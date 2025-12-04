@@ -38,6 +38,15 @@ class ViewCliente extends Page
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('lg')
                 ->form([
+                    Forms\Components\Select::make('idioma')
+                        ->label('🌐 Idioma')
+                        ->options([
+                            'es' => '🇪🇸 Español',
+                            'en' => '🇺🇸 English',
+                            'fr' => '🇫🇷 Français',
+                        ])
+                        ->default('es')
+                        ->required(),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('numero_cotizacion')
                             ->label('Nº Cotización')
@@ -103,6 +112,15 @@ class ViewCliente extends Page
                 ->modalHeading('💰 Nueva Factura')
                 ->modalWidth('lg')
                 ->form([
+                    Forms\Components\Select::make('idioma')
+                        ->label('🌐 Idioma')
+                        ->options([
+                            'es' => '🇪🇸 Español',
+                            'en' => '🇺🇸 English',
+                            'fr' => '🇫🇷 Français',
+                        ])
+                        ->default('es')
+                        ->required(),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('numero_factura')
                             ->label('Nº Factura')

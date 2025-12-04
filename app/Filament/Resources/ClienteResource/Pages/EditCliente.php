@@ -12,6 +12,19 @@ class EditCliente extends EditRecord
     
     protected static string $view = 'filament.resources.cliente-resource.pages.edit-cliente';
 
+    // Ocultar header de Filament
+    protected static bool $hasHeader = false;
+    
+    public function getTitle(): string
+    {
+        return '';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     // Acción de eliminar para el wire:click
     protected function getHeaderActions(): array
     {

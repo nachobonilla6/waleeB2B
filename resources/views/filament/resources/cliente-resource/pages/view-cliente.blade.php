@@ -14,20 +14,20 @@
     @endphp
 
     {{-- Header Sticky con info del cliente y acciones --}}
-    <div class="sticky top-0 z-40 -mx-4 sm:-mx-6 lg:-mx-8 -mt-6 mb-6">
+    <div class="sticky top-0 z-40 -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 mb-6">
         <div class="bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 px-4 sm:px-6 lg:px-8 py-4 shadow-xl">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 {{-- Info del cliente --}}
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
-                        <x-heroicon-o-building-office class="w-6 h-6 text-white"/>
-                    </div>
+                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('index') }}" 
+                       class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
+                        <x-heroicon-o-arrow-left class="w-5 h-5 text-white"/>
+                    </a>
                     <div>
-                        <p class="text-white/70 text-xs font-medium uppercase tracking-wider">Perfil del Cliente</p>
                         <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $cliente->nombre_empresa }}</h1>
                     </div>
                     @if($cliente->estado_cuenta)
-                        <span class="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-bold
+                        <span class="px-3 py-1 rounded-full text-xs font-bold
                             @if($cliente->estado_cuenta === 'activo') bg-green-400 text-green-900
                             @elseif($cliente->estado_cuenta === 'pendiente') bg-yellow-400 text-yellow-900
                             @elseif($cliente->estado_cuenta === 'suspendido') bg-red-400 text-red-900
@@ -39,34 +39,24 @@
                 </div>
 
                 {{-- Botones de acción --}}
-                <div class="flex flex-wrap items-center gap-2">
-                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('index') }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-all duration-200 backdrop-blur-sm">
-                        <x-heroicon-o-arrow-left class="w-4 h-4"/>
-                        <span class="hidden sm:inline">Volver</span>
-                    </a>
+                <div class="flex items-center gap-2">
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('edit', ['record' => $cliente]) }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-400/80 hover:bg-emerald-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-pencil class="w-4 h-4"/>
                         <span class="hidden sm:inline">Editar</span>
                     </a>
                     <button type="button" wire:click="mountAction('cotizacion')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-amber-400/80 hover:bg-amber-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-amber-400/80 hover:bg-amber-400 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-document-text class="w-4 h-4"/>
                         <span class="hidden sm:inline">Cotización</span>
                     </button>
                     <button type="button" wire:click="mountAction('factura')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-blue-400/80 hover:bg-blue-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-blue-400/80 hover:bg-blue-400 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-banknotes class="w-4 h-4"/>
                         <span class="hidden sm:inline">Factura</span>
                     </button>
-                    <a href="{{ \App\Filament\Resources\VelaSportPostResource::getUrl('index') }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-purple-400/80 hover:bg-purple-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
-                        <x-heroicon-o-newspaper class="w-4 h-4"/>
-                        <span class="hidden sm:inline">Posts</span>
-                    </a>
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('create') }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-white/90 hover:bg-white text-emerald-700 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-white/90 hover:bg-white text-emerald-700 rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-plus class="w-4 h-4"/>
                         <span class="hidden sm:inline">Nuevo</span>
                     </a>

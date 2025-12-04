@@ -25,7 +25,12 @@ class ViewCliente extends Page
 
     public function getTitle(): string
     {
-        return $this->record->nombre_empresa;
+        return '';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
     }
 
     protected function getHeaderActions(): array

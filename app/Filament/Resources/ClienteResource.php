@@ -188,30 +188,11 @@ class ClienteResource extends Resource
                             ]),
                         ]),
 
-                    // Paso 5: Fechas y Redes
-                    Forms\Components\Wizard\Step::make('Fechas y Redes')
-                        ->icon('heroicon-o-calendar')
-                        ->description('Fechas importantes y redes sociales')
+                    // Paso 5: Redes Sociales
+                    Forms\Components\Wizard\Step::make('Redes Sociales')
+                        ->icon('heroicon-o-share')
+                        ->description('Presencia en redes sociales')
                         ->schema([
-                            Forms\Components\Section::make('Fechas Importantes')
-                                ->icon('heroicon-o-calendar-days')
-                                ->collapsible()
-                                ->schema([
-                                    Forms\Components\Grid::make(4)->schema([
-                                        Forms\Components\DatePicker::make('fecha_registro')
-                                            ->label('Registro')
-                                            ->displayFormat('d/m/Y'),
-                                        Forms\Components\DatePicker::make('fecha_creacion')
-                                            ->label('Creación')
-                                            ->displayFormat('d/m/Y'),
-                                        Forms\Components\DatePicker::make('fecha_cotizacion')
-                                            ->label('Cotización')
-                                            ->displayFormat('d/m/Y'),
-                                        Forms\Components\DatePicker::make('fecha_factura')
-                                            ->label('Factura')
-                                            ->displayFormat('d/m/Y'),
-                                    ]),
-                                ]),
                             Forms\Components\Section::make('Redes Sociales')
                                 ->icon('heroicon-o-share')
                                 ->collapsible()

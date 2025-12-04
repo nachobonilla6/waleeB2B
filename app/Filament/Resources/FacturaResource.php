@@ -33,7 +33,7 @@ class FacturaResource extends Resource
     public static function getNavigationBadgeColor(): string|array|null
     {
         $pendientes = static::getModel()::where('estado', 'pendiente')->count();
-        return $pendientes > 0 ? 'warning' : 'success';
+        return $pendientes > 0 ? 'success' : 'success';
     }
 
     public static function form(Form $form): Form

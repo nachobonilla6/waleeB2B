@@ -34,7 +34,7 @@ class N8nPostResource extends Resource
     public static function getNavigationBadgeColor(): string|array|null
     {
         $pending = static::getEloquentQuery()->where('status', 'pending')->count();
-        return $pending ? 'warning' : 'info';
+        return $pending ? 'success' : 'info';
     }
 
     public static function form(Form $form): Form

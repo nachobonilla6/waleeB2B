@@ -43,11 +43,19 @@ class EditClient extends EditRecord
         // Si se marcó como enviada, enviar al webhook
         if (($wasEnviado === false || $wasEnviado === null) && $nowEnviado) {
             try {
+                // Buscar el video_url del sitio propuesto
+                $videoUrl = '';
+                if ($updated->proposed_site) {
+                    $sitio = \App\Models\Sitio::where('enlace', $updated->proposed_site)->first();
+                    $videoUrl = $sitio?->video_url ?? '';
+                }
+                
                 $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
                     'name' => $updated->name ?? '',
                     'email' => $updated->email ?? '',
                     'website' => $updated->website ?? '',
                     'proposed_site' => $updated->proposed_site ?? '',
+                    'video_url' => $videoUrl,
                     'feedback' => $updated->feedback ?? '',
                     'propuesta' => $updated->propuesta ?? '',
                 ]);

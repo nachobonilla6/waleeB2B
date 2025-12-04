@@ -182,11 +182,19 @@ class ClientResource extends Resource
                     ->disabled(fn (Client $record) => empty($record->email))
                     ->action(function (Client $record) {
                         try {
+                            // Buscar el video_url del sitio propuesto
+                            $videoUrl = '';
+                            if ($record->proposed_site) {
+                                $sitio = \App\Models\Sitio::where('enlace', $record->proposed_site)->first();
+                                $videoUrl = $sitio?->video_url ?? '';
+                            }
+                            
                             $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
                                 'name' => $record->name ?? '',
                                 'email' => $record->email ?? '',
                                 'website' => $record->website ?? '',
                                 'proposed_site' => $record->proposed_site ?? '',
+                                'video_url' => $videoUrl,
                                 'feedback' => $record->feedback ?? '',
                                 'propuesta' => $record->propuesta ?? '',
                             ]);
@@ -234,11 +242,19 @@ class ClientResource extends Resource
                                 }
                                 
                                 try {
+                                    // Buscar el video_url del sitio propuesto
+                                    $videoUrl = '';
+                                    if ($record->proposed_site) {
+                                        $sitio = \App\Models\Sitio::where('enlace', $record->proposed_site)->first();
+                                        $videoUrl = $sitio?->video_url ?? '';
+                                    }
+                                    
                                     $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
                                         'name' => $record->name ?? '',
                                         'email' => $record->email ?? '',
                                         'website' => $record->website ?? '',
                                         'proposed_site' => $record->proposed_site ?? '',
+                                        'video_url' => $videoUrl,
                                         'feedback' => $record->feedback ?? '',
                                         'propuesta' => $record->propuesta ?? '',
                                     ]);

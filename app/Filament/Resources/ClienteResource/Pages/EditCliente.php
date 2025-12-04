@@ -33,4 +33,10 @@ class EditCliente extends EditRecord
                 ->label('Eliminar'),
         ];
     }
+
+    // Redirigir al listado después de guardar
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

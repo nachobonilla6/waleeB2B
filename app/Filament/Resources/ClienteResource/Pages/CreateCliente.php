@@ -26,4 +26,10 @@ class CreateCliente extends CreateRecord
                 ->url(ClienteResource::getUrl('index')),
         ];
     }
+
+    // Redirigir al listado después de crear
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

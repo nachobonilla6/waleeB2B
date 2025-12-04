@@ -23,6 +23,23 @@ class ClienteResource extends Resource
     protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Cliente';
     protected static ?string $pluralModelLabel = 'Clientes';
+    
+    // Búsqueda global
+    protected static ?string $recordTitleAttribute = 'nombre_empresa';
+    
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nombre_empresa', 'correo', 'telefono', 'ciudad', 'nombre_sitio'];
+    }
+    
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Email' => $record->correo,
+            'Teléfono' => $record->telefono,
+            'Ciudad' => $record->ciudad,
+        ];
+    }
 
     public static function form(Form $form): Form
     {

@@ -29,17 +29,17 @@
 
                 <div class="flex items-center gap-2">
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('view', ['record' => $cliente]) }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-700 dark:bg-emerald-800 hover:bg-emerald-800 dark:hover:bg-emerald-900 text-white rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-700 dark:bg-gray-700 hover:bg-emerald-800 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-eye class="w-4 h-4"/>
                         <span class="hidden sm:inline">Ver</span>
                     </a>
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('create') }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-gray-100 text-emerald-700 rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-emerald-700 dark:text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-plus class="w-4 h-4"/>
                         <span class="hidden sm:inline">Nuevo</span>
                     </a>
                     <button type="button" wire:click="mountAction('delete')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-red-500 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-trash class="w-4 h-4"/>
                     </button>
                 </div>

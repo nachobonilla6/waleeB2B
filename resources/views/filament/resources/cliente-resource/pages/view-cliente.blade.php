@@ -34,22 +34,22 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('edit', ['record' => $cliente]) }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-700 dark:bg-emerald-800 hover:bg-emerald-800 dark:hover:bg-emerald-900 text-white rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-700 dark:bg-gray-700 hover:bg-emerald-800 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-pencil class="w-4 h-4"/>
                         <span class="hidden sm:inline">Editar</span>
                     </a>
                     <button type="button" wire:click="mountAction('cotizacion')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-amber-500 dark:bg-gray-700 hover:bg-amber-600 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-document-text class="w-4 h-4"/>
                         <span class="hidden sm:inline">Cotización</span>
                     </button>
                     <button type="button" wire:click="mountAction('factura')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-blue-500 dark:bg-gray-700 hover:bg-blue-600 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-banknotes class="w-4 h-4"/>
                         <span class="hidden sm:inline">Factura</span>
                     </button>
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('create') }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-gray-100 text-emerald-700 rounded-lg text-sm font-medium transition-all">
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-emerald-700 dark:text-white rounded-lg text-sm font-medium transition-all">
                         <x-heroicon-o-plus class="w-4 h-4"/>
                         <span class="hidden sm:inline">Nuevo</span>
                     </a>
@@ -210,7 +210,7 @@
                 @if($cliente->direccion && $cliente->ciudad)
                     <div class="px-6 pb-6">
                         <a href="https://maps.google.com/?q={{ urlencode($cliente->direccion . ', ' . $cliente->ciudad) }}" target="_blank" 
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium">
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 dark:bg-gray-600 hover:bg-purple-700 dark:hover:bg-gray-500 text-white rounded-lg text-sm font-medium">
                             <x-heroicon-o-map class="w-5 h-5"/> Ver en Maps
                         </a>
                     </div>
@@ -257,7 +257,7 @@
                 @if($cliente->url_sitio)
                     <div class="px-6 pb-6">
                         <a href="{{ $cliente->url_sitio }}" target="_blank" 
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium">
+                           class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 dark:bg-gray-600 hover:bg-amber-700 dark:hover:bg-gray-500 text-white rounded-lg text-sm font-medium">
                             <x-heroicon-o-arrow-top-right-on-square class="w-5 h-5"/> Visitar
                         </a>
                     </div>
@@ -319,7 +319,7 @@
                 </button>
                 <div x-show="currentStep === 1"></div>
                 <button x-show="currentStep < 6" @click="currentStep++"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium">
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-gray-600 dark:hover:bg-gray-500 text-white rounded-lg text-sm font-medium">
                     Siguiente <x-heroicon-o-arrow-right class="w-4 h-4"/>
                 </button>
                 <div x-show="currentStep === 6"></div>

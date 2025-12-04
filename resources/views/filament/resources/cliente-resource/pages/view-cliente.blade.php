@@ -71,7 +71,7 @@
     </div>
 
     {{-- Wizard --}}
-    <div x-data="{ currentStep: 1 }">
+    <div x-data="{ currentStep: {{ request()->integer('step', 1) }} }">
         {{-- Steps Navigation --}}
         <nav class="fi-wi-header mb-6">
             <ol class="fi-wi-header-steps flex items-center justify-center gap-x-2">

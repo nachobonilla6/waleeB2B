@@ -43,7 +43,8 @@ class ClienteResource extends Resource
 
     public static function getGlobalSearchResultUrl(\Illuminate\Database\Eloquent\Model $record): string
     {
-        return static::getUrl('view', ['record' => $record]);
+        // Desde el buscador global, llevar directamente al paso de Contabilidad (7)
+        return static::getUrl('view', ['record' => $record, 'step' => 7]);
     }
 
     public static function form(Form $form): Form

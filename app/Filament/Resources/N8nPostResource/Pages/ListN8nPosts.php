@@ -76,7 +76,7 @@ class ListN8nPosts extends ListRecords
                         }),
                     Actions\Action::make('refrescar')
                         ->label('🔄 Refrescar')
-                        ->color('warning')
+                        ->color('success')
                         ->action(function ($livewire) {
                             $livewire->dispatch('$refresh');
                             Notification::make()

@@ -14,7 +14,7 @@ class SupportCaseStats extends BaseWidget
             Stat::make('Tickets Abiertos', SupportCase::where('status', 'open')->count())
                 ->description('Tickets pendientes de atención')
                 ->descriptionIcon('heroicon-o-inbox')
-                ->color('warning'),
+                ->color('success'),
                 
             Stat::make('En Progreso', SupportCase::where('status', 'in_progress')->count())
                 ->description('Tickets siendo atendidos')

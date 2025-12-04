@@ -50,7 +50,7 @@ class ProposalStatsWidget extends BaseWidget
             Stat::make('Propuestas de hoy', $clientsToday)
                 ->description('Nuevas propuestas hoy')
                 ->descriptionIcon('heroicon-m-document-text')
-                ->color('warning')
+                ->color('success')
                 ->url(route('filament.admin.resources.clients.index', ['tableFilters[created_at][isActive]' => 'true', 'tableFilters[created_at][dates][0]' => $today->format('Y-m-d')])),
                 
             Stat::make('Aprobadas este mes', $approvedThisMonth)

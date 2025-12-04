@@ -166,7 +166,7 @@ class ViewCliente extends Page
             Action::make('edit')
                 ->label('Editar')
                 ->icon('heroicon-o-pencil')
-                ->color('warning')
+                ->color('success')
                 ->url(fn () => ClienteResource::getUrl('edit', ['record' => $this->record])),
 
             Action::make('create')

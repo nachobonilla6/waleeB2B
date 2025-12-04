@@ -26,6 +26,15 @@ class ListClientes extends ListRecords
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('lg')
                 ->form([
+                    Forms\Components\Select::make('idioma')
+                        ->label('🌐 Idioma')
+                        ->options([
+                            'es' => '🇪🇸 Español',
+                            'en' => '🇺🇸 English',
+                            'fr' => '🇫🇷 Français',
+                        ])
+                        ->default('es')
+                        ->required(),
                     Forms\Components\Select::make('cliente_id')
                         ->label('Cliente')
                         ->options(Cliente::pluck('nombre_empresa', 'id'))
@@ -96,6 +105,15 @@ class ListClientes extends ListRecords
                 ->modalHeading('💰 Nueva Factura')
                 ->modalWidth('lg')
                 ->form([
+                    Forms\Components\Select::make('idioma')
+                        ->label('🌐 Idioma')
+                        ->options([
+                            'es' => '🇪🇸 Español',
+                            'en' => '🇺🇸 English',
+                            'fr' => '🇫🇷 Français',
+                        ])
+                        ->default('es')
+                        ->required(),
                     Forms\Components\Select::make('cliente_id')
                         ->label('Cliente')
                         ->options(Cliente::pluck('nombre_empresa', 'id'))

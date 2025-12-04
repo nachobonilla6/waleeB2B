@@ -1103,10 +1103,10 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-contain transition duration-300">
                 </div>
                 
-                <!-- Laravel -->
-                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPNom4M_g0NKR31DzLdISnPUw0k-IxxsDjFkv-BoDE6u2hOjzBBZb827sxbB0YNKFwQP8&usqp=CAU" alt="Laravel" class="w-full h-full object-contain transition duration-300">
-                </div>
+<!-- Laravel -->
+                                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-amber-500 rounded-xl shadow-lg shadow-amber-500/30 transform transition duration-300 hover:scale-105 hover:shadow-amber-500/50 flex items-center justify-center p-2 sm:p-3">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPNom4M_g0NKR31DzLdISnPUw0k-IxxsDjFkv-BoDE6u2hOjzBBZb827sxbB0YNKFwQP8&usqp=CAU" alt="Laravel" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                                </div>
                 
                 <!-- Filament -->
                 <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">

@@ -48,18 +48,24 @@ class AdminPanelProvider extends PanelProvider
                 fn (): string => '<style>
                     .fi-global-search-field,
                     [x-data*="globalSearch"] { 
-                        width: 600px !important; 
-                        min-width: 600px !important;
-                        max-width: 800px !important; 
+                        width: 900px !important; 
+                        min-width: 700px !important;
+                        max-width: 1200px !important;
+                        margin-right: auto !important;
                     }
                     .fi-global-search-field input,
                     [x-data*="globalSearch"] input { 
                         width: 100% !important;
                         font-size: 1rem !important; 
                     }
-                    .fi-topbar nav {
+                    .fi-topbar nav,
+                    .fi-topbar > nav {
                         justify-content: flex-start !important;
                         gap: 1rem !important;
+                        width: 100% !important;
+                    }
+                    .fi-topbar {
+                        padding-left: 1rem !important;
                     }
                 </style>'
             )

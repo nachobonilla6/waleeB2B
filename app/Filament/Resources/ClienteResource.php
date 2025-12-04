@@ -45,164 +45,228 @@ class ClienteResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Grid::make(3)->schema([
-                    Forms\Components\Section::make('Empresa')
+                Forms\Components\Wizard::make([
+                    // Paso 1: Información de la Empresa
+                    Forms\Components\Wizard\Step::make('Empresa')
                         ->icon('heroicon-o-building-office')
-                        ->columnSpan(1)
+                        ->description('Datos básicos de la empresa')
                         ->schema([
-                            Forms\Components\TextInput::make('nombre_empresa')
-                                ->label('Nombre de Empresa')
-                                ->required(),
-                            Forms\Components\Select::make('tipo_empresa')
-                                ->label('Tipo')
-                                ->options([
-                                    'servicios' => 'Servicios',
-                                    'comercio' => 'Comercio',
-                                    'manufactura' => 'Manufactura',
-                                    'tecnologia' => 'Tecnología',
-                                    'otro' => 'Otro',
-                                ]),
-                            Forms\Components\Select::make('industria')
-                                ->label('Industria')
-                                ->options([
-                                    'turismo' => 'Turismo',
-                                    'gastronomia' => 'Gastronomía',
-                                    'retail' => 'Retail',
-                                    'salud' => 'Salud',
-                                    'educacion' => 'Educación',
-                                    'tecnologia' => 'Tecnología',
-                                    'otro' => 'Otro',
-                                ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('nombre_empresa')
+                                    ->label('Nombre de Empresa')
+                                    ->placeholder('Ej: Web Solutions CR')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->prefixIcon('heroicon-o-building-office'),
+                                Forms\Components\Select::make('estado_cuenta')
+                                    ->label('Estado del Cliente')
+                                    ->options([
+                                        'activo' => '🟢 Activo',
+                                        'pendiente' => '🟡 Pendiente',
+                                        'suspendido' => '🔴 Suspendido',
+                                        'cancelado' => '⚫ Cancelado',
+                                    ])
+                                    ->default('pendiente')
+                                    ->native(false),
+                            ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\Select::make('tipo_empresa')
+                                    ->label('Tipo de Empresa')
+                                    ->options([
+                                        'servicios' => '🛎️ Servicios',
+                                        'comercio' => '🛒 Comercio',
+                                        'manufactura' => '🏭 Manufactura',
+                                        'tecnologia' => '💻 Tecnología',
+                                        'otro' => '📦 Otro',
+                                    ])
+                                    ->native(false),
+                                Forms\Components\Select::make('industria')
+                                    ->label('Industria')
+                                    ->options([
+                                        'turismo' => '✈️ Turismo',
+                                        'gastronomia' => '🍽️ Gastronomía',
+                                        'retail' => '🏪 Retail',
+                                        'salud' => '🏥 Salud',
+                                        'educacion' => '🎓 Educación',
+                                        'tecnologia' => '💻 Tecnología',
+                                        'otro' => '📦 Otro',
+                                    ])
+                                    ->native(false),
+                            ]),
                             Forms\Components\Textarea::make('descripcion')
-                                ->label('Descripción')
-                                ->rows(3),
+                                ->label('Descripción del Negocio')
+                                ->placeholder('Breve descripción de la empresa y sus servicios...')
+                                ->rows(3)
+                                ->columnSpanFull(),
                         ]),
 
-                    Forms\Components\Section::make('Fechas')
-                        ->icon('heroicon-o-calendar')
-                        ->columnSpan(1)
-                        ->schema([
-                            Forms\Components\DatePicker::make('fecha_registro')
-                                ->label('Fecha de Registro')
-                                ->displayFormat('d/m/Y'),
-                            Forms\Components\DatePicker::make('fecha_creacion')
-                                ->label('Fecha de Creación')
-                                ->displayFormat('d/m/Y'),
-                            Forms\Components\DatePicker::make('fecha_cotizacion')
-                                ->label('Fecha Cotización')
-                                ->displayFormat('d/m/Y'),
-                            Forms\Components\DatePicker::make('fecha_factura')
-                                ->label('Fecha Factura')
-                                ->displayFormat('d/m/Y'),
-                            Forms\Components\Select::make('estado_cuenta')
-                                ->label('Estado')
-                                ->options([
-                                    'activo' => '🟢 Activo',
-                                    'pendiente' => '🟡 Pendiente',
-                                    'suspendido' => '🔴 Suspendido',
-                                    'cancelado' => '⚫ Cancelado',
-                                ]),
-                        ]),
-
-                    Forms\Components\Section::make('Contacto')
+                    // Paso 2: Contacto
+                    Forms\Components\Wizard\Step::make('Contacto')
                         ->icon('heroicon-o-phone')
-                        ->columnSpan(1)
+                        ->description('Información de contacto')
                         ->schema([
-                            Forms\Components\TextInput::make('correo')
-                                ->label('Correo')
-                                ->email()
-                                ->required(),
-                            Forms\Components\TextInput::make('telefono')
-                                ->label('Teléfono')
-                                ->tel(),
-                            Forms\Components\TextInput::make('telefono_alternativo')
-                                ->label('Tel. Alternativo')
-                                ->tel(),
-                            Forms\Components\TextInput::make('whatsapp')
-                                ->label('WhatsApp')
-                                ->tel(),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('correo')
+                                    ->label('Correo Electrónico')
+                                    ->email()
+                                    ->required()
+                                    ->placeholder('correo@empresa.com')
+                                    ->prefixIcon('heroicon-o-envelope'),
+                                Forms\Components\TextInput::make('telefono')
+                                    ->label('Teléfono Principal')
+                                    ->tel()
+                                    ->placeholder('+506 8888-8888')
+                                    ->prefixIcon('heroicon-o-phone'),
+                            ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('telefono_alternativo')
+                                    ->label('Teléfono Alternativo')
+                                    ->tel()
+                                    ->placeholder('+506 2222-2222')
+                                    ->prefixIcon('heroicon-o-phone'),
+                                Forms\Components\TextInput::make('whatsapp')
+                                    ->label('WhatsApp')
+                                    ->tel()
+                                    ->placeholder('+506 8888-8888')
+                                    ->prefixIcon('heroicon-o-chat-bubble-left'),
+                            ]),
                         ]),
-                ]),
 
-                Forms\Components\Grid::make(2)->schema([
-                    Forms\Components\Section::make('Ubicación')
+                    // Paso 3: Ubicación
+                    Forms\Components\Wizard\Step::make('Ubicación')
                         ->icon('heroicon-o-map-pin')
+                        ->description('Dirección física')
                         ->schema([
                             Forms\Components\Grid::make(3)->schema([
                                 Forms\Components\TextInput::make('pais')
-                                    ->label('País'),
+                                    ->label('País')
+                                    ->placeholder('Costa Rica')
+                                    ->prefixIcon('heroicon-o-flag'),
                                 Forms\Components\TextInput::make('estado')
-                                    ->label('Estado'),
+                                    ->label('Provincia/Estado')
+                                    ->placeholder('San José'),
                                 Forms\Components\TextInput::make('ciudad')
-                                    ->label('Ciudad'),
+                                    ->label('Ciudad')
+                                    ->placeholder('San José'),
                             ]),
                             Forms\Components\TextInput::make('direccion')
-                                ->label('Dirección')
+                                ->label('Dirección Completa')
+                                ->placeholder('Calle, Avenida, Número...')
+                                ->prefixIcon('heroicon-o-home')
                                 ->columnSpanFull(),
                             Forms\Components\TextInput::make('codigo_postal')
-                                ->label('C.P.'),
+                                ->label('Código Postal')
+                                ->placeholder('10101')
+                                ->maxLength(10),
                         ]),
 
-                    Forms\Components\Section::make('Sitio Web')
+                    // Paso 4: Sitio Web
+                    Forms\Components\Wizard\Step::make('Sitio Web')
                         ->icon('heroicon-o-globe-alt')
+                        ->description('Información del sitio web')
                         ->schema([
-                            Forms\Components\TextInput::make('nombre_sitio')
-                                ->label('Dominio'),
-                            Forms\Components\TextInput::make('url_sitio')
-                                ->label('URL')
-                                ->url(),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('nombre_sitio')
+                                    ->label('Nombre del Dominio')
+                                    ->placeholder('miempresa.com')
+                                    ->prefixIcon('heroicon-o-globe-alt'),
+                                Forms\Components\TextInput::make('url_sitio')
+                                    ->label('URL del Sitio')
+                                    ->url()
+                                    ->placeholder('https://www.miempresa.com')
+                                    ->prefixIcon('heroicon-o-link'),
+                            ]),
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('hosting')
-                                    ->label('Hosting'),
+                                    ->label('Proveedor de Hosting')
+                                    ->placeholder('Hostinger, GoDaddy, etc.')
+                                    ->prefixIcon('heroicon-o-server'),
                                 Forms\Components\DatePicker::make('dominio_expira')
-                                    ->label('Expira')
-                                    ->displayFormat('d/m/Y'),
+                                    ->label('Fecha de Expiración')
+                                    ->displayFormat('d/m/Y')
+                                    ->prefixIcon('heroicon-o-calendar'),
                             ]),
                         ]),
-                ]),
 
-                Forms\Components\Section::make('Redes Sociales')
-                    ->icon('heroicon-o-share')
-                    ->schema([
-                        Forms\Components\Repeater::make('redes_sociales')
-                            ->label('')
-                            ->schema([
-                                Forms\Components\Grid::make(3)->schema([
-                                    Forms\Components\Select::make('red')
-                                        ->label('Red')
-                                        ->options([
-                                            'facebook' => '📘 Facebook',
-                                            'instagram' => '📸 Instagram',
-                                            'tiktok' => '🎵 TikTok',
-                                            'twitter' => '🐦 Twitter/X',
-                                            'linkedin' => '💼 LinkedIn',
-                                            'youtube' => '▶️ YouTube',
-                                            'pinterest' => '📌 Pinterest',
-                                        ])
-                                        ->required(),
-                                    Forms\Components\TextInput::make('url')
-                                        ->label('URL')
-                                        ->url()
-                                        ->required(),
-                                    Forms\Components\Toggle::make('activo')
-                                        ->label('Activo')
-                                        ->inline(false),
+                    // Paso 5: Fechas y Redes
+                    Forms\Components\Wizard\Step::make('Fechas y Redes')
+                        ->icon('heroicon-o-calendar')
+                        ->description('Fechas importantes y redes sociales')
+                        ->schema([
+                            Forms\Components\Section::make('Fechas Importantes')
+                                ->icon('heroicon-o-calendar-days')
+                                ->collapsible()
+                                ->schema([
+                                    Forms\Components\Grid::make(4)->schema([
+                                        Forms\Components\DatePicker::make('fecha_registro')
+                                            ->label('Registro')
+                                            ->displayFormat('d/m/Y'),
+                                        Forms\Components\DatePicker::make('fecha_creacion')
+                                            ->label('Creación')
+                                            ->displayFormat('d/m/Y'),
+                                        Forms\Components\DatePicker::make('fecha_cotizacion')
+                                            ->label('Cotización')
+                                            ->displayFormat('d/m/Y'),
+                                        Forms\Components\DatePicker::make('fecha_factura')
+                                            ->label('Factura')
+                                            ->displayFormat('d/m/Y'),
+                                    ]),
                                 ]),
-                            ])
-                            ->defaultItems(0)
-                            ->addActionLabel('Agregar red social')
-                            ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['red'] ?? null),
-                    ]),
+                            Forms\Components\Section::make('Redes Sociales')
+                                ->icon('heroicon-o-share')
+                                ->collapsible()
+                                ->schema([
+                                    Forms\Components\Repeater::make('redes_sociales')
+                                        ->label('')
+                                        ->schema([
+                                            Forms\Components\Grid::make(3)->schema([
+                                                Forms\Components\Select::make('red')
+                                                    ->label('Red Social')
+                                                    ->options([
+                                                        'facebook' => '📘 Facebook',
+                                                        'instagram' => '📸 Instagram',
+                                                        'tiktok' => '🎵 TikTok',
+                                                        'twitter' => '🐦 Twitter/X',
+                                                        'linkedin' => '💼 LinkedIn',
+                                                        'youtube' => '▶️ YouTube',
+                                                        'pinterest' => '📌 Pinterest',
+                                                    ])
+                                                    ->required()
+                                                    ->native(false),
+                                                Forms\Components\TextInput::make('url')
+                                                    ->label('URL del Perfil')
+                                                    ->url()
+                                                    ->required()
+                                                    ->placeholder('https://...'),
+                                                Forms\Components\Toggle::make('activo')
+                                                    ->label('Activo')
+                                                    ->default(true)
+                                                    ->inline(false),
+                                            ]),
+                                        ])
+                                        ->defaultItems(0)
+                                        ->addActionLabel('➕ Agregar red social')
+                                        ->reorderable()
+                                        ->collapsible()
+                                        ->itemLabel(fn (array $state): ?string => $state['red'] ?? 'Nueva red'),
+                                ]),
+                        ]),
 
-                Forms\Components\Section::make('Notas')
-                    ->icon('heroicon-o-document-text')
-                    ->collapsed()
-                    ->schema([
-                        Forms\Components\Textarea::make('notas')
-                            ->label('')
-                            ->rows(4),
-                    ]),
+                    // Paso 6: Notas
+                    Forms\Components\Wizard\Step::make('Notas')
+                        ->icon('heroicon-o-document-text')
+                        ->description('Notas y observaciones')
+                        ->schema([
+                            Forms\Components\Textarea::make('notas')
+                                ->label('Notas del Cliente')
+                                ->placeholder('Agrega cualquier nota o información adicional sobre el cliente...')
+                                ->rows(6)
+                                ->columnSpanFull(),
+                        ]),
+                ])
+                ->skippable()
+                ->persistStepInQueryString()
+                ->columnSpanFull(),
             ]);
     }
 

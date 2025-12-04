@@ -24,7 +24,7 @@ class ListClientes extends ListRecords
                 ->icon('heroicon-o-document-text')
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')
-                ->modalWidth('lg')
+                ->modalWidth('4xl')
                 ->form([
                     Forms\Components\Select::make('idioma')
                         ->label('🌐 Idioma')
@@ -103,7 +103,7 @@ class ListClientes extends ListRecords
                 ->icon('heroicon-o-banknotes')
                 ->color('primary')
                 ->modalHeading('💰 Nueva Factura')
-                ->modalWidth('lg')
+                ->modalWidth('4xl')
                 ->form([
                     Forms\Components\Select::make('idioma')
                         ->label('🌐 Idioma')

@@ -46,10 +46,20 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): string => '<style>
-                    .fi-global-search-field { width: 400px !important; max-width: 600px !important; }
-                    @media (min-width: 1024px) { .fi-global-search-field { width: 500px !important; } }
-                    @media (min-width: 1280px) { .fi-global-search-field { width: 600px !important; } }
-                    .fi-global-search-field input { font-size: 0.95rem !important; }
+                    .fi-global-search-field { 
+                        flex: 1 !important; 
+                        width: 100% !important; 
+                        max-width: none !important; 
+                    }
+                    .fi-global-search-field input { 
+                        font-size: 0.95rem !important; 
+                    }
+                    .fi-topbar nav > div {
+                        flex: 1;
+                    }
+                    .fi-topbar nav {
+                        gap: 1rem;
+                    }
                 </style>'
             )
             ->navigationGroups([

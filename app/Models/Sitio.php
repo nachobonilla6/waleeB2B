@@ -14,7 +14,8 @@ class Sitio extends Model
         'nombre',
         'descripcion',
         'en_linea',
-        'imagen'
+        'imagen',
+        'video_url'
     ];
 
     protected $casts = [

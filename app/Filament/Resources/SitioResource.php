@@ -121,6 +121,13 @@ class SitioResource extends Resource
                             ->columnSpanFull()
                             ->extraAttributes(['class' => 'bg-gray-50 dark:bg-gray-800 rounded-lg p-2 border border-dashed border-gray-300 dark:border-gray-600']),
                         
+                        Forms\Components\Textarea::make('video_url')
+                            ->label('🎬 Enlace de Video')
+                            ->placeholder('https://www.youtube.com/watch?v=... o enlace de Vimeo, etc.')
+                            ->rows(2)
+                            ->columnSpanFull()
+                            ->helperText('Pega aquí el enlace del video de YouTube, Vimeo u otra plataforma'),
+                        
                         Forms\Components\Toggle::make('en_linea')
                             ->label('¿En línea?')
                             ->default(true),

@@ -24,56 +24,84 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <div class="space-y-6">
-        {{-- Header con info principal --}}
-        <div class="bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
-            {{-- Decorative elements --}}
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-24 -translate-x-24"></div>
-            
-            <div class="relative flex flex-col md:flex-row items-center gap-6">
-                <div class="w-28 h-28 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-5xl shadow-xl border-4 border-white/30 transform hover:scale-105 transition-transform duration-300">
-                    <i class="fas fa-building text-white/90"></i>
-                </div>
-                <div class="text-center md:text-left flex-1">
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">{{ $cliente->nombre_empresa }}</h1>
-                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-3">
-                        @if($cliente->industria)
-                            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
-                                <i class="fas fa-industry mr-1"></i> {{ ucfirst($cliente->industria) }}
-                            </span>
-                        @endif
-                        @if($cliente->tipo_empresa)
-                            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
-                                <i class="fas fa-briefcase mr-1"></i> {{ ucfirst($cliente->tipo_empresa) }}
-                            </span>
-                        @endif
+    {{-- Header Sticky con info del cliente y acciones --}}
+    <div class="sticky top-0 z-40 -mx-4 sm:-mx-6 lg:-mx-8 -mt-6 mb-6">
+        <div class="bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 px-4 sm:px-6 lg:px-8 py-4 shadow-xl">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                {{-- Info del cliente --}}
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                        <x-heroicon-o-building-office class="w-6 h-6 text-white"/>
                     </div>
-                    @if($cliente->descripcion)
-                        <p class="text-white/80 text-sm mt-3 max-w-2xl leading-relaxed">{{ $cliente->descripcion }}</p>
-                    @endif
-                </div>
-                <div class="flex flex-col items-center gap-3">
-                    <span class="px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg transform hover:scale-105 transition-all duration-300
-                        @if($cliente->estado_cuenta === 'activo') bg-green-400 text-green-900
-                        @elseif($cliente->estado_cuenta === 'pendiente') bg-yellow-400 text-yellow-900
-                        @elseif($cliente->estado_cuenta === 'suspendido') bg-red-400 text-red-900
-                        @else bg-gray-400 text-gray-900 @endif
-                    ">
-                        @if($cliente->estado_cuenta === 'activo') <i class="fas fa-check-circle mr-1"></i> Activo
-                        @elseif($cliente->estado_cuenta === 'pendiente') <i class="fas fa-clock mr-1"></i> Pendiente
-                        @elseif($cliente->estado_cuenta === 'suspendido') <i class="fas fa-times-circle mr-1"></i> Suspendido
-                        @else <i class="fas fa-circle mr-1"></i> {{ ucfirst($cliente->estado_cuenta ?? 'Sin estado') }} @endif
-                    </span>
-                    @if($cliente->fecha_registro)
-                        <span class="text-xs text-white/70 flex items-center gap-1">
-                            <i class="fas fa-calendar-alt"></i> Desde {{ $cliente->fecha_registro->format('d M, Y') }}
+                    <div>
+                        <p class="text-white/70 text-xs font-medium uppercase tracking-wider">Perfil del Cliente</p>
+                        <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $cliente->nombre_empresa }}</h1>
+                    </div>
+                    @if($cliente->estado_cuenta)
+                        <span class="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-bold
+                            @if($cliente->estado_cuenta === 'activo') bg-green-400 text-green-900
+                            @elseif($cliente->estado_cuenta === 'pendiente') bg-yellow-400 text-yellow-900
+                            @elseif($cliente->estado_cuenta === 'suspendido') bg-red-400 text-red-900
+                            @else bg-gray-400 text-gray-900 @endif
+                        ">
+                            {{ ucfirst($cliente->estado_cuenta) }}
                         </span>
                     @endif
                 </div>
+
+                {{-- Botones de acción --}}
+                <div class="flex flex-wrap items-center gap-2">
+                    {{-- Volver --}}
+                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('index') }}" 
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-all duration-200 backdrop-blur-sm">
+                        <x-heroicon-o-arrow-left class="w-4 h-4"/>
+                        <span class="hidden sm:inline">Volver</span>
+                    </a>
+
+                    {{-- Editar --}}
+                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('edit', ['record' => $cliente]) }}" 
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-400/80 hover:bg-emerald-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                        <x-heroicon-o-pencil class="w-4 h-4"/>
+                        <span class="hidden sm:inline">Editar</span>
+                    </a>
+
+                    {{-- Cotización --}}
+                    <button 
+                        type="button"
+                        wire:click="mountAction('cotizacion')"
+                        class="inline-flex items-center gap-2 px-3 py-2 bg-amber-400/80 hover:bg-amber-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                        <x-heroicon-o-document-text class="w-4 h-4"/>
+                        <span class="hidden sm:inline">Cotización</span>
+                    </button>
+
+                    {{-- Factura --}}
+                    <button 
+                        type="button"
+                        wire:click="mountAction('factura')"
+                        class="inline-flex items-center gap-2 px-3 py-2 bg-blue-400/80 hover:bg-blue-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                        <x-heroicon-o-banknotes class="w-4 h-4"/>
+                        <span class="hidden sm:inline">Factura</span>
+                    </button>
+
+                    {{-- Ver Posts --}}
+                    <a href="{{ \App\Filament\Resources\VelaSportPostResource::getUrl('index') }}" 
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-purple-400/80 hover:bg-purple-400 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                        <x-heroicon-o-newspaper class="w-4 h-4"/>
+                        <span class="hidden sm:inline">Posts</span>
+                    </a>
+
+                    {{-- Nuevo Cliente --}}
+                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('create') }}" 
+                       class="inline-flex items-center gap-2 px-3 py-2 bg-white/90 hover:bg-white text-emerald-700 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg">
+                        <x-heroicon-o-plus class="w-4 h-4"/>
+                        <span class="hidden sm:inline">Nuevo</span>
+                    </a>
+                </div>
             </div>
         </div>
+    </div>
 
+    <div class="space-y-6">
         {{-- Estadísticas rápidas --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300 group">
@@ -285,6 +313,33 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Empresa --}}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="bg-gradient-to-r from-indigo-500 to-violet-500 px-5 py-4">
+                    <h3 class="font-bold text-white flex items-center gap-3">
+                        <i class="fas fa-building text-lg"></i> Información de Empresa
+                    </h3>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
+                            <p class="text-xs text-indigo-600 dark:text-indigo-400 mb-1"><i class="fas fa-briefcase mr-1"></i> Tipo</p>
+                            <p class="text-gray-900 dark:text-white font-medium">{{ ucfirst($cliente->tipo_empresa ?? '—') }}</p>
+                        </div>
+                        <div class="p-3 bg-violet-50 dark:bg-violet-900/20 rounded-xl">
+                            <p class="text-xs text-violet-600 dark:text-violet-400 mb-1"><i class="fas fa-industry mr-1"></i> Industria</p>
+                            <p class="text-gray-900 dark:text-white font-medium">{{ ucfirst($cliente->industria ?? '—') }}</p>
+                        </div>
+                    </div>
+                    @if($cliente->descripcion)
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2"><i class="fas fa-align-left mr-1"></i> Descripción</p>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{{ $cliente->descripcion }}</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             {{-- Fechas importantes --}}
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow duration-300">
                 <div class="bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-4">
@@ -317,42 +372,42 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            {{-- Redes Sociales --}}
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <div class="bg-gradient-to-r from-pink-500 to-rose-500 px-5 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3">
-                        <i class="fas fa-hashtag text-lg"></i> Redes Sociales
-                    </h3>
-                </div>
-                <div class="p-5">
-                    @if(count($redesSociales) > 0)
-                        <div class="space-y-3">
-                            @foreach($redesSociales as $red)
-                                <a href="{{ $red['url'] ?? '#' }}" target="_blank" class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 group border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600">
-                                    <div class="w-10 h-10 {{ $coloresRedes[$red['red'] ?? ''] ?? 'bg-gray-500' }} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                                        <i class="{{ $iconosRedes[$red['red'] ?? ''] ?? 'fas fa-globe' }} text-white"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-semibold text-gray-900 dark:text-white">{{ ucfirst($red['red'] ?? 'Red Social') }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">{{ $red['url'] ?? '' }}</p>
-                                    </div>
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold
-                                        @if($red['activo'] ?? false) bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400
-                                        @else bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 @endif
-                                    ">
-                                        {{ ($red['activo'] ?? false) ? 'Activo' : 'Inactivo' }}
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="text-center py-8 text-gray-400">
-                            <i class="fas fa-share-alt text-4xl mb-3"></i>
-                            <p class="text-sm">No hay redes sociales configuradas</p>
-                        </div>
-                    @endif
-                </div>
+        {{-- Redes Sociales --}}
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            <div class="bg-gradient-to-r from-pink-500 to-rose-500 px-5 py-4">
+                <h3 class="font-bold text-white flex items-center gap-3">
+                    <i class="fas fa-hashtag text-lg"></i> Redes Sociales
+                </h3>
+            </div>
+            <div class="p-5">
+                @if(count($redesSociales) > 0)
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($redesSociales as $red)
+                            <a href="{{ $red['url'] ?? '#' }}" target="_blank" class="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200 group border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-md">
+                                <div class="w-12 h-12 {{ $coloresRedes[$red['red'] ?? ''] ?? 'bg-gray-500' }} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                                    <i class="{{ $iconosRedes[$red['red'] ?? ''] ?? 'fas fa-globe' }} text-white text-lg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-semibold text-gray-900 dark:text-white">{{ ucfirst($red['red'] ?? 'Red Social') }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $red['url'] ?? '' }}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                    @if($red['activo'] ?? false) bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400
+                                    @else bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 @endif
+                                ">
+                                    {{ ($red['activo'] ?? false) ? 'Activo' : 'Inactivo' }}
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fas fa-share-alt text-4xl mb-3"></i>
+                        <p class="text-sm">No hay redes sociales configuradas</p>
+                    </div>
+                @endif
             </div>
         </div>
 

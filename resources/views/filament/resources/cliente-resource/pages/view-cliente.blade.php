@@ -61,19 +61,61 @@
     {{-- Wizard con navegación --}}
     <div x-data="{ currentStep: 1 }" class="space-y-6">
         
-        {{-- Indicador de pasos --}}
+        {{-- Indicador de pasos con iconos --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 overflow-x-auto">
-            <div class="flex items-center gap-2 min-w-max">
-                <template x-for="step in 6" :key="step">
-                    <div class="flex items-center">
-                        <button @click="currentStep = step"
-                            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2"
-                            x-bind:class="currentStep === step ? 'bg-primary-500 text-white border-primary-500' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'"
-                            x-text="step">
-                        </button>
-                        <div x-show="step < 6" class="w-8 h-0.5 bg-gray-200 dark:bg-gray-600 mx-1"></div>
-                    </div>
-                </template>
+            <div class="flex items-center gap-1 min-w-max">
+                {{-- Paso 1 --}}
+                <button @click="currentStep = 1"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
+                    x-bind:class="currentStep === 1 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
+                    <x-heroicon-o-building-office class="w-5 h-5"/>
+                    <span class="hidden sm:inline text-sm font-medium">Empresa</span>
+                </button>
+                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
+                
+                {{-- Paso 2 --}}
+                <button @click="currentStep = 2"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
+                    x-bind:class="currentStep === 2 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
+                    <x-heroicon-o-phone class="w-5 h-5"/>
+                    <span class="hidden sm:inline text-sm font-medium">Contacto</span>
+                </button>
+                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
+                
+                {{-- Paso 3 --}}
+                <button @click="currentStep = 3"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
+                    x-bind:class="currentStep === 3 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
+                    <x-heroicon-o-map-pin class="w-5 h-5"/>
+                    <span class="hidden sm:inline text-sm font-medium">Ubicación</span>
+                </button>
+                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
+                
+                {{-- Paso 4 --}}
+                <button @click="currentStep = 4"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
+                    x-bind:class="currentStep === 4 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
+                    <x-heroicon-o-globe-alt class="w-5 h-5"/>
+                    <span class="hidden sm:inline text-sm font-medium">Web</span>
+                </button>
+                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
+                
+                {{-- Paso 5 --}}
+                <button @click="currentStep = 5"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
+                    x-bind:class="currentStep === 5 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
+                    <x-heroicon-o-share class="w-5 h-5"/>
+                    <span class="hidden sm:inline text-sm font-medium">Redes</span>
+                </button>
+                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
+                
+                {{-- Paso 6 --}}
+                <button @click="currentStep = 6"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
+                    x-bind:class="currentStep === 6 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
+                    <x-heroicon-o-document-text class="w-5 h-5"/>
+                    <span class="hidden sm:inline text-sm font-medium">Notas</span>
+                </button>
             </div>
         </div>
 

@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->darkMode(true)
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Green,
             ])
             ->navigationGroups([
                 NavigationGroup::make()

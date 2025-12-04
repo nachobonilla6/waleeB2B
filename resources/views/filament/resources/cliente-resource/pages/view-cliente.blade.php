@@ -13,325 +13,285 @@
         ];
     @endphp
 
-    {{-- Header Sticky --}}
-    <div class="sticky top-0 z-40 -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 mb-6">
-        <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8 py-4 shadow-sm">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('index') }}" 
-                       class="fi-btn fi-btn-size-md fi-btn-color-gray inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <x-heroicon-o-arrow-left class="w-5 h-5"/>
-                    </a>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{{ $cliente->nombre_empresa }}</h1>
-                    @if($cliente->estado_cuenta)
-                        <span class="px-3 py-1 rounded-full text-xs font-bold
-                            @if($cliente->estado_cuenta === 'activo') bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300
-                            @elseif($cliente->estado_cuenta === 'pendiente') bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300
-                            @elseif($cliente->estado_cuenta === 'suspendido') bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300
-                            @else bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 @endif
-                        ">{{ ucfirst($cliente->estado_cuenta) }}</span>
-                    @endif
-                </div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('edit', ['record' => $cliente]) }}" 
-                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <x-heroicon-o-pencil class="w-4 h-4"/>
-                        <span class="hidden sm:inline">Editar</span>
-                    </a>
-                    <button type="button" wire:click="mountAction('cotizacion')"
-                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <x-heroicon-o-document-text class="w-4 h-4"/>
-                        <span class="hidden sm:inline">Cotización</span>
-                    </button>
-                    <button type="button" wire:click="mountAction('factura')"
-                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <x-heroicon-o-banknotes class="w-4 h-4"/>
-                        <span class="hidden sm:inline">Factura</span>
-                    </button>
-                    <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('create') }}" 
-                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <x-heroicon-o-plus class="w-4 h-4"/>
-                        <span class="hidden sm:inline">Nuevo</span>
-                    </a>
-                </div>
+    {{-- Header --}}
+    <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <x-filament::button
+                :href="\App\Filament\Resources\ClienteResource::getUrl('index')"
+                tag="a"
+                color="gray"
+                icon="heroicon-o-arrow-left"
+            />
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $cliente->nombre_empresa }}</h1>
             </div>
+            @if($cliente->estado_cuenta)
+                <x-filament::badge :color="match($cliente->estado_cuenta) {
+                    'activo' => 'success',
+                    'pendiente' => 'warning', 
+                    'suspendido' => 'danger',
+                    default => 'gray'
+                }">
+                    {{ ucfirst($cliente->estado_cuenta) }}
+                </x-filament::badge>
+            @endif
+        </div>
+        <div class="flex items-center gap-2">
+            <x-filament::button
+                :href="\App\Filament\Resources\ClienteResource::getUrl('edit', ['record' => $cliente])"
+                tag="a"
+                color="gray"
+                icon="heroicon-o-pencil"
+            >
+                Editar
+            </x-filament::button>
+            <x-filament::button
+                wire:click="mountAction('cotizacion')"
+                color="gray"
+                icon="heroicon-o-document-text"
+            >
+                Cotización
+            </x-filament::button>
+            <x-filament::button
+                wire:click="mountAction('factura')"
+                color="gray"
+                icon="heroicon-o-banknotes"
+            >
+                Factura
+            </x-filament::button>
+            <x-filament::button
+                :href="\App\Filament\Resources\ClienteResource::getUrl('create')"
+                tag="a"
+                color="gray"
+                icon="heroicon-o-plus"
+            >
+                Nuevo
+            </x-filament::button>
         </div>
     </div>
 
-    {{-- Wizard con navegación --}}
-    <div x-data="{ currentStep: 1 }" class="space-y-6">
-        
-        {{-- Indicador de pasos con iconos --}}
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 overflow-x-auto">
-            <div class="flex items-center gap-1 min-w-max">
-                {{-- Paso 1 --}}
-                <button @click="currentStep = 1"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
-                    x-bind:class="currentStep === 1 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
-                    <x-heroicon-o-building-office class="w-5 h-5"/>
-                    <span class="hidden sm:inline text-sm font-medium">Empresa</span>
-                </button>
-                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
+    {{-- Wizard --}}
+    <div x-data="{ currentStep: 1 }">
+        {{-- Steps Navigation --}}
+        <nav class="fi-wi-header mb-6">
+            <ol class="fi-wi-header-steps flex items-center gap-x-2 overflow-x-auto">
+                @php
+                    $steps = [
+                        ['icon' => 'heroicon-o-building-office', 'label' => 'Empresa'],
+                        ['icon' => 'heroicon-o-phone', 'label' => 'Contacto'],
+                        ['icon' => 'heroicon-o-map-pin', 'label' => 'Ubicación'],
+                        ['icon' => 'heroicon-o-globe-alt', 'label' => 'Sitio Web'],
+                        ['icon' => 'heroicon-o-share', 'label' => 'Redes'],
+                        ['icon' => 'heroicon-o-document-text', 'label' => 'Notas'],
+                    ];
+                @endphp
                 
-                {{-- Paso 2 --}}
-                <button @click="currentStep = 2"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
-                    x-bind:class="currentStep === 2 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
-                    <x-heroicon-o-phone class="w-5 h-5"/>
-                    <span class="hidden sm:inline text-sm font-medium">Contacto</span>
-                </button>
-                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
-                
-                {{-- Paso 3 --}}
-                <button @click="currentStep = 3"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
-                    x-bind:class="currentStep === 3 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
-                    <x-heroicon-o-map-pin class="w-5 h-5"/>
-                    <span class="hidden sm:inline text-sm font-medium">Ubicación</span>
-                </button>
-                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
-                
-                {{-- Paso 4 --}}
-                <button @click="currentStep = 4"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
-                    x-bind:class="currentStep === 4 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
-                    <x-heroicon-o-globe-alt class="w-5 h-5"/>
-                    <span class="hidden sm:inline text-sm font-medium">Web</span>
-                </button>
-                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
-                
-                {{-- Paso 5 --}}
-                <button @click="currentStep = 5"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
-                    x-bind:class="currentStep === 5 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
-                    <x-heroicon-o-share class="w-5 h-5"/>
-                    <span class="hidden sm:inline text-sm font-medium">Redes</span>
-                </button>
-                <div class="w-4 h-0.5 bg-gray-200 dark:bg-gray-600"></div>
-                
-                {{-- Paso 6 --}}
-                <button @click="currentStep = 6"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg transition-all border"
-                    x-bind:class="currentStep === 6 ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500 text-primary-700 dark:text-primary-400' : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'">
-                    <x-heroicon-o-document-text class="w-5 h-5"/>
-                    <span class="hidden sm:inline text-sm font-medium">Notas</span>
-                </button>
-            </div>
-        </div>
+                @foreach($steps as $index => $step)
+                    <li class="fi-wi-header-step flex items-center gap-x-3 shrink-0">
+                        <button 
+                            type="button"
+                            @click="currentStep = {{ $index + 1 }}"
+                            class="fi-wi-header-step-btn flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                            x-bind:class="currentStep === {{ $index + 1 }} 
+                                ? 'bg-primary-50 text-primary-600 ring-1 ring-primary-600 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400' 
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200'"
+                        >
+                            <x-dynamic-component :component="$step['icon']" class="h-5 w-5"/>
+                            <span>{{ $step['label'] }}</span>
+                        </button>
+                        
+                        @if($index < count($steps) - 1)
+                            <div class="h-px w-8 bg-gray-200 dark:bg-white/10"></div>
+                        @endif
+                    </li>
+                @endforeach
+            </ol>
+        </nav>
 
-        {{-- Contenido --}}
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
-            
+        {{-- Step Content --}}
+        <div class="fi-wi-step rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
             {{-- Paso 1: Empresa --}}
-            <div x-show="currentStep === 1">
-                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-building-office class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 1. Empresa
+            <div x-show="currentStep === 1" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-building-office class="h-5 w-5 text-gray-400"/> Información de Empresa
                     </h3>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Nombre</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->nombre_empresa ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Estado</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ ucfirst($cliente->estado_cuenta ?? '—') }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tipo</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ ucfirst($cliente->tipo_empresa ?? '—') }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Industria</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ ucfirst($cliente->industria ?? '—') }}</p>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Descripción</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 min-h-[60px]">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->descripcion ?? '—' }}</p>
+                <div class="fi-section-content p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <x-filament::input.wrapper label="Nombre de Empresa">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->nombre_empresa ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Estado">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ ucfirst($cliente->estado_cuenta ?? '—') }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Tipo de Empresa">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ ucfirst($cliente->tipo_empresa ?? '—') }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Industria">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ ucfirst($cliente->industria ?? '—') }}</div>
+                        </x-filament::input.wrapper>
+                        <div class="md:col-span-2">
+                            <x-filament::input.wrapper label="Descripción">
+                                <div class="fi-input-wrp-input px-3 py-2 min-h-[60px]">{{ $cliente->descripcion ?? '—' }}</div>
+                            </x-filament::input.wrapper>
                         </div>
                     </div>
                 </div>
             </div>
 
             {{-- Paso 2: Contacto --}}
-            <div x-show="currentStep === 2">
-                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-phone class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 2. Contacto
+            <div x-show="currentStep === 2" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-phone class="h-5 w-5 text-gray-400"/> Información de Contacto
                     </h3>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            @if($cliente->correo)
-                                <a href="mailto:{{ $cliente->correo }}" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $cliente->correo }}</a>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Teléfono</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            @if($cliente->telefono)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->telefono) }}" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $cliente->telefono }}</a>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tel. Alternativo</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->telefono_alternativo ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">WhatsApp</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            @if($cliente->whatsapp)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $cliente->whatsapp }}</a>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
-                        </div>
+                <div class="fi-section-content p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <x-filament::input.wrapper label="Email">
+                            <div class="fi-input-wrp-input px-3 py-2">
+                                @if($cliente->correo)
+                                    <a href="mailto:{{ $cliente->correo }}" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->correo }}</a>
+                                @else —
+                                @endif
+                            </div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Teléfono">
+                            <div class="fi-input-wrp-input px-3 py-2">
+                                @if($cliente->telefono)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->telefono) }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->telefono }}</a>
+                                @else —
+                                @endif
+                            </div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Tel. Alternativo">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->telefono_alternativo ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="WhatsApp">
+                            <div class="fi-input-wrp-input px-3 py-2">
+                                @if($cliente->whatsapp)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->whatsapp }}</a>
+                                @else —
+                                @endif
+                            </div>
+                        </x-filament::input.wrapper>
                     </div>
                 </div>
             </div>
 
             {{-- Paso 3: Ubicación --}}
-            <div x-show="currentStep === 3">
-                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-map-pin class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 3. Ubicación
+            <div x-show="currentStep === 3" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-map-pin class="h-5 w-5 text-gray-400"/> Ubicación
                     </h3>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">País</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->pais ?? '—' }}</p>
+                <div class="fi-section-content p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <x-filament::input.wrapper label="País">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->pais ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Estado">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->estado ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Ciudad">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->ciudad ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <div class="md:col-span-2">
+                            <x-filament::input.wrapper label="Dirección">
+                                <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->direccion ?? '—' }}</div>
+                            </x-filament::input.wrapper>
                         </div>
+                        <x-filament::input.wrapper label="Código Postal">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->codigo_postal ?? '—' }}</div>
+                        </x-filament::input.wrapper>
                     </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Estado</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->estado ?? '—' }}</p>
+                    @if($cliente->direccion && $cliente->ciudad)
+                        <div class="mt-4">
+                            <x-filament::button
+                                :href="'https://maps.google.com/?q=' . urlencode($cliente->direccion . ', ' . $cliente->ciudad)"
+                                tag="a"
+                                target="_blank"
+                                color="gray"
+                                icon="heroicon-o-map"
+                            >
+                                Ver en Maps
+                            </x-filament::button>
                         </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Ciudad</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->ciudad ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Dirección</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->direccion ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">C.P.</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->codigo_postal ?? '—' }}</p>
-                        </div>
-                    </div>
+                    @endif
                 </div>
-                @if($cliente->direccion && $cliente->ciudad)
-                    <div class="px-6 pb-6">
-                        <a href="https://maps.google.com/?q={{ urlencode($cliente->direccion . ', ' . $cliente->ciudad) }}" target="_blank" 
-                           class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <x-heroicon-o-map class="w-5 h-5"/> Ver en Maps
-                        </a>
-                    </div>
-                @endif
             </div>
 
             {{-- Paso 4: Sitio Web --}}
-            <div x-show="currentStep === 4">
-                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-globe-alt class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 4. Sitio Web
+            <div x-show="currentStep === 4" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-globe-alt class="h-5 w-5 text-gray-400"/> Sitio Web
                     </h3>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Dominio</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->nombre_sitio ?? '—' }}</p>
-                        </div>
+                <div class="fi-section-content p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <x-filament::input.wrapper label="Dominio">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->nombre_sitio ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="URL">
+                            <div class="fi-input-wrp-input px-3 py-2">
+                                @if($cliente->url_sitio)
+                                    <a href="{{ $cliente->url_sitio }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->url_sitio }}</a>
+                                @else —
+                                @endif
+                            </div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Hosting">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->hosting ?? '—' }}</div>
+                        </x-filament::input.wrapper>
+                        <x-filament::input.wrapper label="Expira">
+                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->dominio_expira?->format('d/m/Y') ?? '—' }}</div>
+                        </x-filament::input.wrapper>
                     </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">URL</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            @if($cliente->url_sitio)
-                                <a href="{{ $cliente->url_sitio }}" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline truncate block">{{ $cliente->url_sitio }}</a>
-                            @else
-                                <span class="text-gray-400">—</span>
-                            @endif
+                    @if($cliente->url_sitio)
+                        <div class="mt-4">
+                            <x-filament::button
+                                :href="$cliente->url_sitio"
+                                tag="a"
+                                target="_blank"
+                                color="gray"
+                                icon="heroicon-o-arrow-top-right-on-square"
+                            >
+                                Visitar Sitio
+                            </x-filament::button>
                         </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Hosting</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->hosting ?? '—' }}</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Expira</label>
-                        <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                            <p class="text-gray-900 dark:text-white">{{ $cliente->dominio_expira?->format('d/m/Y') ?? '—' }}</p>
-                        </div>
-                    </div>
+                    @endif
                 </div>
-                @if($cliente->url_sitio)
-                    <div class="px-6 pb-6">
-                        <a href="{{ $cliente->url_sitio }}" target="_blank" 
-                           class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <x-heroicon-o-arrow-top-right-on-square class="w-5 h-5"/> Visitar
-                        </a>
-                    </div>
-                @endif
             </div>
 
             {{-- Paso 5: Redes --}}
-            <div x-show="currentStep === 5">
-                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-share class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 5. Redes Sociales
+            <div x-show="currentStep === 5" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-share class="h-5 w-5 text-gray-400"/> Redes Sociales
                     </h3>
                 </div>
-                <div class="p-6">
+                <div class="fi-section-content p-6">
                     @if(count($redesSociales) > 0)
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             @foreach($redesSociales as $red)
                                 <a href="{{ $red['url'] ?? '#' }}" target="_blank" 
-                                   class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
+                                   class="flex items-center gap-3 p-3 rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                                     <span class="text-2xl">{{ $iconosRedes[$red['red'] ?? ''] ?? '🌐' }}</span>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-medium text-gray-900 dark:text-white">{{ ucfirst($red['red'] ?? 'Red') }}</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $red['url'] ?? '' }}</p>
+                                        <p class="font-medium text-gray-950 dark:text-white">{{ ucfirst($red['red'] ?? 'Red') }}</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ $red['url'] ?? '' }}</p>
                                     </div>
-                                    <span class="text-xs px-2 py-1 rounded {{ ($red['activo'] ?? false) ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400' : 'bg-gray-200 text-gray-500 dark:bg-gray-600 dark:text-gray-400' }}">
+                                    <x-filament::badge :color="($red['activo'] ?? false) ? 'success' : 'gray'">
                                         {{ ($red['activo'] ?? false) ? 'Activo' : 'Inactivo' }}
-                                    </span>
+                                    </x-filament::badge>
                                 </a>
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-8 text-gray-400 dark:text-gray-500">
+                        <div class="text-center py-8 text-gray-400">
                             <x-heroicon-o-share class="w-12 h-12 mx-auto mb-2"/>
                             <p>Sin redes sociales</p>
                         </div>
@@ -340,31 +300,41 @@
             </div>
 
             {{-- Paso 6: Notas --}}
-            <div x-show="currentStep === 6">
-                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
-                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-document-text class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 6. Notas
+            <div x-show="currentStep === 6" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-document-text class="h-5 w-5 text-gray-400"/> Notas
                     </h3>
                 </div>
-                <div class="p-6">
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 min-h-[120px]">
-                        <p class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ $cliente->notas ?? 'Sin notas' }}</p>
+                <div class="fi-section-content p-6">
+                    <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4 min-h-[120px]">
+                        <p class="text-gray-950 dark:text-white whitespace-pre-wrap">{{ $cliente->notas ?? 'Sin notas' }}</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Navegación --}}
-            <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex justify-between">
-                <button x-show="currentStep > 1" @click="currentStep--"
-                    class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <x-heroicon-o-arrow-left class="w-4 h-4"/> Anterior
-                </button>
-                <div x-show="currentStep === 1"></div>
-                <button x-show="currentStep < 6" @click="currentStep++"
-                    class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    Siguiente <x-heroicon-o-arrow-right class="w-4 h-4"/>
-                </button>
-                <div x-show="currentStep === 6"></div>
+            {{-- Footer Navigation --}}
+            <div class="fi-wi-footer flex items-center justify-between border-t border-gray-200 px-6 py-4 dark:border-white/10">
+                <div>
+                    <x-filament::button
+                        x-show="currentStep > 1"
+                        @click="currentStep--"
+                        color="gray"
+                        icon="heroicon-o-arrow-left"
+                    >
+                        Anterior
+                    </x-filament::button>
+                </div>
+                <div>
+                    <x-filament::button
+                        x-show="currentStep < 6"
+                        @click="currentStep++"
+                        icon="heroicon-o-arrow-right"
+                        icon-position="after"
+                    >
+                        Siguiente
+                    </x-filament::button>
+                </div>
             </div>
         </div>
     </div>

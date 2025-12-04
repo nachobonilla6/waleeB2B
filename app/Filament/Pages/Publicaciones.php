@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use Filament\Pages\Page;
+use App\Models\Post;
+
+class Publicaciones extends Page
+{
+    // Oculto porque ahora usamos N8nPostResource
+    protected static bool $shouldRegisterNavigation = false;
+    
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationLabel = 'Publicaciones (Legacy)';
+    protected static ?string $title = 'Publicaciones';
+    protected static ?string $navigationGroup = 'Contenido';
+    protected static ?int $navigationSort = 20;
+
+    protected static string $view = 'filament.pages.publicaciones';
+
+    public function getPosts()
+    {
+        return Post::latest()->get();
+    }
+}

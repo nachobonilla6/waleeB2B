@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Cliente extends Model
+{
+    protected $table = 'clientes';
+
+    protected $fillable = [
+        // Empresa
+        'nombre_empresa',
+        'tipo_empresa',
+        'industria',
+        'descripcion',
+        
+        // Fechas
+        'fecha_registro',
+        'fecha_creacion',
+        'fecha_cotizacion',
+        'fecha_factura',
+        'estado_cuenta',
+        
+        // Contacto
+        'correo',
+        'telefono',
+        'telefono_alternativo',
+        'whatsapp',
+        
+        // Ubicación
+        'pais',
+        'estado',
+        'ciudad',
+        'direccion',
+        'codigo_postal',
+        
+        // Sitio Web
+        'nombre_sitio',
+        'url_sitio',
+        'hosting',
+        'dominio_expira',
+        
+        // Redes Sociales
+        'redes_sociales',
+        
+        // Notas
+        'notas',
+    ];
+
+    protected $casts = [
+        'fecha_registro' => 'date',
+        'fecha_creacion' => 'date',
+        'fecha_cotizacion' => 'date',
+        'fecha_factura' => 'date',
+        'dominio_expira' => 'date',
+        'redes_sociales' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+}

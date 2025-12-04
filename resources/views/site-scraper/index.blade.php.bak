@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>websolutions.work - Buscador de Negocios</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        .gm-style-iw {
+            padding: 10px;
+        }
+    </style>
+    @if(env('GOOGLE_MAPS_API_KEY'))
+    <script>
+        // Función para inicializar el autocompletado
+        function initGoogleMaps() {
+            console.log('Google Maps API cargada correctamente');
+            
+            // Verificar si la API de Google Maps está cargada
+            if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+                console.error('La API de Google Maps no se ha cargado correctamente');
+                return;
+            }
+
+            console.log('Inicializando autocompletado de Google Places...');
+            
+            // Crear el input de búsqueda
+            const input = document.getElementById('location_search');
+            if (!input) {
+                console.error('No se encontró el campo de búsqueda');
+                return;
+            }
+            
+            // Crear el contenedor de resultados
+            const results = document.getElementById('location_results');
+            if (!results) {
+                console.error('No se encontró el contenedor de resultados');
+                return;
+            }
+            
+            // Obtener el campo oculto para la URL
+            const urlField = document.getElementById('google_maps_url');
+            
+            try {
+                // Configurar el servicio de autocompletado
+                const autocomplete = new google.maps.places.AutocompleteService();
+                
+                // Manejador de entrada
+                input.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    if (query.length < 2) {
+                            results.classList.add('hidden');
+                            return;
+                        }
+                        
+                        autocomplete.getPlacePredictions({
+                            input: query,
+                            componentRestrictions: { country: 'mx' },
+                            types: ['establishment', 'geocode']
+                        }, (predictions, status) => {
+                            if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+                                console.error('Error en la búsqueda:', status);
+                                results.classList.add('hidden');
+                                return;
+                            }
+                            
+                            // Limpiar resultados anteriores
+                            results.innerHTML = '';
+                            
+                            // Mostrar nuevos resultados
+                            predictions.slice(0, 5).forEach(prediction => {
+                                const div = document.createElement('div');
+                                div.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200';
+                                div.textContent = prediction.description;
+                                div.onclick = () => {
+                                    input.value = prediction.description;
+                                    if (urlField) {
+                                        urlField.value = `https://www.google.com/maps/place/?q=place_id:${prediction.place_id}`;
+                                    }
+                                    results.classList.add('hidden');
+                                };
+                                results.appendChild(div);
+                            });
+                            
+                            results.classList.remove('hidden');
+                        });
+                    });
+                    
+                    // Ocultar resultados al hacer clic fuera
+                    document.addEventListener('click', (e) => {
+                        if (!input.contains(e.target) && !results.contains(e.target)) {
+                            results.classList.add('hidden');
+                        }
+                    });
+                    
+                    console.log('Autocompletado de Google Places inicializado correctamente');
+                    
+                } catch (error) {
+                    console.error('Error al inicializar el autocompletado:', error);
+                }
+            });
+        }
+        
+    </script>
+    <script>
+        // Cargar la API de Google Maps
+        function loadGoogleMaps() {
+            // Verificar si ya está cargada
+            if (window.google && window.google.maps) {
+                console.log('Google Maps ya está cargada');
+                initGoogleMaps();
+                return;
+            }
+            
+            console.log('Cargando Google Maps API...');
+            
+            // Crear el script de la API
+            const script = document.createElement('script');
+            const apiKey = '{{ env('GOOGLE_MAPS_API_KEY') }}';
+            
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps`;
+            script.async = true;
+            script.defer = true;
+            script.onerror = function() {
+                console.error('Error al cargar la API de Google Maps');
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Iniciar la carga cuando el documento esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadGoogleMaps);
+        } else {
+            loadGoogleMaps();
+        }
+    </script>
+    @else
+    <script>
+        console.error('Error: No se ha configurado la API Key de Google Maps. Por favor, verifica tu archivo .env');
+    </script>
+    @endif
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Script para manejar el modal de compartir (si existe) -->
+    <script>
+        // Manejar el error del modal de compartir
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareButton = document.querySelector('[data-share]');
+            if (shareButton) {
+                shareButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Lógica para compartir
+                    console.log('Función de compartir');
+                });
+            }
+        });
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        #location_results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 50;
+        }
+        #location_results div {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        #location_results div:hover {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen py-8 px-4">
+        <div class="w-full max-w-4xl mx-auto">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <div class="text-center mb-8">
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">websolutions.work</h1>
+                        <h2 class="text-lg md:text-xl text-gray-600 mt-2">Buscador de Negocios</h2>
+                        <p class="mt-2 text-gray-600">Encuentra negocios en Google Maps</p>
+                    </div>
+
+                    <form id="scraperForm" action="{{ route('site-scraper.search') }}" method="POST" class="space-y-6">
+                        @csrf
+                        
+                        <!-- Mapa interactivo -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Selecciona una ubicación en el mapa:
+                            </label>
+                            <div id="map" class="w-full h-96 rounded-lg border border-gray-300 mb-2"></div>
+                            <input type="hidden" name="latitude" id="latitude" required>
+                            <input type="hidden" name="longitude" id="longitude" required>
+                            <div id="selected-location" class="text-sm text-gray-600 mt-1">
+                                Haz clic en el mapa para seleccionar una ubicación
+                            </div>
+                            <div id="location-error" class="text-red-500 text-sm mt-1 hidden">
+                                Por favor, selecciona una ubicación en el mapa
+                            </div>
+                        </div>
+
+                        <!-- Range in KM -->
+                        <div>
+                            <label for="range_km" class="block text-sm font-medium text-gray-700 mb-1">
+                                Rango de búsqueda: <span id="rangeValue">5</span> km
+                            </label>
+                            <input type="range" id="range_km" name="range_km" min="1" max="50" value="5" step="1"
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                oninput="document.getElementById('rangeValue').textContent = this.value">
+                        </div>
+
+                        <!-- Industry Select -->
+                        <div>
+                            <label for="industry" class="block text-sm font-medium text-gray-700 mb-1">
+                                Industria
+                            </label>
+                            <div class="space-y-2">
+                                <select id="industry" name="industry" required
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                    onchange="toggleOtherIndustry(this.value)">
+                                    <option value="">Selecciona una industria</option>
+                                    @foreach($industries as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endforeach
+                                    <option value="other">Otro (especificar)</option>
+                                </select>
+                                <div id="otherIndustryContainer" class="hidden">
+                                    <label for="other_industry" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Especificar industria
+                                    </label>
+                                    <input type="text" id="other_industry" name="other_industry"
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        placeholder="Escribe la industria">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-4">
+                            <button type="submit"
+                                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Buscar Negocios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add CSRF Token for AJAX requests -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+        } else {
+            otherContainer.classList.add('hidden');
+            document.getElementById('other_industry').removeAttribute('required');
+        }
+    }
+
+    // Update form submission to handle other_industry
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('scraperForm');
+        form.addEventListener('submit', function(e) {
+            const industrySelect = document.getElementById('industry');
+            const otherIndustry = document.getElementById('other_industry');
+            
+            if (industrySelect.value === 'other' && otherIndustry.value) {
+                // Create a hidden input to send the custom industry value
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'industry';
+                hiddenInput.value = otherIndustry.value;
+                form.appendChild(hiddenInput);
+                
+                // Remove the original select to avoid duplicate submission
+                industrySelect.name = '';
+            }
+        });
+    });
+    
+    // Manejar el envío del formulario
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+        
+        // Mostrar indicador de carga
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Procesando...';
+        
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Error al procesar la solicitud');
+            }
+            
+            // Mostrar mensaje de éxito
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: data.message || 'Búsqueda iniciada correctamente',
+                confirmButtonText: 'Aceptar'
+            });
+            
+            // Limpiar el formulario
+            this.reset();
+            document.getElementById('rangeValue').textContent = '5';
+            
+        } catch (error) {
+            console.error('Error:', error);
+            
+            // Mostrar mensaje de error
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Ocurrió un error al procesar tu solicitud',
+                confirmButtonText: 'Aceptar'
+            });
+        } finally {
+            // Restaurar el botón
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+        }
+        const originalText = submitButton.innerHTML;
+        
+        // Show loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Procesando...
+        `;
+
+        // Send the request
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: data.message,
+                    confirmButtonText: 'Aceptar'
+                });
+                this.reset();
+                document.getElementById('rangeValue').textContent = '5';
+            } else {
+                throw new Error(data.message || 'Error al procesar la solicitud');
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Ocurrió un error al procesar tu solicitud',
+                confirmButtonText: 'Entendido'
+            });
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Buscar Negocios';
+        });
+    });
+    </script>
+</body>
+</html>

@@ -21,6 +21,7 @@ class ViewCliente extends Page
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
+        $this->record->load('facturas');
     }
 
     public function getTitle(): string

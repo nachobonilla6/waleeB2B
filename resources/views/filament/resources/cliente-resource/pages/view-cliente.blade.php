@@ -83,6 +83,7 @@
                         ['icon' => 'heroicon-o-globe-alt', 'label' => 'Sitio Web'],
                         ['icon' => 'heroicon-o-share', 'label' => 'Redes'],
                         ['icon' => 'heroicon-o-document-text', 'label' => 'Notas'],
+                        ['icon' => 'heroicon-o-calculator', 'label' => 'Contabilidad'],
                     ];
                 @endphp
                 
@@ -313,6 +314,128 @@
                 </div>
             </div>
 
+            {{-- Paso 7: Contabilidad --}}
+            <div x-show="currentStep === 7" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-calculator class="h-5 w-5 text-gray-400"/> Contabilidad
+                    </h3>
+                </div>
+                <div class="fi-section-content p-6 space-y-8">
+                    {{-- Resumen --}}
+                    @php
+                        $facturas = $cliente->facturas ?? collect();
+                        $totalFacturado = $facturas->sum('total');
+                        $facturasPendientes = $facturas->where('estado', 'pendiente');
+                        $facturasPagadas = $facturas->where('estado', 'pagada');
+                    @endphp
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="rounded-lg bg-gray-50 dark:bg-white/5 p-4 ring-1 ring-gray-950/5 dark:ring-white/10">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Total Facturado</p>
+                            <p class="text-2xl font-bold text-gray-950 dark:text-white">${{ number_format($totalFacturado, 2) }}</p>
+                        </div>
+                        <div class="rounded-lg bg-green-50 dark:bg-green-500/10 p-4 ring-1 ring-green-500/20">
+                            <p class="text-sm text-green-600 dark:text-green-400">Pagadas</p>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $facturasPagadas->count() }}</p>
+                        </div>
+                        <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 p-4 ring-1 ring-amber-500/20">
+                            <p class="text-sm text-amber-600 dark:text-amber-400">Pendientes</p>
+                            <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $facturasPendientes->count() }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Facturas --}}
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-950 dark:text-white mb-4 flex items-center gap-2">
+                            <x-heroicon-o-document-currency-dollar class="h-5 w-5 text-gray-400"/>
+                            Facturas
+                        </h4>
+                        @if($facturas->count() > 0)
+                            <div class="overflow-x-auto rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50 dark:bg-white/5">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400"># Factura</th>
+                                            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Fecha</th>
+                                            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Concepto</th>
+                                            <th class="px-4 py-3 text-right font-medium text-gray-500 dark:text-gray-400">Total</th>
+                                            <th class="px-4 py-3 text-center font-medium text-gray-500 dark:text-gray-400">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-white/10">
+                                        @foreach($facturas as $factura)
+                                            <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
+                                                <td class="px-4 py-3 font-medium text-gray-950 dark:text-white">{{ $factura->numero_factura }}</td>
+                                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}</td>
+                                                <td class="px-4 py-3 text-gray-950 dark:text-white">{{ Str::limit($factura->concepto, 40) }}</td>
+                                                <td class="px-4 py-3 text-right font-medium text-gray-950 dark:text-white">${{ number_format($factura->total, 2) }}</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <x-filament::badge :color="match($factura->estado) {
+                                                        'pagada' => 'success',
+                                                        'pendiente' => 'warning',
+                                                        'vencida' => 'danger',
+                                                        'cancelada' => 'gray',
+                                                        default => 'gray'
+                                                    }">
+                                                        {{ ucfirst($factura->estado ?? 'N/A') }}
+                                                    </x-filament::badge>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-400 rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10">
+                                <x-heroicon-o-document-currency-dollar class="w-12 h-12 mx-auto mb-2"/>
+                                <p>Sin facturas registradas</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Cotizaciones (usando fecha_cotizacion del cliente) --}}
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-950 dark:text-white mb-4 flex items-center gap-2">
+                            <x-heroicon-o-document-text class="h-5 w-5 text-gray-400"/>
+                            Última Cotización
+                        </h4>
+                        <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4">
+                            @if($cliente->fecha_cotizacion)
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-500 dark:text-gray-400 text-sm">Fecha de última cotización</p>
+                                        <p class="text-lg font-medium text-gray-950 dark:text-white">{{ $cliente->fecha_cotizacion->format('d/m/Y') }}</p>
+                                    </div>
+                                    <x-filament::badge color="info">Enviada</x-filament::badge>
+                                </div>
+                            @else
+                                <div class="text-center py-4 text-gray-400">
+                                    <p>Sin cotizaciones enviadas</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Acciones rápidas --}}
+                    <div class="flex gap-3">
+                        <x-filament::button
+                            wire:click="mountAction('cotizacion')"
+                            color="gray"
+                            icon="heroicon-o-document-plus"
+                        >
+                            Nueva Cotización
+                        </x-filament::button>
+                        <x-filament::button
+                            wire:click="mountAction('factura')"
+                            color="gray"
+                            icon="heroicon-o-document-currency-dollar"
+                        >
+                            Nueva Factura
+                        </x-filament::button>
+                    </div>
+                </div>
+            </div>
+
             {{-- Footer Navigation --}}
             <div class="fi-wi-footer flex items-center justify-between border-t border-gray-200 px-6 py-4 dark:border-white/10">
                 <div>
@@ -327,7 +450,7 @@
                 </div>
                 <div>
                     <x-filament::button
-                        x-show="currentStep < 6"
+                        x-show="currentStep < 7"
                         @click="currentStep++"
                         color="gray"
                         icon="heroicon-o-arrow-right"

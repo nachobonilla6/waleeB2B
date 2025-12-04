@@ -1,6 +1,7 @@
 <x-filament-panels::page>
     @php
         $cliente = $this->record;
+        $cliente->loadMissing('facturas');
         $redesSociales = $cliente->redes_sociales ?? [];
         $iconosRedes = [
             'facebook' => '📘',
@@ -325,8 +326,8 @@
                 <div class="fi-section-content p-6 space-y-8">
                     {{-- Resumen --}}
                     @php
-                        $facturas = $cliente->facturas ?? collect();
-                        $totalFacturado = $facturas->sum('total');
+                        $facturas = $cliente->facturas ? $cliente->facturas : collect();
+                        $totalFacturado = $facturas->sum('total') ?? 0;
                         $facturasPendientes = $facturas->where('estado', 'pendiente');
                         $facturasPagadas = $facturas->where('estado', 'pagada');
                     @endphp

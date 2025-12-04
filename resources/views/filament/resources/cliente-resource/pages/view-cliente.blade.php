@@ -76,7 +76,7 @@
                         ['icon' => 'heroicon-o-phone', 'label' => 'Contacto', 'id' => 'contacto'],
                         ['icon' => 'heroicon-o-map-pin', 'label' => 'Ubicación', 'id' => 'ubicacion'],
                         ['icon' => 'heroicon-o-globe-alt', 'label' => 'Sitio Web', 'id' => 'sitio'],
-                        ['icon' => 'heroicon-o-calendar', 'label' => 'Fechas', 'id' => 'fechas'],
+                        ['icon' => 'heroicon-o-share', 'label' => 'Redes', 'id' => 'redes'],
                         ['icon' => 'heroicon-o-document-text', 'label' => 'Notas', 'id' => 'notas'],
                     ];
                 @endphp
@@ -318,40 +318,15 @@
             </div>
         </div>
 
-        {{-- Paso 5: Fechas y Redes --}}
-        <div id="fechas" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+        {{-- Paso 5: Redes Sociales --}}
+        <div id="redes" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
             <div class="bg-gradient-to-r from-indigo-500 to-violet-500 px-6 py-4">
                 <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                    <x-heroicon-o-calendar class="w-6 h-6"/> Paso 5: Fechas y Redes Sociales
+                    <x-heroicon-o-share class="w-6 h-6"/> Paso 5: Redes Sociales
                 </h3>
-                <p class="text-white/70 text-sm mt-1">Fechas importantes y presencia en redes</p>
+                <p class="text-white/70 text-sm mt-1">Presencia en redes sociales</p>
             </div>
-            <div class="p-6 space-y-6">
-                {{-- Fechas --}}
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-                        <x-heroicon-o-calendar-days class="w-5 h-5"/> Fechas Importantes
-                    </h4>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-                            <p class="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Registro</p>
-                            <p class="font-bold text-gray-800 dark:text-gray-200">{{ $cliente->fecha_registro?->format('d/m/Y') ?? '—' }}</p>
-                        </div>
-                        <div class="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
-                            <p class="text-xs text-green-600 dark:text-green-400 font-medium mb-1">Creación</p>
-                            <p class="font-bold text-gray-800 dark:text-gray-200">{{ $cliente->fecha_creacion?->format('d/m/Y') ?? '—' }}</p>
-                        </div>
-                        <div class="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
-                            <p class="text-xs text-purple-600 dark:text-purple-400 font-medium mb-1">Cotización</p>
-                            <p class="font-bold text-gray-800 dark:text-gray-200">{{ $cliente->fecha_cotizacion?->format('d/m/Y') ?? '—' }}</p>
-                        </div>
-                        <div class="text-center p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
-                            <p class="text-xs text-amber-600 dark:text-amber-400 font-medium mb-1">Factura</p>
-                            <p class="font-bold text-gray-800 dark:text-gray-200">{{ $cliente->fecha_factura?->format('d/m/Y') ?? '—' }}</p>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="p-6">
                 {{-- Redes Sociales --}}
                 <div>
                     <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">

@@ -46,38 +46,22 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): string => '<style>
-                    .fi-global-search-field,
-                    [x-data*="globalSearch"] { 
-                        width: 900px !important; 
-                        min-width: 700px !important;
-                        max-width: 1200px !important;
-                        margin-right: auto !important;
+                    /* Searchbar más ancho */
+                    .fi-global-search-field { 
+                        width: 600px !important; 
+                        min-width: 400px !important;
+                        max-width: 800px !important;
                     }
-                    .fi-global-search-field input,
-                    [x-data*="globalSearch"] input { 
+                    .fi-global-search-field input { 
                         width: 100% !important;
                         font-size: 1rem !important; 
                     }
-                    /* Resultados del search */
-                    .fi-global-search-results,
-                    [x-data*="globalSearch"] > div:not(:first-child),
-                    .fi-global-search-field + div,
-                    [x-ref="panel"] {
-                        width: 900px !important;
-                        min-width: 700px !important;
-                        max-width: 1200px !important;
-                        left: 0 !important;
-                        right: auto !important;
-                        transform: none !important;
-                    }
-                    .fi-topbar nav,
-                    .fi-topbar > nav {
-                        justify-content: flex-start !important;
-                        gap: 1rem !important;
-                        width: 100% !important;
-                    }
-                    .fi-topbar {
-                        padding-left: 1rem !important;
+                    /* Resultados del search - solo el dropdown de búsqueda */
+                    .fi-global-search-field ~ div[x-float-aware],
+                    .fi-global-search-results-ctn {
+                        width: 600px !important;
+                        min-width: 400px !important;
+                        max-width: 800px !important;
                     }
                 </style>'
             )

@@ -125,7 +125,7 @@ class ViewCliente extends Page
                                 ->send();
                         }),
                     Action::make('enviar')
-                        ->label('📤 Enviar')
+                        ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
                             Notification::make()
@@ -223,7 +223,7 @@ class ViewCliente extends Page
                                 ->send();
                         }),
                     Action::make('enviar')
-                        ->label('📤 Enviar')
+                        ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
                             Notification::make()

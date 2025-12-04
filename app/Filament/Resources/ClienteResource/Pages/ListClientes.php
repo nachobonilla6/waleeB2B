@@ -119,7 +119,7 @@ class ListClientes extends ListRecords
                                 ->send();
                         }),
                     Actions\Action::make('enviar')
-                        ->label('📤 Enviar')
+                        ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
                             $cliente = Cliente::find($data['cliente_id']);
@@ -223,7 +223,7 @@ class ListClientes extends ListRecords
                                 ->send();
                         }),
                     Actions\Action::make('enviar')
-                        ->label('📤 Enviar')
+                        ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
                             $cliente = Cliente::find($data['cliente_id']);

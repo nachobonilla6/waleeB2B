@@ -74,7 +74,7 @@
     <div x-data="{ currentStep: 1 }">
         {{-- Steps Navigation --}}
         <nav class="fi-wi-header mb-6">
-            <ol class="fi-wi-header-steps flex items-center gap-x-2 overflow-x-auto">
+            <ol class="fi-wi-header-steps flex items-center justify-center gap-x-2">
                 @php
                     $steps = [
                         ['icon' => 'heroicon-o-building-office', 'label' => 'Empresa'],
@@ -88,21 +88,22 @@
                 @endphp
                 
                 @foreach($steps as $index => $step)
-                    <li class="fi-wi-header-step flex items-center gap-x-3 shrink-0">
+                    <li class="fi-wi-header-step flex items-center gap-x-2 shrink-0">
                         <button 
                             type="button"
                             @click="currentStep = {{ $index + 1 }}"
-                            class="fi-wi-header-step-btn flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                            title="{{ $step['label'] }}"
+                            class="fi-wi-header-step-btn flex items-center justify-center w-10 h-10 rounded-full transition-all"
                             x-bind:class="currentStep === {{ $index + 1 }} 
-                                ? 'bg-primary-50 text-primary-600 ring-1 ring-primary-600 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400' 
-                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200'"
+                                ? 'bg-primary-500 text-white shadow-lg scale-110' 
+                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200'"
                         >
                             <x-dynamic-component :component="$step['icon']" class="h-5 w-5"/>
-                            <span>{{ $step['label'] }}</span>
                         </button>
                         
                         @if($index < count($steps) - 1)
-                            <div class="h-px w-8 bg-gray-200 dark:bg-white/10"></div>
+                            <div class="h-0.5 w-6 bg-gray-200 dark:bg-white/10 transition-colors"
+                                 x-bind:class="currentStep > {{ $index + 1 }} ? 'bg-primary-500' : ''"></div>
                         @endif
                     </li>
                 @endforeach

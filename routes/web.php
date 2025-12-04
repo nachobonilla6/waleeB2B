@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Cache;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\SupportCaseController;
@@ -140,19 +139,3 @@ Route::get('/camas', function () {
 Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaEnviadaController::class, 'index'])
     ->middleware('auth')
     ->name('clients.propuesta-enviada');
-
-// Webhook que n8n llamará cuando el deploy termine correctamente (sin CSRF)
-Route::post('/webhook/deploy-success', function () {
-    Cache::put('last_deploy_success', now()->timestamp, 3600); // guarda timestamp por 1 hora
-
-    return response()->json(['ok' => true]);
-})
-    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
-    ->name('webhook.deploy-success');
-
-// Endpoint que el front consulta para saber si hay un deploy nuevo
-Route::get('/deploy-last-success', function () {
-    return response()->json([
-        'timestamp' => Cache::get('last_deploy_success'),
-    ]);
-})->name('deploy.last-success');

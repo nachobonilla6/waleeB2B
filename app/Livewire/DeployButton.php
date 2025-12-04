@@ -30,7 +30,7 @@ class DeployButton extends Component implements HasActions, HasForms
             ->modalSubmitActionLabel('Sí, hacer deploy')
             ->action(function () {
                 try {
-                    $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/1ec6c667-1b0d-46c9-ad95-8140cc041bba', [
+                    $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/1ec6c667-1b0d-46c9-ad95-8140cc041bba', [
                         'command' => 'cd /home/u655097049/domains/websolutions.work && git pull origin main',
                         'timestamp' => now()->toIso8601String(),
                         'triggered_by' => auth()->user()->name ?? 'Admin',

@@ -29,7 +29,7 @@ class CreateClient extends CreateRecord
         // Si se marcó como enviada al crear, enviar al webhook
         if ($record->propuesta_enviada) {
             try {
-                $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
+                $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
                     'name' => $record->name ?? '',
                     'email' => $record->email ?? '',
                     'website' => $record->website ?? '',

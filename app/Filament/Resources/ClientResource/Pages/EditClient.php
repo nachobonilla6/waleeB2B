@@ -43,7 +43,7 @@ class EditClient extends EditRecord
         // Si se marcó como enviada, enviar al webhook
         if (($wasEnviado === false || $wasEnviado === null) && $nowEnviado) {
             try {
-                $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
+                $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
                     'name' => $updated->name ?? '',
                     'email' => $updated->email ?? '',
                     'website' => $updated->website ?? '',

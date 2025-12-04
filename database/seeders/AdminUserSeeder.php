@@ -15,7 +15,7 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Web Solutions',
                 'email' => 'info@websolutions.work',
-                'password' => Hash::make('marihuana420'),
+                'password' => Hash::make('12345678'),
             ]
         );
     }

@@ -199,13 +199,14 @@ class SitioResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('enlace')
+                Tables\Columns\TextColumn::make('video_url')
+                    ->label('Video URL')
                     ->searchable()
                     ->formatStateUsing(function ($state) {
-                        if (empty($state)) return null;
+                        if (empty($state)) return '-';
                         
                         return \Illuminate\Support\Str::of($state)
-                            ->limit(30)
+                            ->limit(40)
                             ->prepend('<a href="' . e($state) . '" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline" onclick="event.stopPropagation(); return true;">')
                             ->append('</a>');
                     })

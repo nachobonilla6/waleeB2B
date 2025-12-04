@@ -66,85 +66,36 @@
     {{-- Wizard con navegación --}}
     <div x-data="{ currentStep: 1, totalSteps: 6 }" class="space-y-6">
         
-        {{-- Indicador de pasos con iconos --}}
+        {{-- Indicador de pasos --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4">
             <div class="flex items-center justify-between">
-                {{-- Paso 1: Empresa --}}
-                <button @click="currentStep = 1"
-                    :class="currentStep === 1 ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300'"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all">
-                    <div :class="currentStep === 1 ? 'bg-emerald-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
-                         class="w-9 h-9 rounded-full flex items-center justify-center">
-                        <x-heroicon-o-building-office class="w-5 h-5"/>
-                    </div>
-                    <span :class="currentStep === 1 ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-600 dark:text-gray-400'"
-                          class="hidden lg:inline text-sm font-medium">Empresa</span>
-                </button>
-                <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-
-                {{-- Paso 2: Contacto --}}
-                <button @click="currentStep = 2"
-                    :class="currentStep === 2 ? 'bg-blue-100 dark:bg-blue-900/50 border-blue-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300'"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all">
-                    <div :class="currentStep === 2 ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
-                         class="w-9 h-9 rounded-full flex items-center justify-center">
-                        <x-heroicon-o-phone class="w-5 h-5"/>
-                    </div>
-                    <span :class="currentStep === 2 ? 'text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'"
-                          class="hidden lg:inline text-sm font-medium">Contacto</span>
-                </button>
-                <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-
-                {{-- Paso 3: Ubicación --}}
-                <button @click="currentStep = 3"
-                    :class="currentStep === 3 ? 'bg-purple-100 dark:bg-purple-900/50 border-purple-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300'"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all">
-                    <div :class="currentStep === 3 ? 'bg-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
-                         class="w-9 h-9 rounded-full flex items-center justify-center">
-                        <x-heroicon-o-map-pin class="w-5 h-5"/>
-                    </div>
-                    <span :class="currentStep === 3 ? 'text-purple-700 dark:text-purple-400' : 'text-gray-600 dark:text-gray-400'"
-                          class="hidden lg:inline text-sm font-medium">Ubicación</span>
-                </button>
-                <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-
-                {{-- Paso 4: Sitio Web --}}
-                <button @click="currentStep = 4"
-                    :class="currentStep === 4 ? 'bg-amber-100 dark:bg-amber-900/50 border-amber-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300'"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all">
-                    <div :class="currentStep === 4 ? 'bg-amber-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
-                         class="w-9 h-9 rounded-full flex items-center justify-center">
-                        <x-heroicon-o-globe-alt class="w-5 h-5"/>
-                    </div>
-                    <span :class="currentStep === 4 ? 'text-amber-700 dark:text-amber-400' : 'text-gray-600 dark:text-gray-400'"
-                          class="hidden lg:inline text-sm font-medium">Sitio Web</span>
-                </button>
-                <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-
-                {{-- Paso 5: Redes --}}
-                <button @click="currentStep = 5"
-                    :class="currentStep === 5 ? 'bg-indigo-100 dark:bg-indigo-900/50 border-indigo-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300'"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all">
-                    <div :class="currentStep === 5 ? 'bg-indigo-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
-                         class="w-9 h-9 rounded-full flex items-center justify-center">
-                        <x-heroicon-o-share class="w-5 h-5"/>
-                    </div>
-                    <span :class="currentStep === 5 ? 'text-indigo-700 dark:text-indigo-400' : 'text-gray-600 dark:text-gray-400'"
-                          class="hidden lg:inline text-sm font-medium">Redes</span>
-                </button>
-                <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-
-                {{-- Paso 6: Notas --}}
-                <button @click="currentStep = 6"
-                    :class="currentStep === 6 ? 'bg-rose-100 dark:bg-rose-900/50 border-rose-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300'"
-                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all">
-                    <div :class="currentStep === 6 ? 'bg-rose-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
-                         class="w-9 h-9 rounded-full flex items-center justify-center">
-                        <x-heroicon-o-document-text class="w-5 h-5"/>
-                    </div>
-                    <span :class="currentStep === 6 ? 'text-rose-700 dark:text-rose-400' : 'text-gray-600 dark:text-gray-400'"
-                          class="hidden lg:inline text-sm font-medium">Notas</span>
-                </button>
+                @php
+                    $steps = [
+                        ['icon' => 'heroicon-o-building-office', 'label' => 'Empresa'],
+                        ['icon' => 'heroicon-o-phone', 'label' => 'Contacto'],
+                        ['icon' => 'heroicon-o-map-pin', 'label' => 'Ubicación'],
+                        ['icon' => 'heroicon-o-globe-alt', 'label' => 'Sitio Web'],
+                        ['icon' => 'heroicon-o-share', 'label' => 'Redes'],
+                        ['icon' => 'heroicon-o-document-text', 'label' => 'Notas'],
+                    ];
+                @endphp
+                @foreach($steps as $index => $step)
+                    <button 
+                        @click="currentStep = {{ $index + 1 }}"
+                        :class="currentStep === {{ $index + 1 }} ? 'bg-emerald-100 dark:bg-emerald-900/50 border-emerald-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300 dark:hover:border-gray-600'"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all"
+                    >
+                        <div :class="currentStep === {{ $index + 1 }} ? 'bg-emerald-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'"
+                             class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
+                            {{ $index + 1 }}
+                        </div>
+                        <span :class="currentStep === {{ $index + 1 }} ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-600 dark:text-gray-400'"
+                              class="hidden md:inline text-sm font-medium">{{ $step['label'] }}</span>
+                    </button>
+                    @if($index < count($steps) - 1)
+                        <div class="flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-2"></div>
+                    @endif
+                @endforeach
             </div>
         </div>
 

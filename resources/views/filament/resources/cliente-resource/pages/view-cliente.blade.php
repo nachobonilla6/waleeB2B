@@ -15,41 +15,41 @@
 
     {{-- Header Sticky --}}
     <div class="sticky top-0 z-40 -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 mb-6">
-        <div class="bg-emerald-600 dark:bg-emerald-700 px-4 sm:px-6 lg:px-8 py-4 shadow-xl">
+        <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8 py-4 shadow-sm">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('index') }}" 
-                       class="w-10 h-10 bg-emerald-700 dark:bg-emerald-800 rounded-lg flex items-center justify-center hover:bg-emerald-800 dark:hover:bg-emerald-900 transition-colors">
-                        <x-heroicon-o-arrow-left class="w-5 h-5 text-white"/>
+                       class="fi-btn fi-btn-size-md fi-btn-color-gray inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <x-heroicon-o-arrow-left class="w-5 h-5"/>
                     </a>
-                    <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $cliente->nombre_empresa }}</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{{ $cliente->nombre_empresa }}</h1>
                     @if($cliente->estado_cuenta)
                         <span class="px-3 py-1 rounded-full text-xs font-bold
-                            @if($cliente->estado_cuenta === 'activo') bg-green-400 text-green-900
-                            @elseif($cliente->estado_cuenta === 'pendiente') bg-yellow-400 text-yellow-900
-                            @elseif($cliente->estado_cuenta === 'suspendido') bg-red-400 text-red-900
-                            @else bg-gray-400 text-gray-900 @endif
+                            @if($cliente->estado_cuenta === 'activo') bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300
+                            @elseif($cliente->estado_cuenta === 'pendiente') bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300
+                            @elseif($cliente->estado_cuenta === 'suspendido') bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300
+                            @else bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 @endif
                         ">{{ ucfirst($cliente->estado_cuenta) }}</span>
                     @endif
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('edit', ['record' => $cliente]) }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-700 dark:bg-gray-700 hover:bg-emerald-800 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
+                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                         <x-heroicon-o-pencil class="w-4 h-4"/>
                         <span class="hidden sm:inline">Editar</span>
                     </a>
                     <button type="button" wire:click="mountAction('cotizacion')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-amber-500 dark:bg-gray-700 hover:bg-amber-600 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
+                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                         <x-heroicon-o-document-text class="w-4 h-4"/>
                         <span class="hidden sm:inline">Cotización</span>
                     </button>
                     <button type="button" wire:click="mountAction('factura')"
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-blue-500 dark:bg-gray-700 hover:bg-blue-600 dark:hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-all">
+                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                         <x-heroicon-o-banknotes class="w-4 h-4"/>
                         <span class="hidden sm:inline">Factura</span>
                     </button>
                     <a href="{{ \App\Filament\Resources\ClienteResource::getUrl('create') }}" 
-                       class="inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-emerald-700 dark:text-white rounded-lg text-sm font-medium transition-all">
+                       class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                         <x-heroicon-o-plus class="w-4 h-4"/>
                         <span class="hidden sm:inline">Nuevo</span>
                     </a>
@@ -67,8 +67,8 @@
                 <template x-for="step in 6" :key="step">
                     <div class="flex items-center">
                         <button @click="currentStep = step"
-                            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all"
-                            x-bind:class="currentStep === step ? 'bg-emerald-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'"
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all border-2"
+                            x-bind:class="currentStep === step ? 'bg-primary-500 text-white border-primary-500' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'"
                             x-text="step">
                         </button>
                         <div x-show="step < 6" class="w-8 h-0.5 bg-gray-200 dark:bg-gray-600 mx-1"></div>
@@ -82,9 +82,9 @@
             
             {{-- Paso 1: Empresa --}}
             <div x-show="currentStep === 1">
-                <div class="bg-emerald-600 dark:bg-emerald-700 px-6 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-building-office class="w-6 h-6"/> 1. Empresa
+                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
+                        <x-heroicon-o-building-office class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 1. Empresa
                     </h3>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -123,9 +123,9 @@
 
             {{-- Paso 2: Contacto --}}
             <div x-show="currentStep === 2">
-                <div class="bg-blue-600 dark:bg-blue-700 px-6 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-phone class="w-6 h-6"/> 2. Contacto
+                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
+                        <x-heroicon-o-phone class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 2. Contacto
                     </h3>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -133,7 +133,7 @@
                         <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Email</label>
                         <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                             @if($cliente->correo)
-                                <a href="mailto:{{ $cliente->correo }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ $cliente->correo }}</a>
+                                <a href="mailto:{{ $cliente->correo }}" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $cliente->correo }}</a>
                             @else
                                 <span class="text-gray-400">—</span>
                             @endif
@@ -143,7 +143,7 @@
                         <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Teléfono</label>
                         <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                             @if($cliente->telefono)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->telefono) }}" target="_blank" class="text-green-600 dark:text-green-400 hover:underline">{{ $cliente->telefono }}</a>
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->telefono) }}" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $cliente->telefono }}</a>
                             @else
                                 <span class="text-gray-400">—</span>
                             @endif
@@ -159,7 +159,7 @@
                         <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">WhatsApp</label>
                         <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                             @if($cliente->whatsapp)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="text-green-600 dark:text-green-400 hover:underline">{{ $cliente->whatsapp }}</a>
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline">{{ $cliente->whatsapp }}</a>
                             @else
                                 <span class="text-gray-400">—</span>
                             @endif
@@ -170,9 +170,9 @@
 
             {{-- Paso 3: Ubicación --}}
             <div x-show="currentStep === 3">
-                <div class="bg-purple-600 dark:bg-purple-700 px-6 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-map-pin class="w-6 h-6"/> 3. Ubicación
+                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
+                        <x-heroicon-o-map-pin class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 3. Ubicación
                     </h3>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -210,7 +210,7 @@
                 @if($cliente->direccion && $cliente->ciudad)
                     <div class="px-6 pb-6">
                         <a href="https://maps.google.com/?q={{ urlencode($cliente->direccion . ', ' . $cliente->ciudad) }}" target="_blank" 
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 dark:bg-gray-600 hover:bg-purple-700 dark:hover:bg-gray-500 text-white rounded-lg text-sm font-medium">
+                           class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <x-heroicon-o-map class="w-5 h-5"/> Ver en Maps
                         </a>
                     </div>
@@ -219,9 +219,9 @@
 
             {{-- Paso 4: Sitio Web --}}
             <div x-show="currentStep === 4">
-                <div class="bg-amber-600 dark:bg-amber-700 px-6 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-globe-alt class="w-6 h-6"/> 4. Sitio Web
+                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
+                        <x-heroicon-o-globe-alt class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 4. Sitio Web
                     </h3>
                 </div>
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -235,7 +235,7 @@
                         <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">URL</label>
                         <div class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
                             @if($cliente->url_sitio)
-                                <a href="{{ $cliente->url_sitio }}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline truncate block">{{ $cliente->url_sitio }}</a>
+                                <a href="{{ $cliente->url_sitio }}" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline truncate block">{{ $cliente->url_sitio }}</a>
                             @else
                                 <span class="text-gray-400">—</span>
                             @endif
@@ -257,7 +257,7 @@
                 @if($cliente->url_sitio)
                     <div class="px-6 pb-6">
                         <a href="{{ $cliente->url_sitio }}" target="_blank" 
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 dark:bg-gray-600 hover:bg-amber-700 dark:hover:bg-gray-500 text-white rounded-lg text-sm font-medium">
+                           class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <x-heroicon-o-arrow-top-right-on-square class="w-5 h-5"/> Visitar
                         </a>
                     </div>
@@ -266,9 +266,9 @@
 
             {{-- Paso 5: Redes --}}
             <div x-show="currentStep === 5">
-                <div class="bg-indigo-600 dark:bg-indigo-700 px-6 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-share class="w-6 h-6"/> 5. Redes Sociales
+                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
+                        <x-heroicon-o-share class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 5. Redes Sociales
                     </h3>
                 </div>
                 <div class="p-6">
@@ -276,7 +276,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             @foreach($redesSociales as $red)
                                 <a href="{{ $red['url'] ?? '#' }}" target="_blank" 
-                                   class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500">
+                                   class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                                     <span class="text-2xl">{{ $iconosRedes[$red['red'] ?? ''] ?? '🌐' }}</span>
                                     <div class="flex-1 min-w-0">
                                         <p class="font-medium text-gray-900 dark:text-white">{{ ucfirst($red['red'] ?? 'Red') }}</p>
@@ -299,9 +299,9 @@
 
             {{-- Paso 6: Notas --}}
             <div x-show="currentStep === 6">
-                <div class="bg-rose-600 dark:bg-rose-700 px-6 py-4">
-                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
-                        <x-heroicon-o-document-text class="w-6 h-6"/> 6. Notas
+                <div class="bg-gray-100 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                    <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-3 text-lg">
+                        <x-heroicon-o-document-text class="w-6 h-6 text-gray-500 dark:text-gray-400"/> 6. Notas
                     </h3>
                 </div>
                 <div class="p-6">
@@ -314,12 +314,12 @@
             {{-- Navegación --}}
             <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex justify-between">
                 <button x-show="currentStep > 1" @click="currentStep--"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium">
+                    class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <x-heroicon-o-arrow-left class="w-4 h-4"/> Anterior
                 </button>
                 <div x-show="currentStep === 1"></div>
                 <button x-show="currentStep < 6" @click="currentStep++"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 dark:bg-gray-600 dark:hover:bg-gray-500 text-white rounded-lg text-sm font-medium">
+                    class="fi-btn fi-btn-size-md inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                     Siguiente <x-heroicon-o-arrow-right class="w-4 h-4"/>
                 </button>
                 <div x-show="currentStep === 6"></div>

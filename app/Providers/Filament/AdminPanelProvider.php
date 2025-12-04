@@ -63,7 +63,30 @@ class AdminPanelProvider extends PanelProvider
                         min-width: 400px !important;
                         max-width: 800px !important;
                     }
-                </style>'
+                </style>
+                <script>
+                    (function () {
+                        const pageLoadedAt = Date.now();
+
+                        async function checkDeploy() {
+                            try {
+                                const res = await fetch(\"' . route('deploy.last-success') . '\", { cache: \"no-store\" });
+                                if (!res.ok) return;
+                                const data = await res.json();
+                                if (!data.timestamp) return;
+
+                                const lastDeploy = Number(data.timestamp) * 1000;
+                                if (!isNaN(lastDeploy) && lastDeploy > pageLoadedAt) {
+                                    window.location.reload();
+                                }
+                            } catch (e) {
+                                // silenciosamente
+                            }
+                        }
+
+                        setInterval(checkDeploy, 10000); // cada 10 segundos
+                    })();
+                </script>'
             )
             ->navigationGroups([
                 NavigationGroup::make()

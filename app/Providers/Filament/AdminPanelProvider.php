@@ -58,6 +58,18 @@ class AdminPanelProvider extends PanelProvider
                         width: 100% !important;
                         font-size: 1rem !important; 
                     }
+                    /* Resultados del search */
+                    .fi-global-search-results,
+                    [x-data*="globalSearch"] > div:not(:first-child),
+                    .fi-global-search-field + div,
+                    [x-ref="panel"] {
+                        width: 900px !important;
+                        min-width: 700px !important;
+                        max-width: 1200px !important;
+                        left: 0 !important;
+                        right: auto !important;
+                        transform: none !important;
+                    }
                     .fi-topbar nav,
                     .fi-topbar > nav {
                         justify-content: flex-start !important;

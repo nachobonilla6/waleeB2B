@@ -25,9 +25,30 @@ class ClientResource extends Resource
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 1;
 
+    // Búsqueda global
+    protected static ?string $recordTitleAttribute = 'name';
+
     public static function getNavigationBadge(): ?string
     {
         return static::getEloquentQuery()->count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'website'];
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Email' => $record->email,
+            'Website' => $record->website,
+        ];
+    }
+
+    public static function getGlobalSearchResultUrl(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return static::getUrl('view', ['record' => $record]);
     }
 
     public static function form(Form $form): Form

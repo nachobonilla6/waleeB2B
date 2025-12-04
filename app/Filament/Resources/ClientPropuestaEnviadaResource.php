@@ -156,10 +156,6 @@ class ClientPropuestaEnviadaResource extends Resource
                         }
                         return '-';
                     }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Fecha de Envío')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()

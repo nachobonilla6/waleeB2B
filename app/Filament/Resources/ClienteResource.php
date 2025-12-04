@@ -41,6 +41,11 @@ class ClienteResource extends Resource
         ];
     }
 
+    public static function getGlobalSearchResultUrl(\Illuminate\Database\Eloquent\Model $record): string
+    {
+        return static::getUrl('view', ['record' => $record]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form

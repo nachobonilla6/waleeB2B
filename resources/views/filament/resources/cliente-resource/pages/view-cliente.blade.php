@@ -329,6 +329,7 @@
                     <x-filament::button
                         x-show="currentStep < 6"
                         @click="currentStep++"
+                        color="gray"
                         icon="heroicon-o-arrow-right"
                         icon-position="after"
                     >

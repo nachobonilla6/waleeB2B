@@ -38,72 +38,103 @@ class ViewCliente extends Page
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
                 ->form([
-                    Forms\Components\Select::make('idioma')
-                        ->label('🌐 Idioma')
-                        ->options([
-                            'es' => '🇪🇸 Español',
-                            'en' => '🇺🇸 English',
-                            'fr' => '🇫🇷 Français',
-                        ])
-                        ->default('es')
-                        ->required(),
                     Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('idioma')
+                            ->label('🌐 Idioma')
+                            ->options([
+                                'es' => '🇪🇸 Español',
+                                'en' => '🇺🇸 English',
+                                'fr' => '🇫🇷 Français',
+                            ])
+                            ->default('es')
+                            ->required(),
                         Forms\Components\TextInput::make('numero_cotizacion')
                             ->label('Nº Cotización')
                             ->default('COT-' . date('Ymd') . '-' . rand(100, 999))
                             ->disabled(),
+                    ]),
+                    Forms\Components\Grid::make(2)->schema([
                         Forms\Components\DatePicker::make('fecha')
                             ->label('Fecha')
                             ->default(now())
                             ->required(),
+                        Forms\Components\Select::make('tipo_servicio')
+                            ->label('Tipo de Servicio')
+                            ->options([
+                                'diseno_web' => '🌐 Diseño Web',
+                                'redes_sociales' => '📱 Gestión Redes Sociales',
+                                'seo' => '🔍 SEO / Posicionamiento',
+                                'publicidad' => '📢 Publicidad Digital',
+                                'mantenimiento' => '🔧 Mantenimiento Web',
+                                'hosting' => '☁️ Hosting & Dominio',
+                                'combo' => '📦 Paquete Completo',
+                            ])
+                            ->required(),
                     ]),
-                    Forms\Components\Select::make('tipo_servicio')
-                        ->label('Tipo de Servicio')
-                        ->options([
-                            'diseno_web' => '🌐 Diseño Web',
-                            'redes_sociales' => '📱 Gestión Redes Sociales',
-                            'seo' => '🔍 SEO / Posicionamiento',
-                            'publicidad' => '📢 Publicidad Digital',
-                            'mantenimiento' => '🔧 Mantenimiento Web',
-                            'hosting' => '☁️ Hosting & Dominio',
-                            'combo' => '📦 Paquete Completo',
-                        ])
-                        ->required(),
-                    Forms\Components\Select::make('plan')
-                        ->label('Plan')
-                        ->options([
-                            'basico' => 'Básico - $99/mes',
-                            'profesional' => 'Profesional - $199/mes',
-                            'premium' => 'Premium - $349/mes',
-                            'empresarial' => 'Empresarial - $499/mes',
-                            'personalizado' => 'Personalizado',
-                        ])
-                        ->required(),
-                    Forms\Components\TextInput::make('monto')
-                        ->label('Monto (USD)')
-                        ->numeric()
-                        ->prefix('$')
-                        ->required(),
-                    Forms\Components\Select::make('vigencia')
-                        ->label('Vigencia')
-                        ->options([
-                            '7' => '7 días',
-                            '15' => '15 días',
-                            '30' => '30 días',
-                            '60' => '60 días',
-                        ])
-                        ->default('15'),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('plan')
+                            ->label('Plan')
+                            ->options([
+                                'basico' => 'Básico - $99/mes',
+                                'profesional' => 'Profesional - $199/mes',
+                                'premium' => 'Premium - $349/mes',
+                                'empresarial' => 'Empresarial - $499/mes',
+                                'personalizado' => 'Personalizado',
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('monto')
+                            ->label('Monto (USD)')
+                            ->numeric()
+                            ->prefix('$')
+                            ->required(),
+                    ]),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('vigencia')
+                            ->label('Vigencia')
+                            ->options([
+                                '7' => '7 días',
+                                '15' => '15 días',
+                                '30' => '30 días',
+                                '60' => '60 días',
+                            ])
+                            ->default('15'),
+                        Forms\Components\TextInput::make('correo')
+                            ->label('📧 Correo electrónico')
+                            ->email()
+                            ->default(fn () => $this->record->correo)
+                            ->required(),
+                    ]),
                     Forms\Components\Textarea::make('descripcion')
                         ->label('Descripción / Servicios incluidos')
-                        ->rows(3),
+                        ->rows(2)
+                        ->columnSpanFull(),
                 ])
-                ->action(function (array $data) {
-                    Notification::make()
-                        ->title('✅ Cotización creada')
-                        ->body('Cotización ' . $data['numero_cotizacion'] . ' generada correctamente.')
-                        ->success()
-                        ->send();
-                }),
+                ->modalFooterActions(fn ($action) => [
+                    Action::make('cancelar')
+                        ->label('Cancelar')
+                        ->color('gray')
+                        ->close(),
+                    Action::make('borrador')
+                        ->label('💾 Guardar Borrador')
+                        ->color('warning')
+                        ->action(function (array $data) {
+                            Notification::make()
+                                ->title('📝 Borrador guardado')
+                                ->body('Cotización ' . $data['numero_cotizacion'] . ' guardada como borrador.')
+                                ->warning()
+                                ->send();
+                        }),
+                    Action::make('enviar')
+                        ->label('📤 Enviar')
+                        ->color('success')
+                        ->action(function (array $data) {
+                            Notification::make()
+                                ->title('✅ Cotización enviada')
+                                ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'])
+                                ->success()
+                                ->send();
+                        }),
+                ]),
                 
             Action::make('factura')
                 ->label('Crear Factura')
@@ -112,36 +143,38 @@ class ViewCliente extends Page
                 ->modalHeading('💰 Nueva Factura')
                 ->modalWidth('4xl')
                 ->form([
-                    Forms\Components\Select::make('idioma')
-                        ->label('🌐 Idioma')
-                        ->options([
-                            'es' => '🇪🇸 Español',
-                            'en' => '🇺🇸 English',
-                            'fr' => '🇫🇷 Français',
-                        ])
-                        ->default('es')
-                        ->required(),
                     Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('idioma')
+                            ->label('🌐 Idioma')
+                            ->options([
+                                'es' => '🇪🇸 Español',
+                                'en' => '🇺🇸 English',
+                                'fr' => '🇫🇷 Français',
+                            ])
+                            ->default('es')
+                            ->required(),
                         Forms\Components\TextInput::make('numero_factura')
                             ->label('Nº Factura')
                             ->default('FAC-' . date('Ymd') . '-' . rand(100, 999))
                             ->disabled(),
+                    ]),
+                    Forms\Components\Grid::make(2)->schema([
                         Forms\Components\DatePicker::make('fecha_emision')
                             ->label('Fecha Emisión')
                             ->default(now())
                             ->required(),
+                        Forms\Components\Select::make('concepto')
+                            ->label('Concepto')
+                            ->options([
+                                'diseno_web' => '🌐 Diseño Web',
+                                'redes_sociales' => '📱 Gestión Redes Sociales',
+                                'seo' => '🔍 SEO / Posicionamiento',
+                                'publicidad' => '📢 Publicidad Digital',
+                                'mantenimiento' => '🔧 Mantenimiento Mensual',
+                                'hosting' => '☁️ Hosting & Dominio',
+                            ])
+                            ->required(),
                     ]),
-                    Forms\Components\Select::make('concepto')
-                        ->label('Concepto')
-                        ->options([
-                            'diseno_web' => '🌐 Diseño Web',
-                            'redes_sociales' => '📱 Gestión Redes Sociales',
-                            'seo' => '🔍 SEO / Posicionamiento',
-                            'publicidad' => '📢 Publicidad Digital',
-                            'mantenimiento' => '🔧 Mantenimiento Mensual',
-                            'hosting' => '☁️ Hosting & Dominio',
-                        ])
-                        ->required(),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('subtotal')
                             ->label('Subtotal (USD)')
@@ -156,24 +189,50 @@ class ViewCliente extends Page
                             ->prefix('$')
                             ->disabled(),
                     ]),
-                    Forms\Components\Select::make('metodo_pago')
-                        ->label('Método de Pago')
-                        ->options([
-                            'transferencia' => '🏦 Transferencia Bancaria',
-                            'sinpe' => '📲 SINPE Móvil',
-                            'tarjeta' => '💳 Tarjeta de Crédito',
-                            'efectivo' => '💵 Efectivo',
-                            'paypal' => '🅿️ PayPal',
-                        ])
-                        ->required(),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('metodo_pago')
+                            ->label('Método de Pago')
+                            ->options([
+                                'transferencia' => '🏦 Transferencia Bancaria',
+                                'sinpe' => '📲 SINPE Móvil',
+                                'tarjeta' => '💳 Tarjeta de Crédito',
+                                'efectivo' => '💵 Efectivo',
+                                'paypal' => '🅿️ PayPal',
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('correo')
+                            ->label('📧 Correo electrónico')
+                            ->email()
+                            ->default(fn () => $this->record->correo)
+                            ->required(),
+                    ]),
                 ])
-                ->action(function (array $data) {
-                    Notification::make()
-                        ->title('✅ Factura creada')
-                        ->body('Factura ' . $data['numero_factura'] . ' generada correctamente.')
-                        ->success()
-                        ->send();
-                }),
+                ->modalFooterActions(fn ($action) => [
+                    Action::make('cancelar')
+                        ->label('Cancelar')
+                        ->color('gray')
+                        ->close(),
+                    Action::make('borrador')
+                        ->label('💾 Guardar Borrador')
+                        ->color('warning')
+                        ->action(function (array $data) {
+                            Notification::make()
+                                ->title('📝 Borrador guardado')
+                                ->body('Factura ' . $data['numero_factura'] . ' guardada como borrador.')
+                                ->warning()
+                                ->send();
+                        }),
+                    Action::make('enviar')
+                        ->label('📤 Enviar')
+                        ->color('success')
+                        ->action(function (array $data) {
+                            Notification::make()
+                                ->title('✅ Factura enviada')
+                                ->body('Factura ' . $data['numero_factura'] . ' enviada a ' . $data['correo'])
+                                ->success()
+                                ->send();
+                        }),
+                ]),
                 
             Action::make('posts')
                 ->label('Ver Posts')

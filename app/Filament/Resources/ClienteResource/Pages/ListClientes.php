@@ -26,20 +26,22 @@ class ListClientes extends ListRecords
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
                 ->form([
-                    Forms\Components\Select::make('idioma')
-                        ->label('🌐 Idioma')
-                        ->options([
-                            'es' => '🇪🇸 Español',
-                            'en' => '🇺🇸 English',
-                            'fr' => '🇫🇷 Français',
-                        ])
-                        ->default('es')
-                        ->required(),
-                    Forms\Components\Select::make('cliente_id')
-                        ->label('Cliente')
-                        ->options(Cliente::pluck('nombre_empresa', 'id'))
-                        ->searchable()
-                        ->required(),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('idioma')
+                            ->label('🌐 Idioma')
+                            ->options([
+                                'es' => '🇪🇸 Español',
+                                'en' => '🇺🇸 English',
+                                'fr' => '🇫🇷 Français',
+                            ])
+                            ->default('es')
+                            ->required(),
+                        Forms\Components\Select::make('cliente_id')
+                            ->label('Cliente')
+                            ->options(Cliente::pluck('nombre_empresa', 'id'))
+                            ->searchable()
+                            ->required(),
+                    ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('numero_cotizacion')
                             ->label('Nº Cotización')
@@ -50,54 +52,84 @@ class ListClientes extends ListRecords
                             ->default(now())
                             ->required(),
                     ]),
-                    Forms\Components\Select::make('tipo_servicio')
-                        ->label('Tipo de Servicio')
-                        ->options([
-                            'diseno_web' => '🌐 Diseño Web',
-                            'redes_sociales' => '📱 Gestión Redes Sociales',
-                            'seo' => '🔍 SEO / Posicionamiento',
-                            'publicidad' => '📢 Publicidad Digital',
-                            'mantenimiento' => '🔧 Mantenimiento Web',
-                            'hosting' => '☁️ Hosting & Dominio',
-                            'combo' => '📦 Paquete Completo',
-                        ])
-                        ->required(),
-                    Forms\Components\Select::make('plan')
-                        ->label('Plan')
-                        ->options([
-                            'basico' => 'Básico - $99/mes',
-                            'profesional' => 'Profesional - $199/mes',
-                            'premium' => 'Premium - $349/mes',
-                            'empresarial' => 'Empresarial - $499/mes',
-                            'personalizado' => 'Personalizado',
-                        ])
-                        ->required(),
-                    Forms\Components\TextInput::make('monto')
-                        ->label('Monto (USD)')
-                        ->numeric()
-                        ->prefix('$')
-                        ->required(),
-                    Forms\Components\Select::make('vigencia')
-                        ->label('Vigencia')
-                        ->options([
-                            '7' => '7 días',
-                            '15' => '15 días',
-                            '30' => '30 días',
-                            '60' => '60 días',
-                        ])
-                        ->default('15'),
-                    Forms\Components\Textarea::make('descripcion')
-                        ->label('Descripción / Servicios incluidos')
-                        ->rows(3),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('tipo_servicio')
+                            ->label('Tipo de Servicio')
+                            ->options([
+                                'diseno_web' => '🌐 Diseño Web',
+                                'redes_sociales' => '📱 Gestión Redes Sociales',
+                                'seo' => '🔍 SEO / Posicionamiento',
+                                'publicidad' => '📢 Publicidad Digital',
+                                'mantenimiento' => '🔧 Mantenimiento Web',
+                                'hosting' => '☁️ Hosting & Dominio',
+                                'combo' => '📦 Paquete Completo',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('plan')
+                            ->label('Plan')
+                            ->options([
+                                'basico' => 'Básico - $99/mes',
+                                'profesional' => 'Profesional - $199/mes',
+                                'premium' => 'Premium - $349/mes',
+                                'empresarial' => 'Empresarial - $499/mes',
+                                'personalizado' => 'Personalizado',
+                            ])
+                            ->required(),
+                    ]),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\TextInput::make('monto')
+                            ->label('Monto (USD)')
+                            ->numeric()
+                            ->prefix('$')
+                            ->required(),
+                        Forms\Components\Select::make('vigencia')
+                            ->label('Vigencia')
+                            ->options([
+                                '7' => '7 días',
+                                '15' => '15 días',
+                                '30' => '30 días',
+                                '60' => '60 días',
+                            ])
+                            ->default('15'),
+                    ]),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\TextInput::make('correo')
+                            ->label('📧 Correo electrónico')
+                            ->email()
+                            ->required(),
+                        Forms\Components\Textarea::make('descripcion')
+                            ->label('Descripción / Servicios incluidos')
+                            ->rows(2),
+                    ]),
                 ])
-                ->action(function (array $data) {
-                    $cliente = Cliente::find($data['cliente_id']);
-                    Notification::make()
-                        ->title('✅ Cotización creada')
-                        ->body('Cotización ' . $data['numero_cotizacion'] . ' para ' . $cliente->nombre_empresa . ' generada correctamente.')
-                        ->success()
-                        ->send();
-                }),
+                ->modalFooterActions(fn ($action) => [
+                    Actions\Action::make('cancelar')
+                        ->label('Cancelar')
+                        ->color('gray')
+                        ->close(),
+                    Actions\Action::make('borrador')
+                        ->label('💾 Guardar Borrador')
+                        ->color('warning')
+                        ->action(function (array $data) {
+                            $cliente = Cliente::find($data['cliente_id']);
+                            Notification::make()
+                                ->title('📝 Borrador guardado')
+                                ->body('Cotización ' . $data['numero_cotizacion'] . ' guardada como borrador.')
+                                ->warning()
+                                ->send();
+                        }),
+                    Actions\Action::make('enviar')
+                        ->label('📤 Enviar')
+                        ->color('success')
+                        ->action(function (array $data) {
+                            $cliente = Cliente::find($data['cliente_id']);
+                            Notification::make()
+                                ->title('✅ Cotización enviada')
+                                ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'])
+                                ->success()
+                                ->send();
+                        }),
+                ]),
             Actions\Action::make('factura')
                 ->label('Crear Factura')
                 ->icon('heroicon-o-banknotes')
@@ -105,20 +137,22 @@ class ListClientes extends ListRecords
                 ->modalHeading('💰 Nueva Factura')
                 ->modalWidth('4xl')
                 ->form([
-                    Forms\Components\Select::make('idioma')
-                        ->label('🌐 Idioma')
-                        ->options([
-                            'es' => '🇪🇸 Español',
-                            'en' => '🇺🇸 English',
-                            'fr' => '🇫🇷 Français',
-                        ])
-                        ->default('es')
-                        ->required(),
-                    Forms\Components\Select::make('cliente_id')
-                        ->label('Cliente')
-                        ->options(Cliente::pluck('nombre_empresa', 'id'))
-                        ->searchable()
-                        ->required(),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('idioma')
+                            ->label('🌐 Idioma')
+                            ->options([
+                                'es' => '🇪🇸 Español',
+                                'en' => '🇺🇸 English',
+                                'fr' => '🇫🇷 Français',
+                            ])
+                            ->default('es')
+                            ->required(),
+                        Forms\Components\Select::make('cliente_id')
+                            ->label('Cliente')
+                            ->options(Cliente::pluck('nombre_empresa', 'id'))
+                            ->searchable()
+                            ->required(),
+                    ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('numero_factura')
                             ->label('Nº Factura')
@@ -129,17 +163,29 @@ class ListClientes extends ListRecords
                             ->default(now())
                             ->required(),
                     ]),
-                    Forms\Components\Select::make('concepto')
-                        ->label('Concepto')
-                        ->options([
-                            'diseno_web' => '🌐 Diseño Web',
-                            'redes_sociales' => '📱 Gestión Redes Sociales',
-                            'seo' => '🔍 SEO / Posicionamiento',
-                            'publicidad' => '📢 Publicidad Digital',
-                            'mantenimiento' => '🔧 Mantenimiento Mensual',
-                            'hosting' => '☁️ Hosting & Dominio',
-                        ])
-                        ->required(),
+                    Forms\Components\Grid::make(2)->schema([
+                        Forms\Components\Select::make('concepto')
+                            ->label('Concepto')
+                            ->options([
+                                'diseno_web' => '🌐 Diseño Web',
+                                'redes_sociales' => '📱 Gestión Redes Sociales',
+                                'seo' => '🔍 SEO / Posicionamiento',
+                                'publicidad' => '📢 Publicidad Digital',
+                                'mantenimiento' => '🔧 Mantenimiento Mensual',
+                                'hosting' => '☁️ Hosting & Dominio',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('metodo_pago')
+                            ->label('Método de Pago')
+                            ->options([
+                                'transferencia' => '🏦 Transferencia Bancaria',
+                                'sinpe' => '📲 SINPE Móvil',
+                                'tarjeta' => '💳 Tarjeta de Crédito',
+                                'efectivo' => '💵 Efectivo',
+                                'paypal' => '🅿️ PayPal',
+                            ])
+                            ->required(),
+                    ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('subtotal')
                             ->label('Subtotal (USD)')
@@ -154,25 +200,40 @@ class ListClientes extends ListRecords
                             ->prefix('$')
                             ->disabled(),
                     ]),
-                    Forms\Components\Select::make('metodo_pago')
-                        ->label('Método de Pago')
-                        ->options([
-                            'transferencia' => '🏦 Transferencia Bancaria',
-                            'sinpe' => '📲 SINPE Móvil',
-                            'tarjeta' => '💳 Tarjeta de Crédito',
-                            'efectivo' => '💵 Efectivo',
-                            'paypal' => '🅿️ PayPal',
-                        ])
-                        ->required(),
+                    Forms\Components\TextInput::make('correo')
+                        ->label('📧 Correo electrónico')
+                        ->email()
+                        ->required()
+                        ->columnSpanFull(),
                 ])
-                ->action(function (array $data) {
-                    $cliente = Cliente::find($data['cliente_id']);
-                    Notification::make()
-                        ->title('✅ Factura creada')
-                        ->body('Factura ' . $data['numero_factura'] . ' para ' . $cliente->nombre_empresa . ' generada correctamente.')
-                        ->success()
-                        ->send();
-                }),
+                ->modalFooterActions(fn ($action) => [
+                    Actions\Action::make('cancelar')
+                        ->label('Cancelar')
+                        ->color('gray')
+                        ->close(),
+                    Actions\Action::make('borrador')
+                        ->label('💾 Guardar Borrador')
+                        ->color('warning')
+                        ->action(function (array $data) {
+                            $cliente = Cliente::find($data['cliente_id']);
+                            Notification::make()
+                                ->title('📝 Borrador guardado')
+                                ->body('Factura ' . $data['numero_factura'] . ' guardada como borrador.')
+                                ->warning()
+                                ->send();
+                        }),
+                    Actions\Action::make('enviar')
+                        ->label('📤 Enviar')
+                        ->color('success')
+                        ->action(function (array $data) {
+                            $cliente = Cliente::find($data['cliente_id']);
+                            Notification::make()
+                                ->title('✅ Factura enviada')
+                                ->body('Factura ' . $data['numero_factura'] . ' enviada a ' . $data['correo'])
+                                ->success()
+                                ->send();
+                        }),
+                ]),
         ];
     }
 }

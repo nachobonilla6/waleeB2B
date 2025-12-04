@@ -141,12 +141,14 @@ Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaE
     ->middleware('auth')
     ->name('clients.propuesta-enviada');
 
-// Webhook que n8n llamará cuando el deploy termine correctamente
+// Webhook que n8n llamará cuando el deploy termine correctamente (sin CSRF)
 Route::post('/webhook/deploy-success', function () {
     Cache::put('last_deploy_success', now()->timestamp, 3600); // guarda timestamp por 1 hora
 
     return response()->json(['ok' => true]);
-})->name('webhook.deploy-success');
+})
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
+    ->name('webhook.deploy-success');
 
 // Endpoint que el front consulta para saber si hay un deploy nuevo
 Route::get('/deploy-last-success', function () {

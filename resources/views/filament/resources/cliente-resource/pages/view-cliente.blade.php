@@ -365,7 +365,10 @@
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 dark:divide-white/10">
                                         @foreach($facturas as $factura)
-                                            <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
+                                            <tr 
+                                                class="hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
+                                                onclick="window.location.href='{{ \App\Filament\Resources\FacturaResource::getUrl('edit', ['record' => $factura]) }}'"
+                                            >
                                                 <td class="px-4 py-3 font-medium text-gray-950 dark:text-white">{{ $factura->numero_factura }}</td>
                                                 <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}</td>
                                                 <td class="px-4 py-3 text-gray-950 dark:text-white">{{ Str::limit($factura->concepto, 40) }}</td>

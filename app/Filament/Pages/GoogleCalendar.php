@@ -7,7 +7,7 @@ use Filament\Pages\Page;
 class GoogleCalendar extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?string $navigationLabel = 'Calendario';
+    protected static ?string $navigationLabel = 'Calendario de citas';
     protected static ?string $title = 'Google Calendar';
     protected static ?string $navigationGroup = 'Clientes';
     protected static ?int $navigationSort = 3;

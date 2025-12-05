@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Cita;
+use App\Models\Cliente;
 use App\Services\GoogleCalendarService;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
@@ -17,6 +18,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Collection;
 
 class GoogleCalendar extends Page implements HasForms, HasActions
 {
@@ -49,10 +51,34 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         ->maxLength(255)
                         ->placeholder('Ej: Reunión con cliente')
                         ->columnSpan(3),
-                    TextInput::make('cliente')
+                    Select::make('cliente_id')
                         ->label('Cliente')
-                        ->maxLength(255)
-                        ->placeholder('Nombre del cliente')
+                        ->relationship('cliente', 'nombre_empresa')
+                        ->searchable(['nombre_empresa', 'correo'])
+                        ->preload()
+                        ->createOptionForm([
+                            TextInput::make('nombre_empresa')
+                                ->label('Nombre de la Empresa')
+                                ->required()
+                                ->maxLength(255),
+                            TextInput::make('correo')
+                                ->label('Correo Electrónico')
+                                ->email()
+                                ->required()
+                                ->maxLength(255),
+                            TextInput::make('telefono')
+                                ->label('Teléfono')
+                                ->maxLength(255),
+                        ])
+                        ->createOptionUsing(function (array $data): int {
+                            $cliente = Cliente::create([
+                                'nombre_empresa' => $data['nombre_empresa'],
+                                'correo' => $data['correo'],
+                                'telefono' => $data['telefono'] ?? null,
+                                'estado_cuenta' => 'pendiente', // Estado no activo (no activo)
+                            ]);
+                            return $cliente->id;
+                        })
                         ->columnSpan(2),
                     Select::make('estado')
                         ->label('Estado')
@@ -181,7 +207,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         'descripcion' => $cita->descripcion,
                         'fecha_inicio' => $cita->fecha_inicio,
                         'fecha_fin' => $cita->fecha_fin,
-                        'cliente' => $cita->cliente,
+                        'cliente_id' => $cita->cliente_id,
                         'ubicacion' => $cita->ubicacion,
                         'estado' => $cita->estado,
                     ];

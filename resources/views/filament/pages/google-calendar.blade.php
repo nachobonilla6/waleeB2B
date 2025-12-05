@@ -51,7 +51,9 @@
                                                 - {{ $cita->fecha_fin->format('H:i') }}
                                             @endif
                                         </p>
-                                        @if($cita->cliente)
+                                        @if($cita->cliente_id && $cita->cliente)
+                                            <p><strong>Cliente:</strong> {{ $cita->cliente->nombre_empresa }}</p>
+                                        @elseif($cita->cliente)
                                             <p><strong>Cliente:</strong> {{ $cita->cliente }}</p>
                                         @endif
                                         @if($cita->ubicacion)

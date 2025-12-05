@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Cita extends Model
 {
@@ -11,7 +12,8 @@ class Cita extends Model
         'descripcion',
         'fecha_inicio',
         'fecha_fin',
-        'cliente',
+        'cliente_id',
+        'cliente', // Mantener por compatibilidad
         'ubicacion',
         'estado',
         'google_event_id',
@@ -22,4 +24,9 @@ class Cita extends Model
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
     ];
+
+    public function cliente(): BelongsTo
+    {
+        return $this->belongsTo(Cliente::class);
+    }
 }

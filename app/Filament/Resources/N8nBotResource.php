@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Services\N8nService;
 
 class N8nBotResource extends Resource
 {
@@ -135,6 +136,48 @@ class N8nBotResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->iconButton(),
+                Tables\Actions\Action::make('sync_from_n8n')
+                    ->label('Sincronizar desde n8n')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->modalHeading('Sincronizar desde n8n')
+                    ->modalDescription('¿Deseas sincronizar este bot con la información actual de n8n?')
+                    ->action(function (N8nBot $record) {
+                        try {
+                            $n8nService = new N8nService();
+                            $workflow = $n8nService->getWorkflow($record->workflow_id);
+                            
+                            if ($workflow) {
+                                $record->update([
+                                    'name' => $workflow['name'] ?? $record->name,
+                                    'settings' => array_merge($record->settings ?? [], [
+                                        'active' => $workflow['active'] ?? false,
+                                        'updated_at_n8n' => now()->toDateTimeString(),
+                                    ]),
+                                ]);
+                                
+                                Notification::make()
+                                    ->title('Bot sincronizado')
+                                    ->body("El bot '{$record->name}' se ha sincronizado correctamente desde n8n.")
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Error al sincronizar')
+                                    ->body('No se pudo obtener la información del workflow desde n8n.')
+                                    ->warning()
+                                    ->send();
+                            }
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Error al sincronizar')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
                     ->iconButton(),
                 Tables\Actions\Action::make('open_workflow')
                     ->label('Abrir Workflow')

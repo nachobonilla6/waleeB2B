@@ -36,8 +36,8 @@ return [
     ],
 
     'n8n' => [
-        'url' => env('N8N_URL'),
-        'api_key' => env('N8N_API_KEY'),
+        'url' => env('N8N_URL', 'https://n8n.srv1137974.hstgr.cloud'),
+        'api_key' => env('N8N_API_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNWNhODY2Ny0wYmNhLTQwYjAtOWFhYS04ZTBhZDA0ODE1ZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY0OTIyNzk2fQ.IBMfPU0yuKMNOdx0lDUqnJ6W67fpOPsYTIOjEUF679g'),
     ],
 
     'google' => [

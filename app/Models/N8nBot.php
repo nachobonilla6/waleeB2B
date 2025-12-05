@@ -29,8 +29,8 @@ class N8nBot extends Model
      */
     public function runNow(array $data = []): \Illuminate\Http\Client\Response
     {
-        $n8nUrl = config('services.n8n.url', env('N8N_URL'));
-        $n8nApiKey = config('services.n8n.api_key', env('N8N_API_KEY'));
+        $n8nUrl = config('services.n8n.url', 'https://n8n.srv1137974.hstgr.cloud');
+        $n8nApiKey = config('services.n8n.api_key');
 
         if ($this->trigger_type === 'webhook') {
             // Ejecutar vía webhook

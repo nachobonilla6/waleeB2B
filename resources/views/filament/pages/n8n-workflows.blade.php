@@ -75,7 +75,7 @@
                             @endif
                         </div>
 
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap gap-2">
                             <x-filament::button
                                 wire:click="syncWorkflowToBots('{{ $workflowId }}')"
                                 size="sm"
@@ -92,6 +92,21 @@
                                 icon="heroicon-o-arrow-top-right-on-square">
                                 Abrir
                             </x-filament::button>
+                            @if($hasBot)
+                                @php
+                                    $bot = \App\Models\N8nBot::where('workflow_id', $workflowId)->first();
+                                @endphp
+                                @if($bot)
+                                    <x-filament::button
+                                        tag="a"
+                                        href="{{ \App\Filament\Resources\N8nBotResource::getUrl('edit', ['record' => $bot->id]) }}"
+                                        size="sm"
+                                        color="primary"
+                                        icon="heroicon-o-cpu-chip">
+                                        Ver Bot
+                                    </x-filament::button>
+                                @endif
+                            @endif
                         </div>
                     </div>
                 @endforeach

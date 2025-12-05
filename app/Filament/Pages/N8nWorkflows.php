@@ -11,10 +11,15 @@ use Illuminate\Support\Facades\DB;
 class N8nWorkflows extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
-    protected static ?string $navigationLabel = 'Workflows n8n';
-    protected static ?string $title = 'Workflows de n8n';
+    protected static ?string $navigationLabel = 'N8N Automatizaciones';
+    protected static ?string $title = 'N8N Automatizaciones';
     protected static ?string $navigationGroup = 'Soporte';
     protected static ?int $navigationSort = 11;
+    
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
 
     protected static string $view = 'filament.pages.n8n-workflows';
 

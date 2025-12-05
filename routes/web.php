@@ -247,6 +247,7 @@ Route::get('/ejemplo1', function () {
     // Mapeo de páginas de Filament a rutas personalizadas
     $pageRouteMap = [
         'App\\Filament\\Pages\\GoogleCalendar' => 'ejemplo1.lista.citas',
+        'App\\Filament\\Pages\\N8nWorkflows' => '/admin/n8n-workflows',
     ];
     
     // Obtener todos los recursos y páginas

@@ -38,51 +38,56 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         $this->form->fill();
     }
 
+    protected function getFormSchema(): array
+    {
+        return [
+            TextInput::make('titulo')
+                ->label('Título de la Cita')
+                ->required()
+                ->maxLength(255)
+                ->placeholder('Ej: Reunión con cliente'),
+            Textarea::make('descripcion')
+                ->label('Descripción')
+                ->rows(3)
+                ->placeholder('Detalles adicionales de la cita...'),
+            DateTimePicker::make('fecha_inicio')
+                ->label('Fecha y Hora de Inicio')
+                ->required()
+                ->native(false)
+                ->seconds(false)
+                ->displayFormat('d/m/Y H:i')
+                ->timezone(config('app.timezone', 'America/Mexico_City')),
+            DateTimePicker::make('fecha_fin')
+                ->label('Fecha y Hora de Fin')
+                ->native(false)
+                ->seconds(false)
+                ->displayFormat('d/m/Y H:i')
+                ->timezone(config('app.timezone', 'America/Mexico_City'))
+                ->after('fecha_inicio'),
+            TextInput::make('cliente')
+                ->label('Cliente')
+                ->maxLength(255)
+                ->placeholder('Nombre del cliente'),
+            TextInput::make('ubicacion')
+                ->label('Ubicación')
+                ->maxLength(255)
+                ->placeholder('Dirección o lugar de la cita'),
+            Select::make('estado')
+                ->label('Estado')
+                ->options([
+                    'programada' => 'Programada',
+                    'completada' => 'Completada',
+                    'cancelada' => 'Cancelada',
+                ])
+                ->default('programada')
+                ->required(),
+        ];
+    }
+
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                TextInput::make('titulo')
-                    ->label('Título de la Cita')
-                    ->required()
-                    ->maxLength(255)
-                    ->placeholder('Ej: Reunión con cliente'),
-                Textarea::make('descripcion')
-                    ->label('Descripción')
-                    ->rows(3)
-                    ->placeholder('Detalles adicionales de la cita...'),
-                DateTimePicker::make('fecha_inicio')
-                    ->label('Fecha y Hora de Inicio')
-                    ->required()
-                    ->native(false)
-                    ->seconds(false)
-                    ->displayFormat('d/m/Y H:i')
-                    ->timezone(config('app.timezone', 'America/Mexico_City')),
-                DateTimePicker::make('fecha_fin')
-                    ->label('Fecha y Hora de Fin')
-                    ->native(false)
-                    ->seconds(false)
-                    ->displayFormat('d/m/Y H:i')
-                    ->timezone(config('app.timezone', 'America/Mexico_City'))
-                    ->after('fecha_inicio'),
-                TextInput::make('cliente')
-                    ->label('Cliente')
-                    ->maxLength(255)
-                    ->placeholder('Nombre del cliente'),
-                TextInput::make('ubicacion')
-                    ->label('Ubicación')
-                    ->maxLength(255)
-                    ->placeholder('Dirección o lugar de la cita'),
-                Select::make('estado')
-                    ->label('Estado')
-                    ->options([
-                        'programada' => 'Programada',
-                        'completada' => 'Completada',
-                        'cancelada' => 'Cancelada',
-                    ])
-                    ->default('programada')
-                    ->required(),
-            ])
+            ->schema($this->getFormSchema())
             ->statePath('data');
     }
 
@@ -93,7 +98,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                 ->label('Nueva Cita')
                 ->icon('heroicon-o-plus')
                 ->color('success')
-                ->form($this->form->getSchema())
+                ->form($this->getFormSchema())
                 ->action(function (array $data) {
                     $cita = Cita::create($data);
                     
@@ -153,7 +158,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                 ->label('Editar Cita')
                 ->icon('heroicon-o-pencil')
                 ->color('info')
-                ->form($this->form->getSchema())
+                ->form($this->getFormSchema())
                 ->fillForm(function (array $arguments) {
                     $cita = Cita::findOrFail($arguments['id']);
                     return [

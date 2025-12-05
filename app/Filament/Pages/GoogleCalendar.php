@@ -48,11 +48,12 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         ->required()
                         ->maxLength(255)
                         ->placeholder('Ej: Reunión con cliente')
-                        ->columnSpan(2),
+                        ->columnSpan(3),
                     TextInput::make('cliente')
                         ->label('Cliente')
                         ->maxLength(255)
-                        ->placeholder('Nombre del cliente'),
+                        ->placeholder('Nombre del cliente')
+                        ->columnSpan(2),
                     Select::make('estado')
                         ->label('Estado')
                         ->options([
@@ -62,45 +63,37 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         ])
                         ->default('programada')
                         ->required(),
-                ])
-                ->columns(3)
-                ->compact(),
-            \Filament\Forms\Components\Section::make('Fecha y Hora')
-                ->schema([
                     DateTimePicker::make('fecha_inicio')
-                        ->label('Inicio')
+                        ->label('Fecha y Hora de Inicio')
                         ->required()
                         ->native(false)
                         ->seconds(false)
                         ->displayFormat('d/m/Y H:i')
                         ->timezone(config('app.timezone', 'America/Mexico_City'))
-                        ->default(now()->addHour()->startOfHour()),
+                        ->default(now()->addHour()->startOfHour())
+                        ->columnSpan(3),
                     DateTimePicker::make('fecha_fin')
-                        ->label('Fin')
+                        ->label('Fecha y Hora de Fin')
                         ->native(false)
                         ->seconds(false)
                         ->displayFormat('d/m/Y H:i')
                         ->timezone(config('app.timezone', 'America/Mexico_City'))
                         ->default(now()->addHours(2)->startOfHour())
-                        ->after('fecha_inicio'),
-                ])
-                ->columns(2)
-                ->compact(),
-            \Filament\Forms\Components\Section::make('Detalles Adicionales')
-                ->schema([
+                        ->after('fecha_inicio')
+                        ->columnSpan(3),
                     TextInput::make('ubicacion')
                         ->label('Ubicación')
                         ->maxLength(255)
-                        ->placeholder('Dirección o lugar de la cita'),
+                        ->placeholder('Dirección o lugar de la cita')
+                        ->columnSpan(3),
                     Textarea::make('descripcion')
                         ->label('Descripción')
                         ->rows(2)
                         ->placeholder('Detalles adicionales...')
                         ->columnSpanFull(),
                 ])
-                ->columns(1)
-                ->compact()
-                ->collapsible(),
+                ->columns(6)
+                ->compact(),
         ];
     }
 
@@ -119,7 +112,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                 ->icon('heroicon-o-plus')
                 ->color('success')
                 ->form($this->getFormSchema())
-                ->modalWidth('md')
+                ->modalWidth('4xl')
                 ->action(function (array $data) {
                     $cita = Cita::create($data);
                     
@@ -180,7 +173,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                 ->icon('heroicon-o-pencil')
                 ->color('info')
                 ->form($this->getFormSchema())
-                ->modalWidth('md')
+                ->modalWidth('4xl')
                 ->fillForm(function (array $arguments) {
                     $cita = Cita::findOrFail($arguments['id']);
                     return [

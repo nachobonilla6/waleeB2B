@@ -142,6 +142,13 @@ Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaE
 
 // Ruta ejemplo1 - Información de Filament optimizada para móviles
 Route::get('/ejemplo1', function () {
+    try {
+        $panel = \Filament\Facades\Filament::getPanel('admin');
+    } catch (\Exception $e) {
+        $panel = null;
+    }
+    
+    // Estadísticas
     $clientes = \App\Models\Cliente::count();
     $clientesActivos = \App\Models\Cliente::where('estado_cuenta', 'activo')->count();
     $citasHoy = \App\Models\Cita::whereDate('fecha_inicio', today())->where('estado', '!=', 'cancelada')->count();
@@ -154,12 +161,75 @@ Route::get('/ejemplo1', function () {
     $citasTotal = \App\Models\Cita::where('estado', '!=', 'cancelada')->count();
     $usuarios = \App\Models\User::count();
     
+    // Obtener todos los recursos y páginas
+    $groupedItems = [];
+    
+    if ($panel) {
+        // Obtener todos los recursos
+        $resources = [];
+        foreach ($panel->getResources() as $resourceClass) {
+            try {
+                if (method_exists($resourceClass, 'shouldRegisterNavigation') && !$resourceClass::shouldRegisterNavigation()) {
+                    continue;
+                }
+                
+                $resources[] = [
+                    'name' => $resourceClass::getNavigationLabel() ?? class_basename($resourceClass),
+                    'url' => $resourceClass::getUrl('index') ?? '#',
+                    'icon' => $resourceClass::getNavigationIcon(),
+                    'group' => $resourceClass::getNavigationGroup() ?? 'Otros',
+                    'badge' => method_exists($resourceClass, 'getNavigationBadge') ? $resourceClass::getNavigationBadge() : null,
+                ];
+            } catch (\Exception $e) {
+                // Ignorar recursos que no se pueden cargar
+                continue;
+            }
+        }
+        
+        // Obtener todas las páginas personalizadas
+        $pages = [];
+        foreach ($panel->getPages() as $pageClass) {
+            try {
+                if (method_exists($pageClass, 'shouldRegisterNavigation') && !$pageClass::shouldRegisterNavigation()) {
+                    continue;
+                }
+                
+                $pages[] = [
+                    'name' => $pageClass::getNavigationLabel() ?? class_basename($pageClass),
+                    'url' => $pageClass::getUrl() ?? '#',
+                    'icon' => $pageClass::getNavigationIcon(),
+                    'group' => $pageClass::getNavigationGroup() ?? 'Otros',
+                ];
+            } catch (\Exception $e) {
+                // Ignorar páginas que no se pueden cargar
+                continue;
+            }
+        }
+        
+        // Agrupar recursos y páginas por grupo
+        foreach ($resources as $item) {
+            $group = $item['group'] ?? 'Otros';
+            if (!isset($groupedItems[$group])) {
+                $groupedItems[$group] = [];
+            }
+            $groupedItems[$group][] = $item;
+        }
+        foreach ($pages as $item) {
+            $group = $item['group'] ?? 'Otros';
+            if (!isset($groupedItems[$group])) {
+                $groupedItems[$group] = [];
+            }
+            $groupedItems[$group][] = $item;
+        }
+    }
+    
     return view('ejemplo1-mobile', compact(
         'clientes',
         'clientesActivos',
         'citasHoy',
         'citasProximas',
         'citasTotal',
-        'usuarios'
+        'usuarios',
+        'groupedItems'
     ));
 })->name('ejemplo1');

@@ -19,7 +19,7 @@ class DeployButton extends Component implements HasActions, HasForms
     public function deployAction(): Action
     {
         return Action::make('deploy')
-            ->label('Deploy')
+            ->label('Deploy now')
             ->icon('heroicon-o-arrow-up-tray')
             ->color('success')
             ->size('sm')

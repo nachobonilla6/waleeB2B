@@ -53,9 +53,28 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         ->columnSpan(3),
                     Select::make('cliente_id')
                         ->label('Cliente')
-                        ->relationship('cliente', 'nombre_empresa')
-                        ->searchable(['nombre_empresa', 'correo'])
-                        ->preload()
+                        ->options(function () {
+                            return Cliente::orderBy('nombre_empresa')
+                                ->get()
+                                ->mapWithKeys(fn ($cliente) => [
+                                    $cliente->id => $cliente->nombre_empresa . ' (' . $cliente->correo . ')'
+                                ])
+                                ->toArray();
+                        })
+                        ->searchable()
+                        ->getSearchResultsUsing(fn (string $search): array => 
+                            Cliente::where('nombre_empresa', 'like', "%{$search}%")
+                                ->orWhere('correo', 'like', "%{$search}%")
+                                ->limit(50)
+                                ->get()
+                                ->mapWithKeys(fn ($cliente) => [
+                                    $cliente->id => $cliente->nombre_empresa . ' (' . $cliente->correo . ')'
+                                ])
+                                ->toArray()
+                        )
+                        ->getOptionLabelUsing(fn ($value): ?string => 
+                            Cliente::find($value)?->nombre_empresa
+                        )
                         ->createOptionForm([
                             TextInput::make('nombre_empresa')
                                 ->label('Nombre de la Empresa')
@@ -75,7 +94,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                                 'nombre_empresa' => $data['nombre_empresa'],
                                 'correo' => $data['correo'],
                                 'telefono' => $data['telefono'] ?? null,
-                                'estado_cuenta' => 'pendiente', // Estado no activo (no activo)
+                                'estado_cuenta' => 'pendiente', // Estado no activo
                             ]);
                             return $cliente->id;
                         })

@@ -234,6 +234,21 @@ Route::get('/ejemplo1', function () {
     $citasTotal = \App\Models\Cita::where('estado', '!=', 'cancelada')->count();
     $usuarios = \App\Models\User::count();
     
+    // Mapeo de recursos de Filament a rutas personalizadas
+    $resourceRouteMap = [
+        'App\\Filament\\Resources\\ClienteResource' => 'ejemplo1.lista.clientes',
+        'App\\Filament\\Resources\\ClientPropuestaEnviadaResource' => 'ejemplo1.lista.propuestas-enviadas',
+        'App\\Filament\\Resources\\FacturaResource' => 'ejemplo1.lista.facturas',
+        'App\\Filament\\Resources\\SitioResource' => 'ejemplo1.lista.sitios',
+        'App\\Filament\\Resources\\SupportCaseResource' => 'ejemplo1.lista.support-cases',
+        'App\\Filament\\Resources\\UserResource' => 'ejemplo1.lista.usuarios',
+    ];
+    
+    // Mapeo de páginas de Filament a rutas personalizadas
+    $pageRouteMap = [
+        'App\\Filament\\Pages\\GoogleCalendar' => 'ejemplo1.lista.citas',
+    ];
+    
     // Obtener todos los recursos y páginas
     $groupedItems = [];
     
@@ -246,9 +261,12 @@ Route::get('/ejemplo1', function () {
                     continue;
                 }
                 
+                $resourceClassFull = is_string($resourceClass) ? $resourceClass : get_class($resourceClass);
+                $customRoute = $resourceRouteMap[$resourceClassFull] ?? null;
+                
                 $resources[] = [
                     'name' => $resourceClass::getNavigationLabel() ?? class_basename($resourceClass),
-                    'url' => $resourceClass::getUrl('index') ?? '#',
+                    'url' => $customRoute ? route($customRoute) : ($resourceClass::getUrl('index') ?? '#'),
                     'icon' => $resourceClass::getNavigationIcon(),
                     'group' => $resourceClass::getNavigationGroup() ?? 'Otros',
                     'badge' => method_exists($resourceClass, 'getNavigationBadge') ? $resourceClass::getNavigationBadge() : null,
@@ -267,9 +285,12 @@ Route::get('/ejemplo1', function () {
                     continue;
                 }
                 
+                $pageClassFull = is_string($pageClass) ? $pageClass : get_class($pageClass);
+                $customRoute = $pageRouteMap[$pageClassFull] ?? null;
+                
                 $pages[] = [
                     'name' => $pageClass::getNavigationLabel() ?? class_basename($pageClass),
-                    'url' => $pageClass::getUrl() ?? '#',
+                    'url' => $customRoute ? route($customRoute) : ($pageClass::getUrl() ?? '#'),
                     'icon' => $pageClass::getNavigationIcon(),
                     'group' => $pageClass::getNavigationGroup() ?? 'Otros',
                 ];

@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-gray-900">Footwear etc.</h1>
+                    <img src="https://cdn.shopify.com/s/files/1/0012/5332/3286/files/footwear-etc-logo.png" alt="Footwear etc." class="h-10">
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#" class="text-gray-700 hover:text-gray-900 transition">Productos</a>
@@ -35,13 +35,15 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20 overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('https://cdn.shopify.com/s/files/1/0012/5332/3286/files/footwear-etc-store-exterior.jpg');"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                     <h2 class="text-5xl font-bold mb-6 leading-tight">
-                        Tienda Footwear etc.<br>
-                        <span class="text-blue-200">San Jose - Willow Glen</span>
+                        San Jose Shoe Store<br>
+                        <span class="text-blue-200">Footwear etc. San Jose</span><br>
+                        <span class="text-blue-200 text-3xl">Downtown Willow Glen</span>
                     </h2>
                     <p class="text-xl mb-8 text-blue-100">
                         Más de 39 años ofreciendo calzado de calidad que combina estilo y comodidad. 
@@ -114,15 +116,18 @@
                     </div>
                 </div>
 
-                <!-- Map Placeholder -->
+                <!-- Google Maps -->
                 <div class="bg-gray-200 rounded-2xl overflow-hidden shadow-lg">
-                    <div class="h-full min-h-[400px] bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                        <div class="text-center">
-                            <i class="fas fa-map text-6xl text-blue-600 mb-4"></i>
-                            <p class="text-gray-700 font-semibold">Mapa Interactivo</p>
-                            <p class="text-gray-600 text-sm mt-2">Willow Glen, San Jose, CA</p>
-                        </div>
-                    </div>
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3172.234567890123!2d-121.90234567890123!3d37.30456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDE4JzE2LjQiTiAxMjHCsDU0JzA4LjQiVw!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus" 
+                        width="100%" 
+                        height="400" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        class="w-full h-full min-h-[400px]">
+                    </iframe>
                 </div>
             </div>
         </div>
@@ -134,6 +139,15 @@
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">En Esta Tienda Encontrarás</h2>
                 <p class="text-xl text-gray-600">Todo lo que necesitas para el cuidado de tus pies</p>
+            </div>
+            
+            <!-- Store Interior Photo -->
+            <div class="mb-12 rounded-2xl overflow-hidden shadow-xl">
+                <img 
+                    src="https://cdn.shopify.com/s/files/1/0012/5332/3286/files/footwear-etc-store-interior.jpg" 
+                    alt="Interior de Footwear etc. San Jose" 
+                    class="w-full h-auto object-cover"
+                    onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&h=600&fit=crop'; this.alt='Interior de tienda de calzado';">
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

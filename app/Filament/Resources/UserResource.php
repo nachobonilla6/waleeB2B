@@ -17,13 +17,18 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static bool $shouldSkipAuthorization = false;
+    protected static bool $shouldSkipAuthorization = true;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $modelLabel = 'Usuario';
     protected static ?string $navigationLabel = 'Usuarios';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 10;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
 
     public static function form(Form $form): Form
     {

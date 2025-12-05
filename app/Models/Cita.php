@@ -14,6 +14,8 @@ class Cita extends Model
         'cliente',
         'ubicacion',
         'estado',
+        'google_event_id',
+        'google_calendar_id',
     ];
 
     protected $casts = [

@@ -40,4 +40,9 @@ return [
         'api_key' => env('N8N_API_KEY'),
     ],
 
+    'google' => [
+        'calendar_api_key' => env('GOOGLE_CALENDAR_API_KEY'),
+        'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
+    ],
+
 ];

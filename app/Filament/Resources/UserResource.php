@@ -17,6 +17,8 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    protected static bool $shouldSkipAuthorization = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $modelLabel = 'Usuario';
     protected static ?string $navigationLabel = 'Usuarios';

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footwear etc. San Jose - Willow Glen | Tienda de Calzado</title>
     <meta name="description" content="Visita nuestra tienda en Willow Glen, San Jose. Calzado de calidad, servicio excepcional y 39 años de experiencia. Encuentra las mejores marcas como Hoka, Birkenstock, Brooks y más.">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>

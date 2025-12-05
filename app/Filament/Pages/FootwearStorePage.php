@@ -18,5 +18,5 @@ class FootwearStorePage extends Page
 
     protected static string $view = 'filament.pages.footwear-store-page';
     
-    protected static bool $shouldRegisterNavigation = false; // No mostrar en navegación, solo accesible por URL
+    protected static bool $shouldRegisterNavigation = true; // Mostrar en navegación para acceso fácil
 }

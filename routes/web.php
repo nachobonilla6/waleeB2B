@@ -140,6 +140,24 @@ Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaE
     ->middleware('auth')
     ->name('clients.propuesta-enviada');
 
+// Rutas para listas personalizadas móviles
+Route::prefix('ejemplo1/lista')->group(function () {
+    Route::get('/clientes', function () {
+        $clientes = \App\Models\Cliente::orderBy('created_at', 'desc')->paginate(20);
+        return view('ejemplo1-listas.clientes', compact('clientes'));
+    })->name('ejemplo1.lista.clientes');
+    
+    Route::get('/citas', function () {
+        $citas = \App\Models\Cita::with('cliente')->orderBy('fecha_inicio', 'desc')->paginate(20);
+        return view('ejemplo1-listas.citas', compact('citas'));
+    })->name('ejemplo1.lista.citas');
+    
+    Route::get('/usuarios', function () {
+        $usuarios = \App\Models\User::orderBy('created_at', 'desc')->paginate(20);
+        return view('ejemplo1-listas.usuarios', compact('usuarios'));
+    })->name('ejemplo1.lista.usuarios');
+});
+
 // Ruta ejemplo1 - Información de Filament optimizada para móviles
 Route::get('/ejemplo1', function () {
     try {

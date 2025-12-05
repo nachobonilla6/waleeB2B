@@ -147,15 +147,70 @@ Route::prefix('ejemplo1/lista')->group(function () {
         return view('ejemplo1-listas.clientes', compact('clientes'));
     })->name('ejemplo1.lista.clientes');
     
+    Route::get('/clientes/{id}', function ($id) {
+        $cliente = \App\Models\Cliente::findOrFail($id);
+        return view('ejemplo1-listas.show.cliente', compact('cliente'));
+    })->name('ejemplo1.show.cliente');
+    
     Route::get('/citas', function () {
         $citas = \App\Models\Cita::with('cliente')->orderBy('fecha_inicio', 'desc')->paginate(20);
         return view('ejemplo1-listas.citas', compact('citas'));
     })->name('ejemplo1.lista.citas');
     
+    Route::get('/citas/{id}', function ($id) {
+        $cita = \App\Models\Cita::with('cliente')->findOrFail($id);
+        return view('ejemplo1-listas.show.cita', compact('cita'));
+    })->name('ejemplo1.show.cita');
+    
     Route::get('/usuarios', function () {
         $usuarios = \App\Models\User::orderBy('created_at', 'desc')->paginate(20);
         return view('ejemplo1-listas.usuarios', compact('usuarios'));
     })->name('ejemplo1.lista.usuarios');
+    
+    Route::get('/usuarios/{id}', function ($id) {
+        $usuario = \App\Models\User::findOrFail($id);
+        return view('ejemplo1-listas.show.usuario', compact('usuario'));
+    })->name('ejemplo1.show.usuario');
+    
+    Route::get('/propuestas-enviadas', function () {
+        $propuestas = \App\Models\Client::where('propuesta_enviada', true)->orderBy('created_at', 'desc')->paginate(20);
+        return view('ejemplo1-listas.propuestas-enviadas', compact('propuestas'));
+    })->name('ejemplo1.lista.propuestas-enviadas');
+    
+    Route::get('/propuestas-enviadas/{id}', function ($id) {
+        $propuesta = \App\Models\Client::findOrFail($id);
+        return view('ejemplo1-listas.show.propuesta-enviada', compact('propuesta'));
+    })->name('ejemplo1.show.propuesta-enviada');
+    
+    Route::get('/facturas', function () {
+        $facturas = \App\Models\Factura::with('cliente')->orderBy('created_at', 'desc')->paginate(20);
+        return view('ejemplo1-listas.facturas', compact('facturas'));
+    })->name('ejemplo1.lista.facturas');
+    
+    Route::get('/facturas/{id}', function ($id) {
+        $factura = \App\Models\Factura::with('cliente')->findOrFail($id);
+        return view('ejemplo1-listas.show.factura', compact('factura'));
+    })->name('ejemplo1.show.factura');
+    
+    Route::get('/sitios', function () {
+        $sitios = \App\Models\Sitio::with('tags')->orderBy('created_at', 'desc')->paginate(20);
+        return view('ejemplo1-listas.sitios', compact('sitios'));
+    })->name('ejemplo1.lista.sitios');
+    
+    Route::get('/sitios/{id}', function ($id) {
+        $sitio = \App\Models\Sitio::with('tags')->findOrFail($id);
+        return view('ejemplo1-listas.show.sitio', compact('sitio'));
+    })->name('ejemplo1.show.sitio');
+    
+    Route::get('/support-cases', function () {
+        $cases = \App\Models\SupportCase::orderBy('created_at', 'desc')->paginate(20);
+        return view('ejemplo1-listas.support-cases', compact('cases'));
+    })->name('ejemplo1.lista.support-cases');
+    
+    Route::get('/support-cases/{id}', function ($id) {
+        $case = \App\Models\SupportCase::findOrFail($id);
+        return view('ejemplo1-listas.show.support-case', compact('case'));
+    })->name('ejemplo1.show.support-case');
 });
 
 // Ruta ejemplo1 - Información de Filament optimizada para móviles

@@ -34,11 +34,12 @@
         <div class="p-4 space-y-3">
             @forelse($clientes as $cliente)
                 <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                    <div class="flex items-start justify-between mb-2">
-                        <div class="flex-1">
-                            <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">
-                                {{ $cliente->nombre_empresa }}
-                            </h3>
+                    <a href="{{ route('ejemplo1.show.cliente', $cliente->id) }}" class="block">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex-1">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">
+                                    {{ $cliente->nombre_empresa }}
+                                </h3>
                             @if($cliente->correo)
                                 <div class="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-1">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,6 +75,10 @@
                             {{ ucfirst($cliente->estado_cuenta ?? 'N/A') }}
                         </span>
                     </div>
+                    <div class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                        <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">Ver detalles →</span>
+                    </div>
+                    </a>
                 </div>
             @empty
                 <div class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-8 text-center">

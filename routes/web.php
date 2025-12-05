@@ -140,7 +140,7 @@ Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaE
     ->middleware('auth')
     ->name('clients.propuesta-enviada');
 
-// Ruta ejemplo1 - Redirigir a página de Filament
+// Ruta ejemplo1 - Página simplificada móvil-friendly
 Route::get('/ejemplo1', function () {
-    return redirect('/admin/footwear-store-page');
+    return view('ejemplo1-mobile');
 })->name('ejemplo1');

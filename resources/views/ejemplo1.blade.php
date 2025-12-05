@@ -124,7 +124,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center opacity-0 animate-fade-in" style="animation-delay: 0.2s;">
-                    <img src="https://cdn.shopify.com/s/files/1/0012/5332/3286/files/footwear-etc-logo.png" alt="Footwear etc." class="h-10 transition-all-smooth hover:scale-110">
+                    <img src="https://footwearetc.com/cdn/shop/files/Footwear_etc._logo_440x.png?v=1760562269" alt="Footwear etc." class="h-10 transition-all-smooth hover:scale-110">
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#" class="text-gray-700 hover:text-gray-900 transition-all-smooth relative group">

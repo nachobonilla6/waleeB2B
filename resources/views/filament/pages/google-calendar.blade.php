@@ -23,8 +23,8 @@
                 <h3 class="text-lg font-semibold text-gray-950 dark:text-white mb-4">
                     Citas Programadas
                 </h3>
-                <div class="space-y-4">
-                    @forelse($this->getCitas() as $cita)
+                <div class="space-y-4" wire:key="citas-list">
+                    @forelse($this->getCitasProperty() as $cita)
                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">

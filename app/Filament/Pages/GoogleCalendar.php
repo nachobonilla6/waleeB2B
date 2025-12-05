@@ -168,6 +168,8 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         $cita->save();
                     }
                     
+                    $this->dispatch('$refresh');
+                    
                     Notification::make()
                         ->title('Cita creada')
                         ->body('La cita se ha creado y sincronizado con Google Calendar')
@@ -183,11 +185,17 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         ];
     }
 
-    public function getCitas(): \Illuminate\Database\Eloquent\Collection
+    public function getCitasProperty(): \Illuminate\Database\Eloquent\Collection
     {
-        return Cita::where('estado', '!=', 'cancelada')
+        return Cita::with('cliente')
+            ->where('estado', '!=', 'cancelada')
             ->orderBy('fecha_inicio', 'asc')
             ->get();
+    }
+
+    public function getCitas(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getCitasProperty();
     }
 
 
@@ -202,6 +210,8 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         }
         
         $cita->delete();
+        
+        $this->dispatch('$refresh');
         
         Notification::make()
             ->title('Cita eliminada')
@@ -245,6 +255,8 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                             $cita->save();
                         }
                     }
+                    
+                    $this->dispatch('$refresh');
                     
                     Notification::make()
                         ->title('Cita actualizada')

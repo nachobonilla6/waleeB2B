@@ -12,6 +12,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
@@ -117,14 +118,14 @@ class GoogleCalendar extends Page implements HasTable
                 //
             ])
             ->actions([
-                Action::make('ver_en_google')
+                TableAction::make('ver_en_google')
                     ->label('Ver en Google Calendar')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->color('info')
                     ->url(fn (Cita $record) => (new GoogleCalendarService())->getCreateEventUrl($record))
                     ->openUrlInNewTab()
                     ->visible(fn (Cita $record) => true),
-                Action::make('sincronizar_evento')
+                TableAction::make('sincronizar_evento')
                     ->label('Sincronizar con Google')
                     ->icon('heroicon-o-arrow-path')
                     ->color('success')

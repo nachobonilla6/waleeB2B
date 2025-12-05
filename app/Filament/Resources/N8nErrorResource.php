@@ -22,7 +22,7 @@ class N8nErrorResource extends Resource
     protected static ?string $navigationLabel = 'Errores n8n';
     protected static ?string $modelLabel = 'Error';
     protected static ?string $pluralModelLabel = 'Errores n8n';
-    protected static ?string $navigationGroup = 'Soporte';
+    protected static ?string $navigationGroup = 'Automatizaciones';
     protected static ?int $navigationSort = 15;
 
     public static function getNavigationBadge(): ?string

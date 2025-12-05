@@ -23,7 +23,7 @@ class N8nBotResource extends Resource
     protected static ?string $navigationLabel = 'Bots n8n';
     protected static ?string $modelLabel = 'Bot n8n';
     protected static ?string $pluralModelLabel = 'Bots n8n';
-    protected static ?string $navigationGroup = 'Soporte';
+    protected static ?string $navigationGroup = 'Automatizaciones';
     protected static ?int $navigationSort = 10;
 
     public static function getNavigationBadge(): ?string
@@ -33,7 +33,7 @@ class N8nBotResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return false;
     }
 
     public static function form(Form $form): Form

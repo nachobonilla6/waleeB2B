@@ -45,11 +45,6 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         $this->fechaSeleccionada = now()->format('Y-m-d');
     }
 
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-
     protected function getFormSchema(): array
     {
         return [

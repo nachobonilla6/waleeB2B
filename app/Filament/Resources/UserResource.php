@@ -30,6 +30,11 @@ class UserResource extends Resource
         return true;
     }
 
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

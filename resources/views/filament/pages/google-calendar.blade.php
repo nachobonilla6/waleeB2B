@@ -21,129 +21,88 @@
         <!-- Contenido de las pestañas -->
         <div>
             @if($activeTab === 'calendario')
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Calendario Visual -->
-                    <div class="lg:col-span-2">
-                        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-gray-950 dark:text-white mb-4">
-                                    Calendario de Citas
-                                </h3>
-                                
-                                <!-- Calendario Mensual -->
+                <!-- Calendario Visual -->
+                <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                    <div class="p-6 sm:p-8">
+                        <!-- Encabezado del mes -->
+                        @php
+                            $hoy = now();
+                            $inicioMes = $hoy->copy()->startOfMonth()->startOfWeek();
+                            $finMes = $hoy->copy()->endOfMonth()->endOfWeek();
+                            $citasPorDia = $this->getCitasPorDiaProperty();
+                        @endphp
+                        
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {{ $hoy->translatedFormat('F Y') }}
+                            </h3>
+                        </div>
+                        
+                        <!-- Días de la semana -->
+                        <div class="grid grid-cols-7 gap-2 mb-3">
+                            @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
+                                <div class="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 py-3">
+                                    {{ $dia }}
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        <!-- Días del mes -->
+                        <div class="grid grid-cols-7 gap-2">
+                            @for($fecha = $inicioMes->copy(); $fecha->lte($finMes); $fecha->addDay())
                                 @php
-                                    $hoy = now();
-                                    $inicioMes = $hoy->copy()->startOfMonth()->startOfWeek();
-                                    $finMes = $hoy->copy()->endOfMonth()->endOfWeek();
-                                    $citasPorDia = $this->getCitasPorDiaProperty();
+                                    $fechaStr = $fecha->format('Y-m-d');
+                                    $esHoy = $fecha->isToday();
+                                    $esMesActual = $fecha->month === $hoy->month;
+                                    $citasDelDia = $citasPorDia->get($fechaStr, collect());
                                 @endphp
-                                
-                                <div class="overflow-x-auto">
-                                    <div class="min-w-full">
-                                        <!-- Encabezado del mes -->
-                                        <div class="flex items-center justify-between mb-4">
-                                            <h4 class="text-xl font-bold text-gray-900 dark:text-white">
-                                                {{ $hoy->translatedFormat('F Y') }}
-                                            </h4>
-                                        </div>
-                                        
-                                        <!-- Días de la semana -->
-                                        <div class="grid grid-cols-7 gap-1 mb-2">
-                                            @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
-                                                <div class="text-center text-sm font-semibold text-gray-600 dark:text-gray-400 py-2">
-                                                    {{ $dia }}
+                                <div 
+                                    class="min-h-[100px] p-2 rounded-lg border transition-all
+                                        {{ $esHoy ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700 ring-2 ring-primary-500/20' : 'border-gray-200 dark:border-gray-700' }}
+                                        {{ !$esMesActual ? 'opacity-40' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50' }}">
+                                    <!-- Número del día -->
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-semibold
+                                            {{ $esHoy ? 'text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300' }}">
+                                            {{ $fecha->day }}
+                                        </span>
+                                        @if($citasDelDia->count() > 0)
+                                            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                                {{ $citasDelDia->count() }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Citas del día -->
+                                    <div class="space-y-1.5">
+                                        @foreach($citasDelDia->take(3) as $cita)
+                                            <button
+                                                wire:click="mountAction('edit', { id: {{ $cita->id }} })"
+                                                class="w-full text-left text-xs px-2 py-1.5 rounded-md font-medium transition-all hover:scale-[1.02] cursor-pointer
+                                                    @if($cita->estado === 'completada') 
+                                                        bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200 hover:bg-success-200 dark:hover:bg-success-900/70
+                                                    @elseif($cita->estado === 'programada') 
+                                                        bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-200 hover:bg-warning-200 dark:hover:bg-warning-900/70
+                                                    @else 
+                                                        bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700
+                                                    @endif">
+                                                <div class="truncate font-semibold">{{ Str::limit($cita->titulo, 18) }}</div>
+                                                <div class="text-[10px] opacity-75 mt-0.5">
+                                                    {{ $cita->fecha_inicio->format('H:i') }}
+                                                    @if($cita->cliente_id && $cita->cliente)
+                                                        · {{ Str::limit($cita->cliente->nombre_empresa, 12) }}
+                                                    @endif
                                                 </div>
-                                            @endforeach
-                                        </div>
-                                        
-                                        <!-- Días del mes -->
-                                        <div class="grid grid-cols-7 gap-1">
-                                            @for($fecha = $inicioMes->copy(); $fecha->lte($finMes); $fecha->addDay())
-                                                @php
-                                                    $fechaStr = $fecha->format('Y-m-d');
-                                                    $esHoy = $fecha->isToday();
-                                                    $esMesActual = $fecha->month === $hoy->month;
-                                                    $citasDelDia = $citasPorDia->get($fechaStr, collect());
-                                                @endphp
-                                                <div 
-                                                    wire:click="seleccionarFecha('{{ $fechaStr }}')"
-                                                    class="min-h-[80px] p-2 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer transition-colors
-                                                        {{ $esHoy ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700' : '' }}
-                                                        {{ !$esMesActual ? 'opacity-50' : 'hover:bg-gray-50 dark:hover:bg-gray-800' }}
-                                                        {{ $fechaSeleccionada === $fechaStr ? 'ring-2 ring-primary-500' : '' }}">
-                                                    <div class="text-sm font-medium mb-1
-                                                        {{ $esHoy ? 'text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300' }}">
-                                                        {{ $fecha->day }}
-                                                    </div>
-                                                    <div class="space-y-1">
-                                                        @foreach($citasDelDia->take(2) as $cita)
-                                                            <div class="text-xs px-1.5 py-0.5 rounded
-                                                                @if($cita->estado === 'completada') bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200
-                                                                @elseif($cita->estado === 'programada') bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200
-                                                                @else bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200
-                                                                @endif">
-                                                                {{ Str::limit($cita->titulo, 15) }}
-                                                            </div>
-                                                        @endforeach
-                                                        @if($citasDelDia->count() > 2)
-                                                            <div class="text-xs text-gray-500 dark:text-gray-400">
-                                                                +{{ $citasDelDia->count() - 2 }} más
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            @endfor
-                                        </div>
+                                            </button>
+                                        @endforeach
+                                        @if($citasDelDia->count() > 3)
+                                            <div class="text-[10px] text-gray-500 dark:text-gray-400 text-center py-1">
+                                                +{{ $citasDelDia->count() - 3 }} más
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Citas del día seleccionado -->
-                    <div class="lg:col-span-1">
-                        <div class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-                            <div class="p-6">
-                                <h3 class="text-lg font-semibold text-gray-950 dark:text-white mb-4">
-                                    Citas del {{ \Carbon\Carbon::parse($fechaSeleccionada)->translatedFormat('d \d\e F') }}
-                                </h3>
-                                <div class="space-y-3" wire:key="citas-dia-{{ $fechaSeleccionada }}">
-                                    @forelse($this->getCitasDelDiaProperty() as $cita)
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                            <div class="flex items-start justify-between">
-                                                <div class="flex-1">
-                                                    <div class="flex items-center gap-2 mb-1">
-                                                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
-                                                            {{ $cita->titulo }}
-                                                        </h4>
-                                                        <span class="px-1.5 py-0.5 text-xs font-medium rounded-full
-                                                            @if($cita->estado === 'completada') bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200
-                                                            @elseif($cita->estado === 'programada') bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200
-                                                            @else bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200
-                                                            @endif">
-                                                            {{ ucfirst($cita->estado) }}
-                                                        </span>
-                                                    </div>
-                                                    <div class="text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
-                                                        <p><strong>Hora:</strong> {{ $cita->fecha_inicio->format('H:i') }}
-                                                            @if($cita->fecha_fin)
-                                                                - {{ $cita->fecha_fin->format('H:i') }}
-                                                            @endif
-                                                        </p>
-                                                        @if($cita->cliente_id && $cita->cliente)
-                                                            <p><strong>Cliente:</strong> {{ Str::limit($cita->cliente->nombre_empresa, 20) }}</p>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-                                            <p class="text-sm">No hay citas programadas para este día</p>
-                                        </div>
-                                    @endforelse
-                                </div>
-                            </div>
+                            @endfor
                         </div>
                     </div>
                 </div>

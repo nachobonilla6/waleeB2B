@@ -36,6 +36,14 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     public ?array $data = [];
     
     public ?string $activeTab = 'calendario';
+    
+    public ?string $fechaSeleccionada = null;
+    
+    public function mount(): void
+    {
+        $this->form->fill();
+        $this->fechaSeleccionada = now()->format('Y-m-d');
+    }
 
     public function mount(): void
     {
@@ -198,6 +206,32 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     public function getCitas(): \Illuminate\Database\Eloquent\Collection
     {
         return $this->getCitasProperty();
+    }
+
+    public function getCitasPorDiaProperty(): Collection
+    {
+        return $this->getCitasProperty()
+            ->groupBy(function ($cita) {
+                return $cita->fecha_inicio->format('Y-m-d');
+            });
+    }
+
+    public function getCitasDelDiaProperty(): Collection
+    {
+        if (!$this->fechaSeleccionada) {
+            return collect();
+        }
+        
+        return $this->getCitasProperty()
+            ->filter(function ($cita) {
+                return $cita->fecha_inicio->format('Y-m-d') === $this->fechaSeleccionada;
+            })
+            ->sortBy('fecha_inicio');
+    }
+
+    public function seleccionarFecha(string $fecha): void
+    {
+        $this->fechaSeleccionada = $fecha;
     }
 
 

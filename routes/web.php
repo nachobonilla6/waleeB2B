@@ -140,7 +140,26 @@ Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaE
     ->middleware('auth')
     ->name('clients.propuesta-enviada');
 
-// Ruta ejemplo1 - Página simplificada móvil-friendly
+// Ruta ejemplo1 - Información de Filament optimizada para móviles
 Route::get('/ejemplo1', function () {
-    return view('ejemplo1-mobile');
+    $clientes = \App\Models\Cliente::count();
+    $clientesActivos = \App\Models\Cliente::where('estado_cuenta', 'activo')->count();
+    $citasHoy = \App\Models\Cita::whereDate('fecha_inicio', today())->where('estado', '!=', 'cancelada')->count();
+    $citasProximas = \App\Models\Cita::where('fecha_inicio', '>=', now())
+        ->where('estado', '!=', 'cancelada')
+        ->orderBy('fecha_inicio', 'asc')
+        ->limit(5)
+        ->with('cliente')
+        ->get();
+    $citasTotal = \App\Models\Cita::where('estado', '!=', 'cancelada')->count();
+    $usuarios = \App\Models\User::count();
+    
+    return view('ejemplo1-mobile', compact(
+        'clientes',
+        'clientesActivos',
+        'citasHoy',
+        'citasProximas',
+        'citasTotal',
+        'usuarios'
+    ));
 })->name('ejemplo1');

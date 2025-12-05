@@ -20,6 +20,11 @@ class N8nWorkflows extends Page
     {
         return true;
     }
+    
+    public static function canAccess(): bool
+    {
+        return true;
+    }
 
     protected static string $view = 'filament.pages.n8n-workflows';
 

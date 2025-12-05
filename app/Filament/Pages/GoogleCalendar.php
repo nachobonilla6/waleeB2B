@@ -41,46 +41,66 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     protected function getFormSchema(): array
     {
         return [
-            TextInput::make('titulo')
-                ->label('Título de la Cita')
-                ->required()
-                ->maxLength(255)
-                ->placeholder('Ej: Reunión con cliente'),
-            Textarea::make('descripcion')
-                ->label('Descripción')
-                ->rows(3)
-                ->placeholder('Detalles adicionales de la cita...'),
-            DateTimePicker::make('fecha_inicio')
-                ->label('Fecha y Hora de Inicio')
-                ->required()
-                ->native(false)
-                ->seconds(false)
-                ->displayFormat('d/m/Y H:i')
-                ->timezone(config('app.timezone', 'America/Mexico_City')),
-            DateTimePicker::make('fecha_fin')
-                ->label('Fecha y Hora de Fin')
-                ->native(false)
-                ->seconds(false)
-                ->displayFormat('d/m/Y H:i')
-                ->timezone(config('app.timezone', 'America/Mexico_City'))
-                ->after('fecha_inicio'),
-            TextInput::make('cliente')
-                ->label('Cliente')
-                ->maxLength(255)
-                ->placeholder('Nombre del cliente'),
-            TextInput::make('ubicacion')
-                ->label('Ubicación')
-                ->maxLength(255)
-                ->placeholder('Dirección o lugar de la cita'),
-            Select::make('estado')
-                ->label('Estado')
-                ->options([
-                    'programada' => 'Programada',
-                    'completada' => 'Completada',
-                    'cancelada' => 'Cancelada',
+            \Filament\Forms\Components\Section::make('Información de la Cita')
+                ->schema([
+                    TextInput::make('titulo')
+                        ->label('Título')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('Ej: Reunión con cliente')
+                        ->columnSpan(2),
+                    TextInput::make('cliente')
+                        ->label('Cliente')
+                        ->maxLength(255)
+                        ->placeholder('Nombre del cliente'),
+                    Select::make('estado')
+                        ->label('Estado')
+                        ->options([
+                            'programada' => 'Programada',
+                            'completada' => 'Completada',
+                            'cancelada' => 'Cancelada',
+                        ])
+                        ->default('programada')
+                        ->required(),
                 ])
-                ->default('programada')
-                ->required(),
+                ->columns(3)
+                ->compact(),
+            \Filament\Forms\Components\Section::make('Fecha y Hora')
+                ->schema([
+                    DateTimePicker::make('fecha_inicio')
+                        ->label('Inicio')
+                        ->required()
+                        ->native(false)
+                        ->seconds(false)
+                        ->displayFormat('d/m/Y H:i')
+                        ->timezone(config('app.timezone', 'America/Mexico_City'))
+                        ->default(now()->addHour()->startOfHour()),
+                    DateTimePicker::make('fecha_fin')
+                        ->label('Fin')
+                        ->native(false)
+                        ->seconds(false)
+                        ->displayFormat('d/m/Y H:i')
+                        ->timezone(config('app.timezone', 'America/Mexico_City'))
+                        ->default(now()->addHours(2)->startOfHour())
+                        ->after('fecha_inicio'),
+                ])
+                ->columns(2)
+                ->compact(),
+            \Filament\Forms\Components\Section::make('Detalles Adicionales')
+                ->schema([
+                    TextInput::make('ubicacion')
+                        ->label('Ubicación')
+                        ->maxLength(255)
+                        ->placeholder('Dirección o lugar de la cita'),
+                    Textarea::make('descripcion')
+                        ->label('Descripción')
+                        ->rows(2)
+                        ->placeholder('Detalles adicionales...')
+                        ->columnSpanFull(),
+                ])
+                ->columns(1)
+                ->compact()
+                ->collapsible(),
         ];
     }
 
@@ -99,6 +119,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                 ->icon('heroicon-o-plus')
                 ->color('success')
                 ->form($this->getFormSchema())
+                ->modalWidth('md')
                 ->action(function (array $data) {
                     $cita = Cita::create($data);
                     
@@ -159,6 +180,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                 ->icon('heroicon-o-pencil')
                 ->color('info')
                 ->form($this->getFormSchema())
+                ->modalWidth('md')
                 ->fillForm(function (array $arguments) {
                     $cita = Cita::findOrFail($arguments['id']);
                     return [

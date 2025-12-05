@@ -34,6 +34,8 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     protected static string $view = 'filament.pages.google-calendar';
 
     public ?array $data = [];
+    
+    public ?string $activeTab = 'calendario';
 
     public function mount(): void
     {

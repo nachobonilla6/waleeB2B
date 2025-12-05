@@ -13,8 +13,8 @@ class GoogleCalendarService
 
     public function __construct()
     {
-        $this->apiKey = config('services.google.calendar_api_key', '');
-        $this->calendarId = config('services.google.calendar_id', 'primary');
+        $this->apiKey = (string) (config('services.google.calendar_api_key') ?? '');
+        $this->calendarId = (string) (config('services.google.calendar_id') ?? 'primary');
     }
 
     /**

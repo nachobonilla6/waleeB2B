@@ -77,6 +77,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Contenido')
                     ->icon('heroicon-o-document-text'),
                 NavigationGroup::make()
+                    ->label('Automatizaciones')
+                    ->icon('heroicon-o-cpu-chip'),
+                NavigationGroup::make()
                     ->label('Soporte')
                     ->icon('heroicon-o-lifebuoy'),
                 NavigationGroup::make()

@@ -13,8 +13,8 @@ class N8nWorkflows extends Page
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
     protected static ?string $navigationLabel = 'N8N Automatizaciones';
     protected static ?string $title = 'N8N Automatizaciones';
-    protected static ?string $navigationGroup = 'Soporte';
-    protected static ?int $navigationSort = 11;
+    protected static ?string $navigationGroup = 'Automatizaciones';
+    protected static ?int $navigationSort = 1;
     
     public static function shouldRegisterNavigation(): bool
     {

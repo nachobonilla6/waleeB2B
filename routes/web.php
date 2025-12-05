@@ -139,3 +139,8 @@ Route::get('/camas', function () {
 Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaEnviadaController::class, 'index'])
     ->middleware('auth')
     ->name('clients.propuesta-enviada');
+
+// Ruta ejemplo1 - Página mejorada de ubicación
+Route::get('/ejemplo1', function () {
+    return view('ejemplo1');
+})->name('ejemplo1');

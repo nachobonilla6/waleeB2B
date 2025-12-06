@@ -47,9 +47,11 @@ class ViewCliente extends Page
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
-                ->afterFormValidated(function (array $data) {
+                ->afterFormValidated(function (array $data, $action) {
                     // Guardar los datos en la propiedad de la clase
                     $this->cotizacionData = $data;
+                    // También guardar en la acción para acceso desde footer
+                    $action->formData($data);
                 })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([
@@ -145,13 +147,20 @@ class ViewCliente extends Page
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
+                        ->requiresFormSubmission()
                         ->action(function () use ($action) {
                             // Obtener datos del formulario de la acción principal
-                            $data = $action->getFormData();
+                            $parentAction = $this->getMountedAction();
+                            $data = $parentAction ? $parentAction->getFormData() : [];
                             
                             // Si está vacío, intentar usar los datos guardados
                             if (empty($data)) {
                                 $data = $this->cotizacionData;
+                            }
+                            
+                            // Si aún está vacío, intentar obtener de la acción actual
+                            if (empty($data)) {
+                                $data = $action->getFormData();
                             }
                             
                             try {

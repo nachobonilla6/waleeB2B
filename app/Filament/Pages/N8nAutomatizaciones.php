@@ -25,13 +25,33 @@ class N8nAutomatizaciones extends Page
             $n8nService = new N8nService();
             $workflows = $n8nService->getWorkflows();
             
+            $workflowsCollection = collect([]);
             if (isset($workflows['data']) && is_array($workflows['data'])) {
-                return count($workflows['data']);
+                $workflowsCollection = collect($workflows['data']);
             } elseif (is_array($workflows)) {
-                return count($workflows);
+                $workflowsCollection = collect($workflows);
             }
             
-            return '0';
+            // Filtrar workflows archivados
+            $activeWorkflows = $workflowsCollection->filter(function ($workflow) {
+                if (isset($workflow['archived']) && $workflow['archived'] === true) {
+                    return false;
+                }
+                
+                if (isset($workflow['tags']) && is_array($workflow['tags'])) {
+                    foreach ($workflow['tags'] as $tag) {
+                        if (is_array($tag) && isset($tag['name']) && strtolower($tag['name']) === 'archived') {
+                            return false;
+                        } elseif (is_string($tag) && strtolower($tag) === 'archived') {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            });
+            
+            return (string) $activeWorkflows->count();
         } catch (\Exception $e) {
             return null;
         }
@@ -53,12 +73,33 @@ class N8nAutomatizaciones extends Page
         $workflows = $this->n8nService->getWorkflows();
         // La API de n8n puede devolver los datos en diferentes formatos
         if (isset($workflows['data']) && is_array($workflows['data'])) {
-            $this->workflows = collect($workflows['data']);
+            $workflowsCollection = collect($workflows['data']);
         } elseif (is_array($workflows)) {
-            $this->workflows = collect($workflows);
+            $workflowsCollection = collect($workflows);
         } else {
-            $this->workflows = collect([]);
+            $workflowsCollection = collect([]);
         }
+        
+        // Filtrar workflows archivados (excluir los que tienen archived = true o tags que incluyan "archived")
+        $this->workflows = $workflowsCollection->filter(function ($workflow) {
+            // Excluir si está archivado
+            if (isset($workflow['archived']) && $workflow['archived'] === true) {
+                return false;
+            }
+            
+            // Excluir si tiene el tag "archived"
+            if (isset($workflow['tags']) && is_array($workflow['tags'])) {
+                foreach ($workflow['tags'] as $tag) {
+                    if (is_array($tag) && isset($tag['name']) && strtolower($tag['name']) === 'archived') {
+                        return false;
+                    } elseif (is_string($tag) && strtolower($tag) === 'archived') {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        });
     }
 
     public function updatedSearch(): void

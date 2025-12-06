@@ -53,7 +53,7 @@ class CotizacionesPage extends Page implements HasTable
         ];
     }
 
-    protected static function getRouteName(): string
+    public static function getRouteName(): string
     {
         return 'contabilidad.cotizaciones';
     }

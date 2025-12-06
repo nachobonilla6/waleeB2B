@@ -57,6 +57,7 @@ class ViewCliente extends Page
                         Forms\Components\TextInput::make('numero_cotizacion')
                             ->label('Nº Cotización')
                             ->default('COT-' . date('Ymd') . '-' . rand(100, 999))
+                            ->dehydrated()
                             ->disabled(),
                     ]),
                     Forms\Components\Grid::make(2)->schema([
@@ -136,9 +137,19 @@ class ViewCliente extends Page
                         ->action(function (array $data) {
                             try {
                                 // Enviar datos al webhook de n8n
+                                // Convertir fecha a string si es un objeto Carbon
+                                $fecha = $data['fecha'] ?? '';
+                                if ($fecha instanceof \Carbon\Carbon) {
+                                    $fecha = $fecha->format('Y-m-d');
+                                } elseif (is_string($fecha)) {
+                                    $fecha = $fecha;
+                                } else {
+                                    $fecha = '';
+                                }
+                                
                                 $webhookData = [
                                     'numero_cotizacion' => $data['numero_cotizacion'] ?? '',
-                                    'fecha' => $data['fecha'] ?? '',
+                                    'fecha' => $fecha,
                                     'idioma' => $data['idioma'] ?? '',
                                     'tipo_servicio' => $data['tipo_servicio'] ?? '',
                                     'plan' => $data['plan'] ?? '',

@@ -140,15 +140,48 @@ class ListClientes extends ListRecords
                             ->rows(2),
                     ]),
                 ])
-                ->modalSubmitAction(
+                ->modalFooterActionsAlignment(Alignment::End)
+                ->modalFooterActions(fn ($action) => [
+                    Actions\Action::make('cancelar')
+                        ->label('Cancelar')
+                        ->color('gray')
+                        ->close(),
+                    Actions\Action::make('borrador')
+                        ->label('💾 Guardar Borrador')
+                        ->color('warning')
+                        ->action(function () use ($action) {
+                            $data = $action->getFormData();
+                            $cliente = Cliente::find($data['cliente_id'] ?? null);
+                            Notification::make()
+                                ->title('📝 Borrador guardado')
+                                ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada como borrador.')
+                                ->warning()
+                                ->send();
+                        }),
                     Actions\Action::make('enviar')
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->action(function (array $data) {
-                            // Los datos vienen directamente del formulario validado
-                            $clienteId = $data['cliente_id'] ?? null;
-                            $cliente = $clienteId ? Cliente::find($clienteId) : null;
+                        ->action(function () use ($action) {
+                            // Obtener datos del formulario validado
+                            $form = $this->getMountedActionForm();
+                            $data = $form->getState();
+                            
+                            // Si está vacío, intentar obtener de otra manera
+                            if (empty($data)) {
+                                $parentAction = $this->getMountedAction();
+                                $data = $parentAction ? $parentAction->getFormData() : [];
+                            }
+                            
+                            // Si aún está vacío, mostrar error
+                            if (empty($data)) {
+                                Notification::make()
+                                    ->title('❌ Error')
+                                    ->body('No se pudieron obtener los datos del formulario. Por favor, completa el formulario y vuelve a intentar.')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
                             
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;

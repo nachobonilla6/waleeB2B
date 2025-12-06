@@ -80,13 +80,13 @@ class IngresosStatsWidget extends BaseWidget
             ->count();
 
         return [
-            Stat::make('Total Ingresos', Number::currency($totalIngresos, 'USD'))
+            Stat::make('Total Ingresos', Number::currency($totalIngresos, 'CRC'))
                 ->description('Facturas pagadas: ' . Number::format($totalFacturasPagadas))
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('success')
                 ->url(FacturaResource::getUrl('index')),
                 
-            Stat::make('Ingresos este mes', Number::currency($ingresosEsteMes, 'USD'))
+            Stat::make('Ingresos este mes', Number::currency($ingresosEsteMes, 'CRC'))
                 ->description($cambioMensual >= 0 ? "+{$cambioMensual}% vs mes pasado" : "{$cambioMensual}% vs mes pasado")
                 ->descriptionIcon($cambioMensual >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
                 ->color($cambioMensual >= 0 ? 'success' : 'danger')
@@ -98,12 +98,12 @@ class IngresosStatsWidget extends BaseWidget
                     $ingresosEsteMes,
                 ]),
                 
-            Stat::make('Ingresos este año', Number::currency($ingresosEsteAno, 'USD'))
+            Stat::make('Ingresos este año', Number::currency($ingresosEsteAno, 'CRC'))
                 ->description($cambioAnual >= 0 ? "+{$cambioAnual}% vs año pasado" : "{$cambioAnual}% vs año pasado")
                 ->descriptionIcon($cambioAnual >= 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-arrow-trending-down')
                 ->color($cambioAnual >= 0 ? 'success' : 'warning'),
                 
-            Stat::make('Ingresos hoy', Number::currency($ingresosHoy, 'USD'))
+            Stat::make('Ingresos hoy', Number::currency($ingresosHoy, 'CRC'))
                 ->description('Facturas pagadas hoy: ' . $facturasHoy)
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('info'),

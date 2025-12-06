@@ -63,7 +63,7 @@ class IngresosDiariosChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Ingresos (USD)',
+                    'label' => 'Ingresos (₡)',
                     'data' => $ingresosDiarios,
                     'borderColor' => 'rgb(34, 197, 94)', // Verde
                     'backgroundColor' => 'rgba(34, 197, 94, 0.1)',
@@ -82,7 +82,7 @@ class IngresosDiariosChart extends ChartWidget
                 'y' => [
                     'beginAtZero' => true,
                     'ticks' => [
-                        'callback' => 'function(value) { return "$" + value.toLocaleString(); }',
+                        'callback' => 'function(value) { return "₡" + value.toLocaleString(); }',
                     ],
                 ],
             ],
@@ -92,7 +92,7 @@ class IngresosDiariosChart extends ChartWidget
                 ],
                 'tooltip' => [
                     'callbacks' => [
-                        'label' => 'function(context) { return "$" + context.parsed.y.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}); }',
+                        'label' => 'function(context) { return "₡" + context.parsed.y.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}); }',
                     ],
                 ],
             ],

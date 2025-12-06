@@ -166,43 +166,9 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->action(function () use ($action) {
-                            // Obtener datos del formulario validado
-                            $parentAction = $this->getMountedAction();
-                            $data = [];
-                            
-                            if ($parentAction) {
-                                // Intentar obtener datos del formulario validado
-                                try {
-                                    $form = $this->getMountedActionForm(mountedAction: $parentAction);
-                                    if ($form) {
-                                        $data = $form->getState();
-                                    }
-                                } catch (\Exception $e) {
-                                    // Si falla, intentar obtener de otra manera
-                                }
-                                
-                                // Si está vacío, intentar obtener de getFormData
-                                if (empty($data)) {
-                                    $data = $parentAction->getFormData();
-                                }
-                            }
-                            
-                            // Si aún está vacío, usar los datos guardados
-                            if (empty($data)) {
-                                $data = $this->cotizacionData;
-                            }
-                            
-                            // Si aún está vacío, mostrar error
-                            if (empty($data)) {
-                                Notification::make()
-                                    ->title('❌ Error')
-                                    ->body('No se pudieron obtener los datos del formulario. Por favor, completa el formulario y vuelve a intentar.')
-                                    ->danger()
-                                    ->send();
-                                return;
-                            }
-                            
+                        ->requiresFormSubmission()
+                        ->action(function (array $data) {
+                            // Los datos vienen directamente del formulario validado
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             

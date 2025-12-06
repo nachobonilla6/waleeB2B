@@ -271,7 +271,9 @@ class ClientResource extends Resource
                                     ]);
 
                                     if ($response->successful()) {
-                                        $record->update(['propuesta_enviada' => true]);
+                                        if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                                            $record->update(['propuesta_enviada' => true]);
+                                        }
                                         $enviados++;
                                     } else {
                                         $errores++;
@@ -309,14 +311,21 @@ class ClientResource extends Resource
     {
         try {
             // Verificar si la tabla existe antes de hacer el query
-            if (!\Illuminate\Support\Facades\Schema::hasTable('clients')) {
+            if (!Schema::hasTable('clients')) {
                 return parent::getEloquentQuery()->whereRaw('1 = 0');
             }
-            return parent::getEloquentQuery()
-                ->where(function ($query) {
-                    $query->whereNull('propuesta_enviada')
-                          ->orWhere('propuesta_enviada', false);
+            
+            $query = parent::getEloquentQuery();
+            
+            // Verificar si la columna propuesta_enviada existe antes de usarla
+            if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                $query->where(function ($q) {
+                    $q->whereNull('propuesta_enviada')
+                      ->orWhere('propuesta_enviada', false);
                 });
+            }
+            
+            return $query;
         } catch (\Exception $e) {
             // Si hay algún error, retornar un query vacío
             return parent::getEloquentQuery()->whereRaw('1 = 0');

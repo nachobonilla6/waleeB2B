@@ -15,7 +15,7 @@
                 </div>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ClientResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <a href="{{ \App\Filament\Resources\ClientResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-gray-200 dark:border-gray-700">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,7 +29,7 @@
                 </div>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ClientPropuestaEnviadaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
+            <a href="{{ \App\Filament\Resources\ClientPropuestaEnviadaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-gray-200 dark:border-gray-700">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,13 +48,15 @@
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Enviar Datos</h3>
             <form wire:submit="enviarWebhook" class="space-y-4">
                 {{ $this->form }}
-                <x-filament::button
-                    type="submit"
-                    color="success"
-                    size="sm"
-                >
-                    Enviar a Webhook
-                </x-filament::button>
+                <div class="flex justify-end">
+                    <x-filament::button
+                        type="submit"
+                        color="success"
+                        size="sm"
+                    >
+                        Enviar a Webhook
+                    </x-filament::button>
+                </div>
             </form>
         </div>
     </div>

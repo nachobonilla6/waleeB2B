@@ -56,7 +56,16 @@ class FacturasPage extends Page implements HasTable
                                 ->label('Cliente')
                                 ->options(Cliente::pluck('nombre_empresa', 'id'))
                                 ->searchable()
-                                ->required(),
+                                ->required()
+                                ->live()
+                                ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                    if ($state) {
+                                        $cliente = Cliente::find($state);
+                                        if ($cliente?->correo) {
+                                            $set('correo', $cliente->correo);
+                                        }
+                                    }
+                                }),
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('numero_factura')
                                     ->label('Nº Factura')
@@ -128,10 +137,11 @@ class FacturasPage extends Page implements HasTable
                                     ->displayFormat('d/m/Y'),
                             ]),
                             Forms\Components\TextInput::make('correo')
-                                ->label('Correo electrónico')
+                                ->label('Correo electrónico para envío')
                                 ->email()
                                 ->placeholder('correo@ejemplo.com')
-                                ->helperText('Correo donde se enviará la factura'),
+                                ->helperText('Correo donde se enviará la factura. Se auto-completa con el correo del cliente seleccionado.')
+                                ->required(),
                             Forms\Components\Textarea::make('notas')
                                 ->label('Notas')
                                 ->rows(3)

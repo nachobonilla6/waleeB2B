@@ -238,7 +238,16 @@ class CotizacionesPage extends Page implements HasTable
                                 ->label('Cliente')
                                 ->options(Cliente::pluck('nombre_empresa', 'id'))
                                 ->searchable()
-                                ->required(),
+                                ->required()
+                                ->live()
+                                ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                    if ($state) {
+                                        $cliente = Cliente::find($state);
+                                        if ($cliente?->correo) {
+                                            $set('correo', $cliente->correo);
+                                        }
+                                    }
+                                }),
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('numero_factura')
                                     ->label('Nº Factura')

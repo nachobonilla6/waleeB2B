@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Contabilidad;
 
 use App\Filament\Resources\FacturaResource;
+use App\Filament\Resources\CotizacionResource;
 use App\Models\Factura;
 use Filament\Pages\Page;
 use Filament\Actions;
@@ -36,6 +37,15 @@ class FacturasPage extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make()
+                ->label('Nueva Factura')
+                ->icon('heroicon-o-plus')
+                ->url(FacturaResource::getUrl('create')),
+            Actions\Action::make('nueva_cotizacion')
+                ->label('Nueva Cotización')
+                ->icon('heroicon-o-document-plus')
+                ->color('primary')
+                ->url(CotizacionResource::getUrl('create')),
             Actions\Action::make('facturas')
                 ->label('Facturas')
                 ->icon('heroicon-o-banknotes')

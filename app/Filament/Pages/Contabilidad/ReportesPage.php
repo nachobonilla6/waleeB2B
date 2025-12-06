@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Contabilidad;
 
 use App\Filament\Pages\Entradas;
 use App\Filament\Pages\Salidas;
+use App\Filament\Widgets\ReportesStatsWidget;
 use Filament\Pages\Page;
 use Filament\Actions;
 
@@ -19,6 +20,24 @@ class ReportesPage extends Page
     protected static string $view = 'filament.pages.contabilidad.reportes-page';
     
     protected static ?string $slug = 'contabilidad/reportes';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ReportesStatsWidget::class,
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 1,
+            'md' => 2,
+            'lg' => 3,
+            'xl' => 3,
+            '2xl' => 3,
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

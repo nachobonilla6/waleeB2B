@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Contabilidad;
 
 use App\Filament\Resources\CotizacionResource;
+use App\Filament\Resources\FacturaResource;
 use App\Models\Cotizacion;
 use Filament\Pages\Page;
 use Filament\Actions;
@@ -40,6 +41,11 @@ class CotizacionesPage extends Page implements HasTable
                 ->label('Nueva Cotización')
                 ->icon('heroicon-o-plus')
                 ->url(CotizacionResource::getUrl('create')),
+            Actions\Action::make('nueva_factura')
+                ->label('Nueva Factura')
+                ->icon('heroicon-o-banknotes')
+                ->color('primary')
+                ->url(FacturaResource::getUrl('create')),
             Actions\Action::make('facturas')
                 ->label('Facturas')
                 ->icon('heroicon-o-banknotes')

@@ -17,6 +17,8 @@ class ReportesPage extends Page
     protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.pages.contabilidad.reportes-page';
+    
+    protected static ?string $slug = 'contabilidad/reportes';
 
     protected function getHeaderActions(): array
     {
@@ -37,19 +39,6 @@ class ReportesPage extends Page
                 ->color('success')
                 ->url(static::getUrl()),
         ];
-    }
-
-    public static function getRouteName(?string $panel = null): string
-    {
-        return 'contabilidad.reportes';
-    }
-
-    public static function getRoutes(): \Closure
-    {
-        return function () {
-            \Illuminate\Support\Facades\Route::get('/contabilidad/reportes', static::class)
-                ->name(static::getRouteName());
-        };
     }
 }
 

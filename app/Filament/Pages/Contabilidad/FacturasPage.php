@@ -22,6 +22,8 @@ class FacturasPage extends Page implements HasTable
     protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.pages.contabilidad.facturas-page';
+    
+    protected static ?string $slug = 'contabilidad/facturas';
 
     public function table(Table $table): Table
     {
@@ -49,19 +51,6 @@ class FacturasPage extends Page implements HasTable
                 ->color('gray')
                 ->url(ReportesPage::getUrl()),
         ];
-    }
-
-    public static function getRouteName(?string $panel = null): string
-    {
-        return 'contabilidad.facturas';
-    }
-
-    public static function getRoutes(): \Closure
-    {
-        return function () {
-            \Illuminate\Support\Facades\Route::get('/contabilidad/facturas', static::class)
-                ->name(static::getRouteName());
-        };
     }
 }
 

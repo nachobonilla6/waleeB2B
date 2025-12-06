@@ -166,19 +166,18 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->action(function () use ($action) {
-                            // Obtener datos del formulario de la acción principal
-                            $parentAction = $this->getMountedAction();
-                            $data = $parentAction ? $parentAction->getFormData() : [];
+                        ->action(function () {
+                            // Usar los datos guardados en afterFormValidated
+                            $data = $this->cotizacionData;
                             
-                            // Si está vacío, intentar usar los datos guardados
+                            // Si está vacío, mostrar error
                             if (empty($data)) {
-                                $data = $this->cotizacionData;
-                            }
-                            
-                            // Si aún está vacío, intentar obtener de la acción actual
-                            if (empty($data)) {
-                                $data = $action->getFormData();
+                                Notification::make()
+                                    ->title('❌ Error')
+                                    ->body('No se pudieron obtener los datos del formulario. Por favor, completa el formulario y vuelve a intentar.')
+                                    ->danger()
+                                    ->send();
+                                return;
                             }
                             
                             $clienteId = $data['cliente_id'] ?? null;

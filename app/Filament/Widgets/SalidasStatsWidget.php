@@ -60,6 +60,7 @@ class SalidasStatsWidget extends BaseWidget
                 ->description('Facturas pendientes/vencidas: ' . Number::format($totalFacturasPendientes))
                 ->descriptionIcon('heroicon-m-arrow-up-circle')
                 ->color('warning')
+                ->url(\App\Filament\Pages\Salidas::getUrl())
                 ->chart([
                     $salidasMesPasado > 0 ? $salidasMesPasado * 0.8 : 0,
                     $salidasMesPasado > 0 ? $salidasMesPasado * 0.9 : 0,

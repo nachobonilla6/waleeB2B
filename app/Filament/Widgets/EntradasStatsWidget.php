@@ -61,6 +61,7 @@ class EntradasStatsWidget extends BaseWidget
                 ->description('Facturas pagadas: ' . Number::format($totalFacturasPagadas))
                 ->descriptionIcon('heroicon-m-arrow-down-circle')
                 ->color('success')
+                ->url(\App\Filament\Pages\Entradas::getUrl())
                 ->chart([
                     $entradasMesPasado > 0 ? $entradasMesPasado * 0.8 : 0,
                     $entradasMesPasado > 0 ? $entradasMesPasado * 0.9 : 0,

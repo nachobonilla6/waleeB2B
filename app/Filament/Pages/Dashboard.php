@@ -18,6 +18,22 @@ class Dashboard extends BaseDashboard
         ];
     }
 
+    /**
+     * Sobrescribir para evitar que se muestren widgets descubiertos automáticamente
+     */
+    public function getWidgets(): array
+    {
+        return $this->getHeaderWidgets();
+    }
+
+    /**
+     * Sobrescribir para evitar que se muestren widgets descubiertos automáticamente
+     */
+    public function getVisibleWidgets(): array
+    {
+        return $this->getHeaderWidgets();
+    }
+
     public function getColumns(): int | string | array
     {
         return [

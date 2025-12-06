@@ -134,9 +134,15 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->action(function () {
-                            // Usar los datos guardados en la propiedad de la clase
-                            $data = $this->cotizacionData;
+                        ->action(function () use ($action) {
+                            // Obtener datos del formulario de la acción principal
+                            $data = $action->getFormData();
+                            
+                            // Si está vacío, intentar usar los datos guardados
+                            if (empty($data)) {
+                                $data = $this->cotizacionData;
+                            }
+                            
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             
@@ -151,8 +157,8 @@ class ListClientes extends ListRecords
                                     $fecha = '';
                                 }
                                 
-                                // Preparar datos para el webhook
-                                $webhookData = [
+                                // Preparar datos para el email
+                                $emailData = [
                                     'numero_cotizacion' => (string) ($data['numero_cotizacion'] ?? ''),
                                     'fecha' => (string) $fecha,
                                     'idioma' => (string) ($data['idioma'] ?? ''),
@@ -174,14 +180,14 @@ class ListClientes extends ListRecords
                                 if (empty($correoDestino)) {
                                     Notification::make()
                                         ->title('❌ Error')
-                                        ->body('No se especificó un correo electrónico para enviar la cotización.')
+                                        ->body('No se especificó un correo electrónico para enviar la cotización. Datos recibidos: ' . json_encode($data))
                                         ->danger()
                                         ->send();
                                     return;
                                 }
                                 
                                 try {
-                                    Mail::to($correoDestino)->send(new CotizacionMail($webhookData));
+                                    Mail::to($correoDestino)->send(new CotizacionMail($emailData));
                                     
                                     Notification::make()
                                         ->title('✅ Cotización enviada')

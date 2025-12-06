@@ -29,6 +29,11 @@ class BotConfiguracion extends Page implements HasForms
 
     protected static string $view = 'filament.pages.bot-configuracion';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return '1';
+    }
+
     public ?array $data = [];
 
     public function mount(): void

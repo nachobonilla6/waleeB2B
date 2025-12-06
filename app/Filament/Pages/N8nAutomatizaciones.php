@@ -19,6 +19,24 @@ class N8nAutomatizaciones extends Page
 
     protected static string $view = 'filament.pages.n8n-automatizaciones';
 
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            $n8nService = new N8nService();
+            $workflows = $n8nService->getWorkflows();
+            
+            if (isset($workflows['data']) && is_array($workflows['data'])) {
+                return count($workflows['data']);
+            } elseif (is_array($workflows)) {
+                return count($workflows);
+            }
+            
+            return '0';
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     protected N8nService $n8nService;
     public Collection $workflows;
     public ?string $filterActive = null;

@@ -7,10 +7,17 @@ use App\Filament\Resources\CotizacionResource;
 use App\Filament\Pages\Contabilidad;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
+use Filament\View\PanelsRenderHook;
 
 class ListFacturas extends ListRecords
 {
     protected static string $resource = FacturaResource::class;
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     protected function getHeaderActions(): array
     {

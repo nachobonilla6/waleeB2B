@@ -49,42 +49,22 @@
 
         <div class="mt-6">
             @if($activeTab === 'facturas')
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Facturas</h2>
-                            <a href="{{ \App\Filament\Resources\FacturaResource::getUrl('index') }}" class="fi-btn fi-btn-size-sm fi-btn-color-primary rounded-lg px-4 py-2 text-sm font-medium">
-                                Abrir en página completa
-                            </a>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <iframe 
-                            src="{{ \App\Filament\Resources\FacturaResource::getUrl('index') }}" 
-                            class="w-full border-0 rounded-lg"
-                            style="height: calc(100vh - 400px); min-height: 600px;"
-                            frameborder="0"
-                        ></iframe>
-                    </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <iframe 
+                        src="{{ \App\Filament\Resources\FacturaResource::getUrl('index') }}?embed=1" 
+                        class="w-full border-0"
+                        style="height: calc(100vh - 300px); min-height: 600px; display: block;"
+                        frameborder="0"
+                    ></iframe>
                 </div>
             @elseif($activeTab === 'cotizaciones')
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Cotizaciones</h2>
-                            <a href="{{ \App\Filament\Resources\CotizacionResource::getUrl('index') }}" class="fi-btn fi-btn-size-sm fi-btn-color-primary rounded-lg px-4 py-2 text-sm font-medium">
-                                Abrir en página completa
-                            </a>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <iframe 
-                            src="{{ \App\Filament\Resources\CotizacionResource::getUrl('index') }}" 
-                            class="w-full border-0 rounded-lg"
-                            style="height: calc(100vh - 400px); min-height: 600px;"
-                            frameborder="0"
-                        ></iframe>
-                    </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <iframe 
+                        src="{{ \App\Filament\Resources\CotizacionResource::getUrl('index') }}?embed=1" 
+                        class="w-full border-0"
+                        style="height: calc(100vh - 300px); min-height: 600px; display: block;"
+                        frameborder="0"
+                    ></iframe>
                 </div>
             @elseif($activeTab === 'reportes')
                 <div class="space-y-6">

@@ -3,12 +3,14 @@
 namespace App\Filament\Pages\Contabilidad;
 
 use App\Filament\Resources\FacturaResource;
+use App\Models\Factura;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Builder;
 
 class FacturasPage extends Page implements HasTable
 {
@@ -28,6 +30,11 @@ class FacturasPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return FacturaResource::table($table);
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return Factura::query();
     }
 
     protected function getHeaderActions(): array

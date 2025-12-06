@@ -3,12 +3,14 @@
 namespace App\Filament\Pages\Contabilidad;
 
 use App\Filament\Resources\CotizacionResource;
+use App\Models\Cotizacion;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Builder;
 
 class CotizacionesPage extends Page implements HasTable
 {
@@ -28,6 +30,11 @@ class CotizacionesPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return CotizacionResource::table($table);
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return Cotizacion::query();
     }
 
     protected function getHeaderActions(): array

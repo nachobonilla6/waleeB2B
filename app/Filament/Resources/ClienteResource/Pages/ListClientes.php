@@ -216,6 +216,25 @@ class ListClientes extends ListRecords
                                     ->danger()
                                     ->send();
                             }
+                        })
+                )
+                ->modalFooterActionsAlignment(Alignment::End)
+                ->modalFooterActions(fn ($action) => [
+                    Actions\Action::make('cancelar')
+                        ->label('Cancelar')
+                        ->color('gray')
+                        ->close(),
+                    Actions\Action::make('borrador')
+                        ->label('💾 Guardar Borrador')
+                        ->color('warning')
+                        ->action(function () use ($action) {
+                            $data = $action->getFormData();
+                            $cliente = Cliente::find($data['cliente_id'] ?? null);
+                            Notification::make()
+                                ->title('📝 Borrador guardado')
+                                ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada como borrador.')
+                                ->warning()
+                                ->send();
                         }),
                 ]),
             Actions\Action::make('factura')

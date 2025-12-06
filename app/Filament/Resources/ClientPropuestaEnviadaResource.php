@@ -131,13 +131,6 @@ class ClientPropuestaEnviadaResource extends Resource
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(10)
             ->heading('Propuestas Enviadas')
-            ->description(function () {
-                try {
-                    return 'Nombre, correo y fecha de propuesta enviada. Total: ' . static::getEloquentQuery()->count();
-                } catch (\Exception $e) {
-                    return 'Nombre, correo y fecha de propuesta enviada. Total: 0';
-                }
-            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

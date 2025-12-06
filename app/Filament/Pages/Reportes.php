@@ -3,8 +3,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
-use App\Filament\Widgets\EntradasStatsWidget;
-use App\Filament\Widgets\SalidasStatsWidget;
 use App\Models\Factura;
 
 class Reportes extends Page
@@ -25,10 +23,7 @@ class Reportes extends Page
 
     protected function getHeaderWidgets(): array
     {
-        return [
-            EntradasStatsWidget::class,
-            SalidasStatsWidget::class,
-        ];
+        return [];
     }
 
     public function getColumns(): int | string | array

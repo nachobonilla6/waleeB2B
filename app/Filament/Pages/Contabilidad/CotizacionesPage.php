@@ -227,7 +227,7 @@ class CotizacionesPage extends Page implements HasTable
                 ->successNotificationTitle('Cotización creada exitosamente'),
             Actions\CreateAction::make('nueva_factura')
                 ->label('Nueva Factura')
-                ->icon('heroicon-o-banknotes')
+                ->icon('heroicon-o-document-plus')
                 ->color('primary')
                 ->model(Factura::class)
                 ->steps([

@@ -35,7 +35,7 @@ class ReportesPage extends Page
         return [
             Actions\CreateAction::make()
                 ->label('Nueva Factura')
-                ->icon('heroicon-o-banknotes')
+                ->icon('heroicon-o-plus')
                 ->color('success')
                 ->model(Factura::class)
                 ->steps([

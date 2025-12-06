@@ -60,10 +60,12 @@ class BookmarkResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('enlace')
                     ->label('Enlace')
-                    ->url(fn ($record) => $record->enlace, shouldOpenInNewTab: true)
+                    ->url(fn ($record) => $record->enlace)
+                    ->openUrlInNewTab()
                     ->searchable()
                     ->limit(50)
-                    ->copyable(),
+                    ->copyable()
+                    ->default('—'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime('d/m/Y H:i')

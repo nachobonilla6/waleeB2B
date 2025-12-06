@@ -15,5 +15,10 @@ class ListClients extends ListRecords
         return [];
     }
     
+    public function getTitle(): string
+    {
+        return '';
+    }
+    
     protected static string $view = 'filament.resources.client-resource.pages.list-clients';
 }

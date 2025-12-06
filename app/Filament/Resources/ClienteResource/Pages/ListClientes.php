@@ -136,7 +136,6 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->requiresFormSubmission()
                         ->action(function () use ($action) {
                             // Obtener datos del formulario de la acción principal
                             $parentAction = $this->getMountedAction();

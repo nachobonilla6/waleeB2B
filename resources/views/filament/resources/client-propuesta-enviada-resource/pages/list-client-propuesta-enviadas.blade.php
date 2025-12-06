@@ -3,6 +3,7 @@
         'fi-resource-list-records-page',
         'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
     ])
+    :heading="false"
 >
     <div class="flex flex-col gap-y-6">
         <x-filament-panels::resources.tabs />

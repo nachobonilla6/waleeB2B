@@ -112,46 +112,49 @@ class ListClientes extends ListRecords
                     Actions\Action::make('borrador')
                         ->label('💾 Guardar Borrador')
                         ->color('warning')
-                        ->action(function (array $data) {
-                            $cliente = Cliente::find($data['cliente_id']);
+                        ->action(function () use ($action) {
+                            $data = $action->getFormData();
+                            $cliente = Cliente::find($data['cliente_id'] ?? null);
                             Notification::make()
                                 ->title('📝 Borrador guardado')
-                                ->body('Cotización ' . $data['numero_cotizacion'] . ' guardada como borrador.')
+                                ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada como borrador.')
                                 ->warning()
                                 ->send();
                         }),
                     Actions\Action::make('enviar')
                         ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
-                        ->action(function (array $data) {
+                        ->action(function () use ($action) {
+                            $data = $action->getFormData();
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             
                             try {
-                                // Enviar datos al webhook de n8n
                                 // Convertir fecha a string si es un objeto Carbon
                                 $fecha = $data['fecha'] ?? '';
                                 if ($fecha instanceof \Carbon\Carbon) {
                                     $fecha = $fecha->format('Y-m-d');
-                                } elseif (is_string($fecha)) {
+                                } elseif (is_string($fecha) && !empty($fecha)) {
+                                    // Si ya es string, mantenerlo
                                     $fecha = $fecha;
                                 } else {
                                     $fecha = '';
                                 }
                                 
+                                // Preparar datos para el webhook
                                 $webhookData = [
-                                    'numero_cotizacion' => $data['numero_cotizacion'] ?? '',
-                                    'fecha' => $fecha,
-                                    'idioma' => $data['idioma'] ?? '',
-                                    'tipo_servicio' => $data['tipo_servicio'] ?? '',
-                                    'plan' => $data['plan'] ?? '',
-                                    'monto' => $data['monto'] ?? '',
-                                    'vigencia' => $data['vigencia'] ?? '',
-                                    'correo' => $data['correo'] ?? '',
-                                    'descripcion' => $data['descripcion'] ?? '',
+                                    'numero_cotizacion' => (string) ($data['numero_cotizacion'] ?? ''),
+                                    'fecha' => (string) $fecha,
+                                    'idioma' => (string) ($data['idioma'] ?? ''),
+                                    'tipo_servicio' => (string) ($data['tipo_servicio'] ?? ''),
+                                    'plan' => (string) ($data['plan'] ?? ''),
+                                    'monto' => (string) ($data['monto'] ?? ''),
+                                    'vigencia' => (string) ($data['vigencia'] ?? ''),
+                                    'correo' => (string) ($data['correo'] ?? ''),
+                                    'descripcion' => (string) ($data['descripcion'] ?? ''),
                                     'cliente_id' => $clienteId,
-                                    'cliente_nombre' => $cliente?->nombre_empresa ?? '',
-                                    'cliente_correo' => $cliente?->correo ?? '',
+                                    'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
+                                    'cliente_correo' => (string) ($cliente?->correo ?? ''),
                                     'timestamp' => now()->toIso8601String(),
                                 ];
 

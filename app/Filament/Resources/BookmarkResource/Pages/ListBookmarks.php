@@ -14,6 +14,7 @@ class ListBookmarks extends ListRecords
     {
         return [
             Actions\CreateAction::make()
+                ->modalWidth('md')
                 ->form([
                     \Filament\Forms\Components\TextInput::make('categoria')
                         ->label('Categoría')

@@ -64,6 +64,19 @@ class AdminPanelProvider extends PanelProvider
                         min-width: 400px !important;
                         max-width: 800px !important;
                     }
+                    /* Modales más cuadrados */
+                    .fi-modal {
+                        border-radius: 4px !important;
+                    }
+                    .fi-modal-content {
+                        border-radius: 4px !important;
+                    }
+                    .fi-modal-header {
+                        border-radius: 4px 4px 0 0 !important;
+                    }
+                    .fi-modal-footer {
+                        border-radius: 0 0 4px 4px !important;
+                    }
                 </style>'
             )
             ->navigationGroups([

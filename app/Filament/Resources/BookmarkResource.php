@@ -88,6 +88,7 @@ class BookmarkResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->modalWidth('md')
                     ->form([
                         Forms\Components\TextInput::make('categoria')
                             ->label('Categoría')

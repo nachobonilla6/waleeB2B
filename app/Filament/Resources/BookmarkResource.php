@@ -50,6 +50,31 @@ class BookmarkResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('favicon')
+                    ->label('')
+                    ->getStateUsing(function ($record) {
+                        if (empty($record->enlace)) {
+                            return null;
+                        }
+                        try {
+                            $url = parse_url($record->enlace);
+                            $domain = $url['host'] ?? null;
+                            if ($domain) {
+                                // Remover www. si existe
+                                $domain = preg_replace('/^www\./', '', $domain);
+                                // Usar el servicio de Google para obtener el favicon
+                                return "https://www.google.com/s2/favicons?domain={$domain}&sz=32";
+                            }
+                        } catch (\Exception $e) {
+                            return null;
+                        }
+                        return null;
+                    })
+                    ->defaultImageUrl('data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" fill="#ccc"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="20">🔗</text></svg>'))
+                    ->circular(false)
+                    ->width(32)
+                    ->height(32)
+                    ->grow(false),
                 Tables\Columns\TextColumn::make('categoria')
                     ->label('Categoría')
                     ->searchable()

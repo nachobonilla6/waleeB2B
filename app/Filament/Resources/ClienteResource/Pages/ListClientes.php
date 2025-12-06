@@ -167,7 +167,7 @@ class ListClientes extends ListRecords
                         ->color('success')
                         ->icon('heroicon-o-envelope')
                         ->action(function () {
-                            // Obtener la acción principal y validar el formulario
+                            // Obtener la acción principal
                             $parentAction = $this->getMountedAction();
                             
                             if (!$parentAction) {
@@ -179,29 +179,33 @@ class ListClientes extends ListRecords
                                 return;
                             }
                             
-                            // Obtener y validar el formulario
-                            try {
-                                $form = $this->getMountedActionForm(mountedAction: $parentAction);
-                                if (!$form) {
-                                    throw new \Exception('No se pudo obtener el formulario.');
+                            // Obtener datos del formulario usando getFormData
+                            $data = $parentAction->getFormData();
+                            
+                            // Si está vacío, intentar obtener de otra manera
+                            if (empty($data)) {
+                                // Intentar obtener usando el método del formulario
+                                try {
+                                    $form = $this->getMountedActionForm();
+                                    if ($form) {
+                                        $data = $form->getState();
+                                    }
+                                } catch (\Exception $e) {
+                                    // Si falla, usar los datos guardados
+                                    $data = $this->cotizacionData;
                                 }
-                                
-                                // Validar y obtener el estado del formulario
-                                $data = $form->getState();
-                            } catch (\Exception $e) {
-                                Notification::make()
-                                    ->title('❌ Error de validación')
-                                    ->body('Por favor, completa todos los campos requeridos: ' . $e->getMessage())
-                                    ->danger()
-                                    ->send();
-                                return;
                             }
                             
-                            // Si está vacío, mostrar error
+                            // Si aún está vacío, usar los datos guardados
+                            if (empty($data)) {
+                                $data = $this->cotizacionData;
+                            }
+                            
+                            // Si aún está vacío, mostrar error
                             if (empty($data)) {
                                 Notification::make()
                                     ->title('❌ Error')
-                                    ->body('No se pudieron obtener los datos del formulario.')
+                                    ->body('No se pudieron obtener los datos del formulario. Por favor, completa el formulario y vuelve a intentar.')
                                     ->danger()
                                     ->send();
                                 return;

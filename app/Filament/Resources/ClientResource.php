@@ -109,6 +109,7 @@ class ClientResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(5)
+            ->heading('Clientes Google')
             ->description(function () {
                 try {
                     return 'Total: ' . \App\Models\Client::count();

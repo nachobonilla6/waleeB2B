@@ -166,9 +166,47 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->requiresFormSubmission()
-                        ->action(function (array $data) {
-                            // Los datos vienen directamente del formulario validado
+                        ->action(function () {
+                            // Obtener la acción principal y validar el formulario
+                            $parentAction = $this->getMountedAction();
+                            
+                            if (!$parentAction) {
+                                Notification::make()
+                                    ->title('❌ Error')
+                                    ->body('No se pudo obtener la acción del formulario.')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            
+                            // Obtener y validar el formulario
+                            try {
+                                $form = $this->getMountedActionForm(mountedAction: $parentAction);
+                                if (!$form) {
+                                    throw new \Exception('No se pudo obtener el formulario.');
+                                }
+                                
+                                // Validar y obtener el estado del formulario
+                                $data = $form->getState();
+                            } catch (\Exception $e) {
+                                Notification::make()
+                                    ->title('❌ Error de validación')
+                                    ->body('Por favor, completa todos los campos requeridos: ' . $e->getMessage())
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            
+                            // Si está vacío, mostrar error
+                            if (empty($data)) {
+                                Notification::make()
+                                    ->title('❌ Error')
+                                    ->body('No se pudieron obtener los datos del formulario.')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             

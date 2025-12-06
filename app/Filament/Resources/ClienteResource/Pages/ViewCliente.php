@@ -152,7 +152,7 @@ class ViewCliente extends Page
                                     'timestamp' => now()->toIso8601String(),
                                 ];
 
-                                $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/8fa4f274-a074-48ad-b3d8-42e83e5fca51', $webhookData);
+                                $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51', $webhookData);
 
                                 if ($response->successful()) {
                                     Notification::make()

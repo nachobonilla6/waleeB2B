@@ -155,13 +155,13 @@ class ViewCliente extends Page
                                 if ($response->successful()) {
                                     Notification::make()
                                         ->title('✅ Cotización enviada')
-                                        ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'] . ' y al webhook.')
+                                        ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada a ' . ($data['correo'] ?? 'N/A') . ' y al webhook.')
                                         ->success()
                                         ->send();
                                 } else {
                                     Notification::make()
                                         ->title('⚠️ Cotización enviada con advertencia')
-                                        ->body('Cotización enviada a ' . $data['correo'] . ' pero hubo un problema con el webhook.')
+                                        ->body('Cotización enviada a ' . ($data['correo'] ?? 'N/A') . ' pero hubo un problema con el webhook.')
                                         ->warning()
                                         ->send();
                                 }

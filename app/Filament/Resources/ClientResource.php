@@ -20,8 +20,8 @@ class ClientResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $modelLabel = 'Cliente extraído';
-    protected static ?string $navigationLabel = 'clientes google';
+    protected static ?string $modelLabel = 'Cliente Google';
+    protected static ?string $navigationLabel = 'Clientes Google';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 1;
 
@@ -101,7 +101,7 @@ class ClientResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(5)
-            ->heading('clientes google')
+            ->heading('Clientes Google')
             ->description(fn () => 'Total: ' . \App\Models\Client::count())
             ->columns([
                 Tables\Columns\TextColumn::make('name')

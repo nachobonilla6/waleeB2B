@@ -3,9 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Dashboard as BaseDashboard;
-use App\Filament\Widgets\SiteStatsWidget;
-use App\Filament\Widgets\IngresosStatsWidget;
-use App\Filament\Widgets\IngresosDiariosChart;
+use App\Filament\Widgets\EntradasStatsWidget;
 
 class Dashboard extends BaseDashboard
 {
@@ -16,9 +14,7 @@ class Dashboard extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [
-            IngresosStatsWidget::class,
-            SiteStatsWidget::class,
-            IngresosDiariosChart::class,
+            EntradasStatsWidget::class,
         ];
     }
 
@@ -26,10 +22,10 @@ class Dashboard extends BaseDashboard
     {
         return [
             'sm' => 1,
-            'md' => 2,
-            'lg' => 3,
-            'xl' => 3,
-            '2xl' => 3,
+            'md' => 1,
+            'lg' => 1,
+            'xl' => 1,
+            '2xl' => 1,
         ];
     }
 }

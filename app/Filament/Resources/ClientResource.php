@@ -87,7 +87,8 @@ class ClientResource extends Resource
                     ->required(false),
                 Forms\Components\Toggle::make('propuesta_enviada')
                     ->label('Enviar propuesta')
-                    ->default(false),
+                    ->default(false)
+                    ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
                 Forms\Components\Textarea::make('feedback')
                     ->label('Feedback')
                     ->columnSpanFull()
@@ -212,7 +213,9 @@ class ClientResource extends Resource
 
                             if ($response->successful()) {
                                 // Marcar como propuesta enviada en la base de datos
-                                $record->update(['propuesta_enviada' => true]);
+                                if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                                    $record->update(['propuesta_enviada' => true]);
+                                }
                                 
                                 Notification::make()
                                     ->title('La propuesta se ha enviado a ' . ($record->email ?? 'el cliente'))

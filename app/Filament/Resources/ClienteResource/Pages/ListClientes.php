@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
-use App\Models\Cliente;
+use App\Models\Client;
 use App\Models\Cotizacion;
 use App\Mail\CotizacionMail;
 use Filament\Actions;
@@ -55,16 +55,16 @@ class ListClientes extends ListRecords
                             ->required(),
                         Forms\Components\Select::make('cliente_id')
                             ->label('Cliente')
-                            ->options(Cliente::pluck('nombre_empresa', 'id'))
+                            ->options(Client::pluck('name', 'id'))
                             ->searchable()
                             ->required()
                             ->live()
                             ->afterStateUpdated(function (Forms\Set $set, $state) {
                                 // Cuando se selecciona un cliente, actualizar el correo automáticamente
                                 if ($state) {
-                                    $cliente = Cliente::find($state);
-                                    if ($cliente?->correo) {
-                                        $set('correo', $cliente->correo);
+                                    $cliente = Client::find($state);
+                                    if ($cliente?->email) {
+                                        $set('correo', $cliente->email);
                                     }
                                 }
                             }),
@@ -128,8 +128,8 @@ class ListClientes extends ListRecords
                             ->default(function (Forms\Get $get) {
                                 $clienteId = $get('cliente_id');
                                 if ($clienteId) {
-                                    $cliente = Cliente::find($clienteId);
-                                    return $cliente?->correo ?? '';
+                                    $cliente = Client::find($clienteId);
+                                    return $cliente?->email ?? '';
                                 }
                                 return '';
                             })
@@ -140,9 +140,9 @@ class ListClientes extends ListRecords
                                 if (empty($correo)) {
                                     $clienteId = $get('cliente_id');
                                     if ($clienteId) {
-                                        $cliente = Cliente::find($clienteId);
-                                        if ($cliente?->correo) {
-                                            $set('correo', $cliente->correo);
+                                        $cliente = Client::find($clienteId);
+                                        if ($cliente?->email) {
+                                            $set('correo', $cliente->email);
                                         }
                                     }
                                 }
@@ -160,7 +160,7 @@ class ListClientes extends ListRecords
                         ->action(function (array $data) {
                             // Los datos vienen directamente del formulario validado
                             $clienteId = $data['cliente_id'] ?? null;
-                            $cliente = $clienteId ? Cliente::find($clienteId) : null;
+                            $cliente = $clienteId ? Client::find($clienteId) : null;
                             
                             try {
                                 // Convertir fecha a string si es un objeto Carbon
@@ -200,8 +200,8 @@ class ListClientes extends ListRecords
                                     'correo' => (string) ($data['correo'] ?? ''),
                                     'descripcion' => (string) ($data['descripcion'] ?? ''),
                                     'cliente_id' => $clienteId,
-                                    'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
-                                    'cliente_correo' => (string) ($cliente?->correo ?? ''),
+                                    'cliente_nombre' => (string) ($cliente?->name ?? ''),
+                                    'cliente_correo' => (string) ($cliente?->email ?? ''),
                                     'timestamp' => now()->toIso8601String(),
                                 ];
 
@@ -252,7 +252,7 @@ class ListClientes extends ListRecords
                         ->color('warning')
                         ->action(function () use ($action) {
                             $data = $action->getFormData();
-                            $cliente = Cliente::find($data['cliente_id'] ?? null);
+                            $cliente = Client::find($data['cliente_id'] ?? null);
                             Notification::make()
                                 ->title('📝 Borrador guardado')
                                 ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada como borrador.')
@@ -279,7 +279,7 @@ class ListClientes extends ListRecords
                             ->required(),
                         Forms\Components\Select::make('cliente_id')
                             ->label('Cliente')
-                            ->options(Cliente::pluck('nombre_empresa', 'id'))
+                            ->options(Client::pluck('name', 'id'))
                             ->searchable()
                             ->required(),
                     ]),

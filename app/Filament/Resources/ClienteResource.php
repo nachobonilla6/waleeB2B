@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClienteResource\Pages;
 use App\Filament\Resources\ClienteResource\RelationManagers;
-use App\Models\Cliente;
+use App\Models\Client;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClienteResource extends Resource
 {
-    protected static ?string $model = Cliente::class;
+    protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Clientes Google';
@@ -28,235 +28,62 @@ class ClienteResource extends Resource
     protected static bool $shouldRegisterNavigation = false;
     
     // Búsqueda global
-    protected static ?string $recordTitleAttribute = 'nombre_empresa';
+    protected static ?string $recordTitleAttribute = 'name';
     
     public static function getGloballySearchableAttributes(): array
     {
-        return ['nombre_empresa', 'correo', 'telefono', 'ciudad', 'nombre_sitio'];
+        return ['name', 'email', 'phone', 'website'];
     }
     
     public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
     {
         return [
-            'Email' => $record->correo,
-            'Teléfono' => $record->telefono,
-            'Ciudad' => $record->ciudad,
+            'Email' => $record->email,
+            'Teléfono' => $record->phone,
+            'Website' => $record->website,
         ];
     }
 
     public static function getGlobalSearchResultUrl(\Illuminate\Database\Eloquent\Model $record): string
     {
-        // Desde el buscador global, llevar directamente al paso de Contabilidad (7)
-        return static::getUrl('view', ['record' => $record, 'step' => 7]);
+        return static::getUrl('view', ['record' => $record]);
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Wizard::make([
-                    // Paso 1: Información de la Empresa
-                    Forms\Components\Wizard\Step::make('Empresa')
-                        ->icon('heroicon-o-building-office')
-                        ->description('Datos básicos de la empresa')
-                        ->schema([
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('nombre_empresa')
-                                    ->label('Nombre de Empresa')
-                                    ->placeholder('Ej: Web Solutions CR')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->prefixIcon('heroicon-o-building-office'),
-                                Forms\Components\Select::make('estado_cuenta')
-                                    ->label('Estado del Cliente')
-                                    ->options([
-                                        'activo' => '🟢 Activo',
-                                        'pendiente' => '🟡 Pendiente',
-                                        'suspendido' => '🔴 Suspendido',
-                                        'cancelado' => '⚫ Cancelado',
-                                    ])
-                                    ->default('pendiente')
-                                    ->native(false),
-                            ]),
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\Select::make('tipo_empresa')
-                                    ->label('Tipo de Empresa')
-                                    ->options([
-                                        'servicios' => '🛎️ Servicios',
-                                        'comercio' => '🛒 Comercio',
-                                        'manufactura' => '🏭 Manufactura',
-                                        'tecnologia' => '💻 Tecnología',
-                                        'otro' => '📦 Otro',
-                                    ])
-                                    ->native(false),
-                                Forms\Components\Select::make('industria')
-                                    ->label('Industria')
-                                    ->options([
-                                        'turismo' => '✈️ Turismo',
-                                        'gastronomia' => '🍽️ Gastronomía',
-                                        'retail' => '🏪 Retail',
-                                        'salud' => '🏥 Salud',
-                                        'educacion' => '🎓 Educación',
-                                        'tecnologia' => '💻 Tecnología',
-                                        'otro' => '📦 Otro',
-                                    ])
-                                    ->native(false),
-                            ]),
-                            Forms\Components\Textarea::make('descripcion')
-                                ->label('Descripción del Negocio')
-                                ->placeholder('Breve descripción de la empresa y sus servicios...')
-                                ->rows(3)
-                                ->columnSpanFull(),
+                Forms\Components\Section::make('Información del Cliente')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('email')
+                                ->label('Correo Electrónico')
+                                ->email()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('phone')
+                                ->label('Teléfono')
+                                ->tel()
+                                ->maxLength(255),
                         ]),
-
-                    // Paso 2: Contacto
-                    Forms\Components\Wizard\Step::make('Contacto')
-                        ->icon('heroicon-o-phone')
-                        ->description('Información de contacto')
-                        ->schema([
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('correo')
-                                    ->label('Correo Electrónico')
-                                    ->email()
-                                    ->required()
-                                    ->placeholder('correo@empresa.com')
-                                    ->prefixIcon('heroicon-o-envelope'),
-                                Forms\Components\TextInput::make('telefono')
-                                    ->label('Teléfono Principal')
-                                    ->tel()
-                                    ->placeholder('+506 8888-8888')
-                                    ->prefixIcon('heroicon-o-phone'),
-                            ]),
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('telefono_alternativo')
-                                    ->label('Teléfono Alternativo')
-                                    ->tel()
-                                    ->placeholder('+506 2222-2222')
-                                    ->prefixIcon('heroicon-o-phone'),
-                                Forms\Components\TextInput::make('whatsapp')
-                                    ->label('WhatsApp')
-                                    ->tel()
-                                    ->placeholder('+506 8888-8888')
-                                    ->prefixIcon('heroicon-o-chat-bubble-left'),
-                            ]),
+                        Forms\Components\Grid::make(2)->schema([
+                            Forms\Components\TextInput::make('website')
+                                ->label('Sitio Web')
+                                ->url()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('proposed_site')
+                                ->label('Sitio Propuesto')
+                                ->required()
+                                ->maxLength(255),
                         ]),
-
-                    // Paso 3: Ubicación
-                    Forms\Components\Wizard\Step::make('Ubicación')
-                        ->icon('heroicon-o-map-pin')
-                        ->description('Dirección física')
-                        ->schema([
-                            Forms\Components\Grid::make(3)->schema([
-                                Forms\Components\TextInput::make('pais')
-                                    ->label('País')
-                                    ->placeholder('Costa Rica')
-                                    ->prefixIcon('heroicon-o-flag'),
-                                Forms\Components\TextInput::make('estado')
-                                    ->label('Provincia/Estado')
-                                    ->placeholder('San José'),
-                                Forms\Components\TextInput::make('ciudad')
-                                    ->label('Ciudad')
-                                    ->placeholder('San José'),
-                            ]),
-                            Forms\Components\TextInput::make('direccion')
-                                ->label('Dirección Completa')
-                                ->placeholder('Calle, Avenida, Número...')
-                                ->prefixIcon('heroicon-o-home')
-                                ->columnSpanFull(),
-                            Forms\Components\TextInput::make('codigo_postal')
-                                ->label('Código Postal')
-                                ->placeholder('10101')
-                                ->maxLength(10),
-                        ]),
-
-                    // Paso 4: Sitio Web
-                    Forms\Components\Wizard\Step::make('Sitio Web')
-                        ->icon('heroicon-o-globe-alt')
-                        ->description('Información del sitio web')
-                        ->schema([
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('nombre_sitio')
-                                    ->label('Nombre del Dominio')
-                                    ->placeholder('miempresa.com')
-                                    ->prefixIcon('heroicon-o-globe-alt'),
-                                Forms\Components\TextInput::make('url_sitio')
-                                    ->label('URL del Sitio')
-                                    ->url()
-                                    ->placeholder('https://www.miempresa.com')
-                                    ->prefixIcon('heroicon-o-link'),
-                            ]),
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('hosting')
-                                    ->label('Proveedor de Hosting')
-                                    ->placeholder('Hostinger, GoDaddy, etc.')
-                                    ->prefixIcon('heroicon-o-server'),
-                                Forms\Components\DatePicker::make('dominio_expira')
-                                    ->label('Fecha de Expiración')
-                                    ->displayFormat('d/m/Y')
-                                    ->prefixIcon('heroicon-o-calendar'),
-                            ]),
-                        ]),
-
-                    // Paso 5: Redes Sociales
-                    Forms\Components\Wizard\Step::make('Redes Sociales')
-                        ->icon('heroicon-o-share')
-                        ->description('Presencia en redes sociales')
-                        ->schema([
-                            Forms\Components\Section::make('Redes Sociales')
-                                ->icon('heroicon-o-share')
-                                ->collapsible()
-                                ->schema([
-                                    Forms\Components\Repeater::make('redes_sociales')
-                                        ->label('')
-                                        ->schema([
-                                            Forms\Components\Grid::make(3)->schema([
-                                                Forms\Components\Select::make('red')
-                                                    ->label('Red Social')
-                                                    ->options([
-                                                        'facebook' => '📘 Facebook',
-                                                        'instagram' => '📸 Instagram',
-                                                        'tiktok' => '🎵 TikTok',
-                                                        'twitter' => '🐦 Twitter/X',
-                                                        'linkedin' => '💼 LinkedIn',
-                                                        'youtube' => '▶️ YouTube',
-                                                        'pinterest' => '📌 Pinterest',
-                                                    ])
-                                                    ->required()
-                                                    ->native(false),
-                                                Forms\Components\TextInput::make('url')
-                                                    ->label('URL del Perfil')
-                                                    ->url()
-                                                    ->required()
-                                                    ->placeholder('https://...'),
-                                                Forms\Components\Toggle::make('activo')
-                                                    ->label('Activo')
-                                                    ->default(true)
-                                                    ->inline(false),
-                                            ]),
-                                        ])
-                                        ->defaultItems(0)
-                                        ->addActionLabel('➕ Agregar red social')
-                                        ->reorderable()
-                                        ->collapsible()
-                                        ->itemLabel(fn (array $state): ?string => $state['red'] ?? 'Nueva red'),
-                                ]),
-                        ]),
-
-                    // Paso 6: Notas
-                    Forms\Components\Wizard\Step::make('Notas')
-                        ->icon('heroicon-o-document-text')
-                        ->description('Notas y observaciones')
-                        ->schema([
-                            Forms\Components\Textarea::make('notas')
-                                ->label('Notas del Cliente')
-                                ->placeholder('Agrega cualquier nota o información adicional sobre el cliente...')
-                                ->rows(6)
-                                ->columnSpanFull(),
-                        ]),
-                ])
-                ->skippable()
-                ->persistStepInQueryString()
-                ->columnSpanFull(),
+                        Forms\Components\Textarea::make('message')
+                            ->label('Mensaje')
+                            ->rows(4)
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -264,34 +91,28 @@ class ClienteResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nombre_empresa')
-                    ->label('Empresa')
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('correo')
+                Tables\Columns\TextColumn::make('email')
                     ->label('Correo')
                     ->searchable()
                     ->copyable(),
-                Tables\Columns\TextColumn::make('telefono')
+                Tables\Columns\TextColumn::make('phone')
                     ->label('Teléfono')
                     ->searchable(),
-                Tables\Columns\BadgeColumn::make('estado_cuenta')
-                    ->label('Estado')
-                    ->colors([
-                        'success' => 'activo',
-                        'warning' => 'pendiente',
-                        'danger' => 'suspendido',
-                        'gray' => 'cancelado',
-                    ]),
-                Tables\Columns\TextColumn::make('industria')
-                    ->label('Industria')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('nombre_sitio')
+                Tables\Columns\TextColumn::make('website')
                     ->label('Sitio Web')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->url(fn ($record) => $record->website)
+                    ->openUrlInNewTab()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('proposed_site')
+                    ->label('Sitio Propuesto')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')
-                    ->dateTime('d/m/Y')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -299,17 +120,16 @@ class ClienteResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->label('Ver')
-                    ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => static::getUrl('view', ['record' => $record])),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getNavigationBadge(): ?string

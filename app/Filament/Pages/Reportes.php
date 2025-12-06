@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use App\Filament\Widgets\EntradasStatsWidget;
 use App\Filament\Widgets\SalidasStatsWidget;
+use App\Models\Factura;
 
 class Reportes extends Page
 {
@@ -15,6 +16,12 @@ class Reportes extends Page
     protected static ?int $navigationSort = 5;
 
     protected static string $view = 'filament.pages.reportes';
+
+    public static function getNavigationBadge(): ?string
+    {
+        $totalFacturas = Factura::count();
+        return (string) $totalFacturas;
+    }
 
     protected function getHeaderWidgets(): array
     {

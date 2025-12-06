@@ -19,6 +19,7 @@ class Entradas extends Page implements HasTable
     protected static ?string $title = 'Reporte de Entradas';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 6;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.pages.entradas';
 

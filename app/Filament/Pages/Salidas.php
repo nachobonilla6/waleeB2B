@@ -19,6 +19,7 @@ class Salidas extends Page implements HasTable
     protected static ?string $title = 'Reporte de Salidas';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 7;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.pages.salidas';
 

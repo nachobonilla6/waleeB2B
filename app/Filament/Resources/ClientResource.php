@@ -26,6 +26,7 @@ class ClientResource extends Resource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 1;
     protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $pluralModelLabel = 'Clientes Google';
 
     public static function getNavigationBadge(): ?string
     {

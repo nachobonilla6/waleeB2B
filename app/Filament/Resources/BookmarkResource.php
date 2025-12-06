@@ -60,8 +60,7 @@ class BookmarkResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('enlace')
                     ->label('Enlace')
-                    ->url(fn ($record) => $record->enlace)
-                    ->openUrlInNewTab()
+                    ->url(fn ($record) => $record->enlace, shouldOpenInNewTab: true)
                     ->searchable()
                     ->limit(50)
                     ->copyable(),

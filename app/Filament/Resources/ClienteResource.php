@@ -134,7 +134,11 @@ class ClienteResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        try {
+            return static::getModel()::count();
+        } catch (\Exception $e) {
+            return '0';
+        }
     }
 
     public static function getNavigationBadgeColor(): string|array|null

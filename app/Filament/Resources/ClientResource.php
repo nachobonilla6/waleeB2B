@@ -102,7 +102,13 @@ class ClientResource extends Resource
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(5)
             ->heading('Clientes Google')
-            ->description(fn () => 'Total: ' . \App\Models\Client::count())
+            ->description(function () {
+                try {
+                    return 'Total: ' . \App\Models\Client::count();
+                } catch (\Exception $e) {
+                    return 'Total: 0';
+                }
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

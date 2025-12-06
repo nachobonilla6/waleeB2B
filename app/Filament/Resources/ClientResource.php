@@ -27,7 +27,11 @@ class ClientResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getEloquentQuery()->count();
+        try {
+            return static::getEloquentQuery()->count();
+        } catch (\Exception $e) {
+            return '0';
+        }
     }
 
     public static function form(Form $form): Form

@@ -17,7 +17,7 @@ class Entradas extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-arrow-down-circle';
     protected static ?string $navigationLabel = 'Entradas';
     protected static ?string $title = 'Reporte de Entradas';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 6;
     protected static bool $shouldRegisterNavigation = false;
 

@@ -20,7 +20,7 @@ class ClientPropuestaEnviadaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
     protected static ?string $modelLabel = 'Cliente con propuesta enviada';
     protected static ?string $navigationLabel = 'Propuestas Enviadas';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 2;
 
     public static function getNavigationBadge(): ?string

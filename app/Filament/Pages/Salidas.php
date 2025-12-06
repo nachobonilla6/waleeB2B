@@ -17,7 +17,7 @@ class Salidas extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-circle';
     protected static ?string $navigationLabel = 'Salidas';
     protected static ?string $title = 'Reporte de Salidas';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 7;
     protected static bool $shouldRegisterNavigation = false;
 

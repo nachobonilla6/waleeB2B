@@ -22,7 +22,7 @@ class ClientResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $modelLabel = 'Cliente Google';
     protected static ?string $navigationLabel = 'Clientes Google';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string

@@ -128,7 +128,7 @@ class ListClientes extends ListRecords
                             
                             try {
                                 // Enviar datos al webhook de n8n
-                                $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51', [
+                                $webhookData = [
                                     'numero_cotizacion' => $data['numero_cotizacion'] ?? '',
                                     'fecha' => $data['fecha'] ?? '',
                                     'idioma' => $data['idioma'] ?? '',
@@ -142,7 +142,9 @@ class ListClientes extends ListRecords
                                     'cliente_nombre' => $cliente?->nombre_empresa ?? '',
                                     'cliente_correo' => $cliente?->correo ?? '',
                                     'timestamp' => now()->toIso8601String(),
-                                ]);
+                                ];
+
+                                $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51', $webhookData);
 
                                 if ($response->successful()) {
                                     Notification::make()
@@ -151,9 +153,10 @@ class ListClientes extends ListRecords
                                         ->success()
                                         ->send();
                                 } else {
+                                    $errorMessage = $response->status() . ': ' . ($response->body() ?: 'Sin respuesta del servidor');
                                     Notification::make()
                                         ->title('⚠️ Cotización enviada con advertencia')
-                                        ->body('Cotización enviada a ' . ($data['correo'] ?? 'N/A') . ' pero hubo un problema con el webhook.')
+                                        ->body('Cotización enviada a ' . ($data['correo'] ?? 'N/A') . '. Error del webhook: ' . $errorMessage)
                                         ->warning()
                                         ->send();
                                 }

@@ -51,7 +51,7 @@ class FacturasPage extends Page implements HasTable
         ];
     }
 
-    public static function getRouteName(): string
+    public static function getRouteName(?string $panel = null): string
     {
         return 'contabilidad.facturas';
     }

@@ -39,7 +39,7 @@ class ReportesPage extends Page
         ];
     }
 
-    public static function getRouteName(): string
+    public static function getRouteName(?string $panel = null): string
     {
         return 'contabilidad.reportes';
     }

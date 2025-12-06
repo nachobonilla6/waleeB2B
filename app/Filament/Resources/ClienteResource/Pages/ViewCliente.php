@@ -50,8 +50,11 @@ class ViewCliente extends Page
                 ->afterFormValidated(function (array $data, $action) {
                     // Guardar los datos en la propiedad de la clase
                     $this->cotizacionData = $data;
-                    // También guardar en la acción para acceso desde footer
-                    $action->formData($data);
+                })
+                ->action(function (array $data) {
+                    // Esta acción se ejecuta cuando se valida el formulario
+                    // Guardamos los datos aquí también por si acaso
+                    $this->cotizacionData = $data;
                 })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([

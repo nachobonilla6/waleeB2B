@@ -205,6 +205,7 @@ class FacturaResource extends Resource
         return [
             'index' => Pages\ListFacturas::route('/'),
             'create' => Pages\CreateFactura::route('/create'),
+            'view' => Pages\ViewFactura::route('/{record}'),
             'edit' => Pages\EditFactura::route('/{record}/edit'),
         ];
     }

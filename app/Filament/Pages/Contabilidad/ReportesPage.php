@@ -22,7 +22,7 @@ class ReportesPage extends Page
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Reportes';
     protected static ?string $title = 'Reportes';
-    protected static ?string $navigationGroup = 'Contabilidad';
+    protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 3;
     protected static bool $shouldRegisterNavigation = false;
 

@@ -14,7 +14,7 @@ class Contabilidad extends Page
     protected static ?string $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Contabilidad';
     protected static ?string $title = 'Contabilidad';
-    protected static ?string $navigationGroup = 'Contabilidad';
+    protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.contabilidad';

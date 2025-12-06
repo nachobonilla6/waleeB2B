@@ -22,7 +22,7 @@ class CotizacionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Cotizaciones';
-    protected static ?string $navigationGroup = 'Contabilidad';
+    protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 2;
     protected static ?string $modelLabel = 'Cotización';
     protected static ?string $pluralModelLabel = 'Cotizaciones';

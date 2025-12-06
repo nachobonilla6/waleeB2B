@@ -82,7 +82,7 @@ class AdminPanelProvider extends PanelProvider
             )
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Contabilidad')
+                    ->label('Administración')
                     ->icon('heroicon-o-banknotes'),
                 NavigationGroup::make()
                     ->label('Herramientas')

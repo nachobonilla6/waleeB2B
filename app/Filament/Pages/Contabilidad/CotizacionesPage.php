@@ -27,7 +27,7 @@ class CotizacionesPage extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Cotizaciones';
     protected static ?string $title = 'Cotizaciones';
-    protected static ?string $navigationGroup = 'Contabilidad';
+    protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 2;
     protected static bool $shouldRegisterNavigation = false;
 

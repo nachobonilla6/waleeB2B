@@ -144,83 +144,13 @@ class ListClientes extends ListRecords
                             ->rows(2),
                     ]),
                 ])
-                ->modalFooterActionsAlignment(Alignment::End)
-                ->modalFooterActions(fn ($action) => [
-                    Actions\Action::make('cancelar')
-                        ->label('Cancelar')
-                        ->color('gray')
-                        ->close(),
-                    Actions\Action::make('borrador')
-                        ->label('💾 Guardar Borrador')
-                        ->color('warning')
-                        ->action(function () use ($action) {
-                            $data = $action->getFormData();
-                            $cliente = Cliente::find($data['cliente_id'] ?? null);
-                            Notification::make()
-                                ->title('📝 Borrador guardado')
-                                ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada como borrador.')
-                                ->warning()
-                                ->send();
-                        }),
+                ->modalSubmitAction(
                     Actions\Action::make('enviar')
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->action(function () {
-                            // Obtener la acción principal
-                            $parentAction = $this->getMountedAction();
-                            
-                            if (!$parentAction) {
-                                Notification::make()
-                                    ->title('❌ Error')
-                                    ->body('No se pudo obtener la acción del formulario.')
-                                    ->danger()
-                                    ->send();
-                                return;
-                            }
-                            
-                            // Intentar obtener datos del formulario validado
-                            $data = [];
-                            
-                            // Método 1: Intentar obtener usando getMountedActionForm
-                            try {
-                                $form = $this->getMountedActionForm();
-                                if ($form) {
-                                    // Validar y obtener el estado
-                                    $data = $form->getState();
-                                }
-                            } catch (\Illuminate\Validation\ValidationException $e) {
-                                // Si hay errores de validación, mostrarlos
-                                Notification::make()
-                                    ->title('❌ Error de validación')
-                                    ->body('Por favor, completa todos los campos requeridos.')
-                                    ->danger()
-                                    ->send();
-                                return;
-                            } catch (\Exception $e) {
-                                // Si falla, continuar con otros métodos
-                            }
-                            
-                            // Método 2: Si está vacío, intentar obtener usando getFormData
-                            if (empty($data)) {
-                                $data = $parentAction->getFormData();
-                            }
-                            
-                            // Método 3: Si aún está vacío, usar los datos guardados
-                            if (empty($data)) {
-                                $data = $this->cotizacionData;
-                            }
-                            
-                            // Si aún está vacío, mostrar error
-                            if (empty($data)) {
-                                Notification::make()
-                                    ->title('❌ Error')
-                                    ->body('No se pudieron obtener los datos del formulario. Por favor, completa el formulario y vuelve a intentar.')
-                                    ->danger()
-                                    ->send();
-                                return;
-                            }
-                            
+                        ->action(function (array $data) {
+                            // Los datos vienen directamente del formulario validado
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             

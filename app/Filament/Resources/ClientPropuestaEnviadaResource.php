@@ -130,7 +130,6 @@ class ClientPropuestaEnviadaResource extends Resource
             ->defaultSort('created_at', 'desc') // Ordena por fecha de creación descendente (más recientes primero)
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(10)
-            ->heading('Propuestas Enviadas')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

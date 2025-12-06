@@ -21,12 +21,6 @@
             </div>
         </div>
 
-        <!-- Widgets de Stats -->
-        <x-filament-widgets::widgets
-            :widgets="$this->getHeaderWidgets()"
-            :columns="$this->getColumns()"
-        />
-
         <!-- Cards de Entradas y Salidas -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="reportes-cards">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 reportes-card" data-keywords="entradas facturas pagadas ingresos recibidos">

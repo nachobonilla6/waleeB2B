@@ -96,7 +96,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Register your widgets here
+                // Los widgets se registran automáticamente pero el Dashboard los filtra
             ])
             ->middleware([
                 EncryptCookies::class,

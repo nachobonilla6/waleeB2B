@@ -15,6 +15,7 @@ class IngresosStatsWidget extends BaseWidget
     protected static ?string $pollingInterval = '30s';
     protected static bool $isLazy = true;
 
+
     protected function getStats(): array
     {
         $today = Carbon::today();

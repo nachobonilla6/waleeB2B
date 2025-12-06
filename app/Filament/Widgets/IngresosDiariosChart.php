@@ -19,6 +19,7 @@ class IngresosDiariosChart extends ChartWidget
     
     protected static ?string $maxHeight = '200px';
 
+
     protected function getType(): string
     {
         return 'line';

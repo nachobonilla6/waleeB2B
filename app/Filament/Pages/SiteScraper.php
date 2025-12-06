@@ -32,68 +32,44 @@ class SiteScraper extends Page
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('client_id')
-                    ->label('Cliente')
-                    ->options(Client::pluck('name', 'id'))
-                    ->searchable()
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(function (Forms\Set $set, $state) {
-                        if ($state) {
-                            $cliente = Client::find($state);
-                            if ($cliente?->email) {
-                                $set('email', $cliente->email);
-                            }
-                        }
-                    }),
-                Forms\Components\TextInput::make('email')
-                    ->label('Correo Electrónico')
-                    ->email()
+                Forms\Components\TextInput::make('nombre_lugar')
+                    ->label('Nombre del Lugar')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\Select::make('industria')
+                    ->label('Industria')
+                    ->options([
+                        'turismo' => 'Turismo',
+                        'gastronomia' => 'Gastronomía',
+                        'retail' => 'Retail',
+                        'salud' => 'Salud',
+                        'educacion' => 'Educación',
+                        'tecnologia' => 'Tecnología',
+                        'servicios' => 'Servicios',
+                        'comercio' => 'Comercio',
+                        'manufactura' => 'Manufactura',
+                        'otro' => 'Otro',
+                    ])
+                    ->required()
+                    ->native(false),
             ])
             ->statePath('data');
     }
     
-    public function enviarPropuesta(): void
+    public function enviarWebhook(): void
     {
         $data = $this->form->getState();
-        $client = Client::find($data['client_id'] ?? null);
-        
-        if (!$client) {
-            Notification::make()
-                ->title('Error')
-                ->body('Cliente no encontrado')
-                ->danger()
-                ->send();
-            return;
-        }
         
         try {
-            $videoUrl = '';
-            if ($client->proposed_site) {
-                $sitio = \App\Models\Sitio::where('enlace', $client->proposed_site)->first();
-                $videoUrl = $sitio?->video_url ?? '';
-            }
-            
-            $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
-                'name' => $client->name ?? '',
-                'email' => $data['email'] ?? $client->email ?? '',
-                'website' => $client->website ?? '',
-                'proposed_site' => $client->proposed_site ?? '',
-                'video_url' => $videoUrl,
-                'feedback' => $client->feedback ?? '',
-                'propuesta' => $client->propuesta ?? '',
+            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
+                'nombre_lugar' => $data['nombre_lugar'] ?? '',
+                'industria' => $data['industria'] ?? '',
             ]);
 
             if ($response->successful()) {
-                if (\Illuminate\Support\Facades\Schema::hasColumn('clients', 'propuesta_enviada')) {
-                    $client->update(['propuesta_enviada' => true]);
-                }
-                
                 Notification::make()
-                    ->title('Propuesta enviada')
-                    ->body('La propuesta se ha enviado a ' . ($data['email'] ?? $client->email ?? 'el cliente'))
+                    ->title('Datos enviados')
+                    ->body('Los datos se han enviado correctamente al webhook')
                     ->success()
                     ->send();
                     

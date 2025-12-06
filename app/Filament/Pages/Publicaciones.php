@@ -7,7 +7,7 @@ use App\Models\Post;
 
 class Publicaciones extends Page
 {
-    // Oculto porque ahora usamos N8nPostResource
+    // Oculto - recursos de n8n eliminados
     protected static bool $shouldRegisterNavigation = false;
     
     protected static ?string $navigationIcon = 'heroicon-o-document-text';

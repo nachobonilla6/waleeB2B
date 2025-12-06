@@ -35,11 +35,6 @@ return [
         ],
     ],
 
-    'n8n' => [
-        'url' => env('N8N_URL', 'https://n8n.srv1137974.hstgr.cloud'),
-        'api_key' => env('N8N_API_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNWNhODY2Ny0wYmNhLTQwYjAtOWFhYS04ZTBhZDA0ODE1ZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY0OTIyNzk2fQ.IBMfPU0yuKMNOdx0lDUqnJ6W67fpOPsYTIOjEUF679g'),
-    ],
-
     'google' => [
         'calendar_api_key' => env('GOOGLE_CALENDAR_API_KEY'),
         'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),

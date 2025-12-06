@@ -6,6 +6,7 @@ use Filament\Pages\Dashboard as BaseDashboard;
 use App\Filament\Widgets\ClienteStatsWidget;
 use App\Filament\Widgets\SiteStatsWidget;
 use App\Filament\Widgets\ProposalStatsWidget;
+use App\Filament\Widgets\IngresosStatsWidget;
 
 class Dashboard extends BaseDashboard
 {
@@ -17,6 +18,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             ClienteStatsWidget::class,
+            IngresosStatsWidget::class,
             ProposalStatsWidget::class,
             SiteStatsWidget::class,
         ];

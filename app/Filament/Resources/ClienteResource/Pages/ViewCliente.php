@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
-use App\Filament\Resources\VelaSportPostResource;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Actions\Action;
@@ -240,12 +239,6 @@ class ViewCliente extends Page
                         }),
                 ]),
                 
-            Action::make('posts')
-                ->label('Ver Posts')
-                ->icon('heroicon-o-newspaper')
-                ->color('info')
-                ->url(VelaSportPostResource::getUrl('index')),
-
             Action::make('edit')
                 ->label('Editar')
                 ->icon('heroicon-o-pencil')

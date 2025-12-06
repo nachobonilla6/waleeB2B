@@ -53,14 +53,6 @@ class ToolsWidget extends Widget
                     'external' => true,
                 ],
                 [
-                    'label' => 'N8N',
-                    'icon' => 'heroicon-m-cpu-chip',
-                    'url' => 'https://n8n.srv1137974.hstgr.cloud/home/workflows',
-                    'color' => 'blue',
-                    'description' => 'Automatizaciones',
-                    'external' => true,
-                ],
-                [
                     'label' => 'Site Scraper',
                     'icon' => 'heroicon-m-globe-alt',
                     'url' => '/admin/site-scraper',

@@ -28,8 +28,8 @@ class SiteScraper extends Page implements HasForms
     public bool $isSubmitting = false;
     public bool $isSuccess = false;
 
-    // Webhook URL (producción)
-    protected string $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/110bdb87-978a-4635-8783-cf9a9c80e322';
+    // Webhook URL (producción) - DESHABILITADO: recursos de n8n eliminados
+    protected string $webhookUrl = '';
 
     public function mount(): void
     {
@@ -43,12 +43,6 @@ class SiteScraper extends Page implements HasForms
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('config_bot')
-                ->label('Configuración del Bot')
-                ->icon('heroicon-o-cog-6-tooth')
-                ->url('https://n8n.srv1137974.hstgr.cloud/workflow/3OwxkPVt7soP2dzJ')
-                ->openUrlInNewTab()
-                ->color('gray'),
             Actions\Action::make('clientes')
                 ->label('Clientes en Proceso')
                 ->icon('heroicon-o-users')

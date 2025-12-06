@@ -36,8 +36,8 @@ class BotConfiguracion extends Page implements HasForms
         $this->form->fill([
             // Step 1 - Conexión
             'app_status' => true,
-            'n8n_url' => 'https://n8n.srv1137974.hstgr.cloud',
-            'webhook_url' => 'https://n8n.srv1137974.hstgr.cloud/webhook/e3afcfd7-f6dc-41a4-95b1-5e9fac3f96f7',
+            'n8n_url' => '',
+            'webhook_url' => '',
             'api_timeout' => 30,
             
             // Step 2 - Facebook
@@ -66,7 +66,7 @@ class BotConfiguracion extends Page implements HasForms
                 Wizard::make([
                     Wizard\Step::make('Conexión')
                         ->icon('heroicon-o-signal')
-                        ->description('Configuración de n8n')
+                        ->description('Configuración de automatizaciones (deshabilitado)')
                         ->schema([
                             Section::make()
                                 ->columns(2)
@@ -223,9 +223,9 @@ class BotConfiguracion extends Page implements HasForms
                 ->color('gray')
                 ->action(function () {
                     Notification::make()
-                        ->title('✅ Conexión exitosa')
-                        ->body('n8n responde correctamente.')
-                        ->success()
+                        ->title('⚠️ Recursos de n8n eliminados')
+                        ->body('Los recursos de automatizaciones n8n han sido eliminados.')
+                        ->warning()
                         ->send();
                 }),
         ];

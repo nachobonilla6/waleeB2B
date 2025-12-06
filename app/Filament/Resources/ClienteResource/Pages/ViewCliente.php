@@ -168,7 +168,7 @@ class ViewCliente extends Page
                             } catch (\Exception $e) {
                                 Notification::make()
                                     ->title('✅ Cotización enviada')
-                                    ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'] . '. Error al enviar al webhook: ' . $e->getMessage())
+                                    ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada a ' . ($data['correo'] ?? 'N/A') . '. Error al enviar al webhook: ' . $e->getMessage())
                                     ->warning()
                                     ->send();
                             }

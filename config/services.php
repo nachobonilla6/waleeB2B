@@ -40,4 +40,9 @@ return [
         'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
     ],
 
+    'n8n' => [
+        'url' => env('N8N_URL', 'https://n8n.srv1137974.hstgr.cloud'),
+        'api_key' => env('N8N_API_KEY', ''),
+    ],
+
 ];

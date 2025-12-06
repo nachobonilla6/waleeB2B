@@ -12,8 +12,8 @@ class N8nService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.n8n.url', 'https://n8n.srv1137974.hstgr.cloud');
-        $this->apiKey = config('services.n8n.api_key', env('N8N_API_KEY'));
+        $this->baseUrl = env('N8N_URL', 'https://n8n.srv1137974.hstgr.cloud');
+        $this->apiKey = env('N8N_API_KEY', '');
     }
 
     /**
@@ -25,12 +25,11 @@ class N8nService
             $response = Http::timeout(30)
                 ->withHeaders([
                     'X-N8N-API-KEY' => $this->apiKey,
-                    'Accept' => 'application/json',
                 ])
-                ->get($this->baseUrl . '/api/v1/workflows');
+                ->get("{$this->baseUrl}/api/v1/workflows");
 
             if ($response->successful()) {
-                return $response->json('data', []);
+                return $response->json() ?? [];
             }
 
             Log::error('Error al obtener workflows de n8n', [
@@ -57,12 +56,11 @@ class N8nService
             $response = Http::timeout(30)
                 ->withHeaders([
                     'X-N8N-API-KEY' => $this->apiKey,
-                    'Accept' => 'application/json',
                 ])
-                ->get($this->baseUrl . '/api/v1/workflows/' . $workflowId);
+                ->get("{$this->baseUrl}/api/v1/workflows/{$workflowId}");
 
             if ($response->successful()) {
-                return $response->json('data');
+                return $response->json();
             }
 
             return null;
@@ -82,15 +80,11 @@ class N8nService
     public function executeWorkflow(string $workflowId, array $data = []): ?array
     {
         try {
-            $response = Http::timeout(60)
+            $response = Http::timeout(120)
                 ->withHeaders([
                     'X-N8N-API-KEY' => $this->apiKey,
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
                 ])
-                ->post($this->baseUrl . '/api/v1/workflows/' . $workflowId . '/execute', [
-                    'data' => $data,
-                ]);
+                ->post("{$this->baseUrl}/api/v1/workflows/{$workflowId}/execute", $data);
 
             if ($response->successful()) {
                 return $response->json();
@@ -99,7 +93,6 @@ class N8nService
             Log::error('Error al ejecutar workflow de n8n', [
                 'workflow_id' => $workflowId,
                 'status' => $response->status(),
-                'body' => $response->body(),
             ]);
 
             return null;
@@ -114,55 +107,63 @@ class N8nService
     }
 
     /**
-     * Obtiene las ejecuciones de un workflow
-     */
-    public function getWorkflowExecutions(string $workflowId, int $limit = 10): array
-    {
-        try {
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'X-N8N-API-KEY' => $this->apiKey,
-                    'Accept' => 'application/json',
-                ])
-                ->get($this->baseUrl . '/api/v1/executions', [
-                    'workflowId' => $workflowId,
-                    'limit' => $limit,
-                ]);
-
-            if ($response->successful()) {
-                return $response->json('data', []);
-            }
-
-            return [];
-        } catch (\Exception $e) {
-            Log::error('Excepción al obtener ejecuciones de workflow', [
-                'workflow_id' => $workflowId,
-                'message' => $e->getMessage(),
-            ]);
-
-            return [];
-        }
-    }
-
-    /**
      * Activa o desactiva un workflow
      */
     public function toggleWorkflow(string $workflowId, bool $active): bool
     {
         try {
+            $workflow = $this->getWorkflow($workflowId);
+            if (!$workflow) {
+                return false;
+            }
+
             $response = Http::timeout(30)
                 ->withHeaders([
                     'X-N8N-API-KEY' => $this->apiKey,
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
                 ])
-                ->patch($this->baseUrl . '/api/v1/workflows/' . $workflowId, [
+                ->put("{$this->baseUrl}/api/v1/workflows/{$workflowId}", [
                     'active' => $active,
+                    'name' => $workflow['name'] ?? '',
+                    'nodes' => $workflow['nodes'] ?? [],
+                    'connections' => $workflow['connections'] ?? [],
                 ]);
 
             return $response->successful();
         } catch (\Exception $e) {
-            Log::error('Excepción al cambiar estado de workflow', [
+            Log::error('Excepción al cambiar estado del workflow', [
+                'workflow_id' => $workflowId,
+                'message' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Actualiza los nodos de un workflow
+     */
+    public function updateWorkflowNodes(string $workflowId, array $nodes, array $connections = []): bool
+    {
+        try {
+            $workflow = $this->getWorkflow($workflowId);
+            if (!$workflow) {
+                return false;
+            }
+
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'X-N8N-API-KEY' => $this->apiKey,
+                ])
+                ->put("{$this->baseUrl}/api/v1/workflows/{$workflowId}", [
+                    'name' => $workflow['name'] ?? '',
+                    'nodes' => $nodes,
+                    'connections' => $connections ?: ($workflow['connections'] ?? []),
+                    'active' => $workflow['active'] ?? false,
+                ]);
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('Excepción al actualizar nodos del workflow', [
                 'workflow_id' => $workflowId,
                 'message' => $e->getMessage(),
             ]);

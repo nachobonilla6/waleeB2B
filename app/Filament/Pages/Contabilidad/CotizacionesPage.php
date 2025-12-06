@@ -29,12 +29,8 @@ class CotizacionesPage extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        return CotizacionResource::table($table);
-    }
-
-    protected function getTableQuery(): Builder
-    {
-        return Cotizacion::query();
+        return CotizacionResource::table($table)
+            ->query(Cotizacion::query());
     }
 
     protected function getHeaderActions(): array

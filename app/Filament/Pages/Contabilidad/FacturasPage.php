@@ -29,12 +29,8 @@ class FacturasPage extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        return FacturaResource::table($table);
-    }
-
-    protected function getTableQuery(): Builder
-    {
-        return Factura::query();
+        return FacturaResource::table($table)
+            ->query(Factura::query());
     }
 
     protected function getHeaderActions(): array

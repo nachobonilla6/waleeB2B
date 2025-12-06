@@ -30,6 +30,10 @@ class ListClientes extends ListRecords
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
+                ->afterFormValidated(function (array $data, $action) {
+                    // Guardar los datos en la propiedad de la clase
+                    $this->cotizacionData = $data;
+                })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('idioma')
@@ -164,13 +168,29 @@ class ListClientes extends ListRecords
                         ->icon('heroicon-o-envelope')
                         ->action(function () use ($action) {
                             // Obtener datos del formulario validado
-                            $form = $this->getMountedActionForm();
-                            $data = $form->getState();
+                            $parentAction = $this->getMountedAction();
+                            $data = [];
                             
-                            // Si está vacío, intentar obtener de otra manera
+                            if ($parentAction) {
+                                // Intentar obtener datos del formulario validado
+                                try {
+                                    $form = $this->getMountedActionForm(mountedAction: $parentAction);
+                                    if ($form) {
+                                        $data = $form->getState();
+                                    }
+                                } catch (\Exception $e) {
+                                    // Si falla, intentar obtener de otra manera
+                                }
+                                
+                                // Si está vacío, intentar obtener de getFormData
+                                if (empty($data)) {
+                                    $data = $parentAction->getFormData();
+                                }
+                            }
+                            
+                            // Si aún está vacío, usar los datos guardados
                             if (empty($data)) {
-                                $parentAction = $this->getMountedAction();
-                                $data = $parentAction ? $parentAction->getFormData() : [];
+                                $data = $this->cotizacionData;
                             }
                             
                             // Si aún está vacío, mostrar error

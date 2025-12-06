@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\ProposalStatsWidget;
 use Filament\Pages\Page;
 
 class SupportDashboard extends Page
@@ -17,7 +16,7 @@ class SupportDashboard extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-            ProposalStatsWidget::class,
+            // Widgets removidos
         ];
     }
 }

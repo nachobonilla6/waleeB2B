@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Http;
 class ListClientes extends ListRecords
 {
     protected static string $resource = ClienteResource::class;
+    
+    protected array $cotizacionData = [];
 
     protected function getHeaderActions(): array
     {
@@ -26,6 +28,10 @@ class ListClientes extends ListRecords
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
+                ->afterFormValidated(function (array $data) {
+                    // Guardar los datos en la propiedad de la clase
+                    $this->cotizacionData = $data;
+                })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('idioma')
@@ -124,8 +130,9 @@ class ListClientes extends ListRecords
                     Actions\Action::make('enviar')
                         ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
-                        ->action(function () use ($action) {
-                            $data = $action->getFormData();
+                        ->action(function () {
+                            // Usar los datos guardados en la propiedad de la clase
+                            $data = $this->cotizacionData;
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             

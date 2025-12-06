@@ -17,6 +17,8 @@ class ViewCliente extends Page
     protected static string $resource = ClienteResource::class;
 
     protected static string $view = 'filament.resources.cliente-resource.pages.view-cliente';
+    
+    protected array $cotizacionData = [];
 
     public function mount(int|string $record): void
     {
@@ -43,6 +45,10 @@ class ViewCliente extends Page
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
+                ->afterFormValidated(function (array $data) {
+                    // Guardar los datos en la propiedad de la clase
+                    $this->cotizacionData = $data;
+                })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('idioma')
@@ -135,8 +141,9 @@ class ViewCliente extends Page
                     Action::make('enviar')
                         ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
-                        ->action(function () use ($action) {
-                            $data = $action->getFormData();
+                        ->action(function () {
+                            // Usar los datos guardados en la propiedad de la clase
+                            $data = $this->cotizacionData;
                             try {
                                 // Convertir fecha a string si es un objeto Carbon
                                 $fecha = $data['fecha'] ?? '';

@@ -39,7 +39,7 @@
                 </div>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ClientPropuestaEnviadaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-gray-200 dark:border-gray-700">
+            <a href="{{ \App\Filament\Resources\ClientPropuestaEnviadaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

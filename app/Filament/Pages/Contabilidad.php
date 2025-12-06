@@ -5,8 +5,9 @@ namespace App\Filament\Pages;
 use App\Models\Factura;
 use Filament\Pages\Page;
 use Filament\Actions;
-use App\Filament\Resources\FacturaResource;
-use App\Filament\Resources\CotizacionResource;
+use App\Filament\Pages\Contabilidad\FacturasPage;
+use App\Filament\Pages\Contabilidad\CotizacionesPage;
+use App\Filament\Pages\Contabilidad\ReportesPage;
 
 class Contabilidad extends Page
 {
@@ -18,16 +19,17 @@ class Contabilidad extends Page
 
     protected static string $view = 'filament.pages.contabilidad';
 
-    public ?string $activeTab = 'facturas';
-
     public function mount(): void
     {
-        $this->activeTab = request()->get('tab', 'facturas');
-    }
-
-    public function setActiveTab(string $tab): void
-    {
-        $this->activeTab = $tab;
+        // Redirigir a la página de Facturas por defecto
+        $tab = request()->get('tab', 'facturas');
+        
+        match($tab) {
+            'facturas' => $this->redirect(FacturasPage::getUrl()),
+            'cotizaciones' => $this->redirect(CotizacionesPage::getUrl()),
+            'reportes' => $this->redirect(ReportesPage::getUrl()),
+            default => $this->redirect(FacturasPage::getUrl()),
+        };
     }
 
     protected function getHeaderActions(): array
@@ -36,18 +38,18 @@ class Contabilidad extends Page
             Actions\Action::make('facturas')
                 ->label('Facturas')
                 ->icon('heroicon-o-banknotes')
-                ->color($this->activeTab === 'facturas' ? 'success' : 'gray')
-                ->action(fn () => $this->setActiveTab('facturas')),
+                ->color('gray')
+                ->url(FacturasPage::getUrl()),
             Actions\Action::make('cotizaciones')
                 ->label('Cotizaciones')
                 ->icon('heroicon-o-document-text')
-                ->color($this->activeTab === 'cotizaciones' ? 'success' : 'gray')
-                ->action(fn () => $this->setActiveTab('cotizaciones')),
+                ->color('gray')
+                ->url(CotizacionesPage::getUrl()),
             Actions\Action::make('reportes')
                 ->label('Reportes')
                 ->icon('heroicon-o-chart-bar')
-                ->color($this->activeTab === 'reportes' ? 'success' : 'gray')
-                ->action(fn () => $this->setActiveTab('reportes')),
+                ->color('gray')
+                ->url(ReportesPage::getUrl()),
         ];
     }
 

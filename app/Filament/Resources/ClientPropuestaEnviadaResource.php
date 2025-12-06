@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Filament\Notifications\Notification;
 
 class ClientPropuestaEnviadaResource extends Resource
@@ -28,13 +29,31 @@ class ClientPropuestaEnviadaResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getEloquentQuery()->count();
+        try {
+            return static::getEloquentQuery()->count();
+        } catch (\Exception $e) {
+            return '0';
+        }
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where('propuesta_enviada', true);
+        try {
+            $query = parent::getEloquentQuery();
+            
+            // Verificar si la columna propuesta_enviada existe antes de usarla
+            if (Schema::hasTable('clients') && Schema::hasColumn('clients', 'propuesta_enviada')) {
+                $query->where('propuesta_enviada', true);
+            } else {
+                // Si la columna no existe, retornar un query vacío
+                $query->whereRaw('1 = 0');
+            }
+            
+            return $query;
+        } catch (\Exception $e) {
+            // Si hay algún error, retornar un query vacío
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
     }
 
     public static function form(Form $form): Form
@@ -90,7 +109,8 @@ class ClientPropuestaEnviadaResource extends Resource
                 Forms\Components\Toggle::make('propuesta_enviada')
                     ->label('Propuesta enviada')
                     ->default(true)
-                    ->disabled(),
+                    ->disabled()
+                    ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
                 Forms\Components\Textarea::make('feedback')
                     ->label('Feedback')
                     ->columnSpanFull()
@@ -111,7 +131,13 @@ class ClientPropuestaEnviadaResource extends Resource
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(10)
             ->heading('Propuestas Enviadas')
-            ->description(fn () => 'Nombre, correo y fecha de propuesta enviada. Total: ' . static::getEloquentQuery()->count())
+            ->description(function () {
+                try {
+                    return 'Nombre, correo y fecha de propuesta enviada. Total: ' . static::getEloquentQuery()->count();
+                } catch (\Exception $e) {
+                    return 'Nombre, correo y fecha de propuesta enviada. Total: 0';
+                }
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

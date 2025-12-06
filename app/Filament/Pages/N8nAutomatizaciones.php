@@ -90,7 +90,7 @@ class N8nAutomatizaciones extends Page
             // Solo excluir si está explícitamente marcado como archivado
             if (isset($workflow['archived']) && $workflow['archived'] === true) {
                 return false;
-            }
+        }
             
             // Excluir si tiene el tag "archived" (verificar solo si tags existe)
             if (isset($workflow['tags']) && is_array($workflow['tags']) && !empty($workflow['tags'])) {

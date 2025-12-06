@@ -31,7 +31,7 @@ class ClientResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         try {
-            return static::getEloquentQuery()->count();
+        return static::getEloquentQuery()->count();
         } catch (\Exception $e) {
             return '0';
         }
@@ -233,7 +233,7 @@ class ClientResource extends Resource
 
                                     if ($response->successful()) {
                                         if (Schema::hasColumn('clients', 'propuesta_enviada')) {
-                                            $record->update(['propuesta_enviada' => true]);
+                                        $record->update(['propuesta_enviada' => true]);
                                         }
                                         $enviados++;
                                     } else {
@@ -283,7 +283,7 @@ class ClientResource extends Resource
                 $query->where(function ($q) {
                     $q->whereNull('propuesta_enviada')
                       ->orWhere('propuesta_enviada', false);
-                });
+            });
             }
             
             return $query;

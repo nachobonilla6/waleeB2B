@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\Sitio;
+use Filament\Pages\Page;
+
+class SiteManager extends Page
+{
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static ?string $navigationLabel = 'Site Manager';
+    protected static ?string $title = 'Site Manager';
+    protected static ?string $navigationGroup = 'Herramientas';
+    protected static ?int $navigationSort = 3;
+
+    protected static string $view = 'filament.pages.site-manager';
+    
+    public function getSitios()
+    {
+        return Sitio::with('tags')->get();
+    }
+}

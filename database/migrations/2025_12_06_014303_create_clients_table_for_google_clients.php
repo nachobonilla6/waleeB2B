@@ -14,7 +14,7 @@ return new class extends Migration
         // Solo crear la tabla si no existe
         if (!Schema::hasTable('clients')) {
             Schema::create('clients', function (Blueprint $table) {
-                $table->id();
+            $table->id();
                 $table->string('name');
                 $table->string('email')->nullable();
                 $table->string('website')->nullable();
@@ -25,8 +25,8 @@ return new class extends Migration
                 $table->text('propuesta')->nullable();
                 $table->string('proposed_site')->nullable();
                 $table->boolean('propuesta_enviada')->default(false);
-                $table->timestamps();
-            });
+            $table->timestamps();
+        });
         } else {
             // Si la tabla existe, agregar las columnas que faltan
             Schema::table('clients', function (Blueprint $table) {

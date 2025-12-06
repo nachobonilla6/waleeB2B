@@ -202,11 +202,11 @@ class ViewCliente extends Page
                                 try {
                                     Mail::to($correoDestino)->send(new CotizacionMail($emailData));
                                     
-                                    Notification::make()
-                                        ->title('✅ Cotización enviada')
+                            Notification::make()
+                                ->title('✅ Cotización enviada')
                                         ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada por email a ' . $correoDestino)
-                                        ->success()
-                                        ->send();
+                                ->success()
+                                ->send();
                                 } catch (\Exception $mailException) {
                                     Notification::make()
                                         ->title('❌ Error al enviar email')

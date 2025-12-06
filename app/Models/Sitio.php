@@ -14,6 +14,7 @@ class Sitio extends Model
         'nombre',
         'descripcion',
         'en_linea',
+        'enlace',
         'imagen',
         'video_url'
     ];

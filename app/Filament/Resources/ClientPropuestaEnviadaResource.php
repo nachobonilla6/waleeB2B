@@ -30,7 +30,7 @@ class ClientPropuestaEnviadaResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         try {
-            return static::getEloquentQuery()->count();
+        return static::getEloquentQuery()->count();
         } catch (\Exception $e) {
             return '0';
         }

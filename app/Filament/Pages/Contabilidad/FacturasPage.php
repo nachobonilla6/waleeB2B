@@ -36,8 +36,6 @@ class FacturasPage extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->url(FacturaResource::getUrl('create')),
             Actions\Action::make('facturas')
                 ->label('Facturas')
                 ->icon('heroicon-o-banknotes')

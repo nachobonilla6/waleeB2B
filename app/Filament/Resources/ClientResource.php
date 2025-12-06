@@ -306,11 +306,20 @@ class ClientResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where(function ($query) {
-                $query->whereNull('propuesta_enviada')
-                      ->orWhere('propuesta_enviada', false);
-            });
+        try {
+            // Verificar si la tabla existe antes de hacer el query
+            if (!\Illuminate\Support\Facades\Schema::hasTable('clients')) {
+                return parent::getEloquentQuery()->whereRaw('1 = 0');
+            }
+            return parent::getEloquentQuery()
+                ->where(function ($query) {
+                    $query->whereNull('propuesta_enviada')
+                          ->orWhere('propuesta_enviada', false);
+                });
+        } catch (\Exception $e) {
+            // Si hay algún error, retornar un query vacío
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
     }
 
     public static function getRelations(): array

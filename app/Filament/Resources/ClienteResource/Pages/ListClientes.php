@@ -123,7 +123,8 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
-                            $cliente = Cliente::find($data['cliente_id']);
+                            $clienteId = $data['cliente_id'] ?? null;
+                            $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             
                             try {
                                 // Enviar datos al webhook de n8n
@@ -137,9 +138,9 @@ class ListClientes extends ListRecords
                                     'vigencia' => $data['vigencia'] ?? '',
                                     'correo' => $data['correo'] ?? '',
                                     'descripcion' => $data['descripcion'] ?? '',
-                                    'cliente_id' => $data['cliente_id'] ?? null,
-                                    'cliente_nombre' => $cliente->nombre_empresa ?? '',
-                                    'cliente_correo' => $cliente->correo ?? '',
+                                    'cliente_id' => $clienteId,
+                                    'cliente_nombre' => $cliente?->nombre_empresa ?? '',
+                                    'cliente_correo' => $cliente?->correo ?? '',
                                     'timestamp' => now()->toIso8601String(),
                                 ]);
 

@@ -174,10 +174,21 @@ class ClientResource extends Resource
                     ->trueLabel('Con propuesta enviada')
                     ->falseLabel('Sin propuesta enviada')
                     ->queries(
-                        true: fn (Builder $query) => $query->where('propuesta_enviada', true),
-                        false: fn (Builder $query) => $query->where('propuesta_enviada', false),
+                        true: function (Builder $query) {
+                            if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                                return $query->where('propuesta_enviada', true);
+                            }
+                            return $query;
+                        },
+                        false: function (Builder $query) {
+                            if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                                return $query->where('propuesta_enviada', false);
+                            }
+                            return $query;
+                        },
                         blank: fn (Builder $query) => $query,
-                    ),
+                    )
+                    ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
             ])
             ->actions([
                 \Filament\Tables\Actions\EditAction::make()

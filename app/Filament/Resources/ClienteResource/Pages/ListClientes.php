@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Http;
 
 class ListClientes extends ListRecords
 {
@@ -123,11 +124,45 @@ class ListClientes extends ListRecords
                         ->color('success')
                         ->action(function (array $data) {
                             $cliente = Cliente::find($data['cliente_id']);
-                            Notification::make()
-                                ->title('✅ Cotización enviada')
-                                ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'])
-                                ->success()
-                                ->send();
+                            
+                            try {
+                                // Enviar datos al webhook de n8n
+                                $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51', [
+                                    'numero_cotizacion' => $data['numero_cotizacion'] ?? '',
+                                    'fecha' => $data['fecha'] ?? '',
+                                    'idioma' => $data['idioma'] ?? '',
+                                    'tipo_servicio' => $data['tipo_servicio'] ?? '',
+                                    'plan' => $data['plan'] ?? '',
+                                    'monto' => $data['monto'] ?? '',
+                                    'vigencia' => $data['vigencia'] ?? '',
+                                    'correo' => $data['correo'] ?? '',
+                                    'descripcion' => $data['descripcion'] ?? '',
+                                    'cliente_id' => $data['cliente_id'] ?? null,
+                                    'cliente_nombre' => $cliente->nombre_empresa ?? '',
+                                    'cliente_correo' => $cliente->correo ?? '',
+                                    'timestamp' => now()->toIso8601String(),
+                                ]);
+
+                                if ($response->successful()) {
+                                    Notification::make()
+                                        ->title('✅ Cotización enviada')
+                                        ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'] . ' y al webhook.')
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    Notification::make()
+                                        ->title('⚠️ Cotización enviada con advertencia')
+                                        ->body('Cotización enviada a ' . $data['correo'] . ' pero hubo un problema con el webhook.')
+                                        ->warning()
+                                        ->send();
+                                }
+                            } catch (\Exception $e) {
+                                Notification::make()
+                                    ->title('✅ Cotización enviada')
+                                    ->body('Cotización ' . $data['numero_cotizacion'] . ' enviada a ' . $data['correo'] . '. Error al enviar al webhook: ' . $e->getMessage())
+                                    ->warning()
+                                    ->send();
+                            }
                         }),
                 ]),
             Actions\Action::make('factura')

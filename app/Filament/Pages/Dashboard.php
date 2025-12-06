@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\IngresosDashboardWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -12,7 +13,9 @@ class Dashboard extends BaseDashboard
 
     protected function getHeaderWidgets(): array
     {
-        return [];
+        return [
+            IngresosDashboardWidget::class,
+        ];
     }
 
     /**

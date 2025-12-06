@@ -64,7 +64,6 @@ class BookmarkResource extends Resource
                     ->openUrlInNewTab()
                     ->searchable()
                     ->limit(50)
-                    ->copyable()
                     ->default('—'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')

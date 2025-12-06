@@ -9,6 +9,8 @@ use Filament\Resources\Pages\ListRecords;
 class ListClientPropuestaEnviadas extends ListRecords
 {
     protected static string $resource = ClientPropuestaEnviadaResource::class;
+    
+    protected static string $view = 'filament.resources.client-propuesta-enviada-resource.pages.list-client-propuesta-enviadas';
 
     protected function getHeaderActions(): array
     {

@@ -17,6 +17,8 @@ class ListClientes extends ListRecords
 {
     protected static string $resource = ClienteResource::class;
     
+    protected static string $view = 'filament.resources.cliente-resource.pages.list-clientes';
+    
     protected array $cotizacionData = [];
 
     protected function getHeaderActions(): array

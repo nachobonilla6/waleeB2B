@@ -319,10 +319,11 @@ class CotizacionesPage extends Page implements HasTable
                                     ->displayFormat('d/m/Y'),
                             ]),
                             Forms\Components\TextInput::make('correo')
-                                ->label('Correo electrónico')
+                                ->label('Correo electrónico para envío')
                                 ->email()
                                 ->placeholder('correo@ejemplo.com')
-                                ->helperText('Correo donde se enviará la factura'),
+                                ->helperText('Correo donde se enviará la factura. Se auto-completa con el correo del cliente seleccionado.')
+                                ->required(),
                             Forms\Components\Textarea::make('notas')
                                 ->label('Notas')
                                 ->rows(3)

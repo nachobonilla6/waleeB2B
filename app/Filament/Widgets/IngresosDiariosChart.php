@@ -16,6 +16,8 @@ class IngresosDiariosChart extends ChartWidget
     protected static bool $isLazy = true;
     
     protected int | string | array $columnSpan = 'full';
+    
+    protected static ?string $maxHeight = '200px';
 
     protected function getType(): string
     {

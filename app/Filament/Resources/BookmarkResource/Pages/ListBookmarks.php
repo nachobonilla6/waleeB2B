@@ -13,7 +13,25 @@ class ListBookmarks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->form([
+                    \Filament\Forms\Components\TextInput::make('categoria')
+                        ->label('Categoría')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('Ej: Desarrollo, Diseño, Herramientas...'),
+                    \Filament\Forms\Components\TextInput::make('nombre')
+                        ->label('Nombre')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('Nombre del bookmark'),
+                    \Filament\Forms\Components\TextInput::make('enlace')
+                        ->label('Enlace')
+                        ->required()
+                        ->url()
+                        ->maxLength(255)
+                        ->placeholder('https://ejemplo.com'),
+                ]),
         ];
     }
 }

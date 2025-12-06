@@ -87,7 +87,25 @@ class BookmarkResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->form([
+                        Forms\Components\TextInput::make('categoria')
+                            ->label('Categoría')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Ej: Desarrollo, Diseño, Herramientas...'),
+                        Forms\Components\TextInput::make('nombre')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Nombre del bookmark'),
+                        Forms\Components\TextInput::make('enlace')
+                            ->label('Enlace')
+                            ->required()
+                            ->url()
+                            ->maxLength(255)
+                            ->placeholder('https://ejemplo.com'),
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -107,8 +125,6 @@ class BookmarkResource extends Resource
     {
         return [
             'index' => Pages\ListBookmarks::route('/'),
-            'create' => Pages\CreateBookmark::route('/create'),
-            'edit' => Pages\EditBookmark::route('/{record}/edit'),
         ];
     }
 }

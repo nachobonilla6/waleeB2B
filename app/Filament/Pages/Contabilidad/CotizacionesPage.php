@@ -396,12 +396,12 @@ class CotizacionesPage extends Page implements HasTable
             Actions\Action::make('facturas')
                 ->label('Facturas')
                 ->icon('heroicon-o-banknotes')
-                ->color('success')
+                ->color('gray')
                 ->url(FacturasPage::getUrl()),
             Actions\Action::make('cotizaciones')
                 ->label('Cotizaciones')
                 ->icon('heroicon-o-document-text')
-                ->color('gray')
+                ->color('success')
                 ->url(static::getUrl()),
             Actions\Action::make('reportes')
                 ->label('Reportes')

@@ -54,7 +54,17 @@ class ListClientes extends ListRecords
                             ->label('Cliente')
                             ->options(Cliente::pluck('nombre_empresa', 'id'))
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                // Cuando se selecciona un cliente, actualizar el correo automáticamente
+                                if ($state) {
+                                    $cliente = Cliente::find($state);
+                                    if ($cliente?->correo) {
+                                        $set('correo', $cliente->correo);
+                                    }
+                                }
+                            }),
                     ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('numero_cotizacion')

@@ -14,14 +14,14 @@ class ListCotizacions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make()
+                ->label('Nueva Cotización')
+                ->icon('heroicon-o-plus'),
             Actions\Action::make('clientes')
-                ->label('👥 Clientes')
+                ->label('Clientes')
                 ->icon('heroicon-o-users')
                 ->color('primary')
                 ->url(ClienteResource::getUrl('index')),
-            Actions\CreateAction::make()
-                ->label('📝 Nueva Cotización')
-                ->icon('heroicon-o-plus'),
         ];
     }
 }

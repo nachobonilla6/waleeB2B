@@ -25,8 +25,13 @@ class ListClientes extends ListRecords
             Actions\CreateAction::make()
                 ->label('Nuevo Cliente')
                 ->icon('heroicon-o-plus'),
+            Actions\Action::make('cotizaciones')
+                ->label('Cotizaciones')
+                ->icon('heroicon-o-document-text')
+                ->color('primary')
+                ->url(\App\Filament\Resources\CotizacionResource::getUrl('index')),
             Actions\Action::make('cotizacion')
-                ->label('Crear Cotización')
+                ->label('Nueva Cotización')
                 ->icon('heroicon-o-document-text')
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')

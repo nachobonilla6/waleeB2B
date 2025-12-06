@@ -66,11 +66,11 @@ class CotizacionResource extends Resource
                                     }
                                 }),
                             Forms\Components\Select::make('idioma')
-                                ->label('🌐 Idioma')
+                                ->label('Idioma')
                                 ->options([
-                                    'es' => '🇪🇸 Español',
-                                    'en' => '🇺🇸 English',
-                                    'fr' => '🇫🇷 Français',
+                                    'es' => 'Español',
+                                    'en' => 'English',
+                                    'fr' => 'Français',
                                 ])
                                 ->default('es')
                                 ->required(),
@@ -83,13 +83,13 @@ class CotizacionResource extends Resource
                             Forms\Components\Select::make('tipo_servicio')
                                 ->label('Tipo de Servicio')
                                 ->options([
-                                    'diseno_web' => '🌐 Diseño Web',
-                                    'redes_sociales' => '📱 Gestión Redes Sociales',
-                                    'seo' => '🔍 SEO / Posicionamiento',
-                                    'publicidad' => '📢 Publicidad Digital',
-                                    'mantenimiento' => '🔧 Mantenimiento Web',
-                                    'hosting' => '☁️ Hosting & Dominio',
-                                    'combo' => '📦 Paquete Completo',
+                                    'diseno_web' => 'Diseño Web',
+                                    'redes_sociales' => 'Gestión Redes Sociales',
+                                    'seo' => 'SEO / Posicionamiento',
+                                    'publicidad' => 'Publicidad Digital',
+                                    'mantenimiento' => 'Mantenimiento Web',
+                                    'hosting' => 'Hosting & Dominio',
+                                    'combo' => 'Paquete Completo',
                                 ])
                                 ->required(),
                             Forms\Components\Select::make('plan')
@@ -129,16 +129,16 @@ class CotizacionResource extends Resource
                     ->icon('heroicon-o-envelope')
                     ->schema([
                         Forms\Components\TextInput::make('correo')
-                            ->label('📧 Correo electrónico')
+                            ->label('Correo electrónico')
                             ->email()
                             ->required(),
                         Forms\Components\Select::make('estado')
                             ->label('Estado')
                             ->options([
-                                'pendiente' => '⏳ Pendiente',
-                                'enviada' => '📧 Enviada',
-                                'aceptada' => '✅ Aceptada',
-                                'rechazada' => '❌ Rechazada',
+                                'pendiente' => 'Pendiente',
+                                'enviada' => 'Enviada',
+                                'aceptada' => 'Aceptada',
+                                'rechazada' => 'Rechazada',
                             ])
                             ->default('pendiente')
                             ->required(),
@@ -166,13 +166,13 @@ class CotizacionResource extends Resource
                 Tables\Columns\TextColumn::make('tipo_servicio')
                     ->label('Tipo de Servicio')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'diseno_web' => '🌐 Diseño Web',
-                        'redes_sociales' => '📱 Gestión Redes Sociales',
-                        'seo' => '🔍 SEO / Posicionamiento',
-                        'publicidad' => '📢 Publicidad Digital',
-                        'mantenimiento' => '🔧 Mantenimiento Web',
-                        'hosting' => '☁️ Hosting & Dominio',
-                        'combo' => '📦 Paquete Completo',
+                        'diseno_web' => 'Diseño Web',
+                        'redes_sociales' => 'Gestión Redes Sociales',
+                        'seo' => 'SEO / Posicionamiento',
+                        'publicidad' => 'Publicidad Digital',
+                        'mantenimiento' => 'Mantenimiento Web',
+                        'hosting' => 'Hosting & Dominio',
+                        'combo' => 'Paquete Completo',
                         default => $state,
                     })
                     ->searchable(),
@@ -191,10 +191,10 @@ class CotizacionResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pendiente' => '⏳ Pendiente',
-                        'enviada' => '📧 Enviada',
-                        'aceptada' => '✅ Aceptada',
-                        'rechazada' => '❌ Rechazada',
+                        'pendiente' => 'Pendiente',
+                        'enviada' => 'Enviada',
+                        'aceptada' => 'Aceptada',
+                        'rechazada' => 'Rechazada',
                         default => $state,
                     })
                     ->sortable(),
@@ -208,21 +208,21 @@ class CotizacionResource extends Resource
                 Tables\Filters\SelectFilter::make('estado')
                     ->label('Estado')
                     ->options([
-                        'pendiente' => '⏳ Pendiente',
-                        'enviada' => '📧 Enviada',
-                        'aceptada' => '✅ Aceptada',
-                        'rechazada' => '❌ Rechazada',
+                        'pendiente' => 'Pendiente',
+                        'enviada' => 'Enviada',
+                        'aceptada' => 'Aceptada',
+                        'rechazada' => 'Rechazada',
                     ]),
                 Tables\Filters\SelectFilter::make('tipo_servicio')
                     ->label('Tipo de Servicio')
                     ->options([
-                        'diseno_web' => '🌐 Diseño Web',
-                        'redes_sociales' => '📱 Gestión Redes Sociales',
-                        'seo' => '🔍 SEO / Posicionamiento',
-                        'publicidad' => '📢 Publicidad Digital',
-                        'mantenimiento' => '🔧 Mantenimiento Web',
-                        'hosting' => '☁️ Hosting & Dominio',
-                        'combo' => '📦 Paquete Completo',
+                        'diseno_web' => 'Diseño Web',
+                        'redes_sociales' => 'Gestión Redes Sociales',
+                        'seo' => 'SEO / Posicionamiento',
+                        'publicidad' => 'Publicidad Digital',
+                        'mantenimiento' => 'Mantenimiento Web',
+                        'hosting' => 'Hosting & Dominio',
+                        'combo' => 'Paquete Completo',
                     ]),
                 Tables\Filters\Filter::make('fecha')
                     ->form([
@@ -245,7 +245,7 @@ class CotizacionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('enviar_email')
-                    ->label('📧 Enviar Email')
+                    ->label('Enviar Email')
                     ->icon('heroicon-o-envelope')
                     ->color('success')
                     ->action(function (Cotizacion $record) {

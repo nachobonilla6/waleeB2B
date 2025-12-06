@@ -7,6 +7,7 @@ use App\Filament\Resources\CotizacionResource;
 use App\Models\Factura;
 use App\Models\Cotizacion;
 use App\Models\Cliente;
+use App\Mail\FacturaMail;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Forms;
@@ -16,6 +17,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Mail;
 
 class FacturasPage extends Page implements HasTable
 {
@@ -125,6 +127,11 @@ class FacturasPage extends Page implements HasTable
                                     ->label('Fecha Vencimiento')
                                     ->displayFormat('d/m/Y'),
                             ]),
+                            Forms\Components\TextInput::make('correo')
+                                ->label('Correo electrónico')
+                                ->email()
+                                ->placeholder('correo@ejemplo.com')
+                                ->helperText('Correo donde se enviará la factura'),
                             Forms\Components\Textarea::make('notas')
                                 ->label('Notas')
                                 ->rows(3)
@@ -132,6 +139,67 @@ class FacturasPage extends Page implements HasTable
                         ]),
                 ])
                 ->modalWidth('4xl')
+                ->extraModalFooterActions(function ($action) {
+                    return [
+                        Actions\Action::make('guardar_y_enviar')
+                            ->label('Guardar y Enviar por Email')
+                            ->icon('heroicon-o-envelope')
+                            ->color('success')
+                            ->requiresConfirmation()
+                            ->action(function (array $data) use ($action) {
+                                // Crear la factura
+                                $factura = Factura::create($data);
+                                
+                                // Obtener datos del cliente
+                                $cliente = Cliente::find($data['cliente_id'] ?? null);
+                                
+                                // Preparar datos para el email
+                                $emailData = [
+                                    'numero_factura' => (string) ($data['numero_factura'] ?? ''),
+                                    'fecha_emision' => isset($data['fecha_emision']) ? (is_string($data['fecha_emision']) ? $data['fecha_emision'] : $data['fecha_emision']->format('Y-m-d')) : '',
+                                    'concepto' => (string) ($data['concepto'] ?? ''),
+                                    'subtotal' => (string) ($data['subtotal'] ?? '0'),
+                                    'total' => (string) ($data['total'] ?? '0'),
+                                    'metodo_pago' => (string) ($data['metodo_pago'] ?? ''),
+                                    'estado' => (string) ($data['estado'] ?? ''),
+                                    'fecha_vencimiento' => isset($data['fecha_vencimiento']) ? (is_string($data['fecha_vencimiento']) ? $data['fecha_vencimiento'] : $data['fecha_vencimiento']->format('Y-m-d')) : '',
+                                    'notas' => (string) ($data['notas'] ?? ''),
+                                    'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
+                                    'cliente_correo' => (string) ($data['correo'] ?? $cliente?->correo ?? ''),
+                                ];
+                                
+                                // Enviar email
+                                $correoDestino = $data['correo'] ?? $cliente?->correo ?? '';
+                                
+                                if (empty($correoDestino)) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('⚠️ Factura guardada')
+                                        ->body('La factura se guardó pero no se especificó un correo electrónico para enviar.')
+                                        ->warning()
+                                        ->send();
+                                    return;
+                                }
+                                
+                                try {
+                                    \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\FacturaMail($emailData));
+                                    
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('✅ Factura creada y enviada')
+                                        ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' guardada y enviada por email a ' . $correoDestino)
+                                        ->success()
+                                        ->send();
+                                } catch (\Exception $mailException) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('⚠️ Factura guardada')
+                                        ->body('La factura se guardó pero no se pudo enviar el email: ' . $mailException->getMessage())
+                                        ->warning()
+                                        ->send();
+                                }
+                                
+                                $action->success();
+                            }),
+                    ];
+                })
                 ->successNotificationTitle('Factura creada exitosamente'),
             Actions\CreateAction::make('nueva_cotizacion')
                 ->label('Nueva Cotización')
@@ -248,6 +316,71 @@ class FacturasPage extends Page implements HasTable
                         ]),
                 ])
                 ->modalWidth('4xl')
+                ->extraModalFooterActions(function ($action) {
+                    return [
+                        Actions\Action::make('guardar_y_enviar_cotizacion')
+                            ->label('Guardar y Enviar por Email')
+                            ->icon('heroicon-o-envelope')
+                            ->color('success')
+                            ->requiresConfirmation()
+                            ->action(function (array $data) use ($action) {
+                                // Crear la cotización
+                                $cotizacion = Cotizacion::create($data);
+                                
+                                // Obtener datos del cliente
+                                $cliente = Cliente::find($data['cliente_id'] ?? null);
+                                
+                                // Preparar datos para el email
+                                $fecha = isset($data['fecha']) ? (is_string($data['fecha']) ? $data['fecha'] : $data['fecha']->format('Y-m-d')) : '';
+                                
+                                $emailData = [
+                                    'numero_cotizacion' => (string) ($data['numero_cotizacion'] ?? ''),
+                                    'fecha' => $fecha,
+                                    'idioma' => (string) ($data['idioma'] ?? ''),
+                                    'tipo_servicio' => (string) ($data['tipo_servicio'] ?? ''),
+                                    'plan' => (string) ($data['plan'] ?? ''),
+                                    'monto' => (string) ($data['monto'] ?? ''),
+                                    'vigencia' => (string) ($data['vigencia'] ?? ''),
+                                    'correo' => (string) ($data['correo'] ?? ''),
+                                    'descripcion' => (string) ($data['descripcion'] ?? ''),
+                                    'cliente_id' => $data['cliente_id'] ?? null,
+                                    'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
+                                    'cliente_correo' => (string) ($data['correo'] ?? $cliente?->correo ?? ''),
+                                    'timestamp' => now()->toIso8601String(),
+                                ];
+                                
+                                // Enviar email
+                                $correoDestino = $data['correo'] ?? $cliente?->correo ?? '';
+                                
+                                if (empty($correoDestino)) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('⚠️ Cotización guardada')
+                                        ->body('La cotización se guardó pero no se especificó un correo electrónico para enviar.')
+                                        ->warning()
+                                        ->send();
+                                    return;
+                                }
+                                
+                                try {
+                                    Mail::to($correoDestino)->send(new \App\Mail\CotizacionMail($emailData));
+                                    
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('✅ Cotización creada y enviada')
+                                        ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada y enviada por email a ' . $correoDestino)
+                                        ->success()
+                                        ->send();
+                                } catch (\Exception $mailException) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('⚠️ Cotización guardada')
+                                        ->body('La cotización se guardó pero no se pudo enviar el email: ' . $mailException->getMessage())
+                                        ->warning()
+                                        ->send();
+                                }
+                                
+                                $action->success();
+                            }),
+                    ];
+                })
                 ->successNotificationTitle('Cotización creada exitosamente'),
             Actions\Action::make('facturas')
                 ->label('Facturas')

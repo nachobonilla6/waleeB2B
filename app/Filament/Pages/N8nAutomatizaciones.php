@@ -14,7 +14,7 @@ class N8nAutomatizaciones extends Page
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
     protected static ?string $navigationLabel = 'Automatizaciones n8n';
     protected static ?string $title = 'Automatizaciones n8n';
-    protected static ?string $navigationGroup = 'Automatizaciones';
+    protected static ?string $navigationGroup = 'Soporte';
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.n8n-automatizaciones';

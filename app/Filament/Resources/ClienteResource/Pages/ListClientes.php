@@ -111,7 +111,29 @@ class ListClientes extends ListRecords
                         Forms\Components\TextInput::make('correo')
                             ->label('📧 Correo electrónico')
                             ->email()
-                            ->required(),
+                            ->required()
+                            ->default(function (Forms\Get $get) {
+                                $clienteId = $get('cliente_id');
+                                if ($clienteId) {
+                                    $cliente = Cliente::find($clienteId);
+                                    return $cliente?->correo ?? '';
+                                }
+                                return '';
+                            })
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set, Forms\Get $get) {
+                                // Si el correo está vacío y hay un cliente seleccionado, usar el correo del cliente
+                                $correo = $get('correo');
+                                if (empty($correo)) {
+                                    $clienteId = $get('cliente_id');
+                                    if ($clienteId) {
+                                        $cliente = Cliente::find($clienteId);
+                                        if ($cliente?->correo) {
+                                            $set('correo', $cliente->correo);
+                                        }
+                                    }
+                                }
+                            }),
                         Forms\Components\Textarea::make('descripcion')
                             ->label('Descripción / Servicios incluidos')
                             ->rows(2),

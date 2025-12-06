@@ -1,0 +1,22 @@
+# Comandos para ejecutar en el servidor de Hostinger
+# Después de subir los archivos IngresosStatsWidget.php y Dashboard.php
+
+cd /home/u655097049/domains/websolutions.work
+
+# Regenerar autoload
+composer dump-autoload --optimize
+
+# Limpiar caché
+php artisan optimize:clear
+php artisan filament:cache-components
+php artisan view:clear
+php artisan config:clear
+
+# Verificar que los archivos existen
+ls -la app/Filament/Widgets/IngresosStatsWidget.php
+ls -la app/Filament/Pages/Dashboard.php
+
+# Verificar sintaxis
+php -l app/Filament/Widgets/IngresosStatsWidget.php
+php -l app/Filament/Pages/Dashboard.php
+

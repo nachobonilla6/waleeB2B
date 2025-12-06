@@ -13,7 +13,13 @@ class Client extends Model
         'email',
         'phone',
         'website',
+        'address',
+        'telefono_1',
+        'telefono_2',
+        'feedback',
+        'propuesta',
         'proposed_site',
+        'propuesta_enviada',
         'message',
     ];
 

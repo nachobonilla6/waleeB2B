@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
 use App\Models\Cliente;
+use App\Models\Cotizacion;
 use App\Mail\CotizacionMail;
 use Filament\Actions;
 use Filament\Forms;
@@ -165,6 +166,21 @@ class ListClientes extends ListRecords
                                     $fecha = '';
                                 }
                                 
+                                // Guardar la cotización en la base de datos
+                                $cotizacion = Cotizacion::create([
+                                    'numero_cotizacion' => $data['numero_cotizacion'] ?? 'COT-' . date('Ymd') . '-' . rand(100, 999),
+                                    'fecha' => $fecha,
+                                    'idioma' => $data['idioma'] ?? 'es',
+                                    'cliente_id' => $clienteId,
+                                    'tipo_servicio' => $data['tipo_servicio'] ?? '',
+                                    'plan' => $data['plan'] ?? '',
+                                    'monto' => $data['monto'] ?? 0,
+                                    'vigencia' => $data['vigencia'] ?? '15',
+                                    'correo' => $data['correo'] ?? '',
+                                    'descripcion' => $data['descripcion'] ?? '',
+                                    'estado' => 'enviada',
+                                ]);
+                                
                                 // Preparar datos para el email
                                 $emailData = [
                                     'numero_cotizacion' => (string) ($data['numero_cotizacion'] ?? ''),
@@ -188,7 +204,7 @@ class ListClientes extends ListRecords
                                 if (empty($correoDestino)) {
                                     Notification::make()
                                         ->title('❌ Error')
-                                        ->body('No se especificó un correo electrónico para enviar la cotización. Datos recibidos: ' . json_encode($data))
+                                        ->body('No se especificó un correo electrónico para enviar la cotización.')
                                         ->danger()
                                         ->send();
                                     return;
@@ -199,14 +215,14 @@ class ListClientes extends ListRecords
                                     
                                     Notification::make()
                                         ->title('✅ Cotización enviada')
-                                        ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada por email a ' . $correoDestino)
+                                        ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada y enviada por email a ' . $correoDestino)
                                         ->success()
                                         ->send();
                                 } catch (\Exception $mailException) {
                                     Notification::make()
                                         ->title('❌ Error al enviar email')
-                                        ->body('No se pudo enviar el email: ' . $mailException->getMessage())
-                                        ->danger()
+                                        ->body('La cotización se guardó pero no se pudo enviar el email: ' . $mailException->getMessage())
+                                        ->warning()
                                         ->send();
                                 }
                             } catch (\Exception $e) {

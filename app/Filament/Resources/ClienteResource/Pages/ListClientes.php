@@ -179,24 +179,34 @@ class ListClientes extends ListRecords
                                 return;
                             }
                             
-                            // Obtener datos del formulario usando getFormData
-                            $data = $parentAction->getFormData();
+                            // Intentar obtener datos del formulario validado
+                            $data = [];
                             
-                            // Si está vacío, intentar obtener de otra manera
-                            if (empty($data)) {
-                                // Intentar obtener usando el método del formulario
-                                try {
-                                    $form = $this->getMountedActionForm();
-                                    if ($form) {
-                                        $data = $form->getState();
-                                    }
-                                } catch (\Exception $e) {
-                                    // Si falla, usar los datos guardados
-                                    $data = $this->cotizacionData;
+                            // Método 1: Intentar obtener usando getMountedActionForm
+                            try {
+                                $form = $this->getMountedActionForm();
+                                if ($form) {
+                                    // Validar y obtener el estado
+                                    $data = $form->getState();
                                 }
+                            } catch (\Illuminate\Validation\ValidationException $e) {
+                                // Si hay errores de validación, mostrarlos
+                                Notification::make()
+                                    ->title('❌ Error de validación')
+                                    ->body('Por favor, completa todos los campos requeridos.')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            } catch (\Exception $e) {
+                                // Si falla, continuar con otros métodos
                             }
                             
-                            // Si aún está vacío, usar los datos guardados
+                            // Método 2: Si está vacío, intentar obtener usando getFormData
+                            if (empty($data)) {
+                                $data = $parentAction->getFormData();
+                            }
+                            
+                            // Método 3: Si aún está vacío, usar los datos guardados
                             if (empty($data)) {
                                 $data = $this->cotizacionData;
                             }

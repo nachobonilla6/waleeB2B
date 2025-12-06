@@ -12,13 +12,8 @@ class ListClients extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\Action::make('site_scraper')
-                ->label('Site Scraper')
-                ->icon('heroicon-o-globe-alt')
-                ->url('/admin/site-scraper')
-                ->color('success'),
-            Actions\CreateAction::make(),
-        ];
+        return [];
     }
+    
+    protected static string $view = 'filament.resources.client-resource.pages.list-clients';
 }

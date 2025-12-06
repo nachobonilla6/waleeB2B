@@ -10,7 +10,6 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
 class ViewCliente extends Page
@@ -179,62 +178,28 @@ class ViewCliente extends Page
 
                                 // Enviar email con la cotización
                                 $correoDestino = $data['correo'] ?? '';
-                                $emailEnviado = false;
-                                $emailError = null;
                                 
-                                if (!empty($correoDestino)) {
-                                    try {
-                                        Mail::to($correoDestino)->send(new CotizacionMail($webhookData));
-                                        $emailEnviado = true;
-                                    } catch (\Exception $mailException) {
-                                        $emailError = $mailException->getMessage();
-                                    }
+                                if (empty($correoDestino)) {
+                                    Notification::make()
+                                        ->title('❌ Error')
+                                        ->body('No se especificó un correo electrónico para enviar la cotización.')
+                                        ->danger()
+                                        ->send();
+                                    return;
                                 }
-                                
-                                // Convertir a JSON primero
-                                $jsonData = json_encode($webhookData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                                
-                                // Enviar como JSON al webhook
-                                $webhookEnviado = false;
-                                $webhookError = null;
                                 
                                 try {
-                                    $response = Http::timeout(30)
-                                        ->withHeaders(['Content-Type' => 'application/json'])
-                                        ->withBody($jsonData, 'application/json')
-                                        ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51');
+                                    Mail::to($correoDestino)->send(new CotizacionMail($webhookData));
                                     
-                                    $webhookEnviado = $response->successful();
-                                    if (!$webhookEnviado) {
-                                        $webhookError = $response->status() . ': ' . ($response->body() ?: 'Sin respuesta del servidor');
-                                    }
-                                } catch (\Exception $webhookException) {
-                                    $webhookError = $webhookException->getMessage();
-                                }
-
-                                // Mostrar notificación según el resultado
-                                if ($emailEnviado && $webhookEnviado) {
                                     Notification::make()
                                         ->title('✅ Cotización enviada')
-                                        ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada por email a ' . ($data['correo'] ?? 'N/A') . ' y al webhook.')
+                                        ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada por email a ' . $correoDestino)
                                         ->success()
                                         ->send();
-                                } elseif ($emailEnviado) {
+                                } catch (\Exception $mailException) {
                                     Notification::make()
-                                        ->title('✅ Email enviado')
-                                        ->body('Cotización enviada por email a ' . ($data['correo'] ?? 'N/A') . '. Error en webhook: ' . ($webhookError ?? 'Desconocido'))
-                                        ->warning()
-                                        ->send();
-                                } elseif ($webhookEnviado) {
-                                    Notification::make()
-                                        ->title('⚠️ Webhook enviado')
-                                        ->body('Datos enviados al webhook. Error al enviar email: ' . ($emailError ?? 'Desconocido'))
-                                        ->warning()
-                                        ->send();
-                                } else {
-                                    Notification::make()
-                                        ->title('❌ Error al enviar')
-                                        ->body('No se pudo enviar por email ni al webhook. Email: ' . ($emailError ?? 'N/A') . '. Webhook: ' . ($webhookError ?? 'N/A'))
+                                        ->title('❌ Error al enviar email')
+                                        ->body('No se pudo enviar el email: ' . $mailException->getMessage())
                                         ->danger()
                                         ->send();
                                 }

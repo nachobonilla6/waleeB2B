@@ -51,11 +51,6 @@ class ViewCliente extends Page
                     // Guardar los datos en la propiedad de la clase
                     $this->cotizacionData = $data;
                 })
-                ->action(function (array $data) {
-                    // Esta acción se ejecuta cuando se valida el formulario
-                    // Guardamos los datos aquí también por si acaso
-                    $this->cotizacionData = $data;
-                })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('idioma')

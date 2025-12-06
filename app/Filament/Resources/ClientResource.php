@@ -21,7 +21,7 @@ class ClientResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $modelLabel = 'Cliente extraído';
-    protected static ?string $navigationLabel = 'Clientes en proceso';
+    protected static ?string $navigationLabel = 'clientes google';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 1;
 

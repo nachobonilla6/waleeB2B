@@ -37,113 +37,120 @@ class CotizacionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Información de Cotización')
-                    ->icon('heroicon-o-document-text')
-                    ->schema([
-                        Forms\Components\Grid::make(2)->schema([
-                            Forms\Components\TextInput::make('numero_cotizacion')
-                                ->label('Nº Cotización')
-                                ->default('COT-' . date('Ymd') . '-' . rand(100, 999))
-                                ->required()
-                                ->unique(ignoreRecord: true),
-                            Forms\Components\DatePicker::make('fecha')
-                                ->label('Fecha')
-                                ->default(now())
-                                ->required(),
-                        ]),
-                        Forms\Components\Grid::make(2)->schema([
-                            Forms\Components\Select::make('cliente_id')
-                                ->label('Cliente')
-                                ->options(Cliente::pluck('nombre_empresa', 'id'))
-                                ->searchable()
-                                ->required()
-                                ->live()
-                                ->afterStateUpdated(function (Forms\Set $set, $state) {
-                                    if ($state) {
-                                        $cliente = Cliente::find($state);
-                                        if ($cliente?->correo) {
-                                            $set('correo', $cliente->correo);
+                Forms\Components\Wizard::make([
+                    Forms\Components\Wizard\Step::make('Información Básica')
+                        ->icon('heroicon-o-information-circle')
+                        ->schema([
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('numero_cotizacion')
+                                    ->label('Nº Cotización')
+                                    ->default('COT-' . date('Ymd') . '-' . rand(100, 999))
+                                    ->required()
+                                    ->unique(ignoreRecord: true),
+                                Forms\Components\DatePicker::make('fecha')
+                                    ->label('Fecha')
+                                    ->default(now())
+                                    ->required(),
+                            ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\Select::make('cliente_id')
+                                    ->label('Cliente')
+                                    ->options(Cliente::pluck('nombre_empresa', 'id'))
+                                    ->searchable()
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                        if ($state) {
+                                            $cliente = Cliente::find($state);
+                                            if ($cliente?->correo) {
+                                                $set('correo', $cliente->correo);
+                                            }
                                         }
-                                    }
-                                }),
-                            Forms\Components\Select::make('idioma')
-                                ->label('Idioma')
+                                    }),
+                                Forms\Components\Select::make('idioma')
+                                    ->label('Idioma')
+                                    ->options([
+                                        'es' => 'Español',
+                                        'en' => 'English',
+                                        'fr' => 'Français',
+                                    ])
+                                    ->default('es')
+                                    ->required(),
+                            ]),
+                        ]),
+                    Forms\Components\Wizard\Step::make('Detalles del Servicio')
+                        ->icon('heroicon-o-briefcase')
+                        ->schema([
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\Select::make('tipo_servicio')
+                                    ->label('Tipo de Servicio')
+                                    ->options([
+                                        'diseno_web' => 'Diseño Web',
+                                        'redes_sociales' => 'Gestión Redes Sociales',
+                                        'seo' => 'SEO / Posicionamiento',
+                                        'publicidad' => 'Publicidad Digital',
+                                        'mantenimiento' => 'Mantenimiento Web',
+                                        'hosting' => 'Hosting & Dominio',
+                                        'combo' => 'Paquete Completo',
+                                    ])
+                                    ->required(),
+                                Forms\Components\Select::make('plan')
+                                    ->label('Plan')
+                                    ->options([
+                                        'basico' => 'Básico - $99/mes',
+                                        'profesional' => 'Profesional - $199/mes',
+                                        'premium' => 'Premium - $349/mes',
+                                        'empresarial' => 'Empresarial - $499/mes',
+                                        'personalizado' => 'Personalizado',
+                                    ])
+                                    ->required(),
+                            ]),
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('monto')
+                                    ->label('Monto (₡)')
+                                    ->numeric()
+                                    ->prefix('₡')
+                                    ->required(),
+                                Forms\Components\Select::make('vigencia')
+                                    ->label('Vigencia')
+                                    ->options([
+                                        '7' => '7 días',
+                                        '15' => '15 días',
+                                        '30' => '30 días',
+                                        '60' => '60 días',
+                                    ])
+                                    ->default('15')
+                                    ->required(),
+                            ]),
+                            Forms\Components\Textarea::make('descripcion')
+                                ->label('Descripción / Servicios incluidos')
+                                ->rows(3)
+                                ->columnSpanFull(),
+                        ]),
+                    Forms\Components\Wizard\Step::make('Contacto y Estado')
+                        ->icon('heroicon-o-envelope')
+                        ->schema([
+                            Forms\Components\TextInput::make('correo')
+                                ->label('Correo electrónico')
+                                ->email()
+                                ->required(),
+                            Forms\Components\Select::make('estado')
+                                ->label('Estado')
                                 ->options([
-                                    'es' => 'Español',
-                                    'en' => 'English',
-                                    'fr' => 'Français',
+                                    'pendiente' => 'Pendiente',
+                                    'enviada' => 'Enviada',
+                                    'aceptada' => 'Aceptada',
+                                    'rechazada' => 'Rechazada',
                                 ])
-                                ->default('es')
+                                ->default('pendiente')
                                 ->required(),
                         ]),
-                    ]),
-                Forms\Components\Section::make('Detalles del Servicio')
-                    ->icon('heroicon-o-briefcase')
-                    ->schema([
-                        Forms\Components\Grid::make(2)->schema([
-                            Forms\Components\Select::make('tipo_servicio')
-                                ->label('Tipo de Servicio')
-                                ->options([
-                                    'diseno_web' => 'Diseño Web',
-                                    'redes_sociales' => 'Gestión Redes Sociales',
-                                    'seo' => 'SEO / Posicionamiento',
-                                    'publicidad' => 'Publicidad Digital',
-                                    'mantenimiento' => 'Mantenimiento Web',
-                                    'hosting' => 'Hosting & Dominio',
-                                    'combo' => 'Paquete Completo',
-                                ])
-                                ->required(),
-                            Forms\Components\Select::make('plan')
-                                ->label('Plan')
-                                ->options([
-                                    'basico' => 'Básico - $99/mes',
-                                    'profesional' => 'Profesional - $199/mes',
-                                    'premium' => 'Premium - $349/mes',
-                                    'empresarial' => 'Empresarial - $499/mes',
-                                    'personalizado' => 'Personalizado',
-                                ])
-                                ->required(),
-                        ]),
-                        Forms\Components\Grid::make(2)->schema([
-                            Forms\Components\TextInput::make('monto')
-                                ->label('Monto (₡)')
-                                ->numeric()
-                                ->prefix('₡')
-                                ->required(),
-                            Forms\Components\Select::make('vigencia')
-                                ->label('Vigencia')
-                                ->options([
-                                    '7' => '7 días',
-                                    '15' => '15 días',
-                                    '30' => '30 días',
-                                    '60' => '60 días',
-                                ])
-                                ->default('15')
-                                ->required(),
-                        ]),
-                        Forms\Components\Textarea::make('descripcion')
-                            ->label('Descripción / Servicios incluidos')
-                            ->rows(3)
-                            ->columnSpanFull(),
-                    ]),
-                Forms\Components\Section::make('Contacto y Estado')
-                    ->icon('heroicon-o-envelope')
-                    ->schema([
-                        Forms\Components\TextInput::make('correo')
-                            ->label('Correo electrónico')
-                            ->email()
-                            ->required(),
-                        Forms\Components\Select::make('estado')
-                            ->label('Estado')
-                            ->options([
-                                'pendiente' => 'Pendiente',
-                                'enviada' => 'Enviada',
-                                'aceptada' => 'Aceptada',
-                                'rechazada' => 'Rechazada',
-                            ])
-                            ->default('pendiente')
-                            ->required(),
-                    ]),
+                ])
+                ->columnSpanFull()
+                ->submitAction(Forms\Components\Actions\Action::make('submit')
+                    ->label('Crear Cotización')
+                    ->icon('heroicon-o-check')
+                ),
             ]);
     }
 

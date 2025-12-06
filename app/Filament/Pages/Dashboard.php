@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Dashboard as BaseDashboard;
 use App\Filament\Widgets\SiteStatsWidget;
-use App\Filament\Widgets\ProposalStatsWidget;
 use App\Filament\Widgets\IngresosStatsWidget;
 use App\Filament\Widgets\IngresosDiariosChart;
 
@@ -18,7 +17,6 @@ class Dashboard extends BaseDashboard
     {
         return [
             IngresosStatsWidget::class,
-            ProposalStatsWidget::class,
             SiteStatsWidget::class,
             IngresosDiariosChart::class,
         ];

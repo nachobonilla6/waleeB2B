@@ -345,7 +345,7 @@ class ListClientes extends ListRecords
                         ->label('💾 Guardar Borrador')
                         ->color('warning')
                         ->action(function (array $data) {
-                            $cliente = Cliente::find($data['cliente_id']);
+                            $cliente = Client::find($data['cliente_id']);
                             Notification::make()
                                 ->title('📝 Borrador guardado')
                                 ->body('Factura ' . $data['numero_factura'] . ' guardada como borrador.')
@@ -356,7 +356,7 @@ class ListClientes extends ListRecords
                         ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
-                            $cliente = Cliente::find($data['cliente_id']);
+                            $cliente = Client::find($data['cliente_id']);
                             Notification::make()
                                 ->title('✅ Factura enviada')
                                 ->body('Factura ' . $data['numero_factura'] . ' enviada a ' . $data['correo'])

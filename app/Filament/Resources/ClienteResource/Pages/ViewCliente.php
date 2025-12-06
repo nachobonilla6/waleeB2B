@@ -3,12 +3,14 @@
 namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
+use App\Mail\CotizacionMail;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class ViewCliente extends Page
 {
@@ -172,10 +174,20 @@ class ViewCliente extends Page
                                     'timestamp' => now()->toIso8601String(),
                                 ];
 
+                                // Enviar email con la cotización
+                                $correoDestino = $data['correo'] ?? '';
+                                if (!empty($correoDestino)) {
+                                    try {
+                                        Mail::to($correoDestino)->send(new CotizacionMail($webhookData));
+                                    } catch (\Exception $mailException) {
+                                        // Si falla el email, continuar con el webhook
+                                    }
+                                }
+                                
                                 // Convertir a JSON primero
                                 $jsonData = json_encode($webhookData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                                 
-                                // Enviar como JSON
+                                // Enviar como JSON al webhook
                                 $response = Http::timeout(30)
                                     ->withHeaders(['Content-Type' => 'application/json'])
                                     ->withBody($jsonData, 'application/json')

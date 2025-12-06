@@ -15,6 +15,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use App\Filament\Resources\UserResource;
+use App\Filament\Widgets\ReportesStatsWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -103,10 +104,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Los widgets se registran automáticamente pero el Dashboard los filtra explícitamente
-            ])
-            ->widgets([
-                // No registrar widgets globalmente, cada página los define explícitamente
+                ReportesStatsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

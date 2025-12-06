@@ -26,6 +26,7 @@ class SitioResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
     protected static ?string $modelLabel = 'Sitio';
     protected static ?string $navigationGroup = 'Contenido';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
@@ -199,20 +200,6 @@ class SitioResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
-                Tables\Columns\TextColumn::make('video_url')
-                    ->label('Video URL')
-                    ->searchable()
-                    ->formatStateUsing(function ($state) {
-                        if (empty($state)) return '-';
-                        
-                        return \Illuminate\Support\Str::of($state)
-                            ->limit(40)
-                            ->prepend('<a href="' . e($state) . '" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:underline" onclick="event.stopPropagation(); return true;">')
-                            ->append('</a>');
-                    })
-                    ->html()
-                    ->extraCellAttributes(['class' => 'whitespace-nowrap']),
-                
                 Tables\Columns\IconColumn::make('en_linea')
                     ->label('Estado')
                     ->boolean()
@@ -236,11 +223,6 @@ class SitioResource extends Resource
                         '1' => 'En línea',
                         '0' => 'Fuera de línea',
                     ]),
-                
-                Tables\Filters\SelectFilter::make('tags')
-                    ->relationship('tags', 'nombre')
-                    ->multiple()
-                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

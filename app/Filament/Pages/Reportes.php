@@ -12,6 +12,7 @@ class Reportes extends Page
     protected static ?string $title = 'Reportes';
     protected static ?string $navigationGroup = 'Contabilidad';
     protected static ?int $navigationSort = 3;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.pages.reportes';
 

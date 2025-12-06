@@ -24,6 +24,7 @@ class FacturaResource extends Resource
     protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Factura';
     protected static ?string $pluralModelLabel = 'Facturas';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationBadge(): ?string
     {

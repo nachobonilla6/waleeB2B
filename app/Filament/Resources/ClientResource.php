@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Filament\Notifications\Notification;
 
 class ClientResource extends Resource

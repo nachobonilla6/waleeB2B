@@ -18,8 +18,9 @@ class ClienteResource extends Resource
     protected static ?string $model = Cliente::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationLabel = 'Lista de Clientes';
-    protected static ?string $navigationGroup = 'Clientes';
+    protected static ?string $navigationLabel = 'Clientes Google';
+    protected static ?string $title = 'Clientes Google';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Cliente';
     protected static ?string $pluralModelLabel = 'Clientes';

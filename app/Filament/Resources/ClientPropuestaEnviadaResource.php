@@ -23,6 +23,8 @@ class ClientPropuestaEnviadaResource extends Resource
     protected static ?string $title = 'Propuestas Enviadas';
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 2;
+    
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationBadge(): ?string
     {

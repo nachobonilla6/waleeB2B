@@ -25,6 +25,8 @@ class ClienteResource extends Resource
     protected static ?string $modelLabel = 'Cliente';
     protected static ?string $pluralModelLabel = 'Clientes';
     
+    protected static bool $shouldRegisterNavigation = false;
+    
     // Búsqueda global
     protected static ?string $recordTitleAttribute = 'nombre_empresa';
     

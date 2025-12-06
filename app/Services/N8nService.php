@@ -31,44 +31,7 @@ class N8nService
                 ]);
 
             if ($response->successful()) {
-                $workflows = $response->json() ?? [];
-                
-                // Filtrar workflows archivados
-                if (isset($workflows['data']) && is_array($workflows['data'])) {
-                    $workflows['data'] = array_filter($workflows['data'], function ($workflow) {
-                        // Excluir si está marcado como archivado
-                        if (isset($workflow['archived']) && $workflow['archived'] === true) {
-                            return false;
-                        }
-                        // Excluir si tiene tags con "archived"
-                        if (isset($workflow['tags']) && is_array($workflow['tags'])) {
-                            foreach ($workflow['tags'] as $tag) {
-                                $tagName = is_array($tag) ? ($tag['name'] ?? '') : $tag;
-                                if (strtolower($tagName) === 'archived') {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    });
-                } elseif (is_array($workflows)) {
-                    $workflows = array_filter($workflows, function ($workflow) {
-                        if (isset($workflow['archived']) && $workflow['archived'] === true) {
-                            return false;
-                        }
-                        if (isset($workflow['tags']) && is_array($workflow['tags'])) {
-                            foreach ($workflow['tags'] as $tag) {
-                                $tagName = is_array($tag) ? ($tag['name'] ?? '') : $tag;
-                                if (strtolower($tagName) === 'archived') {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    });
-                }
-                
-                return $workflows;
+                return $response->json() ?? [];
             }
 
             Log::error('Error al obtener workflows de n8n', [

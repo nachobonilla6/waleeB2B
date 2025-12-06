@@ -34,15 +34,11 @@ class N8nAutomatizaciones extends Page
             
             // Filtrar workflows archivados - misma lógica que loadWorkflows
             $activeWorkflows = $workflowsCollection->filter(function ($workflow) {
-                if (isset($workflow['archived']) && ($workflow['archived'] === true || $workflow['archived'] === 'true' || $workflow['archived'] === 1)) {
+                if (isset($workflow['archived']) && $workflow['archived'] === true) {
                     return false;
                 }
                 
-                if (isset($workflow['isArchived']) && ($workflow['isArchived'] === true || $workflow['isArchived'] === 'true' || $workflow['isArchived'] === 1)) {
-                    return false;
-                }
-                
-                if (isset($workflow['tags']) && is_array($workflow['tags'])) {
+                if (isset($workflow['tags']) && is_array($workflow['tags']) && !empty($workflow['tags'])) {
                     foreach ($workflow['tags'] as $tag) {
                         $tagName = '';
                         if (is_array($tag)) {
@@ -55,11 +51,6 @@ class N8nAutomatizaciones extends Page
                             return false;
                         }
                     }
-                }
-                
-                $name = $workflow['name'] ?? '';
-                if (stripos($name, '[archived]') !== false || stripos($name, '(archived)') !== false) {
-                    return false;
                 }
                 
                 return true;
@@ -94,19 +85,15 @@ class N8nAutomatizaciones extends Page
             $workflowsCollection = collect([]);
         }
         
-        // Filtrar workflows archivados - verificar múltiples campos posibles
+        // Filtrar workflows archivados - solo excluir si está claramente marcado como archivado
         $this->workflows = $workflowsCollection->filter(function ($workflow) {
-            // Excluir si está marcado como archivado (diferentes formas posibles)
-            if (isset($workflow['archived']) && ($workflow['archived'] === true || $workflow['archived'] === 'true' || $workflow['archived'] === 1)) {
+            // Solo excluir si está explícitamente marcado como archivado
+            if (isset($workflow['archived']) && $workflow['archived'] === true) {
                 return false;
             }
             
-            if (isset($workflow['isArchived']) && ($workflow['isArchived'] === true || $workflow['isArchived'] === 'true' || $workflow['isArchived'] === 1)) {
-                return false;
-            }
-            
-            // Excluir si tiene el tag "archived" o "Archived"
-            if (isset($workflow['tags']) && is_array($workflow['tags'])) {
+            // Excluir si tiene el tag "archived" (verificar solo si tags existe)
+            if (isset($workflow['tags']) && is_array($workflow['tags']) && !empty($workflow['tags'])) {
                 foreach ($workflow['tags'] as $tag) {
                     $tagName = '';
                     if (is_array($tag)) {
@@ -119,12 +106,6 @@ class N8nAutomatizaciones extends Page
                         return false;
                     }
                 }
-            }
-            
-            // Excluir si el nombre contiene "[Archived]" o similar
-            $name = $workflow['name'] ?? '';
-            if (stripos($name, '[archived]') !== false || stripos($name, '(archived)') !== false) {
-                return false;
             }
             
             return true;

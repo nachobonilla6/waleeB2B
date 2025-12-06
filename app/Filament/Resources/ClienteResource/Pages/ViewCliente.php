@@ -165,7 +165,14 @@ class ViewCliente extends Page
                                     'timestamp' => now()->toIso8601String(),
                                 ];
 
-                                $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51', $webhookData);
+                                // Convertir a JSON primero
+                                $jsonData = json_encode($webhookData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                
+                                // Enviar como JSON
+                                $response = Http::timeout(30)
+                                    ->withHeaders(['Content-Type' => 'application/json'])
+                                    ->withBody($jsonData, 'application/json')
+                                    ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/8fa4f274-a074-48ad-b3d8-42e83e5fca51');
 
                                 if ($response->successful()) {
                                     Notification::make()

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Factura;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 
@@ -28,17 +27,33 @@ class IngresosDiariosChart extends ChartWidget
         $today = Carbon::today();
         $startDate = $today->copy()->subDays(29); // Últimos 30 días incluyendo hoy
         
-        // Obtener ingresos diarios de los últimos 30 días
+        // Generar ingresos ficticios para los últimos 30 días
         $ingresosDiarios = [];
         $labels = [];
+        
+        // Base de ingresos diarios con variación realista
+        $baseIngreso = 500; // Base mínima
+        $variacionMaxima = 2000; // Variación máxima
         
         for ($i = 0; $i < 30; $i++) {
             $date = $startDate->copy()->addDays($i);
             $labels[] = $date->format('d/m');
             
-            $ingresos = (float) Factura::where('estado', 'pagada')
-                ->whereDate('fecha_emision', $date)
-                ->sum('total');
+            // Generar ingresos ficticios con variación
+            // Más ingresos en días laborables, menos en fines de semana
+            $dayOfWeek = $date->dayOfWeek; // 0 = domingo, 6 = sábado
+            $isWeekend = $dayOfWeek == 0 || $dayOfWeek == 6;
+            
+            // Base ajustada según día de la semana
+            $adjustedBase = $isWeekend ? $baseIngreso * 0.3 : $baseIngreso;
+            
+            // Variación aleatoria pero con tendencia
+            $variacion = rand(0, $variacionMaxima);
+            
+            // Añadir algunos picos aleatorios (días con ingresos altos)
+            $pico = rand(1, 10) === 1 ? rand(3000, 5000) : 0;
+            
+            $ingresos = round($adjustedBase + $variacion + $pico, 2);
             
             $ingresosDiarios[] = $ingresos;
         }

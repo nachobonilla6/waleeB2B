@@ -30,10 +30,6 @@ class ListClientes extends ListRecords
                 ->color('success')
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
-                ->afterFormValidated(function (array $data, $action) {
-                    // Guardar los datos en la propiedad de la clase
-                    $this->cotizacionData = $data;
-                })
                 ->form([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('idioma')
@@ -144,41 +140,15 @@ class ListClientes extends ListRecords
                             ->rows(2),
                     ]),
                 ])
-                ->modalFooterActionsAlignment(Alignment::End)
-                ->modalFooterActions(fn ($action) => [
-                    Actions\Action::make('cancelar')
-                        ->label('Cancelar')
-                        ->color('gray')
-                        ->close(),
-                    Actions\Action::make('borrador')
-                        ->label('💾 Guardar Borrador')
-                        ->color('warning')
-                        ->action(function () use ($action) {
-                            $data = $action->getFormData();
-                            $cliente = Cliente::find($data['cliente_id'] ?? null);
-                            Notification::make()
-                                ->title('📝 Borrador guardado')
-                                ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada como borrador.')
-                                ->warning()
-                                ->send();
-                        }),
+                ->modalSubmitAction(
                     Actions\Action::make('enviar')
                         ->label('📧 Enviar por Correo')
                         ->color('success')
                         ->icon('heroicon-o-envelope')
-                        ->action(function () {
-                            // Usar los datos guardados en afterFormValidated
-                            $data = $this->cotizacionData;
-                            
-                            // Si está vacío, mostrar error
-                            if (empty($data)) {
-                                Notification::make()
-                                    ->title('❌ Error')
-                                    ->body('No se pudieron obtener los datos del formulario. Por favor, completa el formulario y vuelve a intentar.')
-                                    ->danger()
-                                    ->send();
-                                return;
-                            }
+                        ->action(function (array $data) {
+                            // Los datos vienen directamente del formulario validado
+                            $clienteId = $data['cliente_id'] ?? null;
+                            $cliente = $clienteId ? Cliente::find($clienteId) : null;
                             
                             $clienteId = $data['cliente_id'] ?? null;
                             $cliente = $clienteId ? Cliente::find($clienteId) : null;

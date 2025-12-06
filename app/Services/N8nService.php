@@ -171,5 +171,28 @@ class N8nService
             return false;
         }
     }
+
+    /**
+     * Elimina un workflow
+     */
+    public function deleteWorkflow(string $workflowId): bool
+    {
+        try {
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'X-N8N-API-KEY' => $this->apiKey,
+                ])
+                ->delete("{$this->baseUrl}/api/v1/workflows/{$workflowId}");
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('Excepción al eliminar workflow de n8n', [
+                'workflow_id' => $workflowId,
+                'message' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
 }
 

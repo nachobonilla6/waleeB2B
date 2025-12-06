@@ -141,6 +141,31 @@ class N8nAutomatizaciones extends Page
         }
     }
 
+    public function deleteWorkflow(string $workflowId): void
+    {
+        $this->n8nService = new N8nService();
+        $workflow = $this->workflows->firstWhere('id', $workflowId);
+        $workflowName = $workflow['name'] ?? 'workflow';
+        
+        $success = $this->n8nService->deleteWorkflow($workflowId);
+        
+        if ($success) {
+            Notification::make()
+                ->title('Workflow eliminado')
+                ->body("El workflow '{$workflowName}' ha sido eliminado")
+                ->success()
+                ->send();
+            
+            $this->loadWorkflows();
+        } else {
+            Notification::make()
+                ->title('Error')
+                ->body('No se pudo eliminar el workflow')
+                ->danger()
+                ->send();
+        }
+    }
+
     protected function getHeaderActions(): array
     {
         return [

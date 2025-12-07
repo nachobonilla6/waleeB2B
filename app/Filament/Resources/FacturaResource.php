@@ -281,21 +281,25 @@ class FacturaResource extends Resource
                         Infolists\Components\TextEntry::make('numero_factura')
                             ->label('Nº Factura')
                             ->weight('bold')
-                            ->size('lg'),
+                            ->size('lg')
+                            ->default('-'),
                         Infolists\Components\TextEntry::make('cliente.nombre_empresa')
                             ->label('Cliente')
-                            ->searchable(),
+                            ->default('-'),
                         Infolists\Components\TextEntry::make('correo')
                             ->label('Correo Electrónico')
                             ->url(fn ($record) => $record->correo ? 'mailto:' . $record->correo : null)
                             ->openUrlInNewTab()
+                            ->default('-')
                             ->visible(fn ($record) => !empty($record->correo)),
                         Infolists\Components\TextEntry::make('fecha_emision')
                             ->label('Fecha de Emisión')
-                            ->date('d/m/Y'),
+                            ->date('d/m/Y')
+                            ->default('-'),
                         Infolists\Components\TextEntry::make('fecha_vencimiento')
                             ->label('Fecha de Vencimiento')
                             ->date('d/m/Y')
+                            ->default('-')
                             ->visible(fn ($record) => !empty($record->fecha_vencimiento)),
                     ])
                     ->columns(2),
@@ -304,25 +308,27 @@ class FacturaResource extends Resource
                     ->schema([
                         Infolists\Components\TextEntry::make('concepto')
                             ->label('Concepto')
-                            ->formatStateUsing(fn (string $state): string => match($state) {
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
                                 'diseno_web' => '🌐 Diseño Web',
                                 'redes_sociales' => '📱 Gestión Redes Sociales',
                                 'seo' => '🔍 SEO / Posicionamiento',
                                 'publicidad' => '📢 Publicidad Digital',
                                 'mantenimiento' => '🔧 Mantenimiento Mensual',
                                 'hosting' => '☁️ Hosting & Dominio',
-                                default => $state,
+                                default => $state ?? '-',
                             }),
                         Infolists\Components\TextEntry::make('subtotal')
                             ->label('Subtotal (USD)')
                             ->money('USD')
-                            ->size('lg'),
+                            ->size('lg')
+                            ->default('0.00'),
                         Infolists\Components\TextEntry::make('total')
                             ->label('Total con IVA (13%)')
                             ->money('USD')
                             ->weight('bold')
                             ->size('lg')
-                            ->color('success'),
+                            ->color('success')
+                            ->default('0.00'),
                     ])
                     ->columns(3),
                 Infolists\Components\Section::make('Pago y Estado')
@@ -330,25 +336,25 @@ class FacturaResource extends Resource
                     ->schema([
                         Infolists\Components\TextEntry::make('metodo_pago')
                             ->label('Método de Pago')
-                            ->formatStateUsing(fn (string $state): string => match($state) {
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
                                 'transferencia' => '🏦 Transferencia Bancaria',
                                 'sinpe' => '📲 SINPE Móvil',
                                 'tarjeta' => '💳 Tarjeta de Crédito',
                                 'efectivo' => '💵 Efectivo',
                                 'paypal' => '🅿️ PayPal',
-                                default => $state,
+                                default => $state ?? '-',
                             }),
                         Infolists\Components\TextEntry::make('estado')
                             ->label('Estado')
                             ->badge()
-                            ->formatStateUsing(fn (string $state): string => match($state) {
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
                                 'pendiente' => '🟡 Pendiente',
                                 'pagada' => '🟢 Pagada',
                                 'vencida' => '🔴 Vencida',
                                 'cancelada' => '⚫ Cancelada',
-                                default => $state,
+                                default => $state ?? '-',
                             })
-                            ->color(fn (string $state): string => match($state) {
+                            ->color(fn (?string $state): string => match($state) {
                                 'pendiente' => 'warning',
                                 'pagada' => 'success',
                                 'vencida' => 'danger',
@@ -363,6 +369,7 @@ class FacturaResource extends Resource
                         Infolists\Components\TextEntry::make('notas')
                             ->label('Notas')
                             ->columnSpanFull()
+                            ->default('-')
                             ->visible(fn ($record) => !empty($record->notas)),
                     ])
                     ->visible(fn ($record) => !empty($record->notas)),

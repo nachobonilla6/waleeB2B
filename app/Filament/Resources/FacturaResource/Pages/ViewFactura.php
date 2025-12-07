@@ -14,8 +14,9 @@ class ViewFactura extends ViewRecord
     {
         parent::mount($record);
         
-        // Cargar la relación del cliente
+        // Cargar la relación del cliente y refrescar el record
         $this->record->loadMissing('cliente');
+        $this->record->refresh();
     }
 
     protected function getHeaderActions(): array

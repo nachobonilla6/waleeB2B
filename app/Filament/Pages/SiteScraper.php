@@ -37,21 +37,30 @@ class SiteScraper extends Page
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('industria')
-                    ->label('Industria')
+                    ->label('Tipo de Negocio')
                     ->options([
-                        'turismo' => 'Turismo',
-                        'gastronomia' => 'Gastronomía',
-                        'retail' => 'Retail',
-                        'salud' => 'Salud',
-                        'educacion' => 'Educación',
-                        'tecnologia' => 'Tecnología',
-                        'servicios' => 'Servicios',
-                        'comercio' => 'Comercio',
-                        'manufactura' => 'Manufactura',
-                        'otro' => 'Otro',
+                        'restaurantes' => '🍽️ Restaurantes / Gastronomía',
+                        'retail' => '🛍️ Retail / Tiendas',
+                        'servicios_profesionales' => '💼 Servicios Profesionales',
+                        'salud' => '🏥 Salud / Medicina',
+                        'educacion' => '📚 Educación',
+                        'tecnologia' => '💻 Tecnología / Software',
+                        'turismo' => '✈️ Turismo / Hotelería',
+                        'bienes_raices' => '🏠 Bienes Raíces',
+                        'automotriz' => '🚗 Automotriz',
+                        'otro' => '📝 Otro',
                     ])
                     ->required()
-                    ->native(false),
+                    ->native(false)
+                    ->live()
+                    ->afterStateUpdated(fn (Forms\Set $set) => $set('industria_otro', null)),
+                Forms\Components\TextInput::make('industria_otro')
+                    ->label('Especificar otro tipo de negocio')
+                    ->placeholder('Escribe el tipo de negocio')
+                    ->maxLength(255)
+                    ->required(fn (Forms\Get $get) => $get('industria') === 'otro')
+                    ->visible(fn (Forms\Get $get) => $get('industria') === 'otro')
+                    ->helperText('Por favor, especifica el tipo de negocio'),
             ])
             ->statePath('data');
     }
@@ -60,10 +69,15 @@ class SiteScraper extends Page
     {
         $data = $this->form->getState();
         
+        // Si se seleccionó "otro", usar el valor de industria_otro, sino usar el valor seleccionado
+        $industria = ($data['industria'] ?? '') === 'otro' 
+            ? ($data['industria_otro'] ?? 'Otro') 
+            : ($data['industria'] ?? '');
+        
         try {
             $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/0c01d9a1-788c-44d2-9c1b-9457901d0a3c', [
                 'nombre_lugar' => $data['nombre_lugar'] ?? '',
-                'industria' => $data['industria'] ?? '',
+                'industria' => $industria,
             ]);
 
             if ($response->successful()) {

@@ -11,6 +11,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -50,6 +52,11 @@ class FacturaResource extends Resource
                                 ->options(Cliente::pluck('nombre_empresa', 'id'))
                                 ->searchable()
                                 ->required(),
+                            Forms\Components\TextInput::make('correo')
+                                ->label('Correo Electrónico')
+                                ->email()
+                                ->maxLength(255)
+                                ->helperText('Correo donde se enviará la factura'),
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('numero_factura')
                                     ->label('Nº Factura')
@@ -269,6 +276,104 @@ class FacturaResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Información Básica')
+                    ->icon('heroicon-o-information-circle')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('numero_factura')
+                            ->label('Nº Factura')
+                            ->weight('bold')
+                            ->size('lg'),
+                        Infolists\Components\TextEntry::make('cliente.nombre_empresa')
+                            ->label('Cliente')
+                            ->searchable(),
+                        Infolists\Components\TextEntry::make('correo')
+                            ->label('Correo Electrónico')
+                            ->url(fn ($record) => $record->correo ? 'mailto:' . $record->correo : null)
+                            ->openUrlInNewTab()
+                            ->visible(fn ($record) => !empty($record->correo)),
+                        Infolists\Components\TextEntry::make('fecha_emision')
+                            ->label('Fecha de Emisión')
+                            ->date('d/m/Y'),
+                        Infolists\Components\TextEntry::make('fecha_vencimiento')
+                            ->label('Fecha de Vencimiento')
+                            ->date('d/m/Y')
+                            ->visible(fn ($record) => !empty($record->fecha_vencimiento)),
+                    ])
+                    ->columns(2),
+                Infolists\Components\Section::make('Detalles y Montos')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('concepto')
+                            ->label('Concepto')
+                            ->formatStateUsing(fn (string $state): string => match($state) {
+                                'diseno_web' => '🌐 Diseño Web',
+                                'redes_sociales' => '📱 Gestión Redes Sociales',
+                                'seo' => '🔍 SEO / Posicionamiento',
+                                'publicidad' => '📢 Publicidad Digital',
+                                'mantenimiento' => '🔧 Mantenimiento Mensual',
+                                'hosting' => '☁️ Hosting & Dominio',
+                                default => $state,
+                            }),
+                        Infolists\Components\TextEntry::make('subtotal')
+                            ->label('Subtotal (USD)')
+                            ->money('USD')
+                            ->size('lg'),
+                        Infolists\Components\TextEntry::make('total')
+                            ->label('Total con IVA (13%)')
+                            ->money('USD')
+                            ->weight('bold')
+                            ->size('lg')
+                            ->color('success'),
+                    ])
+                    ->columns(3),
+                Infolists\Components\Section::make('Pago y Estado')
+                    ->icon('heroicon-o-banknotes')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('metodo_pago')
+                            ->label('Método de Pago')
+                            ->formatStateUsing(fn (string $state): string => match($state) {
+                                'transferencia' => '🏦 Transferencia Bancaria',
+                                'sinpe' => '📲 SINPE Móvil',
+                                'tarjeta' => '💳 Tarjeta de Crédito',
+                                'efectivo' => '💵 Efectivo',
+                                'paypal' => '🅿️ PayPal',
+                                default => $state,
+                            }),
+                        Infolists\Components\TextEntry::make('estado')
+                            ->label('Estado')
+                            ->badge()
+                            ->formatStateUsing(fn (string $state): string => match($state) {
+                                'pendiente' => '🟡 Pendiente',
+                                'pagada' => '🟢 Pagada',
+                                'vencida' => '🔴 Vencida',
+                                'cancelada' => '⚫ Cancelada',
+                                default => $state,
+                            })
+                            ->color(fn (string $state): string => match($state) {
+                                'pendiente' => 'warning',
+                                'pagada' => 'success',
+                                'vencida' => 'danger',
+                                'cancelada' => 'gray',
+                                default => 'gray',
+                            }),
+                    ])
+                    ->columns(2),
+                Infolists\Components\Section::make('Notas Adicionales')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('notas')
+                            ->label('Notas')
+                            ->columnSpanFull()
+                            ->visible(fn ($record) => !empty($record->notas)),
+                    ])
+                    ->visible(fn ($record) => !empty($record->notas)),
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -281,6 +386,7 @@ class FacturaResource extends Resource
         return [
             'index' => Pages\ListFacturas::route('/'),
             'create' => Pages\CreateFactura::route('/create'),
+            'view' => Pages\ViewFactura::route('/{record}'),
             'edit' => Pages\EditFactura::route('/{record}/edit'),
         ];
     }

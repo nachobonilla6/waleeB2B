@@ -41,97 +41,105 @@ class FacturaResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
+        $isCreate = $form->getOperation() === 'create';
+        
+        $basicInfoSchema = [
+            Forms\Components\Select::make('cliente_id')
+                ->label('Cliente')
+                ->options(Cliente::pluck('nombre_empresa', 'id'))
+                ->searchable()
+                ->required(),
+            Forms\Components\TextInput::make('correo')
+                ->label('Correo Electrónico')
+                ->email()
+                ->maxLength(255)
+                ->helperText('Correo donde se enviará la factura'),
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\TextInput::make('numero_factura')
+                    ->label('Nº Factura')
+                    ->default(fn () => 'FAC-' . date('Ymd') . '-' . rand(100, 999))
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('fecha_emision')
+                    ->label('Fecha Emisión')
+                    ->default(now())
+                    ->required()
+                    ->displayFormat('d/m/Y'),
+            ]),
+        ];
+        
+        $detailsSchema = [
+            Forms\Components\Select::make('concepto')
+                ->label('Concepto')
+                ->options([
+                    'diseno_web' => '🌐 Diseño Web',
+                    'redes_sociales' => '📱 Gestión Redes Sociales',
+                    'seo' => '🔍 SEO / Posicionamiento',
+                    'publicidad' => '📢 Publicidad Digital',
+                    'mantenimiento' => '🔧 Mantenimiento Mensual',
+                    'hosting' => '☁️ Hosting & Dominio',
+                ])
+                ->required(),
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\TextInput::make('subtotal')
+                    ->label('Subtotal (USD)')
+                    ->numeric()
+                    ->prefix('$')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('total', round($state * 1.13, 2))),
+                Forms\Components\TextInput::make('total')
+                    ->label('Total con IVA (13%)')
+                    ->numeric()
+                    ->prefix('$')
+                    ->required(),
+            ]),
+        ];
+        
+        $paymentSchema = [
+            Forms\Components\Select::make('metodo_pago')
+                ->label('Método de Pago')
+                ->options([
+                    'transferencia' => '🏦 Transferencia Bancaria',
+                    'sinpe' => '📲 SINPE Móvil',
+                    'tarjeta' => '💳 Tarjeta de Crédito',
+                    'efectivo' => '💵 Efectivo',
+                    'paypal' => '🅿️ PayPal',
+                ])
+                ->required(),
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\Select::make('estado')
+                    ->label('Estado')
+                    ->options([
+                        'pendiente' => '🟡 Pendiente',
+                        'pagada' => '🟢 Pagada',
+                        'vencida' => '🔴 Vencida',
+                        'cancelada' => '⚫ Cancelada',
+                    ])
+                    ->default('pendiente')
+                    ->required(),
+                Forms\Components\DatePicker::make('fecha_vencimiento')
+                    ->label('Fecha Vencimiento')
+                    ->displayFormat('d/m/Y'),
+            ]),
+            Forms\Components\Textarea::make('notas')
+                ->label('Notas')
+                ->rows(3)
+                ->columnSpanFull(),
+        ];
+        
+        if ($isCreate) {
+            return $form->schema([
                 Forms\Components\Wizard::make([
                     Forms\Components\Wizard\Step::make('Información Básica')
                         ->icon('heroicon-o-information-circle')
-                        ->schema([
-                            Forms\Components\Select::make('cliente_id')
-                                ->label('Cliente')
-                                ->options(Cliente::pluck('nombre_empresa', 'id'))
-                                ->searchable()
-                                ->required(),
-                            Forms\Components\TextInput::make('correo')
-                                ->label('Correo Electrónico')
-                                ->email()
-                                ->maxLength(255)
-                                ->helperText('Correo donde se enviará la factura'),
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('numero_factura')
-                                    ->label('Nº Factura')
-                                    ->default(fn () => 'FAC-' . date('Ymd') . '-' . rand(100, 999))
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\DatePicker::make('fecha_emision')
-                                    ->label('Fecha Emisión')
-                                    ->default(now())
-                                    ->required()
-                                    ->displayFormat('d/m/Y'),
-                            ]),
-                        ]),
+                        ->schema($basicInfoSchema),
                     Forms\Components\Wizard\Step::make('Detalles y Montos')
                         ->icon('heroicon-o-currency-dollar')
-                        ->schema([
-                            Forms\Components\Select::make('concepto')
-                                ->label('Concepto')
-                                ->options([
-                                    'diseno_web' => '🌐 Diseño Web',
-                                    'redes_sociales' => '📱 Gestión Redes Sociales',
-                                    'seo' => '🔍 SEO / Posicionamiento',
-                                    'publicidad' => '📢 Publicidad Digital',
-                                    'mantenimiento' => '🔧 Mantenimiento Mensual',
-                                    'hosting' => '☁️ Hosting & Dominio',
-                                ])
-                                ->required(),
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\TextInput::make('subtotal')
-                                    ->label('Subtotal (USD)')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->required()
-                                    ->live()
-                                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('total', round($state * 1.13, 2))),
-                                Forms\Components\TextInput::make('total')
-                                    ->label('Total con IVA (13%)')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->required(),
-                            ]),
-                        ]),
+                        ->schema($detailsSchema),
                     Forms\Components\Wizard\Step::make('Pago y Estado')
                         ->icon('heroicon-o-banknotes')
-                        ->schema([
-                            Forms\Components\Select::make('metodo_pago')
-                                ->label('Método de Pago')
-                                ->options([
-                                    'transferencia' => '🏦 Transferencia Bancaria',
-                                    'sinpe' => '📲 SINPE Móvil',
-                                    'tarjeta' => '💳 Tarjeta de Crédito',
-                                    'efectivo' => '💵 Efectivo',
-                                    'paypal' => '🅿️ PayPal',
-                                ])
-                                ->required(),
-                            Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\Select::make('estado')
-                                    ->label('Estado')
-                                    ->options([
-                                        'pendiente' => '🟡 Pendiente',
-                                        'pagada' => '🟢 Pagada',
-                                        'vencida' => '🔴 Vencida',
-                                        'cancelada' => '⚫ Cancelada',
-                                    ])
-                                    ->default('pendiente')
-                                    ->required(),
-                                Forms\Components\DatePicker::make('fecha_vencimiento')
-                                    ->label('Fecha Vencimiento')
-                                    ->displayFormat('d/m/Y'),
-                            ]),
-                            Forms\Components\Textarea::make('notas')
-                                ->label('Notas')
-                                ->rows(3)
-                                ->columnSpanFull(),
-                        ]),
+                        ->schema($paymentSchema),
                 ])
                 ->columnSpanFull()
                 ->submitAction(Forms\Components\Actions\Action::make('submit')
@@ -139,6 +147,23 @@ class FacturaResource extends Resource
                     ->icon('heroicon-o-check')
                 ),
             ]);
+        }
+        
+        // Para edit y view, usar Sections para ver todos los detalles
+        return $form->schema([
+            Forms\Components\Section::make('Información Básica')
+                ->icon('heroicon-o-information-circle')
+                ->schema($basicInfoSchema)
+                ->columns(2),
+            Forms\Components\Section::make('Detalles y Montos')
+                ->icon('heroicon-o-currency-dollar')
+                ->schema($detailsSchema)
+                ->columns(2),
+            Forms\Components\Section::make('Pago y Estado')
+                ->icon('heroicon-o-banknotes')
+                ->schema($paymentSchema)
+                ->columns(2),
+        ]);
     }
 
     public static function table(Table $table): Table

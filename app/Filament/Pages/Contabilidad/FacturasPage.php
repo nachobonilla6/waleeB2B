@@ -46,7 +46,7 @@ class FacturasPage extends Page implements HasTable
             Actions\CreateAction::make()
                 ->label('Nueva Factura')
                 ->icon('heroicon-o-plus')
-                ->color('success')
+                ->color('gray')
                 ->model(Factura::class)
                 ->steps([
                     Step::make('Información Básica')
@@ -214,7 +214,7 @@ class FacturasPage extends Page implements HasTable
             Actions\CreateAction::make('nueva_cotizacion')
                 ->label('Nueva Cotización')
                 ->icon('heroicon-o-document-plus')
-                ->color('primary')
+                ->color('gray')
                 ->model(Cotizacion::class)
                 ->steps([
                     Step::make('Información Básica')

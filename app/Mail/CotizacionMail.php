@@ -29,7 +29,8 @@ class CotizacionMail extends Mailable
     {
         $numeroCotizacion = $this->cotizacionData['numero_cotizacion'] ?? 'N/A';
         return new Envelope(
-            subject: "Cotización {$numeroCotizacion} - Web Solutions",
+            from: 'nachobonilla6@gmail.com',
+            subject: "Cotización {$numeroCotizacion} - WALEÉ",
         );
     }
 

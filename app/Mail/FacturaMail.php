@@ -29,7 +29,8 @@ class FacturaMail extends Mailable
     {
         $numeroFactura = $this->facturaData['numero_factura'] ?? 'N/A';
         return new Envelope(
-            subject: "Factura {$numeroFactura} - Web Solutions",
+            from: 'nachobonilla6@gmail.com',
+            subject: "Factura {$numeroFactura} - WALEÉ",
         );
     }
 

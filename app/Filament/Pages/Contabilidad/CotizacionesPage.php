@@ -38,7 +38,7 @@ class CotizacionesPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return CotizacionResource::table($table)
-            ->query(Cotizacion::query());
+            ->query(Cotizacion::query()->orderBy('created_at', 'desc'));
     }
 
     protected function getHeaderActions(): array

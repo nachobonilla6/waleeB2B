@@ -273,8 +273,7 @@ class CotizacionResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->defaultSort('fecha', 'desc');
+            ]);
     }
 
     public static function getRelations(): array

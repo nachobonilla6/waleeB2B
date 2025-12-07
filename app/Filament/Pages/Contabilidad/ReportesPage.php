@@ -126,6 +126,12 @@ class ReportesPage extends Page
                                     ->label('Fecha Vencimiento')
                                     ->displayFormat('d/m/Y'),
                             ]),
+                            Forms\Components\TextInput::make('correo')
+                                ->label('Correo electrónico para envío')
+                                ->email()
+                                ->placeholder('correo@ejemplo.com')
+                                ->helperText('Correo donde se enviará la factura. Se auto-completa con el correo del cliente seleccionado.')
+                                ->required(),
                             Forms\Components\Textarea::make('notas')
                                 ->label('Notas')
                                 ->rows(3)
@@ -183,10 +189,18 @@ class ReportesPage extends Page
                                         ->success()
                                         ->send();
                                 } catch (\Exception $mailException) {
+                                    \Log::error('Error enviando factura por email', [
+                                        'error' => $mailException->getMessage(),
+                                        'trace' => $mailException->getTraceAsString(),
+                                        'correo' => $correoDestino,
+                                        'factura' => $data['numero_factura'] ?? 'N/A',
+                                    ]);
+                                    
                                     \Filament\Notifications\Notification::make()
                                         ->title('⚠️ Factura guardada')
-                                        ->body('La factura se guardó pero no se pudo enviar el email: ' . $mailException->getMessage())
+                                        ->body('La factura se guardó pero no se pudo enviar el email. Error: ' . $mailException->getMessage() . ' | Verifica la configuración de email en .env (MAIL_MAILER, MAIL_HOST, etc.)')
                                         ->warning()
+                                        ->persistent()
                                         ->send();
                                 }
                                 
@@ -366,10 +380,18 @@ class ReportesPage extends Page
                                         ->success()
                                         ->send();
                                 } catch (\Exception $mailException) {
+                                    \Log::error('Error enviando cotización por email', [
+                                        'error' => $mailException->getMessage(),
+                                        'trace' => $mailException->getTraceAsString(),
+                                        'correo' => $correoDestino,
+                                        'cotizacion' => $data['numero_cotizacion'] ?? 'N/A',
+                                    ]);
+                                    
                                     \Filament\Notifications\Notification::make()
                                         ->title('⚠️ Cotización guardada')
-                                        ->body('La cotización se guardó pero no se pudo enviar el email: ' . $mailException->getMessage())
+                                        ->body('La cotización se guardó pero no se pudo enviar el email. Error: ' . $mailException->getMessage() . ' | Verifica la configuración de email en .env (MAIL_MAILER, MAIL_HOST, etc.)')
                                         ->warning()
+                                        ->persistent()
                                         ->send();
                                 }
                                 

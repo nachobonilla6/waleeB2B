@@ -199,10 +199,18 @@ class FacturasPage extends Page implements HasTable
                                         ->success()
                                         ->send();
                                 } catch (\Exception $mailException) {
+                                    \Log::error('Error enviando factura por email', [
+                                        'error' => $mailException->getMessage(),
+                                        'trace' => $mailException->getTraceAsString(),
+                                        'correo' => $correoDestino,
+                                        'factura' => $data['numero_factura'] ?? 'N/A',
+                                    ]);
+                                    
                                     \Filament\Notifications\Notification::make()
                                         ->title('⚠️ Factura guardada')
-                                        ->body('La factura se guardó pero no se pudo enviar el email: ' . $mailException->getMessage())
+                                        ->body('La factura se guardó pero no se pudo enviar el email. Error: ' . $mailException->getMessage() . ' | Verifica la configuración de email en .env (MAIL_MAILER, MAIL_HOST, etc.)')
                                         ->warning()
+                                        ->persistent()
                                         ->send();
                                 }
                                 

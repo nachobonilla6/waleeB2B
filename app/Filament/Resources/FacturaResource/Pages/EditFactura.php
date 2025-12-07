@@ -10,9 +10,18 @@ class EditFactura extends EditRecord
 {
     protected static string $resource = FacturaResource::class;
 
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+        
+        // Cargar la relación del cliente
+        $this->record->loadMissing('cliente');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
         ];
     }

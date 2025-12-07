@@ -185,7 +185,7 @@ class FacturaResource extends Resource
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('fecha_emision', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')
                     ->options([

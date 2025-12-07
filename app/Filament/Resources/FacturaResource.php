@@ -199,6 +199,66 @@ class FacturaResource extends Resource
                     ->options(Cliente::pluck('nombre_empresa', 'id')),
             ])
             ->actions([
+                Tables\Actions\Action::make('enviar_email')
+                    ->label('Enviar Email')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->action(function (Factura $record) {
+                        // Obtener correo del cliente
+                        $correoDestino = $record->correo ?? $record->cliente?->correo ?? null;
+                        
+                        if (empty($correoDestino)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('⚠️ No se puede enviar')
+                                ->body('La factura no tiene un correo electrónico asociado.')
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+                        
+                        // Preparar datos para el email
+                        $emailData = [
+                            'numero_factura' => (string) ($record->numero_factura ?? ''),
+                            'fecha_emision' => $record->fecha_emision ? $record->fecha_emision->format('Y-m-d') : '',
+                            'concepto' => (string) ($record->concepto ?? ''),
+                            'subtotal' => (string) ($record->subtotal ?? '0'),
+                            'total' => (string) ($record->total ?? '0'),
+                            'metodo_pago' => (string) ($record->metodo_pago ?? ''),
+                            'estado' => (string) ($record->estado ?? ''),
+                            'fecha_vencimiento' => $record->fecha_vencimiento ? $record->fecha_vencimiento->format('Y-m-d') : '',
+                            'notas' => (string) ($record->notas ?? ''),
+                            'cliente_nombre' => (string) ($record->cliente?->nombre_empresa ?? ''),
+                            'cliente_correo' => (string) $correoDestino,
+                        ];
+                        
+                        try {
+                            \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\FacturaMail($emailData));
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('✅ Email enviado')
+                                ->body('La factura ha sido enviada por correo electrónico a ' . $correoDestino)
+                                ->success()
+                                ->send();
+                        } catch (\Exception $mailException) {
+                            \Log::error('Error enviando factura por email desde tabla', [
+                                'error' => $mailException->getMessage(),
+                                'trace' => $mailException->getTraceAsString(),
+                                'correo' => $correoDestino,
+                                'factura' => $record->numero_factura ?? 'N/A',
+                            ]);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('❌ Error al enviar email')
+                                ->body('No se pudo enviar el email: ' . $mailException->getMessage())
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Enviar factura por email')
+                    ->modalDescription('¿Estás seguro de que deseas enviar esta factura por correo electrónico?')
+                    ->modalSubmitActionLabel('Sí, enviar'),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])

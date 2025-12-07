@@ -258,14 +258,63 @@ class CotizacionResource extends Resource
                     ->icon('heroicon-o-envelope')
                     ->color('success')
                     ->action(function (Cotizacion $record) {
-                        // Aquí puedes agregar la lógica para enviar el email
-                        \Filament\Notifications\Notification::make()
-                            ->title('Email enviado')
-                            ->body('La cotización ha sido enviada por correo electrónico.')
-                            ->success()
-                            ->send();
+                        // Obtener correo del cliente
+                        $correoDestino = $record->correo ?? $record->cliente?->correo ?? null;
+                        
+                        if (empty($correoDestino)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('⚠️ No se puede enviar')
+                                ->body('La cotización no tiene un correo electrónico asociado.')
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+                        
+                        // Preparar datos para el email
+                        $emailData = [
+                            'numero_cotizacion' => (string) ($record->numero_cotizacion ?? ''),
+                            'fecha' => $record->fecha ? $record->fecha->format('Y-m-d') : '',
+                            'idioma' => (string) ($record->idioma ?? 'es'),
+                            'tipo_servicio' => (string) ($record->tipo_servicio ?? ''),
+                            'plan' => (string) ($record->plan ?? ''),
+                            'monto' => (string) ($record->monto ?? '0'),
+                            'vigencia' => (string) ($record->vigencia ?? '15'),
+                            'correo' => (string) $correoDestino,
+                            'descripcion' => (string) ($record->descripcion ?? ''),
+                            'cliente_id' => $record->cliente_id ?? null,
+                            'cliente_nombre' => (string) ($record->cliente?->nombre_empresa ?? ''),
+                            'cliente_correo' => (string) $correoDestino,
+                            'timestamp' => now()->toIso8601String(),
+                        ];
+                        
+                        try {
+                            \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\CotizacionMail($emailData));
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('✅ Email enviado')
+                                ->body('La cotización ha sido enviada por correo electrónico a ' . $correoDestino)
+                                ->success()
+                                ->send();
+                        } catch (\Exception $mailException) {
+                            \Log::error('Error enviando cotización por email desde tabla', [
+                                'error' => $mailException->getMessage(),
+                                'trace' => $mailException->getTraceAsString(),
+                                'correo' => $correoDestino,
+                                'cotizacion' => $record->numero_cotizacion ?? 'N/A',
+                            ]);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('❌ Error al enviar email')
+                                ->body('No se pudo enviar el email: ' . $mailException->getMessage())
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
                     })
-                    ->requiresConfirmation(),
+                    ->requiresConfirmation()
+                    ->modalHeading('Enviar cotización por email')
+                    ->modalDescription('¿Estás seguro de que deseas enviar esta cotización por correo electrónico?')
+                    ->modalSubmitActionLabel('Sí, enviar'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

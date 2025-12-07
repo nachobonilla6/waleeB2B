@@ -61,7 +61,7 @@ class SiteScraper extends Page
         $data = $this->form->getState();
         
         try {
-            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/110bdb87-978a-4635-8783-cf9a9c80e322', [
+            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/0c01d9a1-788c-44d2-9c1b-9457901d0a3c', [
                 'nombre_lugar' => $data['nombre_lugar'] ?? '',
                 'industria' => $data['industria'] ?? '',
             ]);

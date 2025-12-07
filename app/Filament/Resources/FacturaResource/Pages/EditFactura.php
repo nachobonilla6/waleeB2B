@@ -12,10 +12,16 @@ class EditFactura extends EditRecord
 
     public function mount(int|string $record): void
     {
-        parent::mount($record);
+        $this->record = $this->resolveRecord($record);
         
-        // Cargar la relación del cliente
+        $this->authorizeAccess();
+        
+        // Cargar la relación del cliente antes de llenar el formulario
         $this->record->loadMissing('cliente');
+        
+        $this->fillForm();
+        
+        $this->previousUrl = url()->previous();
     }
 
     protected function getHeaderActions(): array

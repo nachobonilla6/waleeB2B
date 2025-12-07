@@ -12,11 +12,16 @@ class ViewFactura extends ViewRecord
 
     public function mount(int|string $record): void
     {
-        parent::mount($record);
+        $this->record = $this->resolveRecord($record);
         
-        // Cargar la relación del cliente y refrescar el record
+        $this->authorizeAccess();
+        
+        // Cargar la relación del cliente antes de mostrar el infolist
         $this->record->loadMissing('cliente');
-        $this->record->refresh();
+        
+        if (! $this->hasInfolist()) {
+            $this->fillForm();
+        }
     }
 
     protected function getHeaderActions(): array

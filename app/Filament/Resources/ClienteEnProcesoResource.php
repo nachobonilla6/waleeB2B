@@ -6,6 +6,8 @@ use App\Filament\Resources\ClienteEnProcesoResource\Pages;
 use App\Models\Client;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -112,8 +114,10 @@ class ClienteEnProcesoResource extends Resource
                                 ->label('Llenar con AI')
                                 ->icon('heroicon-o-sparkles')
                                 ->color('primary')
-                                ->action(function (?Client $record) {
-                                    if (! $record?->website) {
+                                ->action(function (Set $set, Get $get, ?Client $record) {
+                                    $website = $get('website') ?: $record?->website;
+
+                                    if (! $website) {
                                         Notification::make()
                                             ->title('Falta sitio web')
                                             ->body('Agrega el sitio web antes de usar AI.')
@@ -126,14 +130,33 @@ class ClienteEnProcesoResource extends Resource
                                         $response = Http::post(
                                             'https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a',
                                             [
-                                                'website' => $record->website,
+                                                'website' => $website,
                                             ]
                                         );
 
                                         if ($response->successful()) {
+                                            $data = $response->json();
+                                            $propuesta = $data['propuesta'] ?? null;
+                                            $feedback = $data['feedback'] ?? null;
+
+                                            if ($record) {
+                                                $record->update([
+                                                    'propuesta' => $propuesta ?? $record->propuesta,
+                                                    'feedback' => $feedback ?? $record->feedback,
+                                                ]);
+                                            }
+
+                                            if ($propuesta !== null) {
+                                                $set('propuesta', $propuesta);
+                                            }
+
+                                            if ($feedback !== null) {
+                                                $set('feedback', $feedback);
+                                            }
+
                                             Notification::make()
                                                 ->title('Enviado a AI')
-                                                ->body('Se envió el sitio a AI para procesar.')
+                                                ->body('Propuesta y feedback actualizados desde AI.')
                                                 ->success()
                                                 ->send();
                                         } else {

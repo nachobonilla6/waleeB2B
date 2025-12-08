@@ -10,6 +10,8 @@ use Filament\Support\Enums\MaxWidth;
 
 class ListClientesGoogleEnviadas extends ListRecords
 {
+    protected static string $maxContentWidth = 'full';
+
     protected static string $resource = ClientesGoogleEnviadasResource::class;
 
     protected function getHeaderWidgets(): array
@@ -17,11 +19,6 @@ class ListClientesGoogleEnviadas extends ListRecords
         return [
             ClientesGoogleEnviadasCards::class,
         ];
-    }
-
-    public function getMaxContentWidth(): MaxWidth | string | null
-    {
-        return MaxWidth::Full;
     }
 
     public function getTitle(): string

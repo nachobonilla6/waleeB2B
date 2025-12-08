@@ -10,6 +10,8 @@ use Filament\Support\Enums\MaxWidth;
 
 class ListClienteEnProcesos extends ListRecords
 {
+    protected static string $maxContentWidth = 'full';
+
     protected static string $resource = ClienteEnProcesoResource::class;
 
     protected function getHeaderWidgets(): array
@@ -17,11 +19,6 @@ class ListClienteEnProcesos extends ListRecords
         return [
             ClientesEnProcesoCards::class,
         ];
-    }
-
-    public function getMaxContentWidth(): MaxWidth | string | null
-    {
-        return MaxWidth::Full;
     }
 
     public function getTitle(): string

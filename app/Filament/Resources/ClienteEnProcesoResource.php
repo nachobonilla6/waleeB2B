@@ -29,6 +29,11 @@ class ClienteEnProcesoResource extends Resource
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 2;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getNavigationBadge(): ?string
     {
         try {

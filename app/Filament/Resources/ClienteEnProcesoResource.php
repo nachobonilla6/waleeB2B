@@ -128,11 +128,6 @@ class ClienteEnProcesoResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Correo')
-                    ->searchable()
-                    ->copyable()
-                    ->icon('heroicon-o-envelope'),
                 Tables\Columns\TextColumn::make('website')
                     ->label('Sitio Web')
                     ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
@@ -140,10 +135,6 @@ class ClienteEnProcesoResource extends Resource
                     ->limit(40)
                     ->copyable()
                     ->icon('heroicon-o-globe-alt'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Fecha de Registro')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('propuesta_enviada')

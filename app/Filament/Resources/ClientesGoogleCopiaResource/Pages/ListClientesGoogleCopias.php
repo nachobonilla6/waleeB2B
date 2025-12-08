@@ -24,12 +24,12 @@ class ListClientesGoogleCopias extends ListRecords
 
     public function getTitle(): string
     {
-        return 'Clientes Google (Copia)';
+        return 'Site Scraper';
     }
 
     public function getHeading(): string
     {
-        return 'Clientes Google (Copia)';
+        return 'Site Scraper';
     }
 
     protected function getHeaderActions(): array

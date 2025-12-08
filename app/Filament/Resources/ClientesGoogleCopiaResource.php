@@ -13,9 +13,9 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationLabel = 'Clientes Google (Copia)';
-    protected static ?string $modelLabel = 'Cliente Google (Copia)';
-    protected static ?string $pluralModelLabel = 'Clientes Google (Copia)';
+    protected static ?string $navigationLabel = 'Site Scraper';
+    protected static ?string $modelLabel = 'Site Scraper';
+    protected static ?string $pluralModelLabel = 'Site Scraper';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 5;
 

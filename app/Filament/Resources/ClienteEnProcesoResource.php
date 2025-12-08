@@ -132,7 +132,15 @@ class ClienteEnProcesoResource extends Resource
                     ->label('Sitio Web')
                     ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
                     ->openUrlInNewTab()
-                    ->formatStateUsing(fn ($state) => $state ? rtrim(preg_replace('/^https?:\\/\\//i', '', $state), '/') : null)
+                    ->formatStateUsing(function ($state) {
+                        if (! $state) {
+                            return null;
+                        }
+                        // Quitar protocolo y www.
+                        $clean = preg_replace('/^https?:\\/\\//i', '', $state);
+                        $clean = preg_replace('/^www\\./i', '', $clean);
+                        return rtrim($clean, '/');
+                    })
                     ->limit(40)
                     ->icon('heroicon-o-globe-alt'),
             ])

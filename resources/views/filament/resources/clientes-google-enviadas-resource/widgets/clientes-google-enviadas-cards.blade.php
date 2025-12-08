@@ -1,6 +1,6 @@
 <div class="w-full space-y-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="{{ \App\Filament\Resources\ClientesGoogleCopiaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-primary-500 dark:border-primary-700 ring-2 ring-primary-200 dark:ring-primary-800">
+        <a href="{{ \App\Filament\Resources\ClientesGoogleCopiaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
             <div class="flex items-center space-x-4">
                 <div class="flex-shrink-0">
                     <svg class="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,7 +14,7 @@
             </div>
         </a>
 
-        <a href="{{ \App\Filament\Resources\ClienteEnProcesoResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
+        <a href="{{ \App\Filament\Resources\ClienteEnProcesoResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-primary-500 dark:border-primary-700 ring-2 ring-primary-200 dark:ring-primary-800">
             <div class="flex items-center space-x-4">
                 <div class="flex-shrink-0">
                     <svg class="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
             </div>
         </a>
 
-        <a href="{{ \App\Filament\Resources\ClientesGoogleEnviadasResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
+        <a href="https://websolutions.work/admin/clientes-google-enviadas" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
             <div class="flex items-center space-x-4">
                 <div class="flex-shrink-0">
                     <svg class="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

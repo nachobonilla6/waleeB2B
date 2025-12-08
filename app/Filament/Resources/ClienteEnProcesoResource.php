@@ -323,7 +323,9 @@ class ClienteEnProcesoResource extends Resource
                 return parent::getEloquentQuery()->whereRaw('1 = 0');
             }
 
-            $query = parent::getEloquentQuery();
+            $query = parent::getEloquentQuery()
+                ->orderByDesc('created_at')
+                ->orderByDesc('id');
 
             // Solo mostrar clientes que NO tienen propuesta enviada (en proceso)
             if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {

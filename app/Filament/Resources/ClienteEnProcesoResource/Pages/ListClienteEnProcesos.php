@@ -6,6 +6,7 @@ use App\Filament\Resources\ClienteEnProcesoResource;
 use App\Filament\Resources\ClienteEnProcesoResource\Widgets\ClientesEnProcesoCards;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 
 class ListClienteEnProcesos extends ListRecords
 {
@@ -16,6 +17,11 @@ class ListClienteEnProcesos extends ListRecords
         return [
             ClientesEnProcesoCards::class,
         ];
+    }
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
     }
 
     protected function getHeaderActions(): array

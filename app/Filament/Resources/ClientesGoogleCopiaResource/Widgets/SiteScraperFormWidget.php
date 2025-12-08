@@ -3,13 +3,17 @@
 namespace App\Filament\Resources\ClientesGoogleCopiaResource\Widgets;
 
 use Filament\Forms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Http;
 
-class SiteScraperFormWidget extends Widget
+class SiteScraperFormWidget extends Widget implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string $view = 'filament.resources.clientes-google-copia-resource.widgets.site-scraper-form-widget';
 
     public ?array $data = [];

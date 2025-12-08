@@ -38,6 +38,9 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
                 });
             }
 
+            // Mostrar solo registros creados en 2023
+            $query->whereYear('created_at', 2023);
+
             return $query;
         } catch (\Exception $e) {
             return parent::getEloquentQuery()->whereRaw('1 = 0');

@@ -133,7 +133,6 @@ class ClienteEnProcesoResource extends Resource
                     ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
                     ->openUrlInNewTab()
                     ->limit(40)
-                    ->copyable()
                     ->icon('heroicon-o-globe-alt'),
             ])
             ->filters([

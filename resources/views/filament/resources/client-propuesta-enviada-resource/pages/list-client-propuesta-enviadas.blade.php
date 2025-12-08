@@ -25,7 +25,7 @@
                 </div>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ClientResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700">
+            <a href="{{ \App\Filament\Resources\ClienteEnProcesoResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Clientes Google</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Gestionar clientes extraídos de Google</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Gestionar prospectos de Google</p>
                     </div>
                 </div>
             </a>

@@ -9,4 +9,9 @@ class ClientesEnProcesoCards extends Widget
     protected static string $view = 'filament.resources.cliente-en-proceso-resource.widgets.clientes-en-proceso-cards';
 
     protected int|string|array $columnSpan = 'full';
+
+    public function getColumnSpan(): int | string | array
+    {
+        return 'full';
+    }
 }

@@ -112,7 +112,45 @@ class ClienteEnProcesoResource extends Resource
                                 ->label('Llenar con AI')
                                 ->icon('heroicon-o-sparkles')
                                 ->color('primary')
-                                ->action(fn () => null),
+                                ->action(function (?Client $record) {
+                                    if (! $record?->website) {
+                                        Notification::make()
+                                            ->title('Falta sitio web')
+                                            ->body('Agrega el sitio web antes de usar AI.')
+                                            ->warning()
+                                            ->send();
+                                        return;
+                                    }
+
+                                    try {
+                                        $response = Http::post(
+                                            'https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a',
+                                            [
+                                                'website' => $record->website,
+                                            ]
+                                        );
+
+                                        if ($response->successful()) {
+                                            Notification::make()
+                                                ->title('Enviado a AI')
+                                                ->body('Se envió el sitio a AI para procesar.')
+                                                ->success()
+                                                ->send();
+                                        } else {
+                                            Notification::make()
+                                                ->title('Error al enviar')
+                                                ->body('El webhook respondió con estado ' . $response->status())
+                                                ->danger()
+                                                ->send();
+                                        }
+                                    } catch (\Exception $e) {
+                                        Notification::make()
+                                            ->title('Error al enviar')
+                                            ->body($e->getMessage())
+                                            ->danger()
+                                            ->send();
+                                    }
+                                }),
                         ])->columnSpanFull()
                           ->visibleOn('edit'),
                         Forms\Components\Toggle::make('propuesta_enviada')

@@ -29,7 +29,7 @@ class ListClienteEnProcesos extends ListRecords
         return 'Clientes Google';
     }
 
-    protected function getHeading(): string
+    public function getHeading(): string
     {
         return 'Clientes Google';
     }

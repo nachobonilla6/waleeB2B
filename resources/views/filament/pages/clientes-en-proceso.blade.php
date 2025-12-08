@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="{{ \App\Filament\Pages\SiteScraper::getUrl() }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-success-200 dark:border-success-900 ring-1 ring-success-100 dark:ring-success-800">
+            <a href="{{ \App\Filament\Pages\SiteScraper::getUrl() }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -15,7 +15,7 @@
                 </div>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ClientResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700">
+            <a href="{{ \App\Filament\Resources\ClientResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-primary-500 dark:border-primary-700 ring-2 ring-primary-200 dark:ring-primary-800">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,7 +29,7 @@
                 </div>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ClientPropuestaEnviadaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-blue-200 dark:border-blue-900 ring-1 ring-blue-100 dark:ring-blue-800">
+            <a href="{{ \App\Filament\Resources\ClientPropuestaEnviadaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
                 <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
                         <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

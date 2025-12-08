@@ -136,8 +136,17 @@ class ClienteEnProcesoResource extends Resource
 
                                         if ($response->successful()) {
                                             $data = $response->json();
-                                            $propuesta = $data['propuesta'] ?? null;
-                                            $feedback = $data['feedback'] ?? null;
+
+                                            $propuestaRaw = $data['propuesta'] ?? null;
+                                            $feedbackRaw = $data['feedback'] ?? null;
+
+                                            $propuesta = is_array($propuestaRaw)
+                                                ? json_encode($propuestaRaw, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                                                : $propuestaRaw;
+
+                                            $feedback = is_array($feedbackRaw)
+                                                ? json_encode($feedbackRaw, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                                                : $feedbackRaw;
 
                                             if ($record) {
                                                 $record->update([

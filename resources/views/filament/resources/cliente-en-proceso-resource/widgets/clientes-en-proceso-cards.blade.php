@@ -1,5 +1,5 @@
-<div class="w-full max-w-full space-y-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+<div class="w-full max-w-full space-y-4" style="width: 100% !important; max-width: 100% !important; margin-left: -1.5rem !important; margin-right: -1.5rem !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important;">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" style="width: 100% !important;">
         <a href="{{ \App\Filament\Resources\ClientesGoogleCopiaResource::getUrl('index') }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
         <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">

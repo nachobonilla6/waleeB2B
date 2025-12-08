@@ -112,6 +112,14 @@ class ClienteEnProcesoResource extends Resource
                             ->default(false)
                             ->helperText('Marcar cuando se haya enviado la propuesta')
                             ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
+                        Forms\Components\Actions::make([
+                            Forms\Components\Actions\Action::make('llenar_ai')
+                                ->label('Llenar con AI')
+                                ->icon('heroicon-o-sparkles')
+                                ->color('primary')
+                                ->action(fn () => null),
+                        ])->columnSpanFull()
+                          ->visibleOn('edit'),
                     ]),
             ]);
     }

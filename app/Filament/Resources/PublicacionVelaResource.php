@@ -33,6 +33,8 @@ class PublicacionVelaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Publicación')
+                    ->compact()
+                    ->collapsible(false)
                     ->schema([
                         Forms\Components\FileUpload::make('foto')
                             ->label('Foto')
@@ -43,7 +45,7 @@ class PublicacionVelaResource extends Resource
                         Forms\Components\Textarea::make('texto')
                             ->label('Texto')
                             ->required()
-                            ->rows(3)
+                            ->rows(2)
                             ->maxLength(500)
                             ->helperText('Texto de la publicación (aproximadamente 25 palabras)')
                             ->columnSpanFull(),
@@ -52,6 +54,7 @@ class PublicacionVelaResource extends Resource
                                 ->label('Crear con AI')
                                 ->icon('heroicon-o-sparkles')
                                 ->color('primary')
+                                ->size('sm')
                                 ->action(function (Set $set) {
                                     $apiKey = config('services.openai.api_key');
                                     if (empty($apiKey)) {
@@ -128,9 +131,11 @@ class PublicacionVelaResource extends Resource
                             ->helperText('Separar hashtags con espacios')
                             ->columnSpanFull(),
                         Forms\Components\DateTimePicker::make('fecha_publicacion')
-                            ->label('Fecha de Publicación')
+                            ->label('Fecha')
                             ->default(now())
-                            ->required(),
+                            ->required()
+                            ->displayFormat('d/m/Y H:i')
+                            ->seconds(false),
                     ])
                     ->columns(2),
             ]);
@@ -160,7 +165,9 @@ class PublicacionVelaResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalWidth('4xl')
+                    ->slideOver(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -39,15 +39,16 @@ class SiteScraper extends Page
                 Forms\Components\Select::make('industria')
                     ->label('Tipo de Negocio')
                     ->options([
-                        'restaurantes' => '🍽️ Restaurantes / Gastronomía',
-                        'retail' => '🛍️ Retail / Tiendas',
-                        'servicios_profesionales' => '💼 Servicios Profesionales',
-                        'salud' => '🏥 Salud / Medicina',
-                        'educacion' => '📚 Educación',
-                        'tecnologia' => '💻 Tecnología / Software',
-                        'turismo' => '✈️ Turismo / Hotelería',
-                        'bienes_raices' => '🏠 Bienes Raíces',
-                        'automotriz' => '🚗 Automotriz',
+                        'tienda_ropa' => '👕 Tienda de Ropa',
+                        'pizzeria' => '🍕 Pizzería',
+                        'restaurante' => '🍽️ Restaurante',
+                        'cafeteria' => '☕ Cafetería',
+                        'farmacia' => '💊 Farmacia',
+                        'supermercado' => '🛒 Supermercado',
+                        'peluqueria' => '✂️ Peluquería / Salón de Belleza',
+                        'gimnasio' => '💪 Gimnasio',
+                        'veterinaria' => '🐾 Veterinaria',
+                        'taller_mecanico' => '🔧 Taller Mecánico',
                         'otro' => '📝 Otro',
                     ])
                     ->required()

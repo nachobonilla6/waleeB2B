@@ -11,6 +11,7 @@ use Filament\Support\Enums\MaxWidth;
 
 class ListClientesGoogleCopias extends ListRecords
 {
+    protected static string $view = 'filament.resources.clientes-google-copia-resource.pages.list-clientes-google-copias';
     protected static string $resource = ClientesGoogleCopiaResource::class;
 
     protected function getHeaderWidgets(): array

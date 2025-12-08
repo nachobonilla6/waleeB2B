@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClientesGoogleCopiaResource\Pages;
 
 use App\Filament\Resources\ClientesGoogleCopiaResource;
 use App\Filament\Resources\ClienteEnProcesoResource\Widgets\ClientesEnProcesoCards;
+use App\Filament\Resources\ClientesGoogleCopiaResource\Widgets\SiteScraperFormWidget;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
@@ -16,6 +17,7 @@ class ListClientesGoogleCopias extends ListRecords
     {
         return [
             ClientesEnProcesoCards::class,
+            SiteScraperFormWidget::class,
         ];
     }
 

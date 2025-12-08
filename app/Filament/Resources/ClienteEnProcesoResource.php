@@ -25,45 +25,34 @@ class ClienteEnProcesoResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
     /**
-     * Convierte un array/objeto JSON a texto legible
+     * Extrae solo el texto de un JSON, sin títulos ni claves
      */
-    protected static function jsonToText($data, $indent = 0): string
+    protected static function jsonToText($data): string
     {
         if (is_string($data)) {
             $decoded = json_decode($data, true);
             if (json_last_error() === JSON_ERROR_NONE) {
                 $data = $decoded;
             } else {
-                return $data;
+                return trim($data);
             }
         }
 
-        if (!is_array($data)) {
-            return (string) $data;
+        if (!is_array($data) && !is_object($data)) {
+            return trim((string) $data);
         }
 
-        $text = '';
-        $prefix = str_repeat('  ', $indent);
-
+        $texts = [];
+        
         foreach ($data as $key => $value) {
-            $keyText = is_numeric($key) ? '' : ucfirst(str_replace('_', ' ', $key)) . ': ';
-            
-            if (is_array($value)) {
-                if (empty($value)) {
-                    $text .= $prefix . $keyText . "N/A\n";
-                } else {
-                    $text .= $prefix . $keyText . "\n";
-                    $text .= static::jsonToText($value, $indent + 1);
-                }
-            } elseif (is_object($value)) {
-                $text .= $prefix . $keyText . "\n";
-                $text .= static::jsonToText((array) $value, $indent + 1);
+            if (is_array($value) || is_object($value)) {
+                $texts[] = static::jsonToText($value);
             } else {
-                $text .= $prefix . $keyText . $value . "\n";
+                $texts[] = trim((string) $value);
             }
         }
 
-        return $text;
+        return trim(implode(' ', $texts));
     }
     protected static ?string $navigationLabel = 'Clientes Google';
     protected static ?string $modelLabel = 'Cliente Google';
@@ -145,17 +134,17 @@ class ClienteEnProcesoResource extends Resource
                     ->columns(2),
                 Forms\Components\Section::make('Propuesta y Feedback')
                     ->schema([
-                        Forms\Components\Textarea::make('propuesta')
-                            ->label('Propuesta')
-                            ->rows(4)
-                            ->columnSpanFull()
-                            ->helperText('Propuesta personalizada para este cliente'),
                         Forms\Components\Textarea::make('feedback')
                             ->label('Feedback')
                             ->rows(3)
                             ->columnSpanFull()
                             ->readOnly()
                             ->helperText('Feedback del cliente (solo lectura)'),
+                        Forms\Components\Textarea::make('propuesta')
+                            ->label('Propuesta')
+                            ->rows(4)
+                            ->columnSpanFull()
+                            ->helperText('Propuesta personalizada para este cliente'),
                         Forms\Components\Actions::make([
                             Forms\Components\Actions\Action::make('llenar_ai')
                                 ->label('Llenar con AI')
@@ -192,11 +181,11 @@ class ClienteEnProcesoResource extends Resource
                                                 'messages' => [
                                                     [
                                                         'role' => 'system',
-                                                        'content' => 'Eres un asistente que genera propuesta y feedback en JSON para un sitio web. Responde SOLO JSON con las claves "propuesta" y "feedback". No incluyas texto extra.',
+                                                        'content' => 'Eres un asistente que genera propuesta y feedback en JSON para un sitio web. Responde SOLO JSON con las claves "propuesta" y "feedback". Cada valor debe ser un texto simple de exactamente 25 palabras, sin títulos, sin estructura, solo texto plano.',
                                                     ],
                                                     [
                                                         'role' => 'user',
-                                                        'content' => 'Genera propuesta y feedback para el sitio: ' . $website . '. Devuelve JSON.',
+                                                        'content' => 'Genera feedback y propuesta (cada uno de exactamente 25 palabras, solo texto) para el sitio: ' . $website . '. Devuelve JSON con "feedback" y "propuesta" como texto simple.',
                                                     ],
                                                 ],
                                             ]);
@@ -226,17 +215,17 @@ class ClienteEnProcesoResource extends Resource
 
                                             if ($record) {
                                                 $record->update([
-                                                    'propuesta' => $propuesta ?? $record->propuesta,
                                                     'feedback' => $feedback ?? $record->feedback,
+                                                    'propuesta' => $propuesta ?? $record->propuesta,
                                                 ]);
-                                            }
-
-                                            if ($propuesta !== null) {
-                                                $set('propuesta', $propuesta);
                                             }
 
                                             if ($feedback !== null) {
                                                 $set('feedback', $feedback);
+                                            }
+
+                                            if ($propuesta !== null) {
+                                                $set('propuesta', $propuesta);
                                             }
 
                                             Notification::make()

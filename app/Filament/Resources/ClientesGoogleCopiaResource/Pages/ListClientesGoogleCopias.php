@@ -24,6 +24,11 @@ class ListClientesGoogleCopias extends ListRecords
         return MaxWidth::Full;
     }
 
+    protected function hasTable(): bool
+    {
+        return false;
+    }
+
     public function getTitle(): string
     {
         return 'Clientes Google (Copia)';

@@ -16,7 +16,7 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
     protected static ?string $navigationLabel = 'Site Scraper';
     protected static ?string $modelLabel = 'Site Scraper';
     protected static ?string $pluralModelLabel = 'Site Scraper';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 5;
 
     public static function getEloquentQuery(): Builder

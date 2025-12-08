@@ -17,6 +17,12 @@ class ListClientesGoogleCopias extends ListRecords
     {
         return [
             ClientesEnProcesoCards::class,
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
             SiteScraperFormWidget::class,
         ];
     }

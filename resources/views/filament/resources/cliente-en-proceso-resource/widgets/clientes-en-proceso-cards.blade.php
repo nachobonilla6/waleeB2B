@@ -22,8 +22,8 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Clientes en Proceso</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Gestionar prospectos pendientes</p>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Clientes Google</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Gestionar prospectos de Google</p>
             </div>
         </div>
     </a>

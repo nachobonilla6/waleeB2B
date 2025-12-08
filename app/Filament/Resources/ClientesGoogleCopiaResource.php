@@ -19,6 +19,11 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 5;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
+
     public static function getEloquentQuery(): Builder
     {
         // Reutiliza el filtro base: solo pendientes (propuesta_enviada null/false)

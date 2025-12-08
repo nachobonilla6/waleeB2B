@@ -11,7 +11,7 @@ class CreateClientesGoogleEnviada extends CreateRecord
 
     public function getTitle(): string
     {
-        return 'Crear Cliente Google (Enviada)';
+        return 'Crear Propuesta Enviada';
     }
 }
 

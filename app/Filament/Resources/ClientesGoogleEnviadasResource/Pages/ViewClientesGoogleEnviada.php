@@ -20,7 +20,7 @@ class ViewClientesGoogleEnviada extends ViewRecord
 
     public function getTitle(): string
     {
-        return 'Detalle Cliente Google (Enviada)';
+        return 'Detalle Propuesta Enviada';
     }
 }
 

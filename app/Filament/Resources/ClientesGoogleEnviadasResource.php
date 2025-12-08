@@ -19,9 +19,9 @@ class ClientesGoogleEnviadasResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
-    protected static ?string $navigationLabel = 'Clientes Google (Enviadas)';
-    protected static ?string $modelLabel = 'Cliente Google (Enviada)';
-    protected static ?string $pluralModelLabel = 'Clientes Google (Enviadas)';
+    protected static ?string $navigationLabel = 'Propuestas Enviadas';
+    protected static ?string $modelLabel = 'Propuesta Enviada';
+    protected static ?string $pluralModelLabel = 'Propuestas Enviadas';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 3;
 

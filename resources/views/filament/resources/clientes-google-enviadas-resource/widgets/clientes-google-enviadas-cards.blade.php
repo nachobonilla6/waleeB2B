@@ -36,8 +36,8 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Clientes Google (Enviadas)</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Propuestas enviadas</p>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Propuestas Enviadas</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Clientes con propuesta enviada</p>
                 </div>
             </div>
         </a>

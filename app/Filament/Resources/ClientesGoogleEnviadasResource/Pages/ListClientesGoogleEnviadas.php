@@ -26,12 +26,12 @@ class ListClientesGoogleEnviadas extends ListRecords
 
     public function getTitle(): string
     {
-        return 'Clientes Google (Enviadas)';
+        return 'Propuestas Enviadas';
     }
 
     public function getHeading(): string
     {
-        return 'Clientes Google (Enviadas)';
+        return 'Propuestas Enviadas';
     }
 
     protected function getHeaderActions(): array

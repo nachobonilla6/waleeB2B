@@ -20,7 +20,7 @@ class EditClientesGoogleEnviada extends EditRecord
 
     public function getTitle(): string
     {
-        return 'Editar Cliente Google (Enviada)';
+        return 'Editar Propuesta Enviada';
     }
 }
 

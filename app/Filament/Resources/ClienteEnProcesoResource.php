@@ -131,7 +131,7 @@ class ClienteEnProcesoResource extends Resource
                                         return;
                                     }
 
-                                    $apiKey = env('OPENAI_API_KEY');
+                                    $apiKey = config('services.openai.api_key');
                                     if (empty($apiKey)) {
                                         Notification::make()
                                             ->title('Falta OPENAI_API_KEY')

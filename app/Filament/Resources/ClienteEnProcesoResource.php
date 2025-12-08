@@ -23,6 +23,48 @@ class ClienteEnProcesoResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
+
+    /**
+     * Convierte un array/objeto JSON a texto legible
+     */
+    protected static function jsonToText($data, $indent = 0): string
+    {
+        if (is_string($data)) {
+            $decoded = json_decode($data, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $data = $decoded;
+            } else {
+                return $data;
+            }
+        }
+
+        if (!is_array($data)) {
+            return (string) $data;
+        }
+
+        $text = '';
+        $prefix = str_repeat('  ', $indent);
+
+        foreach ($data as $key => $value) {
+            $keyText = is_numeric($key) ? '' : ucfirst(str_replace('_', ' ', $key)) . ': ';
+            
+            if (is_array($value)) {
+                if (empty($value)) {
+                    $text .= $prefix . $keyText . "N/A\n";
+                } else {
+                    $text .= $prefix . $keyText . "\n";
+                    $text .= static::jsonToText($value, $indent + 1);
+                }
+            } elseif (is_object($value)) {
+                $text .= $prefix . $keyText . "\n";
+                $text .= static::jsonToText((array) $value, $indent + 1);
+            } else {
+                $text .= $prefix . $keyText . $value . "\n";
+            }
+        }
+
+        return $text;
+    }
     protected static ?string $navigationLabel = 'Clientes Google';
     protected static ?string $modelLabel = 'Cliente Google';
     protected static ?string $pluralModelLabel = 'Clientes Google';
@@ -174,13 +216,13 @@ class ClienteEnProcesoResource extends Resource
                                             $propuestaRaw = $data['propuesta'] ?? null;
                                             $feedbackRaw = $data['feedback'] ?? null;
 
-                                            $propuesta = is_array($propuestaRaw)
-                                                ? json_encode($propuestaRaw, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-                                                : $propuestaRaw;
+                                            $propuesta = is_array($propuestaRaw) || is_object($propuestaRaw)
+                                                ? static::jsonToText($propuestaRaw)
+                                                : (string) ($propuestaRaw ?? '');
 
-                                            $feedback = is_array($feedbackRaw)
-                                                ? json_encode($feedbackRaw, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-                                                : $feedbackRaw;
+                                            $feedback = is_array($feedbackRaw) || is_object($feedbackRaw)
+                                                ? static::jsonToText($feedbackRaw)
+                                                : (string) ($feedbackRaw ?? '');
 
                                             if ($record) {
                                                 $record->update([

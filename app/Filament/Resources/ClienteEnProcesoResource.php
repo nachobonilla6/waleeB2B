@@ -126,16 +126,45 @@ class ClienteEnProcesoResource extends Resource
                                         return;
                                     }
 
+                                    $apiKey = env('OPENAI_API_KEY');
+                                    if (empty($apiKey)) {
+                                        Notification::make()
+                                            ->title('Falta OPENAI_API_KEY')
+                                            ->body('Configura la API key en el servidor para usar AI.')
+                                            ->danger()
+                                            ->send();
+                                        return;
+                                    }
+
                                     try {
-                                        $response = Http::post(
-                                            'https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a',
-                                            [
-                                                'website' => $website,
-                                            ]
-                                        );
+                                        $response = Http::withToken($apiKey)
+                                            ->acceptJson()
+                                            ->post('https://api.openai.com/v1/chat/completions', [
+                                                'model' => 'gpt-4o-mini',
+                                                'response_format' => ['type' => 'json_object'],
+                                                'messages' => [
+                                                    [
+                                                        'role' => 'system',
+                                                        'content' => 'Eres un asistente que genera propuesta y feedback en JSON para un sitio web. Responde SOLO JSON con las claves "propuesta" y "feedback". No incluyas texto extra.',
+                                                    ],
+                                                    [
+                                                        'role' => 'user',
+                                                        'content' => 'Genera propuesta y feedback para el sitio: ' . $website . '. Devuelve JSON.',
+                                                    ],
+                                                ],
+                                            ]);
 
                                         if ($response->successful()) {
-                                            $data = $response->json();
+                                            $responseData = $response->json();
+                                            $data = $responseData['choices'][0]['message']['content'] ?? null;
+
+                                            if (is_string($data)) {
+                                                $data = json_decode($data, true);
+                                            }
+
+                                            if (! is_array($data)) {
+                                                throw new \RuntimeException('La respuesta de AI no es JSON válido.');
+                                            }
 
                                             $propuestaRaw = $data['propuesta'] ?? null;
                                             $feedbackRaw = $data['feedback'] ?? null;

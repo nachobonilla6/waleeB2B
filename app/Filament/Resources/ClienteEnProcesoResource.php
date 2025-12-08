@@ -111,7 +111,7 @@ class ClienteEnProcesoResource extends Resource
                             ->label('Propuesta Enviada')
                             ->default(false)
                             ->helperText('Marcar cuando se haya enviado la propuesta')
-                            ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
+                            ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                     ]),
             ]);
     }
@@ -153,7 +153,7 @@ class ClienteEnProcesoResource extends Resource
                 Tables\Columns\IconColumn::make('propuesta_enviada')
                     ->label('Propuesta Enviada')
                     ->boolean()
-                    ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
+                    ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha de Registro')
                     ->dateTime('d/m/Y H:i')
@@ -167,20 +167,20 @@ class ClienteEnProcesoResource extends Resource
                     ->falseLabel('Sin propuesta enviada')
                     ->queries(
                         true: function (Builder $query) {
-                            if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
                                 return $query->where('propuesta_enviada', true);
                             }
                             return $query;
                         },
                         false: function (Builder $query) {
-                            if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
                                 return $query->where('propuesta_enviada', false);
                             }
                             return $query;
                         },
                         blank: fn (Builder $query) => $query,
                     )
-                    ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
+                    ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
             ])
             ->actions([
                 Tables\Actions\Action::make('enviar_propuesta')
@@ -218,7 +218,7 @@ class ClienteEnProcesoResource extends Resource
                             ]);
 
                             if ($response->successful()) {
-                                if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                                if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
                                     $record->update(['propuesta_enviada' => true]);
                                 }
                                 Notification::make()
@@ -281,7 +281,7 @@ class ClienteEnProcesoResource extends Resource
                                     ]);
 
                                     if ($response->successful()) {
-                                        if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+                                        if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
                                             $record->update(['propuesta_enviada' => true]);
                                         }
                                         $enviados++;
@@ -319,14 +319,14 @@ class ClienteEnProcesoResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         try {
-            if (!Schema::hasTable('clients')) {
+            if (!Schema::hasTable('clientes_en_proceso')) {
                 return parent::getEloquentQuery()->whereRaw('1 = 0');
             }
 
             $query = parent::getEloquentQuery();
 
             // Solo mostrar clientes que NO tienen propuesta enviada (en proceso)
-            if (Schema::hasColumn('clients', 'propuesta_enviada')) {
+            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
                 $query->where(function ($q) {
                     $q->whereNull('propuesta_enviada')
                       ->orWhere('propuesta_enviada', false);
@@ -398,7 +398,7 @@ class ClienteEnProcesoResource extends Resource
                         Infolists\Components\IconEntry::make('propuesta_enviada')
                             ->label('Propuesta Enviada')
                             ->boolean()
-                            ->visible(fn () => Schema::hasColumn('clients', 'propuesta_enviada')),
+                            ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                     ]),
                 Infolists\Components\Section::make('Información Adicional')
                     ->icon('heroicon-o-information-circle')

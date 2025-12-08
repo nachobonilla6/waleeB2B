@@ -107,11 +107,6 @@ class ClienteEnProcesoResource extends Resource
                             ->columnSpanFull()
                             ->readOnly()
                             ->helperText('Feedback del cliente (solo lectura)'),
-                        Forms\Components\Toggle::make('propuesta_enviada')
-                            ->label('Propuesta Enviada')
-                            ->default(false)
-                            ->helperText('Marcar cuando se haya enviado la propuesta')
-                            ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                         Forms\Components\Actions::make([
                             Forms\Components\Actions\Action::make('llenar_ai')
                                 ->label('Llenar con AI')
@@ -120,6 +115,11 @@ class ClienteEnProcesoResource extends Resource
                                 ->action(fn () => null),
                         ])->columnSpanFull()
                           ->visibleOn('edit'),
+                        Forms\Components\Toggle::make('propuesta_enviada')
+                            ->label('Propuesta Enviada')
+                            ->default(false)
+                            ->helperText('Marcar cuando se haya enviado la propuesta')
+                            ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                     ]),
             ]);
     }

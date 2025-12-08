@@ -21,9 +21,9 @@ class ClienteEnProcesoResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
-    protected static ?string $navigationLabel = 'Clientes en Proceso';
-    protected static ?string $modelLabel = 'Cliente en Proceso';
-    protected static ?string $pluralModelLabel = 'Clientes en Proceso';
+    protected static ?string $navigationLabel = 'Clientes Google';
+    protected static ?string $modelLabel = 'Cliente Google';
+    protected static ?string $pluralModelLabel = 'Clientes Google';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 2;
 

@@ -24,6 +24,16 @@ class ListClienteEnProcesos extends ListRecords
         return MaxWidth::Full;
     }
 
+    public function getTitle(): string
+    {
+        return 'Clientes Google';
+    }
+
+    protected function getHeading(): string
+    {
+        return 'Clientes Google';
+    }
+
     protected function getHeaderActions(): array
     {
         return [

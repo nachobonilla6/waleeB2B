@@ -133,27 +133,13 @@ class ClienteEnProcesoResource extends Resource
                     ->searchable()
                     ->copyable()
                     ->icon('heroicon-o-envelope'),
-                Tables\Columns\TextColumn::make('telefono_1')
-                    ->label('Teléfono')
-                    ->searchable()
-                    ->copyable()
-                    ->icon('heroicon-o-phone'),
                 Tables\Columns\TextColumn::make('website')
                     ->label('Sitio Web')
                     ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
                     ->openUrlInNewTab()
-                    ->limit(30)
-                    ->copyable(),
-                Tables\Columns\TextColumn::make('proposed_site')
-                    ->label('Sitio Propuesto')
-                    ->url(fn ($record) => $record->proposed_site ? (str_starts_with($record->proposed_site, 'http') ? $record->proposed_site : 'https://' . $record->proposed_site) : null)
-                    ->openUrlInNewTab()
-                    ->limit(30)
-                    ->color('success'),
-                Tables\Columns\IconColumn::make('propuesta_enviada')
-                    ->label('Propuesta Enviada')
-                    ->boolean()
-                    ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
+                    ->limit(40)
+                    ->copyable()
+                    ->icon('heroicon-o-globe-alt'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha de Registro')
                     ->dateTime('d/m/Y H:i')
@@ -242,8 +228,10 @@ class ClienteEnProcesoResource extends Resource
                         }
                     })
                     ->visible(fn (Client $record) => !($record->propuesta_enviada ?? false)),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye'),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil-square'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

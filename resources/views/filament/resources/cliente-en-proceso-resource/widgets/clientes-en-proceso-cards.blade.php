@@ -1,4 +1,5 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="w-full space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <a href="{{ \App\Filament\Pages\SiteScraper::getUrl() }}" class="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow border-2 border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-800">
         <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">
@@ -40,4 +41,5 @@
             </div>
         </div>
     </a>
+</div>
 </div>

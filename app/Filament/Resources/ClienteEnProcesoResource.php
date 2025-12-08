@@ -205,13 +205,14 @@ class ClienteEnProcesoResource extends Resource
                                             $propuestaRaw = $data['propuesta'] ?? null;
                                             $feedbackRaw = $data['feedback'] ?? null;
 
+                                            // Convertir a texto plano, sin títulos ni estructura
                                             $propuesta = is_array($propuestaRaw) || is_object($propuestaRaw)
                                                 ? static::jsonToText($propuestaRaw)
-                                                : (string) ($propuestaRaw ?? '');
+                                                : trim((string) ($propuestaRaw ?? ''));
 
                                             $feedback = is_array($feedbackRaw) || is_object($feedbackRaw)
                                                 ? static::jsonToText($feedbackRaw)
-                                                : (string) ($feedbackRaw ?? '');
+                                                : trim((string) ($feedbackRaw ?? ''));
 
                                             if ($record) {
                                                 $record->update([

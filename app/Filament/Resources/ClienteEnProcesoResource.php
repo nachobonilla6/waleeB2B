@@ -138,8 +138,7 @@ class ClienteEnProcesoResource extends Resource
                             ->label('Feedback')
                             ->rows(3)
                             ->columnSpanFull()
-                            ->readOnly()
-                            ->helperText('Feedback del cliente (solo lectura)'),
+                            ->helperText('Feedback del cliente'),
                         Forms\Components\Textarea::make('propuesta')
                             ->label('Propuesta')
                             ->rows(4)

@@ -209,8 +209,8 @@ class GoogleCalendarService
             $service = $this->getService();
             if (!$service) {
                 Log::warning('No se pudo obtener el servicio de Google Calendar');
-                return null;
-            }
+            return null;
+        }
 
             $event = new \Google_Service_Calendar_Event();
             $event->setSummary($cita->titulo);
@@ -218,7 +218,7 @@ class GoogleCalendarService
             if ($cita->descripcion) {
                 $event->setDescription($cita->descripcion);
             }
-            
+
             if ($cita->ubicacion) {
                 $event->setLocation($cita->ubicacion);
             }
@@ -249,13 +249,13 @@ class GoogleCalendarService
     public function updateEvent(Cita $cita): bool
     {
         try {
-            if (empty($cita->google_event_id)) {
-                // Si no tiene ID, crear uno nuevo
+        if (empty($cita->google_event_id)) {
+            // Si no tiene ID, crear uno nuevo
                 $eventId = $this->createEvent($cita);
                 if ($eventId) {
                     $cita->google_event_id = $eventId;
-                    return $cita->save();
-                }
+            return $cita->save();
+        }
                 return false;
             }
 
@@ -296,7 +296,7 @@ class GoogleCalendarService
 
             $service->events->update($this->calendarId, $cita->google_event_id, $event);
             
-            return true;
+        return true;
         } catch (\Exception $e) {
             Log::error('Error al actualizar evento en Google Calendar: ' . $e->getMessage());
             return false;
@@ -317,8 +317,8 @@ class GoogleCalendarService
             if (!$service) {
                 Log::warning('No se pudo obtener el servicio de Google Calendar');
                 // Limpiar el ID localmente
-                $cita->google_event_id = null;
-                return $cita->save();
+        $cita->google_event_id = null;
+        return $cita->save();
             }
 
             $service->events->delete($this->calendarId, $cita->google_event_id);

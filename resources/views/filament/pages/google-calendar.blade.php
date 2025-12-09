@@ -35,8 +35,8 @@
                         <div class="flex items-center justify-between mb-8">
                             <div>
                                 <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-1">
-                                    {{ $hoy->translatedFormat('F Y') }}
-                                </h3>
+                                {{ $hoy->translatedFormat('F Y') }}
+                            </h3>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
                                     {{ $hoy->translatedFormat('l, d') }} de {{ $hoy->translatedFormat('F') }}
                                 </p>
@@ -214,7 +214,7 @@
                                                     <span>{{ $fechaInicioFormatted }} 
                                                         @if($horaFin)
                                                             - {{ $horaFin }}
-                                                        @endif
+                                                    @endif
                                                     </span>
                                                 </p>
                                                 @if($cliente)
@@ -252,14 +252,14 @@
                                         </div>
                                         <div class="flex gap-2 ml-4">
                                             @if($citaId && !$fromGoogle)
-                                                <button
+                                            <button
                                                     wire:click="mountAction('edit', { id: {{ $citaId }} })"
-                                                    class="fi-btn fi-btn-size-sm fi-color-info fi-btn-color-info inline-flex items-center justify-center gap-x-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold shadow-sm ring-1 transition duration-75 hover:bg-gray-50 focus-visible:outline-none disabled:opacity-70 disabled:pointer-events-none dark:hover:bg-white/5">
-                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                                    </svg>
-                                                    Editar
-                                                </button>
+                                                class="fi-btn fi-btn-size-sm fi-color-info fi-btn-color-info inline-flex items-center justify-center gap-x-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold shadow-sm ring-1 transition duration-75 hover:bg-gray-50 focus-visible:outline-none disabled:opacity-70 disabled:pointer-events-none dark:hover:bg-white/5">
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                                </svg>
+                                                Editar
+                                            </button>
                                             @endif
                                             @if($googleEventId || $fromGoogle)
                                                 <x-filament::button
@@ -273,14 +273,14 @@
                                                 </x-filament::button>
                                             @endif
                                             @if($citaId && !$fromGoogle)
-                                                <x-filament::button
+                                            <x-filament::button
                                                     wire:click="deleteCita({{ $citaId }})"
-                                                    wire:confirm="¿Estás seguro de eliminar esta cita?"
-                                                    size="sm"
-                                                    color="danger"
-                                                    icon="heroicon-o-trash">
-                                                    Eliminar
-                                                </x-filament::button>
+                                                wire:confirm="¿Estás seguro de eliminar esta cita?"
+                                                size="sm"
+                                                color="danger"
+                                                icon="heroicon-o-trash">
+                                                Eliminar
+                                            </x-filament::button>
                                             @endif
                                         </div>
                                     </div>

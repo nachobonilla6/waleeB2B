@@ -19,18 +19,6 @@ class Dashboard extends BaseDashboard
         ];
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('chat')
-                ->label('Chat')
-                ->icon('heroicon-o-chat-bubble-left-right')
-                ->color('success')
-                ->url(route('chat'))
-                ->openUrlInNewTab(),
-        ];
-    }
-
     /**
      * Sobrescribir para evitar que se muestren widgets descubiertos automáticamente
      * Devolver array vacío para que no se muestren widgets automáticos

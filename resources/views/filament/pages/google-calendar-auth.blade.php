@@ -42,7 +42,7 @@
                     <div class="space-y-4">
                         @if(!$this->checkAuthStatus())
                             <x-filament::button
-                                wire:click="authorize"
+                                wire:click="authorizeGoogleCalendar"
                                 size="lg"
                                 color="primary"
                                 icon="heroicon-o-arrow-right-on-rectangle">
@@ -50,7 +50,7 @@
                             </x-filament::button>
                         @else
                             <x-filament::button
-                                wire:click="authorize"
+                                wire:click="authorizeGoogleCalendar"
                                 size="lg"
                                 color="gray"
                                 icon="heroicon-o-arrow-path">

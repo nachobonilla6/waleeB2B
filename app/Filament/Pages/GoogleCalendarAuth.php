@@ -22,7 +22,7 @@ class GoogleCalendarAuth extends Page
         // Verificar si ya está autorizado
     }
 
-    public function authorize()
+    public function authorizeGoogleCalendar()
     {
         try {
             $service = new GoogleCalendarService();

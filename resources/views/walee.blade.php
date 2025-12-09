@@ -75,9 +75,9 @@
                 <!-- Chat Header -->
                 <div class="px-6 py-3 flex items-center justify-between flex-shrink-0 border-b border-gray-800" style="background-color: #D59F3B;">
                     <div class="flex items-center">
-                        <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="wesolutions" class="h-10 w-10 rounded-full object-cover border-2 border-white/30">
+                        <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="h-10 w-10 rounded-full object-cover border-2 border-white/30">
                         <div class="ml-3">
-                            <h1 class="text-white font-semibold text-lg">wesolutions.work</h1>
+                            <h1 class="text-white font-semibold text-lg">Walee</h1>
                             <div class="flex items-center mt-1">
                                 <span class="h-2 w-2 rounded-full bg-green-400 mr-2"></span>
                                 <span class="text-xs text-indigo-100">En línea</span>

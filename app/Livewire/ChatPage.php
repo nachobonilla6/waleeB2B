@@ -53,7 +53,14 @@ class ChatPage extends Component
                 $responseData = $response->json();
                 
                 // Obtener la respuesta del webhook
-                $assistantMessage = $responseData['response'] ?? $responseData['message'] ?? $responseData['text'] ?? 'Gracias por tu mensaje.';
+                // El formato de n8n puede ser un array con objetos que tienen "output"
+                if (is_array($responseData) && isset($responseData[0]['output'])) {
+                    $assistantMessage = $responseData[0]['output'];
+                } elseif (is_array($responseData) && isset($responseData['output'])) {
+                    $assistantMessage = $responseData['output'];
+                } else {
+                    $assistantMessage = $responseData['response'] ?? $responseData['message'] ?? $responseData['text'] ?? $responseData['output'] ?? 'Gracias por tu mensaje.';
+                }
                 
                 $this->messages[] = [
                     'type' => 'assistant',

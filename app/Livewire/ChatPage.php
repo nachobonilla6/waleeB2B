@@ -118,12 +118,25 @@ class ChatPage extends Component
         $this->newMessage = '';
         $this->isLoading = true;
 
-        // Enviar mensaje al webhook de n8n
+        // Obtener historial de conversación (últimos 100 mensajes) como texto
+        $conversationHistory = ChatMessage::where('user_id', auth()->id())
+            ->orderBy('created_at', 'asc')
+            ->limit(100)
+            ->get()
+            ->map(function ($message) {
+                $sender = $message->type === 'user' ? (auth()->user()->name ?? 'Usuario') : 'WALEE';
+                $timestamp = $message->created_at->format('Y-m-d H:i:s');
+                return "[{$timestamp}] {$sender}: {$message->message}";
+            })
+            ->implode("\n");
+
+        // Enviar mensaje al webhook de n8n con historial
         try {
-            $response = Http::timeout(60)->post('https://n8n.srv1137974.hstgr.cloud/webhook/444688a4-305e-4d97-b667-5f52c2c3bda9', [
+            $response = Http::timeout(60)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', [
                 'message' => $userMessage,
                 'user' => auth()->user()->name ?? 'Usuario',
                 'email' => auth()->user()->email ?? '',
+                'conversation_history' => $conversationHistory,
             ]);
 
             if ($response->successful()) {

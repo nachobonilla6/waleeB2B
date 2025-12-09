@@ -1,11 +1,10 @@
 <div class="h-full flex flex-col bg-white dark:bg-gray-800">
     <!-- Chat Header -->
-    <div class="bg-primary-600 px-6 py-3 flex items-center justify-between flex-shrink-0">
+    <div class="px-6 py-3 flex items-center justify-between flex-shrink-0" style="background-color: #D59F3B;">
         <div class="flex items-center">
             <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="h-10 w-10 rounded-full object-cover border-2 border-white/20">
             <div class="ml-3">
                 <h1 class="text-white font-semibold text-lg">WALEE</h1>
-                <div class="text-indigo-100 text-sm">websolutions.work</div>
                 <div class="flex items-center mt-1">
                     <span class="h-2 w-2 rounded-full bg-green-400 mr-2"></span>
                     <span class="text-xs text-indigo-100">En línea</span>
@@ -75,22 +74,25 @@
                     placeholder="Escribe tu mensaje..."
                     class="w-full rounded-2xl border-0 py-3 px-4 pr-12 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 resize-none transition-all duration-200 min-h-[48px] max-h-32 text-sm leading-relaxed overflow-y-auto"
                     style="scrollbar-width: thin;"
-                    @keydown.enter.prevent="if(!event.shiftKey) $wire.sendMessage()"
+                    @keydown.enter.prevent="if(!event.shiftKey && !$wire.isLoading && trim($wire.newMessage)) $wire.sendMessage()"
                 ></textarea>
             </div>
             <button 
                 type="submit" 
                 :disabled="$isLoading || !trim($newMessage)"
-                class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg shadow-primary-500/50 hover:shadow-xl hover:shadow-primary-500/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transform hover:scale-105 active:scale-95"
-                title="Enviar mensaje"
+                class="inline-flex items-center justify-center h-14 w-14 rounded-full text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transform hover:scale-105 active:scale-95"
+                style="background: linear-gradient(135deg, #D59F3B 0%, #C08A2E 100%); box-shadow: 0 10px 25px rgba(213, 159, 59, 0.4);"
+                onmouseover="this.style.boxShadow='0 15px 35px rgba(213, 159, 59, 0.5)'"
+                onmouseout="this.style.boxShadow='0 10px 25px rgba(213, 159, 59, 0.4)'"
+                title="Enviar mensaje (Enter)"
             >
                 @if($isLoading)
-                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                     </svg>
                 @endif

@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->darkMode(true)
             ->colors([
-                'primary' => Color::Green,
+                'primary' => Color::Amber,
             ])
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->renderHook(

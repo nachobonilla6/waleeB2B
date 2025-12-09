@@ -80,6 +80,10 @@ class AdminPanelProvider extends PanelProvider
                     }
                 </style>'
             )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn (): string => Blade::render('@livewire(\'chat-widget\')')
+            )
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Administración')

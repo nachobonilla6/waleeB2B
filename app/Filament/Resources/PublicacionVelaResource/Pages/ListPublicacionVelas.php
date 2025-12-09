@@ -24,7 +24,7 @@ class ListPublicacionVelas extends ListRecords
         ];
     }
 
-    protected function configureCreateAction(CreateAction $action): void
+    protected function configureCreateAction(CreateAction | \Filament\Tables\Actions\CreateAction $action): void
     {
         $resource = static::getResource();
         

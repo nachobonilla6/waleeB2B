@@ -24,11 +24,13 @@ class ChatActionsController extends Controller
             'user_message' => 'required|string',
             'assistant_message' => 'required|string',
             'voice_enabled' => 'sometimes|boolean',
+            'voice_tone' => 'sometimes|string',
             'skip_actions' => 'sometimes|boolean',
         ]);
 
         $user = $request->user();
         $voiceEnabled = $data['voice_enabled'] ?? true;
+        $voiceTone = $data['voice_tone'] ?? 'alloy';
         $skipActions = $data['skip_actions'] ?? false;
 
         // Guardar mensaje del usuario
@@ -47,7 +49,7 @@ class ChatActionsController extends Controller
 
         $audioUrl = null;
         if ($voiceEnabled) {
-            $audioUrl = $this->generateAudio($assistantChatMessage->message, $assistantChatMessage->id);
+            $audioUrl = $this->generateAudio($assistantChatMessage->message, $assistantChatMessage->id, $voiceTone);
             if ($audioUrl) {
                 $assistantChatMessage->update(['audio_url' => $audioUrl]);
             }
@@ -69,7 +71,7 @@ class ChatActionsController extends Controller
         ]);
     }
 
-    private function generateAudio($text, $messageId)
+    private function generateAudio($text, $messageId, string $voice = 'alloy')
     {
         try {
             $apiKey = config('services.openai.api_key');
@@ -77,6 +79,11 @@ class ChatActionsController extends Controller
             if (empty($apiKey)) {
                 Log::warning('OpenAI API key not configured');
                 return null;
+            }
+
+            $allowedVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+            if (!in_array($voice, $allowedVoices, true)) {
+                $voice = 'alloy';
             }
 
             $response = Http::timeout(30)
@@ -87,7 +94,7 @@ class ChatActionsController extends Controller
                 ->post('https://api.openai.com/v1/audio/speech', [
                     'model' => 'tts-1',
                     'input' => $text,
-                    'voice' => 'alloy',
+                    'voice' => $voice,
                     'response_format' => 'mp3',
                 ]);
 

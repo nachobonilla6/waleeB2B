@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,7 @@
         }
     </style>
 </head>
-<body class="antialiased bg-gray-900 text-gray-100 h-screen overflow-hidden">
+<body class="antialiased h-screen overflow-hidden bg-gray-50 text-gray-900 dark:bg-slate-900 dark:text-slate-100">
     @php
         $chatMessages = \App\Models\ChatMessage::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
@@ -55,7 +55,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
                     </a>
-                    <h1 class="text-xl font-semibold text-gray-900">WALEE Chat</h1>
+                    <h1 class="text-xl font-semibold text-gray-900">wesolutions.work</h1>
                 </div>
                 <div class="flex items-center space-x-4">
                     <span class="text-sm text-gray-600">{{ auth()->user()->name }}</span>
@@ -75,9 +75,9 @@
                 <!-- Chat Header -->
                 <div class="px-6 py-3 flex items-center justify-between flex-shrink-0 border-b border-gray-800" style="background-color: #D59F3B;">
                     <div class="flex items-center">
-                        <div class="h-10 w-10 rounded-full border-2 border-white/30 bg-white/20 flex items-center justify-center text-white font-bold">W</div>
+                        <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="wesolutions" class="h-10 w-10 rounded-full object-cover border-2 border-white/30">
                         <div class="ml-3">
-                            <h1 class="text-white font-semibold text-lg">WALEE</h1>
+                            <h1 class="text-white font-semibold text-lg">wesolutions.work</h1>
                             <div class="flex items-center mt-1">
                                 <span class="h-2 w-2 rounded-full bg-green-400 mr-2"></span>
                                 <span class="text-xs text-indigo-100">En línea</span>

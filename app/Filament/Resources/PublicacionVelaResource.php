@@ -189,7 +189,6 @@ class PublicacionVelaResource extends Resource
     {
         return [
             'index' => Pages\ListPublicacionVelas::route('/'),
-            'create' => Pages\CreatePublicacionVela::route('/create'),
             'edit' => Pages\EditPublicacionVela::route('/{record}/edit'),
         ];
     }

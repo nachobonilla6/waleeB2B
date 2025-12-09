@@ -16,9 +16,10 @@ class ListPublicacionVelas extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->modalWidth('3xl')
+                ->modalWidth('4xl')
                 ->slideOver()
-                ->modalHeading('Crear Publicación Vela'),
+                ->modalHeading('Crear Publicación Vela')
+                ->icon('heroicon-o-plus'),
         ];
     }
 

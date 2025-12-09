@@ -83,43 +83,56 @@ class AdminPanelProvider extends PanelProvider
                         display: grid;
                         grid-template-columns: 1fr 1fr;
                         min-height: 100vh;
+                        position: relative;
+                    }
+                    /* Columna izquierda con imagen de tecnología/IA */
+                    body[data-page="login"] .fi-simple-layout::before {
+                        content: "";
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 50%;
+                        height: 100vh;
+                        background-image: url("https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1920&q=80");
+                        background-size: cover;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        z-index: 0;
+                    }
+                    /* Overlay sutil en la imagen */
+                    body[data-page="login"] .fi-simple-layout::after {
+                        content: "";
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 50%;
+                        height: 100vh;
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
+                        z-index: 1;
                     }
                     body[data-page="login"] .fi-simple-main-ctn {
                         grid-column: 2;
                         background: white;
                         padding: 2rem;
+                        position: relative;
+                        z-index: 2;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                     }
                     .dark body[data-page="login"] .fi-simple-main-ctn {
                         background: rgb(17, 24, 39);
-                    }
-                    /* Columna izquierda con imagen de tecnología/IA */
-                    body[data-page="login"] .fi-simple-layout::before {
-                        content: "";
-                        grid-column: 1;
-                        background-image: url("https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1920&q=80");
-                        background-size: cover;
-                        background-position: center;
-                        background-repeat: no-repeat;
-                        position: relative;
-                    }
-                    /* Overlay sutil en la imagen */
-                    body[data-page="login"] .fi-simple-layout::after {
-                        content: "";
-                        grid-column: 1;
-                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 50%;
-                        height: 100%;
-                        z-index: 1;
                     }
                     /* Ajustar el formulario */
                     body[data-page="login"] .fi-simple-main {
                         max-width: 100% !important;
                         margin: 0 !important;
-                        box-shadow: none !important;
-                        background: transparent !important;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+                        background: rgba(255, 255, 255, 0.98) !important;
+                        backdrop-filter: blur(10px);
+                    }
+                    .dark body[data-page="login"] .fi-simple-main {
+                        background: rgba(17, 24, 39, 0.98) !important;
                     }
                     @media (max-width: 768px) {
                         body[data-page="login"] .fi-simple-layout {
@@ -127,10 +140,14 @@ class AdminPanelProvider extends PanelProvider
                         }
                         body[data-page="login"] .fi-simple-layout::before,
                         body[data-page="login"] .fi-simple-layout::after {
-                            display: none;
+                            width: 100%;
                         }
                         body[data-page="login"] .fi-simple-main-ctn {
                             grid-column: 1;
+                            background: rgba(255, 255, 255, 0.95);
+                        }
+                        .dark body[data-page="login"] .fi-simple-main-ctn {
+                            background: rgba(17, 24, 39, 0.95);
                         }
                     }
                 </style>'

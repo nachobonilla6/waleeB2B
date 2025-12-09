@@ -157,6 +157,19 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('sincronizar_google')
+                ->label('Sincronizar con Google Calendar')
+                ->icon('heroicon-o-arrow-path')
+                ->color('info')
+                ->action(function () {
+                    $this->dispatch('$refresh');
+                    
+                    Notification::make()
+                        ->title('Sincronización iniciada')
+                        ->body('Las citas de Google Calendar se están actualizando...')
+                        ->success()
+                        ->send();
+                }),
             Action::make('nueva_cita')
                 ->label('Nueva Cita')
                 ->icon('heroicon-o-plus')
@@ -190,12 +203,62 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         ];
     }
 
-    public function getCitasProperty(): \Illuminate\Database\Eloquent\Collection
+    public function getCitasProperty(): Collection
     {
-        return Cita::with('cliente')
+        $citas = collect();
+        
+        // Obtener citas de la base de datos local
+        $citasLocales = Cita::with('cliente')
             ->where('estado', '!=', 'cancelada')
             ->orderBy('fecha_inicio', 'asc')
-            ->get();
+            ->get()
+            ->map(function ($cita) {
+                return [
+                    'id' => $cita->id,
+                    'titulo' => $cita->titulo,
+                    'descripcion' => $cita->descripcion,
+                    'fecha_inicio' => $cita->fecha_inicio,
+                    'fecha_fin' => $cita->fecha_fin,
+                    'cliente_id' => $cita->cliente_id,
+                    'cliente' => $cita->cliente,
+                    'ubicacion' => $cita->ubicacion,
+                    'estado' => $cita->estado,
+                    'google_event_id' => $cita->google_event_id,
+                    'from_google' => false,
+                    'is_local' => true,
+                ];
+            });
+        
+        $citas = $citas->merge($citasLocales);
+        
+        // Obtener eventos de Google Calendar
+        try {
+            $service = new GoogleCalendarService();
+            $timeMin = now()->startOfMonth();
+            $timeMax = now()->endOfMonth();
+            
+            $googleEvents = $service->getEvents($timeMin, $timeMax);
+            
+            foreach ($googleEvents as $googleEvent) {
+                $citaData = $service->convertGoogleEventToCita($googleEvent);
+                
+                if ($citaData && !$citas->contains(function ($cita) use ($googleEvent) {
+                    return isset($cita['google_event_id']) && $cita['google_event_id'] === $googleEvent['id'];
+                })) {
+                    // Solo agregar si no existe ya en las citas locales
+                    $citas->push($citaData);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error obteniendo eventos de Google Calendar: ' . $e->getMessage());
+        }
+        
+        // Ordenar por fecha de inicio
+        return $citas->sortBy(function ($cita) {
+            return $cita['fecha_inicio'] instanceof \DateTime 
+                ? $cita['fecha_inicio']->getTimestamp() 
+                : (is_string($cita['fecha_inicio']) ? strtotime($cita['fecha_inicio']) : 0);
+        })->values();
     }
 
     public function getCitas(): \Illuminate\Database\Eloquent\Collection
@@ -207,7 +270,15 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     {
         return $this->getCitasProperty()
             ->groupBy(function ($cita) {
-                return $cita->fecha_inicio->format('Y-m-d');
+                $fechaInicio = is_array($cita) ? $cita['fecha_inicio'] : $cita->fecha_inicio;
+                
+                if ($fechaInicio instanceof \DateTime) {
+                    return $fechaInicio->format('Y-m-d');
+                } elseif (is_string($fechaInicio)) {
+                    return (new \DateTime($fechaInicio))->format('Y-m-d');
+                } else {
+                    return now()->format('Y-m-d');
+                }
             });
     }
 
@@ -219,9 +290,22 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         
         return $this->getCitasProperty()
             ->filter(function ($cita) {
-                return $cita->fecha_inicio->format('Y-m-d') === $this->fechaSeleccionada;
+                $fechaInicio = is_array($cita) ? $cita['fecha_inicio'] : $cita->fecha_inicio;
+                
+                if ($fechaInicio instanceof \DateTime) {
+                    return $fechaInicio->format('Y-m-d') === $this->fechaSeleccionada;
+                } elseif (is_string($fechaInicio)) {
+                    return (new \DateTime($fechaInicio))->format('Y-m-d') === $this->fechaSeleccionada;
+                }
+                
+                return false;
             })
-            ->sortBy('fecha_inicio');
+            ->sortBy(function ($cita) {
+                $fechaInicio = is_array($cita) ? $cita['fecha_inicio'] : $cita->fecha_inicio;
+                return $fechaInicio instanceof \DateTime 
+                    ? $fechaInicio->getTimestamp() 
+                    : (is_string($fechaInicio) ? strtotime($fechaInicio) : 0);
+            });
     }
 
     public function seleccionarFecha(string $fecha): void

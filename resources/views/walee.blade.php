@@ -245,15 +245,12 @@
                     sendBtn.disabled = true;
                     textarea.disabled = true;
                     try {
-                        prependMessage({ type: 'user', content: message });
                         const assistantText = await sendToWebhook(message);
-                        // Mostrar respuesta
-                        showAssistantMessage(assistantText);
-                        // Persistir en BD + TTS opcional, sin duplicar agenda/email (skip_actions)
-                        await finalizeMessage(message, assistantText);
+                        showAssistantMessage(assistantText || 'Lo siento, no recibí respuesta.');
+                        await finalizeMessage(message, assistantText || '');
                     } catch (err) {
                         console.error(err);
-                        prependMessage({ type: 'assistant', content: 'Lo siento, hubo un problema al procesar tu mensaje.' });
+                        showAssistantMessage('Lo siento, hubo un problema al procesar tu mensaje.');
                     } finally {
                         textarea.value = '';
                         textarea.disabled = false;

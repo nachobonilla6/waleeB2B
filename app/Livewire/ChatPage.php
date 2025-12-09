@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\ChatMessage;
 
 class ChatPage extends Component
 {
@@ -14,8 +15,23 @@ class ChatPage extends Component
 
     public function mount()
     {
-        // Inicializar sin mensajes
-        $this->messages = [];
+        // Cargar mensajes históricos del usuario
+        $this->loadMessages();
+    }
+
+    public function loadMessages()
+    {
+        $chatMessages = ChatMessage::where('user_id', auth()->id())
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $this->messages = $chatMessages->map(function ($message) {
+            return [
+                'type' => $message->type,
+                'content' => $message->message,
+                'timestamp' => $message->created_at,
+            ];
+        })->toArray();
     }
 
     public function sendMessage()
@@ -24,12 +40,19 @@ class ChatPage extends Component
             return;
         }
 
-        // Agregar mensaje del usuario
+        // Guardar mensaje del usuario en la base de datos
         $userMessage = trim($this->newMessage);
+        $userChatMessage = ChatMessage::create([
+            'user_id' => auth()->id(),
+            'message' => $userMessage,
+            'type' => 'user',
+        ]);
+
+        // Agregar mensaje del usuario a la vista
         $this->messages[] = [
             'type' => 'user',
             'content' => $userMessage,
-            'timestamp' => now(),
+            'timestamp' => $userChatMessage->created_at,
         ];
 
         $this->newMessage = '';
@@ -56,25 +79,50 @@ class ChatPage extends Component
                     $assistantMessage = $responseData['response'] ?? $responseData['message'] ?? $responseData['text'] ?? $responseData['output'] ?? 'Gracias por tu mensaje.';
                 }
                 
+                // Guardar respuesta del asistente en la base de datos
+                $assistantChatMessage = ChatMessage::create([
+                    'user_id' => auth()->id(),
+                    'message' => $assistantMessage,
+                    'type' => 'assistant',
+                ]);
+                
                 $this->messages[] = [
                     'type' => 'assistant',
                     'content' => $assistantMessage,
-                    'timestamp' => now(),
+                    'timestamp' => $assistantChatMessage->created_at,
                 ];
             } else {
+                $errorMessage = 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.';
+                
+                // Guardar mensaje de error en la base de datos
+                $errorChatMessage = ChatMessage::create([
+                    'user_id' => auth()->id(),
+                    'message' => $errorMessage,
+                    'type' => 'assistant',
+                ]);
+                
                 $this->messages[] = [
                     'type' => 'assistant',
-                    'content' => 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.',
-                    'timestamp' => now(),
+                    'content' => $errorMessage,
+                    'timestamp' => $errorChatMessage->created_at,
                 ];
             }
         } catch (\Exception $e) {
             Log::error('Error al enviar mensaje al webhook de n8n: ' . $e->getMessage());
             
+            $errorMessage = 'Lo siento, hubo un error al conectarse con el servidor. Por favor, intenta de nuevo más tarde.';
+            
+            // Guardar mensaje de error en la base de datos
+            $errorChatMessage = ChatMessage::create([
+                'user_id' => auth()->id(),
+                'message' => $errorMessage,
+                'type' => 'assistant',
+            ]);
+            
             $this->messages[] = [
                 'type' => 'assistant',
-                'content' => 'Lo siento, hubo un error al conectarse con el servidor. Por favor, intenta de nuevo más tarde.',
-                'timestamp' => now(),
+                'content' => $errorMessage,
+                'timestamp' => $errorChatMessage->created_at,
             ];
         } finally {
             $this->isLoading = false;

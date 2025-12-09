@@ -74,4 +74,12 @@ class User extends Authenticatable
         
         return null;
     }
+
+    /**
+     * Get the chat messages for the user
+     */
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
 }

@@ -2,7 +2,7 @@
     <!-- Chat Header -->
     <div class="bg-primary-600 px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div class="flex items-center">
-            <div class="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold">W</div>
+            <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="h-10 w-10 rounded-full object-cover border-2 border-white/20">
             <div class="ml-3">
                 <h1 class="text-white font-semibold text-lg">WALEE</h1>
                 <div class="text-indigo-100 text-sm">websolutions.work</div>
@@ -19,15 +19,13 @@
         @foreach($messages as $index => $message)
             @if($message['type'] === 'assistant')
                 <div class="flex items-start" wire:key="message-{{ $index }}">
-                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-medium">
-                        W
-                    </div>
+                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
                     <div class="ml-3 max-w-xs lg:max-w-md">
                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 inline-block">
                             <p class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{{ $message['content'] }}</p>
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            websolutions.work - {{ $message['timestamp']->format('H:i') }}
+                            WALEE - {{ $message['timestamp']->format('H:i') }}
                         </p>
                     </div>
                 </div>
@@ -50,9 +48,7 @@
 
         @if($isLoading)
             <div class="flex items-start" wire:key="loading">
-                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-medium">
-                    W
-                </div>
+                <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
                 <div class="ml-3 max-w-xs lg:max-w-md">
                     <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 inline-block">
                         <div class="flex items-center space-x-2">

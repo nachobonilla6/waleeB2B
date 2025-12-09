@@ -14,14 +14,8 @@ class ChatPage extends Component
 
     public function mount()
     {
-        // Mensaje inicial del asistente
-        $this->messages = [
-            [
-                'type' => 'assistant',
-                'content' => '¡Hola! Soy WALEE, tu asistente de websolutions.work. ¿En qué puedo ayudarte hoy?',
-                'timestamp' => now(),
-            ],
-        ];
+        // Inicializar sin mensajes
+        $this->messages = [];
     }
 
     public function sendMessage()

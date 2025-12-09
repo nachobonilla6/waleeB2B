@@ -65,11 +65,25 @@ class ChatPage extends Component
             if ($response->successful()) {
                 // Save audio file to storage
                 $audioContent = $response->body();
-                $filename = 'chat-audio/' . $messageId . '_' . time() . '.mp3';
-                Storage::disk('public')->put($filename, $audioContent);
                 
-                // Return the public URL
-                return Storage::url($filename);
+                // Crear directorio si no existe
+                $directory = 'chat-audio';
+                if (!Storage::disk('public')->exists($directory)) {
+                    Storage::disk('public')->makeDirectory($directory);
+                }
+                
+                $filename = $directory . '/' . $messageId . '_' . time() . '.mp3';
+                $saved = Storage::disk('public')->put($filename, $audioContent);
+                
+                if ($saved) {
+                    // Return the public URL
+                    $url = Storage::disk('public')->url($filename);
+                    Log::info('Audio generado con OpenAI TTS', ['filename' => $filename, 'url' => $url, 'size' => strlen($audioContent)]);
+                    return $url;
+                } else {
+                    Log::error('Error al guardar audio generado con OpenAI TTS');
+                    return null;
+                }
             } else {
                 Log::error('OpenAI TTS API error: ' . $response->body());
                 return null;
@@ -123,12 +137,27 @@ class ChatPage extends Component
                     $audioContent = $response->body();
                     
                     if (!empty($audioContent) && strlen($audioContent) > 100) { // Verificar que sea un archivo válido
-                        $filename = 'chat-audio/webhook_' . auth()->id() . '_' . time() . '.mp3';
-                        Storage::disk('public')->put($filename, $audioContent);
-                        $audioUrl = Storage::url($filename);
+                        // Crear directorio si no existe
+                        $directory = 'chat-audio';
+                        if (!Storage::disk('public')->exists($directory)) {
+                            Storage::disk('public')->makeDirectory($directory);
+                        }
+                        
+                        $filename = $directory . '/webhook_' . auth()->id() . '_' . time() . '.mp3';
+                        $saved = Storage::disk('public')->put($filename, $audioContent);
+                        
+                        if ($saved) {
+                            // Generar URL absoluta
+                            $audioUrl = Storage::disk('public')->url($filename);
+                            Log::info('Audio guardado exitosamente', ['filename' => $filename, 'url' => $audioUrl, 'size' => strlen($audioContent)]);
+                        } else {
+                            Log::error('Error al guardar audio del webhook');
+                        }
                         
                         // Intentar obtener el texto del mensaje si viene en headers
                         $assistantMessage = $response->header('X-Message-Text') ?? $response->header('X-Output') ?? 'Mensaje de audio';
+                    } else {
+                        Log::warning('Contenido de audio vacío o muy pequeño', ['size' => strlen($audioContent ?? '')]);
                     }
                 } else {
                     // La respuesta es JSON
@@ -160,9 +189,19 @@ class ChatPage extends Component
                                 }
                                 
                                 if ($audioContent && strlen($audioContent) > 100) {
-                                    $filename = 'chat-audio/webhook_' . auth()->id() . '_' . time() . '.mp3';
-                                    Storage::disk('public')->put($filename, $audioContent);
-                                    $audioUrl = Storage::url($filename);
+                                    // Crear directorio si no existe
+                                    $directory = 'chat-audio';
+                                    if (!Storage::disk('public')->exists($directory)) {
+                                        Storage::disk('public')->makeDirectory($directory);
+                                    }
+                                    
+                                    $filename = $directory . '/webhook_' . auth()->id() . '_' . time() . '.mp3';
+                                    $saved = Storage::disk('public')->put($filename, $audioContent);
+                                    
+                                    if ($saved) {
+                                        $audioUrl = Storage::disk('public')->url($filename);
+                                        Log::info('Audio guardado desde JSON', ['filename' => $filename, 'url' => $audioUrl]);
+                                    }
                                 }
                             }
                         }

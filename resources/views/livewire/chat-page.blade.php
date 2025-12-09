@@ -32,21 +32,35 @@
                                 // Asegurar que la URL sea absoluta
                                 $audioUrl = $message['audio_url'];
                                 if (!str_starts_with($audioUrl, 'http')) {
-                                    $audioUrl = asset($audioUrl);
+                                    // Si empieza con /storage, usar asset directamente
+                                    if (str_starts_with($audioUrl, '/storage')) {
+                                        $audioUrl = asset($audioUrl);
+                                    } else {
+                                        // Si es una ruta relativa, agregar /storage/
+                                        $audioUrl = asset('storage/' . ltrim($audioUrl, '/'));
+                                    }
                                 }
                             @endphp
                             <div class="mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
                                 <audio 
                                     controls 
-                                    class="w-full h-8" 
-                                    preload="auto"
+                                    controlsList="nodownload"
+                                    class="w-full h-10" 
+                                    preload="metadata"
                                     id="audio-{{ $index }}"
                                     data-audio-url="{{ $audioUrl }}"
                                     wire:key="audio-{{ $index }}"
+                                    onloadedmetadata="console.log('Audio cargado:', this.duration)"
+                                    onerror="console.error('Error cargando audio:', this.error, 'URL:', '{{ $audioUrl }}')"
                                 >
                                     <source src="{{ $audioUrl }}" type="audio/mpeg">
+                                    <source src="{{ $audioUrl }}" type="audio/mp3">
                                     Tu navegador no soporta el elemento de audio.
+                                    <a href="{{ $audioUrl }}" download>Descargar audio</a>
                                 </audio>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <a href="{{ $audioUrl }}" target="_blank" class="underline">Ver URL del audio</a>
+                                </p>
                             </div>
                         @endif
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -147,37 +161,60 @@
         let lastAudioUrl = null;
         let playedAudios = new Set();
         
+        function playAudio(audioElement) {
+            if (!audioElement) return;
+            
+            const audioUrl = audioElement.getAttribute('data-audio-url') || audioElement.querySelector('source')?.src;
+            
+            if (!audioUrl || playedAudios.has(audioUrl)) {
+                return;
+            }
+            
+            // Verificar que el audio esté cargado
+            if (audioElement.readyState >= 2) {
+                playedAudios.add(audioUrl);
+                const playPromise = audioElement.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Audio reproduciéndose automáticamente:', audioUrl);
+                    }).catch(error => {
+                        console.log('Autoplay bloqueado. Usa los controles para reproducir.', error);
+                    });
+                }
+            } else {
+                // Esperar a que el audio se cargue
+                audioElement.addEventListener('loadedmetadata', () => {
+                    playedAudios.add(audioUrl);
+                    audioElement.play().catch(e => {
+                        console.log('Autoplay bloqueado después de cargar:', e);
+                    });
+                }, { once: true });
+                
+                audioElement.addEventListener('error', (e) => {
+                    console.error('Error cargando audio:', audioUrl, audioElement.error);
+                }, { once: true });
+                
+                // Forzar carga
+                audioElement.load();
+            }
+        }
+        
         // Escuchar evento cuando hay un nuevo mensaje con audio
         Livewire.on('new-audio-message', (event) => {
             const audioUrl = event[0]?.audioUrl || event.audioUrl;
             if (audioUrl && !playedAudios.has(audioUrl)) {
-                playedAudios.add(audioUrl);
                 lastAudioUrl = audioUrl;
                 
                 // Esperar a que el DOM se actualice
                 setTimeout(() => {
                     const container = document.getElementById('messages-container');
                     if (container) {
-                        // Buscar el último audio en el contenedor
                         const audios = container.querySelectorAll('audio');
                         const lastAudio = audios[audios.length - 1];
-                        
-                        if (lastAudio) {
-                            // Cargar y reproducir automáticamente
-                            lastAudio.load();
-                            
-                            const playPromise = lastAudio.play();
-                            
-                            if (playPromise !== undefined) {
-                                playPromise.then(() => {
-                                    console.log('Audio reproduciéndose automáticamente');
-                                }).catch(error => {
-                                    console.log('Autoplay bloqueado. Usa los controles para reproducir.');
-                                });
-                            }
-                        }
+                        playAudio(lastAudio);
                     }
-                }, 800);
+                }, 1000);
             }
         });
         
@@ -192,17 +229,9 @@
                     const audios = container.querySelectorAll('audio');
                     if (audios.length > 0) {
                         const lastAudio = audios[audios.length - 1];
-                        const audioUrl = lastAudio.getAttribute('data-audio-url') || lastAudio.querySelector('source')?.src;
-                        
-                        if (audioUrl && !playedAudios.has(audioUrl)) {
-                            playedAudios.add(audioUrl);
-                            lastAudio.load();
-                            lastAudio.play().catch(e => {
-                                console.log('Autoplay bloqueado:', e);
-                            });
-                        }
+                        playAudio(lastAudio);
                     }
-                }, 500);
+                }, 800);
             }
         });
     });

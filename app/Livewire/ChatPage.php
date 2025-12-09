@@ -98,12 +98,17 @@ class ChatPage extends Component
     {
         Log::info('sendMessage() llamado', [
             'newMessage' => $this->newMessage,
+            'newMessage_length' => strlen($this->newMessage ?? ''),
             'isLoading' => $this->isLoading,
             'user_id' => auth()->id(),
+            'user_authenticated' => auth()->check(),
         ]);
         
-        if (empty(trim($this->newMessage))) {
-            Log::warning('Intento de enviar mensaje vacío');
+        if (empty(trim($this->newMessage ?? ''))) {
+            Log::warning('Intento de enviar mensaje vacío', [
+                'newMessage' => $this->newMessage,
+                'trimmed' => trim($this->newMessage ?? ''),
+            ]);
             return;
         }
 

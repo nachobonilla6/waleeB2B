@@ -43,7 +43,7 @@ class ChatPage extends Component
 
         // Enviar mensaje al webhook de n8n
         try {
-            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', [
+            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/444688a4-305e-4d97-b667-5f52c2c3bda9', [
                 'message' => $userMessage,
                 'user' => auth()->user()->name ?? 'Usuario',
                 'email' => auth()->user()->email ?? '',

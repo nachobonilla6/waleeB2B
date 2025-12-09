@@ -1,4 +1,9 @@
 <x-filament-panels::page.simple>
+@push('styles')
+<script>
+    document.body.setAttribute('data-page', 'login');
+</script>
+@endpush
     @if (filament()->hasRegistration())
         <x-slot name="subheading">
             {{ __('filament-panels::pages/auth/login.actions.register.before') }}

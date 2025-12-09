@@ -78,6 +78,41 @@ class AdminPanelProvider extends PanelProvider
                     .fi-modal-footer {
                         border-radius: 0 0 4px 4px !important;
                     }
+                    /* Fondo de tecnología/IA para toda la página de login */
+                    body[data-page="login"] {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+                        background-size: 400% 400%;
+                        animation: gradientShift 15s ease infinite;
+                        background-attachment: fixed;
+                    }
+                    body[data-page="login"]::before {
+                        content: "";
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background-image: 
+                            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.4) 0%, transparent 50%),
+                            radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.4) 0%, transparent 50%),
+                            radial-gradient(circle at 40% 20%, rgba(120, 219, 255, 0.4) 0%, transparent 50%),
+                            url("https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1920&q=80");
+                        background-size: cover, cover, cover, cover;
+                        background-position: center;
+                        opacity: 0.3;
+                        z-index: 0;
+                        pointer-events: none;
+                    }
+                    @keyframes gradientShift {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                    /* Asegurar que el contenido esté sobre el fondo */
+                    body[data-page="login"] > * {
+                        position: relative;
+                        z-index: 1;
+                    }
                 </style>'
             )
             ->renderHook(

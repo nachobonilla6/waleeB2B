@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Cita;
+use Google_Client;
+use Google_Service_Calendar;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -10,11 +12,75 @@ class GoogleCalendarService
 {
     protected string $apiKey;
     protected string $calendarId;
+    protected ?Google_Client $client = null;
+    protected ?Google_Service_Calendar $service = null;
 
     public function __construct()
     {
         $this->apiKey = (string) (config('services.google.calendar_api_key') ?? '');
         $this->calendarId = (string) (config('services.google.calendar_id') ?? 'primary');
+    }
+
+    /**
+     * Obtener cliente de Google con OAuth2
+     */
+    protected function getClient(): ?Google_Client
+    {
+        if ($this->client !== null) {
+            return $this->client;
+        }
+
+        try {
+            $client = new Google_Client();
+            
+            // Si hay credenciales OAuth2 configuradas, usarlas
+            $credentialsPath = config('services.google.credentials_path');
+            $accessToken = config('services.google.access_token');
+            
+            if ($credentialsPath && file_exists($credentialsPath)) {
+                $client->setAuthConfig($credentialsPath);
+            } elseif ($this->apiKey) {
+                // Fallback a API key para calendarios públicos
+                $client->setDeveloperKey($this->apiKey);
+            } else {
+                Log::warning('No hay credenciales de Google Calendar configuradas');
+                return null;
+            }
+
+            // Configurar scopes necesarios
+            $client->addScope(Google_Service_Calendar::CALENDAR_READONLY);
+            $client->setAccessType('offline');
+            $client->setPrompt('select_account consent');
+
+            // Si hay un token de acceso guardado, usarlo
+            if ($accessToken) {
+                $client->setAccessToken($accessToken);
+            }
+
+            $this->client = $client;
+            return $this->client;
+        } catch (\Exception $e) {
+            Log::error('Error inicializando Google Client: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Obtener servicio de Google Calendar
+     */
+    protected function getService(): ?Google_Service_Calendar
+    {
+        if ($this->service !== null) {
+            return $this->service;
+        }
+
+        $client = $this->getClient();
+        if (!$client) {
+            return null;
+        }
+
+        $this->service = new Google_Service_Calendar($client);
+        return $this->service;
     }
 
     /**
@@ -132,11 +198,31 @@ class GoogleCalendarService
      */
     public function getEvents(\DateTime $timeMin = null, \DateTime $timeMax = null): array
     {
-        if (empty($this->apiKey)) {
-            Log::warning('Google Calendar API key no configurada');
+        try {
+            // Intentar usar Google Client con OAuth2 primero
+            $service = $this->getService();
+            if ($service) {
+                return $this->getEventsWithOAuth($service, $timeMin, $timeMax);
+            }
+
+            // Fallback a API key si está configurada (solo para calendarios públicos)
+            if ($this->apiKey) {
+                return $this->getEventsWithApiKey($timeMin, $timeMax);
+            }
+
+            Log::warning('No hay credenciales de Google Calendar configuradas');
+            return [];
+        } catch (\Exception $e) {
+            Log::error('Error al obtener eventos de Google Calendar: ' . $e->getMessage());
             return [];
         }
+    }
 
+    /**
+     * Obtener eventos usando OAuth2 (Google Client)
+     */
+    protected function getEventsWithOAuth(Google_Service_Calendar $service, \DateTime $timeMin = null, \DateTime $timeMax = null): array
+    {
         try {
             // Si no se proporcionan fechas, usar el mes actual
             if (!$timeMin) {
@@ -146,7 +232,56 @@ class GoogleCalendarService
                 $timeMax = now()->endOfMonth()->endOfDay();
             }
 
-            // Convertir a UTC para Google Calendar API
+            $optParams = [
+                'maxResults' => 2500,
+                'orderBy' => 'startTime',
+                'singleEvents' => true,
+                'timeMin' => $timeMin->format(\DateTime::RFC3339),
+                'timeMax' => $timeMax->format(\DateTime::RFC3339),
+            ];
+
+            $results = $service->events->listEvents($this->calendarId, $optParams);
+            $events = $results->getItems();
+
+            $eventsArray = [];
+            foreach ($events as $event) {
+                $eventsArray[] = [
+                    'id' => $event->getId(),
+                    'summary' => $event->getSummary(),
+                    'description' => $event->getDescription(),
+                    'location' => $event->getLocation(),
+                    'start' => [
+                        'dateTime' => $event->getStart()->getDateTime(),
+                        'date' => $event->getStart()->getDate(),
+                    ],
+                    'end' => [
+                        'dateTime' => $event->getEnd()->getDateTime(),
+                        'date' => $event->getEnd()->getDate(),
+                    ],
+                ];
+            }
+
+            return $eventsArray;
+        } catch (\Exception $e) {
+            Log::error('Error obteniendo eventos con OAuth2: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtener eventos usando API key (solo calendarios públicos)
+     */
+    protected function getEventsWithApiKey(\DateTime $timeMin = null, \DateTime $timeMax = null): array
+    {
+        try {
+            // Si no se proporcionan fechas, usar el mes actual
+            if (!$timeMin) {
+                $timeMin = now()->startOfMonth();
+            }
+            if (!$timeMax) {
+                $timeMax = now()->endOfMonth()->endOfDay();
+            }
+
             $timezone = config('app.timezone', 'America/Mexico_City');
             $timeMin->setTimezone(new \DateTimeZone($timezone));
             $timeMax->setTimezone(new \DateTimeZone($timezone));
@@ -160,20 +295,20 @@ class GoogleCalendarService
                 'timeZone' => $timezone,
                 'singleEvents' => true,
                 'orderBy' => 'startTime',
-                'maxResults' => 2500, // Máximo permitido por Google
+                'maxResults' => 2500,
             ];
 
             $response = Http::get($url, $params);
 
             if (!$response->successful()) {
-                Log::error('Error al obtener eventos de Google Calendar: ' . $response->status() . ' - ' . $response->body());
+                Log::error('Error al obtener eventos con API key: ' . $response->status() . ' - ' . $response->body());
                 return [];
             }
 
             $data = $response->json();
             return $data['items'] ?? [];
         } catch (\Exception $e) {
-            Log::error('Error al obtener eventos de Google Calendar: ' . $e->getMessage());
+            Log::error('Error obteniendo eventos con API key: ' . $e->getMessage());
             return [];
         }
     }
@@ -181,7 +316,7 @@ class GoogleCalendarService
     /**
      * Convertir evento de Google Calendar a formato Cita
      */
-    public function convertGoogleEventToCita(array $googleEvent): array
+    public function convertGoogleEventToCita(array $googleEvent): ?array
     {
         $start = $googleEvent['start']['dateTime'] ?? $googleEvent['start']['date'] ?? null;
         $end = $googleEvent['end']['dateTime'] ?? $googleEvent['end']['date'] ?? null;

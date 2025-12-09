@@ -38,6 +38,8 @@ return [
     'google' => [
         'calendar_api_key' => env('GOOGLE_CALENDAR_API_KEY'),
         'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
+        'credentials_path' => env('GOOGLE_CREDENTIALS_PATH', storage_path('app/google-credentials.json')),
+        'access_token' => env('GOOGLE_ACCESS_TOKEN'),
     ],
 
     'n8n' => [

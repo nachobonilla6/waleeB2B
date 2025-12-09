@@ -106,34 +106,84 @@ class ChatPage extends Component
 
         // Enviar mensaje al webhook de n8n
         try {
-            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/444688a4-305e-4d97-b667-5f52c2c3bda9', [
+            $response = Http::timeout(60)->post('https://n8n.srv1137974.hstgr.cloud/webhook/444688a4-305e-4d97-b667-5f52c2c3bda9', [
                 'message' => $userMessage,
                 'user' => auth()->user()->name ?? 'Usuario',
                 'email' => auth()->user()->email ?? '',
             ]);
 
             if ($response->successful()) {
-                $responseData = $response->json();
+                $contentType = $response->header('Content-Type') ?? '';
+                $audioUrl = null;
+                $assistantMessage = null;
                 
-                // Obtener la respuesta del webhook
-                // El formato de n8n puede ser un array con objetos que tienen "output"
-                if (is_array($responseData) && isset($responseData[0]['output'])) {
-                    $assistantMessage = $responseData[0]['output'];
-                } elseif (is_array($responseData) && isset($responseData['output'])) {
-                    $assistantMessage = $responseData['output'];
+                // Verificar si la respuesta es un archivo de audio MP3 (binario directo)
+                if (str_contains($contentType, 'audio/mpeg') || str_contains($contentType, 'audio/mp3') || str_contains($contentType, 'application/octet-stream')) {
+                    // La respuesta es directamente un archivo de audio
+                    $audioContent = $response->body();
+                    
+                    if (!empty($audioContent) && strlen($audioContent) > 100) { // Verificar que sea un archivo válido
+                        $filename = 'chat-audio/webhook_' . auth()->id() . '_' . time() . '.mp3';
+                        Storage::disk('public')->put($filename, $audioContent);
+                        $audioUrl = Storage::url($filename);
+                        
+                        // Intentar obtener el texto del mensaje si viene en headers
+                        $assistantMessage = $response->header('X-Message-Text') ?? $response->header('X-Output') ?? 'Mensaje de audio';
+                    }
                 } else {
-                    $assistantMessage = $responseData['response'] ?? $responseData['message'] ?? $responseData['text'] ?? $responseData['output'] ?? 'Gracias por tu mensaje.';
+                    // La respuesta es JSON
+                    try {
+                        $responseData = $response->json();
+                        
+                        // Obtener la respuesta del webhook
+                        // El formato de n8n puede ser un array con objetos que tienen "output"
+                        if (is_array($responseData) && isset($responseData[0]['output'])) {
+                            $assistantMessage = $responseData[0]['output'];
+                        } elseif (is_array($responseData) && isset($responseData['output'])) {
+                            $assistantMessage = $responseData['output'];
+                        } else {
+                            $assistantMessage = $responseData['response'] ?? $responseData['message'] ?? $responseData['text'] ?? $responseData['output'] ?? 'Gracias por tu mensaje.';
+                        }
+                        
+                        // Verificar si viene un archivo de audio en la respuesta JSON
+                        if (isset($responseData['audio_url']) || isset($responseData[0]['audio_url'])) {
+                            $audioUrl = $responseData['audio_url'] ?? $responseData[0]['audio_url'] ?? null;
+                        } elseif (isset($responseData['audio']) || isset($responseData[0]['audio'])) {
+                            // Si viene el audio como base64 o datos binarios
+                            $audioData = $responseData['audio'] ?? $responseData[0]['audio'] ?? null;
+                            if ($audioData) {
+                                // Si es base64, decodificarlo
+                                if (is_string($audioData) && str_starts_with($audioData, 'data:audio')) {
+                                    $audioContent = base64_decode(explode(',', $audioData)[1] ?? '');
+                                } else {
+                                    $audioContent = is_string($audioData) ? base64_decode($audioData) : $audioData;
+                                }
+                                
+                                if ($audioContent && strlen($audioContent) > 100) {
+                                    $filename = 'chat-audio/webhook_' . auth()->id() . '_' . time() . '.mp3';
+                                    Storage::disk('public')->put($filename, $audioContent);
+                                    $audioUrl = Storage::url($filename);
+                                }
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Si no es JSON válido, intentar como texto
+                        $assistantMessage = $response->body();
+                        Log::warning('Webhook response is not valid JSON: ' . $e->getMessage());
+                    }
                 }
                 
                 // Guardar respuesta del asistente en la base de datos
                 $assistantChatMessage = ChatMessage::create([
                     'user_id' => auth()->id(),
-                    'message' => $assistantMessage,
+                    'message' => $assistantMessage ?? 'Mensaje de audio',
                     'type' => 'assistant',
                 ]);
                 
-                // Generar audio automáticamente para mensajes del asistente
-                $audioUrl = $this->generateAudio($assistantMessage, $assistantChatMessage->id);
+                // Si no hay audio del webhook, generar con OpenAI TTS
+                if (!$audioUrl) {
+                    $audioUrl = $this->generateAudio($assistantMessage ?? 'Mensaje de audio', $assistantChatMessage->id);
+                }
                 
                 if ($audioUrl) {
                     $assistantChatMessage->update(['audio_url' => $audioUrl]);
@@ -141,7 +191,7 @@ class ChatPage extends Component
                 
                 $this->messages[] = [
                     'type' => 'assistant',
-                    'content' => $assistantMessage,
+                    'content' => $assistantMessage ?? 'Mensaje de audio',
                     'timestamp' => $assistantChatMessage->created_at,
                     'audio_url' => $audioUrl,
                 ];

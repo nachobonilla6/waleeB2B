@@ -169,7 +169,7 @@
             }
 
             async function sendToWebhook(message) {
-                const resp = await fetch('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', {
+                const resp = await fetch('https://n8n.srv1137974.hstgr.cloud/webhook/444688a4-305e-4d97-b667-5f52c2c3bda9', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

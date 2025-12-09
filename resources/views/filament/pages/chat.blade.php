@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <div class="h-[calc(100vh-12rem)] flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+    <div class="h-[calc(100vh-8rem)] flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
         <!-- Chat Header -->
         <div class="bg-primary-600 px-6 py-4 flex items-center justify-between flex-shrink-0">
             <div class="flex items-center">

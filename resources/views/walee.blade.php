@@ -55,7 +55,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
                     </a>
-                    <h1 class="text-xl font-semibold text-gray-900">wesolutions.work</h1>
+                    <h1 class="text-xl font-semibold" style="color: #D59F3B;">wesolutions.work</h1>
                 </div>
                 <div class="flex items-center space-x-4">
                     <span class="text-sm text-gray-600">{{ auth()->user()->name }}</span>

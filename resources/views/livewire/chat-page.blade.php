@@ -29,7 +29,13 @@
                         </div>
                         @if(isset($message['audio_url']) && $message['audio_url'])
                             <div class="mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
-                                <audio controls class="w-full h-8" preload="auto">
+                                <audio 
+                                    controls 
+                                    class="w-full h-8" 
+                                    preload="auto"
+                                    @if($index === count($messages) - 1 && !$isLoading) autoplay @endif
+                                    wire:key="audio-{{ $index }}"
+                                >
                                     <source src="{{ $message['audio_url'] }}" type="audio/mpeg">
                                     Tu navegador no soporta el elemento de audio.
                                 </audio>

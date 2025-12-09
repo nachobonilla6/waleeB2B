@@ -105,6 +105,40 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat', function () {
         return view('chat.index');
     })->name('chat');
+    
+    // Callback de Google Calendar OAuth2
+    Route::get('/google-calendar/callback', function (\Illuminate\Http\Request $request) {
+        $code = $request->get('code');
+        
+        if (!$code) {
+            \Filament\Notifications\Notification::make()
+                ->title('Error de autorización')
+                ->body('No se recibió el código de autorización de Google.')
+                ->danger()
+                ->send();
+            
+            return redirect()->route('filament.admin.pages.google-calendar-auth');
+        }
+        
+        $service = new \App\Services\GoogleCalendarService();
+        $success = $service->handleCallback($code);
+        
+        if ($success) {
+            \Filament\Notifications\Notification::make()
+                ->title('Autorización exitosa')
+                ->body('Google Calendar ha sido autorizado correctamente.')
+                ->success()
+                ->send();
+        } else {
+            \Filament\Notifications\Notification::make()
+                ->title('Error de autorización')
+                ->body('No se pudo completar la autorización. Intenta nuevamente.')
+                ->danger()
+                ->send();
+        }
+        
+        return redirect()->route('filament.admin.pages.google-calendar-auth');
+    })->name('google-calendar.callback');
 });
 
 // Rutas de autenticación y configuración

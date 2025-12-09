@@ -35,7 +35,7 @@ class GoogleCalendarService
             
             // Si hay credenciales OAuth2 configuradas, usarlas
             $credentialsPath = config('services.google.credentials_path');
-            $accessToken = config('services.google.access_token');
+            $accessToken = $this->getStoredAccessToken();
             
             if ($credentialsPath && file_exists($credentialsPath)) {
                 $client->setAuthConfig($credentialsPath);
@@ -47,14 +47,27 @@ class GoogleCalendarService
                 return null;
             }
 
-            // Configurar scopes necesarios
-            $client->addScope(Google_Service_Calendar::CALENDAR_READONLY);
+            // Configurar scopes necesarios (lectura y escritura)
+            $client->addScope(Google_Service_Calendar::CALENDAR);
             $client->setAccessType('offline');
             $client->setPrompt('select_account consent');
+            
+            // Configurar redirect URI
+            $redirectUri = route('google-calendar.callback');
+            $client->setRedirectUri($redirectUri);
 
             // Si hay un token de acceso guardado, usarlo
             if ($accessToken) {
                 $client->setAccessToken($accessToken);
+                
+                // Si el token expiró, refrescarlo
+                if ($client->isAccessTokenExpired()) {
+                    $refreshToken = $client->getRefreshToken();
+                    if ($refreshToken) {
+                        $client->fetchAccessTokenWithRefreshToken($refreshToken);
+                        $this->saveAccessToken($client->getAccessToken());
+                    }
+                }
             }
 
             $this->client = $client;
@@ -63,6 +76,97 @@ class GoogleCalendarService
             Log::error('Error inicializando Google Client: ' . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Obtener URL de autorización
+     */
+    public function getAuthUrl(): ?string
+    {
+        try {
+            $client = new Google_Client();
+            $credentialsPath = config('services.google.credentials_path');
+            
+            if (!$credentialsPath || !file_exists($credentialsPath)) {
+                return null;
+            }
+            
+            $client->setAuthConfig($credentialsPath);
+            $client->addScope(Google_Service_Calendar::CALENDAR);
+            $client->setAccessType('offline');
+            $client->setPrompt('select_account consent');
+            $client->setRedirectUri(route('google-calendar.callback'));
+            
+            return $client->createAuthUrl();
+        } catch (\Exception $e) {
+            Log::error('Error generando URL de autorización: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Manejar callback de OAuth2
+     */
+    public function handleCallback(string $code): bool
+    {
+        try {
+            $client = new Google_Client();
+            $credentialsPath = config('services.google.credentials_path');
+            
+            if (!$credentialsPath || !file_exists($credentialsPath)) {
+                return false;
+            }
+            
+            $client->setAuthConfig($credentialsPath);
+            $client->setRedirectUri(route('google-calendar.callback'));
+            
+            $token = $client->fetchAccessTokenWithAuthCode($code);
+            
+            if (isset($token['error'])) {
+                Log::error('Error obteniendo token: ' . $token['error']);
+                return false;
+            }
+            
+            $this->saveAccessToken($token);
+            
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error en callback de OAuth2: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Obtener token guardado
+     */
+    protected function getStoredAccessToken(): ?array
+    {
+        $tokenPath = storage_path('app/google-calendar-token.json');
+        
+        if (file_exists($tokenPath)) {
+            $token = json_decode(file_get_contents($tokenPath), true);
+            return $token;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Guardar token de acceso
+     */
+    protected function saveAccessToken(array $token): void
+    {
+        $tokenPath = storage_path('app/google-calendar-token.json');
+        file_put_contents($tokenPath, json_encode($token));
+    }
+
+    /**
+     * Verificar si está autorizado
+     */
+    public function isAuthorized(): bool
+    {
+        $token = $this->getStoredAccessToken();
+        return $token !== null && !empty($token['access_token']);
     }
 
     /**
@@ -88,46 +192,38 @@ class GoogleCalendarService
      */
     public function createEvent(Cita $cita): ?string
     {
-        if (empty($this->apiKey)) {
-            Log::warning('Google Calendar API key no configurada');
-            return null;
-        }
-
         try {
-            $event = [
-                'summary' => $cita->titulo,
-                'description' => $cita->descripcion ?? '',
-                'start' => [
-                    'dateTime' => $cita->fecha_inicio->format('Y-m-d\TH:i:s'),
-                    'timeZone' => config('app.timezone', 'America/Mexico_City'),
-                ],
-                'end' => [
-                    'dateTime' => $cita->fecha_fin 
-                        ? $cita->fecha_fin->format('Y-m-d\TH:i:s')
-                        : $cita->fecha_inicio->addHour()->format('Y-m-d\TH:i:s'),
-                    'timeZone' => config('app.timezone', 'America/Mexico_City'),
-                ],
-            ];
-
-            if ($cita->ubicacion) {
-                $event['location'] = $cita->ubicacion;
+            $service = $this->getService();
+            if (!$service) {
+                Log::warning('No se pudo obtener el servicio de Google Calendar');
+                return null;
             }
 
-            // Usar URL directa de Google Calendar para crear evento
-            $params = http_build_query([
-                'action' => 'TEMPLATE',
-                'text' => $event['summary'],
-                'dates' => $this->formatGoogleCalendarDate($cita->fecha_inicio) . '/' . 
-                          $this->formatGoogleCalendarDate($cita->fecha_fin ?? $cita->fecha_inicio->copy()->addHour()),
-                'details' => $event['description'],
-                'location' => $cita->ubicacion ?? '',
-            ]);
-
-            $googleCalendarUrl = 'https://calendar.google.com/calendar/render?' . $params;
+            $event = new \Google_Service_Calendar_Event();
+            $event->setSummary($cita->titulo);
             
-            // Para integración real con API, necesitarías OAuth2
-            // Por ahora retornamos un identificador único
-            return 'manual_' . $cita->id . '_' . time();
+            if ($cita->descripcion) {
+                $event->setDescription($cita->descripcion);
+            }
+            
+            if ($cita->ubicacion) {
+                $event->setLocation($cita->ubicacion);
+            }
+
+            $start = new \Google_Service_Calendar_EventDateTime();
+            $start->setDateTime($cita->fecha_inicio->format(\DateTime::RFC3339));
+            $start->setTimeZone(config('app.timezone', 'America/Mexico_City'));
+            $event->setStart($start);
+
+            $end = new \Google_Service_Calendar_EventDateTime();
+            $fechaFin = $cita->fecha_fin ?? $cita->fecha_inicio->copy()->addHour();
+            $end->setDateTime($fechaFin->format(\DateTime::RFC3339));
+            $end->setTimeZone(config('app.timezone', 'America/Mexico_City'));
+            $event->setEnd($end);
+
+            $createdEvent = $service->events->insert($this->calendarId, $event);
+            
+            return $createdEvent->getId();
         } catch (\Exception $e) {
             Log::error('Error al crear evento en Google Calendar: ' . $e->getMessage());
             return null;
@@ -139,15 +235,59 @@ class GoogleCalendarService
      */
     public function updateEvent(Cita $cita): bool
     {
-        if (empty($cita->google_event_id)) {
-            // Si no tiene ID, crear uno nuevo
-            $cita->google_event_id = $this->createEvent($cita);
-            return $cita->save();
-        }
+        try {
+            if (empty($cita->google_event_id)) {
+                // Si no tiene ID, crear uno nuevo
+                $eventId = $this->createEvent($cita);
+                if ($eventId) {
+                    $cita->google_event_id = $eventId;
+                    return $cita->save();
+                }
+                return false;
+            }
 
-        // Para actualización real, necesitarías OAuth2
-        // Por ahora solo actualizamos la fecha de modificación
-        return true;
+            $service = $this->getService();
+            if (!$service) {
+                Log::warning('No se pudo obtener el servicio de Google Calendar');
+                return false;
+            }
+
+            // Obtener el evento existente
+            $event = $service->events->get($this->calendarId, $cita->google_event_id);
+            
+            // Actualizar los campos
+            $event->setSummary($cita->titulo);
+            
+            if ($cita->descripcion) {
+                $event->setDescription($cita->descripcion);
+            } else {
+                $event->setDescription('');
+            }
+            
+            if ($cita->ubicacion) {
+                $event->setLocation($cita->ubicacion);
+            } else {
+                $event->setLocation('');
+            }
+
+            $start = new \Google_Service_Calendar_EventDateTime();
+            $start->setDateTime($cita->fecha_inicio->format(\DateTime::RFC3339));
+            $start->setTimeZone(config('app.timezone', 'America/Mexico_City'));
+            $event->setStart($start);
+
+            $end = new \Google_Service_Calendar_EventDateTime();
+            $fechaFin = $cita->fecha_fin ?? $cita->fecha_inicio->copy()->addHour();
+            $end->setDateTime($fechaFin->format(\DateTime::RFC3339));
+            $end->setTimeZone(config('app.timezone', 'America/Mexico_City'));
+            $event->setEnd($end);
+
+            $service->events->update($this->calendarId, $cita->google_event_id, $event);
+            
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar evento en Google Calendar: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -159,10 +299,26 @@ class GoogleCalendarService
             return true;
         }
 
-        // Para eliminación real, necesitarías OAuth2
-        // Por ahora solo limpiamos el ID
-        $cita->google_event_id = null;
-        return $cita->save();
+        try {
+            $service = $this->getService();
+            if (!$service) {
+                Log::warning('No se pudo obtener el servicio de Google Calendar');
+                // Limpiar el ID localmente
+                $cita->google_event_id = null;
+                return $cita->save();
+            }
+
+            $service->events->delete($this->calendarId, $cita->google_event_id);
+            
+            // Limpiar el ID localmente
+            $cita->google_event_id = null;
+            return $cita->save();
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar evento de Google Calendar: ' . $e->getMessage());
+            // Limpiar el ID localmente aunque falle
+            $cita->google_event_id = null;
+            return $cita->save();
+        }
     }
 
     /**

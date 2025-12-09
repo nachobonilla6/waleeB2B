@@ -11,4 +11,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-.env
+storage/app/google-credentials.json
+storage/app/google-calendar-token.json

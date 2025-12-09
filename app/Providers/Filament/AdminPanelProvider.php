@@ -152,7 +152,7 @@ class AdminPanelProvider extends PanelProvider
                     }
                     /* Chat page - tamaño fijo que ocupa toda la página */
                     .fi-chat-page {
-                        height: calc(100vh - 4rem) !important;
+                        height: calc(100vh - 6rem) !important;
                         display: flex;
                         flex-direction: column;
                         padding: 0 !important;

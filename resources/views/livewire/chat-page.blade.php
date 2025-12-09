@@ -1,6 +1,6 @@
 <div class="h-full flex flex-col bg-white dark:bg-gray-800">
     <!-- Chat Header -->
-    <div class="bg-primary-600 px-6 py-4 flex items-center justify-between flex-shrink-0">
+    <div class="bg-primary-600 px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div class="flex items-center">
             <div class="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold">W</div>
             <div class="ml-3">
@@ -67,34 +67,26 @@
     </div>
 
     <!-- Message Input -->
-    <div class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-4 flex-shrink-0">
-        <form wire:submit.prevent="sendMessage" class="flex items-end space-x-3">
+    <div class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 flex-shrink-0">
+        <form wire:submit.prevent="sendMessage" class="flex items-end space-x-2">
             <div class="flex-1 relative">
                 <textarea 
                     wire:model="newMessage"
-                    rows="2"
+                    x-data="{ resize() { $el.style.height = '48px'; $el.style.height = $el.scrollHeight + 'px'; } }"
+                    x-init="resize(); $watch('$wire.newMessage', () => setTimeout(resize, 10))"
+                    @input="resize()"
+                    rows="1"
                     placeholder="Escribe tu mensaje..."
-                    class="w-full rounded-xl border-0 py-4 px-5 pr-14 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 resize-none transition-all duration-200 min-h-[60px] max-h-48 text-base leading-relaxed overflow-y-auto"
+                    class="w-full rounded-2xl border-0 py-3 px-4 pr-12 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 resize-none transition-all duration-200 min-h-[48px] max-h-32 text-sm leading-relaxed overflow-y-auto"
                     style="scrollbar-width: thin;"
                     @keydown.enter.prevent="if(!event.shiftKey) $wire.sendMessage()"
                 ></textarea>
-                <div class="absolute right-3 bottom-3 flex space-x-2">
-                    <button type="button" class="p-1 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                        </svg>
-                    </button>
-                    <button type="button" class="p-1 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </button>
-                </div>
             </div>
             <button 
                 type="submit" 
-                :disabled="$isLoading"
-                class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary-600 hover:bg-primary-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200 mb-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="$isLoading || !trim($newMessage)"
+                class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg shadow-primary-500/50 hover:shadow-xl hover:shadow-primary-500/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transform hover:scale-105 active:scale-95"
+                title="Enviar mensaje"
             >
                 @if($isLoading)
                     <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -103,7 +95,7 @@
                     </svg>
                 @else
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                     </svg>
                 @endif
             </button>

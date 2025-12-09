@@ -231,6 +231,7 @@
         document.addEventListener('livewire:init', () => {
             let lastAudioUrl = null;
             let playedAudios = new Set();
+            let isInitialLoad = true;
             
             function scrollToBottom(smooth = true) {
                 const container = document.getElementById('messages-container');
@@ -250,15 +251,12 @@
                 }
             }
             
-            // Función para asegurar scroll al final después de que todo esté cargado
-            function ensureScrollToBottom() {
+            // Función para mostrar mensajes más recientes sin scroll automático
+            function showLatestMessages() {
                 const container = document.getElementById('messages-container');
                 if (container) {
-                    // Múltiples intentos para asegurar que funcione
-                    setTimeout(() => scrollToBottom(false), 50);
-                    setTimeout(() => scrollToBottom(false), 200);
-                    setTimeout(() => scrollToBottom(false), 500);
-                    setTimeout(() => scrollToBottom(false), 1000);
+                    // Simplemente posicionar al final sin animación
+                    container.scrollTop = container.scrollHeight;
                 }
             }
             
@@ -301,27 +299,38 @@
                 }
             }
             
-            // Scroll al final cuando el componente se monta inicialmente
+            // Mostrar mensajes más recientes cuando el componente se monta inicialmente (sin scroll automático)
             Livewire.hook('mounted', () => {
-                ensureScrollToBottom();
+                isInitialLoad = true;
+                setTimeout(() => {
+                    showLatestMessages();
+                    isInitialLoad = false;
+                }, 100);
             });
             
-            // También asegurar scroll cuando Livewire termina de renderizar
+            // Cuando Livewire termina de renderizar, solo mostrar últimos mensajes en carga inicial
             Livewire.hook('morph', ({ el, component }) => {
-                if (component.name === 'chat-page') {
-                    ensureScrollToBottom();
+                if (component.name === 'chat-page' && isInitialLoad) {
+                    setTimeout(() => {
+                        showLatestMessages();
+                    }, 100);
                 }
             });
             
-            // Asegurar scroll cuando la página se carga completamente
+            // Mostrar mensajes más recientes cuando la página se carga completamente
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', ensureScrollToBottom);
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        showLatestMessages();
+                        isInitialLoad = false;
+                    }, 200);
+                });
             } else {
-                ensureScrollToBottom();
+                setTimeout(() => {
+                    showLatestMessages();
+                    isInitialLoad = false;
+                }, 200);
             }
-            
-            // También cuando la ventana se carga completamente
-            window.addEventListener('load', ensureScrollToBottom);
             
             // Escuchar evento cuando hay un nuevo mensaje con audio
             Livewire.on('new-audio-message', (event) => {
@@ -342,8 +351,10 @@
             });
             
             Livewire.hook('morph.updated', ({ el, component }) => {
-                // Auto-scroll al final cuando hay nuevos mensajes
-                scrollToBottom(true);
+                // Solo hacer scroll automático cuando hay nuevos mensajes (no en carga inicial)
+                if (!isInitialLoad) {
+                    scrollToBottom(true);
+                }
                 
                 // Intentar reproducir el último audio si es nuevo
                 setTimeout(() => {

@@ -45,7 +45,7 @@
 
 <div class="h-full flex flex-col bg-white dark:bg-gray-800">
     <!-- Chat Header -->
-    <div class="px-6 py-3 flex items-center justify-between flex-shrink-0" style="background-color: #D59F3B;">
+    <div class="px-6 py-3 flex items-center justify-between flex-shrink-0 border-b border-gray-200 dark:border-gray-700" style="background-color: #D59F3B;">
         <div class="flex items-center">
             <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="h-10 w-10 rounded-full object-cover border-2 border-white/20">
             <div class="ml-3">
@@ -58,9 +58,42 @@
         </div>
     </div>
 
-    <!-- Messages -->
+    <!-- Search Bar Input (Top) -->
+    <div class="px-4 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
+        <form wire:submit.prevent="sendMessage" class="w-full">
+            <div class="relative">
+                <input 
+                    type="text"
+                    wire:model.live="newMessage"
+                    placeholder="Escribe tu mensaje aquí..."
+                    class="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-[#D59F3B] focus:border-transparent transition-all duration-200"
+                />
+                <button 
+                    type="submit"
+                    wire:loading.attr="disabled"
+                    wire:target="sendMessage"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-lg text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style="background-color: #D59F3B;"
+                >
+                    <span wire:loading.remove wire:target="sendMessage">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </span>
+                    <span wire:loading wire:target="sendMessage">
+                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Messages (Bottom) -->
     <div 
-        class="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 space-y-4 min-h-0" 
+        class="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900 space-y-4 min-h-0" 
         id="messages-container"
     >
         @foreach($messages as $index => $message)
@@ -73,77 +106,76 @@
                                 {!! formatMessageWithLinks($message['content']) !!}
                             </div>
                         </div>
-                        @if(isset($message['audio_url']) && $message['audio_url'])
-                            @php
-                                // Asegurar que la URL sea absoluta
-                                $audioUrl = $message['audio_url'];
-                                if (!str_starts_with($audioUrl, 'http')) {
-                                    // Si empieza con /storage, usar asset directamente
-                                    if (str_starts_with($audioUrl, '/storage')) {
-                                        $audioUrl = asset($audioUrl);
-                                    } else {
-                                        // Si es una ruta relativa, agregar /storage/
-                                        $audioUrl = asset('storage/' . ltrim($audioUrl, '/'));
+                            @if(isset($message['audio_url']) && $message['audio_url'])
+                                @php
+                                    // Asegurar que la URL sea absoluta
+                                    $audioUrl = $message['audio_url'];
+                                    if (!str_starts_with($audioUrl, 'http')) {
+                                        // Si empieza con /storage, usar asset directamente
+                                        if (str_starts_with($audioUrl, '/storage')) {
+                                            $audioUrl = asset($audioUrl);
+                                        } else {
+                                            // Si es una ruta relativa, agregar /storage/
+                                            $audioUrl = asset('storage/' . ltrim($audioUrl, '/'));
+                                        }
                                     }
-                                }
-                            @endphp
-                            <div class="mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
-                                <audio 
-                                    controls 
-                                    controlsList="nodownload"
-                                    class="w-full h-10" 
-                                    preload="metadata"
-                                    id="audio-{{ $index }}"
-                                    data-audio-url="{{ $audioUrl }}"
-                                    wire:key="audio-{{ $index }}"
-                                    onloadedmetadata="console.log('Audio cargado:', this.duration)"
-                                    onerror="console.error('Error cargando audio:', this.error, 'URL:', '{{ $audioUrl }}')"
-                                >
-                                    <source src="{{ $audioUrl }}" type="audio/mpeg">
-                                    <source src="{{ $audioUrl }}" type="audio/mp3">
-                                    Tu navegador no soporta el elemento de audio.
-                                    <a href="{{ $audioUrl }}" download>Descargar audio</a>
-                                </audio>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    <a href="{{ $audioUrl }}" target="_blank" class="underline">Ver URL del audio</a>
-                                </p>
-                            </div>
-                        @endif
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            WALEE - {{ $message['timestamp']->format('H:i') }}
-                        </p>
+                                @endphp
+                                <div class="mt-3 bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                                    <audio 
+                                        controls 
+                                        controlsList="nodownload"
+                                        class="w-full h-10" 
+                                        preload="metadata"
+                                        id="audio-{{ $index }}"
+                                        data-audio-url="{{ $audioUrl }}"
+                                        wire:key="audio-{{ $index }}"
+                                        onloadedmetadata="console.log('Audio cargado:', this.duration)"
+                                        onerror="console.error('Error cargando audio:', this.error, 'URL:', '{{ $audioUrl }}')"
+                                    >
+                                        <source src="{{ $audioUrl }}" type="audio/mpeg">
+                                        <source src="{{ $audioUrl }}" type="audio/mp3">
+                                        Tu navegador no soporta el elemento de audio.
+                                        <a href="{{ $audioUrl }}" download>Descargar audio</a>
+                                    </audio>
+                                </div>
+                            @endif
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                {{ $message['timestamp']->format('d/m/Y H:i') }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             @else
-                <div class="flex items-start justify-end animate-fade-in" wire:key="message-{{ $index }}" style="animation: fadeIn 0.3s ease-in;">
-                    <div class="max-w-xs lg:max-w-md text-right">
-                        <div class="bg-indigo-100 dark:bg-indigo-900 rounded-lg p-3">
-                            <div class="text-sm text-gray-800 dark:text-gray-200 break-words">
+                <div class="flex items-start gap-3 justify-end animate-fade-in" wire:key="message-{{ $index }}" style="animation: fadeIn 0.3s ease-in;">
+                    <div class="flex-1 text-right">
+                        <div class="bg-[#D59F3B] text-white rounded-lg p-4 shadow-sm inline-block">
+                            <div class="text-sm break-words leading-relaxed">
                                 {!! formatMessageWithLinks($message['content']) !!}
                             </div>
+                            <p class="text-xs text-white/80 mt-2">
+                                {{ $message['timestamp']->format('d/m/Y H:i') }}
+                            </p>
                         </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Tú - {{ $message['timestamp']->format('H:i') }}
-                        </p>
                     </div>
                     @php
                         $user = auth()->user();
                         $avatarUrl = $user->avatar ? Storage::url($user->avatar) : 'https://scontent.fsyq2-1.fna.fbcdn.net/v/t39.30808-6/435683598_122110261394258631_6405474837326534704_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=zgjvYarZ9xgQ7kNvwEswbG1&_nc_oc=AdmWm-pIFz310EeZ09ooC9EseFnorsGaoX-I-s3_7InzU9AF7y1ktWzwE18dMah-YZQ&_nc_zt=23&_nc_ht=scontent.fsyq2-1.fna&_nc_gid=XUnr5aeZ51zDI4Jgejtwlw&oh=00_Afk_foorn0DkQzlRE4BKg1Ft8Jqm5SMBBr90TiKvgeT-CQ&oe=693D7C04';
                     @endphp
-                    <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="ml-3 flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
+                    <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
                 </div>
             @endif
         @endforeach
 
         @if($isLoading)
-            <div class="flex items-start animate-fade-in" wire:key="loading" style="animation: fadeIn 0.3s ease-in;">
-                <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
-                <div class="ml-3 max-w-xs lg:max-w-md">
-                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 inline-block">
+            <div class="flex items-start gap-3 animate-fade-in" wire:key="loading" style="animation: fadeIn 0.3s ease-in;">
+                <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
+                <div class="flex-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
                         <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                            <div class="w-2 h-2 bg-[#D59F3B] rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-[#D59F3B] rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                            <div class="w-2 h-2 bg-[#D59F3B] rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">WALEE está escribiendo...</span>
                         </div>
                     </div>
                 </div>

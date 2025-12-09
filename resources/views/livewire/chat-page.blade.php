@@ -153,53 +153,32 @@
 
     <!-- Message Input -->
     <div class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 flex-shrink-0">
-        <form wire:submit.prevent="sendMessage" class="flex items-end space-x-2">
-            <div class="flex-1 relative">
-                <textarea 
+        <form wire:submit.prevent="sendMessage" class="d-flex align-items-end gap-2">
+            <div class="flex-1 w-100">
+                <textarea
                     wire:model.live="newMessage"
-                    x-data="{ 
-                        resize() { 
-                            $el.style.height = '48px'; 
-                            $el.style.height = $el.scrollHeight + 'px'; 
-                        },
-                        handleEnter(e) {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const form = $el.closest('form');
-                                if (form && !$wire.isLoading && $wire.newMessage && $wire.newMessage.trim()) {
-                                    form.requestSubmit();
-                                }
-                            }
-                        }
-                    }"
-                    x-init="resize(); $watch('$wire.newMessage', () => setTimeout(resize, 10))"
-                    @input="resize()"
-                    @keydown.enter.prevent="handleEnter($event)"
-                    rows="1"
+                    rows="2"
                     placeholder="Escribe tu mensaje... (Enter para enviar, Shift+Enter para nueva línea)"
-                    class="w-full rounded-2xl border-0 py-3 px-4 pr-12 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 resize-none transition-all duration-200 min-h-[48px] max-h-32 text-sm leading-relaxed overflow-y-auto"
-                    style="scrollbar-width: thin;"
+                    class="form-control"
+                    style="min-height: 48px; max-height: 160px;"
+                    @keydown.enter.prevent="$event.shiftKey ? null : $el.form.requestSubmit();"
                 ></textarea>
             </div>
-            <button 
-                type="submit" 
+            <button
+                type="submit"
                 wire:loading.attr="disabled"
                 wire:target="sendMessage"
-                disabled="{{ $isLoading || empty(trim($newMessage)) }}"
-                class="inline-flex items-center justify-center h-16 w-16 rounded-lg text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transform hover:scale-105 active:scale-95"
-                style="background: linear-gradient(135deg, #D59F3B 0%, #C08A2E 100%); box-shadow: 0 10px 25px rgba(213, 159, 59, 0.4);"
-                onmouseover="this.style.boxShadow='0 15px 35px rgba(213, 159, 59, 0.5)'"
-                onmouseout="this.style.boxShadow='0 10px 25px rgba(213, 159, 59, 0.4)'"
+                class="btn btn-primary d-flex align-items-center justify-content-center"
+                style="height: 64px; width: 64px; background-color: #D59F3B; border-color: #D59F3B;"
                 title="Enviar mensaje (Enter)"
             >
                 <span wire:loading.remove wire:target="sendMessage">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                     </svg>
                 </span>
                 <span wire:loading wire:target="sendMessage">
-                    <svg class="animate-spin h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>

@@ -35,6 +35,10 @@
         $chatMessages = \App\Models\ChatMessage::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
+        $chatHistory = \App\Models\ChatMessage::where('user_id', auth()->id())
+            ->orderBy('created_at', 'asc')
+            ->limit(20)
+            ->get(['type', 'message']);
         $defaultAvatar = 'https://scontent.fsyq2-1.fna.fbcdn.net/v/t39.30808-6/435683598_122110261394258631_6405474837326534704_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=zgjvYarZ9xgQ7kNvwEswbG1&_nc_oc=AdmWm-pIFz310EeZ09ooC9EseFnorsGaoX-I-s3_7InzU9AF7y1ktWzwE18dMah-YZQ&_nc_zt=23&_nc_ht=scontent.fsyq2-1.fna&_nc_gid=XUnr5aeZ51zDI4Jgejtwlw&oh=00_Afk_foorn0DkQzlRE4BKg1Ft8Jqm5SMBBr90TiKvgeT-CQ&oe=693D7C04';
     @endphp
     <div class="h-screen flex flex-col">
@@ -149,6 +153,7 @@
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             const voiceToggle = document.getElementById('voice-toggle');
             let voiceEnabled = true;
+            let history = @json($chatHistory->map(function($m){ return ['role' => $m->type === 'user' ? 'user' : 'assistant', 'content' => $m->message]; }));
 
             function showAssistantMessage(content, audioUrl = null) {
                 if (!container) return;
@@ -178,6 +183,7 @@
                         message,
                         user: '{{ auth()->user()->name }}',
                         email: '{{ auth()->user()->email }}',
+                        conversation_history: history,
                     }),
                 });
                 if (!resp.ok) throw new Error('Error al llamar al webhook');
@@ -248,6 +254,12 @@
                         const assistantText = await sendToWebhook(message);
                         showAssistantMessage(assistantText || 'Lo siento, no recibí respuesta.');
                         await finalizeMessage(message, assistantText || '');
+                        // Actualizar historial en frontend (mantener máx 20)
+                        history.push({ role: 'user', content: message });
+                        history.push({ role: 'assistant', content: assistantText || '' });
+                        if (history.length > 20) {
+                            history = history.slice(history.length - 20);
+                        }
                     } catch (err) {
                         console.error(err);
                         showAssistantMessage('Lo siento, hubo un problema al procesar tu mensaje.');

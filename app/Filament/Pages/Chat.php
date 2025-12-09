@@ -13,11 +13,5 @@ class Chat extends Page
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.chat';
-
-    public function mount(): void
-    {
-        // Redirigir a la ruta del chat
-        return redirect()->route('chat');
-    }
 }
 

@@ -97,11 +97,20 @@ class ChatPage extends Component
     public function sendMessage()
     {
         if (empty(trim($this->newMessage))) {
+            Log::warning('Intento de enviar mensaje vacío');
             return;
         }
 
         // Guardar mensaje del usuario en la base de datos
         $userMessage = trim($this->newMessage);
+        
+        Log::info('Enviando mensaje al webhook', [
+            'user_id' => auth()->id(),
+            'message' => $userMessage,
+            'user_name' => auth()->user()->name ?? 'Usuario',
+            'user_email' => auth()->user()->email ?? '',
+        ]);
+        
         $userChatMessage = ChatMessage::create([
             'user_id' => auth()->id(),
             'message' => $userMessage,
@@ -130,13 +139,28 @@ class ChatPage extends Component
             })
             ->implode("\n");
 
+        // Preparar datos para el webhook
+        $webhookData = [
+            'message' => $userMessage,
+            'user' => auth()->user()->name ?? 'Usuario',
+            'email' => auth()->user()->email ?? '',
+            'conversation_history' => $conversationHistory,
+        ];
+        
+        Log::info('Datos a enviar al webhook', [
+            'url' => 'https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9',
+            'data' => array_merge($webhookData, ['conversation_history_length' => strlen($conversationHistory)]),
+        ]);
+
         // Enviar mensaje al webhook de n8n con historial
         try {
-            $response = Http::timeout(60)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', [
-                'message' => $userMessage,
-                'user' => auth()->user()->name ?? 'Usuario',
-                'email' => auth()->user()->email ?? '',
-                'conversation_history' => $conversationHistory,
+            $response = Http::timeout(60)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', $webhookData);
+            
+            Log::info('Respuesta del webhook recibida', [
+                'status' => $response->status(),
+                'successful' => $response->successful(),
+                'headers' => $response->headers(),
+                'body_preview' => substr($response->body(), 0, 500),
             ]);
 
             if ($response->successful()) {
@@ -269,7 +293,14 @@ class ChatPage extends Component
                 ];
             }
         } catch (\Exception $e) {
-            Log::error('Error al enviar mensaje al webhook de n8n: ' . $e->getMessage());
+            Log::error('Error al enviar mensaje al webhook de n8n', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'user_id' => auth()->id(),
+                'webhook_url' => 'https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9',
+            ]);
             
             $errorMessage = 'Lo siento, hubo un error al conectarse con el servidor. Por favor, intenta de nuevo más tarde.';
             
@@ -282,7 +313,7 @@ class ChatPage extends Component
             
             $this->messages[] = [
                 'type' => 'assistant',
-                'content' => $errorMessage,
+                'content' => $errorMessage . ' (Error: ' . substr($e->getMessage(), 0, 100) . ')',
                 'timestamp' => $errorChatMessage->created_at,
             ];
         } finally {

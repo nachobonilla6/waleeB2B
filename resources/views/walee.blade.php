@@ -164,20 +164,13 @@
                 wrapper.innerHTML = `
                     <div class="bg-gray-800 text-gray-100 rounded-lg p-4 shadow-sm border border-gray-700 inline-block">
                         <div class="text-sm break-words leading-relaxed assistant-text">${content}</div>
-                        ${audioUrl ? `<div class="mt-3 bg-gray-700 rounded-lg p-2"><audio id="auto-voice" controls controlsList="nodownload" class="w-full h-10" preload="auto"><source src="${audioUrl}" type="audio/mpeg"><source src="${audioUrl}" type="audio/mp3">Tu navegador no soporta audio.</audio></div>` : ''}
                     </div>`;
                 container.appendChild(wrapper);
 
                 if (audioUrl) {
-                    const audio = document.getElementById('auto-voice');
-                    if (audio) {
-                        const play = () => audio.play().catch(() => {});
-                        if (audio.readyState >= 2) {
-                            play();
-                        } else {
-                            audio.addEventListener('canplay', play, { once: true });
-                        }
-                    }
+                    const audio = new Audio(audioUrl);
+                    audio.preload = 'auto';
+                    audio.play().catch(() => {});
                 }
             }
 

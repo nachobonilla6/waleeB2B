@@ -123,6 +123,11 @@ Route::post('/chat/stream', [ChatStreamController::class, 'stream'])
     ->middleware(['auth'])
     ->name('chat.stream');
 
+// Finalizar y persistir conversación después del streaming
+Route::post('/chat/finalize', [\App\Http\Controllers\ChatActionsController::class, 'finalize'])
+    ->middleware(['auth'])
+    ->name('chat.finalize');
+
 // Rutas para los casos de soporte
 Route::get('/cases', [SupportCaseController::class, 'index'])->name('cases.index');
 Route::post('/support-cases/{case}/close', [SupportCaseController::class, 'close'])

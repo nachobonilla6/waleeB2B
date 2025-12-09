@@ -150,6 +150,31 @@ class AdminPanelProvider extends PanelProvider
                             background: rgba(17, 24, 39, 0.95);
                         }
                     }
+                    /* Chat page - tamaño fijo que ocupa toda la página */
+                    .fi-chat-page {
+                        height: calc(100vh - 4rem) !important;
+                        display: flex;
+                        flex-direction: column;
+                        padding: 0 !important;
+                    }
+                    .fi-chat-page > section {
+                        height: 100% !important;
+                        display: flex;
+                        flex-direction: column;
+                        padding: 0 !important;
+                        gap: 0 !important;
+                    }
+                    .fi-chat-page > section > div {
+                        height: 100% !important;
+                        display: flex;
+                        flex-direction: column;
+                        padding: 0 !important;
+                    }
+                    .fi-chat-page > section > div > div {
+                        height: 100% !important;
+                        display: flex;
+                        flex-direction: column;
+                    }
                 </style>'
             )
             ->renderHook(

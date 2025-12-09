@@ -1,4 +1,4 @@
-<div class="h-[calc(100vh-8rem)] flex flex-col bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+<div class="h-full flex flex-col bg-white dark:bg-gray-800">
     <!-- Chat Header -->
     <div class="bg-primary-600 px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div class="flex items-center">
@@ -15,7 +15,7 @@
     </div>
 
     <!-- Messages -->
-    <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 space-y-4" id="messages-container">
+    <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 space-y-4 min-h-0" id="messages-container">
         @foreach($messages as $index => $message)
             @if($message['type'] === 'assistant')
                 <div class="flex items-start" wire:key="message-{{ $index }}">

@@ -316,17 +316,22 @@
                 // Cuando hay nuevos mensajes, hacer scroll al inicio (donde están los más recientes)
                 scrollToTop(true);
                 
-                // Intentar reproducir el primer audio (el más reciente)
-                setTimeout(() => {
-                    const container = document.getElementById('messages-container');
-                    if (container) {
-                        const audios = container.querySelectorAll('audio');
-                        if (audios.length > 0) {
-                            const firstAudio = audios[0]; // El primer audio es el más reciente
-                            playAudio(firstAudio);
-                        }
+                // Intentar reproducir el primer audio (el más reciente) solo si la voz está habilitada
+                if (component && component.name === 'chat-page') {
+                    const voiceEnabled = component.get('voiceEnabled');
+                    if (voiceEnabled) {
+                        setTimeout(() => {
+                            const container = document.getElementById('messages-container');
+                            if (container) {
+                                const audios = container.querySelectorAll('audio');
+                                if (audios.length > 0) {
+                                    const firstAudio = audios[0]; // El primer audio es el más reciente
+                                    playAudio(firstAudio);
+                                }
+                            }
+                        }, 800);
                     }
-                }, 800);
+                }
             });
         });
     </script>

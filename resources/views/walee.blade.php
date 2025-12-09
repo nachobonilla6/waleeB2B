@@ -142,6 +142,8 @@
                                 </p>
                             </div>
                         </div>
+                    @else
+                        <div class="text-sm text-gray-400">Aún no hay mensajes del bot.</div>
                     @endif
                 </div>
             </div>

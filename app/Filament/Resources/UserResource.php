@@ -36,6 +36,21 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Información del Usuario')
                     ->schema([
+                        Forms\Components\FileUpload::make('avatar')
+                            ->label('Foto de perfil')
+                            ->image()
+                            ->directory('avatars')
+                            ->imageEditor()
+                            ->imageCropAspectRatio('1:1')
+                            ->imageResizeTargetWidth('400')
+                            ->imageResizeTargetHeight('400')
+                            ->imageResizeMode('cover')
+                            ->imagePreviewHeight('150')
+                            ->maxSize(2048)
+                            ->visibility('public')
+                            ->helperText('Tamaño recomendado: 400×400px. Máximo 2MB.')
+                            ->columnSpanFull(),
+                        
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
                             ->required()
@@ -71,6 +86,12 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('avatar')
+                    ->label('Foto')
+                    ->circular()
+                    ->defaultImageUrl('https://ui-avatars.com/api/?name=' . urlencode('Usuario') . '&background=D59F3B&color=fff')
+                    ->size(40),
+                
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable()

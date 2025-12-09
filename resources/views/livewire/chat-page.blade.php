@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 <div class="h-full flex flex-col bg-white dark:bg-gray-800">
     <!-- Chat Header -->
     <div class="px-6 py-3 flex items-center justify-between flex-shrink-0" style="background-color: #D59F3B;">
@@ -38,9 +42,11 @@
                             Tú - {{ $message['timestamp']->format('H:i') }}
                         </p>
                     </div>
-                    <div class="ml-3 flex-shrink-0 h-8 w-8 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white font-medium">
-                        {{ \Illuminate\Support\Str::substr(auth()->user()->name ?? 'U', 0, 1) }}
-                    </div>
+                    @php
+                        $user = auth()->user();
+                        $avatarUrl = $user->avatar ? Storage::url($user->avatar) : 'https://scontent.fsyq2-1.fna.fbcdn.net/v/t39.30808-6/435683598_122110261394258631_6405474837326534704_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=zgjvYarZ9xgQ7kNvwEswbG1&_nc_oc=AdmWm-pIFz310EeZ09ooC9EseFnorsGaoX-I-s3_7InzU9AF7y1ktWzwE18dMah-YZQ&_nc_zt=23&_nc_ht=scontent.fsyq2-1.fna&_nc_gid=XUnr5aeZ51zDI4Jgejtwlw&oh=00_Afk_foorn0DkQzlRE4BKg1Ft8Jqm5SMBBr90TiKvgeT-CQ&oe=693D7C04';
+                    @endphp
+                    <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="ml-3 flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
                 </div>
             @endif
         @endforeach

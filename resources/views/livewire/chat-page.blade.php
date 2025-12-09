@@ -227,6 +227,20 @@
             let lastAudioUrl = null;
             let playedAudios = new Set();
             
+            function scrollToBottom(smooth = true) {
+                const container = document.getElementById('messages-container');
+                if (container) {
+                    if (smooth) {
+                        container.scrollTo({
+                            top: container.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }
+            }
+            
             function playAudio(audioElement) {
                 if (!audioElement) return;
                 
@@ -266,6 +280,13 @@
                 }
             }
             
+            // Scroll al final cuando el componente se monta inicialmente
+            Livewire.hook('mounted', () => {
+                setTimeout(() => {
+                    scrollToBottom(false); // Scroll inmediato al cargar
+                }, 200);
+            });
+            
             // Escuchar evento cuando hay un nuevo mensaje con audio
             Livewire.on('new-audio-message', (event) => {
                 const audioUrl = event[0]?.audioUrl || event.audioUrl;
@@ -285,26 +306,20 @@
             });
             
             Livewire.hook('morph.updated', ({ el, component }) => {
-                // Auto-scroll suave al final cuando hay nuevos mensajes
-                const container = document.getElementById('messages-container');
-                if (container) {
-                    // Scroll suave
-                    setTimeout(() => {
-                        container.scrollTo({
-                            top: container.scrollHeight,
-                            behavior: 'smooth'
-                        });
-                    }, 100);
-                    
-                    // Intentar reproducir el último audio si es nuevo
-                    setTimeout(() => {
+                // Auto-scroll al final cuando hay nuevos mensajes
+                scrollToBottom(true);
+                
+                // Intentar reproducir el último audio si es nuevo
+                setTimeout(() => {
+                    const container = document.getElementById('messages-container');
+                    if (container) {
                         const audios = container.querySelectorAll('audio');
                         if (audios.length > 0) {
                             const lastAudio = audios[audios.length - 1];
                             playAudio(lastAudio);
                         }
-                    }, 800);
-                }
+                    }
+                }, 800);
             });
         });
     </script>

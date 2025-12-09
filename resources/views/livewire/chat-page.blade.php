@@ -230,14 +230,30 @@
             function scrollToBottom(smooth = true) {
                 const container = document.getElementById('messages-container');
                 if (container) {
+                    // Forzar reflow para asegurar que el contenido esté renderizado
+                    container.offsetHeight;
+                    
                     if (smooth) {
                         container.scrollTo({
                             top: container.scrollHeight,
                             behavior: 'smooth'
                         });
                     } else {
+                        // Scroll inmediato al final
                         container.scrollTop = container.scrollHeight;
                     }
+                }
+            }
+            
+            // Función para asegurar scroll al final después de que todo esté cargado
+            function ensureScrollToBottom() {
+                const container = document.getElementById('messages-container');
+                if (container) {
+                    // Múltiples intentos para asegurar que funcione
+                    setTimeout(() => scrollToBottom(false), 50);
+                    setTimeout(() => scrollToBottom(false), 200);
+                    setTimeout(() => scrollToBottom(false), 500);
+                    setTimeout(() => scrollToBottom(false), 1000);
                 }
             }
             
@@ -282,10 +298,25 @@
             
             // Scroll al final cuando el componente se monta inicialmente
             Livewire.hook('mounted', () => {
-                setTimeout(() => {
-                    scrollToBottom(false); // Scroll inmediato al cargar
-                }, 200);
+                ensureScrollToBottom();
             });
+            
+            // También asegurar scroll cuando Livewire termina de renderizar
+            Livewire.hook('morph', ({ el, component }) => {
+                if (component.name === 'chat-page') {
+                    ensureScrollToBottom();
+                }
+            });
+            
+            // Asegurar scroll cuando la página se carga completamente
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', ensureScrollToBottom);
+            } else {
+                ensureScrollToBottom();
+            }
+            
+            // También cuando la ventana se carga completamente
+            window.addEventListener('load', ensureScrollToBottom);
             
             // Escuchar evento cuando hay un nuevo mensaje con audio
             Livewire.on('new-audio-message', (event) => {

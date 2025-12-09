@@ -199,114 +199,114 @@
             </button>
         </form>
     </div>
-</div>
-
-<style>
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
     
-    .animate-fade-in {
-        animation: fadeIn 0.3s ease-in;
-    }
-    
-    /* Smooth scroll */
-    #messages-container {
-        scroll-behavior: smooth;
-    }
-</style>
-
-<script>
-    document.addEventListener('livewire:init', () => {
-        let lastAudioUrl = null;
-        let playedAudios = new Set();
-        
-        function playAudio(audioElement) {
-            if (!audioElement) return;
-            
-            const audioUrl = audioElement.getAttribute('data-audio-url') || audioElement.querySelector('source')?.src;
-            
-            if (!audioUrl || playedAudios.has(audioUrl)) {
-                return;
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
             }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        /* Smooth scroll */
+        #messages-container {
+            scroll-behavior: smooth;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('livewire:init', () => {
+            let lastAudioUrl = null;
+            let playedAudios = new Set();
             
-            // Verificar que el audio esté cargado
-            if (audioElement.readyState >= 2) {
-                playedAudios.add(audioUrl);
-                const playPromise = audioElement.play();
+            function playAudio(audioElement) {
+                if (!audioElement) return;
                 
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log('Audio reproduciéndose automáticamente:', audioUrl);
-                    }).catch(error => {
-                        console.log('Autoplay bloqueado. Usa los controles para reproducir.', error);
-                    });
+                const audioUrl = audioElement.getAttribute('data-audio-url') || audioElement.querySelector('source')?.src;
+                
+                if (!audioUrl || playedAudios.has(audioUrl)) {
+                    return;
                 }
-            } else {
-                // Esperar a que el audio se cargue
-                audioElement.addEventListener('loadedmetadata', () => {
+                
+                // Verificar que el audio esté cargado
+                if (audioElement.readyState >= 2) {
                     playedAudios.add(audioUrl);
-                    audioElement.play().catch(e => {
-                        console.log('Autoplay bloqueado después de cargar:', e);
-                    });
-                }, { once: true });
-                
-                audioElement.addEventListener('error', (e) => {
-                    console.error('Error cargando audio:', audioUrl, audioElement.error);
-                }, { once: true });
-                
-                // Forzar carga
-                audioElement.load();
+                    const playPromise = audioElement.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log('Audio reproduciéndose automáticamente:', audioUrl);
+                        }).catch(error => {
+                            console.log('Autoplay bloqueado. Usa los controles para reproducir.', error);
+                        });
+                    }
+                } else {
+                    // Esperar a que el audio se cargue
+                    audioElement.addEventListener('loadedmetadata', () => {
+                        playedAudios.add(audioUrl);
+                        audioElement.play().catch(e => {
+                            console.log('Autoplay bloqueado después de cargar:', e);
+                        });
+                    }, { once: true });
+                    
+                    audioElement.addEventListener('error', (e) => {
+                        console.error('Error cargando audio:', audioUrl, audioElement.error);
+                    }, { once: true });
+                    
+                    // Forzar carga
+                    audioElement.load();
+                }
             }
-        }
-        
-        // Escuchar evento cuando hay un nuevo mensaje con audio
-        Livewire.on('new-audio-message', (event) => {
-            const audioUrl = event[0]?.audioUrl || event.audioUrl;
-            if (audioUrl && !playedAudios.has(audioUrl)) {
-                lastAudioUrl = audioUrl;
-                
-                // Esperar a que el DOM se actualice
-                setTimeout(() => {
-                    const container = document.getElementById('messages-container');
-                    if (container) {
+            
+            // Escuchar evento cuando hay un nuevo mensaje con audio
+            Livewire.on('new-audio-message', (event) => {
+                const audioUrl = event[0]?.audioUrl || event.audioUrl;
+                if (audioUrl && !playedAudios.has(audioUrl)) {
+                    lastAudioUrl = audioUrl;
+                    
+                    // Esperar a que el DOM se actualice
+                    setTimeout(() => {
+                        const container = document.getElementById('messages-container');
+                        if (container) {
+                            const audios = container.querySelectorAll('audio');
+                            const lastAudio = audios[audios.length - 1];
+                            playAudio(lastAudio);
+                        }
+                    }, 1000);
+                }
+            });
+            
+            Livewire.hook('morph.updated', ({ el, component }) => {
+                // Auto-scroll suave al final cuando hay nuevos mensajes
+                const container = document.getElementById('messages-container');
+                if (container) {
+                    // Scroll suave
+                    setTimeout(() => {
+                        container.scrollTo({
+                            top: container.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                    
+                    // Intentar reproducir el último audio si es nuevo
+                    setTimeout(() => {
                         const audios = container.querySelectorAll('audio');
-                        const lastAudio = audios[audios.length - 1];
-                        playAudio(lastAudio);
-                    }
-                }, 1000);
-            }
+                        if (audios.length > 0) {
+                            const lastAudio = audios[audios.length - 1];
+                            playAudio(lastAudio);
+                        }
+                    }, 800);
+                }
+            });
         });
-        
-        Livewire.hook('morph.updated', ({ el, component }) => {
-            // Auto-scroll suave al final cuando hay nuevos mensajes
-            const container = document.getElementById('messages-container');
-            if (container) {
-                // Scroll suave
-                setTimeout(() => {
-                    container.scrollTo({
-                        top: container.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }, 100);
-                
-                // Intentar reproducir el último audio si es nuevo
-                setTimeout(() => {
-                    const audios = container.querySelectorAll('audio');
-                    if (audios.length > 0) {
-                        const lastAudio = audios[audios.length - 1];
-                        playAudio(lastAudio);
-                    }
-                }, 800);
-            }
-        });
-    });
-</script>
+    </script>
+</div>
 

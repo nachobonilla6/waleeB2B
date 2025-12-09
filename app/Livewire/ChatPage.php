@@ -6,6 +6,11 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use Google_Client;
+use Google_Service_Calendar;
+use Google_Service_Calendar_Event;
 use App\Models\ChatMessage;
 
 class ChatPage extends Component
@@ -102,10 +107,11 @@ class ChatPage extends Component
         }
 
         $userMessage = trim($this->newMessage);
+        $user = auth()->user();
 
         // Guardar mensaje del usuario
         $userChatMessage = ChatMessage::create([
-            'user_id' => auth()->id(),
+            'user_id' => $user?->id,
             'message' => $userMessage,
             'type' => 'user',
         ]);
@@ -163,6 +169,14 @@ class ChatPage extends Component
             if ($audioUrl) {
                 $this->dispatch('new-audio-message', audioUrl: $audioUrl);
             }
+
+            // Intentar agenda + email si el usuario lo solicitó
+            $actionsNote = $this->maybeScheduleAndEmail($userMessage, $assistantMessage, $user);
+            if ($actionsNote) {
+                // Actualizar mensaje mostrado con la nota
+                $this->messages[0]['content'] = $assistantMessage . "\n\n" . $actionsNote;
+                $assistantChatMessage->update(['message' => $assistantMessage . "\n\n" . $actionsNote]);
+            }
         } catch (\Exception $e) {
             Log::error('Error al generar respuesta con OpenAI', [
                 'message' => $e->getMessage(),
@@ -184,6 +198,196 @@ class ChatPage extends Component
         } finally {
             $this->isLoading = false;
         }
+    }
+
+    /**
+     * Determina si el usuario está pidiendo agendar / calendario / email
+     */
+    private function shouldSchedule(string $text): bool
+    {
+        $text = mb_strtolower($text);
+        return str_contains($text, 'agendar')
+            || str_contains($text, 'agenda')
+            || str_contains($text, 'cita')
+            || str_contains($text, 'reunión')
+            || str_contains($text, 'calendar')
+            || str_contains($text, 'disponibilidad')
+            || str_contains($text, 'evento');
+    }
+
+    /**
+     * Intenta crear evento en Google Calendar y enviar email de confirmación.
+     */
+    private function maybeScheduleAndEmail(string $userMessage, string $assistantMessage, $user): ?string
+    {
+        if (!$this->shouldSchedule($userMessage)) {
+            return null;
+        }
+
+        try {
+            $service = $this->getCalendarService();
+        } catch (\Exception $e) {
+            Log::warning('No se pudo iniciar servicio de Calendar', ['error' => $e->getMessage()]);
+            return '⚠️ No pude acceder al calendario. Verifica credenciales y token OAuth.';
+        }
+
+        try {
+            $slot = $this->findNextAvailability($service, 60);
+        } catch (\Exception $e) {
+            Log::warning('No se pudo obtener disponibilidad', ['error' => $e->getMessage()]);
+            return '⚠️ No pude comprobar disponibilidad en el calendario.';
+        }
+
+        if (!$slot) {
+            return '⚠️ No encontré disponibilidad próxima para 1 hora.';
+        }
+
+        $summary = 'Reunión con ' . ($user?->name ?? 'Cliente');
+        $description = $assistantMessage;
+        $attendees = [];
+        if (!empty($user?->email)) {
+            $attendees[] = ['email' => $user->email];
+        }
+
+        try {
+            $event = $this->createCalendarEvent($service, $summary, $description, $slot['start'], $slot['end'], $attendees);
+        } catch (\Exception $e) {
+            Log::warning('No se pudo crear evento', ['error' => $e->getMessage()]);
+            return '⚠️ No pude crear el evento en el calendario.';
+        }
+
+        // Enviar correo con el contenido de la respuesta como cuerpo
+        $emailSent = false;
+        if (!empty($user?->email)) {
+            try {
+                $subject = 'Confirmación de evento: ' . $summary;
+                $body = $assistantMessage . "\n\nEnlace del evento: " . ($event->htmlLink ?? '(no disponible)');
+                $this->sendEmail($user->email, $subject, $body);
+                $emailSent = true;
+            } catch (\Exception $e) {
+                Log::warning('No se pudo enviar email', ['error' => $e->getMessage()]);
+            }
+        }
+
+        $note = '✅ Evento creado: ' . $slot['start']->format('d/m/Y H:i') . ' - ' . $slot['end']->format('H:i');
+        if (!empty($event->htmlLink)) {
+            $note .= "\n🔗 " . $event->htmlLink;
+        }
+        if ($emailSent) {
+            $note .= "\n📧 Correo enviado a " . $user->email;
+        } else {
+            $note .= "\n⚠️ Correo no enviado (no hay email del usuario o falló el envío).";
+        }
+
+        return $note;
+    }
+
+    /**
+     * Obtiene cliente de Google Calendar con credenciales + token
+     */
+    private function getCalendarService(): Google_Service_Calendar
+    {
+        $credentialsPath = config('services.google.credentials_path', storage_path('app/google-credentials.json'));
+        $tokenPath = storage_path('app/google-calendar-token.json');
+
+        if (!file_exists($credentialsPath)) {
+            throw new \RuntimeException('Falta google-credentials.json en ' . $credentialsPath);
+        }
+
+        $client = new Google_Client();
+        $client->setApplicationName('WALEE Chat');
+        $client->setScopes(Google_Service_Calendar::CALENDAR);
+        $client->setAuthConfig($credentialsPath);
+        $client->setAccessType('offline');
+
+        if (!file_exists($tokenPath)) {
+            throw new \RuntimeException('Falta token OAuth en ' . $tokenPath . '. Autoriza Google Calendar.');
+        }
+
+        $accessToken = json_decode(file_get_contents($tokenPath), true);
+        $client->setAccessToken($accessToken);
+
+        // Refresh token if expired
+        if ($client->isAccessTokenExpired()) {
+            if ($client->getRefreshToken()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                file_put_contents($tokenPath, json_encode($client->getAccessToken()));
+            } else {
+                throw new \RuntimeException('Token expirado y sin refresh token. Reautoriza Google Calendar.');
+            }
+        }
+
+        return new Google_Service_Calendar($client);
+    }
+
+    /**
+     * Busca el siguiente hueco libre de $duration minutos en los próximos 7 días
+     */
+    private function findNextAvailability(Google_Service_Calendar $service, int $durationMinutes = 60): ?array
+    {
+        $calendarId = 'primary';
+        $now = Carbon::now();
+        $endWindow = $now->copy()->addDays(7);
+
+        $events = $service->events->listEvents($calendarId, [
+            'timeMin' => $now->toRfc3339String(),
+            'timeMax' => $endWindow->toRfc3339String(),
+            'singleEvents' => true,
+            'orderBy' => 'startTime',
+        ])->getItems();
+
+        $cursor = $now->copy();
+        foreach ($events as $event) {
+            $start = Carbon::parse($event->getStart()->getDateTime() ?: $event->getStart()->getDate());
+            $end = Carbon::parse($event->getEnd()->getDateTime() ?: $event->getEnd()->getDate());
+
+            if ($cursor->lt($start) && $cursor->copy()->addMinutes($durationMinutes)->lte($start)) {
+                return ['start' => $cursor->copy(), 'end' => $cursor->copy()->addMinutes($durationMinutes)];
+            }
+
+            if ($cursor->lt($end)) {
+                $cursor = $end->copy();
+            }
+        }
+
+        // Si no encontró hueco entre eventos, usar el cursor si cae antes del fin de ventana
+        if ($cursor->addMinutes($durationMinutes)->lte($endWindow)) {
+            return ['start' => $cursor->copy(), 'end' => $cursor->copy()->addMinutes($durationMinutes)];
+        }
+
+        return null;
+    }
+
+    /**
+     * Crea evento en calendario
+     */
+    private function createCalendarEvent(Google_Service_Calendar $service, string $summary, string $description, Carbon $start, Carbon $end, array $attendees = [])
+    {
+        $event = new Google_Service_Calendar_Event([
+            'summary' => $summary,
+            'description' => $description,
+            'start' => [
+                'dateTime' => $start->toRfc3339String(),
+                'timeZone' => config('app.timezone', 'UTC'),
+            ],
+            'end' => [
+                'dateTime' => $end->toRfc3339String(),
+                'timeZone' => config('app.timezone', 'UTC'),
+            ],
+            'attendees' => $attendees,
+        ]);
+
+        return $service->events->insert('primary', $event);
+    }
+
+    /**
+     * Envia email de texto plano
+     */
+    private function sendEmail(string $to, string $subject, string $body): void
+    {
+        Mail::raw($body, function ($message) use ($to, $subject) {
+            $message->to($to)->subject($subject);
+        });
     }
 
     /**

@@ -129,6 +129,20 @@
             if (container) {
                 container.scrollTop = container.scrollHeight;
             }
+            
+            // Reproducir audio del último mensaje del asistente si tiene audio
+            setTimeout(() => {
+                const lastMessage = container.querySelector('[wire\\:key^="message-"]:last-of-type');
+                if (lastMessage) {
+                    const audio = lastMessage.querySelector('audio');
+                    if (audio && audio.hasAttribute('autoplay')) {
+                        audio.play().catch(e => {
+                            // Si el autoplay falla (por políticas del navegador), solo loguear
+                            console.log('Autoplay bloqueado:', e);
+                        });
+                    }
+                }
+            }, 500);
         });
     });
 </script>

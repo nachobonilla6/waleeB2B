@@ -194,7 +194,11 @@ class ChatPage extends Component
                     'content' => $assistantMessage ?? 'Mensaje de audio',
                     'timestamp' => $assistantChatMessage->created_at,
                     'audio_url' => $audioUrl,
+                    'id' => $assistantChatMessage->id,
                 ];
+                
+                // Disparar evento para reproducir audio automáticamente
+                $this->dispatch('new-audio-message', audioUrl: $audioUrl);
             } else {
                 $errorMessage = 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.';
                 

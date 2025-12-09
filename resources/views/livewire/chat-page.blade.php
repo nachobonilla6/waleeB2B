@@ -28,15 +28,23 @@
                             <p class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{{ $message['content'] }}</p>
                         </div>
                         @if(isset($message['audio_url']) && $message['audio_url'])
+                            @php
+                                // Asegurar que la URL sea absoluta
+                                $audioUrl = $message['audio_url'];
+                                if (!str_starts_with($audioUrl, 'http')) {
+                                    $audioUrl = asset($audioUrl);
+                                }
+                            @endphp
                             <div class="mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
                                 <audio 
                                     controls 
                                     class="w-full h-8" 
                                     preload="auto"
-                                    @if($index === count($messages) - 1 && !$isLoading) autoplay @endif
+                                    id="audio-{{ $index }}"
+                                    data-audio-url="{{ $audioUrl }}"
                                     wire:key="audio-{{ $index }}"
                                 >
-                                    <source src="{{ $message['audio_url'] }}" type="audio/mpeg">
+                                    <source src="{{ $audioUrl }}" type="audio/mpeg">
                                     Tu navegador no soporta el elemento de audio.
                                 </audio>
                             </div>
@@ -136,26 +144,66 @@
 
 <script>
     document.addEventListener('livewire:init', () => {
+        let lastAudioUrl = null;
+        let playedAudios = new Set();
+        
+        // Escuchar evento cuando hay un nuevo mensaje con audio
+        Livewire.on('new-audio-message', (event) => {
+            const audioUrl = event[0]?.audioUrl || event.audioUrl;
+            if (audioUrl && !playedAudios.has(audioUrl)) {
+                playedAudios.add(audioUrl);
+                lastAudioUrl = audioUrl;
+                
+                // Esperar a que el DOM se actualice
+                setTimeout(() => {
+                    const container = document.getElementById('messages-container');
+                    if (container) {
+                        // Buscar el último audio en el contenedor
+                        const audios = container.querySelectorAll('audio');
+                        const lastAudio = audios[audios.length - 1];
+                        
+                        if (lastAudio) {
+                            // Cargar y reproducir automáticamente
+                            lastAudio.load();
+                            
+                            const playPromise = lastAudio.play();
+                            
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    console.log('Audio reproduciéndose automáticamente');
+                                }).catch(error => {
+                                    console.log('Autoplay bloqueado. Usa los controles para reproducir.');
+                                });
+                            }
+                        }
+                    }
+                }, 800);
+            }
+        });
+        
         Livewire.hook('morph.updated', ({ el, component }) => {
             // Auto-scroll al final cuando hay nuevos mensajes
             const container = document.getElementById('messages-container');
             if (container) {
                 container.scrollTop = container.scrollHeight;
-            }
-            
-            // Reproducir audio del último mensaje del asistente si tiene audio
-            setTimeout(() => {
-                const lastMessage = container.querySelector('[wire\\:key^="message-"]:last-of-type');
-                if (lastMessage) {
-                    const audio = lastMessage.querySelector('audio');
-                    if (audio && audio.hasAttribute('autoplay')) {
-                        audio.play().catch(e => {
-                            // Si el autoplay falla (por políticas del navegador), solo loguear
-                            console.log('Autoplay bloqueado:', e);
-                        });
+                
+                // Intentar reproducir el último audio si es nuevo
+                setTimeout(() => {
+                    const audios = container.querySelectorAll('audio');
+                    if (audios.length > 0) {
+                        const lastAudio = audios[audios.length - 1];
+                        const audioUrl = lastAudio.getAttribute('data-audio-url') || lastAudio.querySelector('source')?.src;
+                        
+                        if (audioUrl && !playedAudios.has(audioUrl)) {
+                            playedAudios.add(audioUrl);
+                            lastAudio.load();
+                            lastAudio.play().catch(e => {
+                                console.log('Autoplay bloqueado:', e);
+                            });
+                        }
                     }
-                }
-            }, 500);
+                }, 500);
+            }
         });
     });
 </script>

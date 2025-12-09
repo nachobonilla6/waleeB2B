@@ -298,6 +298,12 @@ class ChatPage extends Component
                 // Disparar evento para reproducir audio automáticamente
                 $this->dispatch('new-audio-message', audioUrl: $audioUrl);
             } else {
+                Log::error('Webhook respondió con error', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'headers' => $response->headers(),
+                ]);
+                
                 $errorMessage = 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.';
                 
                 // Guardar mensaje de error en la base de datos
@@ -309,7 +315,7 @@ class ChatPage extends Component
                 
                 $this->messages[] = [
                     'type' => 'assistant',
-                    'content' => $errorMessage,
+                    'content' => $errorMessage . ' (Status: ' . $response->status() . ')',
                     'timestamp' => $errorChatMessage->created_at,
                 ];
             }

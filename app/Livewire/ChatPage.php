@@ -96,37 +96,36 @@ class ChatPage extends Component
 
     public function sendMessage()
     {
-        try {
-            Log::info('sendMessage() llamado', [
-                'newMessage' => $this->newMessage,
-                'isLoading' => $this->isLoading,
-                'user_id' => auth()->id(),
-            ]);
-            
-            if (empty(trim($this->newMessage))) {
-                Log::warning('Intento de enviar mensaje vacío');
-                return;
-            }
+        Log::info('sendMessage() llamado', [
+            'newMessage' => $this->newMessage,
+            'isLoading' => $this->isLoading,
+            'user_id' => auth()->id(),
+        ]);
+        
+        if (empty(trim($this->newMessage))) {
+            Log::warning('Intento de enviar mensaje vacío');
+            return;
+        }
 
-            // Guardar mensaje del usuario en la base de datos
-            $userMessage = trim($this->newMessage);
-            
-            Log::info('Enviando mensaje al webhook', [
-                'user_id' => auth()->id(),
-                'message' => $userMessage,
-                'user_name' => auth()->user()->name ?? 'Usuario',
-                'user_email' => auth()->user()->email ?? '',
-            ]);
-            
-            $userChatMessage = ChatMessage::create([
-                'user_id' => auth()->id(),
-                'message' => $userMessage,
-                'type' => 'user',
-            ]);
-            
-            Log::info('Mensaje del usuario guardado en BD', [
-                'chat_message_id' => $userChatMessage->id,
-            ]);
+        // Guardar mensaje del usuario en la base de datos
+        $userMessage = trim($this->newMessage);
+        
+        Log::info('Enviando mensaje al webhook', [
+            'user_id' => auth()->id(),
+            'message' => $userMessage,
+            'user_name' => auth()->user()->name ?? 'Usuario',
+            'user_email' => auth()->user()->email ?? '',
+        ]);
+        
+        $userChatMessage = ChatMessage::create([
+            'user_id' => auth()->id(),
+            'message' => $userMessage,
+            'type' => 'user',
+        ]);
+        
+        Log::info('Mensaje del usuario guardado en BD', [
+            'chat_message_id' => $userChatMessage->id,
+        ]);
 
         // Agregar mensaje del usuario a la vista
         $this->messages[] = [

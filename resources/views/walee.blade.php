@@ -35,6 +35,10 @@
         $chatMessages = \App\Models\ChatMessage::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
+        $lastAssistant = \App\Models\ChatMessage::where('user_id', auth()->id())
+            ->where('type', 'assistant')
+            ->orderBy('created_at', 'desc')
+            ->first();
         $chatHistory = \App\Models\ChatMessage::where('user_id', auth()->id())
             ->orderBy('created_at', 'asc')
             ->limit(20)
@@ -128,8 +132,8 @@
                     class="flex-1 overflow-y-auto p-4 bg-gray-900 space-y-4 min-h-0" 
                     id="messages-container"
                 >
-                    @if($chatMessages->isNotEmpty())
-                        @php $last = $chatMessages->first(); @endphp
+                    @if($lastAssistant)
+                        @php $last = $lastAssistant; @endphp
                         <div class="animate-fade-in" style="animation: fadeIn 0.3s ease-in;">
                             <div class="bg-gray-800 text-gray-100 rounded-lg p-4 shadow-sm border border-gray-700 inline-block">
                                 <div class="text-sm break-words leading-relaxed">{!! nl2br(e($last->message)) !!}</div>

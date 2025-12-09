@@ -112,6 +112,11 @@ Route::post('/webhook/tickets', function (\Illuminate\Http\Request $request) {
     ]);
 })->name('webhook.tickets');
 
+// Ruta para WALEE Chat (fuera de Filament)
+Route::get('/walee', function () {
+    return view('walee');
+})->middleware(['auth'])->name('walee');
+
 // Rutas para los casos de soporte
 Route::get('/cases', [SupportCaseController::class, 'index'])->name('cases.index');
 Route::post('/support-cases/{case}/close', [SupportCaseController::class, 'close'])

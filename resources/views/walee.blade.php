@@ -30,7 +30,7 @@
         }
     </style>
 </head>
-<body class="antialiased bg-gray-50 h-screen overflow-hidden">
+<body class="antialiased bg-gray-900 text-gray-100 h-screen overflow-hidden">
     @php
         $chatMessages = \App\Models\ChatMessage::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
@@ -39,7 +39,7 @@
     @endphp
     <div class="h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+        <header class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex-shrink-0 text-gray-100">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <a href="{{ route('filament.admin.pages.dashboard') }}" class="text-gray-600 hover:text-gray-900 mr-4 transition-colors">
@@ -53,7 +53,7 @@
                     <span class="text-sm text-gray-600">{{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                        <button type="submit" class="text-sm text-gray-300 hover:text-white transition-colors">
                             Salir
                         </button>
                     </form>
@@ -65,9 +65,9 @@
         <main class="flex-1 min-h-0 overflow-hidden">
             <div class="h-full flex flex-col bg-white">
                 <!-- Chat Header -->
-                <div class="px-6 py-3 flex items-center justify-between flex-shrink-0 border-b border-gray-200" style="background-color: #D59F3B;">
+                <div class="px-6 py-3 flex items-center justify-between flex-shrink-0 border-b border-gray-800" style="background-color: #D59F3B;">
                     <div class="flex items-center">
-                        <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="h-10 w-10 rounded-full object-cover border-2 border-white/20">
+                        <div class="h-10 w-10 rounded-full border-2 border-white/30 bg-white/20 flex items-center justify-center text-white font-bold">W</div>
                         <div class="ml-3">
                             <h1 class="text-white font-semibold text-lg">WALEE</h1>
                             <div class="flex items-center mt-1">
@@ -95,14 +95,14 @@
                 </div>
 
                 <!-- Search Bar Input (Top) -->
-                <div class="px-4 py-4 border-b border-gray-200 bg-white flex-shrink-0">
+                <div class="px-4 py-4 border-b border-gray-800 bg-gray-900 flex-shrink-0">
                     <form id="chat-form" class="w-full">
                         <div class="relative">
                             <textarea
                                 id="chat-input"
                                 rows="3"
                                 placeholder="Escribe tu mensaje aquí..."
-                                class="w-full px-4 py-4 pr-12 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-[#D59F3B] focus:border-transparent transition-all duration-200 min-h-[96px]"
+                                class="w-full px-4 py-4 pr-12 rounded-lg border border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-[#D59F3B] focus:border-transparent transition-all duration-200 min-h-[96px]"
                                 style="resize: vertical;"
                             ></textarea>
                             <button 
@@ -121,59 +121,20 @@
 
                 <!-- Messages (Bottom) -->
                 <div 
-                    class="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4 min-h-0" 
+                    class="flex-1 overflow-y-auto p-4 bg-gray-900 space-y-4 min-h-0" 
                     id="messages-container"
                 >
-                    @foreach($chatMessages as $index => $message)
-                        @if($message->type === 'assistant')
-                            <div class="flex items-start animate-fade-in" style="animation: fadeIn 0.3s ease-in;">
-                                <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200">
-                                <div class="ml-3 max-w-xs lg:max-w-md">
-                                    <div class="bg-gray-100 rounded-lg p-3 inline-block">
-                                        <div class="text-sm text-gray-800 break-words">{!! nl2br(e($message->message)) !!}</div>
-                                    </div>
-                                    @if($message->audio_url)
-                                        @php
-                                            $audioUrl = $message->audio_url;
-                                            if (!str_starts_with($audioUrl, 'http')) {
-                                                if (str_starts_with($audioUrl, '/storage')) {
-                                                    $audioUrl = asset($audioUrl);
-                                                } else {
-                                                    $audioUrl = asset('storage/' . ltrim($audioUrl, '/'));
-                                                }
-                                            }
-                                        @endphp
-                                        <div class="mt-3 bg-gray-50 rounded-lg p-2">
-                                            <audio controls controlsList="nodownload" class="w-full h-10" preload="metadata">
-                                                <source src="{{ $audioUrl }}" type="audio/mpeg">
-                                                <source src="{{ $audioUrl }}" type="audio/mp3">
-                                                Tu navegador no soporta audio.
-                                            </audio>
-                                        </div>
-                                    @endif
-                                    <p class="text-xs text-gray-500 mt-2">
-                                        {{ $message->created_at->format('d/m/Y H:i') }}
-                                    </p>
-                                </div>
+                    @if($chatMessages->isNotEmpty())
+                        @php $last = $chatMessages->first(); @endphp
+                        <div class="animate-fade-in" style="animation: fadeIn 0.3s ease-in;">
+                            <div class="bg-gray-800 text-gray-100 rounded-lg p-4 shadow-sm border border-gray-700 inline-block">
+                                <div class="text-sm break-words leading-relaxed">{!! nl2br(e($last->message)) !!}</div>
+                                <p class="text-xs text-gray-400 mt-2">
+                                    {{ $last->created_at->format('d/m/Y H:i') }}
+                                </p>
                             </div>
-                        @else
-                            <div class="flex items-start gap-3 justify-end animate-fade-in" style="animation: fadeIn 0.3s ease-in;">
-                                <div class="flex-1 text-right">
-                                    <div class="bg-[#D59F3B] text-white rounded-lg p-4 shadow-sm inline-block">
-                                        <div class="text-sm break-words leading-relaxed">{!! nl2br(e($message->message)) !!}</div>
-                                        <p class="text-xs text-white/80 mt-2">
-                                            {{ $message->created_at->format('d/m/Y H:i') }}
-                                        </p>
-                                    </div>
-                                </div>
-                                @php
-                                    $user = auth()->user();
-                                    $avatarUrl = $user->avatar ? Storage::url($user->avatar) : $defaultAvatar;
-                                @endphp
-                                <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
-                            </div>
-                        @endif
-                    @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
         </main>
@@ -189,30 +150,18 @@
             const voiceToggle = document.getElementById('voice-toggle');
             let voiceEnabled = true;
 
-            function prependMessage({ type, content, audioUrl = null }) {
+            function showAssistantMessage(content, audioUrl = null) {
                 if (!container) return;
+                container.innerHTML = '';
                 const wrapper = document.createElement('div');
-                wrapper.className = 'flex items-start gap-3 animate-fade-in';
+                wrapper.className = 'animate-fade-in';
                 wrapper.style.animation = 'fadeIn 0.3s ease-in';
-                if (type === 'assistant') {
-                    wrapper.innerHTML = `
-                        <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
-                        <div class="flex-1">
-                            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                                <div class="text-sm text-gray-800 break-words leading-relaxed assistant-text">${content}</div>
-                            </div>
-                            ${audioUrl ? `<div class="mt-3 bg-gray-50 rounded-lg p-2"><audio controls controlsList="nodownload" class="w-full h-10" preload="metadata"><source src="${audioUrl}" type="audio/mpeg"><source src="${audioUrl}" type="audio/mp3">Tu navegador no soporta audio.</audio></div>` : ''}
-                        </div>`;
-                } else {
-                    wrapper.classList.add('justify-end');
-                    wrapper.innerHTML = `
-                        <div class="flex-1 text-right">
-                            <div class="bg-[#D59F3B] text-white rounded-lg p-4 shadow-sm inline-block">
-                                <div class="text-sm break-words leading-relaxed">${content}</div>
-                            </div>
-                        </div>`;
-                }
-                container.prepend(wrapper);
+                wrapper.innerHTML = `
+                    <div class="bg-gray-800 text-gray-100 rounded-lg p-4 shadow-sm border border-gray-700 inline-block">
+                        <div class="text-sm break-words leading-relaxed assistant-text">${content}</div>
+                        ${audioUrl ? `<div class="mt-3 bg-gray-700 rounded-lg p-2"><audio controls controlsList="nodownload" class="w-full h-10" preload="metadata"><source src="${audioUrl}" type="audio/mpeg"><source src="${audioUrl}" type="audio/mp3">Tu navegador no soporta audio.</audio></div>` : ''}
+                    </div>`;
+                container.appendChild(wrapper);
             }
 
             function scrollToTop() {
@@ -299,7 +248,7 @@
                         prependMessage({ type: 'user', content: message });
                         const assistantText = await sendToWebhook(message);
                         // Mostrar respuesta
-                        prependMessage({ type: 'assistant', content: assistantText });
+                        showAssistantMessage(assistantText);
                         // Persistir en BD + TTS opcional, sin duplicar agenda/email (skip_actions)
                         await finalizeMessage(message, assistantText);
                     } catch (err) {

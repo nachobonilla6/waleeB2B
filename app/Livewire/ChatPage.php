@@ -13,6 +13,7 @@ class ChatPage extends Component
     public $messages = [];
     public $newMessage = '';
     public $isLoading = false;
+    public $voiceEnabled = true; // Toggle de voz activado por defecto
 
     public function mount()
     {
@@ -364,6 +365,11 @@ class ChatPage extends Component
         } finally {
             $this->isLoading = false;
         }
+    }
+
+    public function toggleVoice()
+    {
+        $this->voiceEnabled = !$this->voiceEnabled;
     }
 
     public function render()

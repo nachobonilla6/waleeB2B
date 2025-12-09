@@ -56,6 +56,22 @@
                 </div>
             </div>
         </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-white/80 hidden sm:inline">Voz</span>
+            <button 
+                wire:click="toggleVoice"
+                type="button"
+                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#D59F3B]"
+                :class="$voiceEnabled ? 'bg-white' : 'bg-gray-300'"
+                role="switch"
+                :aria-checked="$voiceEnabled"
+            >
+                <span 
+                    class="inline-block h-4 w-4 transform rounded-full bg-[#D59F3B] transition-transform"
+                    :class="$voiceEnabled ? 'translate-x-6' : 'translate-x-1'"
+                ></span>
+            </button>
+        </div>
     </div>
 
     <!-- Search Bar Input (Top) -->
@@ -276,15 +292,23 @@
                 if (audioUrl && !playedAudios.has(audioUrl)) {
                     lastAudioUrl = audioUrl;
                     
-                    // Esperar a que el DOM se actualice
-                    setTimeout(() => {
-                        const container = document.getElementById('messages-container');
-                        if (container) {
-                            const audios = container.querySelectorAll('audio');
-                            const lastAudio = audios[audios.length - 1];
-                            playAudio(lastAudio);
+                    // Verificar si la voz está habilitada antes de reproducir
+                    Livewire.hook('morph', ({ component }) => {
+                        if (component.name === 'chat-page') {
+                            const voiceEnabled = component.get('voiceEnabled');
+                            if (voiceEnabled) {
+                                // Esperar a que el DOM se actualice
+                                setTimeout(() => {
+                                    const container = document.getElementById('messages-container');
+                                    if (container) {
+                                        const audios = container.querySelectorAll('audio');
+                                        const lastAudio = audios[audios.length - 1];
+                                        playAudio(lastAudio);
+                                    }
+                                }, 1000);
+                            }
                         }
-                    }, 1000);
+                    });
                 }
             });
             

@@ -214,6 +214,9 @@
                 } catch (_) {
                     // keep text as is
                 }
+                if (!assistantText || assistantText === 'undefined') {
+                    assistantText = 'Lo siento, no recibí respuesta del servicio.';
+                }
                 return assistantText.trim();
             }
 

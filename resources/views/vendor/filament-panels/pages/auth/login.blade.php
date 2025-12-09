@@ -19,4 +19,6 @@
     </x-filament-panels::form>
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
+
+    @include('components.google-login-button')
 </x-filament-panels::page.simple>

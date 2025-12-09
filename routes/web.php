@@ -4,7 +4,12 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\SupportCaseController;
+use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Models\Sitio;
+
+// Rutas de autenticación con Google
+Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
 // Página de inicio
 Route::get('/', function () {

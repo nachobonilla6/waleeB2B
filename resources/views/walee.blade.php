@@ -6,7 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>WALEE - Chat</title>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Livewire Styles -->
     @livewireStyles
     
     <style>
@@ -27,6 +30,11 @@
         
         #messages-container {
             scroll-behavior: smooth;
+        }
+        
+        /* Dark mode support */
+        .dark {
+            color-scheme: dark;
         }
     </style>
 </head>

@@ -14,9 +14,9 @@ class Chat extends Page
 
     protected static string $view = 'filament.pages.chat';
     
-    public function getHeading(): ?string
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
     {
-        return null;
+        return '';
     }
 }
 

@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Filament\Widgets\IngresosDashboardWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Actions\Action;
 
 class Dashboard extends BaseDashboard
 {
@@ -15,6 +16,18 @@ class Dashboard extends BaseDashboard
     {
         return [
             IngresosDashboardWidget::class,
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('chat')
+                ->label('Chat')
+                ->icon('heroicon-o-chat-bubble-left-right')
+                ->color('success')
+                ->url(route('chat'))
+                ->openUrlInNewTab(),
         ];
     }
 

@@ -15,6 +15,8 @@ use App\Models\ChatMessage;
 
 class ChatPage extends Component
 {
+    protected $listeners = ['finalizeMessage'];
+
     public $messages = [];
     public $newMessage = '';
     public $isLoading = false;
@@ -443,6 +445,69 @@ class ChatPage extends Component
     public function toggleVoice()
     {
         $this->voiceEnabled = !$this->voiceEnabled;
+    }
+
+    /**
+     * Finaliza y guarda conversación tras streaming en frontend
+     */
+    public function finalizeMessage(array $payload): void
+    {
+        $userMessage = trim($payload['userMessage'] ?? '');
+        $assistantMessage = trim($payload['assistantMessage'] ?? '');
+
+        if ($userMessage === '' || $assistantMessage === '') {
+            return;
+        }
+
+        $user = auth()->user();
+
+        // Guardar mensaje del usuario
+        $userChatMessage = ChatMessage::create([
+            'user_id' => $user?->id,
+            'message' => $userMessage,
+            'type' => 'user',
+        ]);
+
+        array_unshift($this->messages, [
+            'type' => 'user',
+            'content' => $userMessage,
+            'timestamp' => $userChatMessage->created_at,
+        ]);
+
+        // Guardar respuesta del asistente
+        $assistantChatMessage = ChatMessage::create([
+            'user_id' => $user?->id,
+            'message' => $assistantMessage,
+            'type' => 'assistant',
+        ]);
+
+        $audioUrl = null;
+        if ($this->voiceEnabled) {
+            $audioUrl = $this->generateAudio($assistantMessage, $assistantChatMessage->id);
+            if ($audioUrl) {
+                $assistantChatMessage->update(['audio_url' => $audioUrl]);
+            }
+        }
+
+        array_unshift($this->messages, [
+            'type' => 'assistant',
+            'content' => $assistantMessage,
+            'timestamp' => $assistantChatMessage->created_at,
+            'audio_url' => $audioUrl,
+            'id' => $assistantChatMessage->id,
+        ]);
+
+        if ($audioUrl) {
+            $this->dispatch('new-audio-message', audioUrl: $audioUrl);
+        }
+
+        // Agenda + email si corresponde
+        $actionsNote = $this->maybeScheduleAndEmail($userMessage, $assistantMessage, $user);
+        if ($actionsNote) {
+            // Actualizar mensaje mostrado con la nota
+            $this->messages[0]['content'] .= "\n\n" . $actionsNote;
+            $assistantChatMessage->update(['message' => $assistantMessage . "\n\n" . $actionsNote]);
+        }
     }
 
     public function render()

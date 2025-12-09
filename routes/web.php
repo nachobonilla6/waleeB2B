@@ -5,6 +5,7 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\SupportCaseController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\ChatStreamController;
 use App\Models\Sitio;
 
 // Ruta para servir archivos de audio del chat (sin necesidad de symlink)
@@ -116,6 +117,11 @@ Route::post('/webhook/tickets', function (\Illuminate\Http\Request $request) {
 Route::get('/walee', function () {
     return view('walee');
 })->middleware(['auth'])->name('walee');
+
+// Streaming de chat con OpenAI
+Route::post('/chat/stream', [ChatStreamController::class, 'stream'])
+    ->middleware(['auth'])
+    ->name('chat.stream');
 
 // Rutas para los casos de soporte
 Route::get('/cases', [SupportCaseController::class, 'index'])->name('cases.index');

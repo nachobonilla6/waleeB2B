@@ -76,33 +76,24 @@
 
     <!-- Search Bar Input (Top) -->
     <div class="px-4 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
-        <form wire:submit.prevent="sendMessage" class="w-full">
+        <form id="chat-form" class="w-full">
             <div class="relative">
                 <textarea
-                    wire:model.live="newMessage"
+                    id="chat-input"
                     rows="3"
                     placeholder="Escribe tu mensaje aquí..."
                     class="w-full px-4 py-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-[#D59F3B] focus:border-transparent transition-all duration-200 min-h-[96px]"
                     style="resize: vertical;"
                 ></textarea>
                 <button 
+                    id="chat-send"
                     type="submit"
-                    wire:loading.attr="disabled"
-                    wire:target="sendMessage"
                     class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-lg text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     style="background-color: #D59F3B;"
                 >
-                    <span wire:loading.remove wire:target="sendMessage">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                        </svg>
-                    </span>
-                    <span wire:loading wire:target="sendMessage">
-                        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
                 </button>
             </div>
         </form>
@@ -293,47 +284,148 @@
                 if (audioUrl && !playedAudios.has(audioUrl)) {
                     lastAudioUrl = audioUrl;
                     
-                    // Verificar si la voz está habilitada antes de reproducir
-                    Livewire.hook('morph', ({ component }) => {
-                        if (component.name === 'chat-page') {
-                            const voiceEnabled = component.get('voiceEnabled');
-                            if (voiceEnabled) {
-                                // Esperar a que el DOM se actualice
-                                setTimeout(() => {
-                                    const container = document.getElementById('messages-container');
-                                    if (container) {
-                                        const audios = container.querySelectorAll('audio');
-                                        const lastAudio = audios[audios.length - 1];
-                                        playAudio(lastAudio);
-                                    }
-                                }, 1000);
+                    setTimeout(() => {
+                        const container = document.getElementById('messages-container');
+                        if (container) {
+                            const livewireElement = container.closest('[wire\\:id]');
+                            let voiceEnabled = true;
+                            if (livewireElement) {
+                                const component = Livewire.find(livewireElement.getAttribute('wire:id'));
+                                voiceEnabled = component?.get('voiceEnabled') ?? true;
                             }
+                            if (!voiceEnabled) return;
+
+                            const audios = container.querySelectorAll('audio');
+                            const lastAudio = audios[audios.length - 1];
+                            playAudio(lastAudio);
                         }
-                    });
+                    }, 800);
                 }
             });
             
-            Livewire.hook('morph.updated', ({ el, component }) => {
-                // Cuando hay nuevos mensajes, hacer scroll al inicio (donde están los más recientes)
+            Livewire.hook('morph.updated', () => {
                 scrollToTop(true);
-                
-                // Intentar reproducir el primer audio (el más reciente) solo si la voz está habilitada
-                if (component && component.name === 'chat-page') {
-                    const voiceEnabled = component.get('voiceEnabled');
-                    if (voiceEnabled) {
-                        setTimeout(() => {
-                            const container = document.getElementById('messages-container');
-                            if (container) {
-                                const audios = container.querySelectorAll('audio');
-                                if (audios.length > 0) {
-                                    const firstAudio = audios[0]; // El primer audio es el más reciente
-                                    playAudio(firstAudio);
-                                }
+            });
+
+            // --- Streaming OpenAI via fetch ---
+            const form = document.getElementById('chat-form');
+            const textarea = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send');
+            const container = document.getElementById('messages-container');
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            function prependMessage({ type, content, audioUrl = null }) {
+                if (!container) return;
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex items-start gap-3 animate-fade-in';
+                wrapper.style.animation = 'fadeIn 0.3s ease-in';
+                if (type === 'assistant') {
+                    wrapper.innerHTML = `
+                        <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
+                        <div class="flex-1">
+                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                                <div class="text-sm text-gray-800 dark:text-gray-200 break-words leading-relaxed assistant-text">${content}</div>
+                            </div>
+                        </div>`;
+                } else {
+                    wrapper.classList.add('justify-end');
+                    wrapper.innerHTML = `
+                        <div class="flex-1 text-right">
+                            <div class="bg-[#D59F3B] text-white rounded-lg p-4 shadow-sm inline-block">
+                                <div class="text-sm break-words leading-relaxed">${content}</div>
+                            </div>
+                        </div>`;
+                }
+                container.prepend(wrapper);
+            }
+
+            async function streamMessage(message) {
+                const resp = await fetch('{{ route('chat.stream') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                        'Accept': 'text/event-stream',
+                    },
+                    body: JSON.stringify({ message }),
+                    credentials: 'same-origin',
+                });
+
+                if (!resp.ok || !resp.body) {
+                    throw new Error('No se pudo iniciar streaming');
+                }
+
+                const reader = resp.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let assistantText = '';
+                let assistantNode = null;
+
+                prependMessage({ type: 'user', content: message });
+                assistantNode = document.createElement('div');
+                assistantNode.className = 'flex items-start gap-3 animate-fade-in';
+                assistantNode.style.animation = 'fadeIn 0.3s ease-in';
+                assistantNode.innerHTML = `
+                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
+                    <div class="flex-1">
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                            <div class="text-sm text-gray-800 dark:text-gray-200 break-words leading-relaxed assistant-text"></div>
+                        </div>
+                    </div>`;
+                container.prepend(assistantNode);
+                const assistantTextDiv = assistantNode.querySelector('.assistant-text');
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (!trimmed) continue;
+                        if (trimmed === 'data: [DONE]') {
+                            break;
+                        }
+                        if (trimmed.startsWith('data:')) {
+                            try {
+                                const json = JSON.parse(trimmed.replace(/^data:\s*/, ''));
+                                const delta = json.choices?.[0]?.delta?.content ?? '';
+                                assistantText += delta;
+                                if (assistantTextDiv) assistantTextDiv.textContent = assistantText;
+                            } catch (e) {
+                                console.warn('No JSON chunk', trimmed);
                             }
-                        }, 800);
+                        }
                     }
                 }
-            });
+
+                return assistantText.trim();
+            }
+
+            if (form && textarea && sendBtn && container) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const message = textarea.value.trim();
+                    if (!message || sendBtn.disabled) return;
+
+                    sendBtn.disabled = true;
+                    textarea.disabled = true;
+                    try {
+                        const assistantText = await streamMessage(message);
+                        // Persistir en Livewire/BD con TTS/agenda
+                        window.Livewire?.dispatch('finalizeMessage', {
+                            userMessage: message,
+                            assistantMessage: assistantText,
+                        });
+                    } catch (err) {
+                        console.error(err);
+                        prependMessage({ type: 'assistant', content: 'Lo siento, hubo un problema al procesar tu mensaje.' });
+                    } finally {
+                        textarea.value = '';
+                        textarea.disabled = false;
+                        sendBtn.disabled = false;
+                    }
+                });
+            }
         });
     </script>
 </div>

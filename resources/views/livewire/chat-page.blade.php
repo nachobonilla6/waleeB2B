@@ -87,20 +87,33 @@
             <div class="flex-1 relative">
                 <textarea 
                     wire:model="newMessage"
-                    x-data="{ resize() { $el.style.height = '48px'; $el.style.height = $el.scrollHeight + 'px'; } }"
+                    x-data="{ 
+                        resize() { 
+                            $el.style.height = '48px'; 
+                            $el.style.height = $el.scrollHeight + 'px'; 
+                        },
+                        handleEnter(e) {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                if (!$wire.isLoading && $wire.newMessage.trim()) {
+                                    $wire.sendMessage();
+                                }
+                            }
+                        }
+                    }"
                     x-init="resize(); $watch('$wire.newMessage', () => setTimeout(resize, 10))"
                     @input="resize()"
+                    @keydown="handleEnter($event)"
                     rows="1"
-                    placeholder="Escribe tu mensaje..."
+                    placeholder="Escribe tu mensaje... (Enter para enviar, Shift+Enter para nueva línea)"
                     class="w-full rounded-2xl border-0 py-3 px-4 pr-12 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 resize-none transition-all duration-200 min-h-[48px] max-h-32 text-sm leading-relaxed overflow-y-auto"
                     style="scrollbar-width: thin;"
-                    @keydown.enter.prevent="if(!event.shiftKey && !$wire.isLoading && trim($wire.newMessage)) $wire.sendMessage()"
                 ></textarea>
             </div>
             <button 
                 type="submit" 
                 :disabled="$isLoading || !trim($newMessage)"
-                class="inline-flex items-center justify-center h-16 w-16 rounded-full text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transform hover:scale-105 active:scale-95"
+                class="inline-flex items-center justify-center h-16 w-16 rounded-lg text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transform hover:scale-105 active:scale-95"
                 style="background: linear-gradient(135deg, #D59F3B 0%, #C08A2E 100%); box-shadow: 0 10px 25px rgba(213, 159, 59, 0.4);"
                 onmouseover="this.style.boxShadow='0 15px 35px rgba(213, 159, 59, 0.5)'"
                 onmouseout="this.style.boxShadow='0 10px 25px rgba(213, 159, 59, 0.4)'"

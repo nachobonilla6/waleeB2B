@@ -1,5 +1,46 @@
 @php
     use Illuminate\Support\Facades\Storage;
+    
+    // Función helper para convertir URLs en enlaces estéticos
+    function formatMessageWithLinks($text) {
+        // Primero escapar el texto para seguridad
+        $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+        
+        // Convertir saltos de línea a <br>
+        $text = nl2br($text);
+        
+        // Patrón para detectar URLs (más completo)
+        $urlPattern = '/(https?:\/\/[^\s<>"\'{}|\\^`\[\]]+|www\.[^\s<>"\'{}|\\^`\[\]]+)/i';
+        
+        // Reemplazar URLs con enlaces estéticos
+        $formatted = preg_replace_callback($urlPattern, function($matches) {
+            $url = trim($matches[0]);
+            
+            // Agregar http:// si no tiene protocolo
+            if (!preg_match('/^https?:\/\//i', $url)) {
+                $url = 'https://' . $url;
+            }
+            
+            // Detectar si es Google Calendar
+            $isGoogleCalendar = str_contains($url, 'calendar.google.com') || str_contains($url, 'google.com/calendar');
+            $icon = $isGoogleCalendar ? '📅' : '🔗';
+            
+            // Obtener dominio para mostrar
+            $parsedUrl = parse_url($url);
+            $domain = $parsedUrl['host'] ?? 'Enlace';
+            $displayText = $isGoogleCalendar ? 'Ver en Google Calendar' : (str_replace('www.', '', $domain));
+            
+            return '<a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 mt-1.5 text-xs font-medium text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-all duration-200 group">
+                <span>' . $icon . '</span>
+                <span class="group-hover:underline">' . htmlspecialchars($displayText, ENT_QUOTES, 'UTF-8') . '</span>
+                <svg class="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+            </a>';
+        }, $text);
+        
+        return $formatted;
+    }
 @endphp
 
 <div class="h-full flex flex-col bg-white dark:bg-gray-800">
@@ -21,11 +62,13 @@
     <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 space-y-4 min-h-0" id="messages-container">
         @foreach($messages as $index => $message)
             @if($message['type'] === 'assistant')
-                <div class="flex items-start" wire:key="message-{{ $index }}">
+                <div class="flex items-start animate-fade-in" wire:key="message-{{ $index }}" style="animation: fadeIn 0.3s ease-in;">
                     <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
                     <div class="ml-3 max-w-xs lg:max-w-md">
                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 inline-block">
-                            <p class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{{ $message['content'] }}</p>
+                            <div class="text-sm text-gray-800 dark:text-gray-200 break-words">
+                                {!! formatMessageWithLinks($message['content']) !!}
+                            </div>
                         </div>
                         @if(isset($message['audio_url']) && $message['audio_url'])
                             @php
@@ -69,10 +112,12 @@
                     </div>
                 </div>
             @else
-                <div class="flex items-start justify-end" wire:key="message-{{ $index }}">
+                <div class="flex items-start justify-end animate-fade-in" wire:key="message-{{ $index }}" style="animation: fadeIn 0.3s ease-in;">
                     <div class="max-w-xs lg:max-w-md text-right">
                         <div class="bg-indigo-100 dark:bg-indigo-900 rounded-lg p-3">
-                            <p class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{{ $message['content'] }}</p>
+                            <div class="text-sm text-gray-800 dark:text-gray-200 break-words">
+                                {!! formatMessageWithLinks($message['content']) !!}
+                            </div>
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Tú - {{ $message['timestamp']->format('H:i') }}
@@ -88,7 +133,7 @@
         @endforeach
 
         @if($isLoading)
-            <div class="flex items-start" wire:key="loading">
+            <div class="flex items-start animate-fade-in" wire:key="loading" style="animation: fadeIn 0.3s ease-in;">
                 <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="WALEE" class="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-gray-200 dark:border-gray-600">
                 <div class="ml-3 max-w-xs lg:max-w-md">
                     <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 inline-block">
@@ -156,6 +201,28 @@
     </div>
 </div>
 
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    /* Smooth scroll */
+    #messages-container {
+        scroll-behavior: smooth;
+    }
+</style>
+
 <script>
     document.addEventListener('livewire:init', () => {
         let lastAudioUrl = null;
@@ -219,10 +286,16 @@
         });
         
         Livewire.hook('morph.updated', ({ el, component }) => {
-            // Auto-scroll al final cuando hay nuevos mensajes
+            // Auto-scroll suave al final cuando hay nuevos mensajes
             const container = document.getElementById('messages-container');
             if (container) {
-                container.scrollTop = container.scrollHeight;
+                // Scroll suave
+                setTimeout(() => {
+                    container.scrollTo({
+                        top: container.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }, 100);
                 
                 // Intentar reproducir el último audio si es nuevo
                 setTimeout(() => {

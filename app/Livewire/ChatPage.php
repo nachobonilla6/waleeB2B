@@ -97,43 +97,20 @@ class ChatPage extends Component
 
     public function sendMessage()
     {
-        Log::info('sendMessage() llamado', [
-            'newMessage' => $this->newMessage,
-            'newMessage_length' => strlen($this->newMessage ?? ''),
-            'isLoading' => $this->isLoading,
-            'user_id' => auth()->id(),
-            'user_authenticated' => auth()->check(),
-        ]);
-        
         if (empty(trim($this->newMessage ?? ''))) {
-            Log::warning('Intento de enviar mensaje vacío', [
-                'newMessage' => $this->newMessage,
-                'trimmed' => trim($this->newMessage ?? ''),
-            ]);
             return;
         }
 
-        // Guardar mensaje del usuario en la base de datos
         $userMessage = trim($this->newMessage);
-        
-        Log::info('Enviando mensaje al webhook', [
-            'user_id' => auth()->id(),
-            'message' => $userMessage,
-            'user_name' => auth()->user()->name ?? 'Usuario',
-            'user_email' => auth()->user()->email ?? '',
-        ]);
-        
+
+        // Guardar mensaje del usuario
         $userChatMessage = ChatMessage::create([
             'user_id' => auth()->id(),
             'message' => $userMessage,
             'type' => 'user',
         ]);
-        
-        Log::info('Mensaje del usuario guardado en BD', [
-            'chat_message_id' => $userChatMessage->id,
-        ]);
 
-        // Agregar mensaje del usuario al inicio (orden descendente - más recientes primero)
+        // Agregar mensaje del usuario al inicio (más reciente primero)
         array_unshift($this->messages, [
             'type' => 'user',
             'content' => $userMessage,
@@ -143,228 +120,120 @@ class ChatPage extends Component
         $this->newMessage = '';
         $this->isLoading = true;
 
-        // Obtener historial de conversación (últimos 100 mensajes) como texto
         try {
-            $conversationHistory = ChatMessage::where('user_id', auth()->id())
-                ->orderBy('created_at', 'asc')
-                ->limit(100)
+            // Historial breve (últimos 20 en orden cronológico)
+            $history = ChatMessage::where('user_id', auth()->id())
+                ->orderBy('created_at', 'desc')
+                ->limit(20)
                 ->get()
+                ->reverse()
                 ->map(function ($message) {
-                    $sender = $message->type === 'user' ? (auth()->user()->name ?? 'Usuario') : 'WALEE';
-                    $timestamp = $message->created_at->format('Y-m-d H:i:s');
-                    return "[{$timestamp}] {$sender}: {$message->message}";
+                    return [
+                        'role' => $message->type === 'user' ? 'user' : 'assistant',
+                        'content' => $message->message,
+                    ];
                 })
-                ->implode("\n");
-            
-            // Limitar el tamaño del historial a 50KB para evitar problemas
-            if (strlen($conversationHistory) > 50000) {
-                $conversationHistory = substr($conversationHistory, -50000);
-                Log::warning('Historial de conversación truncado a 50KB');
-            }
-        } catch (\Exception $e) {
-            Log::error('Error al obtener historial de conversación', [
-                'error' => $e->getMessage(),
-            ]);
-            $conversationHistory = '';
-        }
+                ->values()
+                ->toArray();
 
-        // Preparar datos para el webhook
-        $webhookData = [
-            'message' => $userMessage,
-            'user' => auth()->user()->name ?? 'Usuario',
-            'email' => auth()->user()->email ?? '',
-            'conversation_history' => $conversationHistory,
-        ];
-        
-        Log::info('Datos a enviar al webhook', [
-            'url' => 'https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9',
-            'data' => [
-                'message' => $userMessage,
-                'user' => auth()->user()->name ?? 'Usuario',
-                'email' => auth()->user()->email ?? '',
-                'conversation_history_length' => strlen($conversationHistory),
-                'conversation_history_preview' => substr($conversationHistory, 0, 200),
-            ],
-        ]);
+            $assistantMessage = $this->generateAiResponse($history, $userMessage);
 
-        // Enviar mensaje al webhook de n8n con historial
-        try {
-            $response = Http::timeout(60)
-                ->retry(2, 1000) // Reintentar 2 veces con 1 segundo de espera
-                ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', $webhookData);
-            
-            Log::info('Respuesta del webhook recibida', [
-                'status' => $response->status(),
-                'successful' => $response->successful(),
-                'headers' => $response->headers(),
-                'body_preview' => substr($response->body(), 0, 500),
+            $assistantChatMessage = ChatMessage::create([
+                'user_id' => auth()->id(),
+                'message' => $assistantMessage,
+                'type' => 'assistant',
             ]);
 
-            if ($response->successful()) {
-                $contentType = $response->header('Content-Type') ?? '';
-                $audioUrl = null;
-                $assistantMessage = null;
-                
-                // Verificar si la respuesta es un archivo de audio MP3 (binario directo)
-                if (str_contains($contentType, 'audio/mpeg') || str_contains($contentType, 'audio/mp3') || str_contains($contentType, 'application/octet-stream')) {
-                    // La respuesta es directamente un archivo de audio
-                    $audioContent = $response->body();
-                    
-                    if (!empty($audioContent) && strlen($audioContent) > 100) { // Verificar que sea un archivo válido
-                        // Crear directorio si no existe
-                        $directory = 'chat-audio';
-                        if (!Storage::disk('public')->exists($directory)) {
-                            Storage::disk('public')->makeDirectory($directory);
-                        }
-                        
-                        $filename = $directory . '/webhook_' . auth()->id() . '_' . time() . '.mp3';
-                        $saved = Storage::disk('public')->put($filename, $audioContent);
-                        
-                        if ($saved) {
-                            // Generar URL usando la ruta personalizada (sin symlink)
-                            $audioUrl = route('chat.audio', ['filename' => basename($filename)]);
-                            Log::info('Audio guardado exitosamente', ['filename' => $filename, 'url' => $audioUrl, 'size' => strlen($audioContent)]);
-                        } else {
-                            Log::error('Error al guardar audio del webhook');
-                        }
-                        
-                        // Intentar obtener el texto del mensaje si viene en headers
-                        $assistantMessage = $response->header('X-Message-Text') ?? $response->header('X-Output') ?? 'Mensaje de audio';
-                    } else {
-                        Log::warning('Contenido de audio vacío o muy pequeño', ['size' => strlen($audioContent ?? '')]);
-                    }
-                } else {
-                    // La respuesta es JSON
-                    try {
-                        $responseData = $response->json();
-                        
-                        // Obtener la respuesta del webhook
-                        // El formato de n8n puede ser un array con objetos que tienen "output"
-                        if (is_array($responseData) && isset($responseData[0]['output'])) {
-                            $assistantMessage = $responseData[0]['output'];
-                        } elseif (is_array($responseData) && isset($responseData['output'])) {
-                            $assistantMessage = $responseData['output'];
-                        } else {
-                            $assistantMessage = $responseData['response'] ?? $responseData['message'] ?? $responseData['text'] ?? $responseData['output'] ?? 'Gracias por tu mensaje.';
-                        }
-                        
-                        // Verificar si viene un archivo de audio en la respuesta JSON
-                        if (isset($responseData['audio_url']) || isset($responseData[0]['audio_url'])) {
-                            $audioUrl = $responseData['audio_url'] ?? $responseData[0]['audio_url'] ?? null;
-                        } elseif (isset($responseData['audio']) || isset($responseData[0]['audio'])) {
-                            // Si viene el audio como base64 o datos binarios
-                            $audioData = $responseData['audio'] ?? $responseData[0]['audio'] ?? null;
-                            if ($audioData) {
-                                // Si es base64, decodificarlo
-                                if (is_string($audioData) && str_starts_with($audioData, 'data:audio')) {
-                                    $audioContent = base64_decode(explode(',', $audioData)[1] ?? '');
-                                } else {
-                                    $audioContent = is_string($audioData) ? base64_decode($audioData) : $audioData;
-                                }
-                                
-                                if ($audioContent && strlen($audioContent) > 100) {
-                                    // Crear directorio si no existe
-                                    $directory = 'chat-audio';
-                                    if (!Storage::disk('public')->exists($directory)) {
-                                        Storage::disk('public')->makeDirectory($directory);
-                                    }
-                                    
-                                    $filename = $directory . '/webhook_' . auth()->id() . '_' . time() . '.mp3';
-                                    $saved = Storage::disk('public')->put($filename, $audioContent);
-                                    
-                                    if ($saved) {
-                                        // Generar URL usando la ruta personalizada (sin symlink)
-                                        $audioUrl = route('chat.audio', ['filename' => basename($filename)]);
-                                        Log::info('Audio guardado desde JSON', ['filename' => $filename, 'url' => $audioUrl]);
-                                    }
-                                }
-                            }
-                        }
-                    } catch (\Exception $e) {
-                        // Si no es JSON válido, intentar como texto
-                        $assistantMessage = $response->body();
-                        Log::warning('Webhook response is not valid JSON: ' . $e->getMessage());
-                    }
-                }
-                
-                // Guardar respuesta del asistente en la base de datos
-                $assistantChatMessage = ChatMessage::create([
-                    'user_id' => auth()->id(),
-                    'message' => $assistantMessage ?? 'Mensaje de audio',
-                    'type' => 'assistant',
-                ]);
-                
-                // Si no hay audio del webhook, generar con OpenAI TTS
-                if (!$audioUrl) {
-                    $audioUrl = $this->generateAudio($assistantMessage ?? 'Mensaje de audio', $assistantChatMessage->id);
-                }
-                
+            $audioUrl = null;
+            if ($this->voiceEnabled) {
+                $audioUrl = $this->generateAudio($assistantMessage, $assistantChatMessage->id);
                 if ($audioUrl) {
                     $assistantChatMessage->update(['audio_url' => $audioUrl]);
                 }
-                
-                // Agregar mensaje del asistente al inicio (orden descendente)
-                array_unshift($this->messages, [
-                    'type' => 'assistant',
-                    'content' => $assistantMessage ?? 'Mensaje de audio',
-                    'timestamp' => $assistantChatMessage->created_at,
-                    'audio_url' => $audioUrl,
-                    'id' => $assistantChatMessage->id,
-                ]);
-                
-                // Disparar evento para reproducir audio automáticamente
+            }
+
+            array_unshift($this->messages, [
+                'type' => 'assistant',
+                'content' => $assistantMessage,
+                'timestamp' => $assistantChatMessage->created_at,
+                'audio_url' => $audioUrl,
+                'id' => $assistantChatMessage->id,
+            ]);
+
+            if ($audioUrl) {
                 $this->dispatch('new-audio-message', audioUrl: $audioUrl);
-            } else {
-                Log::error('Webhook respondió con error', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                    'headers' => $response->headers(),
-                ]);
-                
-                $errorMessage = 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.';
-                
-                // Guardar mensaje de error en la base de datos
-                $errorChatMessage = ChatMessage::create([
-                    'user_id' => auth()->id(),
-                    'message' => $errorMessage,
-                    'type' => 'assistant',
-                ]);
-                
-                // Agregar mensaje de error al inicio (orden descendente)
-                array_unshift($this->messages, [
-                    'type' => 'assistant',
-                    'content' => $errorMessage . ' (Status: ' . $response->status() . ')',
-                    'timestamp' => $errorChatMessage->created_at,
-                ]);
             }
         } catch (\Exception $e) {
-            Log::error('Error al enviar mensaje al webhook de n8n', [
+            Log::error('Error al generar respuesta con OpenAI', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'user_id' => auth()->id(),
-                'webhook_url' => 'https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9',
             ]);
-            
-            $errorMessage = 'Lo siento, hubo un error al conectarse con el servidor. Por favor, intenta de nuevo más tarde.';
-            
-            // Guardar mensaje de error en la base de datos
+
+            $errorMessage = 'Lo siento, hubo un problema al generar la respuesta. Intenta de nuevo.';
+
             $errorChatMessage = ChatMessage::create([
                 'user_id' => auth()->id(),
                 'message' => $errorMessage,
                 'type' => 'assistant',
             ]);
-            
-            // Agregar mensaje de error al inicio (orden descendente)
+
             array_unshift($this->messages, [
                 'type' => 'assistant',
-                'content' => $errorMessage . ' (Error: ' . substr($e->getMessage(), 0, 100) . ')',
+                'content' => $errorMessage,
                 'timestamp' => $errorChatMessage->created_at,
             ]);
         } finally {
             $this->isLoading = false;
         }
+    }
+
+    /**
+     * Genera respuesta con OpenAI Chat
+     */
+    private function generateAiResponse(array $history, string $userMessage): string
+    {
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            throw new \RuntimeException('OpenAI API key no configurada');
+        }
+
+        $messages = array_merge(
+            [
+                [
+                    'role' => 'system',
+                    'content' => 'Eres WALEE, asistente de websolutions.work. Responde de forma breve, clara y en español. Cuando haya enlaces, preséntalos con texto descriptivo. Puedes ayudar a revisar disponibilidad en calendario y redactar correos si el usuario lo solicita.',
+                ],
+            ],
+            $history,
+            [
+                [
+                    'role' => 'user',
+                    'content' => $userMessage,
+                ],
+            ]
+        );
+
+        $response = Http::timeout(60)
+            ->withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json',
+            ])
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-3.5-turbo',
+                'messages' => $messages,
+                'temperature' => 0.6,
+                'max_tokens' => 500,
+            ]);
+
+        if (!$response->successful()) {
+            Log::error('OpenAI Chat error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            throw new \RuntimeException('Error al generar respuesta con OpenAI');
+        }
+
+        $json = $response->json();
+        return $json['choices'][0]['message']['content'] ?? 'Lo siento, no pude generar una respuesta en este momento.';
     }
 
     public function toggleVoice()

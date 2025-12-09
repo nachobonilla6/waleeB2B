@@ -78,12 +78,13 @@
     <div class="px-4 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
         <form wire:submit.prevent="sendMessage" class="w-full">
             <div class="relative">
-                <input 
-                    type="text"
+                <textarea
                     wire:model.live="newMessage"
+                    rows="3"
                     placeholder="Escribe tu mensaje aquí..."
-                    class="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-[#D59F3B] focus:border-transparent transition-all duration-200"
-                />
+                    class="w-full px-4 py-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-[#D59F3B] focus:border-transparent transition-all duration-200 min-h-[96px]"
+                    style="resize: vertical;"
+                ></textarea>
                 <button 
                     type="submit"
                     wire:loading.attr="disabled"

@@ -14,6 +14,12 @@ class Chat extends Page
 
     protected static string $view = 'filament.pages.chat';
     
+    // Personalizar la URL de navegación para que apunte a /walee
+    public static function getNavigationUrl(): string
+    {
+        return '/walee';
+    }
+    
     public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
     {
         return '';

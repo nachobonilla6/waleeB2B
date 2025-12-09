@@ -59,7 +59,12 @@
     </div>
 
     <!-- Messages -->
-    <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 space-y-4 min-h-0" id="messages-container">
+    <div 
+        class="flex-1 overflow-y-auto p-4 bg-white dark:bg-gray-800 space-y-4 min-h-0" 
+        id="messages-container"
+        x-data="{ init() { this.$nextTick(() => { this.scrollTop = this.scrollHeight; }); } }"
+        x-init="init(); $watch('$wire.messages', () => setTimeout(() => scrollTop = scrollHeight, 100))"
+    >
         @foreach($messages as $index => $message)
             @if($message['type'] === 'assistant')
                 <div class="flex items-start animate-fade-in" wire:key="message-{{ $index }}" style="animation: fadeIn 0.3s ease-in;">

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use App\Models\ChatMessage;
 
 class ChatPage extends Component
@@ -30,8 +31,53 @@ class ChatPage extends Component
                 'type' => $message->type,
                 'content' => $message->message,
                 'timestamp' => $message->created_at,
+                'audio_url' => $message->audio_url,
             ];
         })->toArray();
+    }
+
+    /**
+     * Generate audio from text using OpenAI TTS
+     */
+    private function generateAudio($text, $messageId)
+    {
+        try {
+            $apiKey = config('services.openai.api_key');
+            
+            if (empty($apiKey)) {
+                Log::warning('OpenAI API key not configured');
+                return null;
+            }
+
+            // Call OpenAI TTS API
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Content-Type' => 'application/json',
+                ])
+                ->post('https://api.openai.com/v1/audio/speech', [
+                    'model' => 'tts-1',
+                    'input' => $text,
+                    'voice' => 'alloy', // Options: alloy, echo, fable, onyx, nova, shimmer
+                    'response_format' => 'mp3',
+                ]);
+
+            if ($response->successful()) {
+                // Save audio file to storage
+                $audioContent = $response->body();
+                $filename = 'chat-audio/' . $messageId . '_' . time() . '.mp3';
+                Storage::disk('public')->put($filename, $audioContent);
+                
+                // Return the public URL
+                return Storage::url($filename);
+            } else {
+                Log::error('OpenAI TTS API error: ' . $response->body());
+                return null;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error generating audio with OpenAI TTS: ' . $e->getMessage());
+            return null;
+        }
     }
 
     public function sendMessage()
@@ -86,10 +132,18 @@ class ChatPage extends Component
                     'type' => 'assistant',
                 ]);
                 
+                // Generar audio automáticamente para mensajes del asistente
+                $audioUrl = $this->generateAudio($assistantMessage, $assistantChatMessage->id);
+                
+                if ($audioUrl) {
+                    $assistantChatMessage->update(['audio_url' => $audioUrl]);
+                }
+                
                 $this->messages[] = [
                     'type' => 'assistant',
                     'content' => $assistantMessage,
                     'timestamp' => $assistantChatMessage->created_at,
+                    'audio_url' => $audioUrl,
                 ];
             } else {
                 $errorMessage = 'Lo siento, hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.';

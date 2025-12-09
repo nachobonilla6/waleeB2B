@@ -11,6 +11,7 @@ class ChatMessage extends Model
         'user_id',
         'message',
         'type',
+        'audio_url',
     ];
 
     protected $casts = [

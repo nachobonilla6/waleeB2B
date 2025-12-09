@@ -27,6 +27,14 @@
                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 inline-block">
                             <p class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{{ $message['content'] }}</p>
                         </div>
+                        @if(isset($message['audio_url']) && $message['audio_url'])
+                            <div class="mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                                <audio controls class="w-full h-8" preload="auto">
+                                    <source src="{{ $message['audio_url'] }}" type="audio/mpeg">
+                                    Tu navegador no soporta el elemento de audio.
+                                </audio>
+                            </div>
+                        @endif
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             WALEE - {{ $message['timestamp']->format('H:i') }}
                         </p>

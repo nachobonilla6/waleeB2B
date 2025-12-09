@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PublicacionVelaResource\Pages;
 
 use App\Filament\Resources\PublicacionVelaResource;
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPublicacionVelas extends ListRecords
@@ -21,6 +22,22 @@ class ListPublicacionVelas extends ListRecords
                 ->modalHeading('Crear Publicación Vela')
                 ->icon('heroicon-o-plus'),
         ];
+    }
+
+    protected function configureCreateAction(CreateAction $action): void
+    {
+        $resource = static::getResource();
+        
+        $action
+            ->authorize($resource::canCreate())
+            ->model($this->getModel())
+            ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
+            ->form(fn (\Filament\Forms\Form $form): \Filament\Forms\Form => $this->form($form->columns(2)));
+        
+        // No establecer URL para forzar que use modal
+        // if ($resource::hasPage('create')) {
+        //     $action->url(fn (): string => $resource::getUrl('create'));
+        // }
     }
 
     protected function hasTable(): bool

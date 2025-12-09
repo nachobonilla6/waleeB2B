@@ -23,7 +23,7 @@ class ChatPage extends Component
     public function loadMessages()
     {
         $chatMessages = ChatMessage::where('user_id', auth()->id())
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc') // Ordenar por más recientes primero
             ->get();
 
         $this->messages = $chatMessages->map(function ($message) {

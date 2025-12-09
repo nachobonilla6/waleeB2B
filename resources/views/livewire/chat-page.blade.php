@@ -231,9 +231,8 @@
         document.addEventListener('livewire:init', () => {
             let lastAudioUrl = null;
             let playedAudios = new Set();
-            let isInitialLoad = true;
             
-            function scrollToBottom(smooth = true) {
+            function scrollToTop(smooth = true) {
                 const container = document.getElementById('messages-container');
                 if (container) {
                     // Forzar reflow para asegurar que el contenido esté renderizado
@@ -241,22 +240,13 @@
                     
                     if (smooth) {
                         container.scrollTo({
-                            top: container.scrollHeight,
+                            top: 0,
                             behavior: 'smooth'
                         });
                     } else {
-                        // Scroll inmediato al final
-                        container.scrollTop = container.scrollHeight;
+                        // Scroll inmediato al inicio (donde están los mensajes más recientes)
+                        container.scrollTop = 0;
                     }
-                }
-            }
-            
-            // Función para mostrar mensajes más recientes sin scroll automático
-            function showLatestMessages() {
-                const container = document.getElementById('messages-container');
-                if (container) {
-                    // Simplemente posicionar al final sin animación
-                    container.scrollTop = container.scrollHeight;
                 }
             }
             
@@ -299,38 +289,8 @@
                 }
             }
             
-            // Mostrar mensajes más recientes cuando el componente se monta inicialmente (sin scroll automático)
-            Livewire.hook('mounted', () => {
-                isInitialLoad = true;
-                setTimeout(() => {
-                    showLatestMessages();
-                    isInitialLoad = false;
-                }, 100);
-            });
-            
-            // Cuando Livewire termina de renderizar, solo mostrar últimos mensajes en carga inicial
-            Livewire.hook('morph', ({ el, component }) => {
-                if (component.name === 'chat-page' && isInitialLoad) {
-                    setTimeout(() => {
-                        showLatestMessages();
-                    }, 100);
-                }
-            });
-            
-            // Mostrar mensajes más recientes cuando la página se carga completamente
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        showLatestMessages();
-                        isInitialLoad = false;
-                    }, 200);
-                });
-            } else {
-                setTimeout(() => {
-                    showLatestMessages();
-                    isInitialLoad = false;
-                }, 200);
-            }
+            // Los mensajes más recientes ya están al inicio, no hacer scroll
+            // El contenedor mostrará los mensajes más recientes por defecto sin scroll automático
             
             // Escuchar evento cuando hay un nuevo mensaje con audio
             Livewire.on('new-audio-message', (event) => {
@@ -351,19 +311,17 @@
             });
             
             Livewire.hook('morph.updated', ({ el, component }) => {
-                // Solo hacer scroll automático cuando hay nuevos mensajes (no en carga inicial)
-                if (!isInitialLoad) {
-                    scrollToBottom(true);
-                }
+                // Cuando hay nuevos mensajes, hacer scroll al inicio (donde están los más recientes)
+                scrollToTop(true);
                 
-                // Intentar reproducir el último audio si es nuevo
+                // Intentar reproducir el primer audio (el más reciente)
                 setTimeout(() => {
                     const container = document.getElementById('messages-container');
                     if (container) {
                         const audios = container.querySelectorAll('audio');
                         if (audios.length > 0) {
-                            const lastAudio = audios[audios.length - 1];
-                            playAudio(lastAudio);
+                            const firstAudio = audios[0]; // El primer audio es el más reciente
+                            playAudio(firstAudio);
                         }
                     }
                 }, 800);

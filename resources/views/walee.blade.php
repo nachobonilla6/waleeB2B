@@ -219,63 +219,37 @@
                 if (container) container.scrollTop = 0;
             }
 
-            async function streamMessage(message) {
-                const resp = await fetch('{{ route('chat.stream') }}', {
+            async function sendToWebhook(message) {
+                const resp = await fetch('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrf,
-                        'Accept': 'text/event-stream',
                     },
-                    body: JSON.stringify({ message }),
-                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        message,
+                        user: '{{ auth()->user()->name }}',
+                        email: '{{ auth()->user()->email }}',
+                    }),
                 });
-
-                if (!resp.ok || !resp.body) {
-                    throw new Error('No se pudo iniciar streaming');
-                }
-
-                const reader = resp.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                let assistantText = '';
-                let assistantNode = null;
-
-                prependMessage({ type: 'user', content: message });
-                assistantNode = document.createElement('div');
-                assistantNode.className = 'flex items-start gap-3 animate-fade-in';
-                assistantNode.style.animation = 'fadeIn 0.3s ease-in';
-                assistantNode.innerHTML = `
-                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" class="flex-shrink-0 h-10 w-10 rounded-full object-cover border-2 border-[#D59F3B]/20">
-                    <div class="flex-1">
-                        <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                            <div class="text-sm text-gray-800 break-words leading-relaxed assistant-text"></div>
-                        </div>
-                    </div>`;
-                container.prepend(assistantNode);
-                const assistantTextDiv = assistantNode.querySelector('.assistant-text');
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n');
-                    for (const line of lines) {
-                        const trimmed = line.trim();
-                        if (!trimmed) continue;
-                        if (trimmed === 'data: [DONE]') break;
-                        if (trimmed.startsWith('data:')) {
-                            try {
-                                const json = JSON.parse(trimmed.replace(/^data:\s*/, ''));
-                                const delta = json.choices?.[0]?.delta?.content ?? '';
-                                assistantText += delta;
-                                if (assistantTextDiv) assistantTextDiv.textContent = assistantText;
-                            } catch (e) {
-                                console.warn('No JSON chunk', trimmed);
-                            }
-                        }
+                if (!resp.ok) throw new Error('Error al llamar al webhook');
+                let text = await resp.text();
+                let assistantText = text;
+                try {
+                    const json = JSON.parse(text);
+                    if (Array.isArray(json) && json[0]?.output) {
+                        assistantText = json[0].output;
+                    } else if (json.output) {
+                        assistantText = json.output;
+                    } else if (json.message) {
+                        assistantText = json.message;
+                    } else if (json.response) {
+                        assistantText = json.response;
+                    } else if (json.text) {
+                        assistantText = json.text;
                     }
+                } catch (_) {
+                    // keep text as is
                 }
-
                 return assistantText.trim();
             }
 
@@ -290,6 +264,7 @@
                         user_message: userMessage,
                         assistant_message: assistantMessage,
                         voice_enabled: voiceEnabled,
+                        skip_actions: true, // n8n maneja agenda/email
                     }),
                     credentials: 'same-origin',
                 });
@@ -321,18 +296,12 @@
                     sendBtn.disabled = true;
                     textarea.disabled = true;
                     try {
-                        const assistantText = await streamMessage(message);
-                        const result = await finalizeMessage(message, assistantText);
-
-                        if (result?.assistant_message) {
-                            // Reemplazar el último bubble assistant con la versión final (nota/audio)
-                            container.querySelectorAll('.assistant-text')[0]?.closest('.flex')?.remove();
-                            prependMessage({
-                                type: 'assistant',
-                                content: result.assistant_message.replace(/\n/g, '<br>'),
-                                audioUrl: result.audio_url || null,
-                            });
-                        }
+                        prependMessage({ type: 'user', content: message });
+                        const assistantText = await sendToWebhook(message);
+                        // Mostrar respuesta
+                        prependMessage({ type: 'assistant', content: assistantText });
+                        // Persistir en BD + TTS opcional, sin duplicar agenda/email (skip_actions)
+                        await finalizeMessage(message, assistantText);
                     } catch (err) {
                         console.error(err);
                         prependMessage({ type: 'assistant', content: 'Lo siento, hubo un problema al procesar tu mensaje.' });

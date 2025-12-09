@@ -24,10 +24,12 @@ class ChatActionsController extends Controller
             'user_message' => 'required|string',
             'assistant_message' => 'required|string',
             'voice_enabled' => 'sometimes|boolean',
+            'skip_actions' => 'sometimes|boolean',
         ]);
 
         $user = $request->user();
         $voiceEnabled = $data['voice_enabled'] ?? true;
+        $skipActions = $data['skip_actions'] ?? false;
 
         // Guardar mensaje del usuario
         $userChatMessage = ChatMessage::create([
@@ -51,10 +53,13 @@ class ChatActionsController extends Controller
             }
         }
 
-        // Agenda + email si corresponde
-        $note = $this->maybeScheduleAndEmail($data['user_message'], $assistantChatMessage->message, $user);
-        if ($note) {
-            $assistantChatMessage->update(['message' => $assistantChatMessage->message . "\n\n" . $note]);
+        // Agenda + email si corresponde (y si no se indica omitir)
+        $note = null;
+        if (!$skipActions) {
+            $note = $this->maybeScheduleAndEmail($data['user_message'], $assistantChatMessage->message, $user);
+            if ($note) {
+                $assistantChatMessage->update(['message' => $assistantChatMessage->message . "\n\n" . $note]);
+            }
         }
 
         return response()->json([

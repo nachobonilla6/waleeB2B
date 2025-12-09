@@ -25,6 +25,15 @@ use Illuminate\Support\Facades\Blade;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function boot(): void
+    {
+        // Registrar render hook para el botón de Google login
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+            fn (): \Illuminate\Contracts\View\View => view('components.google-login-button')
+        );
+    }
+
     public function panel(Panel $panel): Panel
     {
         config(['tables.pagination.default_records_per_page' => 5]);
@@ -79,10 +88,6 @@ class AdminPanelProvider extends PanelProvider
                         border-radius: 0 0 4px 4px !important;
                     }
                 </style>'
-            )
-            ->renderHook(
-                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
-                fn (): \Illuminate\Contracts\View\View => view('components.google-login-button')
             )
             ->renderHook(
                 PanelsRenderHook::BODY_END,

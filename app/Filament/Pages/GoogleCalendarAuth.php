@@ -26,12 +26,26 @@ class GoogleCalendarAuth extends Page
     {
         try {
             $service = new GoogleCalendarService();
+            $credentialsPath = config('services.google.credentials_path');
+            
+            // Verificar si el archivo existe
+            if (!$credentialsPath || !file_exists($credentialsPath)) {
+                $expectedPath = storage_path('app/google-credentials.json');
+                Notification::make()
+                    ->title('Error de configuración')
+                    ->body('El archivo de credenciales no se encuentra en: ' . $expectedPath . '. Por favor, sube el archivo google-credentials.json a esa ubicación en el servidor.')
+                    ->danger()
+                    ->persistent()
+                    ->send();
+                return;
+            }
+            
             $authUrl = $service->getAuthUrl();
             
             if (!$authUrl) {
                 Notification::make()
                     ->title('Error')
-                    ->body('No se pudieron cargar las credenciales de Google Calendar. Verifica la configuración.')
+                    ->body('No se pudo generar la URL de autorización. Verifica los logs para más detalles.')
                     ->danger()
                     ->send();
                 return;
@@ -41,6 +55,7 @@ class GoogleCalendarAuth extends Page
             return redirect($authUrl);
         } catch (\Exception $e) {
             Log::error('Error en autorización: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             Notification::make()
                 ->title('Error')
                 ->body('Error al iniciar la autorización: ' . $e->getMessage())

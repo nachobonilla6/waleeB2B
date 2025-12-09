@@ -87,7 +87,19 @@ class GoogleCalendarService
             $client = new Google_Client();
             $credentialsPath = config('services.google.credentials_path');
             
-            if (!$credentialsPath || !file_exists($credentialsPath)) {
+            if (!$credentialsPath) {
+                Log::error('GOOGLE_CREDENTIALS_PATH no está configurado');
+                return null;
+            }
+            
+            if (!file_exists($credentialsPath)) {
+                Log::error('Archivo de credenciales no encontrado en: ' . $credentialsPath);
+                Log::error('Ruta absoluta esperada: ' . storage_path('app/google-credentials.json'));
+                return null;
+            }
+            
+            if (!is_readable($credentialsPath)) {
+                Log::error('Archivo de credenciales no es legible: ' . $credentialsPath);
                 return null;
             }
             
@@ -100,6 +112,7 @@ class GoogleCalendarService
             return $client->createAuthUrl();
         } catch (\Exception $e) {
             Log::error('Error generando URL de autorización: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             return null;
         }
     }

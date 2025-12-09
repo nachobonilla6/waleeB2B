@@ -127,12 +127,12 @@ class ChatPage extends Component
             'chat_message_id' => $userChatMessage->id,
         ]);
 
-        // Agregar mensaje del usuario a la vista
-        $this->messages[] = [
+        // Agregar mensaje del usuario al inicio (orden descendente - más recientes primero)
+        array_unshift($this->messages, [
             'type' => 'user',
             'content' => $userMessage,
             'timestamp' => $userChatMessage->created_at,
-        ];
+        ]);
 
         $this->newMessage = '';
         $this->isLoading = true;
@@ -297,13 +297,14 @@ class ChatPage extends Component
                     $assistantChatMessage->update(['audio_url' => $audioUrl]);
                 }
                 
-                $this->messages[] = [
+                // Agregar mensaje del asistente al inicio (orden descendente)
+                array_unshift($this->messages, [
                     'type' => 'assistant',
                     'content' => $assistantMessage ?? 'Mensaje de audio',
                     'timestamp' => $assistantChatMessage->created_at,
                     'audio_url' => $audioUrl,
                     'id' => $assistantChatMessage->id,
-                ];
+                ]);
                 
                 // Disparar evento para reproducir audio automáticamente
                 $this->dispatch('new-audio-message', audioUrl: $audioUrl);
@@ -323,11 +324,12 @@ class ChatPage extends Component
                     'type' => 'assistant',
                 ]);
                 
-                $this->messages[] = [
+                // Agregar mensaje de error al inicio (orden descendente)
+                array_unshift($this->messages, [
                     'type' => 'assistant',
                     'content' => $errorMessage . ' (Status: ' . $response->status() . ')',
                     'timestamp' => $errorChatMessage->created_at,
-                ];
+                ]);
             }
         } catch (\Exception $e) {
             Log::error('Error al enviar mensaje al webhook de n8n', [
@@ -348,11 +350,12 @@ class ChatPage extends Component
                 'type' => 'assistant',
             ]);
             
-            $this->messages[] = [
+            // Agregar mensaje de error al inicio (orden descendente)
+            array_unshift($this->messages, [
                 'type' => 'assistant',
                 'content' => $errorMessage . ' (Error: ' . substr($e->getMessage(), 0, 100) . ')',
                 'timestamp' => $errorChatMessage->created_at,
-            ];
+            ]);
         } finally {
             $this->isLoading = false;
         }

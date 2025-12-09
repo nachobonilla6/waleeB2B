@@ -128,16 +128,29 @@ class ChatPage extends Component
         $this->isLoading = true;
 
         // Obtener historial de conversación (últimos 100 mensajes) como texto
-        $conversationHistory = ChatMessage::where('user_id', auth()->id())
-            ->orderBy('created_at', 'asc')
-            ->limit(100)
-            ->get()
-            ->map(function ($message) {
-                $sender = $message->type === 'user' ? (auth()->user()->name ?? 'Usuario') : 'WALEE';
-                $timestamp = $message->created_at->format('Y-m-d H:i:s');
-                return "[{$timestamp}] {$sender}: {$message->message}";
-            })
-            ->implode("\n");
+        try {
+            $conversationHistory = ChatMessage::where('user_id', auth()->id())
+                ->orderBy('created_at', 'asc')
+                ->limit(100)
+                ->get()
+                ->map(function ($message) {
+                    $sender = $message->type === 'user' ? (auth()->user()->name ?? 'Usuario') : 'WALEE';
+                    $timestamp = $message->created_at->format('Y-m-d H:i:s');
+                    return "[{$timestamp}] {$sender}: {$message->message}";
+                })
+                ->implode("\n");
+            
+            // Limitar el tamaño del historial a 50KB para evitar problemas
+            if (strlen($conversationHistory) > 50000) {
+                $conversationHistory = substr($conversationHistory, -50000);
+                Log::warning('Historial de conversación truncado a 50KB');
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al obtener historial de conversación', [
+                'error' => $e->getMessage(),
+            ]);
+            $conversationHistory = '';
+        }
 
         // Preparar datos para el webhook
         $webhookData = [
@@ -149,12 +162,20 @@ class ChatPage extends Component
         
         Log::info('Datos a enviar al webhook', [
             'url' => 'https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9',
-            'data' => array_merge($webhookData, ['conversation_history_length' => strlen($conversationHistory)]),
+            'data' => [
+                'message' => $userMessage,
+                'user' => auth()->user()->name ?? 'Usuario',
+                'email' => auth()->user()->email ?? '',
+                'conversation_history_length' => strlen($conversationHistory),
+                'conversation_history_preview' => substr($conversationHistory, 0, 200),
+            ],
         ]);
 
         // Enviar mensaje al webhook de n8n con historial
         try {
-            $response = Http::timeout(60)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', $webhookData);
+            $response = Http::timeout(60)
+                ->retry(2, 1000) // Reintentar 2 veces con 1 segundo de espera
+                ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/444688a4-305e-4d97-b667-5f52c2c3bda9', $webhookData);
             
             Log::info('Respuesta del webhook recibida', [
                 'status' => $response->status(),

@@ -7,6 +7,23 @@ use App\Http\Controllers\SupportCaseController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Models\Sitio;
 
+// Ruta para servir archivos de audio del chat (sin necesidad de symlink)
+Route::get('/storage/chat-audio/{filename}', function ($filename) {
+    $path = storage_path('app/public/chat-audio/' . $filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    $file = file_get_contents($path);
+    $type = mime_content_type($path);
+    
+    return response($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Content-Length', filesize($path))
+        ->header('Cache-Control', 'public, max-age=3600');
+})->where('filename', '.*')->name('chat.audio');
+
 // Rutas de autenticación con Google
 Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');

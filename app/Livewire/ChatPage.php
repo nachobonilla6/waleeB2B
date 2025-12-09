@@ -76,8 +76,8 @@ class ChatPage extends Component
                 $saved = Storage::disk('public')->put($filename, $audioContent);
                 
                 if ($saved) {
-                    // Return the public URL
-                    $url = Storage::disk('public')->url($filename);
+                    // Return the public URL usando la ruta personalizada (sin symlink)
+                    $url = route('chat.audio', ['filename' => basename($filename)]);
                     Log::info('Audio generado con OpenAI TTS', ['filename' => $filename, 'url' => $url, 'size' => strlen($audioContent)]);
                     return $url;
                 } else {
@@ -147,8 +147,8 @@ class ChatPage extends Component
                         $saved = Storage::disk('public')->put($filename, $audioContent);
                         
                         if ($saved) {
-                            // Generar URL absoluta
-                            $audioUrl = Storage::disk('public')->url($filename);
+                            // Generar URL usando la ruta personalizada (sin symlink)
+                            $audioUrl = route('chat.audio', ['filename' => basename($filename)]);
                             Log::info('Audio guardado exitosamente', ['filename' => $filename, 'url' => $audioUrl, 'size' => strlen($audioContent)]);
                         } else {
                             Log::error('Error al guardar audio del webhook');
@@ -199,7 +199,8 @@ class ChatPage extends Component
                                     $saved = Storage::disk('public')->put($filename, $audioContent);
                                     
                                     if ($saved) {
-                                        $audioUrl = Storage::disk('public')->url($filename);
+                                        // Generar URL usando la ruta personalizada (sin symlink)
+                                        $audioUrl = route('chat.audio', ['filename' => basename($filename)]);
                                         Log::info('Audio guardado desde JSON', ['filename' => $filename, 'url' => $audioUrl]);
                                     }
                                 }

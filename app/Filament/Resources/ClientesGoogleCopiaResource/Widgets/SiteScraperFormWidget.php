@@ -29,36 +29,43 @@ class SiteScraperFormWidget extends Widget implements HasForms
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre_lugar')
-                    ->label('Nombre del Lugar')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('industria')
-                    ->label('Tipo de Negocio')
-                    ->options([
-                        'tienda_ropa' => '👕 Tienda de Ropa',
-                        'pizzeria' => '🍕 Pizzería',
-                        'restaurante' => '🍽️ Restaurante',
-                        'cafeteria' => '☕ Cafetería',
-                        'farmacia' => '💊 Farmacia',
-                        'supermercado' => '🛒 Supermercado',
-                        'peluqueria' => '✂️ Peluquería / Salón de Belleza',
-                        'gimnasio' => '💪 Gimnasio',
-                        'veterinaria' => '🐾 Veterinaria',
-                        'taller_mecanico' => '🔧 Taller Mecánico',
-                        'otro' => '📝 Otro',
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('nombre_lugar')
+                            ->label('Nombre del Lugar')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('industria')
+                            ->label('Tipo de Negocio')
+                            ->options([
+                                'tienda_ropa' => '👕 Tienda de Ropa',
+                                'pizzeria' => '🍕 Pizzería',
+                                'restaurante' => '🍽️ Restaurante',
+                                'cafeteria' => '☕ Cafetería',
+                                'farmacia' => '💊 Farmacia',
+                                'supermercado' => '🛒 Supermercado',
+                                'peluqueria' => '✂️ Peluquería / Salón de Belleza',
+                                'gimnasio' => '💪 Gimnasio',
+                                'veterinaria' => '🐾 Veterinaria',
+                                'taller_mecanico' => '🔧 Taller Mecánico',
+                                'otro' => '📝 Otro',
+                            ])
+                            ->required()
+                            ->native(false)
+                            ->live()
+                            ->columnSpanFull()
+                            ->afterStateUpdated(fn (Forms\Set $set) => $set('industria_otro', null)),
+                        Forms\Components\TextInput::make('industria_otro')
+                            ->label('Especificar otro tipo de negocio')
+                            ->placeholder('Escribe el tipo de negocio')
+                            ->maxLength(255)
+                            ->required(fn (Forms\Get $get) => $get('industria') === 'otro')
+                            ->visible(fn (Forms\Get $get) => $get('industria') === 'otro')
+                            ->helperText('Por favor, especifica el tipo de negocio')
+                            ->columnSpanFull(),
                     ])
-                    ->required()
-                    ->native(false)
-                    ->live()
-                    ->afterStateUpdated(fn (Forms\Set $set) => $set('industria_otro', null)),
-                Forms\Components\TextInput::make('industria_otro')
-                    ->label('Especificar otro tipo de negocio')
-                    ->placeholder('Escribe el tipo de negocio')
-                    ->maxLength(255)
-                    ->required(fn (Forms\Get $get) => $get('industria') === 'otro')
-                    ->visible(fn (Forms\Get $get) => $get('industria') === 'otro')
-                    ->helperText('Por favor, especifica el tipo de negocio'),
+                    ->columns(1),
             ])
             ->statePath('data');
     }

@@ -123,6 +123,8 @@ class ClientesGoogleEnviadasResource extends Resource
                                 'pending' => 'Pending',
                                 'accepted' => 'Accepted',
                                 'rejected' => 'Rejected',
+                                'listo_para_enviar' => 'Listo para enviar',
+                                'propuesta_enviada' => 'Propuesta enviada',
                             ])
                             ->default('pending')
                             ->required()
@@ -168,12 +170,16 @@ class ClientesGoogleEnviadasResource extends Resource
                         'pending' => 'warning',
                         'accepted' => 'success',
                         'rejected' => 'danger',
+                        'listo_para_enviar' => 'info',
+                        'propuesta_enviada' => 'success',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'pending' => 'Pending',
                         'accepted' => 'Accepted',
                         'rejected' => 'Rejected',
+                        'listo_para_enviar' => 'Listo para enviar',
+                        'propuesta_enviada' => 'Propuesta enviada',
                         default => $state,
                     })
                     ->sortable()
@@ -300,12 +306,16 @@ class ClientesGoogleEnviadasResource extends Resource
                                 'pending' => 'warning',
                                 'accepted' => 'success',
                                 'rejected' => 'danger',
+                                'listo_para_enviar' => 'info',
+                                'propuesta_enviada' => 'success',
                                 default => 'gray',
                             })
                             ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'pending' => 'Pending',
                                 'accepted' => 'Accepted',
                                 'rejected' => 'Rejected',
+                                'listo_para_enviar' => 'Listo para enviar',
+                                'propuesta_enviada' => 'Propuesta enviada',
                                 default => $state,
                             }),
                     ]),

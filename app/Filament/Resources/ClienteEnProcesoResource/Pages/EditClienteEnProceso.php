@@ -71,7 +71,11 @@ class EditClienteEnProceso extends EditRecord
 
                         if ($response->successful()) {
                             if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
-                                $record->update(['propuesta_enviada' => true]);
+                                $update = ['propuesta_enviada' => true];
+                                if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                                    $update['estado'] = 'propuesta_enviada';
+                                }
+                                $record->update($update);
                             }
                             Notification::make()
                                 ->title('Propuesta enviada')

@@ -264,6 +264,7 @@ class ClienteEnProcesoResource extends Resource
                                 'accepted' => 'Accepted',
                                 'rejected' => 'Rejected',
                                 'listo_para_enviar' => 'Listo para enviar',
+                                'propuesta_enviada' => 'Propuesta enviada',
                             ])
                             ->default('pending')
                             ->required()
@@ -307,6 +308,7 @@ class ClienteEnProcesoResource extends Resource
                         'accepted' => 'success',
                         'rejected' => 'danger',
                         'listo_para_enviar' => 'info',
+                        'propuesta_enviada' => 'success',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -314,6 +316,7 @@ class ClienteEnProcesoResource extends Resource
                         'accepted' => 'Accepted',
                         'rejected' => 'Rejected',
                         'listo_para_enviar' => 'Listo para enviar',
+                        'propuesta_enviada' => 'Propuesta enviada',
                         default => $state,
                     })
                     ->sortable()
@@ -382,7 +385,11 @@ class ClienteEnProcesoResource extends Resource
 
                             if ($response->successful()) {
                                 if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
-                                    $record->update(['propuesta_enviada' => true]);
+                                    $update = ['propuesta_enviada' => true];
+                                    if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                                        $update['estado'] = 'propuesta_enviada';
+                                    }
+                                    $record->update($update);
                                 }
                                 Notification::make()
                                     ->title('Propuesta enviada')
@@ -449,6 +456,11 @@ class ClienteEnProcesoResource extends Resource
                         $record = $action->getRecord();
                         
                         if (! $record) {
+                            return [];
+                        }
+
+                        // En la página \"Listos para Enviar\" NO mostrar el botón de enviar por email en el modal.
+                        if (request()->is('admin/cliente-en-procesos/listos-para-enviar*')) {
                             return [];
                         }
 
@@ -519,7 +531,11 @@ class ClienteEnProcesoResource extends Resource
 
                                         if ($response->successful()) {
                                             if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
-                                                $record->update(['propuesta_enviada' => true]);
+                                                $update = ['propuesta_enviada' => true];
+                                                if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                                                    $update['estado'] = 'propuesta_enviada';
+                                                }
+                                                $record->update($update);
                                             }
                                             
                                             Notification::make()
@@ -738,6 +754,7 @@ class ClienteEnProcesoResource extends Resource
                                 'accepted' => 'success',
                                 'rejected' => 'danger',
                                 'listo_para_enviar' => 'info',
+                                'propuesta_enviada' => 'success',
                                 default => 'gray',
                             })
                             ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -745,6 +762,7 @@ class ClienteEnProcesoResource extends Resource
                                 'accepted' => 'Accepted',
                                 'rejected' => 'Rejected',
                                 'listo_para_enviar' => 'Listo para enviar',
+                                'propuesta_enviada' => 'Propuesta enviada',
                                 default => $state,
                             }),
                     ]),

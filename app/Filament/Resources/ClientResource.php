@@ -134,6 +134,56 @@ class ClientResource extends Resource
                     ->falseLabel('Sin propuesta'),
             ])
             ->actions([
+                Tables\Actions\Action::make('enviar_email')
+                    ->label('Enviar Email')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->action(function (Client $record) {
+                        // Obtener correo del cliente
+                        $correoDestino = $record->email ?? null;
+                        
+                        if (empty($correoDestino)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('⚠️ No se puede enviar')
+                                ->body('El cliente no tiene un correo electrónico asociado.')
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+                        
+                        try {
+                            // Aquí puedes personalizar el email que se envía
+                            \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\FacturaMail([
+                                'cliente_nombre' => $record->name ?? '',
+                                'cliente_correo' => $correoDestino,
+                            ]));
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('✅ Email enviado')
+                                ->body('El email ha sido enviado a ' . $correoDestino)
+                                ->success()
+                                ->send();
+                        } catch (\Exception $mailException) {
+                            \Log::error('Error enviando email desde tabla de clientes', [
+                                'error' => $mailException->getMessage(),
+                                'trace' => $mailException->getTraceAsString(),
+                                'correo' => $correoDestino,
+                                'cliente' => $record->name ?? 'N/A',
+                            ]);
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('❌ Error al enviar email')
+                                ->body('No se pudo enviar el email: ' . $mailException->getMessage())
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading('Enviar email al cliente')
+                    ->modalDescription('¿Estás seguro de que deseas enviar un email a este cliente?')
+                    ->modalSubmitActionLabel('Sí, enviar')
+                    ->visible(fn (Client $record) => !empty($record->email)),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])

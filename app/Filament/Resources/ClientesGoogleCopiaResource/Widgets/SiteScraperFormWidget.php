@@ -20,6 +20,11 @@ class SiteScraperFormWidget extends Widget implements HasForms
 
     protected int|string|array $columnSpan = 'full';
 
+    public function getColumnSpan(): int | string | array
+    {
+        return 'full';
+    }
+
     public function mount(): void
     {
         $this->form->fill();

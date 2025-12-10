@@ -19,6 +19,8 @@
         </div>
 
         {{-- Formulario abajo --}}
-        <x-filament-widgets::widgets :widgets="[ \App\Filament\Resources\ClientesGoogleCopiaResource\Widgets\SiteScraperFormWidget::class ]" />
+        <div style="width: 100% !important; max-width: 100% !important; margin-left: -1.5rem !important; margin-right: -1.5rem !important; padding-left: 1.5rem !important; padding-right: 1.5rem !important;">
+            <x-filament-widgets::widgets :widgets="[ \App\Filament\Resources\ClientesGoogleCopiaResource\Widgets\SiteScraperFormWidget::class ]" />
+        </div>
     </div>
 </x-filament-panels::page>

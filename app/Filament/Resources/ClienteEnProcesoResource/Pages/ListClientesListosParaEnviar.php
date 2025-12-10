@@ -113,6 +113,64 @@ class ListClientesListosParaEnviar extends ListRecords
                     ->icon('heroicon-o-eye'),
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil-square'),
+                Tables\Actions\Action::make('enviar_propuesta')
+                    ->label('Enviar Propuesta')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Enviar propuesta por email')
+                    ->modalDescription('¿Estás seguro de que deseas enviar la propuesta por email a este cliente?')
+                    ->action(function ($record) {
+                        if (empty($record->email)) {
+                            Notification::make()
+                                ->title('Error')
+                                ->body('El cliente no tiene un correo electrónico.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        try {
+                            $videoUrl = '';
+                            if ($record->proposed_site) {
+                                $sitio = \App\Models\Sitio::where('enlace', $record->proposed_site)->first();
+                                $videoUrl = $sitio?->video_url ?? '';
+                            }
+                            $response = \Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
+                                'name' => $record->name ?? '',
+                                'email' => $record->email ?? '',
+                                'website' => $record->website ?? '',
+                                'proposed_site' => $record->proposed_site ?? '',
+                                'video_url' => $videoUrl,
+                                'feedback' => $record->feedback ?? '',
+                                'propuesta' => $record->propuesta ?? '',
+                                'cliente_id' => $record->id ?? null,
+                                'cliente_nombre' => $record->name ?? '',
+                                'cliente_correo' => $record->email ?? '',
+                            ]);
+                            if ($response->successful()) {
+                                $record->update(['propuesta_enviada' => true, 'estado' => 'propuesta_enviada']);
+                                Notification::make()
+                                    ->title('Propuesta enviada')
+                                    ->body('La propuesta se ha enviado correctamente a ' . $record->email)
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Error al enviar propuesta')
+                                    ->body($response->body())
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            }
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Error al enviar')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->visible(fn ($record) => ($record->estado ?? null) === 'listo_para_enviar'),
             ]);
     }
 }

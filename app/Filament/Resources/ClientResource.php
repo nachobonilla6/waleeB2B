@@ -21,8 +21,8 @@ class ClientResource extends Resource
     protected static ?string $navigationLabel = 'Clientes Activos';
     protected static ?string $modelLabel = 'Client';
     protected static ?string $pluralModelLabel = 'Clients';
-    protected static ?string $navigationGroup = 'Herramientas';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Administración';
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationBadge(): ?string
     {

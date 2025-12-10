@@ -25,8 +25,13 @@ class PublicacionVelaResource extends Resource
     protected static ?string $navigationLabel = 'Publicaciones Vela';
     protected static ?string $modelLabel = 'Publicación Vela';
     protected static ?string $pluralModelLabel = 'Publicaciones Vela';
-    protected static ?string $navigationGroup = 'Administración';
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationGroup = 'Herramientas';
+    protected static ?int $navigationSort = 6;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return '13';
+    }
 
     public static function form(Form $form): Form
     {

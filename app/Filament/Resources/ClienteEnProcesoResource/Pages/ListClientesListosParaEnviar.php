@@ -26,13 +26,6 @@ class ListClientesListosParaEnviar extends ListRecords
         return MaxWidth::Full;
     }
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            function() { return view('components.google-clients-nav'); },
-        ];
-    }
-
     protected function getHeaderActions(): array
     {
         return [];

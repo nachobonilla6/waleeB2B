@@ -19,7 +19,7 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 5;
 
-    public static function getNavigationUrl(): ?string
+    public static function getNavigationUrl(): string
     {
         return \App\Filament\Resources\ClienteEnProcesoResource::getUrl('index');
     }

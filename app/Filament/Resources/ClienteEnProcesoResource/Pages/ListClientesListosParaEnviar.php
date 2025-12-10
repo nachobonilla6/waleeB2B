@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ClienteEnProcesoResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
-use App\Filament\Resources\ClienteEnProcesoResource\Widgets\ClientesListosParaEnviarCards;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,11 +11,9 @@ class ListClientesListosParaEnviar extends ListRecords
 {
     protected static string $resource = ClienteEnProcesoResource::class;
 
-    protected function getHeaderWidgets(): array
+    public function getMaxContentWidth(): MaxWidth | string | null
     {
-        return [
-            ClientesListosParaEnviarCards::class,
-        ];
+        return MaxWidth::Full;
     }
 
     public function getTitle(): string
@@ -29,14 +26,17 @@ class ListClientesListosParaEnviar extends ListRecords
         return 'Clientes Listos para Enviar';
     }
 
-    public function getMaxContentWidth(): MaxWidth | string | null
-    {
-        return MaxWidth::Full;
-    }
-
     protected function getHeaderActions(): array
     {
         return [];
+    }
+
+    protected function getTableView(): string
+    {
+        return <<<'blade'
+@include('components.google-clients-nav')
+@include('filament::components.table')
+blade;
     }
 
     protected function getTableQuery(): Builder

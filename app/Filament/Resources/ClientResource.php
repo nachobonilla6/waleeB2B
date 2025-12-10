@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Http;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 
@@ -152,17 +153,29 @@ class ClientResource extends Resource
                         }
                         
                         try {
-                            // Aquí puedes personalizar el email que se envía
-                            \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\FacturaMail([
+                            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a';
+                            
+                            $response = Http::timeout(30)->post($webhookUrl, [
                                 'cliente_nombre' => $record->name ?? '',
                                 'cliente_correo' => $correoDestino,
-                            ]));
+                                'cliente_id' => $record->id ?? null,
+                                'email' => $correoDestino,
+                                'name' => $record->name ?? '',
+                            ]);
                             
-                            \Filament\Notifications\Notification::make()
-                                ->title('✅ Email enviado')
-                                ->body('El email ha sido enviado a ' . $correoDestino)
-                                ->success()
-                                ->send();
+                            if ($response->successful()) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('✅ Email enviado')
+                                    ->body('El email ha sido enviado a ' . $correoDestino)
+                                    ->success()
+                                    ->send();
+                            } else {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('❌ Error al enviar email')
+                                    ->body('El webhook respondió con error: ' . $response->status())
+                                    ->danger()
+                                    ->send();
+                            }
                         } catch (\Exception $mailException) {
                             \Log::error('Error enviando email desde tabla de clientes', [
                                 'error' => $mailException->getMessage(),

@@ -161,7 +161,7 @@ class SitioResource extends Resource
         return $table
             ->recordUrl(fn (Sitio $record): string => static::getUrl('edit', ['record' => $record]))
             ->recordAction('edit')
-            ->defaultPaginationPageOption(5)
+            ->defaultPaginationPageOption(12)
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
@@ -179,42 +179,49 @@ class SitioResource extends Resource
                         
                         // Generate a consistent color based on the name
                         $colors = [
-                            'bg-blue-100 text-blue-800',
-                            'bg-green-100 text-green-800',
-                            'bg-purple-100 text-purple-800',
-                            'bg-green-100 text-green-800',
-                            'bg-pink-100 text-pink-800',
-                            'bg-indigo-100 text-indigo-800',
-                            'bg-red-100 text-red-800',
-                            'bg-gray-100 text-gray-800',
+                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                            'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+                            'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
+                            'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                            'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
                         ];
                         $colorIndex = abs(crc32($record->nombre)) % count($colors);
                         $colorClass = $colors[$colorIndex];
                         
-                        return '<div class="flex items-center justify-center w-10 h-10 rounded-full ' . $colorClass . ' font-medium text-sm">' . $initials . '</div>';
+                        return '<div class="flex items-center justify-center w-10 h-10 rounded-lg ' . $colorClass . ' font-semibold text-sm">' . $initials . '</div>';
                     })
                     ->html()
-                    ->grow(false),
+                    ->grow(false)
+                    ->width('60px'),
                 
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('medium')
+                    ->size('sm')
+                    ->limit(40),
+                
+                Tables\Columns\TextColumn::make('enlace')
+                    ->label('Enlace')
+                    ->url(fn ($record) => $record->enlace)
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-link')
+                    ->color('primary')
+                    ->size('xs')
+                    ->limit(30)
+                    ->toggleable(),
                 
                 Tables\Columns\IconColumn::make('en_linea')
                     ->label('Estado')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle'),
-                
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->size('sm')
+                    ->width('80px'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('en_linea')
@@ -225,12 +232,16 @@ class SitioResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->size('sm'),
+                Tables\Actions\ViewAction::make()
+                    ->iconButton()
+                    ->size('sm'),
             ])
             ->recordClasses(fn ($record) => 'group hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer')
             ->striped()
-            ->defaultPaginationPageOption(25)
+            ->paginated([12, 24, 48, 96])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('marcarEnLinea')

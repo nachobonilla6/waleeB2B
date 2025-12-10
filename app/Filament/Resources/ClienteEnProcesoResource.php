@@ -373,7 +373,10 @@ class ClienteEnProcesoResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye'),
                 Tables\Actions\EditAction::make()
-                    ->icon('heroicon-o-pencil-square'),
+                    ->icon('heroicon-o-pencil-square')
+                    ->form(fn (Form $form, Client $record) => static::form($form))
+                    ->modalWidth('4xl')
+                    ->modalHeading(fn ($record) => 'Editar Cliente: ' . $record->name),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -268,10 +268,8 @@ class ClienteEnProcesoResource extends Resource
                                 }),
                         ])->columnSpanFull()
                           ->visibleOn('edit'),
-                        Forms\Components\Toggle::make('propuesta_enviada')
-                            ->label('Propuesta Enviada')
+                        Forms\Components\Hidden::make('propuesta_enviada')
                             ->default(false)
-                            ->helperText('Marcar cuando se haya enviado la propuesta')
                             ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                         Forms\Components\Select::make('estado')
                             ->label('Estado')
@@ -442,18 +440,18 @@ class ClienteEnProcesoResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye')
                     ->modalWidth('4xl')
-                    ->modalHeading(fn (Client $record) => 'Ver Cliente: ' . $record->name),
+                    ->modalHeading(fn (?Client $record) => 'Ver Cliente: ' . ($record->name ?? 'Cliente')),
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil-square')
                     ->modalWidth('4xl')
-                    ->modalHeading(fn (Client $record) => 'Editar Cliente: ' . $record->name)
+                    ->modalHeading(fn (?Client $record) => 'Editar Cliente: ' . ($record->name ?? 'Cliente'))
                     ->form(fn (Form $form) => static::form($form))
                     ->modalSubmitActionLabel('Guardar')
                     ->modalCancelActionLabel('Cancelar')
                     ->extraModalFooterActions(function ($action) {
                         $record = $action->getRecord();
                         
-                        if ($record->propuesta_enviada ?? false) {
+                        if (!$record || ($record->propuesta_enviada ?? false)) {
                             return [];
                         }
                         
@@ -467,6 +465,15 @@ class ClienteEnProcesoResource extends Resource
                                 ->modalDescription('¿Estás seguro de que deseas enviar la propuesta por email a este cliente?')
                                 ->action(function (array $data) use ($action) {
                                     $record = $action->getRecord();
+
+                                    if (! $record) {
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->body('No se encontró el registro.')
+                                            ->danger()
+                                            ->send();
+                                        return;
+                                    }
                                     
                                     // Primero guardar los cambios
                                     $record->update($data);
@@ -512,6 +519,9 @@ class ClienteEnProcesoResource extends Resource
                                                 ->body('La propuesta se ha enviado correctamente a ' . ($data['email'] ?? $record->email))
                                                 ->success()
                                                 ->send();
+
+                                            // Redirigir a la lista después de enviar
+                                            return redirect(static::getUrl('index'));
                                         } else {
                                             $errorBody = $response->body();
                                             $errorData = json_decode($errorBody, true);

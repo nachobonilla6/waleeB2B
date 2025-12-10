@@ -476,7 +476,9 @@ class ClienteEnProcesoResource extends Resource
                                     }
 
                                     // Tomar los datos actuales del formulario del modal y guardarlos primero
-                                    $data = $data ?: ($action->getFormData() ?? []);
+                                    $formData = $action->getFormData() ?? [];
+                                    $data = $data ?: $formData;
+
                                     $record->fill($data);
                                     $record->save();
                                     $record->refresh();
@@ -492,18 +494,18 @@ class ClienteEnProcesoResource extends Resource
 
                                     try {
                                         $videoUrl = '';
-                                        if ($data['proposed_site'] ?? $record->proposed_site) {
-                                            $sitio = \App\Models\Sitio::where('enlace', $data['proposed_site'] ?? $record->proposed_site)->first();
+                                        $proposedSite = $record->proposed_site ?? ($data['proposed_site'] ?? null);
+                                        if ($proposedSite) {
+                                            $sitio = \App\Models\Sitio::where('enlace', $proposedSite)->first();
                                             $videoUrl = $sitio?->video_url ?? '';
                                         }
 
-                                        // Usar webhook de producción
                                         // Usar siempre los datos ya guardados/actualizados
                                         $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
                                             'name' => $record->name ?? '',
                                             'email' => $record->email ?? '',
                                             'website' => $record->website ?? '',
-                                            'proposed_site' => $record->proposed_site ?? '',
+                                            'proposed_site' => $proposedSite ?? '',
                                             'video_url' => $videoUrl,
                                             'feedback' => $record->feedback ?? '',
                                             'propuesta' => $record->propuesta ?? '',

@@ -446,7 +446,110 @@ class ClienteEnProcesoResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil-square')
                     ->modalWidth('4xl')
-                    ->modalHeading(fn (Client $record) => 'Editar Cliente: ' . $record->name),
+                    ->modalHeading(fn (Client $record) => 'Editar Cliente: ' . $record->name)
+                    ->form(fn (Form $form) => static::form($form))
+                    ->modalSubmitActionLabel('Guardar')
+                    ->modalCancelActionLabel('Cancelar')
+                    ->extraModalFooterActions(function ($action) {
+                        $record = $action->getRecord();
+                        
+                        if ($record->propuesta_enviada ?? false) {
+                            return [];
+                        }
+                        
+                        return [
+                            Tables\Actions\Action::make('enviar_propuesta')
+                                ->label('Enviar Propuesta por Email')
+                                ->icon('heroicon-o-envelope')
+                                ->color('success')
+                                ->requiresConfirmation()
+                                ->modalHeading('Enviar propuesta por email')
+                                ->modalDescription('¿Estás seguro de que deseas enviar la propuesta por email a este cliente?')
+                                ->action(function (array $data) use ($action) {
+                                    $record = $action->getRecord();
+                                    
+                                    // Primero guardar los cambios
+                                    $record->update($data);
+                                    $record = $record->fresh();
+                                    
+                                    if (empty($data['email'] ?? $record->email)) {
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->body('El cliente no tiene un correo electrónico.')
+                                            ->danger()
+                                            ->send();
+                                        return;
+                                    }
+
+                                    try {
+                                        $videoUrl = '';
+                                        if ($data['proposed_site'] ?? $record->proposed_site) {
+                                            $sitio = \App\Models\Sitio::where('enlace', $data['proposed_site'] ?? $record->proposed_site)->first();
+                                            $videoUrl = $sitio?->video_url ?? '';
+                                        }
+
+                                        // Usar webhook de producción
+                                        $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
+                                            'name' => $data['name'] ?? $record->name ?? '',
+                                            'email' => $data['email'] ?? $record->email ?? '',
+                                            'website' => $data['website'] ?? $record->website ?? '',
+                                            'proposed_site' => $data['proposed_site'] ?? $record->proposed_site ?? '',
+                                            'video_url' => $videoUrl,
+                                            'feedback' => $data['feedback'] ?? $record->feedback ?? '',
+                                            'propuesta' => $data['propuesta'] ?? $record->propuesta ?? '',
+                                            'cliente_id' => $record->id ?? null,
+                                            'cliente_nombre' => $data['name'] ?? $record->name ?? '',
+                                            'cliente_correo' => $data['email'] ?? $record->email ?? '',
+                                        ]);
+
+                                        if ($response->successful()) {
+                                            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
+                                                $record->update(['propuesta_enviada' => true]);
+                                            }
+                                            
+                                            Notification::make()
+                                                ->title('Propuesta enviada')
+                                                ->body('La propuesta se ha enviado correctamente a ' . ($data['email'] ?? $record->email))
+                                                ->success()
+                                                ->send();
+                                        } else {
+                                            $errorBody = $response->body();
+                                            $errorData = json_decode($errorBody, true);
+                                            
+                                            \Log::error('Error al enviar propuesta desde edit al webhook', [
+                                                'status' => $response->status(),
+                                                'body' => $errorBody,
+                                                'cliente_id' => $record->id,
+                                                'email' => $data['email'] ?? $record->email,
+                                            ]);
+                                            
+                                            $errorMessage = 'Error ' . $response->status();
+                                            if (isset($errorData['message'])) {
+                                                $errorMessage .= ': ' . $errorData['message'];
+                                                if (str_contains($errorData['message'], 'Respond to Webhook')) {
+                                                    $errorMessage .= ' - El workflow de n8n necesita tener un nodo "Respond to Webhook" configurado.';
+                                                }
+                                            } else {
+                                                $errorMessage .= ': ' . substr($errorBody, 0, 150);
+                                            }
+                                            
+                                            Notification::make()
+                                                ->title('Error al enviar propuesta')
+                                                ->body($errorMessage)
+                                                ->danger()
+                                                ->persistent()
+                                                ->send();
+                                        }
+                                    } catch (\Exception $e) {
+                                        Notification::make()
+                                            ->title('Error al enviar')
+                                            ->body($e->getMessage())
+                                            ->danger()
+                                            ->send();
+                                    }
+                                }),
+                        ];
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -165,9 +165,15 @@ class ClientResource extends Resource
                     ->falseLabel('Sin propuesta'),
             ])
             ->actions([
+                Tables\Actions\Action::make('enviar_email')
+                    ->label('Enviar Email')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->url(fn (Client $record) => $record->email ? 'mailto:' . $record->email : null)
+                    ->openUrlInNewTab()
+                    ->visible(fn (Client $record) => !empty($record->email)),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -37,6 +37,10 @@ class ListClienteEnProcesos extends ListRecords
         $currentUrl = url()->current();
 
         return [
+            Actions\Action::make('extraer_nuevos_clientes')
+                ->label('Extraer Nuevos Clientes')
+                ->url($extraerUrl)
+                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
             Actions\Action::make('clientes_google')
                 ->label('Clientes Google')
                 ->url($clientesGoogleUrl)
@@ -49,10 +53,6 @@ class ListClienteEnProcesos extends ListRecords
                 ->label('Propuestas Enviadas')
                 ->url($propuestasUrl)
                 ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray'),
-            Actions\Action::make('extraer_nuevos_clientes')
-                ->label('Extraer Nuevos Clientes')
-                ->url($extraerUrl)
-                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
         ];
     }
 }

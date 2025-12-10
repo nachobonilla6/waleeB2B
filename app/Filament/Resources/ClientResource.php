@@ -22,18 +22,33 @@ class ClientResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationLabel = 'Clientes Activos';
-    protected static ?string $modelLabel = 'Client';
-    protected static ?string $pluralModelLabel = 'Clients';
+    protected static ?string $modelLabel = 'Cliente Activo';
+    protected static ?string $pluralModelLabel = 'Clientes Activos';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 2;
 
     public static function getNavigationBadge(): ?string
     {
         try {
+            if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                return (string) static::getModel()::where('estado', 'accepted')->count();
+            }
             return (string) static::getModel()::count();
         } catch (\Exception $e) {
             return '0';
         }
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // Solo mostrar clientes con estado 'accepted'
+        if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+            $query->where('estado', 'accepted');
+        }
+
+        return $query;
     }
 
     public static function form(Form $form): Form
@@ -85,10 +100,10 @@ class ClientResource extends Resource
                             ->label('Estado')
                             ->options([
                                 'pending' => 'Pending',
-                                'accepted' => 'Accepted',
+                                'accepted' => 'Activo',
                                 'rejected' => 'Rejected',
                             ])
-                            ->default('pending')
+                            ->default('accepted')
                             ->required()
                             ->native(false)
                             ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'estado')),
@@ -132,18 +147,8 @@ class ClientResource extends Resource
                 Tables\Columns\TextColumn::make('estado')
                     ->label('Estado')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'accepted' => 'success',
-                        'rejected' => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => 'Pending',
-                        'accepted' => 'Accepted',
-                        'rejected' => 'Rejected',
-                        default => $state,
-                    })
+                    ->color('success')
+                    ->formatStateUsing(fn (string $state): string => 'Activo')
                     ->sortable()
                     ->searchable()
                     ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'estado')),
@@ -226,18 +231,8 @@ class ClientResource extends Resource
                         Infolists\Components\TextEntry::make('estado')
                             ->label('Estado')
                             ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'pending' => 'warning',
-                                'accepted' => 'success',
-                                'rejected' => 'danger',
-                                default => 'gray',
-                            })
-                            ->formatStateUsing(fn (string $state): string => match ($state) {
-                                'pending' => 'Pending',
-                                'accepted' => 'Accepted',
-                                'rejected' => 'Rejected',
-                                default => $state,
-                            })
+                            ->color('success')
+                            ->formatStateUsing(fn (string $state): string => 'Activo')
                             ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'estado')),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label('Fecha de Registro')

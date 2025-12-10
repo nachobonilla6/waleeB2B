@@ -125,13 +125,15 @@ class EditClienteEnProceso extends EditRecord
 
     protected function afterSave(): void
     {
-        $record = $this->record->fresh(); // Refrescar para obtener el valor actualizado
+        // Refrescar el record para obtener los valores actualizados después de guardar
+        $this->record->refresh();
+        $record = $this->record;
         
-        // Verificar si se marcó "Propuesta Enviada" y no estaba marcada antes
-        $propuestaEnviada = $record->propuesta_enviada ?? false;
+        // Verificar si se marcó "Propuesta Enviada" después de guardar
+        $propuestaEnviadaNueva = $record->propuesta_enviada ?? false;
         
         // Solo enviar si se marcó como enviada y antes no estaba marcada
-        if ($propuestaEnviada && !$this->propuestaEnviadaAnterior && !empty($record->email)) {
+        if ($propuestaEnviadaNueva && !$this->propuestaEnviadaAnterior && !empty($record->email)) {
             try {
                 $videoUrl = '';
                 if ($record->proposed_site) {

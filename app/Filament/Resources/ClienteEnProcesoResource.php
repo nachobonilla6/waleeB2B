@@ -418,13 +418,11 @@ class ClienteEnProcesoResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye')
                     ->modalWidth('4xl')
-                    ->modalHeading(fn ($record) => 'Ver Cliente: ' . $record->name)
-                    ->infolist(fn (Infolist $infolist) => static::infolist($infolist)),
+                    ->modalHeading(fn (Client $record) => 'Ver Cliente: ' . $record->name),
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil-square')
-                    ->form(fn (Form $form, Client $record) => static::form($form))
                     ->modalWidth('4xl')
-                    ->modalHeading(fn ($record) => 'Editar Cliente: ' . $record->name),
+                    ->modalHeading(fn (Client $record) => 'Editar Cliente: ' . $record->name),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -632,8 +630,8 @@ class ClienteEnProcesoResource extends Resource
         return [
             'index' => Pages\ListClienteEnProcesos::route('/'),
             'create' => Pages\CreateClienteEnProceso::route('/create'),
-            'view' => Pages\ViewClienteEnProceso::route('/{record}'),
-            'edit' => Pages\EditClienteEnProceso::route('/{record}/edit'),
+            // 'view' => Pages\ViewClienteEnProceso::route('/{record}'),
+            // 'edit' => Pages\EditClienteEnProceso::route('/{record}/edit'),
         ];
     }
 }

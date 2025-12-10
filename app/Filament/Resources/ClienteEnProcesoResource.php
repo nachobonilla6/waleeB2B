@@ -403,10 +403,19 @@ class ClienteEnProcesoResource extends Resource
                                     ->success()
                                     ->send();
                             } else {
+                                $errorBody = $response->body();
+                                \Log::error('Error al enviar propuesta al webhook', [
+                                    'status' => $response->status(),
+                                    'body' => $errorBody,
+                                    'cliente_id' => $record->id,
+                                    'email' => $record->email,
+                                ]);
+                                
                                 Notification::make()
                                     ->title('Error al enviar')
-                                    ->body('El webhook respondió con error: ' . $response->status())
+                                    ->body('El webhook respondió con error ' . $response->status() . ': ' . substr($errorBody, 0, 100))
                                     ->danger()
+                                    ->persistent()
                                     ->send();
                             }
                         } catch (\Exception $e) {
@@ -471,6 +480,12 @@ class ClienteEnProcesoResource extends Resource
                                         }
                                         $enviados++;
                                     } else {
+                                        \Log::error('Error al enviar propuesta masiva al webhook', [
+                                            'status' => $response->status(),
+                                            'body' => $response->body(),
+                                            'cliente_id' => $record->id,
+                                            'email' => $record->email,
+                                        ]);
                                         $errores++;
                                     }
                                 } catch (\Exception $e) {

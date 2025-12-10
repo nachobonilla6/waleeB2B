@@ -153,7 +153,7 @@ class ClientResource extends Resource
                         }
                         
                         try {
-                            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a';
+                            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a';
                             
                             $response = Http::timeout(30)->post($webhookUrl, [
                                 'cliente_nombre' => $record->name ?? '',
@@ -170,10 +170,19 @@ class ClientResource extends Resource
                                     ->success()
                                     ->send();
                             } else {
+                                $errorBody = $response->body();
+                                \Log::error('Error al enviar email al webhook', [
+                                    'status' => $response->status(),
+                                    'body' => $errorBody,
+                                    'cliente_id' => $record->id,
+                                    'email' => $correoDestino,
+                                ]);
+                                
                                 \Filament\Notifications\Notification::make()
                                     ->title('❌ Error al enviar email')
-                                    ->body('El webhook respondió con error: ' . $response->status())
+                                    ->body('El webhook respondió con error ' . $response->status() . ': ' . substr($errorBody, 0, 100))
                                     ->danger()
+                                    ->persistent()
                                     ->send();
                             }
                         } catch (\Exception $mailException) {

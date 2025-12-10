@@ -95,7 +95,9 @@ class ClientResource extends Resource
                     ->schema([
                         Forms\Components\Toggle::make('propuesta_enviada')
                             ->label('Propuesta Enviada')
-                            ->default(false),
+                            ->default(false)
+                            ->disabled()
+                            ->dehydrated(),
                         Forms\Components\Select::make('estado')
                             ->label('Estado')
                             ->options([

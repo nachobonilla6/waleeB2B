@@ -34,8 +34,10 @@ class ListClientesListosParaEnviar extends ListRecords
     protected function getTableView(): string
     {
         return <<<'blade'
-@include('components.google-clients-nav')
-@include('filament::components.table')
+<div>
+    @include('components.google-clients-nav')
+    @include('filament::components.table')
+</div>
 blade;
     }
 

@@ -32,10 +32,11 @@ class ListClienteEnProcesos extends ListRecords
 
     protected function getTableView(): string
     {
-        // Extiende la tabla agregando el header global por encima
         return <<<'blade'
-@include('components.google-clients-nav')
-@include('filament::components.table')
+<div>
+    @include('components.google-clients-nav')
+    @include('filament::components.table')
+</div>
 blade;
     }
 }

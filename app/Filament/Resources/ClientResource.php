@@ -120,42 +120,9 @@ class ClientResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Correo')
-                    ->searchable()
-                    ->copyable(),
                 Tables\Columns\TextColumn::make('telefono_1')
                     ->label('Teléfono')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('website')
-                    ->label('Sitio Web')
-                    ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
-                    ->openUrlInNewTab()
-                    ->formatStateUsing(function ($state) {
-                        if (! $state) {
-                            return null;
-                        }
-                        $clean = preg_replace('/^https?:\/\//i', '', $state);
-                        $clean = preg_replace('/^www\./i', '', $clean);
-                        return rtrim($clean, '/');
-                    })
-                    ->limit(40),
-                Tables\Columns\IconColumn::make('propuesta_enviada')
-                    ->label('Propuesta')
-                    ->boolean()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('estado')
-                    ->label('Estado')
-                    ->badge()
-                    ->color('success')
-                    ->formatStateUsing(fn (string $state): string => 'Activo')
-                    ->sortable()
-                    ->searchable()
-                    ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'estado')),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Creado')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('propuesta_enviada')
@@ -165,13 +132,6 @@ class ClientResource extends Resource
                     ->falseLabel('Sin propuesta'),
             ])
             ->actions([
-                Tables\Actions\Action::make('enviar_email')
-                    ->label('Enviar Email')
-                    ->icon('heroicon-o-envelope')
-                    ->color('success')
-                    ->url(fn (Client $record) => $record->email ? 'mailto:' . $record->email : null)
-                    ->openUrlInNewTab()
-                    ->visible(fn (Client $record) => !empty($record->email)),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])

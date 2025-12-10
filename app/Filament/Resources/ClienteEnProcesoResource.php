@@ -425,7 +425,16 @@ class ClienteEnProcesoResource extends Resource
                                 ->send();
                         }
                     })
-                    ->visible(fn (Client $record) => !($record->propuesta_enviada ?? false)),
+                    ->visible(function (Client $record): bool {
+                        // En la página \"Listos para Enviar\" siempre debe mostrarse el botón,
+                        // independientemente de si ya se marcó como propuesta_enviada.
+                        if (request()->is('admin/cliente-en-procesos/listos-para-enviar*')) {
+                            return true;
+                        }
+
+                        // En el resto de páginas, mantener la lógica original:
+                        return !($record->propuesta_enviada ?? false);
+                    }),
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye')
                     ->modalWidth('4xl')

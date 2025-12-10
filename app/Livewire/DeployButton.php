@@ -75,8 +75,7 @@ class DeployButton extends Component implements HasActions, HasForms
             ->icon('heroicon-o-chat-bubble-left-right')
             ->color('info')
             ->size('sm')
-            ->url('/walee')
-            ->openUrlInNewTab();
+            ->url('/walee');
     }
 
     public function render()

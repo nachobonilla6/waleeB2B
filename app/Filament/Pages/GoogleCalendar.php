@@ -28,8 +28,8 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationLabel = 'Calendario';
     protected static ?string $title = 'Citas';
-    protected static ?string $navigationGroup = 'Clientes';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Herramientas';
+    protected static ?int $navigationSort = 4;
 
     protected static string $view = 'filament.pages.google-calendar';
 

@@ -16,6 +16,12 @@ return new class extends Migration
                 $table->string('estado')->default('pending')->after('propuesta_enviada');
             }
         });
+
+        // Actualizar todos los registros existentes a 'pending'
+        \DB::table('clientes_en_proceso')
+            ->whereNull('estado')
+            ->orWhere('estado', '')
+            ->update(['estado' => 'pending']);
     }
 
     /**

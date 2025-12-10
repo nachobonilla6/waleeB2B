@@ -18,11 +18,20 @@ class ClientResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationLabel = 'Clients';
+    protected static ?string $navigationLabel = 'Clientes Activos';
     protected static ?string $modelLabel = 'Client';
     protected static ?string $pluralModelLabel = 'Clients';
-    protected static ?string $navigationGroup = 'Administración';
-    protected static ?int $navigationSort = 15;
+    protected static ?string $navigationGroup = 'Herramientas';
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            return (string) static::getModel()::count();
+        } catch (\Exception $e) {
+            return '0';
+        }
+    }
 
     public static function form(Form $form): Form
     {

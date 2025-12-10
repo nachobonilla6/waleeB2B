@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ClienteEnProcesoResource\Pages;
 use App\Filament\Resources\ClienteEnProcesoResource;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
 use App\Filament\Resources\ClientesGoogleCopiaResource;
+use App\Models\Client;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
@@ -59,7 +60,8 @@ class ListClientesListosParaEnviar extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-        return parent::getTableQuery()
+        // Usar el modelo directamente para no heredar el filtro de "pending" del recurso principal
+        return Client::query()
             ->where('estado', 'listo_para_enviar');
     }
 }

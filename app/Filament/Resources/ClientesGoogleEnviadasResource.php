@@ -212,6 +212,14 @@ class ClientesGoogleEnviadasResource extends Resource
                 $query->where('propuesta_enviada', true);
             }
 
+            // Excluir los que están marcados como \"listo_para_enviar\"
+            if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                $query->where(function ($q) {
+                    $q->whereNull('estado')
+                      ->orWhere('estado', '!=', 'listo_para_enviar');
+                });
+            }
+
             return $query;
         } catch (\Exception $e) {
             return parent::getEloquentQuery()->whereRaw('1 = 0');

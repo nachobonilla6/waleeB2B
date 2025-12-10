@@ -20,6 +20,7 @@ class Client extends Model
         'propuesta',
         'proposed_site',
         'propuesta_enviada',
+        'estado',
         'message',
     ];
 

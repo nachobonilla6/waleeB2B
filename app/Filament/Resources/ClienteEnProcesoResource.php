@@ -255,6 +255,16 @@ class ClienteEnProcesoResource extends Resource
                             ->default(false)
                             ->helperText('Marcar cuando se haya enviado la propuesta')
                             ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
+                        Forms\Components\Select::make('estado')
+                            ->label('Estado')
+                            ->options([
+                                'pending' => 'Pending',
+                                'accepted' => 'Accepted',
+                                'rejected' => 'Rejected',
+                            ])
+                            ->default('pending')
+                            ->required()
+                            ->native(false),
                     ]),
             ]);
     }
@@ -286,6 +296,23 @@ class ClienteEnProcesoResource extends Resource
                     })
                     ->limit(40)
                     ->icon('heroicon-o-globe-alt'),
+                Tables\Columns\TextColumn::make('estado')
+                    ->label('Estado')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'accepted' => 'success',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Pending',
+                        'accepted' => 'Accepted',
+                        'rejected' => 'Rejected',
+                        default => $state,
+                    })
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('propuesta_enviada')

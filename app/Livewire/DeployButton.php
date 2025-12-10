@@ -78,6 +78,16 @@ class DeployButton extends Component implements HasActions, HasForms
             ->url('/walee');
     }
 
+    public function extraerClientesAction(): Action
+    {
+        return Action::make('extraer_clientes')
+            ->label('Extraer Clientes')
+            ->icon('heroicon-o-magnifying-glass')
+            ->color('warning')
+            ->size('sm')
+            ->url('/admin/clientes-google-copias');
+    }
+
     public function render()
     {
         return view('livewire.deploy-button');

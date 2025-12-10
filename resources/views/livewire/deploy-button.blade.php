@@ -4,6 +4,7 @@
     x-on:reload-page.window="window.location.reload()"
 >
     {{ $this->chatAction }}
+    {{ $this->extraerClientesAction }}
     {{ $this->deployAction }}
 
     <x-filament-actions::modals />

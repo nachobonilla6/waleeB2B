@@ -561,6 +561,21 @@ class ClienteEnProcesoResource extends Resource
                             ->label('Propuesta Enviada')
                             ->boolean()
                             ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
+                        Infolists\Components\TextEntry::make('estado')
+                            ->label('Estado')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'pending' => 'warning',
+                                'accepted' => 'success',
+                                'rejected' => 'danger',
+                                default => 'gray',
+                            })
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                'pending' => 'Pending',
+                                'accepted' => 'Accepted',
+                                'rejected' => 'Rejected',
+                                default => $state,
+                            }),
                     ]),
                 Infolists\Components\Section::make('Información Adicional')
                     ->icon('heroicon-o-information-circle')

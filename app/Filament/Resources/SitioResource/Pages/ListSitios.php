@@ -79,11 +79,11 @@ class ListSitios extends ListRecords
     
     protected function getTableRecordsPerPageSelectOptions(): array 
     {
-        return [5 => 5, 10, 25, 50];
+        return [12 => 12, 24, 48, 96];
     }
     
     public function getDefaultTableRecordsPerPageSelectOption(): int 
     {
-        return 5;
+        return 12;
     }
 }

@@ -242,6 +242,9 @@ class SitioResource extends Resource
             ->recordClasses(fn ($record) => 'group hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer')
             ->striped()
             ->paginated([12, 24, 48, 96])
+            ->emptyStateHeading('No hay sitios')
+            ->emptyStateDescription('Comienza creando tu primer sitio')
+            ->emptyStateIcon('heroicon-o-globe-alt')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('marcarEnLinea')

@@ -68,7 +68,25 @@ class ClienteEnProcesoResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         try {
-            return static::getEloquentQuery()->count();
+            $query = parent::getEloquentQuery();
+            
+            // Solo mostrar clientes que NO tienen propuesta enviada (en proceso)
+            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
+                $query->where(function ($q) {
+                    $q->whereNull('propuesta_enviada')
+                      ->orWhere('propuesta_enviada', false);
+                });
+            }
+
+            // Excluir clientes con estado 'accepted'
+            if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                $query->where(function ($q) {
+                    $q->whereNull('estado')
+                      ->orWhere('estado', '!=', 'accepted');
+                });
+            }
+            
+            return (string) $query->count();
         } catch (\Exception $e) {
             return '0';
         }
@@ -492,6 +510,14 @@ class ClienteEnProcesoResource extends Resource
                 $query->where(function ($q) {
                     $q->whereNull('propuesta_enviada')
                       ->orWhere('propuesta_enviada', false);
+                });
+            }
+
+            // Excluir clientes con estado 'accepted'
+            if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
+                $query->where(function ($q) {
+                    $q->whereNull('estado')
+                      ->orWhere('estado', '!=', 'accepted');
                 });
             }
 

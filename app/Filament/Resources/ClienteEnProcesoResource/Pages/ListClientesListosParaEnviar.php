@@ -10,6 +10,9 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Http;
 
 class ListClientesListosParaEnviar extends ListRecords
 {
@@ -63,6 +66,105 @@ class ListClientesListosParaEnviar extends ListRecords
         // Usar el modelo directamente para no heredar el filtro de "pending" del recurso principal
         return Client::query()
             ->where('estado', 'listo_para_enviar');
+    }
+
+    public static function table(Tables\Table $table): Tables\Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold'),
+                Tables\Columns\TextColumn::make('website')
+                    ->label('Sitio Web')
+                    ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
+                    ->openUrlInNewTab()
+                    ->limit(40),
+                Tables\Columns\TextColumn::make('estado')
+                    ->label('Estado')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'accepted' => 'success',
+                        'rejected' => 'danger',
+                        'listo_para_enviar' => 'info',
+                        'propuesta_enviada' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pending' => 'Pending',
+                        'accepted' => 'Accepted',
+                        'rejected' => 'Rejected',
+                        'listo_para_enviar' => 'Listo para enviar',
+                        'propuesta_enviada' => 'Propuesta enviada',
+                        default => $state,
+                    }),
+                Tables\Columns\IconColumn::make('enviar_propuesta')
+                    ->label('Enviar Propuesta')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->action(function ($record) {
+                        if (empty($record->email)) {
+                            Notification::make()
+                                ->title('Error')
+                                ->body('El cliente no tiene un correo electrónico.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        try {
+                            $videoUrl = '';
+                            if ($record->proposed_site) {
+                                $sitio = \App\Models\Sitio::where('enlace', $record->proposed_site)->first();
+                                $videoUrl = $sitio?->video_url ?? '';
+                            }
+                            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
+                                'name' => $record->name ?? '',
+                                'email' => $record->email ?? '',
+                                'website' => $record->website ?? '',
+                                'proposed_site' => $record->proposed_site ?? '',
+                                'video_url' => $videoUrl,
+                                'feedback' => $record->feedback ?? '',
+                                'propuesta' => $record->propuesta ?? '',
+                                'cliente_id' => $record->id ?? null,
+                                'cliente_nombre' => $record->name ?? '',
+                                'cliente_correo' => $record->email ?? '',
+                            ]);
+                            if ($response->successful()) {
+                                $update = ['propuesta_enviada' => true];
+                                $update['estado'] = 'propuesta_enviada';
+                                $record->update($update);
+                                Notification::make()
+                                    ->title('Propuesta enviada')
+                                    ->body('La propuesta se ha enviado correctamente a ' . $record->email)
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Error al enviar propuesta')
+                                    ->body($response->body())
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                            }
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Error al enviar')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->visible(fn ($record) => ($record->estado ?? null) === 'listo_para_enviar'),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye'),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil-square'),
+            ]);
     }
 }
 

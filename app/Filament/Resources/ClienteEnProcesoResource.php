@@ -426,13 +426,12 @@ class ClienteEnProcesoResource extends Resource
                         }
                     })
                     ->visible(function (Client $record): bool {
-                        // En la página \"Listos para Enviar\" siempre debe mostrarse el botón,
-                        // independientemente de si ya se marcó como propuesta_enviada.
-                        if (request()->is('admin/cliente-en-procesos/listos-para-enviar*')) {
+                        // Si el cliente está \"listo_para_enviar\", mostrar siempre el botón
+                        if (($record->estado ?? null) === 'listo_para_enviar') {
                             return true;
                         }
 
-                        // En el resto de páginas, mantener la lógica original:
+                        // En otros estados: solo si aún no se ha enviado la propuesta
                         return !($record->propuesta_enviada ?? false);
                     }),
                 Tables\Actions\ViewAction::make()
@@ -449,7 +448,13 @@ class ClienteEnProcesoResource extends Resource
                     ->extraModalFooterActions(function ($action) {
                         $record = $action->getRecord();
                         
-                        if (!$record || ($record->propuesta_enviada ?? false)) {
+                        if (! $record) {
+                            return [];
+                        }
+
+                        // Si ya fue enviada y NO está en estado \"listo_para_enviar\", ocultar el botón extra.
+                        // Para los \"listo_para_enviar\" siempre mostramos el botón aunque propuesta_enviada sea true.
+                        if (($record->propuesta_enviada ?? false) && ($record->estado ?? null) !== 'listo_para_enviar') {
                             return [];
                         }
                         

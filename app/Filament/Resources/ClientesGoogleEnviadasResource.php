@@ -159,10 +159,6 @@ class ClientesGoogleEnviadasResource extends Resource
                     })
                     ->limit(40)
                     ->icon('heroicon-o-globe-alt'),
-                Tables\Columns\IconColumn::make('propuesta_enviada')
-                    ->label('Propuesta Enviada')
-                    ->boolean()
-                    ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')),
                 Tables\Columns\TextColumn::make('estado')
                     ->label('Estado')
                     ->badge()
@@ -214,16 +210,8 @@ class ClientesGoogleEnviadasResource extends Resource
                 ->orderByDesc('created_at')
                 ->orderByDesc('id');
 
-            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
-                $query->where('propuesta_enviada', true);
-            }
-
-            // Excluir los que están marcados como \"listo_para_enviar\"
             if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
-                $query->where(function ($q) {
-                    $q->whereNull('estado')
-                      ->orWhere('estado', '!=', 'listo_para_enviar');
-                });
+                $query->where('estado', 'propuesta_enviada');
             }
 
             return $query;

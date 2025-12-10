@@ -15,6 +15,11 @@ class GoogleCalendarAuth extends Page
     protected static ?string $navigationGroup = 'Configuración';
     protected static ?int $navigationSort = 100;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static string $view = 'filament.pages.google-calendar-auth';
 
     public function mount(): void

@@ -27,6 +27,11 @@ class BotConfiguracion extends Page implements HasForms
     protected static ?string $navigationGroup = 'Soporte';
     protected static ?int $navigationSort = 50;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static string $view = 'filament.pages.bot-configuracion';
 
     public static function getNavigationBadge(): ?string

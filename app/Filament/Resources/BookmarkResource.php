@@ -23,6 +23,11 @@ class BookmarkResource extends Resource
     protected static ?string $pluralModelLabel = 'Bookmarks';
     protected static ?string $navigationGroup = 'Configuración';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

@@ -17,6 +17,11 @@ class N8nAutomatizaciones extends Page
     protected static ?string $navigationGroup = 'Soporte';
     protected static ?int $navigationSort = 100;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static string $view = 'filament.pages.n8n-automatizaciones';
 
     public static function getNavigationBadge(): ?string

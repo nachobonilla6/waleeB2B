@@ -22,6 +22,11 @@ class N8nJsonResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static ?string $modelLabel = 'Workflow JSON';
 
     protected static ?string $pluralModelLabel = 'Workflows JSON';

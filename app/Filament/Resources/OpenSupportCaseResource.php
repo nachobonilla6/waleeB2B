@@ -32,6 +32,11 @@ class OpenSupportCaseResource extends Resource
     protected static ?string $pluralModelLabel = 'Tickets Abiertos';
     protected static ?string $navigationGroup = 'Soporte';
     protected static ?int $navigationSort = 2;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
     
     public static function getNavigationBadge(): ?string
     {

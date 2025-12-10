@@ -463,7 +463,7 @@ class ClienteEnProcesoResource extends Resource
                                 ->requiresConfirmation()
                                 ->modalHeading('Enviar propuesta por email')
                                 ->modalDescription('¿Estás seguro de que deseas enviar la propuesta por email a este cliente?')
-                                ->action(function () use ($action) {
+                                ->action(function (array $data) use ($action) {
                                     $record = $action->getRecord();
 
                                     if (! $record) {
@@ -476,7 +476,7 @@ class ClienteEnProcesoResource extends Resource
                                     }
 
                                     // Tomar los datos actuales del formulario del modal y guardarlos primero
-                                    $data = $action->getFormData() ?? [];
+                                    $data = $data ?: ($action->getFormData() ?? []);
                                     $record->fill($data);
                                     $record->save();
                                     $record->refresh();

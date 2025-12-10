@@ -1,10 +1,12 @@
 @php
     $currentUrl = url()->current();
     $clientesGoogleUrl = \App\Filament\Resources\ClienteEnProcesoResource::getUrl('index');
+    $listosUrl = \App\Filament\Resources\ClienteEnProcesoResource::getUrl('listos');
     $propuestasEnviadasUrl = 'https://websolutions.work/admin/clientes-google-enviadas';
     $extraerClientesUrl = \App\Filament\Resources\ClientesGoogleCopiaResource::getUrl('index');
     
     $isClientesGoogle = str_contains($currentUrl, 'cliente-en-procesos');
+    $isListos = str_contains($currentUrl, 'listos-para-enviar');
     $isPropuestasEnviadas = str_contains($currentUrl, 'clientes-google-enviadas');
     $isExtraerClientes = str_contains($currentUrl, 'clientes-google-copias');
 @endphp
@@ -13,6 +15,10 @@
     <div class="flex flex-wrap gap-4 w-full" style="width: 100% !important;">
         <a href="{{ $clientesGoogleUrl }}" class="px-6 py-3 rounded-lg transition-colors font-medium {{ $isClientesGoogle ? 'bg-gray-700 dark:bg-gray-600 text-white' : 'bg-gray-900 dark:bg-gray-800 text-white hover:bg-gray-800 dark:hover:bg-gray-700' }}">
             Clientes Google
+        </a>
+
+        <a href="{{ $listosUrl }}" class="px-6 py-3 rounded-lg transition-colors font-medium {{ $isListos ? 'bg-gray-700 dark:bg-gray-600 text-white' : 'bg-gray-900 dark:bg-gray-800 text-white hover:bg-gray-800 dark:hover:bg-gray-700' }}">
+            Listos para Enviar
         </a>
 
         <a href="{{ $propuestasEnviadasUrl }}" class="px-6 py-3 rounded-lg transition-colors font-medium {{ $isPropuestasEnviadas ? 'bg-gray-700 dark:bg-gray-600 text-white' : 'bg-gray-900 dark:bg-gray-800 text-white hover:bg-gray-800 dark:hover:bg-gray-700' }}">

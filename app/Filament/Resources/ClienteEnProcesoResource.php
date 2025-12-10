@@ -69,26 +69,12 @@ class ClienteEnProcesoResource extends Resource
     {
         try {
             $query = parent::getEloquentQuery();
-            
-            // Solo mostrar clientes que NO tienen propuesta enviada (en proceso)
-            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
-                $query->where(function ($q) {
-                    $q->whereNull('propuesta_enviada')
-                      ->orWhere('propuesta_enviada', false);
-                });
-            }
-
-            // Excluir clientes con estado 'accepted'
             if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
-                $query->where(function ($q) {
-                    $q->whereNull('estado')
-                      ->orWhere('estado', '!=', 'accepted');
-                });
+                $query->where('estado', 'pending');
             }
-            
-            return (string) $query->count();
+            return $query->count();
         } catch (\Exception $e) {
-            return '0';
+            return null;
         }
     }
 

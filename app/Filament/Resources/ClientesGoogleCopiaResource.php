@@ -29,6 +29,32 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
         return true;
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            // Contar clientes sin propuesta enviada (igual que Clientes Google)
+            if (!Schema::hasTable('clientes_en_proceso')) {
+                return '0';
+            }
+
+            $query = parent::getEloquentQuery()
+                ->orderByDesc('created_at')
+                ->orderByDesc('id');
+
+            // Solo contar clientes que NO tienen propuesta enviada (en proceso)
+            if (Schema::hasColumn('clientes_en_proceso', 'propuesta_enviada')) {
+                $query->where(function ($q) {
+                    $q->whereNull('propuesta_enviada')
+                      ->orWhere('propuesta_enviada', false);
+                });
+            }
+
+            return (string) $query->count();
+        } catch (\Exception $e) {
+            return '0';
+        }
+    }
+
     public static function getEloquentQuery(): Builder
     {
         // Reutiliza el filtro base: solo pendientes (propuesta_enviada null/false)

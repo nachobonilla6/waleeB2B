@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\ClienteEnProcesoResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
+use App\Filament\Resources\ClientesGoogleEnviadasResource;
+use App\Filament\Resources\ClientesGoogleCopiaResource;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,17 +31,30 @@ class ListClientesListosParaEnviar extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
-    }
+        $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
+        $listosUrl = ClienteEnProcesoResource::getUrl('listos');
+        $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
+        $extraerUrl = ClientesGoogleCopiaResource::getUrl('index');
+        $currentUrl = url()->current();
 
-    protected function getTableView(): string
-    {
-        return <<<'blade'
-<div>
-    @include('components.google-clients-nav')
-    @include('filament::components.table')
-</div>
-blade;
+        return [
+            Actions\Action::make('clientes_google')
+                ->label('Clientes Google')
+                ->url($clientesGoogleUrl)
+                ->color($currentUrl === $clientesGoogleUrl ? 'primary' : 'gray'),
+            Actions\Action::make('listos_para_enviar')
+                ->label('Listos para Enviar')
+                ->url($listosUrl)
+                ->color($currentUrl === $listosUrl ? 'primary' : 'gray'),
+            Actions\Action::make('propuestas_enviadas')
+                ->label('Propuestas Enviadas')
+                ->url($propuestasUrl)
+                ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray'),
+            Actions\Action::make('extraer_nuevos_clientes')
+                ->label('Extraer Nuevos Clientes')
+                ->url($extraerUrl)
+                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
+        ];
     }
 
     protected function getTableQuery(): Builder

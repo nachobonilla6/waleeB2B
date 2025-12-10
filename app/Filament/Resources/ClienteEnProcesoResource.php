@@ -475,14 +475,13 @@ class ClienteEnProcesoResource extends Resource
                                         return;
                                     }
 
-                                    // Tomar los datos actuales del formulario del modal
+                                    // Tomar los datos actuales del formulario del modal y guardarlos primero
                                     $data = $action->getFormData() ?? [];
-
-                                    // Guardar los cambios antes de enviar
-                                    $record->update($data);
-                                    $record = $record->fresh();
+                                    $record->fill($data);
+                                    $record->save();
+                                    $record->refresh();
                                     
-                                    if (empty($data['email'] ?? $record->email)) {
+                                    if (empty($record->email)) {
                                         Notification::make()
                                             ->title('Error')
                                             ->body('El cliente no tiene un correo electrónico.')
@@ -499,17 +498,18 @@ class ClienteEnProcesoResource extends Resource
                                         }
 
                                         // Usar webhook de producción
+                                        // Usar siempre los datos ya guardados/actualizados
                                         $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
-                                            'name' => $data['name'] ?? $record->name ?? '',
-                                            'email' => $data['email'] ?? $record->email ?? '',
-                                            'website' => $data['website'] ?? $record->website ?? '',
-                                            'proposed_site' => $data['proposed_site'] ?? $record->proposed_site ?? '',
+                                            'name' => $record->name ?? '',
+                                            'email' => $record->email ?? '',
+                                            'website' => $record->website ?? '',
+                                            'proposed_site' => $record->proposed_site ?? '',
                                             'video_url' => $videoUrl,
-                                            'feedback' => $data['feedback'] ?? $record->feedback ?? '',
-                                            'propuesta' => $data['propuesta'] ?? $record->propuesta ?? '',
+                                            'feedback' => $record->feedback ?? '',
+                                            'propuesta' => $record->propuesta ?? '',
                                             'cliente_id' => $record->id ?? null,
-                                            'cliente_nombre' => $data['name'] ?? $record->name ?? '',
-                                            'cliente_correo' => $data['email'] ?? $record->email ?? '',
+                                            'cliente_nombre' => $record->name ?? '',
+                                            'cliente_correo' => $record->email ?? '',
                                         ]);
 
                                         if ($response->successful()) {
@@ -519,7 +519,7 @@ class ClienteEnProcesoResource extends Resource
                                             
                                             Notification::make()
                                                 ->title('Propuesta enviada')
-                                                ->body('La propuesta se ha enviado correctamente a ' . ($data['email'] ?? $record->email))
+                                                ->body('La propuesta se ha enviado correctamente a ' . ($record->email))
                                                 ->success()
                                                 ->send();
 

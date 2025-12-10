@@ -277,6 +277,7 @@ class ClienteEnProcesoResource extends Resource
                                 'pending' => 'Pending',
                                 'accepted' => 'Accepted',
                                 'rejected' => 'Rejected',
+                                'listo_para_enviar' => 'Listo para enviar',
                             ])
                             ->default('pending')
                             ->required()
@@ -319,12 +320,14 @@ class ClienteEnProcesoResource extends Resource
                         'pending' => 'warning',
                         'accepted' => 'success',
                         'rejected' => 'danger',
+                        'listo_para_enviar' => 'info',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'pending' => 'Pending',
                         'accepted' => 'Accepted',
                         'rejected' => 'Rejected',
+                        'listo_para_enviar' => 'Listo para enviar',
                         default => $state,
                     })
                     ->sortable()
@@ -746,12 +749,14 @@ class ClienteEnProcesoResource extends Resource
                                 'pending' => 'warning',
                                 'accepted' => 'success',
                                 'rejected' => 'danger',
+                                'listo_para_enviar' => 'info',
                                 default => 'gray',
                             })
                             ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'pending' => 'Pending',
                                 'accepted' => 'Accepted',
                                 'rejected' => 'Rejected',
+                                'listo_para_enviar' => 'Listo para enviar',
                                 default => $state,
                             }),
                     ]),
@@ -781,6 +786,7 @@ class ClienteEnProcesoResource extends Resource
         return [
             'index' => Pages\ListClienteEnProcesos::route('/'),
             'create' => Pages\CreateClienteEnProceso::route('/create'),
+            'listos' => Pages\ListClientesListosParaEnviar::route('/listos-para-enviar'),
             // 'view' => Pages\ViewClienteEnProceso::route('/{record}'),
             // 'edit' => Pages\EditClienteEnProceso::route('/{record}/edit'),
         ];

@@ -68,6 +68,17 @@ class DeployButton extends Component implements HasActions, HasForms
             });
     }
 
+    public function chatAction(): Action
+    {
+        return Action::make('chat')
+            ->label('Walee Chat')
+            ->icon('heroicon-o-chat-bubble-left-right')
+            ->color('info')
+            ->size('sm')
+            ->url('/walee')
+            ->openUrlInNewTab();
+    }
+
     public function render()
     {
         return view('livewire.deploy-button');

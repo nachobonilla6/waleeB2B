@@ -21,7 +21,6 @@ class Client extends Model
         'proposed_site',
         'propuesta_enviada',
         'estado',
-        'message',
     ];
 
     protected $casts = [

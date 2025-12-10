@@ -79,10 +79,6 @@ class ClienteResource extends Resource
                                 ->required()
                                 ->maxLength(255),
                         ]),
-                        Forms\Components\Textarea::make('message')
-                            ->label('Mensaje')
-                            ->rows(4)
-                            ->columnSpanFull(),
                     ]),
             ]);
     }

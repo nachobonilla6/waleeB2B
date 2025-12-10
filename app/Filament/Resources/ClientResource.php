@@ -78,10 +78,6 @@ class ClientResource extends Resource
                     ->columns(2),
                 Forms\Components\Section::make('Información Adicional')
                     ->schema([
-                        Forms\Components\Textarea::make('message')
-                            ->label('Mensaje')
-                            ->rows(3)
-                            ->columnSpanFull(),
                         Forms\Components\Toggle::make('propuesta_enviada')
                             ->label('Propuesta Enviada')
                             ->default(false),
@@ -224,10 +220,6 @@ class ClientResource extends Resource
                 Infolists\Components\Section::make('Información Adicional')
                     ->icon('heroicon-o-information-circle')
                     ->schema([
-                        Infolists\Components\TextEntry::make('message')
-                            ->label('Mensaje')
-                            ->columnSpanFull()
-                            ->visible(fn ($record) => !empty($record->message)),
                         Infolists\Components\IconEntry::make('propuesta_enviada')
                             ->label('Propuesta Enviada')
                             ->boolean(),

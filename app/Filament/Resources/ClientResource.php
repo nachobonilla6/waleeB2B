@@ -171,6 +171,8 @@ class ClientResource extends Resource
                                     ->send();
                             } else {
                                 $errorBody = $response->body();
+                                $errorData = json_decode($errorBody, true);
+                                
                                 \Log::error('Error al enviar email al webhook', [
                                     'status' => $response->status(),
                                     'body' => $errorBody,
@@ -178,9 +180,19 @@ class ClientResource extends Resource
                                     'email' => $correoDestino,
                                 ]);
                                 
+                                $errorMessage = 'Error ' . $response->status();
+                                if (isset($errorData['message'])) {
+                                    $errorMessage .= ': ' . $errorData['message'];
+                                    if (str_contains($errorData['message'], 'Respond to Webhook')) {
+                                        $errorMessage .= ' - El workflow de n8n necesita tener un nodo "Respond to Webhook" configurado.';
+                                    }
+                                } else {
+                                    $errorMessage .= ': ' . substr($errorBody, 0, 150);
+                                }
+                                
                                 \Filament\Notifications\Notification::make()
                                     ->title('❌ Error al enviar email')
-                                    ->body('El webhook respondió con error ' . $response->status() . ': ' . substr($errorBody, 0, 100))
+                                    ->body($errorMessage)
                                     ->danger()
                                     ->persistent()
                                     ->send();

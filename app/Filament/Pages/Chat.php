@@ -24,5 +24,10 @@ class Chat extends Page
     {
         return '';
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return '1';
+    }
 }
 

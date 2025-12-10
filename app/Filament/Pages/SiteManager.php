@@ -19,4 +19,13 @@ class SiteManager extends Page
     {
         return Sitio::with('tags')->get();
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            return (string) Sitio::count();
+        } catch (\Exception $e) {
+            return '0';
+        }
+    }
 }

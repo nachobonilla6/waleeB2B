@@ -31,6 +31,20 @@ class GoogleCalendar extends Page implements HasForms, HasActions
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 4;
 
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            // Contar citas pendientes (no completadas ni canceladas)
+            $pendientes = \App\Models\Cita::where(function ($query) {
+                $query->whereNotIn('estado', ['completada', 'cancelada'])
+                      ->orWhereNull('estado');
+            })->count();
+            return (string) $pendientes;
+        } catch (\Exception $e) {
+            return '0';
+        }
+    }
+
     protected static string $view = 'filament.pages.google-calendar';
 
     public ?array $data = [];

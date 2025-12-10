@@ -380,7 +380,7 @@ class ClienteEnProcesoResource extends Resource
                                 $videoUrl = $sitio?->video_url ?? '';
                             }
 
-                            $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
+                            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
                                 'name' => $record->name ?? '',
                                 'email' => $record->email ?? '',
                                 'website' => $record->website ?? '',
@@ -388,6 +388,9 @@ class ClienteEnProcesoResource extends Resource
                                 'video_url' => $videoUrl,
                                 'feedback' => $record->feedback ?? '',
                                 'propuesta' => $record->propuesta ?? '',
+                                'cliente_id' => $record->id ?? null,
+                                'cliente_nombre' => $record->name ?? '',
+                                'cliente_correo' => $record->email ?? '',
                             ]);
 
                             if ($response->successful()) {
@@ -449,7 +452,7 @@ class ClienteEnProcesoResource extends Resource
                                         $videoUrl = $sitio?->video_url ?? '';
                                     }
 
-                                    $response = Http::post('https://n8n.srv1137974.hstgr.cloud/webhook-test/92c5f4ef-f206-4e3d-a613-5874c7dbc8bd', [
+                                    $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
                                         'name' => $record->name ?? '',
                                         'email' => $record->email ?? '',
                                         'website' => $record->website ?? '',
@@ -457,6 +460,9 @@ class ClienteEnProcesoResource extends Resource
                                         'video_url' => $videoUrl,
                                         'feedback' => $record->feedback ?? '',
                                         'propuesta' => $record->propuesta ?? '',
+                                        'cliente_id' => $record->id ?? null,
+                                        'cliente_nombre' => $record->name ?? '',
+                                        'cliente_correo' => $record->email ?? '',
                                     ]);
 
                                     if ($response->successful()) {

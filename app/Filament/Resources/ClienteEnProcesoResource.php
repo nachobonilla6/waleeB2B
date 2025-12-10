@@ -416,7 +416,10 @@ class ClienteEnProcesoResource extends Resource
                     })
                     ->visible(fn (Client $record) => !($record->propuesta_enviada ?? false)),
                 Tables\Actions\ViewAction::make()
-                    ->icon('heroicon-o-eye'),
+                    ->icon('heroicon-o-eye')
+                    ->modalWidth('4xl')
+                    ->modalHeading(fn ($record) => 'Ver Cliente: ' . $record->name)
+                    ->infolist(fn (Infolist $infolist) => static::infolist($infolist)),
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil-square')
                     ->form(fn (Form $form, Client $record) => static::form($form))

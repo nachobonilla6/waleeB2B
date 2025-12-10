@@ -9,7 +9,7 @@
         </a>
 
         <a href="{{ \App\Filament\Resources\ClientesGoogleCopiaResource::getUrl('index') }}" class="px-6 py-3 bg-gray-900 dark:bg-gray-800 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors font-medium">
-            Site Scraper
+            Extraer Nuevos Clientes
         </a>
     </div>
 </div>

@@ -68,7 +68,7 @@ class ListClientesListosParaEnviar extends ListRecords
             ->where('estado', 'listo_para_enviar');
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([

@@ -44,6 +44,8 @@ class FacturaResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Información Básica')
                 ->icon('heroicon-o-information-circle')
+                ->collapsible()
+                ->collapsed(false)
                 ->schema([
                     Forms\Components\Select::make('cliente_id')
                         ->label('Cliente')
@@ -67,12 +69,12 @@ class FacturaResource extends Resource
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('numero_factura')
                             ->label('Nº Factura')
-                            ->default(fn () => 'FAC-' . date('Ymd') . '-' . rand(100, 999))
+                            ->default(fn ($get) => $get('numero_factura') ?: 'FAC-' . date('Ymd') . '-' . rand(100, 999))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('fecha_emision')
                             ->label('Fecha Emisión')
-                            ->default(now())
+                            ->default(fn ($get) => $get('fecha_emision') ?: now())
                             ->required()
                             ->displayFormat('d/m/Y'),
                     ]),
@@ -80,6 +82,8 @@ class FacturaResource extends Resource
                 ->columns(2),
             Forms\Components\Section::make('Detalles y Montos')
                 ->icon('heroicon-o-currency-dollar')
+                ->collapsible()
+                ->collapsed(false)
                 ->schema([
                     Forms\Components\Select::make('concepto')
                         ->label('Concepto')
@@ -110,6 +114,8 @@ class FacturaResource extends Resource
                 ->columns(2),
             Forms\Components\Section::make('Pago y Estado')
                 ->icon('heroicon-o-banknotes')
+                ->collapsible()
+                ->collapsed(false)
                 ->schema([
                     Forms\Components\Select::make('metodo_pago')
                         ->label('Método de Pago')
@@ -130,7 +136,7 @@ class FacturaResource extends Resource
                                 'vencida' => '🔴 Vencida',
                                 'cancelada' => '⚫ Cancelada',
                             ])
-                            ->default('pendiente')
+                            ->default(fn ($get) => $get('estado') ?: 'pendiente')
                             ->required(),
                         Forms\Components\DatePicker::make('fecha_vencimiento')
                             ->label('Fecha Vencimiento')

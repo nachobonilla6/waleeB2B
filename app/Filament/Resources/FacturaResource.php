@@ -276,8 +276,33 @@ class FacturaResource extends Resource
                     ->modalHeading('Enviar factura por email')
                     ->modalDescription('¿Estás seguro de que deseas enviar esta factura por correo electrónico?')
                     ->modalSubmitActionLabel('Sí, enviar'),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn (Factura $record) => 'Ver Factura: ' . $record->numero_factura)
+                    ->modalWidth('4xl')
+                    ->beforeFormFilled(function (Factura $record) {
+                        // Cargar relaciones antes de mostrar el infolist
+                        $record->loadMissing('cliente');
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->modalHeading(fn (Factura $record) => 'Editar Factura: ' . $record->numero_factura)
+                    ->modalWidth('4xl')
+                    ->mutateFormDataUsing(function (array $data, Factura $record): array {
+                        // Asegurar que todos los datos se carguen correctamente
+                        $record->loadMissing('cliente');
+                        return array_merge($data, [
+                            'cliente_id' => $record->cliente_id,
+                            'correo' => $record->correo,
+                            'numero_factura' => $record->numero_factura,
+                            'fecha_emision' => $record->fecha_emision,
+                            'concepto' => $record->concepto,
+                            'subtotal' => $record->subtotal,
+                            'total' => $record->total,
+                            'metodo_pago' => $record->metodo_pago,
+                            'estado' => $record->estado,
+                            'fecha_vencimiento' => $record->fecha_vencimiento,
+                            'notas' => $record->notas,
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -292,6 +317,8 @@ class FacturaResource extends Resource
             ->schema([
                 Infolists\Components\Section::make('Información Básica')
                     ->icon('heroicon-o-information-circle')
+                    ->collapsible()
+                    ->collapsed(false)
                     ->schema([
                         Infolists\Components\TextEntry::make('numero_factura')
                             ->label('Nº Factura')
@@ -320,6 +347,8 @@ class FacturaResource extends Resource
                     ->columns(2),
                 Infolists\Components\Section::make('Detalles y Montos')
                     ->icon('heroicon-o-currency-dollar')
+                    ->collapsible()
+                    ->collapsed(false)
                     ->schema([
                         Infolists\Components\TextEntry::make('concepto')
                             ->label('Concepto')
@@ -348,6 +377,8 @@ class FacturaResource extends Resource
                     ->columns(3),
                 Infolists\Components\Section::make('Pago y Estado')
                     ->icon('heroicon-o-banknotes')
+                    ->collapsible()
+                    ->collapsed(false)
                     ->schema([
                         Infolists\Components\TextEntry::make('metodo_pago')
                             ->label('Método de Pago')

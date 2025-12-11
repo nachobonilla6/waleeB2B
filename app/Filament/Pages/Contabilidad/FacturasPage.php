@@ -7,7 +7,6 @@ use App\Filament\Resources\CotizacionResource;
 use App\Models\Factura;
 use App\Models\Cotizacion;
 use App\Models\Cliente;
-use App\Mail\FacturaMail;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Forms;
@@ -163,8 +162,8 @@ class FacturasPage extends Page implements HasTable
                                 // Obtener datos del cliente
                                 $cliente = Cliente::find($data['cliente_id'] ?? null);
                                 
-                                // Preparar datos para el email
-                                $emailData = [
+                                // Preparar datos para el webhook
+                                $webhookData = [
                                     'numero_factura' => (string) ($data['numero_factura'] ?? ''),
                                     'fecha_emision' => isset($data['fecha_emision']) ? (is_string($data['fecha_emision']) ? $data['fecha_emision'] : $data['fecha_emision']->format('Y-m-d')) : '',
                                     'concepto' => (string) ($data['concepto'] ?? ''),
@@ -178,37 +177,31 @@ class FacturasPage extends Page implements HasTable
                                     'cliente_correo' => (string) ($data['correo'] ?? $cliente?->correo ?? ''),
                                 ];
                                 
-                                // Enviar email
-                                $correoDestino = $data['correo'] ?? $cliente?->correo ?? '';
-                                
-                                if (empty($correoDestino)) {
-                                    \Filament\Notifications\Notification::make()
-                                        ->title('⚠️ Factura guardada')
-                                        ->body('La factura se guardó pero no se especificó un correo electrónico para enviar.')
-                                        ->warning()
-                                        ->send();
-                                    return;
-                                }
-                                
                                 try {
-                                    \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\FacturaMail($emailData));
+                                    $response = \Illuminate\Support\Facades\Http::post(
+                                        'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
+                                        $webhookData
+                                    );
                                     
-                                    \Filament\Notifications\Notification::make()
-                                        ->title('✅ Factura creada y enviada')
-                                        ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' guardada y enviada por email a ' . $correoDestino)
-                                        ->success()
-                                        ->send();
-                                } catch (\Exception $mailException) {
-                                    \Log::error('Error enviando factura por email', [
-                                        'error' => $mailException->getMessage(),
-                                        'trace' => $mailException->getTraceAsString(),
-                                        'correo' => $correoDestino,
+                                    if ($response->successful()) {
+                                        \Filament\Notifications\Notification::make()
+                                            ->title('✅ Factura creada y enviada')
+                                            ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' guardada y enviada al webhook correctamente')
+                                            ->success()
+                                            ->send();
+                                    } else {
+                                        throw new \Exception('Error en la respuesta del webhook: ' . $response->status());
+                                    }
+                                } catch (\Exception $webhookException) {
+                                    \Log::error('Error enviando factura al webhook', [
+                                        'error' => $webhookException->getMessage(),
+                                        'trace' => $webhookException->getTraceAsString(),
                                         'factura' => $data['numero_factura'] ?? 'N/A',
                                     ]);
                                     
                                     \Filament\Notifications\Notification::make()
                                         ->title('⚠️ Factura guardada')
-                                        ->body('La factura se guardó pero no se pudo enviar el email. Error: ' . $mailException->getMessage() . ' | Verifica la configuración de email en .env (MAIL_MAILER, MAIL_HOST, etc.)')
+                                        ->body('La factura se guardó pero no se pudo enviar al webhook. Error: ' . $webhookException->getMessage())
                                         ->warning()
                                         ->persistent()
                                         ->send();

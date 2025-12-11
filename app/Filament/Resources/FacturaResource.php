@@ -233,8 +233,8 @@ class FacturaResource extends Resource
                             return;
                         }
                         
-                        // Preparar datos para el email
-                        $emailData = [
+                        // Preparar datos para el webhook
+                        $webhookData = [
                             'numero_factura' => (string) ($record->numero_factura ?? ''),
                             'fecha_emision' => $record->fecha_emision ? $record->fecha_emision->format('Y-m-d') : '',
                             'concepto' => (string) ($record->concepto ?? ''),
@@ -249,24 +249,31 @@ class FacturaResource extends Resource
                         ];
                         
                         try {
-                            \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\FacturaMail($emailData));
+                            $response = \Illuminate\Support\Facades\Http::post(
+                                'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
+                                $webhookData
+                            );
                             
-                            \Filament\Notifications\Notification::make()
-                                ->title('✅ Email enviado')
-                                ->body('La factura ha sido enviada por correo electrónico a ' . $correoDestino)
-                                ->success()
-                                ->send();
-                        } catch (\Exception $mailException) {
-                            \Log::error('Error enviando factura por email desde tabla', [
-                                'error' => $mailException->getMessage(),
-                                'trace' => $mailException->getTraceAsString(),
+                            if ($response->successful()) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('✅ Factura enviada')
+                                    ->body('La factura ha sido enviada al webhook correctamente')
+                                    ->success()
+                                    ->send();
+                            } else {
+                                throw new \Exception('Error en la respuesta del webhook: ' . $response->status());
+                            }
+                        } catch (\Exception $webhookException) {
+                            \Log::error('Error enviando factura al webhook desde tabla', [
+                                'error' => $webhookException->getMessage(),
+                                'trace' => $webhookException->getTraceAsString(),
                                 'correo' => $correoDestino,
                                 'factura' => $record->numero_factura ?? 'N/A',
                             ]);
                             
                             \Filament\Notifications\Notification::make()
-                                ->title('❌ Error al enviar email')
-                                ->body('No se pudo enviar el email: ' . $mailException->getMessage())
+                                ->title('❌ Error al enviar factura')
+                                ->body('No se pudo enviar la factura al webhook: ' . $webhookException->getMessage())
                                 ->danger()
                                 ->persistent()
                                 ->send();

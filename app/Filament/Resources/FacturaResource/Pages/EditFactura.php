@@ -24,6 +24,12 @@ class EditFactura extends EditRecord
         $this->previousUrl = url()->previous();
     }
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        // Asegurar que todos los datos se carguen correctamente
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

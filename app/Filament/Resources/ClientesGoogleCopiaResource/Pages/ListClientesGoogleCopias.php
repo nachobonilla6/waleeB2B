@@ -126,12 +126,12 @@ class ListClientesGoogleCopias extends ListRecords implements HasForms
 
     public function getTitle(): string
     {
-        return 'Alpha Bot';
+        return 'Site Scraper';
     }
 
     public function getHeading(): string
     {
-        return 'Alpha Bot';
+        return 'Site Scraper';
     }
 
     protected function getHeaderActions(): array

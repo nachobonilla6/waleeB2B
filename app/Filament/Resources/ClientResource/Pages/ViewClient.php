@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
+use App\Filament\Pages\EmailComposer;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -31,9 +32,9 @@ class ViewClient extends ViewRecord
             Actions\Action::make('redactar_email')
                 ->label('Redactar Email')
                 ->icon('heroicon-o-envelope')
-                ->color('gray')
-                ->disabled()
-                ->tooltip('Próximamente'),
+                ->color('primary')
+                ->url(fn () => EmailComposer::getUrl())
+                ->openUrlInNewTab(),
             Actions\Action::make('agregar_nota')
                 ->label('Agregar Nota')
                 ->icon('heroicon-o-pencil-square')

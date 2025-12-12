@@ -40,6 +40,12 @@ class ViewClient extends ViewRecord
                 ->color('gray')
                 ->disabled()
                 ->tooltip('Próximamente'),
+            Actions\Action::make('historial')
+                ->label('Historial')
+                ->icon('heroicon-o-clock')
+                ->color('gray')
+                ->disabled()
+                ->tooltip('Próximamente'),
         ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Client;
 use App\Models\User;
+use App\Observers\ClientObserver;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+        
+        // Registrar Observer para el modelo Client
+        Client::observe(ClientObserver::class);
     }
 
     /**

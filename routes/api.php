@@ -311,6 +311,10 @@ Route::post('/n8n-webhook', function (\Illuminate\Http\Request $request) {
     ], 200);
 })->name('api.n8n-webhook');
 
+// Webhook para que n8n reporte el progreso de workflows
+Route::post('/n8n/progress', [\App\Http\Controllers\N8nProgressController::class, 'update'])
+    ->name('api.n8n-progress');
+
 // Webhook para errores de n8n (Error Trigger) - DESHABILITADO: Modelo N8nError eliminado
 // Route::post('/n8n-error', ...) - Comentado porque N8nError ya no existe
 

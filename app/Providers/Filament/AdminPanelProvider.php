@@ -188,6 +188,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Herramientas')
                     ->icon('heroicon-o-wrench-screwdriver'),
+                NavigationGroup::make()
+                    ->label('Extraer Clientes')
+                    ->icon('heroicon-o-user-group'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([

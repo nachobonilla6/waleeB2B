@@ -22,12 +22,12 @@ class ClientesGoogleEnviadasResource extends Resource
     protected static ?string $navigationLabel = 'Propuestas Enviadas';
     protected static ?string $modelLabel = 'Propuesta Enviada';
     protected static ?string $pluralModelLabel = 'Propuestas Enviadas';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Extraer Clientes';
     protected static ?int $navigationSort = 3;
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return true;
     }
 
     public static function getNavigationBadge(): ?string

@@ -38,6 +38,8 @@ class ListClientesGoogleEnviadas extends ListRecords
 
         // Contar clientes pendientes
         $pendingCount = \App\Models\Client::where('estado', 'pending')->count();
+        $listosCount = \App\Models\Client::where('estado', 'listo_para_enviar')->count();
+        $propuestasCount = \App\Models\Client::where('estado', 'propuesta_enviada')->count();
 
         return [
             Actions\Action::make('extraer_nuevos_clientes')
@@ -53,11 +55,15 @@ class ListClientesGoogleEnviadas extends ListRecords
             Actions\Action::make('listos_para_enviar')
                 ->label('Listos para Enviar')
                 ->url($listosUrl)
-                ->color($currentUrl === $listosUrl ? 'primary' : 'gray'),
+                ->color($currentUrl === $listosUrl ? 'primary' : 'gray')
+                ->badge($listosCount > 0 ? (string) $listosCount : null)
+                ->badgeColor('info'),
             Actions\Action::make('propuestas_enviadas')
                 ->label('Propuestas Enviadas')
                 ->url($propuestasUrl)
-                ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray'),
+                ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray')
+                ->badge($propuestasCount > 0 ? (string) $propuestasCount : null)
+                ->badgeColor('success'),
         ];
     }
 }

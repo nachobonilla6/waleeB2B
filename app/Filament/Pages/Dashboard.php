@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\IngresosDashboardWidget;
+use App\Filament\Widgets\ClientesStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Actions\Action;
 
@@ -15,6 +16,7 @@ class Dashboard extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [
+            ClientesStatsWidget::class,
             IngresosDashboardWidget::class,
         ];
     }

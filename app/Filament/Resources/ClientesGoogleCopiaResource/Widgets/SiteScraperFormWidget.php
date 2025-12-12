@@ -84,7 +84,7 @@ class SiteScraperFormWidget extends Widget implements HasForms
             : ($data['industria'] ?? '');
 
         try {
-            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c', [
+            $response = Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/0c01d9a1-788c-44d2-9c1b-9457901d0a3c', [
                 'nombre_lugar' => $data['nombre_lugar'] ?? '',
                 'industria' => $industria,
             ]);

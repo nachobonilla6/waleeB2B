@@ -49,7 +49,10 @@ class WorkflowsPage extends Page implements HasTable
                     ->wrap(),
                 Tables\Columns\TextColumn::make('progress')
                     ->label('Progreso')
-                    ->formatStateUsing(fn ($state) => $state . '%')
+                    ->formatStateUsing(fn ($state, $record) => 
+                        $record && $record->status === 'completed' ? '100%' : 
+                        ($state . '%')
+                    )
                     ->sortable(),
                 Tables\Columns\ViewColumn::make('progress')
                     ->label('Barra de Progreso')
@@ -104,6 +107,7 @@ class WorkflowsPage extends Page implements HasTable
                 Tables\Actions\Action::make('view_result')
                     ->label('Ver Resultado')
                     ->icon('heroicon-o-eye')
+                    ->color('info')
                     ->visible(fn ($record) => $record && $record->result !== null)
                     ->modalHeading('Resultado del Workflow')
                     ->modalContent(fn ($record) => $record ? view('filament.pages.workflow-result', [
@@ -112,7 +116,74 @@ class WorkflowsPage extends Page implements HasTable
                     ]) : 'No hay datos disponibles')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar'),
+                Tables\Actions\Action::make('view_error')
+                    ->label('Ver Error')
+                    ->icon('heroicon-o-exclamation-triangle')
+                    ->color('danger')
+                    ->visible(fn ($record) => $record && $record->status === 'failed')
+                    ->modalHeading('Detalles del Error')
+                    ->modalContent(fn ($record) => view('filament.pages.workflow-error', [
+                        'record' => $record,
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Cerrar'),
+                Tables\Actions\Action::make('view_payload')
+                    ->label('Ver Payload')
+                    ->icon('heroicon-o-document-text')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record && $record->data !== null)
+                    ->modalHeading('Payload del Workflow')
+                    ->modalContent(fn ($record) => view('filament.pages.workflow-payload', [
+                        'data' => $record->data,
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Cerrar'),
+                Tables\Actions\Action::make('retry')
+                    ->label('Reintentar')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('warning')
+                    ->visible(fn ($record) => $record && $record->status === 'failed')
+                    ->requiresConfirmation()
+                    ->modalHeading('Reintentar Workflow')
+                    ->modalDescription('¿Estás seguro de que deseas reintentar este workflow? Se creará un nuevo registro.')
+                    ->action(function ($record) {
+                        try {
+                            $jobId = Str::uuid();
+                            
+                            // Obtener datos originales si existen
+                            $originalData = $record->data ?? [];
+                            
+                            // Crear nuevo registro
+                            $newWorkflowRun = WorkflowRun::create([
+                                'job_id' => $jobId,
+                                'status' => 'pending',
+                                'progress' => 0,
+                                'step' => 'En cola',
+                                'workflow_name' => $record->workflow_name,
+                                'data' => $originalData,
+                            ]);
+
+                            Notification::make()
+                                ->title('Workflow en cola para reintento')
+                                ->body('Se ha creado un nuevo registro. Debes iniciar el workflow manualmente con el mismo webhook.')
+                                ->warning()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Error al reintentar')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
             ])
+            ->recordClasses(fn ($record) => match($record->status) {
+                'failed' => 'border-l-4 border-l-danger-500 bg-danger-50/50 dark:bg-danger-900/10',
+                'running' => 'border-l-4 border-l-primary-500 bg-primary-50/50 dark:bg-primary-900/10',
+                'completed' => 'border-l-4 border-l-success-500 bg-success-50/50 dark:bg-success-900/10',
+                'pending' => 'border-l-4 border-l-warning-500 bg-warning-50/50 dark:bg-warning-900/10',
+                default => '',
+            })
             ->poll('3s') // Auto-refresh cada 3 segundos
             ->defaultSort('created_at', 'desc');
     }
@@ -186,8 +257,9 @@ class WorkflowsPage extends Page implements HasTable
                         } else {
                             $workflowRun->update([
                                 'status' => 'failed',
+                                'step' => 'Error al iniciar workflow',
                                 'error_message' => 'Error al iniciar workflow: ' . $response->status(),
-                                'completed_at' => now(),
+                                'completed_at' => null, // No marcar como completado si falla
                             ]);
 
                             Notification::make()
@@ -200,8 +272,9 @@ class WorkflowsPage extends Page implements HasTable
                         if (isset($workflowRun)) {
                             $workflowRun->update([
                                 'status' => 'failed',
+                                'step' => 'Error al iniciar',
                                 'error_message' => $e->getMessage(),
-                                'completed_at' => now(),
+                                'completed_at' => null, // No marcar como completado si falla
                             ]);
                         }
 

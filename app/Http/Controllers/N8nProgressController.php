@@ -37,17 +37,31 @@ class N8nProgressController extends Controller
 
             $updateData = [
                 'status' => $request->status,
-                'step' => $request->step,
                 'progress' => $request->progress ?? $workflowRun->progress,
             ];
+
+            // Actualizar step - si es failed y no viene step, usar mensaje de error o "Error"
+            if ($request->status === 'failed') {
+                $updateData['step'] = $request->step 
+                    ?? $request->error_message 
+                    ?? 'Error en la ejecución';
+                // NO marcar completed_at cuando falla
+                $updateData['completed_at'] = null;
+            } else {
+                $updateData['step'] = $request->step ?? $workflowRun->step;
+            }
 
             // Actualizar timestamps según el estado
             if ($request->status === 'running' && !$workflowRun->started_at) {
                 $updateData['started_at'] = now();
             }
 
-            if (in_array($request->status, ['completed', 'failed'])) {
+            // Solo marcar completed_at si realmente se completó (no si falló)
+            if ($request->status === 'completed') {
                 $updateData['completed_at'] = now();
+            } elseif ($request->status === 'failed') {
+                // Asegurar que completed_at sea null en fallos
+                $updateData['completed_at'] = null;
             }
 
             // Guardar result si viene

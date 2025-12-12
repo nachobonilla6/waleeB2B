@@ -171,40 +171,58 @@ Route::post('/n8n-webhook', function (\Illuminate\Http\Request $request) {
 
         // Procesar cada elemento y crear una notificación
         foreach ($elements as $index => $element) {
-            // Extraer título y cuerpo de diferentes campos posibles
-            $title = $element['titulo'] 
-                ?? $element['Titulo'] 
-                ?? $element['title'] 
-                ?? $element['Title']
+            // Buscar el nombre del negocio en diferentes campos posibles
+            $nombreNegocio = $element['nombre_lugar']
+                ?? $element['nombreLugar']
+                ?? $element['nombre_negocio']
+                ?? $element['nombreNegocio']
                 ?? $element['nombre']
                 ?? $element['Nombre']
                 ?? $element['name']
-                ?? ($totalElements > 1 ? "Notificación " . ($index + 1) : 'Notificación de n8n');
+                ?? $element['Name']
+                ?? $element['negocio']
+                ?? $element['Negocio']
+                ?? $element['business']
+                ?? $element['Business']
+                ?? null;
             
-            $body = $element['mensaje']
-                ?? $element['Mensaje']
-                ?? $element['message']
-                ?? $element['Message']
-                ?? $element['texto']
-                ?? $element['Texto']
-                ?? $element['text']
-                ?? $element['descripcion']
-                ?? $element['Descripcion']
-                ?? $element['description']
-                ?? '';
-            
-            // Si el body está vacío, intentar construir uno con los datos disponibles
-            if (empty($body)) {
-                $bodyParts = [];
-                foreach ($element as $key => $value) {
-                    // Ignorar campos comunes que no queremos mostrar
-                    if (!in_array(strtolower($key), ['titulo', 'title', 'nombre', 'name', 'id', 'timestamp', 'fecha', 'date'])) {
-                        if (is_string($value) || is_numeric($value)) {
-                            $bodyParts[] = ucfirst($key) . ': ' . $value;
+            // Si encontramos un nombre de negocio, formatear como notificación de cliente extraído
+            if ($nombreNegocio) {
+                $title = 'Nuevo Cliente';
+                $body = 'Nuevo cliente extraído: ' . $nombreNegocio;
+            } else {
+                // Si no hay nombre de negocio, usar la lógica original
+                $title = $element['titulo'] 
+                    ?? $element['Titulo'] 
+                    ?? $element['title'] 
+                    ?? $element['Title']
+                    ?? ($totalElements > 1 ? "Notificación " . ($index + 1) : 'Notificación de n8n');
+                
+                $body = $element['mensaje']
+                    ?? $element['Mensaje']
+                    ?? $element['message']
+                    ?? $element['Message']
+                    ?? $element['texto']
+                    ?? $element['Texto']
+                    ?? $element['text']
+                    ?? $element['descripcion']
+                    ?? $element['Descripcion']
+                    ?? $element['description']
+                    ?? '';
+                
+                // Si el body está vacío, intentar construir uno con los datos disponibles
+                if (empty($body)) {
+                    $bodyParts = [];
+                    foreach ($element as $key => $value) {
+                        // Ignorar campos comunes que no queremos mostrar
+                        if (!in_array(strtolower($key), ['titulo', 'title', 'nombre', 'name', 'id', 'timestamp', 'fecha', 'date', 'nombre_lugar', 'nombrenegocio'])) {
+                            if (is_string($value) || is_numeric($value)) {
+                                $bodyParts[] = ucfirst($key) . ': ' . $value;
+                            }
                         }
                     }
+                    $body = !empty($bodyParts) ? implode("\n", array_slice($bodyParts, 0, 5)) : 'Nuevo elemento recibido de n8n';
                 }
-                $body = !empty($bodyParts) ? implode("\n", array_slice($bodyParts, 0, 5)) : 'Nuevo elemento recibido de n8n';
             }
             
             // Limitar el body a 200 caracteres para que no sea muy largo
@@ -213,12 +231,15 @@ Route::post('/n8n-webhook', function (\Illuminate\Http\Request $request) {
             }
             
             // Determinar el tipo de notificación (success, info, warning, danger)
+            // Si es un nuevo cliente extraído, usar 'success' por defecto
+            $defaultStatus = $nombreNegocio ? 'success' : 'info';
+            
             $status = $element['tipo']
                 ?? $element['Tipo']
                 ?? $element['type']
                 ?? $element['status']
                 ?? $element['estado']
-                ?? 'info';
+                ?? $defaultStatus;
             
             // Normalizar el status
             $status = match(strtolower($status)) {
@@ -229,15 +250,18 @@ Route::post('/n8n-webhook', function (\Illuminate\Http\Request $request) {
             };
             
             // Icono opcional
+            // Si es un nuevo cliente, usar icono de usuario por defecto
+            $defaultIcon = $nombreNegocio ? 'heroicon-o-user-plus' : match($status) {
+                'success' => 'heroicon-o-check-circle',
+                'warning' => 'heroicon-o-exclamation-triangle',
+                'danger' => 'heroicon-o-x-circle',
+                default => 'heroicon-o-bell',
+            };
+            
             $icon = $element['icono'] 
                 ?? $element['Icono']
                 ?? $element['icon']
-                ?? match($status) {
-                    'success' => 'heroicon-o-check-circle',
-                    'warning' => 'heroicon-o-exclamation-triangle',
-                    'danger' => 'heroicon-o-x-circle',
-                    default => 'heroicon-o-bell',
-                };
+                ?? $defaultIcon;
             
             // Enviar notificación a todos los usuarios
             foreach ($users as $user) {

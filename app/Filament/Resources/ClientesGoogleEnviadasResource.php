@@ -189,8 +189,6 @@ class ClientesGoogleEnviadasResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye'),
-                Tables\Actions\EditAction::make()
-                    ->icon('heroicon-o-pencil-square'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -327,7 +325,6 @@ class ClientesGoogleEnviadasResource extends Resource
             'index' => Pages\ListClientesGoogleEnviadas::route('/'),
             'create' => Pages\CreateClientesGoogleEnviada::route('/create'),
             'view' => Pages\ViewClientesGoogleEnviada::route('/{record}'),
-            'edit' => Pages\EditClientesGoogleEnviada::route('/{record}/edit'),
         ];
     }
 }

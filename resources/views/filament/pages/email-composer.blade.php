@@ -18,7 +18,7 @@
                 </div>
 
                 <x-filament::section>
-                    <x-filament::form wire:submit.prevent="enviar">
+                    <x-filament-panels::form wire:submit.prevent="enviar">
                         {{ $this->form }}
                         <div class="mt-4 flex justify-end gap-3">
                             <x-filament::button color="gray" icon="heroicon-o-stop-circle" disabled>
@@ -28,7 +28,7 @@
                                 Enviar
                             </x-filament::button>
                         </div>
-                    </x-filament::form>
+                    </x-filament-panels::form>
                 </x-filament::section>
             </div>
         </div>

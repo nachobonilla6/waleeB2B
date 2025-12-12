@@ -5,9 +5,11 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
+use App\Models\Client;
 
 class EmailComposer extends Page implements HasForms
 {
@@ -41,6 +43,25 @@ class EmailComposer extends Page implements HasForms
             ->schema([
                 Forms\Components\Section::make('Destinatarios')
                     ->schema([
+                        Forms\Components\Select::make('cliente_id')
+                            ->label('Cliente (lista general)')
+                            ->placeholder('Selecciona un cliente')
+                            ->options(fn () => Client::query()
+                                ->orderBy('name')
+                                ->get()
+                                ->mapWithKeys(fn (Client $c) => [
+                                    $c->id => trim($c->name . ($c->email ? " ({$c->email})" : '')),
+                                ])
+                            )
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $cliente = Client::find($state);
+                                if ($cliente?->email) {
+                                    $set('para', $cliente->email);
+                                }
+                            })
+                            ->columnSpan(3),
                         Forms\Components\TextInput::make('para')
                             ->label('Para')
                             ->email()

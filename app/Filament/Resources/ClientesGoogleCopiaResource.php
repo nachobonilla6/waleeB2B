@@ -21,7 +21,7 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
 
     public static function getNavigationUrl(): string
     {
-        return \App\Filament\Resources\ClienteEnProcesoResource::getUrl('index');
+        return static::getUrl('index');
     }
 
     public static function shouldRegisterNavigation(): bool

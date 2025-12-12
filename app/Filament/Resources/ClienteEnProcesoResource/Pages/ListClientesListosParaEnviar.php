@@ -41,6 +41,9 @@ class ListClientesListosParaEnviar extends ListRecords
         $extraerUrl = ClientesGoogleCopiaResource::getUrl('index');
         $currentUrl = url()->current();
 
+        // Contar clientes pendientes
+        $pendingCount = Client::where('estado', 'pending')->count();
+
         return [
             Actions\Action::make('extraer_nuevos_clientes')
                 ->label('Extraer Nuevos Clientes')
@@ -49,7 +52,9 @@ class ListClientesListosParaEnviar extends ListRecords
             Actions\Action::make('clientes_google')
                 ->label('Clientes Google')
                 ->url($clientesGoogleUrl)
-                ->color($currentUrl === $clientesGoogleUrl ? 'primary' : 'gray'),
+                ->color($currentUrl === $clientesGoogleUrl ? 'primary' : 'gray')
+                ->badge($pendingCount > 0 ? (string) $pendingCount : null)
+                ->badgeColor('warning'),
             Actions\Action::make('listos_para_enviar')
                 ->label('Listos para Enviar')
                 ->url($listosUrl)

@@ -27,4 +27,9 @@ class Client extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
+    }
 }

@@ -55,6 +55,7 @@ class EmailComposer extends Page implements HasForms
                             )
                             ->searchable()
                             ->live()
+                            ->helperText('Opcional: puedes elegir un cliente o escribir otro correo en "Para".')
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $cliente = Client::find($state);
                                 if ($cliente?->email) {

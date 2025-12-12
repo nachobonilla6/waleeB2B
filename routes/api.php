@@ -106,6 +106,187 @@ Route::post('/notificacion-facebook', function (\Illuminate\Http\Request $reques
     ], 200);
 })->name('api.notificacion-facebook');
 
+// Webhook genérico para recibir elementos de n8n y convertirlos en notificaciones de Filament
+Route::post('/n8n-webhook', function (\Illuminate\Http\Request $request) {
+    // Log de la petición para debugging
+    \Log::info('Webhook de n8n recibido', [
+        'headers' => $request->headers->all(),
+        'body' => $request->all(),
+        'ip' => $request->ip(),
+    ]);
+
+    try {
+        $rawData = $request->all();
+        
+        // n8n puede enviar los datos de diferentes formas:
+        // 1. Array de elementos directamente: [{"campo1": "valor1"}, {"campo2": "valor2"}]
+        // 2. Objeto con campo 'data': {"data": [{"campo1": "valor1"}]}
+        // 3. Un solo elemento: {"campo1": "valor1"}
+        // 4. Dentro de un array con estructura n8n: [{"json": {"campo1": "valor1"}}]
+        
+        $elements = [];
+        
+        // Si viene como array directo
+        if (isset($rawData[0]) && is_array($rawData[0])) {
+            $elements = $rawData;
+        }
+        // Si viene dentro de un campo 'data'
+        elseif (isset($rawData['data']) && is_array($rawData['data'])) {
+            $elements = $rawData['data'];
+        }
+        // Si viene como un solo objeto, lo convertimos en array
+        elseif (is_array($rawData) && !empty($rawData)) {
+            // Verificar si tiene estructura n8n con 'json'
+            if (isset($rawData[0]['json'])) {
+                $elements = array_map(function($item) {
+                    return $item['json'] ?? $item;
+                }, $rawData);
+            } else {
+                $elements = [$rawData];
+            }
+        }
+        
+        if (empty($elements)) {
+            \Log::warning('No se encontraron elementos en el webhook de n8n');
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron elementos para procesar',
+                'received_data' => $rawData,
+            ], 200);
+        }
+
+        // Obtener todos los usuarios
+        $users = User::all();
+        
+        if ($users->isEmpty()) {
+            \Log::warning('No hay usuarios para enviar notificaciones');
+            return response()->json([
+                'success' => false,
+                'message' => 'No hay usuarios en el sistema',
+            ], 200);
+        }
+
+        $notificationsSent = 0;
+        $totalElements = count($elements);
+
+        // Procesar cada elemento y crear una notificación
+        foreach ($elements as $index => $element) {
+            // Extraer título y cuerpo de diferentes campos posibles
+            $title = $element['titulo'] 
+                ?? $element['Titulo'] 
+                ?? $element['title'] 
+                ?? $element['Title']
+                ?? $element['nombre']
+                ?? $element['Nombre']
+                ?? $element['name']
+                ?? ($totalElements > 1 ? "Notificación " . ($index + 1) : 'Notificación de n8n');
+            
+            $body = $element['mensaje']
+                ?? $element['Mensaje']
+                ?? $element['message']
+                ?? $element['Message']
+                ?? $element['texto']
+                ?? $element['Texto']
+                ?? $element['text']
+                ?? $element['descripcion']
+                ?? $element['Descripcion']
+                ?? $element['description']
+                ?? '';
+            
+            // Si el body está vacío, intentar construir uno con los datos disponibles
+            if (empty($body)) {
+                $bodyParts = [];
+                foreach ($element as $key => $value) {
+                    // Ignorar campos comunes que no queremos mostrar
+                    if (!in_array(strtolower($key), ['titulo', 'title', 'nombre', 'name', 'id', 'timestamp', 'fecha', 'date'])) {
+                        if (is_string($value) || is_numeric($value)) {
+                            $bodyParts[] = ucfirst($key) . ': ' . $value;
+                        }
+                    }
+                }
+                $body = !empty($bodyParts) ? implode("\n", array_slice($bodyParts, 0, 5)) : 'Nuevo elemento recibido de n8n';
+            }
+            
+            // Limitar el body a 200 caracteres para que no sea muy largo
+            if (strlen($body) > 200) {
+                $body = substr($body, 0, 197) . '...';
+            }
+            
+            // Determinar el tipo de notificación (success, info, warning, danger)
+            $status = $element['tipo']
+                ?? $element['Tipo']
+                ?? $element['type']
+                ?? $element['status']
+                ?? $element['estado']
+                ?? 'info';
+            
+            // Normalizar el status
+            $status = match(strtolower($status)) {
+                'success', 'exito', 'éxito', 'ok' => 'success',
+                'warning', 'advertencia', 'alerta' => 'warning',
+                'danger', 'error', 'error', 'fallo' => 'danger',
+                default => 'info',
+            };
+            
+            // Icono opcional
+            $icon = $element['icono'] 
+                ?? $element['Icono']
+                ?? $element['icon']
+                ?? match($status) {
+                    'success' => 'heroicon-o-check-circle',
+                    'warning' => 'heroicon-o-exclamation-triangle',
+                    'danger' => 'heroicon-o-x-circle',
+                    default => 'heroicon-o-bell',
+                };
+            
+            // Enviar notificación a todos los usuarios
+            foreach ($users as $user) {
+                try {
+                    $notification = Notification::make()
+                        ->title($title)
+                        ->body($body)
+                        ->{$status}() // success(), info(), warning(), danger()
+                        ->icon($icon)
+                        ->duration(10000); // 10 segundos
+                    
+                    $notificationData = $notification->getDatabaseMessage();
+                    
+                    $user->notifications()->create([
+                        'id' => \Illuminate\Support\Str::uuid()->toString(),
+                        'type' => \Filament\Notifications\DatabaseNotification::class,
+                        'data' => $notificationData,
+                        'read_at' => null, // Dejar sin leer para que aparezca en la campana
+                    ]);
+                    
+                    $notificationsSent++;
+                } catch (\Exception $e) {
+                    \Log::error('Error enviando notificación a usuario ' . $user->id . ': ' . $e->getMessage());
+                }
+            }
+        }
+
+        \Log::info("Notificaciones enviadas: {$notificationsSent} de " . ($users->count() * $totalElements) . " posibles");
+
+    } catch (\Exception $e) {
+        \Log::error('Error procesando webhook de n8n: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error procesando webhook: ' . $e->getMessage(),
+            'timestamp' => now()->toDateTimeString(),
+        ], 500);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Notificaciones recibidas y enviadas a Filament',
+        'elements_processed' => count($elements ?? []),
+        'notifications_sent' => $notificationsSent ?? 0,
+        'timestamp' => now()->toDateTimeString(),
+    ], 200);
+})->name('api.n8n-webhook');
+
 // Webhook para errores de n8n (Error Trigger) - DESHABILITADO: Modelo N8nError eliminado
 // Route::post('/n8n-error', ...) - Comentado porque N8nError ya no existe
 

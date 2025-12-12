@@ -13,7 +13,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Http;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 
@@ -87,18 +86,10 @@ class ClientResource extends Resource
                             ->url()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Forms\Components\TextInput::make('proposed_site')
-                            ->label('Sitio Propuesto')
-                            ->maxLength(255),
                     ])
                     ->columns(2),
                 Forms\Components\Section::make('Información Adicional')
                     ->schema([
-                        Forms\Components\Toggle::make('propuesta_enviada')
-                            ->label('Propuesta Enviada')
-                            ->default(false)
-                            ->disabled()
-                            ->dehydrated(),
                         Forms\Components\Select::make('estado')
                             ->label('Estado')
                             ->options([
@@ -128,96 +119,8 @@ class ClientResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('propuesta_enviada')
-                    ->label('Propuesta Enviada')
-                    ->placeholder('Todos')
-                    ->trueLabel('Con propuesta')
-                    ->falseLabel('Sin propuesta'),
             ])
             ->actions([
-                Tables\Actions\Action::make('enviar_email')
-                    ->label('Enviar Email')
-                    ->icon('heroicon-o-envelope')
-                    ->color('success')
-                    ->action(function (Client $record) {
-                        // Obtener correo del cliente
-                        $correoDestino = $record->email ?? null;
-                        
-                        if (empty($correoDestino)) {
-                            \Filament\Notifications\Notification::make()
-                                ->title('⚠️ No se puede enviar')
-                                ->body('El cliente no tiene un correo electrónico asociado.')
-                                ->warning()
-                                ->send();
-                            return;
-                        }
-                        
-                        try {
-                            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a';
-                            
-                            $response = Http::timeout(30)->post($webhookUrl, [
-                                'cliente_nombre' => $record->name ?? '',
-                                'cliente_correo' => $correoDestino,
-                                'cliente_id' => $record->id ?? null,
-                                'email' => $correoDestino,
-                                'name' => $record->name ?? '',
-                            ]);
-                            
-                            if ($response->successful()) {
-                                \Filament\Notifications\Notification::make()
-                                    ->title('✅ Email enviado')
-                                    ->body('El email ha sido enviado a ' . $correoDestino)
-                                    ->success()
-                                    ->send();
-                            } else {
-                                $errorBody = $response->body();
-                                $errorData = json_decode($errorBody, true);
-                                
-                                \Log::error('Error al enviar email al webhook', [
-                                    'status' => $response->status(),
-                                    'body' => $errorBody,
-                                    'cliente_id' => $record->id,
-                                    'email' => $correoDestino,
-                                ]);
-                                
-                                $errorMessage = 'Error ' . $response->status();
-                                if (isset($errorData['message'])) {
-                                    $errorMessage .= ': ' . $errorData['message'];
-                                    if (str_contains($errorData['message'], 'Respond to Webhook')) {
-                                        $errorMessage .= ' - El workflow de n8n necesita tener un nodo "Respond to Webhook" configurado.';
-                                    }
-                                } else {
-                                    $errorMessage .= ': ' . substr($errorBody, 0, 150);
-                                }
-                                
-                                \Filament\Notifications\Notification::make()
-                                    ->title('❌ Error al enviar email')
-                                    ->body($errorMessage)
-                                    ->danger()
-                                    ->persistent()
-                                    ->send();
-                            }
-                        } catch (\Exception $mailException) {
-                            \Log::error('Error enviando email desde tabla de clientes', [
-                                'error' => $mailException->getMessage(),
-                                'trace' => $mailException->getTraceAsString(),
-                                'correo' => $correoDestino,
-                                'cliente' => $record->name ?? 'N/A',
-                            ]);
-                            
-                            \Filament\Notifications\Notification::make()
-                                ->title('❌ Error al enviar email')
-                                ->body('No se pudo enviar el email: ' . $mailException->getMessage())
-                                ->danger()
-                                ->persistent()
-                                ->send();
-                        }
-                    })
-                    ->requiresConfirmation()
-                    ->modalHeading('Enviar email al cliente')
-                    ->modalDescription('¿Estás seguro de que deseas enviar un email a este cliente?')
-                    ->modalSubmitActionLabel('Sí, enviar')
-                    ->visible(fn (Client $record) => !empty($record->email)),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
@@ -266,20 +169,11 @@ class ClientResource extends Resource
                             ->url(fn ($record) => $record->website ? (str_starts_with($record->website, 'http') ? $record->website : 'https://' . $record->website) : null)
                             ->openUrlInNewTab()
                             ->icon('heroicon-o-link'),
-                        Infolists\Components\TextEntry::make('proposed_site')
-                            ->label('Sitio Propuesto')
-                            ->url(fn ($record) => $record->proposed_site ? (str_starts_with($record->proposed_site, 'http') ? $record->proposed_site : 'https://' . $record->proposed_site) : null)
-                            ->openUrlInNewTab()
-                            ->color('success')
-                            ->icon('heroicon-o-sparkles'),
                     ])
                     ->columns(2),
                 Infolists\Components\Section::make('Información Adicional')
                     ->icon('heroicon-o-information-circle')
                     ->schema([
-                        Infolists\Components\IconEntry::make('propuesta_enviada')
-                            ->label('Propuesta Enviada')
-                            ->boolean(),
                         Infolists\Components\TextEntry::make('estado')
                             ->label('Estado')
                             ->badge()

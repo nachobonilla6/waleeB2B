@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\IngresosDashboardWidget;
-use App\Filament\Widgets\ClientesStatsWidget;
+use App\Filament\Widgets\IngresosUltimos30DiasChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Actions\Action;
 
@@ -16,18 +16,18 @@ class Dashboard extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [
-            ClientesStatsWidget::class,
             IngresosDashboardWidget::class,
         ];
     }
 
     /**
-     * Sobrescribir para evitar que se muestren widgets descubiertos automáticamente
-     * Devolver array vacío para que no se muestren widgets automáticos
+     * Widgets del dashboard
      */
     public function getWidgets(): array
     {
-        return [];
+        return [
+            IngresosUltimos30DiasChart::class,
+        ];
     }
 
     /**

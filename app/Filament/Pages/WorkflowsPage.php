@@ -75,7 +75,7 @@ class WorkflowsPage extends Page implements HasTable
                 Tables\Columns\TextColumn::make('error_message')
                     ->label('Error')
                     ->limit(50)
-                    ->visible(fn ($record) => $record->status === 'failed')
+                    ->visible(fn ($record) => $record && $record->status === 'failed')
                     ->wrap(),
                 Tables\Columns\TextColumn::make('started_at')
                     ->label('Iniciado')
@@ -104,12 +104,12 @@ class WorkflowsPage extends Page implements HasTable
                 Tables\Actions\Action::make('view_result')
                     ->label('Ver Resultado')
                     ->icon('heroicon-o-eye')
-                    ->visible(fn ($record) => $record->result !== null)
+                    ->visible(fn ($record) => $record && $record->result !== null)
                     ->modalHeading('Resultado del Workflow')
-                    ->modalContent(fn ($record) => view('filament.pages.workflow-result', [
+                    ->modalContent(fn ($record) => $record ? view('filament.pages.workflow-result', [
                         'result' => $record->result,
                         'data' => $record->data,
-                    ]))
+                    ]) : 'No hay datos disponibles')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar'),
             ])

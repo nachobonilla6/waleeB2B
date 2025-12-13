@@ -78,8 +78,25 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.name',
             ]);
 
+        // Query para facturas enviadas (las que tienen correo)
+        $facturasQuery = Factura::query()
+            ->whereNotNull('correo')
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("'factura_enviada' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ]);
+
         // Crear la UNION y envolverla en una subquery para poder ordenar
-        $unionQuery = $notesQuery->unionAll($propuestasQuery);
+        $unionQuery = $notesQuery->unionAll($propuestasQuery)->unionAll($facturasQuery);
         
         // Envolver en una subquery usando fromSub para poder ordenar
         // Ordenar por created_at (desc)
@@ -120,7 +137,7 @@ class HistorialPage extends Page implements HasTable
                     ->placeholder('Sistema')
                     ->sortable()
                     ->formatStateUsing(function ($state, $record) {
-                        if (isset($record->record_type) && $record->record_type === 'propuesta') {
+                        if (isset($record->record_type) && ($record->record_type === 'propuesta' || $record->record_type === 'factura')) {
                             return 'Sistema';
                         }
                         if ($state) {
@@ -137,6 +154,13 @@ class HistorialPage extends Page implements HasTable
                     ->formatStateUsing(function ($state, $record) {
                         if (isset($record->record_type) && $record->record_type === 'propuesta') {
                             return $record->name ?? 'N/A';
+                        }
+                        if (isset($record->record_type) && $record->record_type === 'factura') {
+                            if (isset($record->cliente_id) && $record->cliente_id) {
+                                $cliente = Cliente::find($record->cliente_id);
+                                return $cliente?->nombre_empresa ?? 'N/A';
+                            }
+                            return 'N/A';
                         }
                         if ($state) {
                             $client = Client::find($state);
@@ -173,6 +197,7 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'Reunión',
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
+                        'factura_enviada' => '💰 Factura Enviada',
                     ]),
                 Tables\Filters\SelectFilter::make('client_id')
                     ->label('Cliente')

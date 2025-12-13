@@ -153,7 +153,8 @@ class ListClientesGoogleCopias extends Page implements HasTable
                         'completed' => 'success',
                         'failed' => 'danger',
                         'running' => match(true) {
-                            ($record->progress ?? 0) >= 75 => 'success',
+                            ($record->progress ?? 0) > 75 => 'success',
+                            ($record->progress ?? 0) == 75 => 'warning',
                             ($record->progress ?? 0) >= 50 => 'info',
                             ($record->progress ?? 0) >= 25 => 'warning',
                             default => 'gray',

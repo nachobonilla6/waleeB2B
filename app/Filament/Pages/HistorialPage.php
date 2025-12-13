@@ -185,22 +185,21 @@ class HistorialPage extends Page implements HasTable
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->requiresConfirmation(false)
-                    ->using(function ($record) {
-                        // Retornar solo el ID numérico para evitar que Filament intente buscar el registro
+                    ->action(function ($record) {
+                        // Extraer el ID numérico para evitar que Filament intente buscar el registro
                         // Esto evita el error de query con notes.id
+                        $noteId = null;
                         if (is_object($record)) {
                             $id = $record->id ?? $record->getKey() ?? null;
                             $recordType = $record->record_type ?? null;
-                            // Solo retornar el ID si es una nota
-                            return ($id && $recordType === 'note') ? $id : null;
+                            // Solo usar el ID si es una nota
+                            $noteId = ($id && $recordType === 'note') ? $id : null;
                         } elseif (is_array($record)) {
                             $id = $record['id'] ?? null;
                             $recordType = $record['record_type'] ?? null;
-                            return ($id && $recordType === 'note') ? $id : null;
+                            $noteId = ($id && $recordType === 'note') ? $id : null;
                         }
-                        return null;
-                    })
-                    ->action(function ($noteId) {
+                        
                         if ($noteId) {
                             // Verificar que sea una nota (no propuesta) consultando directamente
                             $note = DB::table('notes')->where('id', $noteId)->first();

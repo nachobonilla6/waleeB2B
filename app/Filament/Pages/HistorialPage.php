@@ -24,6 +24,9 @@ class HistorialPage extends Page implements HasTable
 {
     use InteractsWithTable;
 
+    public $mountedTableActionRecord = null;
+    public $mountedTableActionRecordType = null;
+
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Historial';
     protected static ?string $title = 'Historial de Notas';
@@ -90,6 +93,7 @@ class HistorialPage extends Page implements HasTable
 
         return $table
             ->query($unifiedQuery)
+            ->key('id')
             ->columns([
                 Tables\Columns\IconColumn::make('pinned')
                     ->label('')
@@ -181,10 +185,18 @@ class HistorialPage extends Page implements HasTable
                     ->icon(fn ($record) => ($record->pinned ?? false) ? 'heroicon-o-bookmark-slash' : 'heroicon-s-bookmark')
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
-                    ->action(function ($record) {
-                        if (isset($record->record_type) && $record->record_type === 'note' && isset($record->id)) {
+                    ->requiresConfirmation(false)
+                    ->mountUsing(function ($record) {
+                        // Capturar el ID antes de que Filament intente buscar el registro
+                        $this->mountedTableActionRecord = is_object($record) ? ($record->id ?? null) : ($record['id'] ?? null);
+                        $this->mountedTableActionRecordType = is_object($record) ? ($record->record_type ?? null) : ($record['record_type'] ?? null);
+                    })
+                    ->action(function () {
+                        $noteId = $this->mountedTableActionRecord ?? null;
+                        $recordType = $this->mountedTableActionRecordType ?? null;
+                        
+                        if ($noteId && $recordType === 'note') {
                             // Usar DB directamente para evitar problemas con la subquery
-                            $noteId = $record->id;
                             $currentPinned = DB::table('notes')->where('id', $noteId)->value('pinned') ?? false;
                             $newPinnedState = !$currentPinned;
                             

@@ -179,7 +179,7 @@ class AdminPanelProvider extends PanelProvider
             )
             ->renderHook(
                 PanelsRenderHook::BODY_END,
-                fn (): string => Blade::render('@livewire(\'chat-widget\')')
+                fn (): string => Blade::render('@livewire(\'floating-chat\')')
             )
             ->navigationGroups([
                 NavigationGroup::make()

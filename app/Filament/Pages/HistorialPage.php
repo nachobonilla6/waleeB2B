@@ -121,7 +121,7 @@ class HistorialPage extends Page implements HasTable
                         'style' => 'min-height: 4.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;',
                     ])
                     ->html()
-                    ->formatStateUsing(fn ($state) => {
+                    ->formatStateUsing(function ($state) {
                         $content = $state ?? '';
                         return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
                     }),

@@ -110,6 +110,39 @@ class WorkflowsPage extends Page implements HasTable
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar'),
+                Tables\Actions\Action::make('stop')
+                    ->label('Detener')
+                    ->icon('heroicon-o-stop-circle')
+                    ->color('danger')
+                    ->visible(fn ($record) => $record && $record->status === 'running')
+                    ->requiresConfirmation()
+                    ->modalHeading('Detener Workflow')
+                    ->modalDescription('¿Estás seguro de que deseas detener este workflow? El proceso se cancelará y no se completará.')
+                    ->action(function ($record) {
+                        try {
+                            $record->update([
+                                'status' => 'failed',
+                                'step' => 'Cancelado manualmente',
+                                'error_message' => 'Workflow detenido manualmente por el usuario',
+                                'completed_at' => now(),
+                            ]);
+
+                            // Procesar el siguiente workflow en cola
+                            WorkflowRun::processNextPendingWorkflow();
+
+                            Notification::make()
+                                ->title('Workflow detenido')
+                                ->body('El workflow ha sido detenido correctamente.')
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Error al detener workflow')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
                 Tables\Actions\Action::make('retry')
                     ->label('Reintentar')
                     ->icon('heroicon-o-arrow-path')

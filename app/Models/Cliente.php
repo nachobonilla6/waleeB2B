@@ -62,7 +62,7 @@ class Cliente extends Model
 
     public function facturas(): HasMany
     {
-        return $this->hasMany(Factura::class);
+        return $this->hasMany(Factura::class)->orderBy('created_at', 'desc');
     }
 
     public function citas(): HasMany

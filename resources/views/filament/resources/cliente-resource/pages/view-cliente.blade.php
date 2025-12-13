@@ -326,7 +326,7 @@
                 <div class="fi-section-content p-6 space-y-8">
                     {{-- Resumen --}}
                     @php
-                        $facturas = $cliente->facturas ? $cliente->facturas : collect();
+                        $facturas = $cliente->facturas ? $cliente->facturas->sortByDesc('created_at') : collect();
                         $totalFacturado = $facturas->sum('total') ?? 0;
                         $facturasPendientes = $facturas->where('estado', 'pendiente');
                         $facturasPagadas = $facturas->where('estado', 'pagada');

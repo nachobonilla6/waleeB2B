@@ -20,14 +20,19 @@
                         {{ $this->record->name ?? 'N/A' }}
                     </h2>
                     
-                    <!-- Estado -->
-                    @if($this->record->estado ?? false)
+                    <!-- Estado accepted como alerta -->
+                    @if(($this->record->estado ?? '') === 'accepted')
                         <div class="mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200">
-                                {{ ucfirst($this->record->estado) }}
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200">
+                                Accepted
                             </span>
                         </div>
                     @endif
+                    
+                    <!-- Activo -->
+                    <div class="mb-3">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Activo</span>
+                    </div>
                     
                     <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                         @if($this->record->email)

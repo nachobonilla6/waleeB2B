@@ -264,6 +264,11 @@ class FacturaResource extends Resource
                             );
                             
                             if ($response->successful()) {
+                                // Guardar el correo y marcar como enviada
+                                $record->correo = $correoDestino;
+                                $record->enviada_at = now();
+                                $record->save();
+                                
                                 \Filament\Notifications\Notification::make()
                                     ->title('✅ Factura enviada')
                                     ->body('La factura ha sido enviada al webhook correctamente')

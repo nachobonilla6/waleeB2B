@@ -21,11 +21,13 @@ class Factura extends Model
         'estado',
         'fecha_vencimiento',
         'notas',
+        'enviada_at',
     ];
 
     protected $casts = [
         'fecha_emision' => 'date',
         'fecha_vencimiento' => 'date',
+        'enviada_at' => 'datetime',
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
     ];

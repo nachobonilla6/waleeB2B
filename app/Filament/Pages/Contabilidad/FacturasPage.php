@@ -238,6 +238,11 @@ class FacturasPage extends Page implements HasTable
                                     );
                                     
                                     if ($response->successful()) {
+                                        // Marcar como enviada
+                                        $factura->correo = $data['correo'] ?? $cliente?->correo ?? '';
+                                        $factura->enviada_at = now();
+                                        $factura->save();
+                                        
                                         \Filament\Notifications\Notification::make()
                                             ->title('✅ Factura creada y enviada')
                                             ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' guardada y enviada al webhook correctamente')

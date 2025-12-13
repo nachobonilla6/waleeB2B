@@ -79,16 +79,17 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.name',
             ]);
 
-        // Query para facturas creadas
+        // Query para facturas enviadas (las que tienen enviada_at)
         $facturasQuery = Factura::query()
+            ->whereNotNull('enviada_at')
             ->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
                 'facturas.cliente_id',
                 DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
-                DB::raw("'factura_creada' as type"),
+                DB::raw("'factura_enviada' as type"),
                 DB::raw("NULL as user_id"),
-                'facturas.created_at',
+                'facturas.enviada_at as created_at',
                 'facturas.updated_at',
                 DB::raw("'factura' as record_type"),
                 DB::raw("NULL as propuesta"),
@@ -134,6 +135,7 @@ class HistorialPage extends Page implements HasTable
                         'email' => 'success',
                         'propuesta_enviada' => 'warning',
                         'factura_creada' => 'warning',
+                        'factura_enviada' => 'warning',
                         'cotizacion_creada' => 'warning',
                         default => 'gray',
                     })
@@ -257,6 +259,7 @@ class HistorialPage extends Page implements HasTable
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
                         'factura_creada' => '💰 Factura Creada',
+                        'factura_enviada' => '💰 Factura Enviada',
                         'cotizacion_creada' => '📋 Cotización Creada',
                     ]),
                 Tables\Filters\SelectFilter::make('client_id')

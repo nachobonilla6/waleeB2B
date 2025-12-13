@@ -201,6 +201,13 @@ class FacturaResource extends Resource
                         default => $state,
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('enlace')
+                    ->label('Ver Factura')
+                    ->icon('heroicon-o-document')
+                    ->url(fn ($record) => $record->enlace ?: null)
+                    ->openUrlInNewTab()
+                    ->color('primary')
+                    ->formatStateUsing(fn ($state) => $state ? 'Ver Factura' : null),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([

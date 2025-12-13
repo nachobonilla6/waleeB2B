@@ -33,7 +33,7 @@ class ListClienteEnProcesos extends ListRecords
         $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
         $listosUrl = ClienteEnProcesoResource::getUrl('listos');
         $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
-        $extraerUrl = ListClientesGoogleCopias::getUrl();
+        $extraerUrl = url('/admin/list-clientes-google-copias');
         $currentUrl = url()->current();
 
         // Contar clientes pendientes

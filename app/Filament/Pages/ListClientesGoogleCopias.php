@@ -26,6 +26,30 @@ class ListClientesGoogleCopias extends Page implements HasTable
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 5;
 
+    protected static ?string $slug = 'list-clientes-google-copias';
+
+    // #region agent log
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?\Illuminate\Database\Eloquent\Model $tenant = null): string
+    {
+        file_put_contents('/home/josh/Desktop/Github repositories/websolutions-laravel/.cursor/debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'ListClientesGoogleCopias.php:30', 'message' => 'getUrl() called', 'data' => ['class' => static::class, 'slug' => static::getSlug(), 'route_name' => static::getRouteName()], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+        
+        try {
+            $url = parent::getUrl($parameters, $isAbsolute, $panel, $tenant);
+            
+            // #region agent log
+            file_put_contents('/home/josh/Desktop/Github repositories/websolutions-laravel/.cursor/debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'ListClientesGoogleCopias.php:37', 'message' => 'getUrl() succeeded', 'data' => ['url' => $url], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+            // #endregion
+            
+            return $url;
+        } catch (\Exception $e) {
+            // #region agent log
+            file_put_contents('/home/josh/Desktop/Github repositories/websolutions-laravel/.cursor/debug.log', json_encode(['sessionId' => 'debug-session', 'runId' => 'run1', 'hypothesisId' => 'B', 'location' => 'ListClientesGoogleCopias.php:44', 'message' => 'getUrl() failed', 'data' => ['error' => $e->getMessage(), 'slug' => static::getSlug(), 'route_name' => static::getRouteName()], 'timestamp' => time() * 1000]) . "\n", FILE_APPEND);
+            // #endregion
+            throw $e;
+        }
+    }
+    // #endregion
+
     public function getMaxContentWidth(): MaxWidth | string | null
     {
         return MaxWidth::Full;

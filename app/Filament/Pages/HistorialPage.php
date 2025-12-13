@@ -183,13 +183,16 @@ class HistorialPage extends Page implements HasTable
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->action(function ($record) {
                         if (isset($record->record_type) && $record->record_type === 'note' && isset($record->id)) {
-                            $note = Note::find($record->id);
+                            // Usar el ID directamente de la subquery
+                            $noteId = $record->id;
+                            $note = Note::where('id', $noteId)->first();
                             if ($note) {
-                                $note->update(['pinned' => !$note->pinned]);
+                                $newPinnedState = !$note->pinned;
+                                $note->update(['pinned' => $newPinnedState]);
                                 
                                 Notification::make()
-                                    ->title($note->pinned ? 'Nota fijada' : 'Nota desfijada')
-                                    ->body($note->pinned ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
+                                    ->title($newPinnedState ? 'Nota fijada' : 'Nota desfijada')
+                                    ->body($newPinnedState ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
                                     ->success()
                                     ->send();
                             }
@@ -212,6 +215,12 @@ class HistorialPage extends Page implements HasTable
                     ->searchable()
                     ->preload(),
             ])
+            ->recordClasses(fn ($record) => {
+                if (isset($record->record_type) && $record->record_type === 'note' && ($record->pinned ?? false)) {
+                    return 'bg-red-50 dark:bg-red-900/20 border-l-4 border-l-red-500';
+                }
+                return '';
+            })
             ->defaultSort('created_at', 'desc');
     }
 

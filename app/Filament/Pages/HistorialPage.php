@@ -363,15 +363,11 @@ class HistorialPage extends Page implements HasTable
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
-                        // Factura enviada - enlace externo (en blank)
+                        // Factura enviada - enlace al view
                         if ($recordType === 'factura' && $type === 'factura_enviada' && $recordId) {
-                            $enlace = $getValue('enlace');
-                            if ($enlace) {
-                                $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                                return '<a href="' . e($enlace) . '" target="_blank" rel="noopener noreferrer" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
-                            }
-                            // Si no hay enlace, mostrar sin link
-                            return '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            $url = FacturaResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Factura editada - enlace al view
@@ -388,9 +384,9 @@ class HistorialPage extends Page implements HasTable
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
-                        // Cotización enviada - enlace al edit
+                        // Cotización enviada - enlace al view
                         if ($recordType === 'cotizacion' && $type === 'cotizacion_enviada' && $recordId) {
-                            $url = CotizacionResource::getUrl('edit', ['record' => $recordId]);
+                            $url = CotizacionResource::getUrl('view', ['record' => $recordId]);
                             $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }

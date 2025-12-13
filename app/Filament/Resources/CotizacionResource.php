@@ -11,6 +11,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
@@ -327,6 +329,119 @@ class CotizacionResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Información Básica')
+                    ->icon('heroicon-o-information-circle')
+                    ->collapsible()
+                    ->collapsed(false)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('numero_cotizacion')
+                            ->label('Nº Cotización')
+                            ->weight('bold')
+                            ->size('lg')
+                            ->default('-'),
+                        Infolists\Components\TextEntry::make('cliente.nombre_empresa')
+                            ->label('Cliente')
+                            ->default('-'),
+                        Infolists\Components\TextEntry::make('correo')
+                            ->label('Correo Electrónico')
+                            ->url(fn ($record) => $record->correo ? 'mailto:' . $record->correo : null)
+                            ->openUrlInNewTab()
+                            ->default('-')
+                            ->visible(fn ($record) => !empty($record->correo)),
+                        Infolists\Components\TextEntry::make('fecha')
+                            ->label('Fecha')
+                            ->date('d/m/Y')
+                            ->default('-'),
+                        Infolists\Components\TextEntry::make('idioma')
+                            ->label('Idioma')
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
+                                'es' => 'Español',
+                                'en' => 'English',
+                                'fr' => 'Français',
+                                default => $state ?? '-',
+                            }),
+                    ])
+                    ->columns(2),
+                Infolists\Components\Section::make('Detalles del Servicio')
+                    ->icon('heroicon-o-briefcase')
+                    ->collapsible()
+                    ->collapsed(false)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('tipo_servicio')
+                            ->label('Tipo de Servicio')
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
+                                'diseno_web' => 'Diseño Web',
+                                'redes_sociales' => 'Gestión Redes Sociales',
+                                'seo' => 'SEO / Posicionamiento',
+                                'publicidad' => 'Publicidad Digital',
+                                'mantenimiento' => 'Mantenimiento Web',
+                                'hosting' => 'Hosting & Dominio',
+                                'combo' => 'Paquete Completo',
+                                default => $state ?? '-',
+                            }),
+                        Infolists\Components\TextEntry::make('plan')
+                            ->label('Plan')
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
+                                'basico' => 'Básico - $99/mes',
+                                'profesional' => 'Profesional - $199/mes',
+                                'premium' => 'Premium - $349/mes',
+                                'empresarial' => 'Empresarial - $499/mes',
+                                'personalizado' => 'Personalizado',
+                                default => $state ?? '-',
+                            }),
+                        Infolists\Components\TextEntry::make('monto')
+                            ->label('Monto (₡)')
+                            ->money('CRC', divideBy: 1)
+                            ->size('lg')
+                            ->weight('bold')
+                            ->color('success')
+                            ->default('0'),
+                        Infolists\Components\TextEntry::make('vigencia')
+                            ->label('Vigencia')
+                            ->formatStateUsing(fn (?string $state): string => $state ? $state . ' días' : '-'),
+                        Infolists\Components\TextEntry::make('descripcion')
+                            ->label('Descripción / Servicios incluidos')
+                            ->columnSpanFull()
+                            ->default('-')
+                            ->visible(fn ($record) => !empty($record->descripcion)),
+                    ])
+                    ->columns(2),
+                Infolists\Components\Section::make('Estado')
+                    ->icon('heroicon-o-check-circle')
+                    ->collapsible()
+                    ->collapsed(false)
+                    ->schema([
+                        Infolists\Components\TextEntry::make('estado')
+                            ->label('Estado')
+                            ->badge()
+                            ->formatStateUsing(fn (?string $state): string => match($state) {
+                                'pendiente' => 'Pendiente',
+                                'enviada' => 'Enviada',
+                                'aceptada' => 'Aceptada',
+                                'rechazada' => 'Rechazada',
+                                default => $state ?? '-',
+                            })
+                            ->color(fn (?string $state): string => match($state) {
+                                'pendiente' => 'warning',
+                                'enviada' => 'info',
+                                'aceptada' => 'success',
+                                'rechazada' => 'danger',
+                                default => 'gray',
+                            }),
+                        Infolists\Components\TextEntry::make('enviada_at')
+                            ->label('Fecha de Envío')
+                            ->dateTime('d/m/Y H:i')
+                            ->default('-')
+                            ->visible(fn ($record) => !empty($record->enviada_at)),
+                    ])
+                    ->columns(2),
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -339,6 +454,7 @@ class CotizacionResource extends Resource
         return [
             'index' => Pages\ListCotizacions::route('/'),
             'create' => Pages\CreateCotizacion::route('/create'),
+            'view' => Pages\ViewCotizacion::route('/{record}'),
             'edit' => Pages\EditCotizacion::route('/{record}/edit'),
         ];
     }

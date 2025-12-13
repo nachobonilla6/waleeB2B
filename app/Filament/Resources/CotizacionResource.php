@@ -146,11 +146,7 @@ class CotizacionResource extends Resource
                                 ->required(),
                         ]),
                 ])
-                ->columnSpanFull()
-                ->submitAction(Forms\Components\Actions\Action::make('submit')
-                    ->label('Crear Cotización')
-                    ->icon('heroicon-o-check')
-                ),
+                ->columnSpanFull(),
             ]);
     }
 

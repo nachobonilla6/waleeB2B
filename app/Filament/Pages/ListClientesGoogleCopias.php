@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 use App\Models\WorkflowRun;
+use App\Models\Client;
+use App\Filament\Resources\ClienteEnProcesoResource;
+use App\Filament\Resources\ClientesGoogleEnviadasResource;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
@@ -71,7 +74,7 @@ class ListClientesGoogleCopias extends Page implements HasTable
             ->query(WorkflowRun::query()->orderBy('created_at', 'desc'))
             ->columns([
                 Tables\Columns\TextColumn::make('data.nombre_lugar')
-                    ->label('Nombre del Lugar')
+                    ->label('Lugar')
                     ->searchable()
                     ->sortable()
                     ->placeholder('N/A')
@@ -195,14 +198,47 @@ class ListClientesGoogleCopias extends Page implements HasTable
 
     protected function getHeaderActions(): array
     {
+        $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
+        $listosUrl = ClienteEnProcesoResource::getUrl('listos');
+        $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
+        $extraerUrl = url('/admin/list-clientes-google-copias');
+        $currentUrl = url()->current();
+
+        // Contar clientes pendientes
+        $pendingCount = Client::where('estado', 'pending')->count();
+        $listosCount = Client::where('estado', 'listo_para_enviar')->count();
+        $propuestasCount = Client::where('estado', 'propuesta_enviada')->count();
+
         return [
+            Action::make('extraer_nuevos_clientes')
+                ->label('Extraer Nuevos Clientes')
+                ->url($extraerUrl)
+                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
+            Action::make('clientes_google')
+                ->label('Clientes Google')
+                ->url($clientesGoogleUrl)
+                ->color($currentUrl === $clientesGoogleUrl ? 'primary' : 'gray')
+                ->badge($pendingCount > 0 ? (string) $pendingCount : null)
+                ->badgeColor('warning'),
+            Action::make('listos_para_enviar')
+                ->label('Listos para Enviar')
+                ->url($listosUrl)
+                ->color($currentUrl === $listosUrl ? 'primary' : 'gray')
+                ->badge($listosCount > 0 ? (string) $listosCount : null)
+                ->badgeColor('info'),
+            Action::make('propuestas_enviadas')
+                ->label('Propuestas Enviadas')
+                ->url($propuestasUrl)
+                ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray')
+                ->badge($propuestasCount > 0 ? (string) $propuestasCount : null)
+                ->badgeColor('success'),
             Action::make('start_search')
                 ->label('Iniciar Búsqueda')
                 ->icon('heroicon-o-magnifying-glass')
                 ->color('primary')
                 ->form([
                     Forms\Components\TextInput::make('nombre_lugar')
-                        ->label('Nombre del Lugar')
+                        ->label('Lugar')
                         ->placeholder('Ej: Heredia, San José, etc.')
                         ->required()
                         ->maxLength(255),
@@ -275,100 +311,6 @@ class ListClientesGoogleCopias extends Page implements HasTable
 
                             Notification::make()
                                 ->title('Error al iniciar búsqueda')
-                                ->body('El webhook respondió con error: ' . $response->status())
-                                ->danger()
-                                ->send();
-                        }
-                    } catch (\Exception $e) {
-                        if (isset($workflowRun)) {
-                            $workflowRun->update([
-                                'status' => 'failed',
-                                'step' => 'Error al iniciar',
-                                'error_message' => $e->getMessage(),
-                                'completed_at' => null,
-                            ]);
-                        }
-
-                        Notification::make()
-                            ->title('Error')
-                            ->body($e->getMessage())
-                            ->danger()
-                            ->send();
-                    }
-                }),
-            Action::make('start_workflow')
-                ->label('Iniciar Workflow')
-                ->icon('heroicon-o-play')
-                ->color('success')
-                ->form([
-                    Forms\Components\TextInput::make('workflow_name')
-                        ->label('Nombre del Workflow')
-                        ->placeholder('Ej: Extracción de clientes')
-                        ->maxLength(255),
-                    Forms\Components\TextInput::make('webhook_url')
-                        ->label('URL del Webhook de n8n')
-                        ->placeholder('https://n8n.srv1137974.hstgr.cloud/webhook/...')
-                        ->url()
-                        ->required()
-                        ->helperText('URL del webhook de n8n que iniciará el workflow'),
-                    Forms\Components\Textarea::make('data')
-                        ->label('Datos Adicionales (JSON)')
-                        ->placeholder('{"query": "valor", "param": "valor"}')
-                        ->helperText('Datos adicionales a enviar al workflow (opcional)')
-                        ->rows(4),
-                ])
-                ->action(function (array $data) {
-                    try {
-                        $jobId = Str::uuid();
-
-                        // Crear el registro del workflow
-                        $workflowRun = WorkflowRun::create([
-                            'job_id' => $jobId,
-                            'status' => 'pending',
-                            'progress' => 0,
-                            'step' => 'En cola',
-                            'workflow_name' => $data['workflow_name'] ?? null,
-                        ]);
-
-                        // Preparar datos para enviar a n8n
-                        $payload = [
-                            'job_id' => $jobId,
-                            'progress_url' => url('/api/n8n/progress'),
-                        ];
-
-                        // Agregar datos adicionales si se proporcionaron
-                        if (!empty($data['data'])) {
-                            $parsedData = json_decode($data['data'], true);
-                            if (json_last_error() === JSON_ERROR_NONE) {
-                                $payload = array_merge($payload, $parsedData);
-                            }
-                        }
-
-                        // Llamar al webhook de n8n
-                        $response = Http::timeout(120)->post($data['webhook_url'], $payload);
-
-                        if ($response->successful()) {
-                            $workflowRun->update([
-                                'status' => 'running',
-                                'step' => 'Iniciado',
-                                'started_at' => now(),
-                            ]);
-
-                            Notification::make()
-                                ->title('Workflow iniciado')
-                                ->body('El workflow se ha iniciado correctamente. ID: ' . substr($jobId, 0, 8))
-                                ->success()
-                                ->send();
-                        } else {
-                            $workflowRun->update([
-                                'status' => 'failed',
-                                'step' => 'Error al iniciar workflow',
-                                'error_message' => 'Error al iniciar workflow: ' . $response->status(),
-                                'completed_at' => null,
-                            ]);
-
-                            Notification::make()
-                                ->title('Error al iniciar workflow')
                                 ->body('El webhook respondió con error: ' . $response->status())
                                 ->danger()
                                 ->send();

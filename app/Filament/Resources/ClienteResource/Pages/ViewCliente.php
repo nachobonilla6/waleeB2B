@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClienteResource\Pages;
 
 use App\Filament\Resources\ClienteResource;
 use App\Mail\CotizacionMail;
+use App\Models\Note;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Actions\Action;
@@ -25,7 +26,7 @@ class ViewCliente extends Page
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
-        $this->record->loadMissing('facturas');
+        $this->record->loadMissing(['facturas', 'notes.user']);
     }
 
     public function getTitle(): string
@@ -338,6 +339,49 @@ class ViewCliente extends Page
                 ->icon('heroicon-o-arrow-left')
                 ->color('gray')
                 ->url(ClienteResource::getUrl('index')),
+
+            Action::make('agregar_nota')
+                ->label('Agregar Nota')
+                ->icon('heroicon-o-pencil-square')
+                ->color('primary')
+                ->form([
+                    Forms\Components\Textarea::make('content')
+                        ->label('Contenido de la nota')
+                        ->required()
+                        ->rows(5)
+                        ->placeholder('Escribe tu nota aquí...')
+                        ->maxLength(5000),
+                    Forms\Components\Select::make('type')
+                        ->label('Tipo')
+                        ->options([
+                            'note' => 'Nota',
+                            'call' => 'Llamada',
+                            'meeting' => 'Reunión',
+                            'email' => 'Email',
+                        ])
+                        ->default('note')
+                        ->required(),
+                ])
+                ->action(function (array $data) {
+                    $cliente = $this->record;
+                    
+                    Note::create([
+                        'cliente_id' => $cliente->id,
+                        'content' => $data['content'],
+                        'type' => $data['type'],
+                        'user_id' => auth()->id(),
+                    ]);
+
+                    // Recargar la relación de notas
+                    $this->record->refresh();
+                    $this->record->load('notes.user');
+
+                    Notification::make()
+                        ->title('Nota agregada')
+                        ->body('La nota se ha guardado correctamente.')
+                        ->success()
+                        ->send();
+                }),
         ];
     }
 }

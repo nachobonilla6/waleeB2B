@@ -9,6 +9,7 @@ class Note extends Model
 {
     protected $fillable = [
         'client_id',
+        'cliente_id',
         'content',
         'type',
         'user_id',
@@ -22,6 +23,11 @@ class Note extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function cliente(): BelongsTo
+    {
+        return $this->belongsTo(Cliente::class);
     }
 
     public function user(): BelongsTo

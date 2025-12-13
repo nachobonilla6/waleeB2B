@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     @php
         $cliente = $this->record;
-        $cliente->loadMissing('facturas');
+        $cliente->loadMissing(['facturas', 'notes.user']);
         $redesSociales = $cliente->redes_sociales ?? [];
         $iconosRedes = [
             'facebook' => '📘',
@@ -309,10 +309,56 @@
                         <x-heroicon-o-document-text class="h-5 w-5 text-gray-400"/> Notas
                     </h3>
                 </div>
-                <div class="fi-section-content p-6">
-                    <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4 min-h-[120px]">
-                        <p class="text-gray-950 dark:text-white whitespace-pre-wrap">{{ $cliente->notas ?? 'Sin notas' }}</p>
-                    </div>
+                <div class="fi-section-content p-6 space-y-4">
+                    {{-- Nota de texto simple (legacy) --}}
+                    @if($cliente->notas)
+                        <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nota General</p>
+                            <p class="text-gray-950 dark:text-white whitespace-pre-wrap">{{ $cliente->notas }}</p>
+                        </div>
+                    @endif
+
+                    {{-- Notas relacionadas --}}
+                    @if($cliente->notes && $cliente->notes->count() > 0)
+                        <div class="space-y-3">
+                            @foreach($cliente->notes as $note)
+                                <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4 hover:ring-gray-950/10 dark:hover:ring-white/20 transition-colors">
+                                    <div class="flex items-start justify-between gap-4 mb-2">
+                                        <div class="flex items-center gap-2">
+                                            <x-filament::badge :color="match($note->type) {
+                                                'note' => 'gray',
+                                                'call' => 'primary',
+                                                'meeting' => 'info',
+                                                'email' => 'success',
+                                                default => 'gray'
+                                            }">
+                                                {{ match($note->type) {
+                                                    'note' => 'Nota',
+                                                    'call' => 'Llamada',
+                                                    'meeting' => 'Reunión',
+                                                    'email' => 'Email',
+                                                    default => $note->type
+                                                } }}
+                                            </x-filament::badge>
+                                            @if($note->user)
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                    por {{ $note->user->name }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $note->created_at->format('d/m/Y H:i') }}
+                                        </span>
+                                    </div>
+                                    <p class="text-gray-950 dark:text-white whitespace-pre-wrap">{{ $note->content }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @elseif(!$cliente->notas)
+                        <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-8 text-center">
+                            <p class="text-gray-500 dark:text-gray-400">No hay notas registradas</p>
+                        </div>
+                    @endif
                 </div>
             </div>
 

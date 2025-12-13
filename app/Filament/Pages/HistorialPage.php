@@ -6,6 +6,7 @@ use App\Models\Note;
 use App\Models\Client;
 use App\Models\Factura;
 use App\Models\Cliente;
+use Illuminate\Support\Facades\DB;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Forms;
@@ -32,8 +33,46 @@ class HistorialPage extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        // Query personalizada que combina notas y propuestas enviadas
+        $query = DB::table('notes')
+            ->select([
+                'notes.id',
+                'notes.client_id',
+                'notes.cliente_id',
+                'notes.content',
+                'notes.type',
+                'notes.user_id',
+                'notes.created_at',
+                'notes.updated_at',
+                DB::raw("'note' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ])
+            ->union(
+                DB::table('clientes_en_proceso')
+                    ->where(function ($q) {
+                        $q->where('estado', 'propuesta_enviada')
+                          ->orWhere('propuesta_enviada', true);
+                    })
+                    ->whereNotNull('propuesta')
+                    ->select([
+                        'clientes_en_proceso.id',
+                        'clientes_en_proceso.id as client_id',
+                        DB::raw("NULL as cliente_id"),
+                        'clientes_en_proceso.propuesta as content',
+                        DB::raw("'propuesta_enviada' as type"),
+                        DB::raw("NULL as user_id"),
+                        'clientes_en_proceso.created_at',
+                        'clientes_en_proceso.updated_at',
+                        DB::raw("'propuesta' as record_type"),
+                        'clientes_en_proceso.propuesta',
+                        'clientes_en_proceso.name',
+                    ])
+            )
+            ->orderBy('created_at', 'desc');
+
         return $table
-            ->query(Note::query()->with(['client', 'cliente', 'user'])->orderBy('created_at', 'desc'))
+            ->query($query)
             ->columns([
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipo')
@@ -43,6 +82,7 @@ class HistorialPage extends Page implements HasTable
                         'call' => 'primary',
                         'meeting' => 'info',
                         'email' => 'success',
+                        'propuesta_enviada' => 'warning',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -50,6 +90,7 @@ class HistorialPage extends Page implements HasTable
                         'call' => 'Llamada',
                         'meeting' => 'Reunión',
                         'email' => 'Email',
+                        'propuesta_enviada' => '📄 Propuesta Enviada',
                         default => $state,
                     })
                     ->sortable(),
@@ -57,12 +98,22 @@ class HistorialPage extends Page implements HasTable
                     ->label('Fecha')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('user.name')
+                Tables\Columns\TextColumn::make('user_id')
                     ->label('Creado por')
                     ->placeholder('Sistema')
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(function ($state, $record) {
+                        if (isset($record->record_type) && $record->record_type === 'propuesta') {
+                            return 'Sistema';
+                        }
+                        if ($state) {
+                            $user = \App\Models\User::find($state);
+                            return $user?->name ?? 'Sistema';
+                        }
+                        return 'Sistema';
+                    }),
                 Tables\Columns\TextColumn::make('content')
-                    ->label('Nota')
+                    ->label('Nota / Propuesta')
                     ->wrap()
                     ->searchable()
                     ->extraAttributes(fn ($record) => [
@@ -70,14 +121,31 @@ class HistorialPage extends Page implements HasTable
                         'style' => 'min-height: 4.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;',
                     ])
                     ->html()
-                    ->formatStateUsing(fn ($state) => '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>'),
-                Tables\Columns\TextColumn::make('client.name')
+                    ->formatStateUsing(fn ($state) => {
+                        $content = $state ?? '';
+                        return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
+                    }),
+                Tables\Columns\TextColumn::make('client_id')
                     ->label('Cliente')
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->placeholder(fn ($record) => $record->cliente?->nombre_empresa ?? 'N/A')
-                    ->getStateUsing(fn ($record) => $record->client?->name ?? $record->cliente?->nombre_empresa ?? 'N/A')
+                    ->formatStateUsing(function ($state, $record) {
+                        if (isset($record->record_type) && $record->record_type === 'propuesta') {
+                            return $record->name ?? 'N/A';
+                        }
+                        if ($state) {
+                            $client = Client::find($state);
+                            if ($client) {
+                                return $client->name ?? 'N/A';
+                            }
+                        }
+                        if (isset($record->cliente_id) && $record->cliente_id) {
+                            $cliente = Cliente::find($record->cliente_id);
+                            return $cliente?->nombre_empresa ?? 'N/A';
+                        }
+                        return 'N/A';
+                    })
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -88,6 +156,7 @@ class HistorialPage extends Page implements HasTable
                         'call' => 'Llamada',
                         'meeting' => 'Reunión',
                         'email' => 'Email',
+                        'propuesta_enviada' => '📄 Propuesta Enviada',
                     ]),
                 Tables\Filters\SelectFilter::make('client_id')
                     ->label('Cliente')

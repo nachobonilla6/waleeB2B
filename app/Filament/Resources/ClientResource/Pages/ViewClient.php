@@ -15,6 +15,12 @@ class ViewClient extends ViewRecord
 {
     protected static string $resource = ClientResource::class;
 
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+        $this->record->load('notes.user');
+    }
+
     /**
      * Botones de acción.
      */
@@ -70,6 +76,10 @@ class ViewClient extends ViewRecord
                         'type' => $data['type'],
                         'user_id' => auth()->id(),
                     ]);
+
+                    // Recargar la relación de notas
+                    $this->record->refresh();
+                    $this->record->load('notes.user');
 
                     Notification::make()
                         ->title('Nota agregada')

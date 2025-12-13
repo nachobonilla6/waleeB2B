@@ -188,6 +188,46 @@ class ClientResource extends Resource
                             ->dateTime('d/m/Y H:i'),
                     ])
                     ->columns(2),
+                Infolists\Components\Section::make('Notas')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        Infolists\Components\RepeatableEntry::make('notes')
+                            ->label('')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('content')
+                                    ->label('')
+                                    ->wrap()
+                                    ->columnSpanFull(),
+                                Infolists\Components\TextEntry::make('type')
+                                    ->label('Tipo')
+                                    ->badge()
+                                    ->color(fn (string $state): string => match ($state) {
+                                        'note' => 'gray',
+                                        'call' => 'primary',
+                                        'meeting' => 'info',
+                                        'email' => 'success',
+                                        default => 'gray',
+                                    })
+                                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                                        'note' => 'Nota',
+                                        'call' => 'Llamada',
+                                        'meeting' => 'Reunión',
+                                        'email' => 'Email',
+                                        default => $state,
+                                    }),
+                                Infolists\Components\TextEntry::make('user.name')
+                                    ->label('Creado por')
+                                    ->placeholder('Sistema'),
+                                Infolists\Components\TextEntry::make('created_at')
+                                    ->label('Fecha')
+                                    ->dateTime('d/m/Y H:i'),
+                            ])
+                            ->columns(3)
+                            ->emptyLabel('No hay notas registradas')
+                            ->orderBy('created_at', 'desc'),
+                    ])
+                    ->collapsible()
+                    ->collapsed(false),
             ]);
     }
 

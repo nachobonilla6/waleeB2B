@@ -23,6 +23,7 @@ class N8nProgressController extends Controller
                 'data' => 'nullable',
                 'workflow_name' => 'nullable|string',
                 'error_message' => 'nullable|string',
+                'message' => 'nullable|string',
             ]);
 
             $workflowRun = WorkflowRun::where('job_id', $request->job_id)->first();
@@ -72,6 +73,16 @@ class N8nProgressController extends Controller
             // Guardar data adicional si viene
             if ($request->has('data')) {
                 $updateData['data'] = $request->data;
+            }
+            
+            // Si viene message, agregarlo a data (mergear con data existente si hay)
+            if ($request->has('message')) {
+                $currentData = $updateData['data'] ?? $workflowRun->data ?? [];
+                if (!is_array($currentData)) {
+                    $currentData = [];
+                }
+                $currentData['message'] = $request->message;
+                $updateData['data'] = $currentData;
             }
 
             // Guardar nombre del workflow si viene

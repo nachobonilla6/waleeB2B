@@ -67,6 +67,12 @@ class WorkflowsPage extends Page implements HasTable
                 Tables\Columns\ViewColumn::make('progress')
                     ->label('Barra de Progreso')
                     ->view('filament.tables.columns.progress-bar'),
+                Tables\Columns\TextColumn::make('data.message')
+                    ->label('Mensaje')
+                    ->searchable()
+                    ->wrap()
+                    ->placeholder('N/A')
+                    ->getStateUsing(fn ($record) => $record->data['message'] ?? null),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

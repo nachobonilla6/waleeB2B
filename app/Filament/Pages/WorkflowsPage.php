@@ -64,9 +64,6 @@ class WorkflowsPage extends Page implements HasTable
                         ($state . '%')
                     )
                     ->sortable(),
-                Tables\Columns\ViewColumn::make('progress')
-                    ->label('Barra de Progreso')
-                    ->view('filament.tables.columns.progress-bar'),
                 Tables\Columns\TextColumn::make('data.message')
                     ->label('Mensaje')
                     ->searchable()

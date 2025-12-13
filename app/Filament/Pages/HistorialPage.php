@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard\Step;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -30,6 +31,11 @@ class HistorialPage extends Page implements HasTable
     protected static ?int $navigationSort = 121;
 
     protected static string $view = 'filament.pages.historial-page';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     public function table(Table $table): Table
     {

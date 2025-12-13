@@ -3,8 +3,8 @@
         <!-- Barra lateral izquierda -->
         <div class="w-64 flex-shrink-0">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <!-- Foto cuadrada -->
-                <div class="w-28 h-28 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
+                <!-- Foto cuadrada 5x5 -->
+                <div class="w-20 h-20 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
                     @if($this->record->foto ?? false)
                         <img src="{{ $this->record->foto }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">
                     @else

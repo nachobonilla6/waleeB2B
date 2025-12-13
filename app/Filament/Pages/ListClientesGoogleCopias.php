@@ -77,11 +77,16 @@ class ListClientesGoogleCopias extends Page implements HasTable
                     ->searchable()
                     ->sortable()
                     ->placeholder('N/A')
+                    ->icon('heroicon-o-map-pin')
+                    ->color('info')
+                    ->weight('bold')
                     ->getStateUsing(fn ($record) => $record->data['nombre_lugar'] ?? null),
                 Tables\Columns\TextColumn::make('data.industria')
                     ->label('Industria')
                     ->searchable()
                     ->sortable()
+                    ->badge()
+                    ->color('gray')
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'tienda_ropa' => '👕 Tienda de Ropa',
                         'pizzeria' => '🍕 Pizzería',
@@ -97,19 +102,86 @@ class ListClientesGoogleCopias extends Page implements HasTable
                         default => $state ?? 'N/A',
                     })
                     ->getStateUsing(fn ($record) => $record->data['industria'] ?? null),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Estado')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'completed' => 'success',
+                        'running' => 'info',
+                        'failed' => 'danger',
+                        'pending' => 'warning',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'completed' => '✅ Completado',
+                        'running' => '🔄 Ejecutando',
+                        'failed' => '❌ Fallido',
+                        'pending' => '⏳ Pendiente',
+                        default => $state,
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('progress')
                     ->label('Progreso')
+                    ->badge()
+                    ->color(fn ($state, $record) => match(true) {
+                        $record && $record->status === 'completed' => 'success',
+                        $record && $record->status === 'failed' => 'danger',
+                        $state >= 75 => 'success',
+                        $state >= 50 => 'info',
+                        $state >= 25 => 'warning',
+                        default => 'gray',
+                    })
                     ->formatStateUsing(fn ($state, $record) => 
                         $record && $record->status === 'completed' ? '100%' : 
                         ($state . '%')
                     )
-                    ->sortable(),
+                    ->sortable()
+                    ->icon(fn ($state, $record) => match(true) {
+                        $record && $record->status === 'completed' => 'heroicon-o-check-circle',
+                        $record && $record->status === 'failed' => 'heroicon-o-x-circle',
+                        $state >= 75 => 'heroicon-o-arrow-trending-up',
+                        $state >= 50 => 'heroicon-o-clock',
+                        $state >= 25 => 'heroicon-o-play',
+                        default => 'heroicon-o-pause',
+                    }),
                 Tables\Columns\TextColumn::make('data.message')
                     ->label('Mensaje')
                     ->searchable()
                     ->wrap()
                     ->placeholder('N/A')
-                    ->getStateUsing(fn ($record) => $record->data['message'] ?? null),
+                    ->color(fn ($state, $record) => match($record->status ?? 'pending') {
+                        'completed' => 'success',
+                        'failed' => 'danger',
+                        'running' => match(true) {
+                            ($record->progress ?? 0) >= 75 => 'success',
+                            ($record->progress ?? 0) >= 50 => 'info',
+                            ($record->progress ?? 0) >= 25 => 'warning',
+                            default => 'gray',
+                        },
+                        'pending' => 'warning',
+                        default => 'gray',
+                    })
+                    ->icon(fn ($state, $record) => match($record->status ?? 'pending') {
+                        'completed' => 'heroicon-o-check-circle',
+                        'failed' => 'heroicon-o-exclamation-triangle',
+                        'running' => 'heroicon-o-arrow-path',
+                        'pending' => 'heroicon-o-clock',
+                        default => null,
+                    })
+                    ->weight(fn ($record) => $record->status === 'running' ? 'bold' : 'normal')
+                    ->getStateUsing(fn ($record) => $record->data['message'] ?? $record->step ?? 'N/A'),
+                Tables\Columns\TextColumn::make('step')
+                    ->label('Paso Actual')
+                    ->icon('heroicon-o-arrow-right-circle')
+                    ->color(fn ($state, $record) => match($record->status ?? 'pending') {
+                        'completed' => 'success',
+                        'failed' => 'danger',
+                        'running' => 'info',
+                        'pending' => 'warning',
+                        default => 'gray',
+                    })
+                    ->placeholder('N/A')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

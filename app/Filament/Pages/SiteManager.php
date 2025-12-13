@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Sitio;
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 
 class SiteManager extends Page
 {
@@ -14,6 +15,11 @@ class SiteManager extends Page
     protected static ?int $navigationSort = 3;
 
     protected static string $view = 'filament.pages.site-manager';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
     
     public function getSitios()
     {

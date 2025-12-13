@@ -6,10 +6,16 @@ use App\Filament\Resources\SitioResource;
 use App\Models\Sitio;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 
 class ListSitios extends ListRecords
 {
     protected static string $resource = SitioResource::class;
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     protected function getHeaderActions(): array
     {

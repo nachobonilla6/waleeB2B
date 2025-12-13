@@ -6,12 +6,18 @@ use App\Filament\Resources\PublicacionVelaResource;
 use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 
 class ListPublicacionVelas extends ListRecords
 {
     protected static string $resource = PublicacionVelaResource::class;
 
     protected static string $view = 'filament.resources.publicacion-vela-resource.pages.list-publicacion-velas';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     protected function getHeaderActions(): array
     {

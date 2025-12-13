@@ -17,6 +17,8 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
+use Filament\Notifications\Notification;
 
 class FacturasPage extends Page implements HasTable
 {
@@ -148,6 +150,46 @@ class FacturasPage extends Page implements HasTable
                         ]),
                 ])
                 ->modalWidth('4xl')
+                ->afterCreate(function (array $data, $record) {
+                    // Obtener datos del cliente
+                    $cliente = Cliente::find($data['cliente_id'] ?? null);
+                    
+                    // Preparar datos para el webhook
+                    $webhookData = [
+                        'numero_factura' => (string) ($data['numero_factura'] ?? $record->numero_factura ?? ''),
+                        'fecha_emision' => isset($data['fecha_emision']) ? (is_string($data['fecha_emision']) ? $data['fecha_emision'] : $data['fecha_emision']->format('Y-m-d')) : ($record->fecha_emision ? $record->fecha_emision->format('Y-m-d') : ''),
+                        'concepto' => (string) ($data['concepto'] ?? $record->concepto ?? ''),
+                        'subtotal' => (string) ($data['subtotal'] ?? $record->subtotal ?? '0'),
+                        'total' => (string) ($data['total'] ?? $record->total ?? '0'),
+                        'metodo_pago' => (string) ($data['metodo_pago'] ?? $record->metodo_pago ?? ''),
+                        'estado' => (string) ($data['estado'] ?? $record->estado ?? ''),
+                        'fecha_vencimiento' => isset($data['fecha_vencimiento']) ? (is_string($data['fecha_vencimiento']) ? $data['fecha_vencimiento'] : $data['fecha_vencimiento']->format('Y-m-d')) : ($record->fecha_vencimiento ? $record->fecha_vencimiento->format('Y-m-d') : ''),
+                        'notas' => (string) ($data['notas'] ?? $record->notas ?? ''),
+                        'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
+                        'cliente_correo' => (string) ($data['correo'] ?? $record->correo ?? $cliente?->correo ?? ''),
+                        'factura_id' => $record->id ?? null,
+                    ];
+                    
+                    try {
+                        $response = Http::timeout(30)->post(
+                            'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
+                            $webhookData
+                        );
+                        
+                        if (!$response->successful()) {
+                            \Log::warning('Error en respuesta del webhook al crear factura', [
+                                'status' => $response->status(),
+                                'response' => $response->body(),
+                                'factura_id' => $record->id ?? null,
+                            ]);
+                        }
+                    } catch (\Exception $webhookException) {
+                        \Log::error('Error enviando factura al webhook', [
+                            'error' => $webhookException->getMessage(),
+                            'factura_id' => $record->id ?? null,
+                        ]);
+                    }
+                })
                 ->extraModalFooterActions(function ($action) {
                     return [
                         Actions\Action::make('guardar_y_enviar')
@@ -178,7 +220,7 @@ class FacturasPage extends Page implements HasTable
                                 ];
                                 
                                 try {
-                                    $response = \Illuminate\Support\Facades\Http::post(
+                                    $response = Http::timeout(30)->post(
                                         'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
                                         $webhookData
                                     );

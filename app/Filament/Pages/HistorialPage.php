@@ -185,11 +185,21 @@ class HistorialPage extends Page implements HasTable
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->requiresConfirmation(false)
-                    ->action(function ($data) {
-                        // $data viene de using() - es un stdClass con id y record_type
-                        if ($data && isset($data->id) && isset($data->record_type) && $data->record_type === 'note') {
-                            $noteId = $data->id;
-                            
+                    ->mountUsing(function ($record) {
+                        // Capturar el ID antes de que Filament intente buscar el registro usando el modelo
+                        if (is_object($record)) {
+                            $this->mountedTableActionRecord = $record->id ?? $record->getKey() ?? null;
+                            $this->mountedTableActionRecordType = $record->record_type ?? null;
+                        } elseif (is_array($record)) {
+                            $this->mountedTableActionRecord = $record['id'] ?? null;
+                            $this->mountedTableActionRecordType = $record['record_type'] ?? null;
+                        }
+                    })
+                    ->action(function () {
+                        $noteId = $this->mountedTableActionRecord ?? null;
+                        $recordType = $this->mountedTableActionRecordType ?? null;
+                        
+                        if ($noteId && $recordType === 'note') {
                             // Verificar que sea una nota (no propuesta) consultando directamente
                             $note = DB::table('notes')->where('id', $noteId)->first();
                             
@@ -206,32 +216,6 @@ class HistorialPage extends Page implements HasTable
                                     ->send();
                             }
                         }
-                    })
-                    ->using(function ($record) {
-                        // Retornar un objeto simple que no sea un modelo Eloquent
-                        // Esto evita que Filament intente buscar el registro usando el modelo
-                        if (is_object($record)) {
-                            $id = $record->id ?? $record->getKey() ?? null;
-                            $recordType = $record->record_type ?? null;
-                            
-                            if ($id && $recordType === 'note') {
-                                $obj = new \stdClass();
-                                $obj->id = $id;
-                                $obj->record_type = $recordType;
-                                return $obj;
-                            }
-                        } elseif (is_array($record)) {
-                            $id = $record['id'] ?? null;
-                            $recordType = $record['record_type'] ?? null;
-                            
-                            if ($id && $recordType === 'note') {
-                                $obj = new \stdClass();
-                                $obj->id = $id;
-                                $obj->record_type = $recordType;
-                                return $obj;
-                            }
-                        }
-                        return null;
                     }),
             ])
             ->filters([

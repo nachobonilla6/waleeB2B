@@ -189,7 +189,7 @@ class WorkflowsPage extends Page implements HasTable
                 ->action(function (array $data) {
                     try {
                         $jobId = Str::uuid();
-                        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/0c01d9a1-788c-44d2-9c1b-9457901d0a3c';
+                        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c';
 
                         // Crear el registro del workflow
                         $workflowRun = WorkflowRun::create([

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 class ViewClient extends ViewRecord implements HasTable
 {
     use InteractsWithTable;
-{
+    
     protected static string $resource = ClientResource::class;
     
     protected static string $view = 'filament.resources.client-resource.pages.view-client';
@@ -33,7 +33,7 @@ class ViewClient extends ViewRecord implements HasTable
         $this->record->load('notes.user');
     }
     
-    public function getClientActivitiesTable()
+    public function table(Table $table): Table
     {
         $clientId = $this->record->id;
         
@@ -54,22 +54,14 @@ class ViewClient extends ViewRecord implements HasTable
                 DB::raw("NULL as name"),
                 DB::raw("NULL as enlace"),
             ]);
-
-        // Query para facturas del cliente (necesitamos obtener el cliente_id desde facturas)
-        // Como facturas usa cliente_id (de Cliente), necesitamos buscar facturas relacionadas
-        // Pero Client y Cliente son diferentes modelos, así que solo mostraremos notas por ahora
-        // Si hay facturas/cotizaciones relacionadas, se pueden agregar después
-        
-        // Crear la query unificada
-        $unionQuery = $notesQuery;
         
         // Envolver en una subquery para poder ordenar
         $unifiedQuery = Note::query()
-            ->fromSub($unionQuery, 'unified')
+            ->fromSub($notesQuery, 'unified')
             ->orderBy('created_at', 'desc')
             ->select('unified.*');
 
-        $table = Tables\Table::make($this)
+        return $table
             ->query($unifiedQuery)
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
@@ -134,8 +126,6 @@ class ViewClient extends ViewRecord implements HasTable
             ->emptyStateHeading('No hay actividades registradas')
             ->emptyStateDescription('Las actividades de este cliente aparecerán aquí.')
             ->emptyStateIcon('heroicon-o-document-text');
-
-        return $table;
     }
 
     /**

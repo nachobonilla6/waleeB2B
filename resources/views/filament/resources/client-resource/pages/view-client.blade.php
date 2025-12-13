@@ -4,13 +4,11 @@
         <div class="w-64 flex-shrink-0">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <!-- Foto cuadrada -->
-                <div class="w-28 h-28 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square">
+                <div class="w-28 h-28 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
                     @if($this->record->foto ?? false)
                         <img src="{{ $this->record->foto }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">
                     @else
-                        <svg class="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpqzpN0OXHCje7AJYyuAOQwf3asqFGJYWpzg&s" alt="{{ $this->record->name ?? 'Cliente' }}" class="w-full h-full object-cover rounded-lg">
                     @endif
                 </div>
                 

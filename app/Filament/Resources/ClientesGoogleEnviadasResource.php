@@ -159,6 +159,14 @@ class ClientesGoogleEnviadasResource extends Resource
                     })
                     ->limit(40)
                     ->icon('heroicon-o-globe-alt'),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->url(fn($record) => $record->email ? 'mailto:' . $record->email : null)
+                    ->openUrlInNewTab()
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('estado')
                     ->label('Estado')
                     ->badge()

@@ -37,6 +37,21 @@ class ListClientesGoogleCopias extends Page implements HasTable
         $this->mountAction('start_search');
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            $pendingCount = Client::where('estado', 'pending')->count();
+            return $pendingCount > 0 ? (string) $pendingCount : null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
     public function getMaxContentWidth(): MaxWidth | string | null
     {
         return MaxWidth::Full;

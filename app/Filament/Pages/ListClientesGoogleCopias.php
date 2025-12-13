@@ -188,28 +188,6 @@ class ListClientesGoogleCopias extends Page implements HasTable
         $propuestasCount = Client::where('estado', 'propuesta_enviada')->count();
 
         return [
-            Action::make('extraer_nuevos_clientes')
-                ->label('Extraer Nuevos Clientes')
-                ->url($extraerUrl)
-                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
-            Action::make('clientes_google')
-                ->label('Clientes Google')
-                ->url($clientesGoogleUrl)
-                ->color($currentUrl === $clientesGoogleUrl ? 'primary' : 'gray')
-                ->badge($pendingCount > 0 ? (string) $pendingCount : null)
-                ->badgeColor('warning'),
-            Action::make('listos_para_enviar')
-                ->label('Listos para Enviar')
-                ->url($listosUrl)
-                ->color($currentUrl === $listosUrl ? 'primary' : 'gray')
-                ->badge($listosCount > 0 ? (string) $listosCount : null)
-                ->badgeColor('info'),
-            Action::make('propuestas_enviadas')
-                ->label('Propuestas Enviadas')
-                ->url($propuestasUrl)
-                ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray')
-                ->badge($propuestasCount > 0 ? (string) $propuestasCount : null)
-                ->badgeColor('success'),
             Action::make('start_search')
                 ->label('Iniciar Búsqueda')
                 ->icon('heroicon-o-magnifying-glass')
@@ -310,6 +288,28 @@ class ListClientesGoogleCopias extends Page implements HasTable
                             ->send();
                     }
                 }),
+            Action::make('extraer_nuevos_clientes')
+                ->label('Extraer Nuevos Clientes')
+                ->url($extraerUrl)
+                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
+            Action::make('clientes_google')
+                ->label('Clientes Google')
+                ->url($clientesGoogleUrl)
+                ->color($currentUrl === $clientesGoogleUrl ? 'primary' : 'gray')
+                ->badge($pendingCount > 0 ? (string) $pendingCount : null)
+                ->badgeColor('warning'),
+            Action::make('listos_para_enviar')
+                ->label('Listos para Enviar')
+                ->url($listosUrl)
+                ->color($currentUrl === $listosUrl ? 'primary' : 'gray')
+                ->badge($listosCount > 0 ? (string) $listosCount : null)
+                ->badgeColor('info'),
+            Action::make('propuestas_enviadas')
+                ->label('Propuestas Enviadas')
+                ->url($propuestasUrl)
+                ->color($currentUrl === $propuestasUrl ? 'primary' : 'gray')
+                ->badge($propuestasCount > 0 ? (string) $propuestasCount : null)
+                ->badgeColor('success'),
         ];
     }
 }

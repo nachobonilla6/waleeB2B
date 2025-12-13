@@ -16,6 +16,11 @@ class ListosParaEnviar extends Page
 
     protected static string $view = 'filament.pages.listos-para-enviar';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getNavigationBadge(): ?string
     {
         try {

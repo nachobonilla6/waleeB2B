@@ -23,12 +23,12 @@ class UserResource extends Resource
     protected static ?string $modelLabel = 'Usuario';
     protected static ?string $navigationLabel = 'Usuarios';
     protected static ?string $navigationGroup = 'Soporte';
-    protected static ?int $navigationSort = 5;
 
     public static function shouldRegisterNavigation(): bool
     {
         return false;
     }
+    protected static ?int $navigationSort = 5;
 
     public static function getNavigationBadge(): ?string
     {

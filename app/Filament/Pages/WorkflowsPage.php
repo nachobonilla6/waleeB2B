@@ -27,6 +27,11 @@ class WorkflowsPage extends Page implements HasTable
 
     protected static string $view = 'filament.pages.workflows-page';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function table(Table $table): Table
     {
         return $table

@@ -93,7 +93,7 @@ class HistorialPage extends Page implements HasTable
             ->columns([
                 Tables\Columns\IconColumn::make('pinned')
                     ->label('')
-                    ->icon(fn ($state, $record) => {
+                    ->icon(function ($state, $record) {
                         if (isset($record->record_type) && $record->record_type !== 'note') {
                             return null;
                         }

@@ -13,11 +13,13 @@ class Note extends Model
         'content',
         'type',
         'user_id',
+        'pinned',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'pinned' => 'boolean',
     ];
 
     public function client(): BelongsTo

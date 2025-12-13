@@ -59,6 +59,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'note' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
             ]);
 
         $propuestasQuery = Client::query()
@@ -79,6 +80,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'propuesta' as record_type"),
                 'clientes_en_proceso.propuesta',
                 'clientes_en_proceso.name',
+                DB::raw("NULL as enlace"),
             ]);
 
         // Query para facturas creadas
@@ -135,6 +137,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'factura' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                'facturas.enlace',
             ]);
 
         // Query para cotizaciones creadas
@@ -151,6 +154,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'cotizacion' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
             ]);
 
         // Query para cotizaciones editadas (updated_at != created_at)
@@ -192,6 +196,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'cotizacion' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
             ]);
 
         // Crear la UNION y envolverla en una subquery para poder ordenar

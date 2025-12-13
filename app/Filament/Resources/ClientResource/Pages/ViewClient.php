@@ -6,19 +6,136 @@ use App\Filament\Resources\ClientResource;
 use App\Filament\Pages\EmailComposer;
 use App\Filament\Pages\HistorialPage;
 use App\Models\Note;
+use App\Models\Client;
+use App\Models\Factura;
+use App\Models\Cotizacion;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Facades\DB;
 
-class ViewClient extends ViewRecord
+class ViewClient extends ViewRecord implements HasTable
+{
+    use InteractsWithTable;
 {
     protected static string $resource = ClientResource::class;
+    
+    protected static string $view = 'filament.resources.client-resource.pages.view-client';
 
     public function mount(int|string $record): void
     {
         parent::mount($record);
         $this->record->load('notes.user');
+    }
+    
+    public function getClientActivitiesTable()
+    {
+        $clientId = $this->record->id;
+        
+        // Query para notas del cliente
+        $notesQuery = Note::query()
+            ->where('client_id', $clientId)
+            ->select([
+                'notes.id',
+                'notes.client_id',
+                DB::raw("NULL as cliente_id"),
+                'notes.content',
+                'notes.type',
+                'notes.user_id',
+                'notes.created_at',
+                'notes.updated_at',
+                DB::raw("'note' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
+            ]);
+
+        // Query para facturas del cliente (necesitamos obtener el cliente_id desde facturas)
+        // Como facturas usa cliente_id (de Cliente), necesitamos buscar facturas relacionadas
+        // Pero Client y Cliente son diferentes modelos, así que solo mostraremos notas por ahora
+        // Si hay facturas/cotizaciones relacionadas, se pueden agregar después
+        
+        // Crear la query unificada
+        $unionQuery = $notesQuery;
+        
+        // Envolver en una subquery para poder ordenar
+        $unifiedQuery = Note::query()
+            ->fromSub($unionQuery, 'unified')
+            ->orderBy('created_at', 'desc')
+            ->select('unified.*');
+
+        $table = Tables\Table::make($this)
+            ->query($unifiedQuery)
+            ->columns([
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('user_id')
+                    ->label('Creado por')
+                    ->placeholder('Sistema')
+                    ->sortable()
+                    ->formatStateUsing(function ($state, $record) {
+                        if ($state) {
+                            $user = \App\Models\User::find($state);
+                            return $user?->name ?? 'Sistema';
+                        }
+                        return 'Sistema';
+                    }),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'note' => 'gray',
+                        'call' => 'primary',
+                        'meeting' => 'info',
+                        'email' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'note' => 'Nota',
+                        'call' => 'Llamada',
+                        'meeting' => 'Reunión',
+                        'email' => 'Email',
+                        default => $state,
+                    }),
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Detalles')
+                    ->wrap()
+                    ->searchable()
+                    ->html()
+                    ->formatStateUsing(function ($state, $record) {
+                        $getValue = function($key) use ($record) {
+                            if (is_array($record)) {
+                                return $record[$key] ?? null;
+                            }
+                            return $record->$key ?? null;
+                        };
+                        
+                        $recordId = $getValue('id');
+                        $recordType = $getValue('record_type');
+                        
+                        // Nota - enlace al view de la nota
+                        if ($recordType === 'note' && $recordId) {
+                            $url = \App\Filament\Resources\NoteResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        return '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
+                    }),
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No hay actividades registradas')
+            ->emptyStateDescription('Las actividades de este cliente aparecerán aquí.')
+            ->emptyStateIcon('heroicon-o-document-text');
+
+        return $table;
     }
 
     /**

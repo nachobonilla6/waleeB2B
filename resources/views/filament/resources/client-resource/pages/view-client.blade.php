@@ -1,0 +1,82 @@
+<x-filament-panels::page>
+    <div class="flex gap-6">
+        <!-- Barra lateral izquierda -->
+        <div class="w-64 flex-shrink-0">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <!-- Foto vacía 7x7 -->
+                <div class="w-28 h-28 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                    <svg class="w-16 h-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                
+                <!-- Nombre y detalles -->
+                <div class="text-center">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        {{ $this->record->name ?? 'N/A' }}
+                    </h2>
+                    
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        @if($this->record->email)
+                            <div class="flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <a href="mailto:{{ $this->record->email }}" class="hover:text-primary-600 dark:hover:text-primary-400">
+                                    {{ $this->record->email }}
+                                </a>
+                            </div>
+                        @endif
+                        
+                        @if($this->record->telefono_1)
+                            <div class="flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                                <a href="tel:{{ $this->record->telefono_1 }}" class="hover:text-primary-600 dark:hover:text-primary-400">
+                                    {{ $this->record->telefono_1 }}
+                                </a>
+                            </div>
+                        @endif
+                        
+                        @if($this->record->website)
+                            <div class="flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                                </svg>
+                                <a href="{{ str_starts_with($this->record->website, 'http') ? $this->record->website : 'https://' . $this->record->website }}" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="hover:text-primary-600 dark:hover:text-primary-400 truncate">
+                                    {{ $this->record->website }}
+                                </a>
+                            </div>
+                        @endif
+                        
+                        @if($this->record->address)
+                            <div class="flex items-start justify-center gap-2 pt-2">
+                                <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <span class="text-center">{{ $this->record->address }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenido principal - Registro de actividades -->
+        <div class="flex-1">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Registro de Actividades
+                    </h3>
+                    {{ $this->table }}
+                </div>
+            </div>
+        </div>
+    </div>
+</x-filament-panels::page>

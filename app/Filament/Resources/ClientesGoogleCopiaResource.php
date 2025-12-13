@@ -21,12 +21,12 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
 
     public static function getNavigationUrl(): string
     {
-        return static::getUrl('index');
+        return \App\Filament\Resources\ClientesGoogleCopiaResource\Pages\ListClientesGoogleCopias::getUrl();
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return false; // La página ListClientesGoogleCopias se registra independientemente
     }
 
     public static function getNavigationBadge(): ?string
@@ -86,7 +86,6 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListClientesGoogleCopias::route('/'),
             'create' => Pages\CreateClientesGoogleCopia::route('/create'),
             'view' => Pages\ViewClientesGoogleCopia::route('/{record}'),
             'edit' => Pages\EditClientesGoogleCopia::route('/{record}/edit'),

@@ -19,6 +19,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
+use Filament\Support\Enums\MaxWidth;
 
 class CotizacionesPage extends Page implements HasTable
 {
@@ -34,6 +35,11 @@ class CotizacionesPage extends Page implements HasTable
     protected static string $view = 'filament.pages.contabilidad.cotizaciones-page';
     
     protected static ?string $slug = 'contabilidad/cotizaciones';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     public function table(Table $table): Table
     {

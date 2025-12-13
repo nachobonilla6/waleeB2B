@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 
 class FacturasPage extends Page implements HasTable
 {
@@ -34,6 +35,11 @@ class FacturasPage extends Page implements HasTable
     protected static string $view = 'filament.pages.contabilidad.facturas-page';
     
     protected static ?string $slug = 'contabilidad/facturas';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     public function table(Table $table): Table
     {

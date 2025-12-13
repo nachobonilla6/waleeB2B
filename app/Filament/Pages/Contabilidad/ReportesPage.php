@@ -15,6 +15,7 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Support\Facades\Mail;
+use Filament\Support\Enums\MaxWidth;
 
 class ReportesPage extends Page
 {
@@ -28,6 +29,11 @@ class ReportesPage extends Page
     protected static string $view = 'filament.pages.contabilidad.reportes-page';
     
     protected static ?string $slug = 'contabilidad/reportes';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     protected function getHeaderActions(): array
     {

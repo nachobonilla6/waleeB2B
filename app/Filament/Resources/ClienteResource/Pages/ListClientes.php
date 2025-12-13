@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Mail;
 
 class ListClientes extends ListRecords
@@ -20,6 +21,11 @@ class ListClientes extends ListRecords
     protected static string $view = 'filament.resources.cliente-resource.pages.list-clientes';
     
     protected array $cotizacionData = [];
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     protected function getHeaderActions(): array
     {

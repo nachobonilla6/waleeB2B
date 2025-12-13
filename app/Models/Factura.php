@@ -22,6 +22,7 @@ class Factura extends Model
         'fecha_vencimiento',
         'notas',
         'enviada_at',
+        'enlace',
     ];
 
     protected $casts = [

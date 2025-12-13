@@ -8,6 +8,8 @@ use App\Models\Factura;
 use App\Models\Cliente;
 use App\Models\Cotizacion;
 use Illuminate\Support\Facades\DB;
+use App\Filament\Resources\FacturaResource;
+use App\Filament\Resources\CotizacionResource;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Forms;
@@ -93,6 +95,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'factura' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                'facturas.enlace',
             ]);
 
         // Query para facturas editadas (updated_at != created_at y no es por enviada_at)
@@ -114,6 +117,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'factura' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                'facturas.enlace',
             ]);
 
         // Query para facturas enviadas (las que tienen enviada_at)
@@ -335,6 +339,73 @@ class HistorialPage extends Page implements HasTable
                     ->html()
                     ->formatStateUsing(function ($state, $record) {
                         $content = $state ?? '';
+                        $getValue = function($key) use ($record) {
+                            if (is_array($record)) {
+                                return $record[$key] ?? null;
+                            }
+                            return $record->$key ?? null;
+                        };
+                        
+                        $recordType = $getValue('record_type');
+                        $recordId = $getValue('id');
+                        $type = $getValue('type');
+                        
+                        // Factura creada - enlace al view
+                        if ($recordType === 'factura' && $type === 'factura_creada' && $recordId) {
+                            $url = FacturaResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Factura enviada - enlace externo (en blank)
+                        if ($recordType === 'factura' && $type === 'factura_enviada' && $recordId) {
+                            $enlace = $getValue('enlace');
+                            if ($enlace) {
+                                $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                                return '<a href="' . e($enlace) . '" target="_blank" rel="noopener noreferrer" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            }
+                            // Si no hay enlace, mostrar sin link
+                            return '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                        }
+                        
+                        // Factura editada - enlace al view
+                        if ($recordType === 'factura' && $type === 'factura_editada' && $recordId) {
+                            $url = FacturaResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Cotización creada/editada - enlace al edit
+                        if ($recordType === 'cotizacion' && in_array($type, ['cotizacion_creada', 'cotizacion_editada']) && $recordId) {
+                            $url = CotizacionResource::getUrl('edit', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Cotización enviada - enlace al edit
+                        if ($recordType === 'cotizacion' && $type === 'cotizacion_enviada' && $recordId) {
+                            $url = CotizacionResource::getUrl('edit', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Nota - enlace al cliente si tiene cliente_id o client_id
+                        if ($recordType === 'note' && $recordId) {
+                            $clienteId = $getValue('cliente_id');
+                            $clientId = $getValue('client_id');
+                            
+                            if ($clienteId) {
+                                $url = \App\Filament\Resources\ClienteResource::getUrl('view', ['record' => $clienteId]);
+                                $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
+                                return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            } elseif ($clientId) {
+                                $url = \App\Filament\Resources\ClientResource::getUrl('view', ['record' => $clientId]);
+                                $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
+                                return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            }
+                        }
+                        
+                        // Por defecto, sin enlace
                         if (isset($record->record_type) && ($record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
                             return '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
                         }

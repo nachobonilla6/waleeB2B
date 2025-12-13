@@ -21,6 +21,11 @@ class EmailComposer extends Page implements HasForms
     protected static ?string $navigationGroup = 'Clientes';
     protected static ?int $navigationSort = 120;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static string $view = 'filament.pages.email-composer';
 
     public ?array $data = [];

@@ -225,10 +225,11 @@ class ListClientesGoogleCopias extends Page implements HasTable
                     ->visible(fn ($record) => $record && $record->status === 'failed')
                     ->requiresConfirmation()
                     ->modalHeading('Reintentar Workflow')
-                    ->modalDescription('¿Estás seguro de que deseas reintentar este workflow? Se creará un nuevo registro.')
+                    ->modalDescription('¿Estás seguro de que deseas reintentar este workflow? Se creará un nuevo registro y se enviará automáticamente al webhook.')
                     ->action(function ($record) {
                         try {
                             $jobId = Str::uuid();
+                            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c';
                             
                             // Obtener datos originales si existen
                             $originalData = $record->data ?? [];
@@ -243,12 +244,53 @@ class ListClientesGoogleCopias extends Page implements HasTable
                                 'data' => $originalData,
                             ]);
 
-                            Notification::make()
-                                ->title('Workflow en cola para reintento')
-                                ->body('Se ha creado un nuevo registro. Debes iniciar el workflow manualmente con el mismo webhook.')
-                                ->warning()
-                                ->send();
+                            // Preparar payload para n8n
+                            $payload = [
+                                'job_id' => $jobId,
+                                'progress_url' => url('/api/n8n/progress'),
+                                'nombre_lugar' => $originalData['nombre_lugar'] ?? '',
+                                'industria' => $originalData['industria'] ?? '',
+                            ];
+
+                            // Llamar al webhook de n8n
+                            $response = Http::timeout(120)->post($webhookUrl, $payload);
+
+                            if ($response->successful()) {
+                                $newWorkflowRun->update([
+                                    'status' => 'running',
+                                    'step' => 'Iniciado - Buscando lugares',
+                                    'started_at' => now(),
+                                ]);
+
+                                Notification::make()
+                                    ->title('✅ Workflow reintentado')
+                                    ->body('El workflow se ha reenviado correctamente. ID: ' . substr($jobId, 0, 8))
+                                    ->success()
+                                    ->send();
+                            } else {
+                                $newWorkflowRun->update([
+                                    'status' => 'failed',
+                                    'step' => 'Error al iniciar búsqueda',
+                                    'error_message' => 'Error al iniciar workflow: ' . $response->status(),
+                                    'completed_at' => null,
+                                ]);
+
+                                Notification::make()
+                                    ->title('⚠️ Error al reintentar')
+                                    ->body('El webhook respondió con error: ' . $response->status())
+                                    ->danger()
+                                    ->send();
+                            }
                         } catch (\Exception $e) {
+                            if (isset($newWorkflowRun)) {
+                                $newWorkflowRun->update([
+                                    'status' => 'failed',
+                                    'step' => 'Error al iniciar',
+                                    'error_message' => $e->getMessage(),
+                                    'completed_at' => null,
+                                ]);
+                            }
+
                             Notification::make()
                                 ->title('Error al reintentar')
                                 ->body($e->getMessage())

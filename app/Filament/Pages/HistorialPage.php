@@ -172,18 +172,24 @@ class HistorialPage extends Page implements HasTable
                     ->sortable(false)
                     ->weight('bold')
                     ->getStateUsing(function ($record) {
-                        // Convertir a array si es objeto para acceso más seguro
-                        $data = is_array($record) ? $record : (array) $record;
-                        $recordType = $data['record_type'] ?? null;
+                        // Acceso seguro a propiedades (funciona con objetos y arrays)
+                        $getValue = function($key) use ($record) {
+                            if (is_array($record)) {
+                                return $record[$key] ?? null;
+                            }
+                            return $record->$key ?? null;
+                        };
+                        
+                        $recordType = $getValue('record_type');
                         
                         // Propuestas
                         if ($recordType === 'propuesta') {
-                            return $data['name'] ?? 'N/A';
+                            return $getValue('name') ?? 'N/A';
                         }
                         
                         // Facturas y Cotizaciones
                         if ($recordType === 'factura' || $recordType === 'cotizacion') {
-                            $clienteId = $data['cliente_id'] ?? null;
+                            $clienteId = $getValue('cliente_id');
                             if ($clienteId) {
                                 try {
                                     $cliente = Cliente::find($clienteId);
@@ -200,7 +206,7 @@ class HistorialPage extends Page implements HasTable
                         }
                         
                         // Notas - pueden tener client_id (Client) o cliente_id (Cliente)
-                        $clientId = $data['client_id'] ?? null;
+                        $clientId = $getValue('client_id');
                         if ($clientId) {
                             try {
                                 $client = Client::find($clientId);
@@ -212,7 +218,7 @@ class HistorialPage extends Page implements HasTable
                             }
                         }
                         
-                        $clienteId = $data['cliente_id'] ?? null;
+                        $clienteId = $getValue('cliente_id');
                         if ($clienteId) {
                             try {
                                 $cliente = Cliente::find($clienteId);

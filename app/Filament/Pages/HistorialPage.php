@@ -33,13 +33,15 @@ class HistorialPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Note::query()->with(['client', 'user'])->orderBy('created_at', 'desc'))
+            ->query(Note::query()->with(['client', 'cliente', 'user'])->orderBy('created_at', 'desc'))
             ->columns([
                 Tables\Columns\TextColumn::make('client.name')
                     ->label('Cliente')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold'),
+                    ->weight('bold')
+                    ->placeholder(fn ($record) => $record->cliente?->nombre_empresa ?? 'N/A')
+                    ->getStateUsing(fn ($record) => $record->client?->name ?? $record->cliente?->nombre_empresa ?? 'N/A'),
                 Tables\Columns\TextColumn::make('content')
                     ->label('Nota')
                     ->limit(100)
@@ -92,6 +94,70 @@ class HistorialPage extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('crear_nota')
+                ->label('Crear Nota')
+                ->icon('heroicon-o-pencil-square')
+                ->color('primary')
+                ->form([
+                    Forms\Components\Select::make('tipo_cliente')
+                        ->label('Tipo de Cliente')
+                        ->options([
+                            'client' => 'Cliente Google (clientes_en_proceso)',
+                            'cliente' => 'Cliente Activo (clientes)',
+                        ])
+                        ->required()
+                        ->live()
+                        ->default('client'),
+                    Forms\Components\Select::make('client_id')
+                        ->label('Cliente Google')
+                        ->options(Client::pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->visible(fn (Forms\Get $get) => $get('tipo_cliente') === 'client'),
+                    Forms\Components\Select::make('cliente_id')
+                        ->label('Cliente Activo')
+                        ->options(Cliente::pluck('nombre_empresa', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->visible(fn (Forms\Get $get) => $get('tipo_cliente') === 'cliente'),
+                    Forms\Components\Textarea::make('content')
+                        ->label('Contenido de la nota')
+                        ->required()
+                        ->rows(5)
+                        ->placeholder('Escribe tu nota aquí...')
+                        ->maxLength(5000),
+                    Forms\Components\Select::make('type')
+                        ->label('Tipo')
+                        ->options([
+                            'note' => 'Nota',
+                            'call' => 'Llamada',
+                            'meeting' => 'Reunión',
+                            'email' => 'Email',
+                        ])
+                        ->default('note')
+                        ->required(),
+                ])
+                ->action(function (array $data) {
+                    $noteData = [
+                        'content' => $data['content'],
+                        'type' => $data['type'],
+                        'user_id' => auth()->id(),
+                    ];
+
+                    if ($data['tipo_cliente'] === 'client' && isset($data['client_id'])) {
+                        $noteData['client_id'] = $data['client_id'];
+                    } elseif ($data['tipo_cliente'] === 'cliente' && isset($data['cliente_id'])) {
+                        $noteData['cliente_id'] = $data['cliente_id'];
+                    }
+
+                    Note::create($noteData);
+
+                    Notification::make()
+                        ->title('Nota creada')
+                        ->body('La nota se ha guardado correctamente.')
+                        ->success()
+                        ->send();
+                }),
             Actions\CreateAction::make()
                 ->label('Crear Factura')
                 ->icon('heroicon-o-banknotes')

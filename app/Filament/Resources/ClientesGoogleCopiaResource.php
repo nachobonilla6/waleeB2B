@@ -19,11 +19,6 @@ class ClientesGoogleCopiaResource extends ClienteEnProcesoResource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 5;
 
-    public static function getNavigationUrl(): string
-    {
-        return \App\Filament\Resources\ClientesGoogleCopiaResource\Pages\ListClientesGoogleCopias::getUrl();
-    }
-
     public static function shouldRegisterNavigation(): bool
     {
         return false; // La página ListClientesGoogleCopias se registra independientemente

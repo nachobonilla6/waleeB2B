@@ -31,6 +31,12 @@ class ListClientesGoogleCopias extends Page implements HasTable
 
     protected static ?string $slug = 'list-clientes-google-copias';
 
+    public function mount(): void
+    {
+        // Abrir automáticamente la modal de "Iniciar Búsqueda" cuando se accede a la página
+        $this->mountAction('start_search');
+    }
+
     public function getMaxContentWidth(): MaxWidth | string | null
     {
         return MaxWidth::Full;

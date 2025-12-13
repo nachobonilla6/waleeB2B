@@ -161,7 +161,7 @@ class WorkflowsPage extends Page implements HasTable
             Action::make('start_search')
                 ->label('Iniciar Búsqueda')
                 ->icon('heroicon-o-magnifying-glass')
-                ->color('primary')
+                ->color('gray')
                 ->form([
                     Forms\Components\TextInput::make('nombre_lugar')
                         ->label('Nombre del Lugar')

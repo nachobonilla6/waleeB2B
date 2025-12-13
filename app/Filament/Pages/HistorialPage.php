@@ -35,18 +35,6 @@ class HistorialPage extends Page implements HasTable
         return $table
             ->query(Note::query()->with(['client', 'cliente', 'user'])->orderBy('created_at', 'desc'))
             ->columns([
-                Tables\Columns\TextColumn::make('client.name')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->sortable()
-                    ->weight('bold')
-                    ->placeholder(fn ($record) => $record->cliente?->nombre_empresa ?? 'N/A')
-                    ->getStateUsing(fn ($record) => $record->client?->name ?? $record->cliente?->nombre_empresa ?? 'N/A'),
-                Tables\Columns\TextColumn::make('content')
-                    ->label('Nota')
-                    ->limit(100)
-                    ->wrap()
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
@@ -63,15 +51,34 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'Reunión',
                         'email' => 'Email',
                         default => $state,
-                    }),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('Creado por')
-                    ->placeholder('Sistema')
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Creado por')
+                    ->placeholder('Sistema')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Nota')
+                    ->wrap()
+                    ->searchable()
+                    ->extraAttributes(fn ($record) => [
+                        'class' => 'min-h-[4.5rem] py-3',
+                        'style' => 'min-height: 4.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;',
+                    ])
+                    ->html()
+                    ->formatStateUsing(fn ($state) => '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>'),
+                Tables\Columns\TextColumn::make('client.name')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->placeholder(fn ($record) => $record->cliente?->nombre_empresa ?? 'N/A')
+                    ->getStateUsing(fn ($record) => $record->client?->name ?? $record->cliente?->nombre_empresa ?? 'N/A')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')

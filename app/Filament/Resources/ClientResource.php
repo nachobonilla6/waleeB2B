@@ -221,9 +221,7 @@ class ClientResource extends Resource
                                     ->label('Fecha')
                                     ->dateTime('d/m/Y H:i'),
                             ])
-                            ->columns(3)
-                            ->emptyLabel('No hay notas registradas')
-                            ->orderBy('created_at', 'desc'),
+                            ->columns(3),
                     ])
                     ->collapsible()
                     ->collapsed(false),

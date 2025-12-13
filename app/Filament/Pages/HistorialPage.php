@@ -97,7 +97,7 @@ class HistorialPage extends Page implements HasTable
                         if (isset($record->record_type) && $record->record_type !== 'note') {
                             return null;
                         }
-                        return ($state ?? false) ? 'heroicon-s-pin' : 'heroicon-o-pin';
+                        return ($state ?? false) ? 'heroicon-s-bookmark' : 'heroicon-o-bookmark';
                     })
                     ->color(fn ($state) => ($state ?? false) ? 'warning' : 'gray')
                     ->sortable()
@@ -178,7 +178,7 @@ class HistorialPage extends Page implements HasTable
             ->actions([
                 Tables\Actions\Action::make('toggle_pin')
                     ->label(fn ($record) => ($record->pinned ?? false) ? 'Desfijar' : 'Fijar')
-                    ->icon(fn ($record) => ($record->pinned ?? false) ? 'heroicon-o-pin-slash' : 'heroicon-s-pin')
+                    ->icon(fn ($record) => ($record->pinned ?? false) ? 'heroicon-o-bookmark-slash' : 'heroicon-s-bookmark')
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->action(function ($record) {

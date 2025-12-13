@@ -51,7 +51,6 @@ class HistorialPage extends Page implements HasTable
                 'notes.content',
                 'notes.type',
                 'notes.user_id',
-                'notes.pinned',
                 'notes.created_at',
                 'notes.updated_at',
                 DB::raw("'note' as record_type"),
@@ -72,7 +71,6 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.propuesta as content',
                 DB::raw("'propuesta_enviada' as type"),
                 DB::raw("NULL as user_id"),
-                DB::raw("0 as pinned"),
                 'clientes_en_proceso.created_at',
                 'clientes_en_proceso.updated_at',
                 DB::raw("'propuesta' as record_type"),
@@ -84,27 +82,15 @@ class HistorialPage extends Page implements HasTable
         $unionQuery = $notesQuery->unionAll($propuestasQuery);
         
         // Envolver en una subquery usando fromSub para poder ordenar
-        // Ordenar primero por pinned (desc), luego por created_at (desc)
+        // Ordenar por created_at (desc)
         $unifiedQuery = Note::query()
             ->fromSub($unionQuery, 'unified')
-            ->orderBy('pinned', 'desc')
             ->orderBy('created_at', 'desc')
             ->select('unified.*');
 
         return $table
             ->query($unifiedQuery)
             ->columns([
-                Tables\Columns\IconColumn::make('pinned')
-                    ->label('')
-                    ->icon(function ($state, $record) {
-                        if (isset($record->record_type) && $record->record_type !== 'note') {
-                            return null;
-                        }
-                        return ($state ?? false) ? 'heroicon-s-bookmark' : 'heroicon-o-bookmark';
-                    })
-                    ->color(fn ($state) => ($state ?? false) ? 'warning' : 'gray')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
@@ -178,47 +164,6 @@ class HistorialPage extends Page implements HasTable
                         return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
                     }),
             ])
-            ->actions([
-                Tables\Actions\Action::make('toggle_pin')
-                    ->label(fn ($record) => ($record->pinned ?? false) ? 'Desfijar' : 'Fijar')
-                    ->icon(fn ($record) => ($record->pinned ?? false) ? 'heroicon-o-bookmark-slash' : 'heroicon-s-bookmark')
-                    ->color('warning')
-                    ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
-                    ->requiresConfirmation(false)
-                    ->action(function ($record) {
-                        // Extraer el ID numérico para evitar que Filament intente buscar el registro
-                        // Esto evita el error de query con notes.id
-                        $noteId = null;
-                        if (is_object($record)) {
-                            $id = $record->id ?? $record->getKey() ?? null;
-                            $recordType = $record->record_type ?? null;
-                            // Solo usar el ID si es una nota
-                            $noteId = ($id && $recordType === 'note') ? $id : null;
-                        } elseif (is_array($record)) {
-                            $id = $record['id'] ?? null;
-                            $recordType = $record['record_type'] ?? null;
-                            $noteId = ($id && $recordType === 'note') ? $id : null;
-                        }
-                        
-                        if ($noteId) {
-                            // Verificar que sea una nota (no propuesta) consultando directamente
-                            $note = DB::table('notes')->where('id', $noteId)->first();
-                            
-                            if ($note) {
-                                $currentPinned = $note->pinned ?? false;
-                                $newPinnedState = !$currentPinned;
-                                
-                                DB::table('notes')->where('id', $noteId)->update(['pinned' => $newPinnedState]);
-                                
-                                Notification::make()
-                                    ->title($newPinnedState ? 'Nota fijada' : 'Nota desfijada')
-                                    ->body($newPinnedState ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
-                                    ->success()
-                                    ->send();
-                            }
-                        }
-                    }),
-            ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->label('Tipo')
@@ -235,12 +180,6 @@ class HistorialPage extends Page implements HasTable
                     ->searchable()
                     ->preload(),
             ])
-            ->recordClasses(function ($record) {
-                if (isset($record->record_type) && $record->record_type === 'note' && ($record->pinned ?? false)) {
-                    return 'bg-red-50 dark:bg-red-900/20 border-l-4 border-l-red-500';
-                }
-                return '';
-            })
             ->defaultSort('created_at', 'desc');
     }
 

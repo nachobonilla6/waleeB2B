@@ -176,7 +176,7 @@ class FacturasPage extends Page implements HasTable
                     
                     try {
                         $response = Http::timeout(30)->post(
-                            'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
+                            'https://n8n.srv1137974.hstgr.cloud/webhook/62cb26b6-1b4a-492b-8780-709ff47c81bf',
                             $webhookData
                         );
                         
@@ -227,7 +227,7 @@ class FacturasPage extends Page implements HasTable
                                 
                                 try {
                                     $response = Http::timeout(30)->post(
-                                        'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
+                                        'https://n8n.srv1137974.hstgr.cloud/webhook/62cb26b6-1b4a-492b-8780-709ff47c81bf',
                                         $webhookData
                                     );
                                     

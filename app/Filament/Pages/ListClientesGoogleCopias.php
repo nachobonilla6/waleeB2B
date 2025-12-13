@@ -179,7 +179,6 @@ class ListClientesGoogleCopias extends Page implements HasTable
         $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
         $listosUrl = ClienteEnProcesoResource::getUrl('listos');
         $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
-        $extraerUrl = url('/admin/list-clientes-google-copias');
         $currentUrl = url()->current();
 
         // Contar clientes pendientes
@@ -288,10 +287,6 @@ class ListClientesGoogleCopias extends Page implements HasTable
                             ->send();
                     }
                 }),
-            Action::make('extraer_nuevos_clientes')
-                ->label('Extraer Nuevos Clientes')
-                ->url($extraerUrl)
-                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
             Action::make('clientes_google')
                 ->label('Clientes Google')
                 ->url($clientesGoogleUrl)

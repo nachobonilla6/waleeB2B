@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ClienteEnProcesoResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
-use App\Filament\Pages\ListClientesGoogleCopias;
 use App\Models\WorkflowRun;
 use Filament\Actions;
 use Filament\Forms;
@@ -38,7 +37,6 @@ class ListClienteEnProcesos extends ListRecords
         $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
         $listosUrl = ClienteEnProcesoResource::getUrl('listos');
         $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
-        $extraerUrl = url('/admin/list-clientes-google-copias');
         $currentUrl = url()->current();
 
         // Contar clientes pendientes
@@ -147,10 +145,6 @@ class ListClienteEnProcesos extends ListRecords
                             ->send();
                     }
                 }),
-            Actions\Action::make('extraer_nuevos_clientes')
-                ->label('Extraer Nuevos Clientes')
-                ->url($extraerUrl)
-                ->color($currentUrl === $extraerUrl ? 'primary' : 'gray'),
             Actions\Action::make('clientes_google')
                 ->label('Clientes Google')
                 ->url($clientesGoogleUrl)

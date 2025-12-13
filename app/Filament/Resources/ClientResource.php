@@ -196,7 +196,6 @@ class ClientResource extends Resource
                             ->schema([
                                 Infolists\Components\TextEntry::make('content')
                                     ->label('')
-                                    ->wrap()
                                     ->columnSpanFull(),
                                 Infolists\Components\TextEntry::make('type')
                                     ->label('Tipo')

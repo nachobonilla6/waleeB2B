@@ -183,19 +183,18 @@ class HistorialPage extends Page implements HasTable
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->action(function ($record) {
                         if (isset($record->record_type) && $record->record_type === 'note' && isset($record->id)) {
-                            // Usar el ID directamente de la subquery
+                            // Usar DB directamente para evitar problemas con la subquery
                             $noteId = $record->id;
-                            $note = Note::where('id', $noteId)->first();
-                            if ($note) {
-                                $newPinnedState = !$note->pinned;
-                                $note->update(['pinned' => $newPinnedState]);
-                                
-                                Notification::make()
-                                    ->title($newPinnedState ? 'Nota fijada' : 'Nota desfijada')
-                                    ->body($newPinnedState ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
-                                    ->success()
-                                    ->send();
-                            }
+                            $currentPinned = DB::table('notes')->where('id', $noteId)->value('pinned') ?? false;
+                            $newPinnedState = !$currentPinned;
+                            
+                            DB::table('notes')->where('id', $noteId)->update(['pinned' => $newPinnedState]);
+                            
+                            Notification::make()
+                                ->title($newPinnedState ? 'Nota fijada' : 'Nota desfijada')
+                                ->body($newPinnedState ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
+                                ->success()
+                                ->send();
                         }
                     }),
             ])

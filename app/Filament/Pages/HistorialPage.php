@@ -166,31 +166,49 @@ class HistorialPage extends Page implements HasTable
                         }
                         return 'Sistema';
                     }),
-                Tables\Columns\TextColumn::make('client_id')
+                Tables\Columns\TextColumn::make('cliente_nombre')
                     ->label('Cliente')
-                    ->searchable()
-                    ->sortable()
+                    ->searchable(false)
+                    ->sortable(false)
                     ->weight('bold')
-                    ->formatStateUsing(function ($state, $record) {
+                    ->getStateUsing(function ($record) {
+                        // Propuestas
                         if (isset($record->record_type) && $record->record_type === 'propuesta') {
                             return $record->name ?? 'N/A';
                         }
+                        // Facturas y Cotizaciones
                         if (isset($record->record_type) && ($record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
-                            if (isset($record->cliente_id) && $record->cliente_id) {
-                                $cliente = Cliente::find($record->cliente_id);
-                                return $cliente?->nombre_empresa ?? 'N/A';
+                            $clienteId = $record->cliente_id ?? null;
+                            if ($clienteId) {
+                                try {
+                                    $cliente = Cliente::find($clienteId);
+                                    return $cliente?->nombre_empresa ?? 'N/A';
+                                } catch (\Exception $e) {
+                                    return 'N/A';
+                                }
                             }
                             return 'N/A';
                         }
-                        if ($state) {
-                            $client = Client::find($state);
-                            if ($client) {
-                                return $client->name ?? 'N/A';
+                        // Notas - pueden tener client_id (Client) o cliente_id (Cliente)
+                        $clientId = $record->client_id ?? null;
+                        if ($clientId) {
+                            try {
+                                $client = Client::find($clientId);
+                                if ($client) {
+                                    return $client->name ?? 'N/A';
+                                }
+                            } catch (\Exception $e) {
+                                // Continuar con cliente_id
                             }
                         }
-                        if (isset($record->cliente_id) && $record->cliente_id) {
-                            $cliente = Cliente::find($record->cliente_id);
-                            return $cliente?->nombre_empresa ?? 'N/A';
+                        $clienteId = $record->cliente_id ?? null;
+                        if ($clienteId) {
+                            try {
+                                $cliente = Cliente::find($clienteId);
+                                return $cliente?->nombre_empresa ?? 'N/A';
+                            } catch (\Exception $e) {
+                                return 'N/A';
+                            }
                         }
                         return 'N/A';
                     }),

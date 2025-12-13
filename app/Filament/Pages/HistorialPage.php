@@ -33,8 +33,8 @@ class HistorialPage extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        // Query personalizada que combina notas y propuestas enviadas
-        $query = DB::table('notes')
+        // Usar un query builder de Eloquent con union
+        $notesQuery = Note::query()
             ->select([
                 'notes.id',
                 'notes.client_id',
@@ -47,32 +47,33 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'note' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
-            ])
-            ->union(
-                DB::table('clientes_en_proceso')
-                    ->where(function ($q) {
-                        $q->where('estado', 'propuesta_enviada')
-                          ->orWhere('propuesta_enviada', true);
-                    })
-                    ->whereNotNull('propuesta')
-                    ->select([
-                        'clientes_en_proceso.id',
-                        'clientes_en_proceso.id as client_id',
-                        DB::raw("NULL as cliente_id"),
-                        'clientes_en_proceso.propuesta as content',
-                        DB::raw("'propuesta_enviada' as type"),
-                        DB::raw("NULL as user_id"),
-                        'clientes_en_proceso.created_at',
-                        'clientes_en_proceso.updated_at',
-                        DB::raw("'propuesta' as record_type"),
-                        'clientes_en_proceso.propuesta',
-                        'clientes_en_proceso.name',
-                    ])
-            )
-            ->orderBy('created_at', 'desc');
+            ]);
+
+        $propuestasQuery = Client::query()
+            ->where(function ($q) {
+                $q->where('estado', 'propuesta_enviada')
+                  ->orWhere('propuesta_enviada', true);
+            })
+            ->whereNotNull('propuesta')
+            ->select([
+                'clientes_en_proceso.id',
+                'clientes_en_proceso.id as client_id',
+                DB::raw("NULL as cliente_id"),
+                'clientes_en_proceso.propuesta as content',
+                DB::raw("'propuesta_enviada' as type"),
+                DB::raw("NULL as user_id"),
+                'clientes_en_proceso.created_at',
+                'clientes_en_proceso.updated_at',
+                DB::raw("'propuesta' as record_type"),
+                'clientes_en_proceso.propuesta',
+                'clientes_en_proceso.name',
+            ]);
+
+        // Usar unionAll para mantener el tipo Eloquent Builder
+        $unifiedQuery = $notesQuery->unionAll($propuestasQuery)->orderBy('created_at', 'desc');
 
         return $table
-            ->query($query)
+            ->query($unifiedQuery)
             ->columns([
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipo')

@@ -176,6 +176,7 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("'cotizacion' as record_type"),
                 DB::raw("NULL as propuesta"),
                 DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
             ]);
 
         // Query para cotizaciones enviadas (las que tienen enviada_at o estado = 'enviada')

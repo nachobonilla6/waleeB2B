@@ -186,18 +186,23 @@ class HistorialPage extends Page implements HasTable
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->requiresConfirmation(false)
                     ->using(function ($record) {
-                        // Retornar solo el ID numérico para evitar que Filament intente buscar el registro
+                        // Retornar un objeto que no sea un modelo Eloquent para evitar que Filament intente buscar el registro
                         $noteId = is_object($record) ? ($record->id ?? null) : ($record['id'] ?? null);
                         $recordType = is_object($record) ? ($record->record_type ?? null) : ($record['record_type'] ?? null);
                         
-                        // Solo retornar el ID si es una nota
+                        // Retornar un stdClass en lugar del modelo para evitar queries automáticas
                         if ($noteId && $recordType === 'note') {
-                            return $noteId;
+                            $obj = new \stdClass();
+                            $obj->id = $noteId;
+                            $obj->record_type = $recordType;
+                            return $obj;
                         }
                         return null;
                     })
-                    ->action(function ($noteId) {
-                        if ($noteId) {
+                    ->action(function ($data) {
+                        if ($data && isset($data->id) && $data->record_type === 'note') {
+                            $noteId = $data->id;
+                            
                             // Verificar que sea una nota (no propuesta) consultando directamente
                             $note = DB::table('notes')->where('id', $noteId)->first();
                             

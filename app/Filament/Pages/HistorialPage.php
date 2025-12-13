@@ -69,8 +69,14 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.name',
             ]);
 
-        // Usar unionAll para mantener el tipo Eloquent Builder
-        $unifiedQuery = $notesQuery->unionAll($propuestasQuery)->orderBy('created_at', 'desc');
+        // Crear la UNION y envolverla en una subquery para poder ordenar
+        $unionQuery = $notesQuery->unionAll($propuestasQuery);
+        
+        // Envolver en una subquery usando fromSub para poder ordenar
+        $unifiedQuery = Note::query()
+            ->fromSub($unionQuery, 'unified')
+            ->orderBy('created_at', 'desc')
+            ->select('unified.*');
 
         return $table
             ->query($unifiedQuery)

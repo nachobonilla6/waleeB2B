@@ -150,24 +150,27 @@ class FacturasPage extends Page implements HasTable
                         ]),
                 ])
                 ->modalWidth('4xl')
-                ->afterCreate(function (array $data, $record) {
+                ->action(function (array $data) {
+                    // Crear la factura
+                    $factura = Factura::create($data);
+                    
                     // Obtener datos del cliente
                     $cliente = Cliente::find($data['cliente_id'] ?? null);
                     
                     // Preparar datos para el webhook
                     $webhookData = [
-                        'numero_factura' => (string) ($data['numero_factura'] ?? $record->numero_factura ?? ''),
-                        'fecha_emision' => isset($data['fecha_emision']) ? (is_string($data['fecha_emision']) ? $data['fecha_emision'] : $data['fecha_emision']->format('Y-m-d')) : ($record->fecha_emision ? $record->fecha_emision->format('Y-m-d') : ''),
-                        'concepto' => (string) ($data['concepto'] ?? $record->concepto ?? ''),
-                        'subtotal' => (string) ($data['subtotal'] ?? $record->subtotal ?? '0'),
-                        'total' => (string) ($data['total'] ?? $record->total ?? '0'),
-                        'metodo_pago' => (string) ($data['metodo_pago'] ?? $record->metodo_pago ?? ''),
-                        'estado' => (string) ($data['estado'] ?? $record->estado ?? ''),
-                        'fecha_vencimiento' => isset($data['fecha_vencimiento']) ? (is_string($data['fecha_vencimiento']) ? $data['fecha_vencimiento'] : $data['fecha_vencimiento']->format('Y-m-d')) : ($record->fecha_vencimiento ? $record->fecha_vencimiento->format('Y-m-d') : ''),
-                        'notas' => (string) ($data['notas'] ?? $record->notas ?? ''),
+                        'numero_factura' => (string) ($data['numero_factura'] ?? $factura->numero_factura ?? ''),
+                        'fecha_emision' => isset($data['fecha_emision']) ? (is_string($data['fecha_emision']) ? $data['fecha_emision'] : $data['fecha_emision']->format('Y-m-d')) : ($factura->fecha_emision ? $factura->fecha_emision->format('Y-m-d') : ''),
+                        'concepto' => (string) ($data['concepto'] ?? $factura->concepto ?? ''),
+                        'subtotal' => (string) ($data['subtotal'] ?? $factura->subtotal ?? '0'),
+                        'total' => (string) ($data['total'] ?? $factura->total ?? '0'),
+                        'metodo_pago' => (string) ($data['metodo_pago'] ?? $factura->metodo_pago ?? ''),
+                        'estado' => (string) ($data['estado'] ?? $factura->estado ?? ''),
+                        'fecha_vencimiento' => isset($data['fecha_vencimiento']) ? (is_string($data['fecha_vencimiento']) ? $data['fecha_vencimiento'] : $data['fecha_vencimiento']->format('Y-m-d')) : ($factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : ''),
+                        'notas' => (string) ($data['notas'] ?? $factura->notas ?? ''),
                         'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
-                        'cliente_correo' => (string) ($data['correo'] ?? $record->correo ?? $cliente?->correo ?? ''),
-                        'factura_id' => $record->id ?? null,
+                        'cliente_correo' => (string) ($data['correo'] ?? $factura->correo ?? $cliente?->correo ?? ''),
+                        'factura_id' => $factura->id ?? null,
                     ];
                     
                     try {
@@ -180,13 +183,13 @@ class FacturasPage extends Page implements HasTable
                             \Log::warning('Error en respuesta del webhook al crear factura', [
                                 'status' => $response->status(),
                                 'response' => $response->body(),
-                                'factura_id' => $record->id ?? null,
+                                'factura_id' => $factura->id ?? null,
                             ]);
                         }
                     } catch (\Exception $webhookException) {
                         \Log::error('Error enviando factura al webhook', [
                             'error' => $webhookException->getMessage(),
-                            'factura_id' => $record->id ?? null,
+                            'factura_id' => $factura->id ?? null,
                         ]);
                     }
                 })

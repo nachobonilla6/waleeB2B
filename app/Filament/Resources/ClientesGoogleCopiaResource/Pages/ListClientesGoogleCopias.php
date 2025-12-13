@@ -7,7 +7,7 @@ use App\Models\WorkflowRun;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,12 +16,17 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-class ListClientesGoogleCopias extends ListRecords implements HasTable
+class ListClientesGoogleCopias extends Page implements HasTable
 {
     use InteractsWithTable;
 
     protected static string $view = 'filament.resources.clientes-google-copia-resource.pages.list-clientes-google-copias';
-    protected static string $resource = ClientesGoogleCopiaResource::class;
+    
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationLabel = 'Site Scraper';
+    protected static ?string $title = 'Site Scraper';
+    protected static ?string $navigationGroup = 'Herramientas';
+    protected static ?int $navigationSort = 5;
 
     public function getMaxContentWidth(): MaxWidth | string | null
     {

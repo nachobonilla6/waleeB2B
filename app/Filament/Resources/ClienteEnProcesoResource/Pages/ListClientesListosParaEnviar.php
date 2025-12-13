@@ -72,7 +72,7 @@ class ListClientesListosParaEnviar extends ListRecords
         ];
     }
 
-    protected function getTableQuery(): Builder
+    protected function getTableQuery(): ?Builder
     {
         // Usar el modelo directamente para no heredar el filtro de "pending" del recurso principal
         return Client::query()

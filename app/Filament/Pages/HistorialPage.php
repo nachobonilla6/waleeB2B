@@ -185,21 +185,23 @@ class HistorialPage extends Page implements HasTable
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->requiresConfirmation(false)
-                    ->mountUsing(function ($record) {
-                        // Capturar el ID antes de que Filament intente buscar el registro usando el modelo
+                    ->using(function ($record) {
+                        // Retornar solo el ID numérico para evitar que Filament intente buscar el registro
+                        // Esto evita el error de query con notes.id
                         if (is_object($record)) {
-                            $this->mountedTableActionRecord = $record->id ?? $record->getKey() ?? null;
-                            $this->mountedTableActionRecordType = $record->record_type ?? null;
+                            $id = $record->id ?? $record->getKey() ?? null;
+                            $recordType = $record->record_type ?? null;
+                            // Solo retornar el ID si es una nota
+                            return ($id && $recordType === 'note') ? $id : null;
                         } elseif (is_array($record)) {
-                            $this->mountedTableActionRecord = $record['id'] ?? null;
-                            $this->mountedTableActionRecordType = $record['record_type'] ?? null;
+                            $id = $record['id'] ?? null;
+                            $recordType = $record['record_type'] ?? null;
+                            return ($id && $recordType === 'note') ? $id : null;
                         }
+                        return null;
                     })
-                    ->action(function () {
-                        $noteId = $this->mountedTableActionRecord ?? null;
-                        $recordType = $this->mountedTableActionRecordType ?? null;
-                        
-                        if ($noteId && $recordType === 'note') {
+                    ->action(function ($noteId) {
+                        if ($noteId) {
                             // Verificar que sea una nota (no propuesta) consultando directamente
                             $note = DB::table('notes')->where('id', $noteId)->first();
                             

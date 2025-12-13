@@ -28,8 +28,8 @@ class HistorialPage extends Page implements HasTable
     public $mountedTableActionRecordType = null;
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
-    protected static ?string $navigationLabel = 'Historial';
-    protected static ?string $title = 'Historial de Notas';
+    protected static ?string $navigationLabel = 'Registro de Actividades';
+    protected static ?string $title = 'Registro de Actividades';
     protected static ?string $navigationGroup = 'Clientes';
     protected static ?int $navigationSort = 121;
 
@@ -117,6 +117,7 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'info',
                         'email' => 'success',
                         'propuesta_enviada' => 'warning',
+                        'factura_enviada' => 'warning',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -175,7 +176,7 @@ class HistorialPage extends Page implements HasTable
                         return 'N/A';
                     }),
                 Tables\Columns\TextColumn::make('content')
-                    ->label('Nota / Propuesta')
+                    ->label('Nota / Propuesta / Factura')
                     ->wrap()
                     ->searchable()
                     ->extraAttributes(fn ($record) => [
@@ -257,7 +258,7 @@ class HistorialPage extends Page implements HasTable
                 ->action(function (array $data) {
                     $noteData = [
                         'content' => $data['content'],
-                        'type' => $data['type'],
+                        'type' => 'note',
                         'user_id' => auth()->id(),
                     ];
 

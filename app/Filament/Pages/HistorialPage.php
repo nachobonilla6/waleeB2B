@@ -210,38 +210,6 @@ class HistorialPage extends Page implements HasTable
         return $table
             ->query($unifiedQuery)
             ->columns([
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Tipo')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'note' => 'warning',
-                        'call' => 'primary',
-                        'meeting' => 'info',
-                        'email' => 'success',
-                        'propuesta_enviada' => 'warning',
-                        'factura_creada' => 'warning',
-                        'factura_editada' => 'warning',
-                        'factura_enviada' => 'warning',
-                        'cotizacion_creada' => 'warning',
-                        'cotizacion_editada' => 'warning',
-                        'cotizacion_enviada' => 'warning',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'note' => 'Nota',
-                        'call' => 'Llamada',
-                        'meeting' => 'Reunión',
-                        'email' => 'Email',
-                        'propuesta_enviada' => '📄 Propuesta Enviada',
-                        'factura_creada' => '💰 Factura Creada',
-                        'factura_editada' => '✏️ Factura Editada',
-                        'factura_enviada' => '📧 Factura Enviada',
-                        'cotizacion_creada' => '📋 Cotización Creada',
-                        'cotizacion_editada' => '✏️ Cotización Editada',
-                        'cotizacion_enviada' => '📧 Cotización Enviada',
-                        default => $state,
-                    })
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha')
                     ->dateTime('d/m/Y H:i')
@@ -324,8 +292,40 @@ class HistorialPage extends Page implements HasTable
                         
                         return 'N/A';
                     }),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'note' => 'warning',
+                        'call' => 'primary',
+                        'meeting' => 'info',
+                        'email' => 'success',
+                        'propuesta_enviada' => 'warning',
+                        'factura_creada' => 'warning',
+                        'factura_editada' => 'warning',
+                        'factura_enviada' => 'warning',
+                        'cotizacion_creada' => 'warning',
+                        'cotizacion_editada' => 'warning',
+                        'cotizacion_enviada' => 'warning',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'note' => 'Nota',
+                        'call' => 'Llamada',
+                        'meeting' => 'Reunión',
+                        'email' => 'Email',
+                        'propuesta_enviada' => '📄 Propuesta Enviada',
+                        'factura_creada' => '💰 Factura Creada',
+                        'factura_editada' => '✏️ Factura Editada',
+                        'factura_enviada' => '📧 Factura Enviada',
+                        'cotizacion_creada' => '📋 Cotización Creada',
+                        'cotizacion_editada' => '✏️ Cotización Editada',
+                        'cotizacion_enviada' => '📧 Cotización Enviada',
+                        default => $state,
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('content')
-                    ->label('Nota / Propuesta / Factura / Cotización')
+                    ->label('Detalles')
                     ->wrap()
                     ->searchable()
                     ->extraAttributes(fn ($record) => [

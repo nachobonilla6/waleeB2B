@@ -85,7 +85,7 @@ class HistorialPage extends Page implements HasTable
                     ->label('Tipo')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'note' => 'gray',
+                        'note' => 'warning',
                         'call' => 'primary',
                         'meeting' => 'info',
                         'email' => 'success',
@@ -119,19 +119,6 @@ class HistorialPage extends Page implements HasTable
                         }
                         return 'Sistema';
                     }),
-                Tables\Columns\TextColumn::make('content')
-                    ->label('Nota / Propuesta')
-                    ->wrap()
-                    ->searchable()
-                    ->extraAttributes(fn ($record) => [
-                        'class' => 'min-h-[4.5rem] py-3',
-                        'style' => 'min-height: 4.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;',
-                    ])
-                    ->html()
-                    ->formatStateUsing(function ($state) {
-                        $content = $state ?? '';
-                        return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
-                    }),
                 Tables\Columns\TextColumn::make('client_id')
                     ->label('Cliente')
                     ->searchable()
@@ -152,8 +139,20 @@ class HistorialPage extends Page implements HasTable
                             return $cliente?->nombre_empresa ?? 'N/A';
                         }
                         return 'N/A';
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    }),
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Nota / Propuesta')
+                    ->wrap()
+                    ->searchable()
+                    ->extraAttributes(fn ($record) => [
+                        'class' => 'min-h-[4.5rem] py-3',
+                        'style' => 'min-height: 4.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;',
+                    ])
+                    ->html()
+                    ->formatStateUsing(function ($state) {
+                        $content = $state ?? '';
+                        return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')

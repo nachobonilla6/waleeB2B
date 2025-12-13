@@ -17,6 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\DB;
 
 class ViewClient extends ViewRecord implements HasTable
@@ -26,6 +27,11 @@ class ViewClient extends ViewRecord implements HasTable
     protected static string $resource = ClientResource::class;
     
     protected static string $view = 'filament.resources.client-resource.pages.view-client';
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
 
     public function mount(int|string $record): void
     {

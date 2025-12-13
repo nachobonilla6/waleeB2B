@@ -185,24 +185,21 @@ class HistorialPage extends Page implements HasTable
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->requiresConfirmation(false)
-                    ->using(function ($record) {
-                        // Retornar un objeto que no sea un modelo Eloquent para evitar que Filament intente buscar el registro
-                        $noteId = is_object($record) ? ($record->id ?? null) : ($record['id'] ?? null);
-                        $recordType = is_object($record) ? ($record->record_type ?? null) : ($record['record_type'] ?? null);
+                    ->action(function ($record) {
+                        // Obtener el ID directamente del record
+                        // Filament puede pasar el record de diferentes formas, necesitamos manejarlos todos
+                        $noteId = null;
                         
-                        // Retornar un stdClass en lugar del modelo para evitar queries automáticas
-                        if ($noteId && $recordType === 'note') {
-                            $obj = new \stdClass();
-                            $obj->id = $noteId;
-                            $obj->record_type = $recordType;
-                            return $obj;
+                        if (is_object($record)) {
+                            // Si es un objeto, obtener el ID directamente
+                            $noteId = $record->id ?? $record->getKey() ?? null;
+                        } elseif (is_array($record)) {
+                            $noteId = $record['id'] ?? null;
+                        } elseif (is_numeric($record)) {
+                            $noteId = $record;
                         }
-                        return null;
-                    })
-                    ->action(function ($data) {
-                        if ($data && isset($data->id) && $data->record_type === 'note') {
-                            $noteId = $data->id;
-                            
+                        
+                        if ($noteId) {
                             // Verificar que sea una nota (no propuesta) consultando directamente
                             $note = DB::table('notes')->where('id', $noteId)->first();
                             
@@ -219,6 +216,15 @@ class HistorialPage extends Page implements HasTable
                                     ->send();
                             }
                         }
+                    })
+                    ->using(function ($record) {
+                        // Retornar solo el ID numérico para evitar que Filament intente buscar el registro
+                        if (is_object($record)) {
+                            return $record->id ?? $record->getKey() ?? null;
+                        } elseif (is_array($record)) {
+                            return $record['id'] ?? null;
+                        }
+                        return is_numeric($record) ? $record : null;
                     }),
             ])
             ->filters([

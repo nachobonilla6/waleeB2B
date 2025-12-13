@@ -157,6 +157,9 @@ class WorkflowsPage extends Page implements HasTable
 
     protected function getHeaderActions(): array
     {
+        $siteScraperUrl = url('/admin/list-clientes-google-copias');
+        $currentUrl = url()->current();
+        
         return [
             Action::make('start_search')
                 ->label('Iniciar Búsqueda')
@@ -258,6 +261,11 @@ class WorkflowsPage extends Page implements HasTable
                             ->send();
                     }
                 }),
+            Action::make('site_scraper')
+                ->label('Site Scraper')
+                ->icon('heroicon-o-magnifying-glass-plus')
+                ->url($siteScraperUrl)
+                ->color($currentUrl === $siteScraperUrl ? 'primary' : 'gray'),
             Action::make('start_workflow')
                 ->label('Iniciar Workflow')
                 ->icon('heroicon-o-play')

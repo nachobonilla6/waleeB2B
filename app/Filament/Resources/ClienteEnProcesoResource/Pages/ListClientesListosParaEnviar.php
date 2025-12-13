@@ -39,6 +39,7 @@ class ListClientesListosParaEnviar extends ListRecords
         $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
         $listosUrl = ClienteEnProcesoResource::getUrl('listos');
         $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
+        $siteScraperUrl = url('/admin/list-clientes-google-copias');
         $currentUrl = url()->current();
 
         // Contar clientes pendientes
@@ -147,6 +148,11 @@ class ListClientesListosParaEnviar extends ListRecords
                             ->send();
                     }
                 }),
+            Actions\Action::make('site_scraper')
+                ->label('Site Scraper')
+                ->icon('heroicon-o-magnifying-glass-plus')
+                ->url($siteScraperUrl)
+                ->color($currentUrl === $siteScraperUrl ? 'primary' : 'gray'),
             Actions\Action::make('clientes_google')
                 ->label('Clientes Google')
                 ->url($clientesGoogleUrl)

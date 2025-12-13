@@ -32,21 +32,31 @@ class WorkflowsPage extends Page implements HasTable
         return $table
             ->query(WorkflowRun::query()->orderBy('created_at', 'desc'))
             ->columns([
-                Tables\Columns\TextColumn::make('job_id')
-                    ->label('ID del Trabajo')
-                    ->copyable()
+                Tables\Columns\TextColumn::make('data.nombre_lugar')
+                    ->label('Nombre del Lugar')
                     ->searchable()
                     ->sortable()
-                    ->limit(20),
-                Tables\Columns\TextColumn::make('workflow_name')
-                    ->label('Workflow')
+                    ->placeholder('N/A')
+                    ->getStateUsing(fn ($record) => $record->data['nombre_lugar'] ?? null),
+                Tables\Columns\TextColumn::make('data.industria')
+                    ->label('Industria')
                     ->searchable()
                     ->sortable()
-                    ->placeholder('Sin nombre'),
-                Tables\Columns\TextColumn::make('step')
-                    ->label('Paso Actual')
-                    ->placeholder('En cola')
-                    ->wrap(),
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'tienda_ropa' => '👕 Tienda de Ropa',
+                        'pizzeria' => '🍕 Pizzería',
+                        'restaurante' => '🍽️ Restaurante',
+                        'cafeteria' => '☕ Cafetería',
+                        'farmacia' => '💊 Farmacia',
+                        'supermercado' => '🛒 Supermercado',
+                        'peluqueria' => '✂️ Peluquería / Salón de Belleza',
+                        'gimnasio' => '💪 Gimnasio',
+                        'veterinaria' => '🐾 Veterinaria',
+                        'taller_mecanico' => '🔧 Taller Mecánico',
+                        'otro' => '📝 Otro',
+                        default => $state ?? 'N/A',
+                    })
+                    ->getStateUsing(fn ($record) => $record->data['industria'] ?? null),
                 Tables\Columns\TextColumn::make('progress')
                     ->label('Progreso')
                     ->formatStateUsing(fn ($state, $record) => 
@@ -57,41 +67,6 @@ class WorkflowsPage extends Page implements HasTable
                 Tables\Columns\ViewColumn::make('progress')
                     ->label('Barra de Progreso')
                     ->view('filament.tables.columns.progress-bar'),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Estado')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'running' => 'primary',
-                        'completed' => 'success',
-                        'failed' => 'danger',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => 'Pendiente',
-                        'running' => 'Ejecutando',
-                        'completed' => 'Completado',
-                        'failed' => 'Fallido',
-                        default => $state,
-                    })
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('error_message')
-                    ->label('Error')
-                    ->limit(50)
-                    ->visible(fn ($record) => $record && $record->status === 'failed')
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('started_at')
-                    ->label('Iniciado')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('completed_at')
-                    ->label('Completado')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Creado')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -124,17 +99,6 @@ class WorkflowsPage extends Page implements HasTable
                     ->modalHeading('Detalles del Error')
                     ->modalContent(fn ($record) => view('filament.pages.workflow-error', [
                         'record' => $record,
-                    ]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Cerrar'),
-                Tables\Actions\Action::make('view_payload')
-                    ->label('Ver Payload')
-                    ->icon('heroicon-o-document-text')
-                    ->color('gray')
-                    ->visible(fn ($record) => $record && $record->data !== null)
-                    ->modalHeading('Payload del Workflow')
-                    ->modalContent(fn ($record) => view('filament.pages.workflow-payload', [
-                        'data' => $record->data,
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar'),

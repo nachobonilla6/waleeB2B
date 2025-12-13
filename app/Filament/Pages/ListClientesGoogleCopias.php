@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ClientesGoogleCopiaResource\Pages;
-
-use App\Filament\Resources\ClientesGoogleCopiaResource;
+namespace App\Filament\Pages;
 use App\Models\WorkflowRun;
 use Filament\Actions\Action;
 use Filament\Forms;

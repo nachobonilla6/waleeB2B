@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ClientesGoogleEnviadasResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
-use App\Filament\Resources\ClientesGoogleCopiaResource\Pages\ListClientesGoogleCopias;
+use App\Filament\Pages\ListClientesGoogleCopias;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;

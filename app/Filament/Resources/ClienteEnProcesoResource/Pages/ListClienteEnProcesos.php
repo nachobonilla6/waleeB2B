@@ -4,7 +4,7 @@ namespace App\Filament\Resources\ClienteEnProcesoResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
-use App\Filament\Resources\ClientesGoogleCopiaResource\Pages\ListClientesGoogleCopias;
+use App\Filament\Pages\ListClientesGoogleCopias;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;

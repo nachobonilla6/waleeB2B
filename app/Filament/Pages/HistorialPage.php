@@ -215,7 +215,7 @@ class HistorialPage extends Page implements HasTable
                     ->searchable()
                     ->preload(),
             ])
-            ->recordClasses(fn ($record) => {
+            ->recordClasses(function ($record) {
                 if (isset($record->record_type) && $record->record_type === 'note' && ($record->pinned ?? false)) {
                     return 'bg-red-50 dark:bg-red-900/20 border-l-4 border-l-red-500';
                 }

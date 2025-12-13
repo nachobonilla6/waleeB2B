@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ClientesGoogleEnviadasResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
-use App\Filament\Resources\ClientesGoogleCopiaResource;
+use App\Filament\Resources\ClientesGoogleCopiaResource\Pages\ListClientesGoogleCopias;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -33,7 +33,7 @@ class ListClientesGoogleEnviadas extends ListRecords
         $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');
         $listosUrl = ClienteEnProcesoResource::getUrl('listos');
         $propuestasUrl = ClientesGoogleEnviadasResource::getUrl('index');
-        $extraerUrl = ClientesGoogleCopiaResource::getUrl('index');
+        $extraerUrl = ListClientesGoogleCopias::getUrl();
         $currentUrl = url()->current();
 
         // Contar clientes pendientes

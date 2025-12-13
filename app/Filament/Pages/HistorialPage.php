@@ -6,6 +6,7 @@ use App\Models\Note;
 use App\Models\Client;
 use App\Models\Factura;
 use App\Models\Cliente;
+use App\Models\Cotizacion;
 use Illuminate\Support\Facades\DB;
 use Filament\Pages\Page;
 use Filament\Actions;
@@ -78,15 +79,14 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.name',
             ]);
 
-        // Query para facturas enviadas (las que tienen correo)
+        // Query para facturas creadas
         $facturasQuery = Factura::query()
-            ->whereNotNull('correo')
             ->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
                 'facturas.cliente_id',
                 DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
-                DB::raw("'factura_enviada' as type"),
+                DB::raw("'factura_creada' as type"),
                 DB::raw("NULL as user_id"),
                 'facturas.created_at',
                 'facturas.updated_at',
@@ -95,8 +95,24 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("NULL as name"),
             ]);
 
+        // Query para cotizaciones creadas
+        $cotizacionesQuery = Cotizacion::query()
+            ->select([
+                'cotizacions.id',
+                DB::raw("NULL as client_id"),
+                'cotizacions.cliente_id',
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("'cotizacion_creada' as type"),
+                DB::raw("NULL as user_id"),
+                'cotizacions.created_at',
+                'cotizacions.updated_at',
+                DB::raw("'cotizacion' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ]);
+
         // Crear la UNION y envolverla en una subquery para poder ordenar
-        $unionQuery = $notesQuery->unionAll($propuestasQuery)->unionAll($facturasQuery);
+        $unionQuery = $notesQuery->unionAll($propuestasQuery)->unionAll($facturasQuery)->unionAll($cotizacionesQuery);
         
         // Envolver en una subquery usando fromSub para poder ordenar
         // Ordenar por created_at (desc)
@@ -117,7 +133,8 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'info',
                         'email' => 'success',
                         'propuesta_enviada' => 'warning',
-                        'factura_enviada' => 'warning',
+                        'factura_creada' => 'warning',
+                        'cotizacion_creada' => 'warning',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -126,6 +143,8 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'Reunión',
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
+                        'factura_creada' => '💰 Factura Creada',
+                        'cotizacion_creada' => '📋 Cotización Creada',
                         default => $state,
                     })
                     ->sortable(),
@@ -156,7 +175,7 @@ class HistorialPage extends Page implements HasTable
                         if (isset($record->record_type) && $record->record_type === 'propuesta') {
                             return $record->name ?? 'N/A';
                         }
-                        if (isset($record->record_type) && $record->record_type === 'factura') {
+                        if (isset($record->record_type) && ($record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
                             if (isset($record->cliente_id) && $record->cliente_id) {
                                 $cliente = Cliente::find($record->cliente_id);
                                 return $cliente?->nombre_empresa ?? 'N/A';
@@ -176,7 +195,7 @@ class HistorialPage extends Page implements HasTable
                         return 'N/A';
                     }),
                 Tables\Columns\TextColumn::make('content')
-                    ->label('Nota / Propuesta / Factura')
+                    ->label('Nota / Propuesta / Factura / Cotización')
                     ->wrap()
                     ->searchable()
                     ->extraAttributes(fn ($record) => [
@@ -184,8 +203,11 @@ class HistorialPage extends Page implements HasTable
                         'style' => 'min-height: 4.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem;',
                     ])
                     ->html()
-                    ->formatStateUsing(function ($state) {
+                    ->formatStateUsing(function ($state, $record) {
                         $content = $state ?? '';
+                        if (isset($record->record_type) && ($record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
+                            return '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                        }
                         return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
                     }),
             ])
@@ -198,7 +220,8 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'Reunión',
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
-                        'factura_enviada' => '💰 Factura Enviada',
+                        'factura_creada' => '💰 Factura Creada',
+                        'cotizacion_creada' => '📋 Cotización Creada',
                     ]),
                 Tables\Filters\SelectFilter::make('client_id')
                     ->label('Cliente')

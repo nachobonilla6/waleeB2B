@@ -377,8 +377,15 @@ class HistorialPage extends Page implements HasTable
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
-                        // Cotización creada/editada - enlace al edit
-                        if ($recordType === 'cotizacion' && in_array($type, ['cotizacion_creada', 'cotizacion_editada']) && $recordId) {
+                        // Cotización creada - enlace al view
+                        if ($recordType === 'cotizacion' && $type === 'cotizacion_creada' && $recordId) {
+                            $url = CotizacionResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Cotización editada - enlace al edit
+                        if ($recordType === 'cotizacion' && $type === 'cotizacion_editada' && $recordId) {
                             $url = CotizacionResource::getUrl('edit', ['record' => $recordId]);
                             $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';

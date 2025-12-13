@@ -10,6 +10,7 @@ use App\Models\Cotizacion;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Resources\FacturaResource;
 use App\Filament\Resources\CotizacionResource;
+use App\Filament\Resources\NoteResource;
 use Filament\Pages\Page;
 use Filament\Actions;
 use Filament\Forms;
@@ -398,20 +399,11 @@ class HistorialPage extends Page implements HasTable
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
-                        // Nota - enlace al cliente si tiene cliente_id o client_id
+                        // Nota - enlace al view de la nota
                         if ($recordType === 'note' && $recordId) {
-                            $clienteId = $getValue('cliente_id');
-                            $clientId = $getValue('client_id');
-                            
-                            if ($clienteId) {
-                                $url = \App\Filament\Resources\ClienteResource::getUrl('view', ['record' => $clienteId]);
-                                $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
-                                return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
-                            } elseif ($clientId) {
-                                $url = \App\Filament\Resources\ClientResource::getUrl('view', ['record' => $clientId]);
-                                $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
-                                return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
-                            }
+                            $url = NoteResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Por defecto, sin enlace

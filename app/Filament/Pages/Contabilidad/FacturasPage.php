@@ -38,7 +38,7 @@ class FacturasPage extends Page implements HasTable
     public function table(Table $table): Table
     {
         return FacturaResource::table($table)
-            ->query(Factura::query()->orderBy('created_at', 'desc'));
+            ->query(Factura::query()->orderBy('id', 'desc'));
     }
 
     protected function getHeaderActions(): array

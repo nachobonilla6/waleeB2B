@@ -209,7 +209,7 @@ class FacturaResource extends Resource
                     ->color('primary')
                     ->formatStateUsing(fn ($state) => $state ? 'Ver Factura' : null),
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')
                     ->options([

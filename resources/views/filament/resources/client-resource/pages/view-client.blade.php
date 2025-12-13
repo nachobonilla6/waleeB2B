@@ -16,6 +16,15 @@
                         {{ $this->record->name ?? 'N/A' }}
                     </h2>
                     
+                    <!-- Estado -->
+                    @if($this->record->estado ?? false)
+                        <div class="mb-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success-800 dark:bg-success-900 dark:text-success-200">
+                                {{ ucfirst($this->record->estado) }}
+                            </span>
+                        </div>
+                    @endif
+                    
                     <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                         @if($this->record->email)
                             <div class="flex items-center justify-center gap-2">

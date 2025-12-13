@@ -201,13 +201,32 @@ class ViewCliente extends Page
                                 }
                                 
                                 try {
+                                    // Crear la cotización si no existe
+                                    $cotizacion = \App\Models\Cotizacion::create([
+                                        'numero_cotizacion' => $data['numero_cotizacion'] ?? 'COT-' . date('Ymd') . '-' . rand(100, 999),
+                                        'fecha' => $fecha,
+                                        'idioma' => $data['idioma'] ?? 'es',
+                                        'cliente_id' => $this->record->id ?? null,
+                                        'tipo_servicio' => $data['tipo_servicio'] ?? '',
+                                        'plan' => $data['plan'] ?? '',
+                                        'monto' => $data['monto'] ?? 0,
+                                        'vigencia' => $data['vigencia'] ?? '15',
+                                        'correo' => $correoDestino,
+                                        'descripcion' => $data['descripcion'] ?? '',
+                                        'estado' => 'enviada',
+                                    ]);
+                                    
                                     Mail::to($correoDestino)->send(new CotizacionMail($emailData));
                                     
-                            Notification::make()
-                                ->title('✅ Cotización enviada')
+                                    // Marcar como enviada
+                                    $cotizacion->enviada_at = now();
+                                    $cotizacion->save();
+                                    
+                                    Notification::make()
+                                        ->title('✅ Cotización enviada')
                                         ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' enviada por email a ' . $correoDestino)
-                                ->success()
-                                ->send();
+                                        ->success()
+                                        ->send();
                                 } catch (\Exception $mailException) {
                                     Notification::make()
                                         ->title('❌ Error al enviar email')

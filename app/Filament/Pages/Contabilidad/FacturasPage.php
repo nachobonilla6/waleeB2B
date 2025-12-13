@@ -434,6 +434,12 @@ class FacturasPage extends Page implements HasTable
                                 try {
                                     Mail::to($correoDestino)->send(new \App\Mail\CotizacionMail($emailData));
                                     
+                                    // Marcar como enviada
+                                    $cotizacion->correo = $correoDestino;
+                                    $cotizacion->enviada_at = now();
+                                    $cotizacion->estado = 'enviada';
+                                    $cotizacion->save();
+                                    
                                     \Filament\Notifications\Notification::make()
                                         ->title('✅ Cotización creada y enviada')
                                         ->body('Cotización ' . ($data['numero_cotizacion'] ?? 'N/A') . ' guardada y enviada por email a ' . $correoDestino)

@@ -19,11 +19,13 @@ class Cotizacion extends Model
         'correo',
         'descripcion',
         'estado',
+        'enviada_at',
     ];
 
     protected $casts = [
         'fecha' => 'date',
         'monto' => 'decimal:2',
+        'enviada_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

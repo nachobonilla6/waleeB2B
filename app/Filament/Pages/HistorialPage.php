@@ -79,8 +79,45 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.name',
             ]);
 
+        // Query para facturas creadas
+        $facturasCreadasQuery = Factura::query()
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("'factura_creada' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ]);
+
+        // Query para facturas editadas (updated_at != created_at y no es por enviada_at)
+        $facturasEditadasQuery = Factura::query()
+            ->whereRaw('facturas.updated_at != facturas.created_at')
+            ->where(function($q) {
+                $q->whereNull('facturas.enviada_at')
+                  ->orWhereRaw('facturas.updated_at != facturas.enviada_at');
+            })
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("'factura_editada' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.updated_at as created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ]);
+
         // Query para facturas enviadas (las que tienen enviada_at)
-        $facturasQuery = Factura::query()
+        $facturasEnviadasQuery = Factura::query()
             ->whereNotNull('enviada_at')
             ->select([
                 'facturas.id',
@@ -97,7 +134,7 @@ class HistorialPage extends Page implements HasTable
             ]);
 
         // Query para cotizaciones creadas
-        $cotizacionesQuery = Cotizacion::query()
+        $cotizacionesCreadasQuery = Cotizacion::query()
             ->select([
                 'cotizacions.id',
                 DB::raw("NULL as client_id"),
@@ -112,8 +149,56 @@ class HistorialPage extends Page implements HasTable
                 DB::raw("NULL as name"),
             ]);
 
+        // Query para cotizaciones editadas (updated_at != created_at)
+        $cotizacionesEditadasQuery = Cotizacion::query()
+            ->whereRaw('cotizacions.updated_at != cotizacions.created_at')
+            ->where(function($q) {
+                $q->whereNull('cotizacions.enviada_at')
+                  ->orWhereRaw('cotizacions.updated_at != cotizacions.enviada_at');
+            })
+            ->select([
+                'cotizacions.id',
+                DB::raw("NULL as client_id"),
+                'cotizacions.cliente_id',
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("'cotizacion_editada' as type"),
+                DB::raw("NULL as user_id"),
+                'cotizacions.updated_at as created_at',
+                'cotizacions.updated_at',
+                DB::raw("'cotizacion' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ]);
+
+        // Query para cotizaciones enviadas (las que tienen enviada_at o estado = 'enviada')
+        $cotizacionesEnviadasQuery = Cotizacion::query()
+            ->where(function($q) {
+                $q->whereNotNull('enviada_at')
+                  ->orWhere('estado', 'enviada');
+            })
+            ->select([
+                'cotizacions.id',
+                DB::raw("NULL as client_id"),
+                'cotizacions.cliente_id',
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("'cotizacion_enviada' as type"),
+                DB::raw("NULL as user_id"),
+                DB::raw("COALESCE(cotizacions.enviada_at, cotizacions.updated_at) as created_at"),
+                'cotizacions.updated_at',
+                DB::raw("'cotizacion' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+            ]);
+
         // Crear la UNION y envolverla en una subquery para poder ordenar
-        $unionQuery = $notesQuery->unionAll($propuestasQuery)->unionAll($facturasQuery)->unionAll($cotizacionesQuery);
+        $unionQuery = $notesQuery
+            ->unionAll($propuestasQuery)
+            ->unionAll($facturasCreadasQuery)
+            ->unionAll($facturasEditadasQuery)
+            ->unionAll($facturasEnviadasQuery)
+            ->unionAll($cotizacionesCreadasQuery)
+            ->unionAll($cotizacionesEditadasQuery)
+            ->unionAll($cotizacionesEnviadasQuery);
         
         // Envolver en una subquery usando fromSub para poder ordenar
         // Ordenar por created_at (desc)
@@ -135,8 +220,11 @@ class HistorialPage extends Page implements HasTable
                         'email' => 'success',
                         'propuesta_enviada' => 'warning',
                         'factura_creada' => 'warning',
+                        'factura_editada' => 'warning',
                         'factura_enviada' => 'warning',
                         'cotizacion_creada' => 'warning',
+                        'cotizacion_editada' => 'warning',
+                        'cotizacion_enviada' => 'warning',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -146,7 +234,11 @@ class HistorialPage extends Page implements HasTable
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
                         'factura_creada' => '💰 Factura Creada',
+                        'factura_editada' => '✏️ Factura Editada',
+                        'factura_enviada' => '📧 Factura Enviada',
                         'cotizacion_creada' => '📋 Cotización Creada',
+                        'cotizacion_editada' => '✏️ Cotización Editada',
+                        'cotizacion_enviada' => '📧 Cotización Enviada',
                         default => $state,
                     })
                     ->sortable(),
@@ -159,7 +251,7 @@ class HistorialPage extends Page implements HasTable
                     ->placeholder('Sistema')
                     ->sortable()
                     ->formatStateUsing(function ($state, $record) {
-                        if (isset($record->record_type) && ($record->record_type === 'propuesta' || $record->record_type === 'factura')) {
+                        if (isset($record->record_type) && ($record->record_type === 'propuesta' || $record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
                             return 'Sistema';
                         }
                         if ($state) {
@@ -259,8 +351,11 @@ class HistorialPage extends Page implements HasTable
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
                         'factura_creada' => '💰 Factura Creada',
-                        'factura_enviada' => '💰 Factura Enviada',
+                        'factura_editada' => '✏️ Factura Editada',
+                        'factura_enviada' => '📧 Factura Enviada',
                         'cotizacion_creada' => '📋 Cotización Creada',
+                        'cotizacion_editada' => '✏️ Cotización Editada',
+                        'cotizacion_enviada' => '📧 Cotización Enviada',
                     ]),
                 Tables\Filters\SelectFilter::make('client_id')
                     ->label('Cliente')

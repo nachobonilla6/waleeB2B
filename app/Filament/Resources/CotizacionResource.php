@@ -290,6 +290,12 @@ class CotizacionResource extends Resource
                         try {
                             \Illuminate\Support\Facades\Mail::to($correoDestino)->send(new \App\Mail\CotizacionMail($emailData));
                             
+                            // Marcar como enviada
+                            $record->correo = $correoDestino;
+                            $record->enviada_at = now();
+                            $record->estado = 'enviada';
+                            $record->save();
+                            
                             \Filament\Notifications\Notification::make()
                                 ->title('✅ Email enviado')
                                 ->body('La cotización ha sido enviada por correo electrónico a ' . $correoDestino)

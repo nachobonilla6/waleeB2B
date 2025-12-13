@@ -168,6 +168,7 @@ class FacturasPage extends Page implements HasTable
                         'estado' => (string) ($data['estado'] ?? $factura->estado ?? ''),
                         'fecha_vencimiento' => isset($data['fecha_vencimiento']) ? (is_string($data['fecha_vencimiento']) ? $data['fecha_vencimiento'] : $data['fecha_vencimiento']->format('Y-m-d')) : ($factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : ''),
                         'notas' => (string) ($data['notas'] ?? $factura->notas ?? ''),
+                        'cliente_id' => $data['cliente_id'] ?? $factura->cliente_id ?? null,
                         'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
                         'cliente_correo' => (string) ($data['correo'] ?? $factura->correo ?? $cliente?->correo ?? ''),
                         'factura_id' => $factura->id ?? null,
@@ -218,8 +219,10 @@ class FacturasPage extends Page implements HasTable
                                     'estado' => (string) ($data['estado'] ?? ''),
                                     'fecha_vencimiento' => isset($data['fecha_vencimiento']) ? (is_string($data['fecha_vencimiento']) ? $data['fecha_vencimiento'] : $data['fecha_vencimiento']->format('Y-m-d')) : '',
                                     'notas' => (string) ($data['notas'] ?? ''),
+                                    'cliente_id' => $data['cliente_id'] ?? $factura->cliente_id ?? null,
                                     'cliente_nombre' => (string) ($cliente?->nombre_empresa ?? ''),
                                     'cliente_correo' => (string) ($data['correo'] ?? $cliente?->correo ?? ''),
+                                    'factura_id' => $factura->id ?? null,
                                 ];
                                 
                                 try {

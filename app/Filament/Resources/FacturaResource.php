@@ -244,8 +244,10 @@ class FacturaResource extends Resource
                             'estado' => (string) ($record->estado ?? ''),
                             'fecha_vencimiento' => $record->fecha_vencimiento ? $record->fecha_vencimiento->format('Y-m-d') : '',
                             'notas' => (string) ($record->notas ?? ''),
+                            'cliente_id' => $record->cliente_id ?? null,
                             'cliente_nombre' => (string) ($record->cliente?->nombre_empresa ?? ''),
                             'cliente_correo' => (string) $correoDestino,
+                            'factura_id' => $record->id ?? null,
                         ];
                         
                         try {

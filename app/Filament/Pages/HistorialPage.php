@@ -93,7 +93,6 @@ class HistorialPage extends Page implements HasTable
 
         return $table
             ->query($unifiedQuery)
-            ->key('id')
             ->columns([
                 Tables\Columns\IconColumn::make('pinned')
                     ->label('')
@@ -186,27 +185,34 @@ class HistorialPage extends Page implements HasTable
                     ->color('warning')
                     ->visible(fn ($record) => isset($record->record_type) && $record->record_type === 'note')
                     ->requiresConfirmation(false)
-                    ->mountUsing(function ($record) {
-                        // Capturar el ID antes de que Filament intente buscar el registro
-                        $this->mountedTableActionRecord = is_object($record) ? ($record->id ?? null) : ($record['id'] ?? null);
-                        $this->mountedTableActionRecordType = is_object($record) ? ($record->record_type ?? null) : ($record['record_type'] ?? null);
-                    })
-                    ->action(function () {
-                        $noteId = $this->mountedTableActionRecord ?? null;
-                        $recordType = $this->mountedTableActionRecordType ?? null;
+                    ->using(function ($record) {
+                        // Retornar solo el ID numérico para evitar que Filament intente buscar el registro
+                        $noteId = is_object($record) ? ($record->id ?? null) : ($record['id'] ?? null);
+                        $recordType = is_object($record) ? ($record->record_type ?? null) : ($record['record_type'] ?? null);
                         
+                        // Solo retornar el ID si es una nota
                         if ($noteId && $recordType === 'note') {
-                            // Usar DB directamente para evitar problemas con la subquery
-                            $currentPinned = DB::table('notes')->where('id', $noteId)->value('pinned') ?? false;
-                            $newPinnedState = !$currentPinned;
+                            return $noteId;
+                        }
+                        return null;
+                    })
+                    ->action(function ($noteId) {
+                        if ($noteId) {
+                            // Verificar que sea una nota (no propuesta) consultando directamente
+                            $note = DB::table('notes')->where('id', $noteId)->first();
                             
-                            DB::table('notes')->where('id', $noteId)->update(['pinned' => $newPinnedState]);
-                            
-                            Notification::make()
-                                ->title($newPinnedState ? 'Nota fijada' : 'Nota desfijada')
-                                ->body($newPinnedState ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
-                                ->success()
-                                ->send();
+                            if ($note) {
+                                $currentPinned = $note->pinned ?? false;
+                                $newPinnedState = !$currentPinned;
+                                
+                                DB::table('notes')->where('id', $noteId)->update(['pinned' => $newPinnedState]);
+                                
+                                Notification::make()
+                                    ->title($newPinnedState ? 'Nota fijada' : 'Nota desfijada')
+                                    ->body($newPinnedState ? 'La nota se ha fijado correctamente.' : 'La nota se ha desfijado correctamente.')
+                                    ->success()
+                                    ->send();
+                            }
                         }
                     }),
             ])

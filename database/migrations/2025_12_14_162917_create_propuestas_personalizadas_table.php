@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('propuestas_personalizadas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('cliente_id')->nullable()->constrained('clientes_en_proceso')->onDelete('set null');
-            $table->string('cliente_nombre')->nullable();
-            $table->string('email');
-            $table->string('subject');
-            $table->text('body');
-            $table->text('ai_prompt')->nullable();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('propuestas_personalizadas')) {
+            Schema::create('propuestas_personalizadas', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('cliente_id')->nullable()->constrained('clientes_en_proceso')->onDelete('set null');
+                $table->string('cliente_nombre')->nullable();
+                $table->string('email');
+                $table->string('subject');
+                $table->text('body');
+                $table->text('ai_prompt')->nullable();
+                $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

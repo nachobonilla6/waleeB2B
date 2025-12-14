@@ -180,7 +180,8 @@ class ListClientPropuestaEnviadas extends ListRecords
                         
                         // Enviar email
                         Mail::raw($data['body'], function ($message) use ($data, $client) {
-                            $message->to($data['email'])
+                            $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
+                                    ->to($data['email'])
                                     ->subject($data['subject']);
                         });
                         

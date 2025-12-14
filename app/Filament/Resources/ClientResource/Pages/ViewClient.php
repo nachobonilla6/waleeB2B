@@ -10,6 +10,7 @@ use App\Filament\Resources\CotizacionResource;
 use App\Mail\CotizacionMail;
 use App\Models\Note;
 use App\Models\Client;
+use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Cotizacion;
 use Filament\Actions;
@@ -412,6 +413,21 @@ class ViewClient extends ViewRecord implements HasTable
                         ->color('warning')
                         ->action(function (array $data) {
                             try {
+                                // Buscar o crear Cliente basado en el Client actual
+                                $correo = $data['correo'] ?? $this->record->email ?? '';
+                                $cliente = Cliente::where('correo', $correo)->first();
+                                
+                                if (!$cliente) {
+                                    // Crear un nuevo Cliente con los datos del Client
+                                    $cliente = Cliente::create([
+                                        'nombre_empresa' => $this->record->name ?? 'Cliente',
+                                        'correo' => $correo,
+                                        'telefono' => $this->record->telefono_1 ?? $this->record->phone ?? null,
+                                        'estado_cuenta' => 'activo',
+                                        'fecha_registro' => now(),
+                                    ]);
+                                }
+                                
                                 // Crear la factura como borrador
                                 $facturaData = [
                                     'numero_factura' => $data['numero_factura'] ?? 'FAC-' . date('Ymd') . '-' . rand(100, 999),
@@ -421,8 +437,8 @@ class ViewClient extends ViewRecord implements HasTable
                                     'total' => $data['total'] ?? ($data['subtotal'] ?? 0) * 1.13,
                                     'metodo_pago' => $data['metodo_pago'] ?? '',
                                     'estado' => 'borrador',
-                                    'correo' => $data['correo'] ?? $this->record->email ?? '',
-                                    'cliente_id' => null,
+                                    'correo' => $correo,
+                                    'cliente_id' => $cliente->id,
                                 ];
                                 
                                 $factura = Factura::create($facturaData);
@@ -450,6 +466,21 @@ class ViewClient extends ViewRecord implements HasTable
                         ->color('success')
                         ->action(function (array $data) {
                             try {
+                                // Buscar o crear Cliente basado en el Client actual
+                                $correo = $data['correo'] ?? $this->record->email ?? '';
+                                $cliente = Cliente::where('correo', $correo)->first();
+                                
+                                if (!$cliente) {
+                                    // Crear un nuevo Cliente con los datos del Client
+                                    $cliente = Cliente::create([
+                                        'nombre_empresa' => $this->record->name ?? 'Cliente',
+                                        'correo' => $correo,
+                                        'telefono' => $this->record->telefono_1 ?? $this->record->phone ?? null,
+                                        'estado_cuenta' => 'activo',
+                                        'fecha_registro' => now(),
+                                    ]);
+                                }
+                                
                                 // Crear la factura
                                 $facturaData = [
                                     'numero_factura' => $data['numero_factura'] ?? 'FAC-' . date('Ymd') . '-' . rand(100, 999),
@@ -459,8 +490,8 @@ class ViewClient extends ViewRecord implements HasTable
                                     'total' => $data['total'] ?? ($data['subtotal'] ?? 0) * 1.13,
                                     'metodo_pago' => $data['metodo_pago'] ?? '',
                                     'estado' => 'enviada',
-                                    'correo' => $data['correo'] ?? $this->record->email ?? '',
-                                    'cliente_id' => null, // Client no tiene relación directa con Factura
+                                    'correo' => $correo,
+                                    'cliente_id' => $cliente->id,
                                 ];
                                 
                                 $factura = Factura::create($facturaData);
@@ -474,8 +505,8 @@ class ViewClient extends ViewRecord implements HasTable
                                     'total' => (string) ($factura->total ?? '0'),
                                     'metodo_pago' => (string) ($factura->metodo_pago ?? ''),
                                     'estado' => (string) ($factura->estado ?? 'enviada'),
-                                    'cliente_id' => null,
-                                    'cliente_nombre' => (string) ($this->record->name ?? ''),
+                                    'cliente_id' => $cliente->id ?? null,
+                                    'cliente_nombre' => (string) ($cliente->nombre_empresa ?? $this->record->name ?? ''),
                                     'cliente_correo' => (string) ($factura->correo ?? ''),
                                     'factura_id' => $factura->id ?? null,
                                 ];

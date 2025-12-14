@@ -25,7 +25,7 @@ class DeployButton extends Component implements HasActions, HasForms, HasTable
     public function ticketsPreviewAction(): Action
     {
         return Action::make('tickets_preview')
-            ->label('Preview Tickets')
+            ->label('Propuesta Personalizada')
             ->icon('heroicon-o-ticket')
             ->color('primary')
             ->size('sm')

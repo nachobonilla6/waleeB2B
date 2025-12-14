@@ -170,8 +170,8 @@ class ViewClient extends ViewRecord implements HasTable
                         Forms\Components\TextInput::make('numero_cotizacion')
                             ->label('Nº Cotización')
                             ->default('COT-' . date('Ymd') . '-' . rand(100, 999))
-                            ->dehydrated()
-                            ->disabled(),
+                            ->readonly()
+                            ->dehydrated(),
                     ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\DatePicker::make('fecha')
@@ -348,7 +348,8 @@ class ViewClient extends ViewRecord implements HasTable
                         Forms\Components\TextInput::make('numero_factura')
                             ->label('Nº Factura')
                             ->default('FAC-' . date('Ymd') . '-' . rand(100, 999))
-                            ->disabled(),
+                            ->readonly()
+                            ->dehydrated(),
                     ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\DatePicker::make('fecha_emision')
@@ -410,7 +411,7 @@ class ViewClient extends ViewRecord implements HasTable
                         ->action(function (array $data) {
                             Notification::make()
                                 ->title('📝 Borrador guardado')
-                                ->body('Factura ' . $data['numero_factura'] . ' guardada como borrador.')
+                                ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' guardada como borrador.')
                                 ->warning()
                                 ->send();
                         }),
@@ -420,7 +421,7 @@ class ViewClient extends ViewRecord implements HasTable
                         ->action(function (array $data) {
                             Notification::make()
                                 ->title('✅ Factura enviada')
-                                ->body('Factura ' . $data['numero_factura'] . ' enviada a ' . $data['correo'])
+                                ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' enviada a ' . ($data['correo'] ?? 'N/A'))
                                 ->success()
                                 ->send();
                         }),

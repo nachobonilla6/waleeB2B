@@ -153,6 +153,11 @@ class BotConfir extends Page implements HasForms
                 Forms\Components\Section::make('Credenciales de N8N')
                     ->icon('heroicon-o-shield-check')
                     ->schema([
+                        Forms\Components\TextInput::make('n8n_base_url')
+                            ->label('N8N Base URL')
+                            ->url()
+                            ->placeholder('https://n8n.example.com')
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('n8n_api_key')
                             ->label('N8N API Key')
                             ->password()
@@ -161,6 +166,13 @@ class BotConfir extends Page implements HasForms
                             ->label('N8N Webhook URL')
                             ->url()
                             ->placeholder('https://n8n.example.com/webhook/...')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('n8n_username')
+                            ->label('N8N Username')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('n8n_password')
+                            ->label('N8N Password')
+                            ->password()
                             ->columnSpanFull(),
                     ]),
             ])

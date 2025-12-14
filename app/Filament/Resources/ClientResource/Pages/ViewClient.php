@@ -150,7 +150,7 @@ class ViewClient extends ViewRecord implements HasTable
             Actions\Action::make('crear_cotizacion')
                 ->label('Crear Cotización')
                 ->icon('heroicon-o-document-text')
-                ->color('success')
+                ->color('gray')
                 ->modalHeading('📝 Nueva Cotización')
                 ->modalWidth('4xl')
                 ->afterFormValidated(function (array $data, $action) {
@@ -331,7 +331,7 @@ class ViewClient extends ViewRecord implements HasTable
             Actions\Action::make('crear_factura')
                 ->label('Crear Factura')
                 ->icon('heroicon-o-banknotes')
-                ->color('primary')
+                ->color('gray')
                 ->modalHeading('💰 Nueva Factura')
                 ->modalWidth('4xl')
                 ->form([

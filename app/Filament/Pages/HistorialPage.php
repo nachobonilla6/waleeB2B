@@ -34,7 +34,7 @@ class HistorialPage extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Registro de Actividades';
     protected static ?string $title = 'Registro de Actividades';
-    protected static ?string $navigationGroup = 'Clientes';
+    protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 121;
 
     protected static string $view = 'filament.pages.historial-page';

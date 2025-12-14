@@ -6,6 +6,7 @@ use Filament\Widgets\Widget;
 use Filament\Support\Facades\Filament;
 use Filament\Support\Facades\Route;
 use App\Filament\Resources\ClienteEnProcesoResource;
+use App\Filament\Resources\SitioResource;
 use App\Filament\Pages\HistorialPage;
 
 class ToolsWidget extends Widget
@@ -60,6 +61,14 @@ class ToolsWidget extends Widget
                     'url' => ClienteEnProcesoResource::getUrl('index'),
                     'color' => 'green',
                     'description' => 'Clientes en proceso',
+                    'external' => false,
+                ],
+                [
+                    'label' => 'Sitios',
+                    'icon' => 'heroicon-m-globe-alt',
+                    'url' => SitioResource::getUrl('index'),
+                    'color' => 'indigo',
+                    'description' => 'Gestión de sitios web',
                     'external' => false,
                 ],
                 [

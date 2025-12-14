@@ -31,7 +31,7 @@ class BotConfir extends Page implements HasForms
         return $form
             ->schema([
                 Forms\Components\Section::make('Configuración SQL')
-                    ->icon('heroicon-o-database')
+                    ->icon('heroicon-o-circle-stack')
                     ->schema([
                         Forms\Components\Textarea::make('sql')
                             ->label('SQL')

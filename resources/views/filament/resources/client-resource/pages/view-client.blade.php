@@ -72,7 +72,9 @@
                         <div class="space-y-2">
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Account Status:</span>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Activo</span>
+                                <x-filament::badge color="success" class="font-bold">
+                                    Activo
+                                </x-filament::badge>
                             </div>
                         </div>
                     </div>

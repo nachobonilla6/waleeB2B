@@ -28,6 +28,11 @@ class PublicacionVelaResource extends Resource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 6;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return '13';

@@ -20,6 +20,11 @@ class BotConfir extends Page implements HasForms
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 10;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public ?array $data = [];
 
     public function mount(): void

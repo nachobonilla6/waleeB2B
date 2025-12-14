@@ -6,6 +6,7 @@ use Filament\Widgets\Widget;
 use Filament\Support\Facades\Filament;
 use Filament\Support\Facades\Route;
 use App\Filament\Resources\ClienteEnProcesoResource;
+use App\Filament\Pages\HistorialPage;
 
 class ToolsWidget extends Widget
 {
@@ -54,11 +55,19 @@ class ToolsWidget extends Widget
                     'external' => true,
                 ],
                 [
-                    'label' => 'Site Scraper',
-                    'icon' => 'heroicon-m-globe-alt',
-                    'url' => '/admin/site-scraper',
+                    'label' => 'Clientes Google',
+                    'icon' => 'heroicon-m-user-group',
+                    'url' => ClienteEnProcesoResource::getUrl('index'),
                     'color' => 'green',
-                    'description' => 'Extraer datos de sitios web',
+                    'description' => 'Clientes en proceso',
+                    'external' => false,
+                ],
+                [
+                    'label' => 'Registro de Actividades',
+                    'icon' => 'heroicon-m-clock',
+                    'url' => HistorialPage::getUrl(),
+                    'color' => 'blue',
+                    'description' => 'Historial de actividades',
                     'external' => false,
                 ],
                 // Web Solutions moved to the top

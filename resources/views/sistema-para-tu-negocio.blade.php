@@ -38,7 +38,16 @@
 <body class="bg-gray-50 dark:bg-gray-900">
     <div class="min-h-screen">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
+        <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16 relative">
+            <!-- Botón Back -->
+            <div class="container mx-auto px-4 mb-4">
+                <a href="/" class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-300 text-white font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Volver al inicio
+                </a>
+            </div>
             <div class="container mx-auto px-4 text-center">
                 <h1 class="text-5xl font-bold mb-4">🚀 Sistema para tu Negocio</h1>
                 <p class="text-xl opacity-90 max-w-3xl mx-auto">

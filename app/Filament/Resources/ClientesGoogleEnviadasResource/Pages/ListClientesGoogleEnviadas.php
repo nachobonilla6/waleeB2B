@@ -260,27 +260,46 @@ class ListClientesGoogleEnviadas extends ListRecords
                                         ->timeout(120)
                                         ->post('https://api.openai.com/v1/chat/completions', [
                                             'model' => 'gpt-4o-mini',
+                                            'response_format' => ['type' => 'json_object'],
                                             'messages' => [
                                                 [
                                                     'role' => 'system',
-                                                    'content' => 'Eres un experto en marketing digital y redacción de emails comerciales. Genera emails profesionales, persuasivos y enfocados en ayudar al cliente.',
+                                                    'content' => 'Eres un experto en marketing digital y redacción de emails comerciales. Genera emails profesionales, persuasivos y directos. Responde SOLO con JSON que contenga "subject" (asunto del email, máximo 10 palabras) y "body" (cuerpo del email completo). NO incluyas mensajes de cierre como "Si necesitas alguna modificación", "No dudes en contactarme", etc. Solo el contenido del email.',
                                                 ],
                                                 [
                                                     'role' => 'user',
-                                                    'content' => $prompt,
+                                                    'content' => $prompt . ' Responde en JSON con "subject" y "body".',
                                                 ],
                                             ],
                                         ]);
                                     
                                     if ($response->successful()) {
                                         $responseData = $response->json();
-                                        $emailContent = $responseData['choices'][0]['message']['content'] ?? '';
+                                        $content = $responseData['choices'][0]['message']['content'] ?? '';
                                         
-                                        if (empty($emailContent)) {
+                                        if (empty($content)) {
                                             throw new \RuntimeException('La respuesta de AI está vacía.');
                                         }
                                         
-                                        $set('body', trim($emailContent));
+                                        $data = is_string($content) ? json_decode($content, true) : $content;
+                                        
+                                        if (!is_array($data)) {
+                                            throw new \RuntimeException('La respuesta de AI no es JSON válido.');
+                                        }
+                                        
+                                        $emailSubject = trim($data['subject'] ?? 'Propuesta Personalizada');
+                                        $emailBody = trim($data['body'] ?? '');
+                                        
+                                        if (empty($emailBody)) {
+                                            throw new \RuntimeException('El cuerpo del email está vacío.');
+                                        }
+                                        
+                                        // Limpiar mensajes de cierre comunes
+                                        $emailBody = preg_replace('/\s*(Si necesitas alguna modificación.*?\.|No dudes en.*?\.|Estoy a tu disposición.*?\.|Quedo a la espera.*?\.).*/is', '', $emailBody);
+                                        $emailBody = trim($emailBody);
+                                        
+                                        $set('subject', $emailSubject);
+                                        $set('body', $emailBody);
                                         
                                         Notification::make()
                                             ->title('✅ Email generado con AI')

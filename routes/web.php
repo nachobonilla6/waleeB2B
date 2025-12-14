@@ -212,6 +212,11 @@ Route::get('/camas', function () {
     return view('camas');
 })->name('camas');
 
+// Ruta para sistema para tu negocio
+Route::get('/sistema-para-tu-negocio', function () {
+    return view('sistema-para-tu-negocio');
+})->name('sistema-para-tu-negocio');
+
 // Ruta para clientes con propuesta enviada
 Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaEnviadaController::class, 'index'])
     ->middleware('auth')

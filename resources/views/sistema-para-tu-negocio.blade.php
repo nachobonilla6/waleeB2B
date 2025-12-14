@@ -7,9 +7,24 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2115/2115955.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        .image-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .image-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -31,6 +46,68 @@
                 <img src="https://i.postimg.cc/ZRp9RQJk/screenshot-2025-12-14-12-01-56.png" 
                      alt="Sistema de Gestión" 
                      class="w-full rounded-lg shadow-2xl border-4 border-gray-200 dark:border-gray-700">
+            </div>
+
+            <!-- Galería de Imágenes -->
+            <div class="max-w-6xl mx-auto mb-12">
+                <h2 class="text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">Galería del Sistema</h2>
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+                    Descubre las características y funcionalidades de nuestro sistema diseñado especialmente para tu negocio
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Imagen 1 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover">
+                        <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                            <img src="https://i.postimg.cc/vZ45y3gX/1.png" 
+                                 alt="Sistema para tu Negocio - Captura 1" 
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Vista Principal del Sistema</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Interfaz intuitiva y moderna para gestionar tu negocio</p>
+                        </div>
+                    </div>
+
+                    <!-- Imagen 2 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover" style="animation-delay: 0.1s;">
+                        <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                            <img src="https://i.postimg.cc/6p8CKY2b/screenshot-2025-12-14-12-09-31.png" 
+                                 alt="Sistema para tu Negocio - Captura 2" 
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Panel de Control</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Gestiona todas las operaciones desde un solo lugar</p>
+                        </div>
+                    </div>
+
+                    <!-- Imagen 3 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover" style="animation-delay: 0.2s;">
+                        <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                            <img src="https://i.postimg.cc/t4sFb2ZB/screenshot-2025-12-14-12-09-51.png" 
+                                 alt="Sistema para tu Negocio - Captura 3" 
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Funcionalidades Avanzadas</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Herramientas potentes para optimizar tus procesos</p>
+                        </div>
+                    </div>
+
+                    <!-- Imagen 4 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover" style="animation-delay: 0.3s;">
+                        <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                            <img src="https://i.postimg.cc/RVsw2jFP/screenshot-2025-12-14-12-10-10.png" 
+                                 alt="Sistema para tu Negocio - Captura 4" 
+                                 class="w-full h-full object-contain">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Dashboard Interactivo</h3>
+                            <p class="text-gray-600 dark:text-gray-300">Visualiza métricas y estadísticas en tiempo real</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Módulos Principales -->

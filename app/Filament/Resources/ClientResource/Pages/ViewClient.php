@@ -428,13 +428,13 @@ class ViewClient extends ViewRecord implements HasTable
             Actions\Action::make('redactar_email')
                 ->label('Redactar Email')
                 ->icon('heroicon-o-envelope')
-                ->color('primary')
+                ->color('gray')
                 ->url(fn () => EmailComposer::getUrl())
                 ->openUrlInNewTab(),
             Actions\Action::make('agregar_nota')
                 ->label('Agregar Nota')
                 ->icon('heroicon-o-pencil-square')
-                ->color('primary')
+                ->color('gray')
                 ->form([
                     Forms\Components\Textarea::make('content')
                         ->label('Contenido de la nota')
@@ -473,12 +473,6 @@ class ViewClient extends ViewRecord implements HasTable
                         ->success()
                         ->send();
                 }),
-            Actions\Action::make('historial')
-                ->label('Historial')
-                ->icon('heroicon-o-clock')
-                ->color('primary')
-                ->url(fn () => HistorialPage::getUrl())
-                ->openUrlInNewTab(),
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use Filament\Widgets\Widget;
 use Filament\Support\Facades\Filament;
 use Filament\Support\Facades\Route;
+use App\Filament\Resources\ClienteEnProcesoResource;
 
 class ToolsWidget extends Widget
 {

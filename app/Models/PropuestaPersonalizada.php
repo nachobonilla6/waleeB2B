@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PropuestaPersonalizada extends Model
 {
+    protected $table = 'propuestas_personalizadas';
+
     protected $fillable = [
         'cliente_id',
         'cliente_nombre',

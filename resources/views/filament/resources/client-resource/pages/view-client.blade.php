@@ -68,10 +68,13 @@
                     
                     <!-- Sección Alerts -->
                     <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Alerts</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Activo</span>
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-4">Alerts</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Account Status</h4>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Activo</span>
+                                </div>
                             </div>
                         </div>
                     </div>

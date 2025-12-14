@@ -47,15 +47,7 @@
             </div>
         </div>
 
-        <!-- Imagen Principal -->
-        <div class="container mx-auto px-4 py-12">
-            <div class="max-w-6xl mx-auto mb-12">
-                <img src="https://i.postimg.cc/ZRp9RQJk/screenshot-2025-12-14-12-01-56.png" 
-                     alt="Sistema de Gestión" 
-                     class="w-full rounded-lg shadow-2xl border-4 border-gray-200 dark:border-gray-700">
-            </div>
-
-            <!-- Galería de Imágenes -->
+        <!-- Galería de Imágenes -->
             <div class="max-w-6xl mx-auto mb-12">
                 <h2 class="text-4xl font-bold text-center mb-4 text-gray-900 dark:text-white">Galería del Sistema</h2>
                 <p class="text-center text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
@@ -67,13 +59,13 @@
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
                         <div class="bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden" style="min-height: 500px;">
                             <img id="mainImage" 
-                                 src="https://i.postimg.cc/vZ45y3gX/1.png" 
+                                 src="https://i.postimg.cc/ZRp9RQJk/screenshot-2025-12-14-12-01-56.png" 
                                  alt="Sistema para tu Negocio" 
                                  class="w-full h-full object-contain transition-opacity duration-300">
                         </div>
                         <div class="p-6">
-                            <h3 id="mainTitle" class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Vista Principal del Sistema</h3>
-                            <p id="mainDescription" class="text-gray-600 dark:text-gray-300">Interfaz intuitiva y moderna para gestionar tu negocio</p>
+                            <h3 id="mainTitle" class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Sistema de Gestión</h3>
+                            <p id="mainDescription" class="text-gray-600 dark:text-gray-300">Plataforma integral para la gestión de tu negocio</p>
                         </div>
                     </div>
                 </div>
@@ -82,14 +74,14 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <!-- Thumbnail 1 -->
                     <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-blue-500 transition-all duration-300 hover:shadow-lg active" 
-                         onclick="changeImage('https://i.postimg.cc/vZ45y3gX/1.png', 'Vista Principal del Sistema', 'Interfaz intuitiva y moderna para gestionar tu negocio', this)">
+                         onclick="changeImage('https://i.postimg.cc/ZRp9RQJk/screenshot-2025-12-14-12-01-56.png', 'Sistema de Gestión', 'Plataforma integral para la gestión de tu negocio', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
-                            <img src="https://i.postimg.cc/vZ45y3gX/1.png" 
-                                 alt="Vista Principal" 
+                            <img src="https://i.postimg.cc/ZRp9RQJk/screenshot-2025-12-14-12-01-56.png" 
+                                 alt="Sistema de Gestión" 
                                  class="w-full h-full object-contain">
                         </div>
                         <div class="p-3">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Vista Principal</p>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Sistema de Gestión</p>
                         </div>
                     </div>
 

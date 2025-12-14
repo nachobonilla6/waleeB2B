@@ -5,7 +5,6 @@
 >
     {{ $this->chatAction }}
     {{ $this->extraerClientesAction }}
-    {{ $this->ticketsPreviewAction }}
 
     <x-filament-actions::modals />
 </div>

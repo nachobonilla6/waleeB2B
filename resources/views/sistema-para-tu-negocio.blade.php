@@ -26,6 +26,13 @@
             transform: scale(1.05);
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
+        .thumbnail-item.active {
+            border-color: rgb(59 130 246) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .thumbnail-item:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
@@ -55,56 +62,73 @@
                     Descubre las características y funcionalidades de nuestro sistema diseñado especialmente para tu negocio
                 </p>
                 
-                <div class="grid md:grid-cols-2 gap-8">
-                    <!-- Imagen 1 -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover">
+                <!-- Imagen Principal Grande -->
+                <div class="mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+                        <div class="bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden" style="min-height: 500px;">
+                            <img id="mainImage" 
+                                 src="https://i.postimg.cc/vZ45y3gX/1.png" 
+                                 alt="Sistema para tu Negocio" 
+                                 class="w-full h-full object-contain transition-opacity duration-300">
+                        </div>
+                        <div class="p-6">
+                            <h3 id="mainTitle" class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Vista Principal del Sistema</h3>
+                            <p id="mainDescription" class="text-gray-600 dark:text-gray-300">Interfaz intuitiva y moderna para gestionar tu negocio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Thumbnail 1 -->
+                    <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-blue-500 transition-all duration-300 hover:shadow-lg active" 
+                         onclick="changeImage('https://i.postimg.cc/vZ45y3gX/1.png', 'Vista Principal del Sistema', 'Interfaz intuitiva y moderna para gestionar tu negocio', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/vZ45y3gX/1.png" 
-                                 alt="Sistema para tu Negocio - Captura 1" 
+                                 alt="Vista Principal" 
                                  class="w-full h-full object-contain">
                         </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Vista Principal del Sistema</h3>
-                            <p class="text-gray-600 dark:text-gray-300">Interfaz intuitiva y moderna para gestionar tu negocio</p>
+                        <div class="p-3">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Vista Principal</p>
                         </div>
                     </div>
 
-                    <!-- Imagen 2 -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover" style="animation-delay: 0.1s;">
+                    <!-- Thumbnail 2 -->
+                    <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-transparent transition-all duration-300 hover:shadow-lg hover:border-blue-300" 
+                         onclick="changeImage('https://i.postimg.cc/6p8CKY2b/screenshot-2025-12-14-12-09-31.png', 'Panel de Control', 'Gestiona todas las operaciones desde un solo lugar', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/6p8CKY2b/screenshot-2025-12-14-12-09-31.png" 
-                                 alt="Sistema para tu Negocio - Captura 2" 
+                                 alt="Panel de Control" 
                                  class="w-full h-full object-contain">
                         </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Panel de Control</h3>
-                            <p class="text-gray-600 dark:text-gray-300">Gestiona todas las operaciones desde un solo lugar</p>
+                        <div class="p-3">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Panel de Control</p>
                         </div>
                     </div>
 
-                    <!-- Imagen 3 -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover" style="animation-delay: 0.2s;">
+                    <!-- Thumbnail 3 -->
+                    <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-transparent transition-all duration-300 hover:shadow-lg hover:border-blue-300" 
+                         onclick="changeImage('https://i.postimg.cc/t4sFb2ZB/screenshot-2025-12-14-12-09-51.png', 'Funcionalidades Avanzadas', 'Herramientas potentes para optimizar tus procesos', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/t4sFb2ZB/screenshot-2025-12-14-12-09-51.png" 
-                                 alt="Sistema para tu Negocio - Captura 3" 
+                                 alt="Funcionalidades Avanzadas" 
                                  class="w-full h-full object-contain">
                         </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Funcionalidades Avanzadas</h3>
-                            <p class="text-gray-600 dark:text-gray-300">Herramientas potentes para optimizar tus procesos</p>
+                        <div class="p-3">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Funcionalidades</p>
                         </div>
                     </div>
 
-                    <!-- Imagen 4 -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden fade-in image-hover" style="animation-delay: 0.3s;">
+                    <!-- Thumbnail 4 -->
+                    <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-transparent transition-all duration-300 hover:shadow-lg hover:border-blue-300" 
+                         onclick="changeImage('https://i.postimg.cc/RVsw2jFP/screenshot-2025-12-14-12-10-10.png', 'Dashboard Interactivo', 'Visualiza métricas y estadísticas en tiempo real', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/RVsw2jFP/screenshot-2025-12-14-12-10-10.png" 
-                                 alt="Sistema para tu Negocio - Captura 4" 
+                                 alt="Dashboard Interactivo" 
                                  class="w-full h-full object-contain">
                         </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Dashboard Interactivo</h3>
-                            <p class="text-gray-600 dark:text-gray-300">Visualiza métricas y estadísticas en tiempo real</p>
+                        <div class="p-3">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Dashboard</p>
                         </div>
                     </div>
                 </div>
@@ -436,5 +460,36 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function changeImage(imageSrc, title, description, thumbnailElement) {
+            // Cambiar la imagen principal con efecto fade
+            const mainImage = document.getElementById('mainImage');
+            const mainTitle = document.getElementById('mainTitle');
+            const mainDescription = document.getElementById('mainDescription');
+            
+            // Fade out
+            mainImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                mainImage.src = imageSrc;
+                mainImage.alt = title;
+                mainTitle.textContent = title;
+                mainDescription.textContent = description;
+                
+                // Fade in
+                mainImage.style.opacity = '1';
+            }, 150);
+            
+            // Actualizar estado activo de thumbnails
+            document.querySelectorAll('.thumbnail-item').forEach(item => {
+                item.classList.remove('active', 'border-blue-500');
+                item.classList.add('border-transparent');
+            });
+            
+            thumbnailElement.classList.add('active', 'border-blue-500');
+            thumbnailElement.classList.remove('border-transparent');
+        }
+    </script>
 </body>
 </html>

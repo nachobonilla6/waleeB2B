@@ -45,6 +45,11 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Sistema para tu negocio - Página pública
+Route::get('/sistema-para-tu-negocio', function () {
+    return view('sistema-para-tu-negocio');
+})->name('sistema.negocio');
+
 // Formulario para crear un nuevo ticket
 Route::get('/tickets/crear', function () {
     return view('test-form');

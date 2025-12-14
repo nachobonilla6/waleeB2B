@@ -31,7 +31,7 @@ class DeployButton extends Component implements HasActions, HasForms, HasTable
             ->size('sm')
             ->modalHeading('📋 Lista de Tickets')
             ->modalWidth('6xl')
-            ->modalContent(fn () => view('livewire.tickets-preview', ['component' => $this]))
+            ->modalContent(fn () => view('livewire.tickets-preview'))
             ->modalSubmitAction(false)
             ->modalCancelActionLabel('Cerrar');
     }

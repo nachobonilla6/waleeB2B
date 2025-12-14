@@ -2,7 +2,7 @@
     <div class="flex gap-6">
         <!-- Barra lateral izquierda -->
         <div class="w-64 flex-shrink-0">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 min-h-[600px]">
                 <!-- Foto cuadrada -->
                 <div class="w-32 h-32 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
                     @if($this->record->foto ?? false)
@@ -14,25 +14,11 @@
                 
                 <!-- Nombre y detalles -->
                 <div class="text-left">
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
                         {{ $this->record->name ?? 'N/A' }}
                     </h2>
                     
-                    <!-- Estado accepted como alerta -->
-                    @if(($this->record->estado ?? '') === 'accepted')
-                        <div class="mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-800 dark:bg-warning-900 dark:text-warning-200">
-                                Accepted
-                            </span>
-                        </div>
-                    @endif
-                    
-                    <!-- Activo -->
-                    <div class="mb-3">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Activo</span>
-                    </div>
-                    
-                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div class="space-y-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
                         @if($this->record->email)
                             <div class="flex items-center gap-2">
                                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,6 +64,16 @@
                                 <span>{{ $this->record->address }}</span>
                             </div>
                         @endif
+                    </div>
+                    
+                    <!-- Sección Alerts -->
+                    <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Alerts</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Activo</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -484,7 +484,7 @@ class ListClientesGoogleCopias extends Page implements HasTable
             Action::make('propuesta_personalizada')
                 ->label('Propuesta Personalizada')
                 ->icon('heroicon-o-envelope')
-                ->color('success')
+                ->color('gray')
                 ->modalHeading('📧 Enviar Propuesta Personalizada')
                 ->modalWidth('2xl')
                 ->form([

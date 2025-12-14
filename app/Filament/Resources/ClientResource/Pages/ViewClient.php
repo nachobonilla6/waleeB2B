@@ -24,6 +24,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Http;
 
 class ViewClient extends ViewRecord implements HasTable
 {
@@ -380,7 +381,8 @@ class ViewClient extends ViewRecord implements HasTable
                             ->label('Total con IVA (13%)')
                             ->numeric()
                             ->prefix('$')
-                            ->disabled(),
+                            ->readonly()
+                            ->dehydrated(),
                     ]),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\Select::make('metodo_pago')
@@ -409,21 +411,117 @@ class ViewClient extends ViewRecord implements HasTable
                         ->label('💾 Guardar Borrador')
                         ->color('warning')
                         ->action(function (array $data) {
-                            Notification::make()
-                                ->title('📝 Borrador guardado')
-                                ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' guardada como borrador.')
-                                ->warning()
-                                ->send();
+                            try {
+                                // Crear la factura como borrador
+                                $facturaData = [
+                                    'numero_factura' => $data['numero_factura'] ?? 'FAC-' . date('Ymd') . '-' . rand(100, 999),
+                                    'fecha_emision' => $data['fecha_emision'] ?? now(),
+                                    'concepto' => $data['concepto'] ?? '',
+                                    'subtotal' => $data['subtotal'] ?? 0,
+                                    'total' => $data['total'] ?? ($data['subtotal'] ?? 0) * 1.13,
+                                    'metodo_pago' => $data['metodo_pago'] ?? '',
+                                    'estado' => 'borrador',
+                                    'correo' => $data['correo'] ?? $this->record->email ?? '',
+                                    'cliente_id' => null,
+                                ];
+                                
+                                $factura = Factura::create($facturaData);
+                                
+                                Notification::make()
+                                    ->title('📝 Borrador guardado')
+                                    ->body('Factura ' . $factura->numero_factura . ' guardada como borrador.')
+                                    ->success()
+                                    ->send();
+                            } catch (\Exception $e) {
+                                \Log::error('Error guardando factura como borrador', [
+                                    'error' => $e->getMessage(),
+                                    'data' => $data,
+                                ]);
+                                
+                                Notification::make()
+                                    ->title('❌ Error')
+                                    ->body('Error al guardar el borrador: ' . $e->getMessage())
+                                    ->danger()
+                                    ->send();
+                            }
                         }),
                     Actions\Action::make('enviar')
                         ->label('📧 Enviar Correo Electrónico')
                         ->color('success')
                         ->action(function (array $data) {
-                            Notification::make()
-                                ->title('✅ Factura enviada')
-                                ->body('Factura ' . ($data['numero_factura'] ?? 'N/A') . ' enviada a ' . ($data['correo'] ?? 'N/A'))
-                                ->success()
-                                ->send();
+                            try {
+                                // Crear la factura
+                                $facturaData = [
+                                    'numero_factura' => $data['numero_factura'] ?? 'FAC-' . date('Ymd') . '-' . rand(100, 999),
+                                    'fecha_emision' => $data['fecha_emision'] ?? now(),
+                                    'concepto' => $data['concepto'] ?? '',
+                                    'subtotal' => $data['subtotal'] ?? 0,
+                                    'total' => $data['total'] ?? ($data['subtotal'] ?? 0) * 1.13,
+                                    'metodo_pago' => $data['metodo_pago'] ?? '',
+                                    'estado' => 'enviada',
+                                    'correo' => $data['correo'] ?? $this->record->email ?? '',
+                                    'cliente_id' => null, // Client no tiene relación directa con Factura
+                                ];
+                                
+                                $factura = Factura::create($facturaData);
+                                
+                                // Preparar datos para el webhook
+                                $webhookData = [
+                                    'numero_factura' => (string) ($factura->numero_factura ?? ''),
+                                    'fecha_emision' => isset($factura->fecha_emision) ? (is_string($factura->fecha_emision) ? $factura->fecha_emision : $factura->fecha_emision->format('Y-m-d')) : '',
+                                    'concepto' => (string) ($factura->concepto ?? ''),
+                                    'subtotal' => (string) ($factura->subtotal ?? '0'),
+                                    'total' => (string) ($factura->total ?? '0'),
+                                    'metodo_pago' => (string) ($factura->metodo_pago ?? ''),
+                                    'estado' => (string) ($factura->estado ?? 'enviada'),
+                                    'cliente_id' => null,
+                                    'cliente_nombre' => (string) ($this->record->name ?? ''),
+                                    'cliente_correo' => (string) ($factura->correo ?? ''),
+                                    'factura_id' => $factura->id ?? null,
+                                ];
+                                
+                                // Llamar al webhook
+                                $response = Http::timeout(30)->post(
+                                    'https://n8n.srv1137974.hstgr.cloud/webhook-test/62cb26b6-1b4a-492b-8780-709ff47c81bf',
+                                    $webhookData
+                                );
+                                
+                                if ($response->successful()) {
+                                    // Marcar como enviada
+                                    $factura->enviada_at = now();
+                                    $factura->save();
+                                    
+                                    Notification::make()
+                                        ->title('✅ Factura creada y enviada')
+                                        ->body('Factura ' . $factura->numero_factura . ' guardada y enviada al webhook correctamente')
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    \Log::warning('Error en respuesta del webhook al crear factura', [
+                                        'status' => $response->status(),
+                                        'response' => $response->body(),
+                                        'factura_id' => $factura->id ?? null,
+                                    ]);
+                                    
+                                    Notification::make()
+                                        ->title('⚠️ Factura creada pero error en webhook')
+                                        ->body('La factura se creó pero hubo un error al enviar al webhook: ' . $response->status())
+                                        ->warning()
+                                        ->send();
+                                }
+                            } catch (\Exception $e) {
+                                \Log::error('Error creando/enviando factura al webhook', [
+                                    'error' => $e->getMessage(),
+                                    'trace' => $e->getTraceAsString(),
+                                    'data' => $data,
+                                ]);
+                                
+                                Notification::make()
+                                    ->title('❌ Error')
+                                    ->body('Error al procesar la factura: ' . $e->getMessage())
+                                    ->danger()
+                                    ->send();
+                            }
                         }),
                 ]),
             Actions\Action::make('redactar_email')

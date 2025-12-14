@@ -87,40 +87,40 @@
 
                     <!-- Thumbnail 2 -->
                     <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-transparent transition-all duration-300 hover:shadow-lg hover:border-blue-300" 
-                         onclick="changeImage('https://i.postimg.cc/6p8CKY2b/screenshot-2025-12-14-12-09-31.png', 'Panel de Control', 'Gestiona todas las operaciones desde un solo lugar', this)">
+                         onclick="changeImage('https://i.postimg.cc/6p8CKY2b/screenshot-2025-12-14-12-09-31.png', 'Envío de correos electrónicos', 'Sistema automatizado para el envío de correos electrónicos', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/6p8CKY2b/screenshot-2025-12-14-12-09-31.png" 
-                                 alt="Panel de Control" 
+                                 alt="Envío de correos electrónicos" 
                                  class="w-full h-full object-contain">
                         </div>
                         <div class="p-3">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Panel de Control</p>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Envío de correos electrónicos</p>
                         </div>
                     </div>
 
                     <!-- Thumbnail 3 -->
                     <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-transparent transition-all duration-300 hover:shadow-lg hover:border-blue-300" 
-                         onclick="changeImage('https://i.postimg.cc/t4sFb2ZB/screenshot-2025-12-14-12-09-51.png', 'Funcionalidades Avanzadas', 'Herramientas potentes para optimizar tus procesos', this)">
+                         onclick="changeImage('https://i.postimg.cc/t4sFb2ZB/screenshot-2025-12-14-12-09-51.png', 'Registro de actividades', 'Sistema completo para registrar y gestionar todas las actividades', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/t4sFb2ZB/screenshot-2025-12-14-12-09-51.png" 
-                                 alt="Funcionalidades Avanzadas" 
+                                 alt="Registro de actividades" 
                                  class="w-full h-full object-contain">
                         </div>
                         <div class="p-3">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Funcionalidades</p>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Registro de actividades</p>
                         </div>
                     </div>
 
                     <!-- Thumbnail 4 -->
                     <div class="cursor-pointer thumbnail-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border-2 border-transparent transition-all duration-300 hover:shadow-lg hover:border-blue-300" 
-                         onclick="changeImage('https://i.postimg.cc/RVsw2jFP/screenshot-2025-12-14-12-10-10.png', 'Dashboard Interactivo', 'Visualiza métricas y estadísticas en tiempo real', this)">
+                         onclick="changeImage('https://i.postimg.cc/RVsw2jFP/screenshot-2025-12-14-12-10-10.png', 'Creación y envío de facturas y cotizaciones', 'Sistema completo para crear, gestionar y enviar facturas y cotizaciones', this)">
                         <div class="aspect-video bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                             <img src="https://i.postimg.cc/RVsw2jFP/screenshot-2025-12-14-12-10-10.png" 
-                                 alt="Dashboard Interactivo" 
+                                 alt="Creación y envío de facturas y cotizaciones" 
                                  class="w-full h-full object-contain">
                         </div>
                         <div class="p-3">
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Dashboard</p>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white text-center">Facturas y cotizaciones</p>
                         </div>
                     </div>
                 </div>

@@ -85,6 +85,7 @@
                         ['icon' => 'heroicon-o-share', 'label' => 'Redes'],
                         ['icon' => 'heroicon-o-document-text', 'label' => 'Notas'],
                         ['icon' => 'heroicon-o-document-currency-dollar', 'label' => 'Contabilidad'],
+                        ['icon' => 'heroicon-o-clock', 'label' => 'Actividades'],
                     ];
                 @endphp
                 
@@ -487,6 +488,18 @@
                 </div>
             </div>
 
+            {{-- Paso 8: Registro de Actividades --}}
+            <div x-show="currentStep === 8" x-cloak>
+                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-clock class="h-5 w-5 text-gray-400"/> Registro de Actividades
+                    </h3>
+                </div>
+                <div class="fi-section-content p-6">
+                    {{ $this->table }}
+                </div>
+            </div>
+
             {{-- Footer Navigation --}}
             <div class="fi-wi-footer flex items-center justify-between border-t border-gray-200 px-6 py-4 dark:border-white/10">
                 <div>
@@ -501,7 +514,7 @@
                 </div>
                 <div>
                     <x-filament::button
-                        x-show="currentStep < 7"
+                        x-show="currentStep < 8"
                         @click="currentStep++"
                         color="gray"
                         icon="heroicon-o-arrow-right"

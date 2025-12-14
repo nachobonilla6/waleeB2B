@@ -5,17 +5,25 @@ namespace App\Filament\Resources\ClienteResource\Pages;
 use App\Filament\Resources\ClienteResource;
 use App\Mail\CotizacionMail;
 use App\Models\Note;
+use App\Models\Factura;
+use App\Models\Cotizacion;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
-class ViewCliente extends Page
+class ViewCliente extends Page implements HasTable
 {
     use InteractsWithRecord;
+    use InteractsWithTable;
 
     protected static string $resource = ClienteResource::class;
 
@@ -37,6 +45,249 @@ class ViewCliente extends Page
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function table(Table $table): Table
+    {
+        $clienteId = $this->record->id;
+        
+        // Query para notas del cliente
+        $notesQuery = Note::query()
+            ->where('cliente_id', $clienteId)
+            ->select([
+                'notes.id',
+                DB::raw("NULL as client_id"),
+                'notes.cliente_id',
+                'notes.content',
+                'notes.type',
+                'notes.user_id',
+                'notes.created_at',
+                'notes.updated_at',
+                DB::raw("'note' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
+            ]);
+        
+        // Query para facturas creadas
+        $facturasCreadasQuery = Factura::query()
+            ->where('cliente_id', $clienteId)
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("'factura_creada' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                'facturas.enlace',
+            ]);
+
+        // Query para facturas editadas
+        $facturasEditadasQuery = Factura::query()
+            ->where('cliente_id', $clienteId)
+            ->whereRaw('facturas.updated_at != facturas.created_at')
+            ->where(function($q) {
+                $q->whereNull('facturas.enviada_at')
+                  ->orWhereRaw('facturas.updated_at != facturas.enviada_at');
+            })
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("'factura_editada' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.updated_at as created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                'facturas.enlace',
+            ]);
+
+        // Query para facturas enviadas
+        $facturasEnviadasQuery = Factura::query()
+            ->where('cliente_id', $clienteId)
+            ->whereNotNull('enviada_at')
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("'factura_enviada' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.enviada_at as created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                'facturas.enlace',
+            ]);
+
+        // Query para cotizaciones creadas
+        $cotizacionesCreadasQuery = Cotizacion::query()
+            ->where('cliente_id', $clienteId)
+            ->select([
+                'cotizacions.id',
+                DB::raw("NULL as client_id"),
+                'cotizacions.cliente_id',
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("'cotizacion_creada' as type"),
+                DB::raw("NULL as user_id"),
+                'cotizacions.created_at',
+                'cotizacions.updated_at',
+                DB::raw("'cotizacion' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
+            ]);
+
+        // Query para cotizaciones editadas
+        $cotizacionesEditadasQuery = Cotizacion::query()
+            ->where('cliente_id', $clienteId)
+            ->whereRaw('cotizacions.updated_at != cotizacions.created_at')
+            ->where(function($q) {
+                $q->whereNull('cotizacions.enviada_at')
+                  ->orWhereRaw('cotizacions.updated_at != cotizacions.enviada_at');
+            })
+            ->select([
+                'cotizacions.id',
+                DB::raw("NULL as client_id"),
+                'cotizacions.cliente_id',
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("'cotizacion_editada' as type"),
+                DB::raw("NULL as user_id"),
+                'cotizacions.updated_at as created_at',
+                'cotizacions.updated_at',
+                DB::raw("'cotizacion' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
+            ]);
+
+        // Query para cotizaciones enviadas
+        $cotizacionesEnviadasQuery = Cotizacion::query()
+            ->where('cliente_id', $clienteId)
+            ->where(function($q) {
+                $q->whereNotNull('enviada_at')
+                  ->orWhere('estado', 'enviada');
+            })
+            ->select([
+                'cotizacions.id',
+                DB::raw("NULL as client_id"),
+                'cotizacions.cliente_id',
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("'cotizacion_enviada' as type"),
+                DB::raw("NULL as user_id"),
+                DB::raw("COALESCE(cotizacions.enviada_at, cotizacions.updated_at) as created_at"),
+                'cotizacions.updated_at',
+                DB::raw("'cotizacion' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                DB::raw("NULL as enlace"),
+            ]);
+
+        // Unir todas las queries
+        $unifiedQuery = $notesQuery
+            ->union($facturasCreadasQuery)
+            ->union($facturasEditadasQuery)
+            ->union($facturasEnviadasQuery)
+            ->union($cotizacionesCreadasQuery)
+            ->union($cotizacionesEditadasQuery)
+            ->union($cotizacionesEnviadasQuery)
+            ->orderBy('created_at', 'desc');
+
+        return $table
+            ->query($unifiedQuery)
+            ->columns([
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('user_id')
+                    ->label('Creado por')
+                    ->placeholder('Sistema')
+                    ->formatStateUsing(function ($state) {
+                        if ($state) {
+                            $user = \App\Models\User::find($state);
+                            return $user?->name ?? 'Sistema';
+                        }
+                        return 'Sistema';
+                    }),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipo')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'note' => 'warning',
+                        'call' => 'primary',
+                        'meeting' => 'info',
+                        'email' => 'success',
+                        'propuesta_enviada' => 'warning',
+                        'factura_creada' => 'warning',
+                        'factura_editada' => 'warning',
+                        'factura_enviada' => 'success',
+                        'cotizacion_creada' => 'warning',
+                        'cotizacion_editada' => 'warning',
+                        'cotizacion_enviada' => 'success',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'note' => 'Nota',
+                        'call' => 'Llamada',
+                        'meeting' => 'Reunión',
+                        'email' => 'Email',
+                        'propuesta_enviada' => '📄 Propuesta Enviada',
+                        'factura_creada' => '💰 Factura Creada',
+                        'factura_editada' => '✏️ Factura Editada',
+                        'factura_enviada' => '📧 Factura Enviada',
+                        'cotizacion_creada' => '📋 Cotización Creada',
+                        'cotizacion_editada' => '✏️ Cotización Editada',
+                        'cotizacion_enviada' => '📧 Cotización Enviada',
+                        default => $state,
+                    })
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Detalles')
+                    ->wrap()
+                    ->searchable()
+                    ->html()
+                    ->formatStateUsing(function ($state, $record) {
+                        $getValue = function($key) use ($record) {
+                            if (is_array($record)) {
+                                return $record[$key] ?? null;
+                            }
+                            return $record->$key ?? null;
+                        };
+                        
+                        $recordId = $getValue('id');
+                        $recordType = $getValue('record_type');
+                        $enlace = $getValue('enlace');
+                        
+                        // Nota - enlace al view de la nota
+                        if ($recordType === 'note' && $recordId) {
+                            $url = \App\Filament\Resources\NoteResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
+                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Factura - enlace si existe
+                        if ($recordType === 'factura' && $enlace) {
+                            $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
+                            return '<a href="' . $enlace . '" target="_blank" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        return '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
+                    }),
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No hay actividades registradas')
+            ->emptyStateDescription('Las actividades de este cliente aparecerán aquí.')
+            ->emptyStateIcon('heroicon-o-document-text');
     }
 
     protected function getHeaderActions(): array

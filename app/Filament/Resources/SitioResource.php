@@ -26,7 +26,7 @@ class SitioResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
     protected static ?string $modelLabel = 'Sitio';
     protected static ?string $navigationGroup = 'Contenido';
-    protected static bool $shouldRegisterNavigation = true;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {

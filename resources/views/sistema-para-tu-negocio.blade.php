@@ -42,7 +42,7 @@
             <div class="container mx-auto px-4 text-center">
                 <h1 class="text-5xl font-bold mb-4">🚀 Sistema para tu Negocio</h1>
                 <p class="text-xl opacity-90 max-w-3xl mx-auto">
-                    Plataforma integral para la gestión de clientes, proyectos web, contabilidad y automatización de procesos.
+                    Plataforma integral para la gestión de clientes, proyectos web, contabilidad y automatización de procesos. También podemos crear soluciones personalizadas según tus necesidades específicas.
                 </p>
             </div>
         </div>
@@ -428,7 +428,7 @@
             <div class="bg-gradient-to-r from-blue-600 to-purple-800 rounded-lg p-8 text-white text-center mb-12">
                 <h2 class="text-3xl font-bold mb-4">¿Listo para transformar tu negocio?</h2>
                 <p class="text-lg mb-6 opacity-90">
-                    Esta plataforma está diseñada para agencias web y empresas que buscan automatizar sus procesos y aumentar su productividad.
+                    Esta plataforma está diseñada para agencias web y empresas que buscan automatizar sus procesos y aumentar su productividad. También ofrecemos soluciones completamente personalizadas adaptadas a las necesidades específicas de tu negocio.
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
                     <div class="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3">

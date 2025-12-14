@@ -298,32 +298,9 @@ class FacturaResource extends Resource
                     ->modalDescription('¿Estás seguro de que deseas enviar esta factura por correo electrónico?')
                     ->modalSubmitActionLabel('Sí, enviar'),
                 Tables\Actions\ViewAction::make()
-                    ->modalHeading(fn (Factura $record) => 'Ver Factura: ' . $record->numero_factura)
-                    ->modalWidth('4xl')
-                    ->beforeFormFilled(function (Factura $record) {
-                        // Cargar relaciones antes de mostrar el infolist
-                        $record->loadMissing('cliente');
-                    }),
+                    ->url(fn (Factura $record) => static::getUrl('view', ['record' => $record])),
                 Tables\Actions\EditAction::make()
-                    ->modalHeading(fn (Factura $record) => 'Editar Factura: ' . $record->numero_factura)
-                    ->modalWidth('4xl')
-                    ->mutateFormDataUsing(function (array $data, Factura $record): array {
-                        // Asegurar que todos los datos se carguen correctamente
-                        $record->loadMissing('cliente');
-                        return array_merge($data, [
-                            'cliente_id' => $record->cliente_id,
-                            'correo' => $record->correo,
-                            'numero_factura' => $record->numero_factura,
-                            'fecha_emision' => $record->fecha_emision,
-                            'concepto' => $record->concepto,
-                            'subtotal' => $record->subtotal,
-                            'total' => $record->total,
-                            'metodo_pago' => $record->metodo_pago,
-                            'estado' => $record->estado,
-                            'fecha_vencimiento' => $record->fecha_vencimiento,
-                            'notas' => $record->notas,
-                        ]);
-                    }),
+                    ->url(fn (Factura $record) => static::getUrl('edit', ['record' => $record])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

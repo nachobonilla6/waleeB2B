@@ -314,10 +314,10 @@ class HistorialPage extends Page implements HasTable
                         'propuesta_enviada' => 'warning',
                         'factura_creada' => 'warning',
                         'factura_editada' => 'warning',
-                        'factura_enviada' => 'warning',
+                        'factura_enviada' => 'success',
                         'cotizacion_creada' => 'warning',
                         'cotizacion_editada' => 'warning',
-                        'cotizacion_enviada' => 'warning',
+                        'cotizacion_enviada' => 'success',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {

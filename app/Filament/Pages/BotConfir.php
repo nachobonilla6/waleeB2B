@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Http;
 
 class BotConfir extends Page implements HasForms
 {
@@ -62,7 +63,7 @@ class BotConfir extends Page implements HasForms
     {
         $data = $this->form->getState();
         
-        // Aquí puedes agregar la lógica para guardar los datos
+        // Aquí puedes agregar la lógica para guardar los datos en base de datos si es necesario
         // Por ahora solo mostramos una notificación
         
         Notification::make()
@@ -72,12 +73,76 @@ class BotConfir extends Page implements HasForms
             ->send();
     }
 
+    public function sendWebhook(): void
+    {
+        $data = $this->form->getState();
+        
+        // Validar que el webhook URL esté presente
+        if (empty($data['webhook_url'])) {
+            Notification::make()
+                ->title('Error')
+                ->body('Debes ingresar la URL del webhook.')
+                ->danger()
+                ->send();
+            return;
+        }
+        
+        // Preparar los datos para enviar al webhook
+        $webhookData = [
+            'sql' => $data['sql'] ?? '',
+            'prompt' => $data['prompt'] ?? '',
+            'access_token' => $data['access_token'] ?? '',
+            'timestamp' => now()->toIso8601String(),
+        ];
+        
+        try {
+            $response = Http::timeout(30)->post($data['webhook_url'], $webhookData);
+            
+            if ($response->successful()) {
+                Notification::make()
+                    ->title('✅ Webhook enviado')
+                    ->body('Los datos se han enviado al webhook de N8N correctamente.')
+                    ->success()
+                    ->send();
+            } else {
+                Notification::make()
+                    ->title('❌ Error al enviar webhook')
+                    ->body('El webhook respondió con código: ' . $response->status())
+                    ->danger()
+                    ->persistent()
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error enviando webhook desde Bot Confir', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'webhook_url' => $data['webhook_url'] ?? 'N/A',
+            ]);
+            
+            Notification::make()
+                ->title('❌ Error al enviar webhook')
+                ->body('No se pudo enviar el webhook: ' . $e->getMessage())
+                ->danger()
+                ->persistent()
+                ->send();
+        }
+    }
+
     protected function getFormActions(): array
     {
         return [
             \Filament\Actions\Action::make('save')
                 ->label('Guardar Configuración')
                 ->submit('save'),
+            \Filament\Actions\Action::make('sendWebhook')
+                ->label('Enviar Webhook')
+                ->icon('heroicon-o-paper-airplane')
+                ->color('success')
+                ->action('sendWebhook')
+                ->requiresConfirmation()
+                ->modalHeading('Enviar webhook a N8N')
+                ->modalDescription('¿Estás seguro de que deseas enviar estos datos al webhook de N8N?')
+                ->modalSubmitActionLabel('Sí, enviar'),
         ];
     }
 }

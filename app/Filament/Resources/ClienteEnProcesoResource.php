@@ -62,7 +62,7 @@ class ClienteEnProcesoResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return true;
     }
 
     public static function getNavigationBadge(): ?string

@@ -82,7 +82,7 @@ class PropuestaPersonalizadaResource extends Resource
                     ->icon('heroicon-o-eye')
                     ->modalHeading('📧 Propuesta Personalizada')
                     ->modalWidth('4xl')
-                    ->modalContent(fn (PropuestaPersonalizada $record) => view('filament.resources.propuesta-personalizada-resource.view-modal', ['record' => $record])),
+                    ->modalContent(fn (PropuestaPersonalizada $record) => view('filament.resources.propuesta-personalizada-resource.view-modal', ['record' => $record]))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Cerrar'),
             ])

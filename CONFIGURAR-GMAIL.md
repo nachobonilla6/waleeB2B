@@ -43,10 +43,10 @@ MAIL_FROM_NAME="Web Solutions"
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
-MAIL_USERNAME=websolutions@gmail.com
+MAIL_USERNAME=websolutionscrnow@gmail.com
 MAIL_PASSWORD=abcd efgh ijkl mnop
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=websolutions@gmail.com
+MAIL_FROM_ADDRESS=websolutionscrnow@gmail.com
 MAIL_FROM_NAME="Web Solutions"
 ```
 

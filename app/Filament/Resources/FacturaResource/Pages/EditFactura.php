@@ -32,4 +32,9 @@ class EditFactura extends EditRecord
             $this->getSaveFormAction(),
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

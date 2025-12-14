@@ -10,62 +10,97 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
+use App\Models\SupportCase;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 
-class DeployButton extends Component implements HasActions, HasForms
+class DeployButton extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use InteractsWithTable;
 
-    public function deployAction(): Action
+    public function ticketsPreviewAction(): Action
     {
-        return Action::make('deploy')
-            ->label('Deploy now')
-            ->icon('heroicon-o-arrow-up-tray')
-            ->color('success')
+        return Action::make('tickets_preview')
+            ->label('Preview Tickets')
+            ->icon('heroicon-o-ticket')
+            ->color('primary')
             ->size('sm')
-            ->requiresConfirmation()
-            ->modalIcon('heroicon-o-arrow-up-tray')
-            ->modalHeading('Deploy a Producción')
-            ->modalDescription('¿Estás seguro de que quieres hacer deploy? Esto ejecutará git pull en el servidor de producción.')
-            ->modalSubmitActionLabel('Sí, hacer deploy')
-            ->action(function () {
-                try {
-                    $response = Http::timeout(120)->post('https://n8n.srv1137974.hstgr.cloud/webhook/1ec6c667-1b0d-46c9-ad95-8140cc041bba', [
-                        'command' => 'cd /home/u655097049/domains/websolutions.work && git pull origin main',
-                        'timestamp' => now()->toIso8601String(),
-                        'triggered_by' => auth()->user()->name ?? 'Admin',
-                    ]);
+            ->modalHeading('📋 Lista de Tickets')
+            ->modalWidth('6xl')
+            ->modalContent(fn () => view('livewire.tickets-preview', ['component' => $this]))
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel('Cerrar');
+    }
 
-                    if (! $response->successful()) {
-                        Notification::make()
-                            ->title('Error en deploy')
-                            ->body('El servidor respondió con error: ' . $response->status())
-                            ->warning()
-                            ->send();
-
-                        return;
-                    }
-
-                    $data = $response->json();
-                    $shouldRefresh = is_array($data) && ($data['refresh'] ?? false);
-
-                    Notification::make()
-                        ->title('Deploy completado')
-                        ->body('n8n respondió correctamente.')
-                        ->success()
-                        ->send();
-
-                    if ($shouldRefresh) {
-                        $this->dispatch('reload-page');
-                    }
-                } catch (\Exception $e) {
-                    Notification::make()
-                        ->title('Error de conexión')
-                        ->body($e->getMessage())
-                        ->danger()
-                        ->send();
-                }
-            });
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(SupportCase::query())
+            ->defaultSort('created_at', 'desc')
+            ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Asunto')
+                    ->searchable()
+                    ->limit(40)
+                    ->tooltip(fn (SupportCase $record): string => $record->title),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Estado')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'open' => 'warning',
+                        'in_progress' => 'info',
+                        'resolved' => 'success',
+                        'closed' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => 
+                        match ($state) {
+                            'open' => 'Abierto',
+                            'in_progress' => 'En Progreso',
+                            'resolved' => 'Resuelto',
+                            'closed' => 'Cerrado',
+                            default => $state,
+                        }
+                    ),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Correo')
+                    ->searchable()
+                    ->icon('heroicon-o-envelope'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Estado')
+                    ->options([
+                        'open' => 'Abierto',
+                        'in_progress' => 'En Progreso',
+                        'resolved' => 'Resuelto',
+                        'closed' => 'Cerrado',
+                    ]),
+            ])
+            ->actions([
+                Tables\Actions\Action::make('view')
+                    ->label('Ver')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn (SupportCase $record) => \App\Filament\Resources\SupportCaseResource::getUrl('view', ['record' => $record])),
+            ])
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([5, 10, 25, 50]);
     }
 
     public function chatAction(): Action

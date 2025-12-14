@@ -439,7 +439,7 @@ class ListClientesListosParaEnviar extends ListRecords
                                 $sitio = \App\Models\Sitio::where('enlace', $record->proposed_site)->first();
                                 $videoUrl = $sitio?->video_url ?? '';
                             }
-                            $response = \Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
+                            $response = \Http::timeout(30)->post('https://n8n.srv1137974.hstgr.cloud/webhook/f1d17b9f-5def-4ee1-b539-d0cd5ec6be6a', [
                                 'name' => $record->name ?? '',
                                 'email' => $record->email ?? '',
                                 'website' => $record->website ?? '',

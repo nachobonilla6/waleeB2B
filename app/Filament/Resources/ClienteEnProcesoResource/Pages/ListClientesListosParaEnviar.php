@@ -6,6 +6,7 @@ use App\Filament\Resources\ClienteEnProcesoResource;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
 use App\Models\Client;
 use App\Models\WorkflowRun;
+use App\Models\PropuestaPersonalizada;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Get;
@@ -330,14 +331,26 @@ class ListClientesListosParaEnviar extends ListRecords
                     try {
                         $client = Client::find($data['cliente_id']);
                         
+                        // Enviar email
                         Mail::raw($data['body'], function ($message) use ($data, $client) {
                             $message->to($data['email'])
                                     ->subject($data['subject']);
                         });
                         
+                        // Guardar en la base de datos
+                        PropuestaPersonalizada::create([
+                            'cliente_id' => $data['cliente_id'] ?? null,
+                            'cliente_nombre' => $client?->name ?? 'N/A',
+                            'email' => $data['email'],
+                            'subject' => $data['subject'],
+                            'body' => $data['body'],
+                            'ai_prompt' => $data['ai_prompt'] ?? null,
+                            'user_id' => auth()->id(),
+                        ]);
+                        
                         Notification::make()
                             ->title('✅ Email enviado')
-                            ->body('La propuesta personalizada ha sido enviada a ' . $data['email'])
+                            ->body('La propuesta personalizada ha sido enviada a ' . $data['email'] . ' y guardada en el registro.')
                             ->success()
                             ->send();
                     } catch (\Exception $e) {

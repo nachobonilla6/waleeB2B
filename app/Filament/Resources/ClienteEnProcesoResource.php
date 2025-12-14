@@ -57,8 +57,8 @@ class ClienteEnProcesoResource extends Resource
     protected static ?string $navigationLabel = 'Clientes Google';
     protected static ?string $modelLabel = 'Cliente Google';
     protected static ?string $pluralModelLabel = 'Clientes Google';
-    protected static ?string $navigationGroup = 'Extraer Clientes';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Herramientas';
+    protected static ?int $navigationSort = 6;
 
     public static function shouldRegisterNavigation(): bool
     {

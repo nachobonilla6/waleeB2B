@@ -51,14 +51,14 @@
                 color="gray"
                 icon="heroicon-o-document-text"
             >
-                Cotización
+                Crear Cotización
             </x-filament::button>
             <x-filament::button
                 wire:click="mountAction('factura')"
                 color="gray"
                 icon="heroicon-o-banknotes"
             >
-                Factura
+                Crear Factura
             </x-filament::button>
             <x-filament::button
                 :href="\App\Filament\Resources\ClienteResource::getUrl('create')"
@@ -475,14 +475,14 @@
                             color="gray"
                             icon="heroicon-o-document-plus"
                         >
-                            Nueva Cotización
+                            Crear Cotización
                         </x-filament::button>
                         <x-filament::button
                             wire:click="mountAction('factura')"
                             color="gray"
                             icon="heroicon-o-document-currency-dollar"
                         >
-                            Nueva Factura
+                            Crear Factura
                         </x-filament::button>
                     </div>
                 </div>

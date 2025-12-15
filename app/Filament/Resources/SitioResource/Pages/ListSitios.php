@@ -25,7 +25,7 @@ class ListSitios extends ListRecords
                 ->icon('heroicon-o-plus-circle')
                 ->modalWidth('4xl')
                 ->modalHeading('Subir Nuevo Sitio')
-                ->form(SitioResource::form(\Filament\Forms\Form::make()))
+                ->form(fn ($form) => SitioResource::form($form))
                 ->mutateFormDataUsing(function (array $data): array {
                     return $data;
                 })

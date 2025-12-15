@@ -49,6 +49,10 @@ class ClientPropuestaEnviadaResource extends Resource
                 $query->whereRaw('1 = 0');
             }
             
+            // Ordenar por fecha de actualización descendente (más recientes primero)
+            $query->orderByDesc('updated_at')
+                  ->orderByDesc('created_at');
+            
             return $query;
         } catch (\Exception $e) {
             // Si hay algún error, retornar un query vacío

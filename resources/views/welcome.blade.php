@@ -183,9 +183,13 @@
                             <div class="h-64 flex items-center justify-center p-4 relative group bg-gray-900 overflow-hidden">
                                 @if($sitio->imagen)
                                     @php
-                                        $imagenUrl = str_starts_with($sitio->imagen, 'storage/') 
-                                            ? asset($sitio->imagen) 
-                                            : asset('storage/' . $sitio->imagen);
+                                        // Filament guarda las rutas relativas al disco 'public'
+                                        // La ruta puede ser 'sitios/filename.jpg' o 'storage/sitios/filename.jpg'
+                                        $imagenPath = $sitio->imagen;
+                                        if (!str_starts_with($imagenPath, 'storage/') && !str_starts_with($imagenPath, 'http')) {
+                                            $imagenPath = 'storage/' . $imagenPath;
+                                        }
+                                        $imagenUrl = str_starts_with($imagenPath, 'http') ? $imagenPath : asset($imagenPath);
                                     @endphp
                                     <img src="{{ $imagenUrl }}" 
                                          alt="{{ $sitio->nombre }}" 

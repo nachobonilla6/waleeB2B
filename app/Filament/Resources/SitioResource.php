@@ -317,14 +317,4 @@ class SitioResource extends Resource
             'edit' => Pages\EditSitio::route('/{record}/edit'),
         ];
     }
-    
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('en_linea', true)->count();
-    }
-    
-    public static function getNavigationBadgeColor(): string|array|null
-    {
-        return 'success';
-    }
 }

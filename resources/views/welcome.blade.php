@@ -184,11 +184,13 @@
                                 @if($sitio->imagen)
                                     @php
                                         // Filament guarda las rutas relativas al disco 'public'
-                                        // La ruta puede ser 'sitios/filename.jpg' o 'storage/sitios/filename.jpg'
+                                        // La ruta guardada es 'sitios/filename.jpg' (sin 'storage/')
                                         $imagenPath = $sitio->imagen;
+                                        // Si no empieza con 'storage/' ni 'http', agregar 'storage/'
                                         if (!str_starts_with($imagenPath, 'storage/') && !str_starts_with($imagenPath, 'http')) {
                                             $imagenPath = 'storage/' . $imagenPath;
                                         }
+                                        // Si ya tiene 'storage/', usar directamente
                                         $imagenUrl = str_starts_with($imagenPath, 'http') ? $imagenPath : asset($imagenPath);
                                     @endphp
                                     <img src="{{ $imagenUrl }}" 

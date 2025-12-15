@@ -91,7 +91,7 @@ class HistorialPage extends Page implements HasTable
                 'clientes_en_proceso.propuesta as content',
                 DB::raw("'propuesta_enviada' as type"),
                 DB::raw("NULL as user_id"),
-                'clientes_en_proceso.created_at',
+                'clientes_en_proceso.updated_at as created_at',
                 'clientes_en_proceso.updated_at',
                 DB::raw("'propuesta' as record_type"),
                 'clientes_en_proceso.propuesta',

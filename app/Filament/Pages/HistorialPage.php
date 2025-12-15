@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Factura;
 use App\Models\Cliente;
 use App\Models\Cotizacion;
+use App\Models\PropuestaPersonalizada;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Resources\FacturaResource;
 use App\Filament\Resources\CotizacionResource;
@@ -45,7 +46,8 @@ class HistorialPage extends Page implements HasTable
             $notesCount = Note::count();
             $facturasCount = Factura::count();
             $cotizacionesCount = Cotizacion::count();
-            $total = $notesCount + $facturasCount + $cotizacionesCount;
+            $propuestasPersonalizadasCount = PropuestaPersonalizada::count();
+            $total = $notesCount + $facturasCount + $cotizacionesCount + $propuestasPersonalizadasCount;
             return $total > 0 ? (string) $total : null;
         } catch (\Exception $e) {
             return null;
@@ -243,7 +245,12 @@ class HistorialPage extends Page implements HasTable
                     ->placeholder('Sistema')
                     ->sortable()
                     ->formatStateUsing(function ($state, $record) {
-                        if (isset($record->record_type) && ($record->record_type === 'propuesta' || $record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
+                        if (isset($record->record_type) && ($record->record_type === 'propuesta' || $record->record_type === 'factura' || $record->record_type === 'cotizacion' || $record->record_type === 'propuesta_personalizada')) {
+                            // Para propuestas personalizadas, mostrar el usuario si existe
+                            if ($record->record_type === 'propuesta_personalizada' && $state) {
+                                $user = \App\Models\User::find($state);
+                                return $user?->name ?? 'Sistema';
+                            }
                             return 'Sistema';
                         }
                         if ($state) {
@@ -270,6 +277,11 @@ class HistorialPage extends Page implements HasTable
                         
                         // Propuestas
                         if ($recordType === 'propuesta') {
+                            return $getValue('name') ?? 'N/A';
+                        }
+                        
+                        // Propuestas Personalizadas
+                        if ($recordType === 'propuesta_personalizada') {
                             return $getValue('name') ?? 'N/A';
                         }
                         
@@ -419,6 +431,11 @@ class HistorialPage extends Page implements HasTable
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
+                        // Propuesta Personalizada - mostrar contenido
+                        if ($recordType === 'propuesta_personalizada') {
+                            return '<div class="whitespace-pre-wrap font-semibold text-primary-600 dark:text-primary-400">' . e($content) . '</div>';
+                        }
+                        
                         // Por defecto, sin enlace
                         if (isset($record->record_type) && ($record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
                             return '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
@@ -441,6 +458,7 @@ class HistorialPage extends Page implements HasTable
                         'cotizacion_creada' => '📋 Cotización Creada',
                         'cotizacion_editada' => '✏️ Cotización Editada',
                         'cotizacion_enviada' => '📧 Cotización Enviada',
+                        'propuesta_personalizada' => '📧 Propuesta Personalizada',
                     ]),
                 Tables\Filters\SelectFilter::make('client_id')
                     ->label('Cliente')

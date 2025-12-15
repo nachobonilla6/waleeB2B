@@ -40,6 +40,13 @@ class ListClientesListosParaEnviar extends ListRecords
         return 'Clientes Listos para Enviar';
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ListosParaEnviarStatsWidget::class,
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         $clientesGoogleUrl = ClienteEnProcesoResource::getUrl('index');

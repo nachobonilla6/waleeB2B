@@ -182,9 +182,15 @@
                              @if($isSistemaGestion || $sitio->url) onclick="window.location.href='{{ $cardUrl }}'" @endif>
                             <div class="h-64 flex items-center justify-center p-4 relative group bg-gray-900 overflow-hidden">
                                 @if($sitio->imagen)
-                                    <img src="{{ asset('storage/' . $sitio->imagen) }}" 
+                                    @php
+                                        $imagenUrl = str_starts_with($sitio->imagen, 'storage/') 
+                                            ? asset($sitio->imagen) 
+                                            : asset('storage/' . $sitio->imagen);
+                                    @endphp
+                                    <img src="{{ $imagenUrl }}" 
                                          alt="{{ $sitio->nombre }}" 
-                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:z-50 group-hover:shadow-2xl group-hover:shadow-black/50">
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:z-50 group-hover:shadow-2xl group-hover:shadow-black/50"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 @else
                                     @php
                                         $words = explode(' ', $sitio->nombre);

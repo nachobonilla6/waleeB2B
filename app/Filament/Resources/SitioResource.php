@@ -29,6 +29,15 @@ class SitioResource extends Resource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 3;
     protected static bool $shouldRegisterNavigation = true;
+    
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            return (string) static::getModel()::count();
+        } catch (\Exception $e) {
+            return '0';
+        }
+    }
 
     public static function form(Form $form): Form
     {
@@ -166,20 +175,28 @@ class SitioResource extends Resource
             ->defaultPaginationPageOption(12)
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('nombre')
+                Tables\Columns\ImageColumn::make('imagen')
                     ->label('')
-                    ->formatStateUsing(function ($record) {
-                        // Get initials from name
+                    ->getStateUsing(function ($record) {
+                        if ($record->imagen) {
+                            // Si la imagen ya incluye 'storage/', usar directamente
+                            if (str_starts_with($record->imagen, 'storage/')) {
+                                return asset($record->imagen);
+                            }
+                            // Si es solo la ruta relativa, agregar 'storage/'
+                            return asset('storage/' . $record->imagen);
+                        }
+                        return null;
+                    })
+                    ->defaultImageUrl(function ($record) {
+                        // Mostrar iniciales si no hay imagen
                         $words = explode(' ', $record->nombre);
                         $initials = '';
                         $maxInitials = 2;
-                        
                         foreach ($words as $i => $word) {
                             if ($i >= $maxInitials) break;
                             $initials .= strtoupper(substr($word, 0, 1));
                         }
-                        
-                        // Generate a consistent color based on the name
                         $colors = [
                             'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
                             'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
@@ -191,12 +208,13 @@ class SitioResource extends Resource
                         ];
                         $colorIndex = abs(crc32($record->nombre)) % count($colors);
                         $colorClass = $colors[$colorIndex];
-                        
-                        return '<div class="flex items-center justify-center w-10 h-10 rounded-lg ' . $colorClass . ' font-semibold text-sm">' . $initials . '</div>';
+                        // Retornar null para usar el formato por defecto de ImageColumn
+                        return null;
                     })
-                    ->html()
+                    ->circular(false)
+                    ->size(60)
                     ->grow(false)
-                    ->width('60px'),
+                    ->width('80px'),
                 
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable()

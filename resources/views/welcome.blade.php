@@ -170,7 +170,7 @@
                     @foreach($sitios as $sitio)
                         @php
                             $isSistemaGestion = stripos($sitio->nombre, 'Sistema de Gestión') !== false || stripos($sitio->nombre, 'Sistema de gestión') !== false;
-                            $cardUrl = $isSistemaGestion ? route('sistema.negocio') : ($sitio->url ?? '#');
+                            $cardUrl = $isSistemaGestion ? '/sistema-para-tu-negocio' : ($sitio->url ?? '#');
                         @endphp
                         <div class="project-card bg-gray-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-full {{ $isSistemaGestion || $sitio->url ? 'cursor-pointer' : '' }}" 
                              @if($isSistemaGestion || $sitio->url) onclick="window.location.href='{{ $cardUrl }}'" @endif>
@@ -274,7 +274,7 @@
                     </svg>
                 </a>
                 <div>
-                    <a href="{{ route('sistema.negocio') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105">
+                    <a href="/sistema-para-tu-negocio" class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
                             <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />

@@ -180,11 +180,11 @@
                         @endphp
                         <div class="project-card bg-gray-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-full {{ $isSistemaGestion || $sitio->url ? 'cursor-pointer' : '' }}" 
                              @if($isSistemaGestion || $sitio->url) onclick="window.location.href='{{ $cardUrl }}'" @endif>
-                            <div class="h-48 flex items-center justify-center p-6 relative group bg-gray-900">
+                            <div class="h-64 flex items-center justify-center p-4 relative group bg-gray-900 overflow-hidden">
                                 @if($sitio->imagen)
                                     <img src="{{ asset('storage/' . $sitio->imagen) }}" 
                                          alt="{{ $sitio->nombre }}" 
-                                         class="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-150 group-hover:z-50 group-hover:shadow-2xl group-hover:shadow-black/50">
+                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:z-50 group-hover:shadow-2xl group-hover:shadow-black/50">
                                 @else
                                     @php
                                         $words = explode(' ', $sitio->nombre);

@@ -39,6 +39,19 @@ class HistorialPage extends Page implements HasTable
 
     protected static string $view = 'filament.pages.historial-page';
 
+    public static function getNavigationBadge(): ?string
+    {
+        try {
+            $notesCount = Note::count();
+            $facturasCount = Factura::count();
+            $cotizacionesCount = Cotizacion::count();
+            $total = $notesCount + $facturasCount + $cotizacionesCount;
+            return $total > 0 ? (string) $total : null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function getMaxContentWidth(): MaxWidth | string | null
     {
         return MaxWidth::Full;

@@ -55,8 +55,8 @@ class Contabilidad extends Page
 
     public static function getNavigationBadge(): ?string
     {
-        $pendientes = Factura::where('estado', 'pendiente')->count();
-        return $pendientes > 0 ? (string) $pendientes : null;
+        $total = Factura::count();
+        return $total > 0 ? (string) $total : null;
     }
 
     public static function getNavigationBadgeColor(): string|array|null

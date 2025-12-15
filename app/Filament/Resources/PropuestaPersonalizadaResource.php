@@ -24,6 +24,11 @@ class PropuestaPersonalizadaResource extends Resource
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 7;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

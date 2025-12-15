@@ -44,8 +44,8 @@ class ListClientesGoogleCopias extends Page implements HasTable
     public static function getNavigationBadge(): ?string
     {
         try {
-            $pendingCount = Client::where('estado', 'pending')->count();
-            return $pendingCount > 0 ? (string) $pendingCount : null;
+            $count = Client::count();
+            return $count > 0 ? (string) $count : null;
         } catch (\Exception $e) {
             return null;
         }

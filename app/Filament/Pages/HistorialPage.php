@@ -356,7 +356,7 @@ class HistorialPage extends Page implements HasTable
                         'call' => 'primary',
                         'meeting' => 'info',
                         'email' => 'success',
-                        'propuesta_enviada' => 'warning',
+                        'propuesta_enviada' => 'success',
                         'propuesta_personalizada' => 'success',
                         'factura_creada' => 'warning',
                         'factura_editada' => 'warning',

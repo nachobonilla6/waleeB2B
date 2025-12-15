@@ -136,7 +136,7 @@ class ClientesGoogleEnviadasResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('updated_at', 'desc')
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(10)
             ->columns([
@@ -213,6 +213,7 @@ class ClientesGoogleEnviadasResource extends Resource
             }
 
             $query = parent::getEloquentQuery()
+                ->orderByDesc('updated_at')
                 ->orderByDesc('created_at')
                 ->orderByDesc('id');
 

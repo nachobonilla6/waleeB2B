@@ -127,7 +127,7 @@ class ClientPropuestaEnviadaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc') // Ordena por fecha de creación descendente (más recientes primero)
+            ->defaultSort('updated_at', 'desc') // Ordena por fecha de actualización descendente (más recientes primero)
             ->paginationPageOptions([5, 10, 25, 50])
             ->defaultPaginationPageOption(10)
             ->columns([

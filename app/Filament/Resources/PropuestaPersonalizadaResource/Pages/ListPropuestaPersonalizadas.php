@@ -11,6 +11,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 

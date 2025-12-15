@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ClienteEnProcesoResource\Pages;
 
 use App\Filament\Resources\ClienteEnProcesoResource;
 use App\Filament\Resources\ClientesGoogleEnviadasResource;
+use App\Filament\Resources\ClienteEnProcesoResource\Widgets\ListosParaEnviarStatsWidget;
 use App\Models\Client;
 use App\Models\WorkflowRun;
 use App\Models\PropuestaPersonalizada;

@@ -387,13 +387,25 @@ class ListClientesGoogleCopias extends Page implements HasTable
                             'otro' => '📝 Otro',
                         ])
                         ->required()
+                        ->live()
                         ->native(false),
+                    Forms\Components\TextInput::make('industria_otro')
+                        ->label('Especificar Tipo de Negocio')
+                        ->placeholder('Escribe el tipo de negocio...')
+                        ->maxLength(255)
+                        ->required(fn (Forms\Get $get) => $get('industria') === 'otro')
+                        ->visible(fn (Forms\Get $get) => $get('industria') === 'otro'),
                 ])
                 ->action(function (array $data) {
                     try {
                         $jobId = Str::uuid();
                         $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c';
 
+                        // Determinar industria final
+                        $industria = $data['industria'] === 'otro' && !empty($data['industria_otro']) 
+                            ? $data['industria_otro'] 
+                            : $data['industria'];
+                        
                         // Crear el registro del workflow
                         $workflowRun = WorkflowRun::create([
                             'job_id' => $jobId,
@@ -403,7 +415,7 @@ class ListClientesGoogleCopias extends Page implements HasTable
                             'workflow_name' => 'Búsqueda: ' . ($data['nombre_lugar'] ?? 'Sin nombre'),
                             'data' => [
                                 'nombre_lugar' => $data['nombre_lugar'],
-                                'industria' => $data['industria'],
+                                'industria' => $industria,
                             ],
                         ]);
 

@@ -357,6 +357,7 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'info',
                         'email' => 'success',
                         'propuesta_enviada' => 'warning',
+                        'propuesta_personalizada' => 'success',
                         'factura_creada' => 'warning',
                         'factura_editada' => 'warning',
                         'factura_enviada' => 'success',
@@ -371,6 +372,7 @@ class HistorialPage extends Page implements HasTable
                         'meeting' => 'Reunión',
                         'email' => 'Email',
                         'propuesta_enviada' => '📄 Propuesta Enviada',
+                        'propuesta_personalizada' => '📧 Propuesta Personalizada',
                         'factura_creada' => '💰 Factura Creada',
                         'factura_editada' => '✏️ Factura Editada',
                         'factura_enviada' => '📧 Factura Enviada',
@@ -405,62 +407,62 @@ class HistorialPage extends Page implements HasTable
                         // Factura creada - enlace al view
                         if ($recordType === 'factura' && $type === 'factura_creada' && $recordId) {
                             $url = FacturaResource::getUrl('view', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Factura enviada - enlace al view
                         if ($recordType === 'factura' && $type === 'factura_enviada' && $recordId) {
                             $url = FacturaResource::getUrl('view', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Factura editada - enlace al view
                         if ($recordType === 'factura' && $type === 'factura_editada' && $recordId) {
                             $url = FacturaResource::getUrl('view', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Cotización creada - enlace al view
                         if ($recordType === 'cotizacion' && $type === 'cotizacion_creada' && $recordId) {
                             $url = CotizacionResource::getUrl('view', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Cotización editada - enlace al edit
                         if ($recordType === 'cotizacion' && $type === 'cotizacion_editada' && $recordId) {
                             $url = CotizacionResource::getUrl('edit', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Cotización enviada - enlace al view
                         if ($recordType === 'cotizacion' && $type === 'cotizacion_enviada' && $recordId) {
                             $url = CotizacionResource::getUrl('view', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Nota - enlace al view de la nota
                         if ($recordType === 'note' && $recordId) {
                             $url = NoteResource::getUrl('view', ['record' => $recordId]);
-                            $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
-                            return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                            $contentHtml = '<div class="whitespace-pre-wrap text-success-600 dark:text-success-400">' . nl2br(e($content)) . '</div>';
+                            return '<a href="' . $url . '" class="text-success-600 dark:text-success-400 hover:underline">' . $contentHtml . '</a>';
                         }
                         
                         // Propuesta Personalizada - mostrar contenido
                         if ($recordType === 'propuesta_personalizada') {
-                            return '<div class="whitespace-pre-wrap font-semibold text-primary-600 dark:text-primary-400">' . e($content) . '</div>';
+                            return '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
                         }
                         
                         // Por defecto, sin enlace
                         if (isset($record->record_type) && ($record->record_type === 'factura' || $record->record_type === 'cotizacion')) {
-                            return '<div class="whitespace-pre-wrap font-semibold">' . e($content) . '</div>';
+                            return '<div class="whitespace-pre-wrap font-semibold text-success-600 dark:text-success-400">' . e($content) . '</div>';
                         }
-                        return '<div class="whitespace-pre-wrap">' . nl2br(e($content)) . '</div>';
+                        return '<div class="whitespace-pre-wrap text-success-600 dark:text-success-400">' . nl2br(e($content)) . '</div>';
                     }),
             ])
             ->filters([

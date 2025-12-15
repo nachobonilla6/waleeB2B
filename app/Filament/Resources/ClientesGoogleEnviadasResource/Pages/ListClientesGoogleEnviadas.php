@@ -14,6 +14,8 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -35,6 +37,13 @@ class ListClientesGoogleEnviadas extends ListRecords
     public function getHeading(): string
     {
         return 'Propuestas Enviadas';
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PropuestasEnviadasStatsWidget::class,
+        ];
     }
 
     protected function getHeaderActions(): array

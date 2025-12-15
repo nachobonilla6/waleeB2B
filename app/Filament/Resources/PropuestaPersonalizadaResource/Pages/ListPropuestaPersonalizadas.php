@@ -19,6 +19,11 @@ class ListPropuestaPersonalizadas extends ListRecords
 {
     protected static string $resource = PropuestaPersonalizadaResource::class;
 
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::Full;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

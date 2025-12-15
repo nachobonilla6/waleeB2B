@@ -226,6 +226,26 @@ class HistorialPage extends Page implements HasTable
             ->unionAll($cotizacionesEditadasQuery)
             ->unionAll($cotizacionesEnviadasQuery);
         
+        // Query para propuestas personalizadas
+        $propuestasPersonalizadasQuery = PropuestaPersonalizada::query()
+            ->select([
+                'propuestas_personalizadas.id',
+                'propuestas_personalizadas.cliente_id as client_id',
+                DB::raw("NULL as cliente_id"),
+                DB::raw("CONCAT('Propuesta Personalizada enviada a ', propuestas_personalizadas.email, ' - Asunto: ', propuestas_personalizadas.subject) as content"),
+                DB::raw("'propuesta_personalizada' as type"),
+                'propuestas_personalizadas.user_id',
+                'propuestas_personalizadas.created_at',
+                'propuestas_personalizadas.updated_at',
+                DB::raw("'propuesta_personalizada' as record_type"),
+                DB::raw("NULL as propuesta"),
+                'propuestas_personalizadas.cliente_nombre as name',
+                DB::raw("NULL as enlace"),
+            ]);
+        
+        // Agregar propuestas personalizadas al union
+        $unionQuery = $unionQuery->unionAll($propuestasPersonalizadasQuery);
+        
         // Envolver en una subquery usando fromSub para poder ordenar
         // Ordenar por created_at (desc)
         $unifiedQuery = Note::query()

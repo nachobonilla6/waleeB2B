@@ -9,10 +9,15 @@ use Filament\Support\Enums\MaxWidth;
 class SiteManager extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
-    protected static ?string $navigationLabel = 'Site Manager';
-    protected static ?string $title = 'Site Manager';
+    protected static ?string $navigationLabel = 'Sitios';
+    protected static ?string $title = 'Sitios';
     protected static ?string $navigationGroup = 'Herramientas';
     protected static ?int $navigationSort = 3;
+    
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false; // Ocultar porque usaremos el link directo
+    }
 
     protected static string $view = 'filament.pages.site-manager';
 

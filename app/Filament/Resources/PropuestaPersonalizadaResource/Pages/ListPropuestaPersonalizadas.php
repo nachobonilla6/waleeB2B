@@ -30,16 +30,25 @@ class ListPropuestaPersonalizadas extends ListRecords
                 ->form([
                     Forms\Components\Select::make('cliente_id')
                         ->label('Cliente (Opcional)')
-                        ->options(Client::orderBy('name')->pluck('name', 'id'))
+                        ->options(function () {
+                            return Client::orderBy('name')->pluck('name', 'id')->toArray();
+                        })
                         ->searchable()
+                        ->preload()
                         ->live()
+                        ->placeholder('Selecciona un cliente o deja vacío')
                         ->afterStateUpdated(function (Set $set, $state) {
                             if ($state) {
                                 $client = Client::find($state);
-                                if ($client?->email) {
-                                    $set('email', $client->email);
+                                if ($client) {
+                                    if ($client->email) {
+                                        $set('email', $client->email);
+                                    }
                                     $set('cliente_nombre', $client->name);
                                 }
+                            } else {
+                                $set('email', '');
+                                $set('cliente_nombre', '');
                             }
                         }),
                     Forms\Components\TextInput::make('cliente_nombre')

@@ -300,6 +300,14 @@ class ClienteEnProcesoResource extends Resource
                     })
                     ->limit(40)
                     ->icon('heroicon-o-globe-alt'),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable()
+                    ->icon('heroicon-o-envelope')
+                    ->color('success')
+                    ->url(fn($record) => $record->email ? 'mailto:' . $record->email : null)
+                    ->openUrlInNewTab(),
                 Tables\Columns\TextColumn::make('estado')
                     ->label('Estado')
                     ->badge()

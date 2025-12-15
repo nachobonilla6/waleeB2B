@@ -448,6 +448,54 @@ class HistorialPage extends Page implements HasTable
                     ->searchable()
                     ->preload(),
             ])
+            ->actions([
+                Tables\Actions\DeleteAction::make()
+                    ->label('Borrar')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('¿Borrar registro?')
+                    ->modalDescription('¿Estás seguro de que deseas borrar este registro? Esta acción no se puede deshacer.')
+                    ->action(function ($record) {
+                        try {
+                            $recordType = is_array($record) ? ($record['record_type'] ?? null) : ($record->record_type ?? null);
+                            $recordId = is_array($record) ? ($record['id'] ?? null) : ($record->id ?? null);
+                            
+                            if (!$recordType || !$recordId) {
+                                throw new \Exception('No se pudo identificar el tipo de registro');
+                            }
+                            
+                            switch ($recordType) {
+                                case 'note':
+                                    Note::find($recordId)?->delete();
+                                    break;
+                                case 'factura':
+                                    Factura::find($recordId)?->delete();
+                                    break;
+                                case 'cotizacion':
+                                    Cotizacion::find($recordId)?->delete();
+                                    break;
+                                case 'propuesta':
+                                    Client::find($recordId)?->update(['propuesta' => null, 'propuesta_enviada' => false]);
+                                    break;
+                                default:
+                                    throw new \Exception('Tipo de registro no soportado para borrar');
+                            }
+                            
+                            Notification::make()
+                                ->title('Registro borrado')
+                                ->body('El registro ha sido borrado exitosamente.')
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Error al borrar')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+            ])
             ->defaultSort('created_at', 'desc');
     }
 

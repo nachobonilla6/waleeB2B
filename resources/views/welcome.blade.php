@@ -168,7 +168,12 @@
             @if(isset($sitios) && $sitios->count() > 0)
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($sitios as $sitio)
-                        <div class="project-card bg-gray-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-full">
+                        @php
+                            $isSistemaGestion = stripos($sitio->nombre, 'Sistema de Gestión') !== false || stripos($sitio->nombre, 'Sistema de gestión') !== false;
+                            $cardUrl = $isSistemaGestion ? route('sistema.negocio') : ($sitio->url ?? '#');
+                        @endphp
+                        <div class="project-card bg-gray-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-full {{ $isSistemaGestion || $sitio->url ? 'cursor-pointer' : '' }}" 
+                             @if($isSistemaGestion || $sitio->url) onclick="window.location.href='{{ $cardUrl }}'" @endif>
                             <div class="h-48 flex items-center justify-center p-6 relative group bg-gray-900">
                                 @if($sitio->imagen)
                                     <img src="{{ asset('storage/' . $sitio->imagen) }}" 

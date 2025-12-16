@@ -59,6 +59,22 @@
                             placeholder="Ingresa la segunda palabra">
                     </div>
 
+                    <!-- Campo Job IDs -->
+                    <div class="mb-6">
+                        <label for="job_ids" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Job IDs
+                        </label>
+                        <input 
+                            type="text" 
+                            id="job_ids" 
+                            name="job_ids" 
+                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                            placeholder="Ingresa los Job IDs (separados por coma si son múltiples)">
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Puedes ingresar uno o varios Job IDs separados por comas
+                        </p>
+                    </div>
+
                     <!-- Campo Webhook URL -->
                     <div class="mb-6">
                         <label for="webhook_url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -103,7 +119,7 @@
                     <i class="fas fa-info-circle mr-2"></i> Información
                 </h3>
                 <p class="text-sm text-blue-800 dark:text-blue-300">
-                    Los datos se enviarán al webhook en formato JSON con las siguientes claves: <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">palabra1</code>, <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">palabra2</code> y <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">timestamp</code>.
+                    Los datos se enviarán al webhook en formato JSON con las siguientes claves: <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">palabra1</code>, <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">palabra2</code>, <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">job_ids</code> y <code class="bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded">timestamp</code>.
                 </p>
             </div>
         </div>

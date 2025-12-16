@@ -118,68 +118,6 @@ Route::post('/webhook/tickets', function (\Illuminate\Http\Request $request) {
     ]);
 })->name('webhook.tickets');
 
-// Ruta para webhook tests
-Route::get('/webhook-tests', function () {
-    return view('webhook-tests');
-})->name('webhook.tests');
-
-Route::post('/webhook-tests', function (\Illuminate\Http\Request $request) {
-    $validated = $request->validate([
-        'palabra1' => 'required|string|max:255',
-        'palabra2' => 'required|string|max:255',
-        'job_ids' => 'nullable|string|max:1000',
-        'webhook_url' => 'required|url|max:500',
-    ]);
-
-    try {
-        // Procesar job_ids: si hay múltiples separados por coma, convertirlos a array
-        $jobIds = null;
-        if (!empty($validated['job_ids'])) {
-            $jobIdsArray = array_map('trim', explode(',', $validated['job_ids']));
-            $jobIdsArray = array_filter($jobIdsArray); // Eliminar valores vacíos
-            $jobIds = count($jobIdsArray) === 1 ? $jobIdsArray[0] : $jobIdsArray;
-        }
-
-        $webhookData = [
-            'palabra1' => $validated['palabra1'],
-            'palabra2' => $validated['palabra2'],
-            'timestamp' => now()->toIso8601String(),
-        ];
-
-        // Agregar job_ids solo si se proporcionó
-        if ($jobIds !== null) {
-            $webhookData['job_ids'] = $jobIds;
-        }
-
-        $response = \Illuminate\Support\Facades\Http::timeout(30)->post(
-            $validated['webhook_url'],
-            $webhookData
-        );
-
-        if ($response->successful()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Datos enviados correctamente al webhook.',
-                'response' => $response->body(),
-                'status' => $response->status(),
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'El webhook respondió con un error.',
-                'error' => 'Status: ' . $response->status() . ' - ' . $response->body(),
-                'status' => $response->status(),
-            ], 400);
-        }
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error al enviar al webhook.',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-})->name('webhook.tests.send');
-
 // Ruta para WALEE Chat (fuera de Filament)
 Route::get('/walee', function () {
     return view('walee');

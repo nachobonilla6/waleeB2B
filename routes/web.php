@@ -217,6 +217,11 @@ Route::get('/sistema-para-tu-negocio', function () {
     return view('sistema-para-tu-negocio');
 })->name('sistema-para-tu-negocio');
 
+// Ruta para sistema de pizzeria
+Route::get('/pizzeria', function () {
+    return view('pizzeria');
+})->name('pizzeria');
+
 // Ruta para clientes con propuesta enviada
 Route::get('/clientes/propuesta-enviada', [App\Http\Controllers\ClientPropuestaEnviadaController::class, 'index'])
     ->middleware('auth')

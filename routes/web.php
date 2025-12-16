@@ -118,6 +118,54 @@ Route::post('/webhook/tickets', function (\Illuminate\Http\Request $request) {
     ]);
 })->name('webhook.tickets');
 
+// Ruta para webhook tests
+Route::get('/webhook-tests', function () {
+    return view('webhook-tests');
+})->name('webhook.tests');
+
+Route::post('/webhook-tests', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'palabra1' => 'required|string|max:255',
+        'palabra2' => 'required|string|max:255',
+        'webhook_url' => 'required|url|max:500',
+    ]);
+
+    try {
+        $webhookData = [
+            'palabra1' => $validated['palabra1'],
+            'palabra2' => $validated['palabra2'],
+            'timestamp' => now()->toIso8601String(),
+        ];
+
+        $response = \Illuminate\Support\Facades\Http::timeout(30)->post(
+            $validated['webhook_url'],
+            $webhookData
+        );
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Datos enviados correctamente al webhook.',
+                'response' => $response->body(),
+                'status' => $response->status(),
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'El webhook respondió con un error.',
+                'error' => 'Status: ' . $response->status() . ' - ' . $response->body(),
+                'status' => $response->status(),
+            ], 400);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al enviar al webhook.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+})->name('webhook.tests.send');
+
 // Ruta para WALEE Chat (fuera de Filament)
 Route::get('/walee', function () {
     return view('walee');

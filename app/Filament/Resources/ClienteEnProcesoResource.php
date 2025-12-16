@@ -265,6 +265,7 @@ class ClienteEnProcesoResource extends Resource
                                 'rejected' => 'Rejected',
                                 'listo_para_enviar' => 'Listo para enviar',
                                 'propuesta_enviada' => 'Propuesta enviada',
+                                'propuesta_personalizada_enviada' => 'Propuesta personalizada enviada',
                             ])
                             ->default('pending')
                             ->required()
@@ -317,6 +318,7 @@ class ClienteEnProcesoResource extends Resource
                         'rejected' => 'danger',
                         'listo_para_enviar' => 'info',
                         'propuesta_enviada' => 'success',
+                        'propuesta_personalizada_enviada' => 'success',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -325,6 +327,7 @@ class ClienteEnProcesoResource extends Resource
                         'rejected' => 'Rejected',
                         'listo_para_enviar' => 'Listo para enviar',
                         'propuesta_enviada' => 'Propuesta enviada',
+                        'propuesta_personalizada_enviada' => 'Propuesta personalizada enviada',
                         default => $state,
                     })
                     ->sortable()
@@ -536,6 +539,7 @@ class ClienteEnProcesoResource extends Resource
                                 'rejected' => 'danger',
                                 'listo_para_enviar' => 'info',
                                 'propuesta_enviada' => 'success',
+                                'propuesta_personalizada_enviada' => 'success',
                                 default => 'gray',
                             })
                             ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -544,6 +548,7 @@ class ClienteEnProcesoResource extends Resource
                                 'rejected' => 'Rejected',
                                 'listo_para_enviar' => 'Listo para enviar',
                                 'propuesta_enviada' => 'Propuesta enviada',
+                                'propuesta_personalizada_enviada' => 'Propuesta personalizada enviada',
                                 default => $state,
                             }),
                     ]),

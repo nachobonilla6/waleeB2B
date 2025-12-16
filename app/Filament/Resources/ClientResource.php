@@ -96,6 +96,9 @@ class ClientResource extends Resource
                                 'pending' => 'Pending',
                                 'accepted' => 'Activo',
                                 'rejected' => 'Rejected',
+                                'listo_para_enviar' => 'Listo para enviar',
+                                'propuesta_enviada' => 'Propuesta enviada',
+                                'propuesta_personalizada_enviada' => 'Propuesta personalizada enviada',
                             ])
                             ->default('accepted')
                             ->required()

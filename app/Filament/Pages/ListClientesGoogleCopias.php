@@ -669,6 +669,14 @@ class ListClientesGoogleCopias extends Page implements HasTable
                             'user_id' => auth()->id(),
                         ]);
                         
+                        // Marcar el contacto como propuesta enviada
+                        if ($client) {
+                            $client->update([
+                                'propuesta_enviada' => true,
+                                'estado' => 'propuesta_enviada'
+                            ]);
+                        }
+                        
                         Notification::make()
                             ->title('✅ Email enviado')
                             ->body('La propuesta personalizada ha sido enviada a ' . $data['email'] . ' y guardada en el registro.')

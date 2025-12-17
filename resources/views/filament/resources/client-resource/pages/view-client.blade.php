@@ -115,17 +115,17 @@
                     @endphp
 
                     @if ($facturas->isEmpty())
-                        <div class="mt-4 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-400">
+                        <div class="mt-4 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
                             No hay facturas relacionadas con este cliente todavía.
                         </div>
                     @else
                         <div class="mt-2">
-                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-3">
                                 Detalle de facturas
                             </h4>
                             <div class="space-y-3">
                                 @foreach ($facturas as $factura)
-                                    <div class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                    <div class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                         <div>
                                             <p class="text-sm font-semibold text-gray-900 dark:text-white">
                                                 {{ $factura->numero_factura }}

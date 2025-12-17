@@ -98,17 +98,19 @@ class FacturaResource extends Resource
                         ->required(),
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('subtotal')
-                            ->label('Subtotal (USD)')
+                            ->label('Subtotal (₡)')
                             ->numeric()
-                            ->prefix('$')
+                            ->prefix('₡')
                             ->required()
+                            ->step(0.01)
                             ->live()
                             ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('total', round($state * 1.13, 2))),
                         Forms\Components\TextInput::make('total')
                             ->label('Total con IVA (13%)')
                             ->numeric()
-                            ->prefix('$')
-                            ->required(),
+                            ->prefix('₡')
+                            ->required()
+                            ->step(0.01),
                     ]),
                 ])
                 ->columns(2),
@@ -180,7 +182,7 @@ class FacturaResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('total')
                     ->label('Total')
-                    ->money('USD')
+                    ->money('CRC', divideBy: 1)
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('estado')
                     ->label('Estado')
@@ -360,13 +362,13 @@ class FacturaResource extends Resource
                                 default => $state ?? '-',
                             }),
                         Infolists\Components\TextEntry::make('subtotal')
-                            ->label('Subtotal (USD)')
-                            ->money('USD')
+                            ->label('Subtotal (₡)')
+                            ->money('CRC', divideBy: 1)
                             ->size('lg')
                             ->default('0.00'),
                         Infolists\Components\TextEntry::make('total')
                             ->label('Total con IVA (13%)')
-                            ->money('USD')
+                            ->money('CRC', divideBy: 1)
                             ->weight('bold')
                             ->size('lg')
                             ->color('success')

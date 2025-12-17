@@ -102,16 +102,18 @@ class FacturasPage extends Page implements HasTable
                                 ->required(),
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('subtotal')
-                                    ->label('Subtotal (USD)')
+                                    ->label('Subtotal (₡)')
                                     ->numeric()
-                                    ->prefix('$')
+                                    ->prefix('₡')
                                     ->required()
+                                    ->step(0.01)
                                     ->live()
                                     ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('total', round($state * 1.13, 2))),
                                 Forms\Components\TextInput::make('total')
                                     ->label('Total con IVA (13%)')
                                     ->numeric()
-                                    ->prefix('$')
+                                    ->prefix('₡')
+                                    ->step(0.01)
                                     ->required(),
                             ]),
                         ]),

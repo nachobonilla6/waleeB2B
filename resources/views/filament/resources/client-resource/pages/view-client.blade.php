@@ -6,8 +6,12 @@
                 <!-- Foto cuadrada -->
                 <div class="w-full flex items-start justify-between mb-4 gap-3">
                     <div class="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
-                        @if($this->record->foto ?? false)
-                            <img src="{{ $this->record->foto }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">
+                        @php
+                            $fotoPath = $this->record->foto ?? null;
+                            $fotoUrl = $fotoPath ? \Illuminate\Support\Facades\Storage::url($fotoPath) : null;
+                        @endphp
+                        @if($fotoUrl)
+                            <img src="{{ $fotoUrl }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">
                         @else
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpqzpN0OXHCje7AJYyuAOQwf3asqFGJYWpzg&s" alt="{{ $this->record->name ?? 'Cliente' }}" class="w-full h-full object-cover rounded-lg">
                         @endif

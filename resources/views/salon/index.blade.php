@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -131,6 +132,26 @@
         }
         .pink-border {
             border-color: rgba(236, 72, 153, 0.3);
+        }
+        .dark-popup {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(236, 72, 153, 0.3) !important;
+        }
+        .swal2-title {
+            color: #ec4899 !important;
+        }
+        .swal2-html-container {
+            color: #e2e8f0 !important;
+        }
+        .swal2-confirm {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%) !important;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4) !important;
+        }
+        .swal2-confirm:hover {
+            opacity: 0.9 !important;
+            transform: scale(1.05) !important;
         }
     </style>
 </head>
@@ -386,17 +407,44 @@
             const date = document.getElementById('appointmentDate').value;
             
             if (!date) {
-                alert('Por favor selecciona una fecha');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Fecha requerida',
+                    text: 'Por favor selecciona una fecha',
+                    confirmButtonColor: '#ec4899',
+                    width: '400px',
+                    customClass: {
+                        popup: 'dark-popup'
+                    }
+                });
                 return;
             }
             
             if (!selectedTime) {
-                alert('Por favor selecciona una hora');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Hora requerida',
+                    text: 'Por favor selecciona una hora',
+                    confirmButtonColor: '#ec4899',
+                    width: '400px',
+                    customClass: {
+                        popup: 'dark-popup'
+                    }
+                });
                 return;
             }
             
             if (selectedTreatments.size === 0) {
-                alert('Por favor selecciona al menos un tratamiento');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Tratamiento requerido',
+                    text: 'Por favor selecciona al menos un tratamiento',
+                    confirmButtonColor: '#ec4899',
+                    width: '400px',
+                    customClass: {
+                        popup: 'dark-popup'
+                    }
+                });
                 return;
             }
 
@@ -492,17 +540,53 @@
 
         // Limpiar carrito
         function clearCart() {
-            if (confirm('¿Estás seguro de que deseas eliminar todas las citas?')) {
-                appointments = [];
-                selectedTreatments.clear();
-                document.querySelectorAll('.treatment-card').forEach(el => {
-                    el.classList.remove('selected');
-                    el.querySelector('.check-icon').classList.add('hidden');
-                });
-                renderAppointments();
-                updateSummary();
-                updateCartBadge();
-            }
+            Swal.fire({
+                title: '¿Eliminar todas las citas?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ec4899',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                width: '400px',
+                background: '#1e293b',
+                color: '#e2e8f0',
+                customClass: {
+                    popup: 'dark-popup border border-pink-500/30',
+                    title: 'text-pink-300',
+                    confirmButton: 'px-6 py-2 rounded-lg font-semibold',
+                    cancelButton: 'px-6 py-2 rounded-lg font-semibold'
+                },
+                buttonsStyling: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    appointments = [];
+                    selectedTreatments.clear();
+                    document.querySelectorAll('.treatment-card').forEach(el => {
+                        el.classList.remove('selected');
+                        el.querySelector('.check-icon').classList.add('hidden');
+                    });
+                    renderAppointments();
+                    updateSummary();
+                    updateCartBadge();
+                    
+                    Swal.fire({
+                        title: 'Eliminado',
+                        text: 'Todas las citas han sido eliminadas',
+                        icon: 'success',
+                        confirmButtonColor: '#ec4899',
+                        width: '350px',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: '#1e293b',
+                        color: '#e2e8f0',
+                        customClass: {
+                            popup: 'dark-popup border border-pink-500/30'
+                        }
+                    });
+                }
+            });
         }
 
         // Actualizar resumen
@@ -545,28 +629,89 @@
             const email = document.getElementById('customerEmail').value.trim();
             
             if (!name || !phone || !email) {
-                alert('Por favor completa todos tus datos');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Datos incompletos',
+                    text: 'Por favor completa todos tus datos',
+                    confirmButtonColor: '#ec4899',
+                    width: '400px',
+                    customClass: {
+                        popup: 'dark-popup'
+                    }
+                });
                 return;
             }
             
             if (appointments.length === 0) {
-                alert('Por favor agrega al menos una cita');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin citas',
+                    text: 'Por favor agrega al menos una cita',
+                    confirmButtonColor: '#ec4899',
+                    width: '400px',
+                    customClass: {
+                        popup: 'dark-popup'
+                    }
+                });
                 return;
             }
             
-            // Aquí iría la lógica para enviar los datos al servidor
-            const summary = appointments.map(a => {
+            // Preparar resumen de citas
+            const totalPrice = appointments.reduce((sum, a) => sum + a.total, 0);
+            const summaryList = appointments.map(a => {
                 const date = new Date(a.date);
-                return `${date.toLocaleDateString('es-ES')} a las ${a.time} - ${a.treatments.map(t => t.name).join(', ')}`;
-            }).join('\n');
+                const formattedDate = date.toLocaleDateString('es-ES', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                return `<div class="text-left mb-2 pb-2 border-b border-pink-500/20">
+                    <div class="font-semibold text-pink-300">${formattedDate} a las ${a.time}</div>
+                    <div class="text-sm text-gray-400">${a.treatments.map(t => t.name).join(', ')}</div>
+                    <div class="text-sm text-pink-400 font-bold">$${a.total.toLocaleString()}</div>
+                </div>`;
+            }).join('');
             
-            alert(`¡Citas confirmadas exitosamente!\n\n${summary}\n\nTotal: $${appointments.reduce((sum, a) => sum + a.total, 0).toLocaleString()}\n\nTe esperamos!`);
-            
-            // Limpiar después de confirmar
-            clearCart();
-            document.getElementById('customerName').value = '';
-            document.getElementById('customerPhone').value = '';
-            document.getElementById('customerEmail').value = '';
+            // Mostrar modal de confirmación
+            Swal.fire({
+                icon: 'success',
+                title: '¡Citas Confirmadas!',
+                html: `
+                    <div class="text-left">
+                        <p class="mb-3 text-gray-300">Hola <strong class="text-pink-300">${name}</strong>, tus citas han sido confirmadas:</p>
+                        <div class="max-h-48 overflow-y-auto mb-3">
+                            ${summaryList}
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-pink-500/20">
+                            <span class="text-gray-300 font-semibold">Total:</span>
+                            <span class="text-2xl font-bold text-pink-400">$${totalPrice.toLocaleString()}</span>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-400">Te esperamos en el salón ✨</p>
+                    </div>
+                `,
+                confirmButtonText: 'Perfecto',
+                confirmButtonColor: '#ec4899',
+                width: '450px',
+                background: '#1e293b',
+                color: '#e2e8f0',
+                customClass: {
+                    popup: 'dark-popup border border-pink-500/30',
+                    title: 'text-pink-300',
+                    confirmButton: 'px-6 py-2 rounded-lg font-semibold',
+                    htmlContainer: 'text-left'
+                },
+                buttonsStyling: true,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Limpiar después de confirmar
+                    clearCart();
+                    document.getElementById('customerName').value = '';
+                    document.getElementById('customerPhone').value = '';
+                    document.getElementById('customerEmail').value = '';
+                }
+            });
         }
 
         // Inicializar

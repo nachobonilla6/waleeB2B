@@ -113,6 +113,11 @@ class ClientResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('foto')
+                    ->label('Foto')
+                    ->square()
+                    ->size(40)
+                    ->extraImgAttributes(['class' => 'object-cover rounded-lg']),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable()

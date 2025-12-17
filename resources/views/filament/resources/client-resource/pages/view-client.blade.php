@@ -4,12 +4,25 @@
         <div class="w-64 flex-shrink-0">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 min-h-[600px]">
                 <!-- Foto cuadrada -->
-                <div class="w-32 h-32 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
-                    @if($this->record->foto ?? false)
-                        <img src="{{ $this->record->foto }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">
-                    @else
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpqzpN0OXHCje7AJYyuAOQwf3asqFGJYWpzg&s" alt="{{ $this->record->name ?? 'Cliente' }}" class="w-full h-full object-cover rounded-lg">
-                    @endif
+                <div class="w-full flex items-start justify-between mb-4 gap-3">
+                    <div class="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
+                        @if($this->record->foto ?? false)
+                            <img src="{{ $this->record->foto }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">
+                        @else
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpqzpN0OXHCje7AJYyuAOQwf3asqFGJYWpzg&s" alt="{{ $this->record->name ?? 'Cliente' }}" class="w-full h-full object-cover rounded-lg">
+                        @endif
+                    </div>
+                    <div class="flex-1 flex justify-end">
+                        <x-filament::button
+                            :href="\\App\\Filament\\Resources\\ClientResource::getUrl('edit', ['record' => $this->record])"
+                            tag=\"a\"
+                            size=\"sm\"
+                            color=\"gray\"
+                            icon=\"heroicon-o-pencil\"
+                        >
+                            Editar cliente
+                        </x-filament::button>
+                    </div>
                 </div>
                 
                 <!-- Nombre y detalles -->

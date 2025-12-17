@@ -93,14 +93,80 @@
             </div>
         </div>
         
-        <!-- Contenido principal - Registro de actividades -->
+        <!-- Contenido principal - Finanzas del cliente -->
         <div class="flex-1">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
                 <div class="p-6">
+                    @php
+                        $email = $this->record->email ?? null;
+                        $facturas = $email
+                            ? \App\Models\Factura::where('correo', $email)->orderByDesc('fecha_emision')->get()
+                            : collect();
+                        $total = $facturas->sum('total');
+                        $pagado = $facturas->where('estado', 'pagada')->sum('total');
+                        $pendiente = $total - $pagado;
+                    @endphp
+
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        Registro de Actividades
+                        Finanzas
                     </h3>
-                    {{ $this->table }}
+
+                    {{-- Resumen tipo app de facturación --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="rounded-lg bg-blue-50 dark:bg-blue-500/10 p-4 ring-1 ring-blue-500/20">
+                            <p class="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">TOTAL</p>
+                            <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                                ₡{{ number_format($total, 2, ',', ' ') }}
+                            </p>
+                        </div>
+                        <div class="rounded-lg bg-green-50 dark:bg-green-500/10 p-4 ring-1 ring-green-500/20">
+                            <p class="text-xs font-semibold text-green-700 dark:text-green-300 mb-1">PAGADO</p>
+                            <p class="text-2xl font-bold text-green-700 dark:text-green-300">
+                                ₡{{ number_format($pagado, 2, ',', ' ') }}
+                            </p>
+                        </div>
+                        <div class="rounded-lg bg-red-50 dark:bg-red-500/10 p-4 ring-1 ring-red-500/20">
+                            <p class="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">PENDIENTE</p>
+                            <p class="text-2xl font-bold text-red-700 dark:text-red-300">
+                                ₡{{ number_format($pendiente, 2, ',', ' ') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Lista de facturas inspirada en la app de facturación --}}
+                    @if ($facturas->isEmpty())
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            No hay facturas relacionadas con este cliente todavía.
+                        </div>
+                    @else
+                        <div class="space-y-3">
+                            @foreach ($facturas as $factura)
+                                <div class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                            {{ $factura->numero_factura }}
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">
+                                            ₡{{ number_format($factura->total, 2, ',', ' ') }}
+                                        </p>
+                                        <x-filament::badge :color="match($factura->estado) {
+                                            'pagada' => 'success',
+                                            'pendiente' => 'warning',
+                                            'vencida' => 'danger',
+                                            default => 'gray',
+                                        }" class="mt-1">
+                                            {{ strtoupper($factura->estado) }}
+                                        </x-filament::badge>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

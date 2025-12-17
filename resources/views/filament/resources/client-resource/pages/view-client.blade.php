@@ -147,6 +147,23 @@
                             @endforeach
                         </div>
                     @endif
+
+                    {{-- Registro de actividades del cliente --}}
+                    <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Registro de actividades
+                            </h3>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                Ordenado de más reciente a más antiguo
+                            </span>
+                        </div>
+                        <div class="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900/60">
+                            <div class="p-4">
+                                {{ $this->table }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

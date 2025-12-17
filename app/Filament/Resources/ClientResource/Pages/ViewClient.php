@@ -49,6 +49,8 @@ class ViewClient extends ViewRecord implements HasTable
     public function table(Table $table): Table
     {
         $clientId = $this->record->id;
+        $clientEmail = $this->record->email ?? null;
+        $clientName = $this->record->name ?? null;
         
         // Query para notas del cliente
         $notesQuery = Note::query()
@@ -68,9 +70,45 @@ class ViewClient extends ViewRecord implements HasTable
                 DB::raw("NULL as enlace"),
             ]);
         
-        // Envolver en una subquery para poder ordenar
+        // Query para facturas del cliente (por correo o nombre)
+        $facturasQuery = Factura::query()
+            ->where(function($q) use ($clientEmail, $clientName) {
+                if ($clientEmail) {
+                    $q->where('facturas.correo', $clientEmail);
+                }
+                // También buscar por cliente relacionado si existe
+                if ($clientEmail) {
+                    $q->orWhereHas('cliente', function($clienteQuery) use ($clientEmail, $clientName) {
+                        if ($clientEmail) {
+                            $clienteQuery->where('correo', $clientEmail);
+                        }
+                        if ($clientName) {
+                            $clienteQuery->orWhere('nombre_empresa', 'like', '%' . $clientName . '%');
+                        }
+                    });
+                }
+            })
+            ->select([
+                'facturas.id',
+                DB::raw("NULL as client_id"),
+                'facturas.cliente_id',
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: ₡', ROUND(facturas.total, 2)) as content"),
+                DB::raw("'factura' as type"),
+                DB::raw("NULL as user_id"),
+                'facturas.created_at',
+                'facturas.updated_at',
+                DB::raw("'factura' as record_type"),
+                DB::raw("NULL as propuesta"),
+                DB::raw("NULL as name"),
+                'facturas.enlace',
+            ]);
+        
+        // Unir las queries
         $unifiedQuery = Note::query()
-            ->fromSub($notesQuery, 'unified')
+            ->fromSub(
+                $notesQuery->union($facturasQuery),
+                'unified'
+            )
             ->orderBy('created_at', 'desc')
             ->select('unified.*');
 
@@ -100,6 +138,7 @@ class ViewClient extends ViewRecord implements HasTable
                         'call' => 'primary',
                         'meeting' => 'info',
                         'email' => 'success',
+                        'factura' => 'warning',
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
@@ -107,6 +146,7 @@ class ViewClient extends ViewRecord implements HasTable
                         'call' => 'Llamada',
                         'meeting' => 'Reunión',
                         'email' => 'Email',
+                        'factura' => 'Factura',
                         default => $state,
                     }),
                 Tables\Columns\TextColumn::make('content')
@@ -124,12 +164,20 @@ class ViewClient extends ViewRecord implements HasTable
                         
                         $recordId = $getValue('id');
                         $recordType = $getValue('record_type');
+                        $enlace = $getValue('enlace');
                         
                         // Nota - enlace al view de la nota
                         if ($recordType === 'note' && $recordId) {
                             $url = \App\Filament\Resources\NoteResource::getUrl('view', ['record' => $recordId]);
                             $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
                             return '<a href="' . $url . '" class="text-primary-600 dark:text-primary-400 hover:underline">' . $contentHtml . '</a>';
+                        }
+                        
+                        // Factura - enlace al view de la factura o enlace externo
+                        if ($recordType === 'factura' && $recordId) {
+                            $url = $enlace ?: FacturaResource::getUrl('view', ['record' => $recordId]);
+                            $contentHtml = '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';
+                            return '<a href="' . $url . '" class="text-warning-600 dark:text-warning-400 hover:underline font-medium">' . $contentHtml . '</a>';
                         }
                         
                         return '<div class="whitespace-pre-wrap">' . nl2br(e($state)) . '</div>';

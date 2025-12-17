@@ -41,7 +41,7 @@ class ViewCliente extends Page implements HasTable
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
-        $this->record->loadMissing(['facturas', 'notes.user']);
+        $this->record->loadMissing(['notes.user']);
     }
     
     public function setActiveTab(string $tab): void
@@ -51,7 +51,23 @@ class ViewCliente extends Page implements HasTable
     
     public function getFacturasFiltradasProperty()
     {
-        $query = Factura::where('cliente_id', $this->record->id);
+        $clientEmail = $this->record->email ?? null;
+        $clientName = $this->record->name ?? null;
+        
+        // Buscar facturas por correo o nombre del cliente
+        $query = Factura::query()->where(function($q) use ($clientEmail, $clientName) {
+            if ($clientEmail) {
+                $q->where('correo', $clientEmail)
+                  ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail, $clientName) {
+                      if ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      }
+                      if ($clientName) {
+                          $clienteQuery->orWhere('nombre_empresa', 'like', '%' . $clientName . '%');
+                      }
+                  });
+            }
+        });
         
         if ($this->filtroAno && $this->filtroAno !== 'TODOS') {
             $query->whereYear('fecha_emision', $this->filtroAno);
@@ -102,15 +118,16 @@ class ViewCliente extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        $clienteId = $this->record->id;
+        $clientId = $this->record->id;
+        $clientEmail = $this->record->email ?? null;
         
         // Query para notas del cliente
         $notesQuery = Note::query()
-            ->where('cliente_id', $clienteId)
+            ->where('client_id', $clientId)
             ->select([
                 'notes.id',
-                DB::raw("NULL as client_id"),
-                'notes.cliente_id',
+                'notes.client_id',
+                DB::raw("NULL as cliente_id"),
                 'notes.content',
                 'notes.type',
                 'notes.user_id',
@@ -122,14 +139,21 @@ class ViewCliente extends Page implements HasTable
                 DB::raw("NULL as enlace"),
             ]);
         
-        // Query para facturas creadas
+        // Query para facturas creadas (buscar por correo o nombre)
         $facturasCreadasQuery = Factura::query()
-            ->where('cliente_id', $clienteId)
+            ->where(function($q) use ($clientEmail) {
+                if ($clientEmail) {
+                    $q->where('correo', $clientEmail)
+                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      });
+                }
+            })
             ->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
                 'facturas.cliente_id',
-                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: ₡', ROUND(facturas.total, 2)) as content"),
                 DB::raw("'factura_creada' as type"),
                 DB::raw("NULL as user_id"),
                 'facturas.created_at',
@@ -142,7 +166,14 @@ class ViewCliente extends Page implements HasTable
 
         // Query para facturas editadas
         $facturasEditadasQuery = Factura::query()
-            ->where('cliente_id', $clienteId)
+            ->where(function($q) use ($clientEmail) {
+                if ($clientEmail) {
+                    $q->where('correo', $clientEmail)
+                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      });
+                }
+            })
             ->whereRaw('facturas.updated_at != facturas.created_at')
             ->where(function($q) {
                 $q->whereNull('facturas.enviada_at')
@@ -152,7 +183,7 @@ class ViewCliente extends Page implements HasTable
                 'facturas.id',
                 DB::raw("NULL as client_id"),
                 'facturas.cliente_id',
-                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: ₡', ROUND(facturas.total, 2)) as content"),
                 DB::raw("'factura_editada' as type"),
                 DB::raw("NULL as user_id"),
                 'facturas.updated_at as created_at',
@@ -165,13 +196,20 @@ class ViewCliente extends Page implements HasTable
 
         // Query para facturas enviadas
         $facturasEnviadasQuery = Factura::query()
-            ->where('cliente_id', $clienteId)
+            ->where(function($q) use ($clientEmail) {
+                if ($clientEmail) {
+                    $q->where('correo', $clientEmail)
+                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      });
+                }
+            })
             ->whereNotNull('enviada_at')
             ->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
                 'facturas.cliente_id',
-                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: $', facturas.total) as content"),
+                DB::raw("CONCAT('Factura ', facturas.numero_factura, ' - ', facturas.concepto, ' - Total: ₡', ROUND(facturas.total, 2)) as content"),
                 DB::raw("'factura_enviada' as type"),
                 DB::raw("NULL as user_id"),
                 'facturas.enviada_at as created_at',
@@ -182,14 +220,21 @@ class ViewCliente extends Page implements HasTable
                 'facturas.enlace',
             ]);
 
-        // Query para cotizaciones creadas
+        // Query para cotizaciones creadas (buscar por correo)
         $cotizacionesCreadasQuery = Cotizacion::query()
-            ->where('cliente_id', $clienteId)
+            ->where(function($q) use ($clientEmail) {
+                if ($clientEmail) {
+                    $q->where('correo', $clientEmail)
+                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      });
+                }
+            })
             ->select([
                 'cotizacions.id',
                 DB::raw("NULL as client_id"),
                 'cotizacions.cliente_id',
-                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: ₡', ROUND(cotizacions.monto, 2)) as content"),
                 DB::raw("'cotizacion_creada' as type"),
                 DB::raw("NULL as user_id"),
                 'cotizacions.created_at',
@@ -202,7 +247,14 @@ class ViewCliente extends Page implements HasTable
 
         // Query para cotizaciones editadas
         $cotizacionesEditadasQuery = Cotizacion::query()
-            ->where('cliente_id', $clienteId)
+            ->where(function($q) use ($clientEmail) {
+                if ($clientEmail) {
+                    $q->where('correo', $clientEmail)
+                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      });
+                }
+            })
             ->whereRaw('cotizacions.updated_at != cotizacions.created_at')
             ->where(function($q) {
                 $q->whereNull('cotizacions.enviada_at')
@@ -212,7 +264,7 @@ class ViewCliente extends Page implements HasTable
                 'cotizacions.id',
                 DB::raw("NULL as client_id"),
                 'cotizacions.cliente_id',
-                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: ₡', ROUND(cotizacions.monto, 2)) as content"),
                 DB::raw("'cotizacion_editada' as type"),
                 DB::raw("NULL as user_id"),
                 'cotizacions.updated_at as created_at',
@@ -225,7 +277,14 @@ class ViewCliente extends Page implements HasTable
 
         // Query para cotizaciones enviadas
         $cotizacionesEnviadasQuery = Cotizacion::query()
-            ->where('cliente_id', $clienteId)
+            ->where(function($q) use ($clientEmail) {
+                if ($clientEmail) {
+                    $q->where('correo', $clientEmail)
+                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
+                          $clienteQuery->where('correo', $clientEmail);
+                      });
+                }
+            })
             ->where(function($q) {
                 $q->whereNotNull('enviada_at')
                   ->orWhere('estado', 'enviada');
@@ -234,7 +293,7 @@ class ViewCliente extends Page implements HasTable
                 'cotizacions.id',
                 DB::raw("NULL as client_id"),
                 'cotizacions.cliente_id',
-                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: $', cotizacions.monto) as content"),
+                DB::raw("CONCAT('Cotización ', cotizacions.numero_cotizacion, ' - ', cotizacions.tipo_servicio, ' - ', cotizacions.plan, ' - Monto: ₡', ROUND(cotizacions.monto, 2)) as content"),
                 DB::raw("'cotizacion_enviada' as type"),
                 DB::raw("NULL as user_id"),
                 DB::raw("COALESCE(cotizacions.enviada_at, cotizacions.updated_at) as created_at"),

@@ -1,13 +1,20 @@
 <x-filament-panels::page>
     @php
         $cliente = $this->record;
-        $cliente->loadMissing(['facturas', 'notes.user']);
+        $cliente->loadMissing(['notes.user']);
         $facturasFiltradas = $this->facturasFiltradas;
         $resumen = $this->resumenFacturas;
         
-        // Obtener años únicos de las facturas
-        $anos = \App\Models\Factura::where('cliente_id', $cliente->id)
-            ->selectRaw('YEAR(fecha_emision) as ano')
+        // Obtener años únicos de las facturas (por correo o nombre)
+        $clientEmail = $cliente->email ?? null;
+        $anosQuery = \App\Models\Factura::query();
+        if ($clientEmail) {
+            $anosQuery->where('correo', $clientEmail)
+                     ->orWhereHas('cliente', function($q) use ($clientEmail) {
+                         $q->where('correo', $clientEmail);
+                     });
+        }
+        $anos = $anosQuery->selectRaw('YEAR(fecha_emision) as ano')
             ->distinct()
             ->orderBy('ano', 'desc')
             ->pluck('ano')
@@ -15,8 +22,14 @@
             ->prepend('TODOS');
         
         // Obtener series únicas
-        $series = \App\Models\Factura::where('cliente_id', $cliente->id)
-            ->whereNotNull('serie')
+        $seriesQuery = \App\Models\Factura::query();
+        if ($clientEmail) {
+            $seriesQuery->where('correo', $clientEmail)
+                       ->orWhereHas('cliente', function($q) use ($clientEmail) {
+                           $q->where('correo', $clientEmail);
+                       });
+        }
+        $series = $seriesQuery->whereNotNull('serie')
             ->select('serie')
             ->distinct()
             ->orderBy('serie')
@@ -50,16 +63,21 @@
                 icon="heroicon-o-arrow-left"
             />
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $cliente->nombre_empresa }}</h1>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $cliente->name }}</h1>
             </div>
-            @if($cliente->estado_cuenta)
-                <x-filament::badge :color="match($cliente->estado_cuenta) {
-                    'activo' => 'success',
-                    'pendiente' => 'warning', 
-                    'suspendido' => 'danger',
+            @if($cliente->estado)
+                <x-filament::badge :color="match($cliente->estado) {
+                    'accepted' => 'success',
+                    'pending' => 'warning', 
+                    'rejected' => 'danger',
                     default => 'gray'
                 }">
-                    {{ ucfirst($cliente->estado_cuenta) }}
+                    {{ match($cliente->estado) {
+                        'accepted' => 'Activo',
+                        'pending' => 'Pendiente',
+                        'rejected' => 'Rechazado',
+                        default => ucfirst($cliente->estado ?? '')
+                    } }}
                 </x-filament::badge>
             @endif
         </div>
@@ -194,7 +212,7 @@
                                                 <div class="flex-1">
                                                     <div class="flex items-center gap-3 mb-1">
                                                         <span class="font-semibold text-gray-900 dark:text-white">{{ $factura->numero_factura }}</span>
-                                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $factura->cliente->nombre_empresa ?? '' }}</span>
+                                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $factura->cliente->nombre_empresa ?? $cliente->name }}</span>
                                                     </div>
                                                     <div class="flex items-center gap-2 flex-wrap">
                                                         @if($factura->estado === 'vencida')

@@ -10,46 +10,75 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
+            color: #e2e8f0;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
+            backdrop-filter: blur(10px);
+        }
+        .header-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.3);
+        }
+        .main-content {
+            margin-top: 180px;
+        }
+        .dark-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(236, 72, 153, 0.2);
         }
         .treatment-card {
             transition: all 0.3s ease;
             position: relative;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid rgba(236, 72, 153, 0.2);
         }
         .treatment-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px -10px rgba(236, 72, 153, 0.4);
+            border-color: rgba(236, 72, 153, 0.5);
         }
         .treatment-card.selected {
-            border: 3px solid #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border: 3px solid #ec4899;
+            box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2), 0 10px 30px rgba(236, 72, 153, 0.3);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
         .time-slot {
             transition: all 0.2s ease;
             position: relative;
+            background: #1e293b;
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            color: #e2e8f0;
         }
         .time-slot:hover:not(.disabled) {
-            background-color: #e0e7ff;
-            border-color: #667eea;
+            background-color: rgba(236, 72, 153, 0.2);
+            border-color: #ec4899;
             transform: scale(1.05);
+            color: #fff;
         }
         .time-slot.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
             color: white;
-            border-color: #667eea;
+            border-color: #ec4899;
             font-weight: 600;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
         }
         .time-slot.disabled {
-            opacity: 0.4;
+            opacity: 0.3;
             cursor: not-allowed;
-            background-color: #f3f4f6;
+            background-color: #0f172a;
+            border-color: rgba(236, 72, 153, 0.1);
         }
         .appointment-item {
             animation: slideIn 0.3s ease;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            border: 2px solid rgba(236, 72, 153, 0.3);
         }
         @keyframes slideIn {
             from {
@@ -75,11 +104,39 @@
         .smooth-scroll {
             scroll-behavior: smooth;
         }
+        .pink-accent {
+            color: #ec4899;
+        }
+        .pink-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        }
+        .dark-input {
+            background: #1e293b;
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            color: #e2e8f0;
+        }
+        .dark-input:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+        }
+        .dark-input::placeholder {
+            color: #64748b;
+        }
+        .dark-bg-section {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+        .pink-text {
+            color: #ec4899;
+        }
+        .pink-border {
+            border-color: rgba(236, 72, 153, 0.3);
+        }
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Header -->
-    <header class="gradient-bg text-white py-8 shadow-lg">
+    <!-- Header Fijo -->
+    <header class="gradient-bg text-white py-6 shadow-lg header-fixed">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -96,15 +153,15 @@
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-4 py-8 main-content">
         <div class="max-w-7xl mx-auto">
             <!-- Breadcrumb -->
             <div class="mb-6">
-                <nav class="text-sm text-gray-600">
+                <nav class="text-sm text-gray-400">
                     <ol class="flex items-center space-x-2">
-                        <li><a href="/" class="hover:text-purple-600">Inicio</a></li>
+                        <li><a href="/" class="hover:pink-accent transition-colors">Inicio</a></li>
                         <li><i class="fas fa-chevron-right text-xs"></i></li>
-                        <li class="text-gray-800 font-medium">Reservar Citas</li>
+                        <li class="text-gray-300 font-medium">Reservar Citas</li>
                     </ol>
                 </nav>
             </div>
@@ -113,35 +170,35 @@
             <div class="grid lg:grid-cols-3 gap-6">
                 <!-- Sección de Tratamientos (2/3) -->
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+                    <div class="dark-card rounded-2xl shadow-xl p-6 mb-6">
                         <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">
-                                <i class="fas fa-spa text-purple-600 mr-2"></i>
+                            <h2 class="text-2xl font-bold text-white">
+                                <i class="fas fa-spa pink-accent mr-2"></i>
                                 Selecciona tus Tratamientos
                             </h2>
-                            <span class="text-sm text-gray-500">Puedes elegir varios</span>
+                            <span class="text-sm text-gray-400">Puedes elegir varios</span>
                         </div>
                         <div class="grid md:grid-cols-2 gap-4 smooth-scroll" id="treatmentsContainer">
                             @foreach($treatments as $treatment)
-                            <div class="treatment-card bg-white border-2 border-gray-200 rounded-xl p-4 cursor-pointer transition-all duration-300" 
+                            <div class="treatment-card rounded-xl p-4 cursor-pointer transition-all duration-300" 
                                  onclick="toggleTreatment({{ $treatment['id'] }})"
                                  id="treatment-{{ $treatment['id'] }}"
                                  data-treatment='@json($treatment)'>
                                 <div class="flex items-start space-x-4">
-                                    <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg border-2 border-pink-500/30">
                                         <img src="{{ $treatment['image'] }}" alt="{{ $treatment['name'] }}" 
                                              class="w-full h-full object-cover">
                                     </div>
                                     <div class="flex-1">
-                                        <h3 class="font-semibold text-gray-800 text-lg mb-2">{{ $treatment['name'] }}</h3>
-                                        <div class="flex items-center text-sm text-gray-600 mb-2">
-                                            <i class="far fa-clock mr-2 text-purple-600"></i>
+                                        <h3 class="font-semibold text-white text-lg mb-2">{{ $treatment['name'] }}</h3>
+                                        <div class="flex items-center text-sm text-gray-400 mb-2">
+                                            <i class="far fa-clock mr-2 pink-accent"></i>
                                             <span>{{ $treatment['duration'] }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <span class="text-2xl font-bold text-purple-600">${{ number_format($treatment['price'], 0) }}</span>
+                                            <span class="text-2xl font-bold pink-accent">${{ number_format($treatment['price'], 0) }}</span>
                                             <div class="check-icon hidden">
-                                                <i class="fas fa-check-circle text-2xl text-purple-600"></i>
+                                                <i class="fas fa-check-circle text-2xl pink-accent"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -152,28 +209,28 @@
                     </div>
 
                     <!-- Formulario para Agregar Cita -->
-                    <div class="bg-white rounded-2xl shadow-xl p-6" id="appointmentFormSection">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                            <i class="fas fa-calendar-plus text-purple-600 mr-2"></i>
+                    <div class="dark-card rounded-2xl shadow-xl p-6" id="appointmentFormSection">
+                        <h2 class="text-2xl font-bold text-white mb-6">
+                            <i class="fas fa-calendar-plus pink-accent mr-2"></i>
                             Agregar Nueva Cita
                         </h2>
                         <form id="appointmentForm" class="space-y-6">
                             <!-- Fecha -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="far fa-calendar mr-2 text-purple-600"></i>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    <i class="far fa-calendar mr-2 pink-accent"></i>
                                     Fecha
                                 </label>
                                 <input type="date" id="appointmentDate" 
-                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                                       class="dark-input w-full px-4 py-3 rounded-lg transition-all"
                                        min="{{ date('Y-m-d') }}"
                                        required>
                             </div>
 
                             <!-- Hora -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    <i class="far fa-clock mr-2 text-purple-600"></i>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">
+                                    <i class="far fa-clock mr-2 pink-accent"></i>
                                     Hora
                                 </label>
                                 <div class="grid grid-cols-4 md:grid-cols-6 gap-2" id="timeSlots">
@@ -191,7 +248,7 @@
                             <!-- Botón para agregar cita -->
                             <button type="button" 
                                     onclick="addAppointment()"
-                                    class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                    class="w-full pink-gradient text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg">
                                 <i class="fas fa-plus mr-2"></i>
                                 Agregar Cita al Carrito
                             </button>
@@ -201,10 +258,10 @@
 
                 <!-- Sidebar - Carrito de Citas (1/3) -->
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-6" id="cartSidebar">
+                    <div class="dark-card rounded-2xl shadow-xl p-6 sticky top-6" id="cartSidebar">
                         <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-bold text-gray-800">
-                                <i class="fas fa-shopping-cart text-purple-600 mr-2"></i>
+                            <h2 class="text-xl font-bold text-white">
+                                <i class="fas fa-shopping-cart pink-accent mr-2"></i>
                                 Mis Citas
                             </h2>
                             <button onclick="clearCart()" class="text-sm text-red-600 hover:text-red-700">
@@ -215,7 +272,7 @@
 
                         <!-- Lista de Citas -->
                         <div id="appointmentsList" class="space-y-3 max-h-[500px] overflow-y-auto smooth-scroll mb-6">
-                            <div class="text-center text-gray-500 py-8" id="emptyCart">
+                            <div class="text-center text-gray-400 py-8" id="emptyCart">
                                 <i class="fas fa-calendar-times text-4xl mb-3 opacity-50"></i>
                                 <p>No hay citas agregadas</p>
                                 <p class="text-sm mt-2">Selecciona tratamientos y agrega fechas</p>
@@ -223,36 +280,36 @@
                         </div>
 
                         <!-- Resumen -->
-                        <div class="border-t border-gray-200 pt-4">
+                        <div class="border-t pink-border pt-4">
                             <div class="space-y-2 mb-4">
-                                <div class="flex justify-between text-sm text-gray-600">
+                                <div class="flex justify-between text-sm text-gray-400">
                                     <span>Citas:</span>
-                                    <span id="totalAppointments" class="font-medium">0</span>
+                                    <span id="totalAppointments" class="font-medium text-white">0</span>
                                 </div>
-                                <div class="flex justify-between text-sm text-gray-600">
+                                <div class="flex justify-between text-sm text-gray-400">
                                     <span>Tratamientos:</span>
-                                    <span id="totalTreatments" class="font-medium">0</span>
+                                    <span id="totalTreatments" class="font-medium text-white">0</span>
                                 </div>
-                                <div class="border-t border-gray-200 pt-2"></div>
+                                <div class="border-t pink-border pt-2"></div>
                                 <div class="flex justify-between text-lg font-bold">
-                                    <span>Total:</span>
-                                    <span id="totalPrice" class="text-purple-600">$0</span>
+                                    <span class="text-white">Total:</span>
+                                    <span id="totalPrice" class="pink-accent">$0</span>
                                 </div>
                             </div>
 
                             <!-- Información del Cliente -->
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <h3 class="font-medium text-gray-800 mb-3">
-                                    <i class="fas fa-user mr-2 text-purple-600"></i>
+                            <div class="dark-bg-section p-4 rounded-lg mb-4 border pink-border">
+                                <h3 class="font-medium text-white mb-3">
+                                    <i class="fas fa-user mr-2 pink-accent"></i>
                                     Tus Datos
                                 </h3>
                                 <div class="space-y-3">
                                     <input type="text" id="customerName" placeholder="Nombre Completo" required
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                           class="dark-input w-full px-3 py-2 rounded-lg text-sm">
                                     <input type="tel" id="customerPhone" placeholder="Teléfono" required
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                           class="dark-input w-full px-3 py-2 rounded-lg text-sm">
                                     <input type="email" id="customerEmail" placeholder="Correo Electrónico" required
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                           class="dark-input w-full px-3 py-2 rounded-lg text-sm">
                                 </div>
                             </div>
 
@@ -393,30 +450,30 @@
                 });
                 
                 const treatmentsList = appointment.treatments.map(t => 
-                    `<span class="inline-block bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded mr-1 mb-1">${t.name}</span>`
+                    `<span class="inline-block bg-pink-500/20 text-pink-300 text-xs px-2 py-1 rounded mr-1 mb-1 border border-pink-500/30">${t.name}</span>`
                 ).join('');
                 
                 return `
-                    <div class="appointment-item bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-lg p-4">
+                    <div class="appointment-item rounded-lg p-4">
                         <div class="flex items-start justify-between mb-2">
                             <div class="flex-1">
-                                <div class="font-semibold text-gray-800 mb-1">
-                                    <i class="far fa-calendar text-purple-600 mr-1"></i>
+                                <div class="font-semibold text-white mb-1">
+                                    <i class="far fa-calendar pink-accent mr-1"></i>
                                     ${formattedDate}
                                 </div>
-                                <div class="text-sm text-gray-600 mb-2">
-                                    <i class="far fa-clock text-purple-600 mr-1"></i>
+                                <div class="text-sm text-gray-400 mb-2">
+                                    <i class="far fa-clock pink-accent mr-1"></i>
                                     ${appointment.time}
                                 </div>
                                 <div class="text-xs text-gray-500 mb-2">
                                     ${treatmentsList}
                                 </div>
-                                <div class="font-bold text-purple-600">
+                                <div class="font-bold pink-accent">
                                     $${appointment.total.toLocaleString()}
                                 </div>
                             </div>
                             <button onclick="removeAppointment(${appointment.id})" 
-                                    class="text-red-500 hover:text-red-700 ml-2">
+                                    class="text-red-400 hover:text-red-300 ml-2 transition-colors">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>

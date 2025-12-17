@@ -14,11 +14,11 @@
                     </div>
                     <div class="flex-1 flex justify-end">
                         <x-filament::button
-                            :href="\\App\\Filament\\Resources\\ClientResource::getUrl('edit', ['record' => $this->record])"
-                            tag=\"a\"
-                            size=\"sm\"
-                            color=\"gray\"
-                            icon=\"heroicon-o-pencil\"
+                            :href="\App\Filament\Resources\ClientResource::getUrl('edit', ['record' => $this->record])"
+                            tag="a"
+                            size="sm"
+                            color="gray"
+                            icon="heroicon-o-pencil"
                         >
                             Editar cliente
                         </x-filament::button>

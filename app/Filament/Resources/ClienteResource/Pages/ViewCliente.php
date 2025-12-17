@@ -134,7 +134,7 @@ class ViewCliente extends Page implements HasTable
         if ($clientEmail) {
             $facturasCreadasQuery->where('correo', $clientEmail);
         }
-            ->select([
+        $facturasCreadasQuery->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
                 'facturas.cliente_id',
@@ -154,7 +154,7 @@ class ViewCliente extends Page implements HasTable
         if ($clientEmail) {
             $facturasEditadasQuery->where('correo', $clientEmail);
         }
-            ->whereRaw('facturas.updated_at != facturas.created_at')
+        $facturasEditadasQuery->whereRaw('facturas.updated_at != facturas.created_at')
             ->where(function($q) {
                 $q->whereNull('facturas.enviada_at')
                   ->orWhereRaw('facturas.updated_at != facturas.enviada_at');
@@ -179,7 +179,7 @@ class ViewCliente extends Page implements HasTable
         if ($clientEmail) {
             $facturasEnviadasQuery->where('correo', $clientEmail);
         }
-            ->whereNotNull('enviada_at')
+        $facturasEnviadasQuery->whereNotNull('enviada_at')
             ->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
@@ -200,7 +200,7 @@ class ViewCliente extends Page implements HasTable
         if ($clientEmail) {
             $cotizacionesCreadasQuery->where('correo', $clientEmail);
         }
-            ->select([
+        $cotizacionesCreadasQuery->select([
                 'cotizacions.id',
                 DB::raw("NULL as client_id"),
                 'cotizacions.cliente_id',
@@ -220,7 +220,7 @@ class ViewCliente extends Page implements HasTable
         if ($clientEmail) {
             $cotizacionesEditadasQuery->where('correo', $clientEmail);
         }
-            ->whereRaw('cotizacions.updated_at != cotizacions.created_at')
+        $cotizacionesEditadasQuery->whereRaw('cotizacions.updated_at != cotizacions.created_at')
             ->where(function($q) {
                 $q->whereNull('cotizacions.enviada_at')
                   ->orWhereRaw('cotizacions.updated_at != cotizacions.enviada_at');
@@ -245,7 +245,7 @@ class ViewCliente extends Page implements HasTable
         if ($clientEmail) {
             $cotizacionesEnviadasQuery->where('correo', $clientEmail);
         }
-            ->where(function($q) {
+        $cotizacionesEnviadasQuery->where(function($q) {
                 $q->whereNotNull('enviada_at')
                   ->orWhere('estado', 'enviada');
             })

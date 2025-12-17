@@ -1,27 +1,8 @@
 <x-filament-panels::page>
-    {{-- Navegación de pestañas --}}
-    <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-        <nav class="-mb-px flex space-x-8">
-            <button
-                wire:click="setActiveTab('resumen')"
-                class="whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium transition-colors {{ $activeTab === 'resumen' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}"
-            >
-                Resumen
-            </button>
-            <button
-                wire:click="setActiveTab('actividades')"
-                class="whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium transition-colors {{ $activeTab === 'actividades' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200' }}"
-            >
-                Registro de actividades
-            </button>
-        </nav>
-    </div>
-
-    @if ($activeTab === 'resumen')
-        <div class="flex gap-6">
-            <!-- Barra lateral izquierda -->
-            <div class="w-64 flex-shrink-0">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 min-h-[600px]">
+    <div class="flex gap-6">
+        <!-- Barra lateral izquierda -->
+        <div class="w-64 flex-shrink-0">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 min-h-[600px]">
                 <!-- Foto cuadrada -->
                 <div class="w-32 h-32 mb-4 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
                     @if($this->record->foto ?? false)
@@ -110,92 +91,18 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Contenido principal - Resumen estilo facturación -->
-            <div class="flex-1 space-y-4">
-                @php
-                    $stats = $this->facturasStats;
-                @endphp
-
-                {{-- Resumen de facturas similar a la app de facturación --}}
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="rounded-lg bg-blue-50 dark:bg-blue-500/10 p-4 ring-1 ring-blue-500/20">
-                        <p class="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">TOTAL</p>
-                        <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                            ₡{{ number_format($stats['total'] ?? 0, 2, ',', ' ') }}
-                        </p>
-                    </div>
-                    <div class="rounded-lg bg-green-50 dark:bg-green-500/10 p-4 ring-1 ring-green-500/20">
-                        <p class="text-xs font-semibold text-green-700 dark:text-green-300 mb-1">PAGADO</p>
-                        <p class="text-2xl font-bold text-green-700 dark:text-green-300">
-                            ₡{{ number_format($stats['pagado'] ?? 0, 2, ',', ' ') }}
-                        </p>
-                    </div>
-                    <div class="rounded-lg bg-red-50 dark:bg-red-500/10 p-4 ring-1 ring-red-500/20">
-                        <p class="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">PENDIENTE</p>
-                        <p class="text-2xl font-bold text-red-700 dark:text-red-300">
-                            ₡{{ number_format($stats['pendiente'] ?? 0, 2, ',', ' ') }}
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Lista simple de facturas relacionadas (si existen) --}}
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow ring-1 ring-gray-950/5 dark:ring-white/10">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
-                            Facturas relacionadas (por correo)
-                        </h3>
-                    </div>
-                    @php
-                        $email = $this->record->email ?? null;
-                        $facturas = $email
-                            ? \App\Models\Factura::where('correo', $email)->orderByDesc('fecha_emision')->limit(20)->get()
-                            : collect();
-                    @endphp
-                    @if ($facturas->isEmpty())
-                        <div class="p-6 text-sm text-gray-500 dark:text-gray-400">
-                            No hay facturas relacionadas con este cliente todavía.
-                        </div>
-                    @else
-                        <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach ($facturas as $factura)
-                                <div class="px-4 py-3 flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $factura->numero_factura }}
-                                        </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}
-                                        </p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                            ₡{{ number_format($factura->total, 2, ',', ' ') }}
-                                        </p>
-                                        <x-filament::badge :color="match($factura->estado) {
-                                            'pagada' => 'success',
-                                            'pendiente' => 'warning',
-                                            'vencida' => 'danger',
-                                            default => 'gray',
-                                        }" class="mt-1">
-                                            {{ ucfirst($factura->estado) }}
-                                        </x-filament::badge>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
+        </div>
+        
+        <!-- Contenido principal - Registro de actividades -->
+        <div class="flex-1">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Registro de Actividades
+                    </h3>
+                    {{ $this->table }}
                 </div>
             </div>
         </div>
-    @elseif ($activeTab === 'actividades')
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-            <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Registro de Actividades
-                </h3>
-                {{ $this->table }}
-            </div>
-        </div>
-    @endif
+    </div>
 </x-filament-panels::page>

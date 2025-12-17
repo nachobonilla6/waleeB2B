@@ -662,14 +662,22 @@ class HistorialPage extends Page implements HasTable
                                     ->numeric()
                                     ->prefix('₡')
                                     ->step(0.01)
-                                    ->helperText('Opcional: Subtotal sin impuestos'),
+                                    ->helperText('Se calcula automáticamente si introduces el total'),
                                 Forms\Components\TextInput::make('total')
                                     ->label('Total (₡) - Incluye impuestos')
                                     ->numeric()
                                     ->prefix('₡')
                                     ->required()
                                     ->step(0.01)
+                                    ->live()
                                     ->helperText('Total final que incluye todos los impuestos')
+                                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                                        // Si se introduce el total y no hay subtotal, calcular el subtotal
+                                        if ($state && empty($get('subtotal'))) {
+                                            $subtotal = round($state / 1.13, 2);
+                                            $set('subtotal', $subtotal);
+                                        }
+                                    })
                                     ->required(),
                             ]),
                         ]),

@@ -115,55 +115,43 @@
                     @endphp
 
                     @if ($facturas->isEmpty())
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                        <div class="mt-4 rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-400">
                             No hay facturas relacionadas con este cliente todavía.
                         </div>
                     @else
-                        <div class="space-y-3">
-                            @foreach ($facturas as $factura)
-                                <div class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                                            {{ $factura->numero_factura }}
-                                        </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}
-                                        </p>
+                        <div class="mt-2">
+                            <h4 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                                Detalle de facturas
+                            </h4>
+                            <div class="space-y-3">
+                                @foreach ($facturas as $factura)
+                                    <div class="flex items-center justify-between px-4 py-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                                {{ $factura->numero_factura }}
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-bold text-gray-900 dark:text-white">
+                                                ₡{{ number_format($factura->total, 2, ',', ' ') }}
+                                            </p>
+                                            <x-filament::badge :color="match($factura->estado) {
+                                                'pagada' => 'success',
+                                                'pendiente' => 'warning',
+                                                'vencida' => 'danger',
+                                                default => 'gray',
+                                            }" class="mt-1">
+                                                {{ strtoupper($factura->estado) }}
+                                            </x-filament::badge>
+                                        </div>
                                     </div>
-                                    <div class="text-right">
-                                        <p class="text-sm font-bold text-gray-900 dark:text-white">
-                                            ₡{{ number_format($factura->total, 2, ',', ' ') }}
-                                        </p>
-                                        <x-filament::badge :color="match($factura->estado) {
-                                            'pagada' => 'success',
-                                            'pendiente' => 'warning',
-                                            'vencida' => 'danger',
-                                            default => 'gray',
-                                        }" class="mt-1">
-                                            {{ strtoupper($factura->estado) }}
-                                        </x-filament::badge>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    {{-- Registro de actividades del cliente --}}
-                    <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                Registro de actividades
-                            </h3>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                Ordenado de más reciente a más antiguo
-                            </span>
-                        </div>
-                        <div class="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900/60">
-                            <div class="p-4">
-                                {{ $this->table }}
+                                @endforeach
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>

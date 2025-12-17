@@ -30,10 +30,8 @@ class ClientResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         try {
-            if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
-                return (string) static::getModel()::where('estado', 'accepted')->count();
-            }
-            return (string) static::getModel()::count();
+            // Siempre usar clientes_en_proceso con estado 'accepted' (activo)
+            return (string) static::getModel()::where('estado', 'accepted')->count();
         } catch (\Exception $e) {
             return '0';
         }
@@ -43,10 +41,8 @@ class ClientResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        // Solo mostrar clientes con estado 'accepted'
-        if (Schema::hasColumn('clientes_en_proceso', 'estado')) {
-            $query->where('estado', 'accepted');
-        }
+        // Siempre filtrar solo clientes con estado 'accepted' (activo) en clientes_en_proceso
+        $query->where('estado', 'accepted');
 
         return $query;
     }
@@ -102,8 +98,7 @@ class ClientResource extends Resource
                             ])
                             ->default('accepted')
                             ->required()
-                            ->native(false)
-                            ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'estado')),
+                            ->native(false),
                     ]),
             ]);
     }
@@ -181,8 +176,15 @@ class ClientResource extends Resource
                             ->label('Estado')
                             ->badge()
                             ->color('success')
-                            ->formatStateUsing(fn (string $state): string => 'Activo')
-                            ->visible(fn () => Schema::hasColumn('clientes_en_proceso', 'estado')),
+                            ->formatStateUsing(fn (string $state): string => match($state) {
+                                'accepted' => 'Activo',
+                                'pending' => 'Pendiente',
+                                'rejected' => 'Rechazado',
+                                'listo_para_enviar' => 'Listo para enviar',
+                                'propuesta_enviada' => 'Propuesta enviada',
+                                'propuesta_personalizada_enviada' => 'Propuesta personalizada enviada',
+                                default => ucfirst($state),
+                            }),
                         Infolists\Components\TextEntry::make('created_at')
                             ->label('Fecha de Registro')
                             ->dateTime('d/m/Y H:i'),

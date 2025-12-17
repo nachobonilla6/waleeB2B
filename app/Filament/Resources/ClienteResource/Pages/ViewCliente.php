@@ -718,7 +718,7 @@ class ViewCliente extends Page implements HasTable
                     $cliente = $this->record;
                     
                     Note::create([
-                        'cliente_id' => $cliente->id,
+                        'client_id' => $cliente->id, // Usar client_id para clientes_en_proceso
                         'content' => $data['content'],
                         'type' => $data['type'],
                         'user_id' => auth()->id(),

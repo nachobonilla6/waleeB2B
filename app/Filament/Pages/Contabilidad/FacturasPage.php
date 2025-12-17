@@ -105,15 +105,15 @@ class FacturasPage extends Page implements HasTable
                                     ->label('Subtotal (₡)')
                                     ->numeric()
                                     ->prefix('₡')
-                                    ->required()
                                     ->step(0.01)
-                                    ->live()
-                                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('total', round($state * 1.13, 2))),
+                                    ->helperText('Opcional: Subtotal sin impuestos'),
                                 Forms\Components\TextInput::make('total')
-                                    ->label('Total con IVA (13%)')
+                                    ->label('Total (₡) - Incluye impuestos')
                                     ->numeric()
                                     ->prefix('₡')
+                                    ->required()
                                     ->step(0.01)
+                                    ->helperText('Total final que incluye todos los impuestos')
                                     ->required(),
                             ]),
                         ]),

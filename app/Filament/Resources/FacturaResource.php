@@ -101,16 +101,15 @@ class FacturaResource extends Resource
                             ->label('Subtotal (₡)')
                             ->numeric()
                             ->prefix('₡')
-                            ->required()
                             ->step(0.01)
-                            ->live()
-                            ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('total', round($state * 1.13, 2))),
+                            ->helperText('Opcional: Subtotal sin impuestos'),
                         Forms\Components\TextInput::make('total')
-                            ->label('Total con IVA (13%)')
+                            ->label('Total (₡) - Incluye impuestos')
                             ->numeric()
                             ->prefix('₡')
                             ->required()
-                            ->step(0.01),
+                            ->step(0.01)
+                            ->helperText('Total final que incluye todos los impuestos'),
                     ]),
                 ])
                 ->columns(2),
@@ -365,9 +364,10 @@ class FacturaResource extends Resource
                             ->label('Subtotal (₡)')
                             ->money('CRC', divideBy: 1)
                             ->size('lg')
-                            ->default('0.00'),
+                            ->default('0.00')
+                            ->visible(fn ($record) => !empty($record->subtotal) && $record->subtotal > 0),
                         Infolists\Components\TextEntry::make('total')
-                            ->label('Total con IVA (13%)')
+                            ->label('Total (₡) - Incluye impuestos')
                             ->money('CRC', divideBy: 1)
                             ->weight('bold')
                             ->size('lg')

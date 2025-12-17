@@ -16,7 +16,7 @@ class Dashboard extends BaseDashboard
      * Widgets visibles en el dashboard - solo estos se mostrarán
      * Esto sobrescribe el descubrimiento automático de widgets
      */
-    protected function getWidgets(): array
+    public function getWidgets(): array
     {
         return [
             IngresosDashboardWidget::class,

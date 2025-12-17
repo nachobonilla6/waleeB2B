@@ -14,6 +14,7 @@ class IngresosDashboardWidget extends BaseWidget
     {
         $today = Carbon::today();
         $startOfMonth = $today->copy()->startOfMonth();
+        $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
         
         // Ingresos totales (todas las facturas pagadas)
         $ingresosTotales = (float) Factura::where('estado', 'pagada')->sum('total');
@@ -23,9 +24,9 @@ class IngresosDashboardWidget extends BaseWidget
             ->where('fecha_emision', '>=', $startOfMonth)
             ->sum('total');
         
-        // Ingresos del día
-        $ingresosDia = (float) Factura::where('estado', 'pagada')
-            ->whereDate('fecha_emision', $today)
+        // Ingresos de la semana actual (desde lunes)
+        $ingresosSemana = (float) Factura::where('estado', 'pagada')
+            ->where('fecha_emision', '>=', $startOfWeek)
             ->sum('total');
         
         return [
@@ -34,13 +35,13 @@ class IngresosDashboardWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('success'),
                 
-            Stat::make('Ingresos Mensual', Number::currency($ingresosMensual, 'CRC'))
+            Stat::make('Ingresos Mensuales', Number::currency($ingresosMensual, 'CRC'))
                 ->description('Ingresos de este mes')
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('info'),
                 
-            Stat::make('Ingresos del Día', Number::currency($ingresosDia, 'CRC'))
-                ->description('Ingresos de hoy')
+            Stat::make('Ingresos de la Semana', Number::currency($ingresosSemana, 'CRC'))
+                ->description('Ingresos de esta semana')
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
         ];

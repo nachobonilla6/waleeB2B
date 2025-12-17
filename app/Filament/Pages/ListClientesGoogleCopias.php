@@ -669,11 +669,11 @@ class ListClientesGoogleCopias extends Page implements HasTable
                             'user_id' => auth()->id(),
                         ]);
                         
-                        // Marcar el contacto como propuesta enviada
+                        // Marcar el contacto como propuesta personalizada enviada
                         if ($client) {
                             $client->update([
                                 'propuesta_enviada' => true,
-                                'estado' => 'propuesta_enviada'
+                                'estado' => 'propuesta_personalizada_enviada'
                             ]);
                         }
                         

@@ -218,11 +218,11 @@ class ListPropuestaPersonalizadas extends ListRecords
                             'user_id' => auth()->id(),
                         ]);
                         
-                        // Marcar el contacto como propuesta enviada solo si se envió el email
+                        // Marcar el contacto como propuesta personalizada enviada solo si se envió el email
                         if (($data['enviar_email'] ?? false) && $client) {
                             $client->update([
                                 'propuesta_enviada' => true,
-                                'estado' => 'propuesta_enviada'
+                                'estado' => 'propuesta_personalizada_enviada'
                             ]);
                         }
                         

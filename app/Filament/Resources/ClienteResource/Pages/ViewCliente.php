@@ -30,11 +30,64 @@ class ViewCliente extends Page implements HasTable
     protected static string $view = 'filament.resources.cliente-resource.pages.view-cliente';
     
     protected array $cotizacionData = [];
+    
+    public ?string $activeTab = 'facturas';
+    
+    public ?string $filtroAno = null;
+    public ?string $filtroTrimestre = null;
+    public ?string $filtroMes = null;
+    public ?string $filtroSerie = null;
 
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
         $this->record->loadMissing(['facturas', 'notes.user']);
+    }
+    
+    public function setActiveTab(string $tab): void
+    {
+        $this->activeTab = $tab;
+    }
+    
+    public function getFacturasFiltradasProperty()
+    {
+        $query = Factura::where('cliente_id', $this->record->id);
+        
+        if ($this->filtroAno && $this->filtroAno !== 'TODOS') {
+            $query->whereYear('fecha_emision', $this->filtroAno);
+        }
+        
+        if ($this->filtroTrimestre && $this->filtroTrimestre !== 'TODOS') {
+            $mesInicio = (($this->filtroTrimestre - 1) * 3) + 1;
+            $mesFin = $mesInicio + 2;
+            $query->whereMonth('fecha_emision', '>=', $mesInicio)
+                  ->whereMonth('fecha_emision', '<=', $mesFin);
+        }
+        
+        if ($this->filtroMes && $this->filtroMes !== 'TODOS') {
+            $query->whereMonth('fecha_emision', $this->filtroMes);
+        }
+        
+        if ($this->filtroSerie && $this->filtroSerie !== 'TODOS') {
+            $query->where('serie', $this->filtroSerie);
+        }
+        
+        return $query->orderBy('fecha_emision', 'desc')->get();
+    }
+    
+    public function getResumenFacturasProperty()
+    {
+        $facturas = $this->facturasFiltradas;
+        
+        $total = $facturas->sum('total');
+        $pagado = $facturas->sum('monto_pagado');
+        $pendiente = $total - $pagado;
+        
+        return [
+            'total' => $total,
+            'pagado' => $pagado,
+            'pendiente' => $pendiente,
+        ];
     }
 
     public function getTitle(): string

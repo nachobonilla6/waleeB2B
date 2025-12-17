@@ -2,16 +2,42 @@
     @php
         $cliente = $this->record;
         $cliente->loadMissing(['facturas', 'notes.user']);
-        $redesSociales = $cliente->redes_sociales ?? [];
-        $iconosRedes = [
-            'facebook' => '📘',
-            'instagram' => '📸',
-            'tiktok' => '🎵',
-            'twitter' => '🐦',
-            'linkedin' => '💼',
-            'youtube' => '▶️',
-            'pinterest' => '📌',
-        ];
+        $facturasFiltradas = $this->facturasFiltradas;
+        $resumen = $this->resumenFacturas;
+        
+        // Obtener años únicos de las facturas
+        $anos = \App\Models\Factura::where('cliente_id', $cliente->id)
+            ->selectRaw('YEAR(fecha_emision) as ano')
+            ->distinct()
+            ->orderBy('ano', 'desc')
+            ->pluck('ano')
+            ->map(fn($ano) => (string)$ano)
+            ->prepend('TODOS');
+        
+        // Obtener series únicas
+        $series = \App\Models\Factura::where('cliente_id', $cliente->id)
+            ->whereNotNull('serie')
+            ->select('serie')
+            ->distinct()
+            ->orderBy('serie')
+            ->pluck('serie')
+            ->prepend('TODOS');
+        
+        $meses = collect([
+            'TODOS' => 'TODOS',
+            '1' => 'Enero',
+            '2' => 'Febrero',
+            '3' => 'Marzo',
+            '4' => 'Abril',
+            '5' => 'Mayo',
+            '6' => 'Junio',
+            '7' => 'Julio',
+            '8' => 'Agosto',
+            '9' => 'Septiembre',
+            '10' => 'Octubre',
+            '11' => 'Noviembre',
+            '12' => 'Diciembre',
+        ]);
     @endphp
 
     {{-- Header --}}
@@ -60,468 +86,155 @@
             >
                 Crear Factura
             </x-filament::button>
-            <x-filament::button
-                :href="\App\Filament\Resources\ClienteResource::getUrl('create')"
-                tag="a"
-                color="gray"
-                icon="heroicon-o-plus"
-            >
-                Nuevo
-            </x-filament::button>
         </div>
     </div>
 
-    {{-- Wizard --}}
-    <div x-data="{ currentStep: {{ request()->integer('step', 1) }} }">
-        {{-- Steps Navigation --}}
-        <nav class="fi-wi-header mb-6">
-            <ol class="fi-wi-header-steps flex items-center justify-center gap-x-2">
-                @php
-                    $steps = [
-                        ['icon' => 'heroicon-o-building-office', 'label' => 'Empresa'],
-                        ['icon' => 'heroicon-o-phone', 'label' => 'Contacto'],
-                        ['icon' => 'heroicon-o-map-pin', 'label' => 'Ubicación'],
-                        ['icon' => 'heroicon-o-globe-alt', 'label' => 'Sitio Web'],
-                        ['icon' => 'heroicon-o-share', 'label' => 'Redes'],
-                        ['icon' => 'heroicon-o-document-text', 'label' => 'Notas'],
-                        ['icon' => 'heroicon-o-document-currency-dollar', 'label' => 'Contabilidad'],
-                        ['icon' => 'heroicon-o-clock', 'label' => 'Actividades'],
-                    ];
-                @endphp
-                
-                @foreach($steps as $index => $step)
-                    <li class="fi-wi-header-step flex items-center gap-x-2 shrink-0">
-                        <button 
-                            type="button"
-                            @click="currentStep = {{ $index + 1 }}"
-                            title="{{ $step['label'] }}"
-                            class="fi-wi-header-step-btn flex items-center justify-center w-10 h-10 rounded-full transition-all"
-                            x-bind:class="currentStep === {{ $index + 1 }} 
-                                ? 'bg-primary-500 text-white shadow-lg scale-110' 
-                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200'"
-                        >
-                            <x-dynamic-component :component="$step['icon']" class="h-5 w-5"/>
-                        </button>
-                        
-                        @if($index < count($steps) - 1)
-                            <div class="h-0.5 w-6 bg-gray-200 dark:bg-white/10 transition-colors"
-                                 x-bind:class="currentStep > {{ $index + 1 }} ? 'bg-primary-500' : ''"></div>
-                        @endif
-                    </li>
-                @endforeach
-            </ol>
-        </nav>
+    {{-- Tabs --}}
+    <div x-data="{ activeTab: @entangle('activeTab') }">
+        {{-- Tab Navigation --}}
+        <div class="mb-6 border-b border-gray-200 dark:border-white/10">
+            <nav class="-mb-px flex space-x-8">
+                <button
+                    @click="$wire.set('activeTab', 'facturas')"
+                    :class="activeTab === 'facturas' 
+                        ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
+                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors"
+                >
+                    <x-heroicon-o-banknotes class="inline-block h-5 w-5 mr-2" />
+                    Facturas
+                </button>
+                <button
+                    @click="$wire.set('activeTab', 'actividades')"
+                    :class="activeTab === 'actividades' 
+                        ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
+                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors"
+                >
+                    <x-heroicon-o-clock class="inline-block h-5 w-5 mr-2" />
+                    Registro de Actividades
+                </button>
+            </nav>
+        </div>
 
-        {{-- Step Content --}}
-        <div class="fi-wi-step rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
-            {{-- Paso 1: Empresa --}}
-            <div x-show="currentStep === 1" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-building-office class="h-5 w-5 text-gray-400"/> Información de Empresa
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <x-filament::input.wrapper label="Nombre de Empresa">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->nombre_empresa ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Estado">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ ucfirst($cliente->estado_cuenta ?? '—') }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Tipo de Empresa">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ ucfirst($cliente->tipo_empresa ?? '—') }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Industria">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ ucfirst($cliente->industria ?? '—') }}</div>
-                        </x-filament::input.wrapper>
-                        <div class="md:col-span-2">
-                            <x-filament::input.wrapper label="Descripción">
-                                <div class="fi-input-wrp-input px-3 py-2 min-h-[60px]">{{ $cliente->descripcion ?? '—' }}</div>
-                            </x-filament::input.wrapper>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Paso 2: Contacto --}}
-            <div x-show="currentStep === 2" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-phone class="h-5 w-5 text-gray-400"/> Información de Contacto
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <x-filament::input.wrapper label="Email">
-                            <div class="fi-input-wrp-input px-3 py-2">
-                                @if($cliente->correo)
-                                    <a href="mailto:{{ $cliente->correo }}" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->correo }}</a>
-                                @else —
-                                @endif
-                            </div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Teléfono">
-                            <div class="fi-input-wrp-input px-3 py-2">
-                                @if($cliente->telefono)
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->telefono) }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->telefono }}</a>
-                                @else —
-                                @endif
-                            </div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Tel. Alternativo">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->telefono_alternativo ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="WhatsApp">
-                            <div class="fi-input-wrp-input px-3 py-2">
-                                @if($cliente->whatsapp)
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $cliente->whatsapp) }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->whatsapp }}</a>
-                                @else —
-                                @endif
-                            </div>
-                        </x-filament::input.wrapper>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Paso 3: Ubicación --}}
-            <div x-show="currentStep === 3" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-map-pin class="h-5 w-5 text-gray-400"/> Ubicación
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <x-filament::input.wrapper label="País">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->pais ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Estado">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->estado ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Ciudad">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->ciudad ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <div class="md:col-span-2">
-                            <x-filament::input.wrapper label="Dirección">
-                                <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->direccion ?? '—' }}</div>
-                            </x-filament::input.wrapper>
-                        </div>
-                        <x-filament::input.wrapper label="Código Postal">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->codigo_postal ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                    </div>
-                    @if($cliente->direccion && $cliente->ciudad)
-                        <div class="mt-4">
-                            <x-filament::button
-                                :href="'https://maps.google.com/?q=' . urlencode($cliente->direccion . ', ' . $cliente->ciudad)"
-                                tag="a"
-                                target="_blank"
-                                color="gray"
-                                icon="heroicon-o-map"
-                            >
-                                Ver en Maps
-                            </x-filament::button>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Paso 4: Sitio Web --}}
-            <div x-show="currentStep === 4" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-globe-alt class="h-5 w-5 text-gray-400"/> Sitio Web
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <x-filament::input.wrapper label="Dominio">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->nombre_sitio ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="URL">
-                            <div class="fi-input-wrp-input px-3 py-2">
-                                @if($cliente->url_sitio)
-                                    <a href="{{ $cliente->url_sitio }}" target="_blank" class="text-primary-600 hover:underline dark:text-primary-400">{{ $cliente->url_sitio }}</a>
-                                @else —
-                                @endif
-                            </div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Hosting">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->hosting ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                        <x-filament::input.wrapper label="Expira">
-                            <div class="fi-input-wrp-input px-3 py-2">{{ $cliente->dominio_expira?->format('d/m/Y') ?? '—' }}</div>
-                        </x-filament::input.wrapper>
-                    </div>
-                    @if($cliente->url_sitio)
-                        <div class="mt-4">
-                            <x-filament::button
-                                :href="$cliente->url_sitio"
-                                tag="a"
-                                target="_blank"
-                                color="gray"
-                                icon="heroicon-o-arrow-top-right-on-square"
-                            >
-                                Visitar Sitio
-                            </x-filament::button>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Paso 5: Redes --}}
-            <div x-show="currentStep === 5" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-share class="h-5 w-5 text-gray-400"/> Redes Sociales
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6">
-                    @if(count($redesSociales) > 0)
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            @foreach($redesSociales as $red)
-                                <a href="{{ $red['url'] ?? '#' }}" target="_blank" 
-                                   class="flex items-center gap-3 p-3 rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                                    <span class="text-2xl">{{ $iconosRedes[$red['red'] ?? ''] ?? '🌐' }}</span>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-medium text-gray-950 dark:text-white">{{ ucfirst($red['red'] ?? 'Red') }}</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ $red['url'] ?? '' }}</p>
-                                    </div>
-                                    <x-filament::badge :color="($red['activo'] ?? false) ? 'success' : 'gray'">
-                                        {{ ($red['activo'] ?? false) ? 'Activo' : 'Inactivo' }}
-                                    </x-filament::badge>
-                                </a>
+        {{-- Tab Content: Facturas --}}
+        <div x-show="activeTab === 'facturas'" x-cloak>
+            <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                {{-- Filtros --}}
+                <div class="border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                    <div class="flex flex-wrap gap-3">
+                        <select wire:model.live="filtroAno" class="rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
+                            <option value="">AÑO TODOS</option>
+                            @foreach($anos as $ano)
+                                <option value="{{ $ano === 'TODOS' ? '' : $ano }}">{{ $ano }}</option>
                             @endforeach
-                        </div>
-                    @else
-                        <div class="text-center py-8 text-gray-400">
-                            <x-heroicon-o-share class="w-12 h-12 mx-auto mb-2"/>
-                            <p>Sin redes sociales</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Paso 6: Notas --}}
-            <div x-show="currentStep === 6" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-document-text class="h-5 w-5 text-gray-400"/> Notas
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6 space-y-4">
-                    {{-- Nota de texto simple (legacy) --}}
-                    @if($cliente->notas)
-                        <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4">
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Nota General</p>
-                            <p class="text-gray-950 dark:text-white whitespace-pre-wrap">{{ $cliente->notas }}</p>
-                        </div>
-                    @endif
-
-                    {{-- Notas relacionadas --}}
-                    @if($cliente->notes && $cliente->notes->count() > 0)
-                        <div class="space-y-3">
-                            @foreach($cliente->notes as $note)
-                                <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4 hover:ring-gray-950/10 dark:hover:ring-white/20 transition-colors">
-                                    <div class="flex items-start justify-between gap-4 mb-2">
-                                        <div class="flex items-center gap-2">
-                                            <x-filament::badge :color="match($note->type) {
-                                                'note' => 'gray',
-                                                'call' => 'primary',
-                                                'meeting' => 'info',
-                                                'email' => 'success',
-                                                default => 'gray'
-                                            }">
-                                                {{ match($note->type) {
-                                                    'note' => 'Nota',
-                                                    'call' => 'Llamada',
-                                                    'meeting' => 'Reunión',
-                                                    'email' => 'Email',
-                                                    default => $note->type
-                                                } }}
-                                            </x-filament::badge>
-                                            @if($note->user)
-                                                <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                    por {{ $note->user->name }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $note->created_at->format('d/m/Y H:i') }}
-                                        </span>
-                                    </div>
-                                    <p class="text-gray-950 dark:text-white whitespace-pre-wrap">{{ $note->content }}</p>
-                                </div>
+                        </select>
+                        <select wire:model.live="filtroTrimestre" class="rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
+                            <option value="">TRIMESTRE TODOS</option>
+                            <option value="1">Q1</option>
+                            <option value="2">Q2</option>
+                            <option value="3">Q3</option>
+                            <option value="4">Q4</option>
+                        </select>
+                        <select wire:model.live="filtroMes" class="rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
+                            @foreach($meses as $key => $mes)
+                                <option value="{{ $key === 'TODOS' ? '' : $key }}">{{ $mes }}</option>
                             @endforeach
-                        </div>
-                    @elseif(!$cliente->notas)
-                        <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-8 text-center">
-                            <p class="text-gray-500 dark:text-gray-400">No hay notas registradas</p>
-                        </div>
-                    @endif
+                        </select>
+                        <select wire:model.live="filtroSerie" class="rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-sm">
+                            <option value="">SERIE TODOS</option>
+                            @foreach($series as $serie)
+                                <option value="{{ $serie === 'TODOS' ? '' : $serie }}">{{ $serie }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            {{-- Paso 7: Contabilidad --}}
-            <div x-show="currentStep === 7" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-document-currency-dollar class="h-5 w-5 text-gray-400"/> Contabilidad
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6 space-y-8">
-                    {{-- Resumen --}}
-                    @php
-                        $facturas = $cliente->facturas ? $cliente->facturas->sortByDesc('created_at') : collect();
-                        $totalFacturado = $facturas->sum('total') ?? 0;
-                        $facturasPendientes = $facturas->where('estado', 'pendiente');
-                        $facturasPagadas = $facturas->where('estado', 'pagada');
-                    @endphp
+                {{-- Resumen --}}
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-white/10">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="rounded-lg bg-gray-50 dark:bg-white/5 p-4 ring-1 ring-gray-950/5 dark:ring-white/10">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Total Facturado</p>
-                            <p class="text-2xl font-bold text-gray-950 dark:text-white">${{ number_format($totalFacturado, 2) }}</p>
+                        <div class="rounded-lg bg-blue-50 dark:bg-blue-500/10 p-4 ring-1 ring-blue-500/20">
+                            <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">TOTAL</p>
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($resumen['total'], 2, ',', ' ') }}</p>
                         </div>
                         <div class="rounded-lg bg-green-50 dark:bg-green-500/10 p-4 ring-1 ring-green-500/20">
-                            <p class="text-sm text-green-600 dark:text-green-400">Pagadas</p>
-                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $facturasPagadas->count() }}</p>
+                            <p class="text-sm text-green-600 dark:text-green-400 font-medium">PAGADO</p>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">₡{{ number_format($resumen['pagado'], 2, ',', ' ') }}</p>
                         </div>
-                        <div class="rounded-lg bg-amber-50 dark:bg-amber-500/10 p-4 ring-1 ring-amber-500/20">
-                            <p class="text-sm text-amber-600 dark:text-amber-400">Pendientes</p>
-                            <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $facturasPendientes->count() }}</p>
+                        <div class="rounded-lg bg-red-50 dark:bg-red-500/10 p-4 ring-1 ring-red-500/20">
+                            <p class="text-sm text-red-600 dark:text-red-400 font-medium">PENDIENTE</p>
+                            <p class="text-2xl font-bold text-red-600 dark:text-red-400">₡{{ number_format($resumen['pendiente'], 2, ',', ' ') }}</p>
                         </div>
                     </div>
+                </div>
 
-                    {{-- Facturas --}}
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-950 dark:text-white mb-4 flex items-center gap-2">
-                            <x-heroicon-o-document-currency-dollar class="h-5 w-5 text-gray-400"/>
-                            Facturas
-                        </h4>
-                        @if($facturas->count() > 0)
-                            <div class="overflow-x-auto rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-50 dark:bg-white/5">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400"># Factura</th>
-                                            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Fecha</th>
-                                            <th class="px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-400">Concepto</th>
-                                            <th class="px-4 py-3 text-right font-medium text-gray-500 dark:text-gray-400">Total</th>
-                                            <th class="px-4 py-3 text-center font-medium text-gray-500 dark:text-gray-400">Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200 dark:divide-white/10">
-                                        @foreach($facturas as $factura)
-                                            <tr 
-                                                class="hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-colors"
-                                                onclick="window.location.href='{{ \App\Filament\Resources\FacturaResource::getUrl('edit', ['record' => $factura]) }}'"
-                                            >
-                                                <td class="px-4 py-3 font-medium text-gray-950 dark:text-white">{{ $factura->numero_factura }}</td>
-                                                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ $factura->fecha_emision?->format('d/m/Y') ?? '—' }}</td>
-                                                <td class="px-4 py-3 text-gray-950 dark:text-white">{{ Str::limit($factura->concepto, 40) }}</td>
-                                                <td class="px-4 py-3 text-right font-medium text-gray-950 dark:text-white">${{ number_format($factura->total, 2) }}</td>
-                                                <td class="px-4 py-3 text-center">
-                                                    <x-filament::badge :color="match($factura->estado) {
-                                                        'pagada' => 'success',
-                                                        'pendiente' => 'warning',
-                                                        'vencida' => 'danger',
-                                                        'cancelada' => 'gray',
-                                                        default => 'gray'
-                                                    }">
-                                                        {{ ucfirst($factura->estado ?? 'N/A') }}
-                                                    </x-filament::badge>
-                                                </td>
-                                            </tr>
+                {{-- Lista de Facturas --}}
+                <div class="p-6">
+                    @php
+                        $facturasAgrupadas = $facturasFiltradas->groupBy(function($factura) {
+                            return $factura->fecha_emision->format('Y');
+                        });
+                    @endphp
+                    
+                    @if($facturasFiltradas->count() > 0)
+                        @foreach($facturasAgrupadas as $ano => $facturasAno)
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">{{ $ano }}</h3>
+                                @php
+                                    $mesesEspanol = [
+                                        1 => 'ENERO', 2 => 'FEBRERO', 3 => 'MARZO', 4 => 'ABRIL',
+                                        5 => 'MAYO', 6 => 'JUNIO', 7 => 'JULIO', 8 => 'AGOSTO',
+                                        9 => 'SEPTIEMBRE', 10 => 'OCTUBRE', 11 => 'NOVIEMBRE', 12 => 'DICIEMBRE'
+                                    ];
+                                    $facturasPorMes = $facturasAno->groupBy(function($factura) {
+                                        return $factura->fecha_emision->month;
+                                    });
+                                @endphp
+                                @foreach($facturasPorMes->sortKeys()->reverse() as $mesNum => $facturasMes)
+                                    <h4 class="text-md font-medium text-gray-700 dark:text-gray-300 mb-3 text-center">{{ $mesesEspanol[$mesNum] ?? '' }}</h4>
+                                    <div class="space-y-3">
+                                        @foreach($facturasMes as $factura)
+                                            <div class="flex items-center justify-between p-4 rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                                                 onclick="window.location.href='{{ \App\Filament\Resources\FacturaResource::getUrl('view', ['record' => $factura]) }}'">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-3 mb-1">
+                                                        <span class="font-semibold text-gray-900 dark:text-white">{{ $factura->numero_factura }}</span>
+                                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $factura->cliente->nombre_empresa ?? '' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-2 flex-wrap">
+                                                        @if($factura->estado === 'vencida')
+                                                            <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-500/10 dark:text-red-400">VENCIDA</span>
+                                                        @endif
+                                                        @if($factura->monto_pagado > 0 && $factura->monto_pagado < $factura->total)
+                                                            <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-inset ring-yellow-600/20 dark:bg-yellow-500/10 dark:text-yellow-400">PAGO PARCIAL</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-lg font-bold text-gray-900 dark:text-white">₡{{ number_format($factura->total, 2, ',', ' ') }}</p>
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $factura->fecha_vencimiento?->format('d/m/Y') ?? '—' }}</p>
+                                                </div>
+                                            </div>
                                         @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="text-center py-8 text-gray-400 rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10">
-                                <x-heroicon-o-document-currency-dollar class="w-12 h-12 mx-auto mb-2"/>
-                                <p>Sin facturas registradas</p>
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- Cotizaciones (usando fecha_cotizacion del cliente) --}}
-                    <div>
-                        <h4 class="text-sm font-medium text-gray-950 dark:text-white mb-4 flex items-center gap-2">
-                            <x-heroicon-o-document-text class="h-5 w-5 text-gray-400"/>
-                            Última Cotización
-                        </h4>
-                        <div class="rounded-lg ring-1 ring-gray-950/5 dark:ring-white/10 p-4">
-                            @if($cliente->fecha_cotizacion)
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-gray-500 dark:text-gray-400 text-sm">Fecha de última cotización</p>
-                                        <p class="text-lg font-medium text-gray-950 dark:text-white">{{ $cliente->fecha_cotizacion->format('d/m/Y') }}</p>
                                     </div>
-                                    <x-filament::badge color="info">Enviada</x-filament::badge>
-                                </div>
-                            @else
-                                <div class="text-center py-4 text-gray-400">
-                                    <p>Sin cotizaciones enviadas</p>
-                                </div>
-                            @endif
+                                @endforeach
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="text-center py-12 text-gray-400">
+                            <x-heroicon-o-banknotes class="w-12 h-12 mx-auto mb-2"/>
+                            <p>No hay facturas registradas</p>
                         </div>
-                    </div>
-
-                    {{-- Acciones rápidas --}}
-                    <div class="flex gap-3">
-                        <x-filament::button
-                            wire:click="mountAction('cotizacion')"
-                            color="gray"
-                            icon="heroicon-o-document-plus"
-                        >
-                            Crear Cotización
-                        </x-filament::button>
-                        <x-filament::button
-                            wire:click="mountAction('factura')"
-                            color="gray"
-                            icon="heroicon-o-document-currency-dollar"
-                        >
-                            Crear Factura
-                        </x-filament::button>
-                    </div>
+                    @endif
                 </div>
             </div>
+        </div>
 
-            {{-- Paso 8: Registro de Actividades --}}
-            <div x-show="currentStep === 8" x-cloak>
-                <div class="fi-section-header border-b border-gray-200 px-6 py-4 dark:border-white/10">
-                    <h3 class="fi-section-header-heading text-base font-semibold text-gray-950 dark:text-white flex items-center gap-2">
-                        <x-heroicon-o-clock class="h-5 w-5 text-gray-400"/> Registro de Actividades
-                    </h3>
-                </div>
-                <div class="fi-section-content p-6">
+        {{-- Tab Content: Registro de Actividades --}}
+        <div x-show="activeTab === 'actividades'" x-cloak>
+            <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                <div class="p-6">
                     {{ $this->table }}
-                </div>
-            </div>
-
-            {{-- Footer Navigation --}}
-            <div class="fi-wi-footer flex items-center justify-between border-t border-gray-200 px-6 py-4 dark:border-white/10">
-                <div>
-                    <x-filament::button
-                        x-show="currentStep > 1"
-                        @click="currentStep--"
-                        color="gray"
-                        icon="heroicon-o-arrow-left"
-                    >
-                        Anterior
-                    </x-filament::button>
-                </div>
-                <div>
-                    <x-filament::button
-                        x-show="currentStep < 8"
-                        @click="currentStep++"
-                        color="gray"
-                        icon="heroicon-o-arrow-right"
-                        icon-position="after"
-                    >
-                        Siguiente
-                    </x-filament::button>
                 </div>
             </div>
         </div>

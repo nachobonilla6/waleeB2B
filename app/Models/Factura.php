@@ -13,10 +13,13 @@ class Factura extends Model
         'cliente_id',
         'correo',
         'numero_factura',
+        'serie',
         'fecha_emision',
         'concepto',
+        'concepto_pago',
         'subtotal',
         'total',
+        'monto_pagado',
         'metodo_pago',
         'estado',
         'fecha_vencimiento',
@@ -31,6 +34,7 @@ class Factura extends Model
         'enviada_at' => 'datetime',
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
+        'monto_pagado' => 'decimal:2',
     ];
 
     public function cliente(): BelongsTo

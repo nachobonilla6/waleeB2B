@@ -21,9 +21,9 @@ class ClientResource extends Resource
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationLabel = 'Perfiles';
-    protected static ?string $modelLabel = 'Perfil';
-    protected static ?string $pluralModelLabel = 'Perfiles';
+    protected static ?string $navigationLabel = 'Clientes Activos';
+    protected static ?string $modelLabel = 'Cliente Activo';
+    protected static ?string $pluralModelLabel = 'Clientes Activos';
     protected static ?string $navigationGroup = 'Administración';
     protected static ?int $navigationSort = 2;
 

@@ -90,26 +90,20 @@
     </div>
 
     {{-- Tabs --}}
-    <div x-data="{ activeTab: @entangle('activeTab') }">
+    <div>
         {{-- Tab Navigation --}}
         <div class="mb-6 border-b border-gray-200 dark:border-white/10">
             <nav class="-mb-px flex space-x-8">
                 <button
-                    @click="$wire.set('activeTab', 'facturas')"
-                    :class="activeTab === 'facturas' 
-                        ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
-                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
-                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors"
+                    wire:click="setActiveTab('facturas')"
+                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors {{ $activeTab === 'facturas' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }}"
                 >
                     <x-heroicon-o-banknotes class="inline-block h-5 w-5 mr-2" />
                     Facturas
                 </button>
                 <button
-                    @click="$wire.set('activeTab', 'actividades')"
-                    :class="activeTab === 'actividades' 
-                        ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
-                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'"
-                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors"
+                    wire:click="setActiveTab('actividades')"
+                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors {{ $activeTab === 'actividades' ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }}"
                 >
                     <x-heroicon-o-clock class="inline-block h-5 w-5 mr-2" />
                     Registro de Actividades
@@ -118,7 +112,8 @@
         </div>
 
         {{-- Tab Content: Facturas --}}
-        <div x-show="activeTab === 'facturas'" x-cloak>
+        @if($activeTab === 'facturas')
+        <div>
             <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 {{-- Filtros --}}
                 <div class="border-b border-gray-200 px-6 py-4 dark:border-white/10">
@@ -229,14 +224,17 @@
                 </div>
             </div>
         </div>
+        @endif
 
         {{-- Tab Content: Registro de Actividades --}}
-        <div x-show="activeTab === 'actividades'" x-cloak>
+        @if($activeTab === 'actividades')
+        <div>
             <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                 <div class="p-6">
                     {{ $this->table }}
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </x-filament-panels::page>

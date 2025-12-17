@@ -35,6 +35,8 @@ class ViewClient extends ViewRecord implements HasTable
     
     protected static string $view = 'filament.resources.client-resource.pages.view-client';
 
+    public ?string $activeTab = 'resumen';
+
     public function getMaxContentWidth(): MaxWidth | string | null
     {
         return MaxWidth::Full;
@@ -44,6 +46,36 @@ class ViewClient extends ViewRecord implements HasTable
     {
         parent::mount($record);
         $this->record->load('notes.user');
+    }
+
+    public function setActiveTab(string $tab): void
+    {
+        $this->activeTab = $tab;
+    }
+
+    public function getFacturasStatsProperty(): array
+    {
+        $email = $this->record->email ?? null;
+
+        if (! $email) {
+            return [
+                'total' => 0,
+                'pagado' => 0,
+                'pendiente' => 0,
+            ];
+        }
+
+        $baseQuery = Factura::query()->where('correo', $email);
+
+        $total = (clone $baseQuery)->sum('total');
+        $pagado = (clone $baseQuery)->where('estado', 'pagada')->sum('total');
+        $pendiente = $total - $pagado;
+
+        return [
+            'total' => $total,
+            'pagado' => $pagado,
+            'pendiente' => $pendiente,
+        ];
     }
     
     public function table(Table $table): Table

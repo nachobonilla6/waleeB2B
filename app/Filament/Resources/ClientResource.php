@@ -125,8 +125,16 @@ class ClientResource extends Resource
             ->filters([
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Ver cliente')
+                    ->icon('heroicon-o-user-circle')
+                    ->button()
+                    ->color('primary'),
+                Tables\Actions\EditAction::make()
+                    ->label('Editar cliente')
+                    ->icon('heroicon-o-pencil-square')
+                    ->button()
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

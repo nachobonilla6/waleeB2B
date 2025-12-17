@@ -52,22 +52,12 @@ class ViewCliente extends Page implements HasTable
     public function getFacturasFiltradasProperty()
     {
         $clientEmail = $this->record->email ?? null;
-        $clientName = $this->record->name ?? null;
         
-        // Buscar facturas por correo o nombre del cliente
-        $query = Factura::query()->where(function($q) use ($clientEmail, $clientName) {
-            if ($clientEmail) {
-                $q->where('correo', $clientEmail)
-                  ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail, $clientName) {
-                      if ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      }
-                      if ($clientName) {
-                          $clienteQuery->orWhere('nombre_empresa', 'like', '%' . $clientName . '%');
-                      }
-                  });
-            }
-        });
+        // Buscar facturas solo por correo del cliente (clientes_en_proceso)
+        $query = Factura::query();
+        if ($clientEmail) {
+            $query->where('correo', $clientEmail);
+        }
         
         if ($this->filtroAno && $this->filtroAno !== 'TODOS') {
             $query->whereYear('fecha_emision', $this->filtroAno);
@@ -139,16 +129,11 @@ class ViewCliente extends Page implements HasTable
                 DB::raw("NULL as enlace"),
             ]);
         
-        // Query para facturas creadas (buscar por correo o nombre)
-        $facturasCreadasQuery = Factura::query()
-            ->where(function($q) use ($clientEmail) {
-                if ($clientEmail) {
-                    $q->where('correo', $clientEmail)
-                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      });
-                }
-            })
+        // Query para facturas creadas (buscar solo por correo)
+        $facturasCreadasQuery = Factura::query();
+        if ($clientEmail) {
+            $facturasCreadasQuery->where('correo', $clientEmail);
+        }
             ->select([
                 'facturas.id',
                 DB::raw("NULL as client_id"),
@@ -165,15 +150,10 @@ class ViewCliente extends Page implements HasTable
             ]);
 
         // Query para facturas editadas
-        $facturasEditadasQuery = Factura::query()
-            ->where(function($q) use ($clientEmail) {
-                if ($clientEmail) {
-                    $q->where('correo', $clientEmail)
-                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      });
-                }
-            })
+        $facturasEditadasQuery = Factura::query();
+        if ($clientEmail) {
+            $facturasEditadasQuery->where('correo', $clientEmail);
+        }
             ->whereRaw('facturas.updated_at != facturas.created_at')
             ->where(function($q) {
                 $q->whereNull('facturas.enviada_at')
@@ -195,15 +175,10 @@ class ViewCliente extends Page implements HasTable
             ]);
 
         // Query para facturas enviadas
-        $facturasEnviadasQuery = Factura::query()
-            ->where(function($q) use ($clientEmail) {
-                if ($clientEmail) {
-                    $q->where('correo', $clientEmail)
-                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      });
-                }
-            })
+        $facturasEnviadasQuery = Factura::query();
+        if ($clientEmail) {
+            $facturasEnviadasQuery->where('correo', $clientEmail);
+        }
             ->whereNotNull('enviada_at')
             ->select([
                 'facturas.id',
@@ -220,16 +195,11 @@ class ViewCliente extends Page implements HasTable
                 'facturas.enlace',
             ]);
 
-        // Query para cotizaciones creadas (buscar por correo)
-        $cotizacionesCreadasQuery = Cotizacion::query()
-            ->where(function($q) use ($clientEmail) {
-                if ($clientEmail) {
-                    $q->where('correo', $clientEmail)
-                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      });
-                }
-            })
+        // Query para cotizaciones creadas (buscar solo por correo)
+        $cotizacionesCreadasQuery = Cotizacion::query();
+        if ($clientEmail) {
+            $cotizacionesCreadasQuery->where('correo', $clientEmail);
+        }
             ->select([
                 'cotizacions.id',
                 DB::raw("NULL as client_id"),
@@ -246,15 +216,10 @@ class ViewCliente extends Page implements HasTable
             ]);
 
         // Query para cotizaciones editadas
-        $cotizacionesEditadasQuery = Cotizacion::query()
-            ->where(function($q) use ($clientEmail) {
-                if ($clientEmail) {
-                    $q->where('correo', $clientEmail)
-                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      });
-                }
-            })
+        $cotizacionesEditadasQuery = Cotizacion::query();
+        if ($clientEmail) {
+            $cotizacionesEditadasQuery->where('correo', $clientEmail);
+        }
             ->whereRaw('cotizacions.updated_at != cotizacions.created_at')
             ->where(function($q) {
                 $q->whereNull('cotizacions.enviada_at')
@@ -276,15 +241,10 @@ class ViewCliente extends Page implements HasTable
             ]);
 
         // Query para cotizaciones enviadas
-        $cotizacionesEnviadasQuery = Cotizacion::query()
-            ->where(function($q) use ($clientEmail) {
-                if ($clientEmail) {
-                    $q->where('correo', $clientEmail)
-                      ->orWhereHas('cliente', function($clienteQuery) use ($clientEmail) {
-                          $clienteQuery->where('correo', $clientEmail);
-                      });
-                }
-            })
+        $cotizacionesEnviadasQuery = Cotizacion::query();
+        if ($clientEmail) {
+            $cotizacionesEnviadasQuery->where('correo', $clientEmail);
+        }
             ->where(function($q) {
                 $q->whereNotNull('enviada_at')
                   ->orWhere('estado', 'enviada');
@@ -545,9 +505,9 @@ class ViewCliente extends Page implements HasTable
                                     'vigencia' => (string) ($data['vigencia'] ?? ''),
                                     'correo' => (string) ($data['correo'] ?? ''),
                                     'descripcion' => (string) ($data['descripcion'] ?? ''),
-                                    'cliente_id' => $this->record->id ?? null,
-                                    'cliente_nombre' => (string) ($this->record->nombre_empresa ?? ''),
-                                    'cliente_correo' => (string) ($this->record->correo ?? ''),
+                                    'cliente_id' => null, // No usar cliente_id, solo correo
+                                    'cliente_nombre' => (string) ($this->record->name ?? ''),
+                                    'cliente_correo' => (string) ($this->record->email ?? ''),
                                     'timestamp' => now()->toIso8601String(),
                                 ];
 
@@ -569,7 +529,7 @@ class ViewCliente extends Page implements HasTable
                                         'numero_cotizacion' => $data['numero_cotizacion'] ?? 'COT-' . date('Ymd') . '-' . rand(100, 999),
                                         'fecha' => $fecha,
                                         'idioma' => $data['idioma'] ?? 'es',
-                                        'cliente_id' => $this->record->id ?? null,
+                                        'cliente_id' => null, // No usar cliente_id, solo correo
                                         'tipo_servicio' => $data['tipo_servicio'] ?? '',
                                         'plan' => $data['plan'] ?? '',
                                         'monto' => $data['monto'] ?? 0,

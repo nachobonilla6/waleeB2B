@@ -11,30 +11,32 @@ class Dashboard extends BaseDashboard
 {
     protected static ?string $navigationIcon = 'heroicon-o-home';
     protected static ?string $title = 'WALEÉ Dashboard';
-    protected static string $view = 'filament.pages.dashboard';
 
-    protected function getHeaderWidgets(): array
+    /**
+     * Widgets visibles en el dashboard - solo estos se mostrarán
+     * Esto sobrescribe el descubrimiento automático de widgets
+     */
+    protected function getWidgets(): array
     {
         return [
             IngresosDashboardWidget::class,
-        ];
-    }
-
-    /**
-     * Widgets del dashboard
-     */
-    public function getWidgets(): array
-    {
-        return [
             IngresosUltimos30DiasChart::class,
         ];
     }
 
     /**
      * Sobrescribir para evitar que se muestren widgets descubiertos automáticamente
-     * Devolver array vacío para que no se muestren widgets automáticos
+     * Solo mostrar los widgets definidos explícitamente en getWidgets()
      */
     public function getVisibleWidgets(): array
+    {
+        return $this->getWidgets();
+    }
+
+    /**
+     * No mostrar widgets en el header
+     */
+    protected function getHeaderWidgets(): array
     {
         return [];
     }

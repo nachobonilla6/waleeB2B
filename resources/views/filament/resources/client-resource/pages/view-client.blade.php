@@ -1,7 +1,7 @@
 <x-filament-panels::page>
-    <div class="flex flex-col md:flex-row gap-6">
+    <div class="flex gap-6">
         <!-- Barra lateral izquierda -->
-        <div class="w-full md:w-64 flex-shrink-0">
+        <div class="w-64 flex-shrink-0">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 min-h-[600px]">
                 <!-- Foto cuadrada -->
                 <div class="w-full flex items-start justify-between mb-4 gap-3">
@@ -107,7 +107,7 @@
         </div>
         
         <!-- Contenido principal - Finanzas del cliente -->
-        <div class="flex-1 mt-6 md:mt-0">
+        <div class="flex-1">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">

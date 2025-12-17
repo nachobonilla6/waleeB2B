@@ -8,7 +8,17 @@
                     <div class="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center aspect-square overflow-hidden">
                         @php
                             $fotoPath = $this->record->foto ?? null;
-                            $fotoUrl = $fotoPath ? \Illuminate\Support\Facades\Storage::url($fotoPath) : null;
+                            $fotoUrl = null;
+
+                            if ($fotoPath) {
+                                if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                    // Por si en algún momento se guardó una URL completa
+                                    $fotoUrl = $fotoPath;
+                                } else {
+                                    // Ruta almacenada por FileUpload en el disco (ej: public)
+                                    $fotoUrl = \Illuminate\Support\Facades\Storage::url($fotoPath);
+                                }
+                            }
                         @endphp
                         @if($fotoUrl)
                             <img src="{{ $fotoUrl }}" alt="{{ $this->record->name }}" class="w-full h-full object-cover rounded-lg">

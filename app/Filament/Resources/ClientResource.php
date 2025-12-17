@@ -57,6 +57,12 @@ class ClientResource extends Resource
                             ->label('Nombre')
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('foto')
+                            ->label('URL de foto / avatar')
+                            ->url()
+                            ->maxLength(2048)
+                            ->helperText('Opcional. URL de una imagen cuadrada que se mostrará en el perfil.')
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('email')
                             ->label('Correo Electrónico')
                             ->email()

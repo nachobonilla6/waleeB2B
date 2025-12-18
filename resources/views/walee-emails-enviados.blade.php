@@ -84,6 +84,13 @@
         $emails = \App\Models\PropuestaPersonalizada::with('cliente')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+        
+        // Contadores
+        $totalEmails = \App\Models\PropuestaPersonalizada::count();
+        $emailsEsteMes = \App\Models\PropuestaPersonalizada::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $emailsHoy = \App\Models\PropuestaPersonalizada::whereDate('created_at', today())->count();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -124,6 +131,22 @@
                     </a>
                 </div>
             </header>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-400">{{ $totalEmails }}</div>
+                    <div class="text-xs text-blue-400/70">Total</div>
+                </div>
+                <div class="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-violet-400">{{ $emailsEsteMes }}</div>
+                    <div class="text-xs text-violet-400/70">Este mes</div>
+                </div>
+                <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-400">{{ $emailsHoy }}</div>
+                    <div class="text-xs text-emerald-400/70">Hoy</div>
+                </div>
+            </div>
             
             <!-- Email List -->
             <div class="space-y-4 animate-fade-in-up">

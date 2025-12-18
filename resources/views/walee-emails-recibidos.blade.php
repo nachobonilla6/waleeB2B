@@ -94,7 +94,11 @@
         $emails = \App\Models\EmailRecibido::orderBy('received_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+        
+        // Contadores
+        $totalEmails = \App\Models\EmailRecibido::count();
         $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+        $destacados = \App\Models\EmailRecibido::where('is_starred', true)->count();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -144,6 +148,22 @@
                     </button>
                 </div>
             </header>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-400">{{ $totalEmails }}</div>
+                    <div class="text-xs text-emerald-400/70">Total</div>
+                </div>
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-400">{{ $noLeidos }}</div>
+                    <div class="text-xs text-blue-400/70">Sin leer</div>
+                </div>
+                <div class="bg-walee-500/10 border border-walee-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-walee-400">{{ $destacados }}</div>
+                    <div class="text-xs text-walee-400/70">Destacados</div>
+                </div>
+            </div>
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

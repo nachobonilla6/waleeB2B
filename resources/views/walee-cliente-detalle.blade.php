@@ -79,7 +79,7 @@
                         @endif
                         <h1 class="text-2xl font-bold text-white">{{ $cliente->name }}</h1>
                         <span class="inline-block mt-2 px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                            {{ ucfirst($cliente->estado) }}
+                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                         </span>
                     </div>
                     

@@ -620,6 +620,71 @@ Route::post('/walee-facturas/generar-ai', function (\Illuminate\Http\Request $re
     }
 })->middleware(['auth'])->name('walee.facturas.generar-ai');
 
+// Lista de facturas
+Route::get('/walee-facturas/lista', function () {
+    return view('walee-facturas-lista');
+})->middleware(['auth'])->name('walee.facturas.lista');
+
+// Ver factura individual
+Route::get('/walee-facturas/{id}', function ($id) {
+    $factura = \App\Models\Factura::with('cliente')->findOrFail($id);
+    return view('walee-factura-ver', compact('factura'));
+})->middleware(['auth'])->name('walee.factura.ver');
+
+// Enviar factura por email
+Route::post('/walee-facturas/{id}/enviar', function ($id) {
+    try {
+        $factura = \App\Models\Factura::with('cliente')->findOrFail($id);
+        
+        if (!$factura->correo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La factura no tiene correo asociado',
+            ], 400);
+        }
+        
+        // Construir el cuerpo del email
+        $emailBody = "Estimado cliente,\n\n";
+        $emailBody .= "Adjunto encontrará los detalles de su factura:\n\n";
+        $emailBody .= "Factura #" . $factura->numero_factura . "\n";
+        $emailBody .= "Fecha: " . ($factura->fecha_emision?->format('d/m/Y') ?? 'N/A') . "\n";
+        $emailBody .= "Concepto: " . $factura->concepto . "\n";
+        $emailBody .= "Total: ₡" . number_format($factura->total, 0, ',', '.') . "\n\n";
+        
+        if ($factura->notas) {
+            $emailBody .= "Notas: " . $factura->notas . "\n\n";
+        }
+        
+        $emailBody .= "Gracias por su preferencia.\n\n";
+        $emailBody .= "Web Solutions\n";
+        $emailBody .= "websolutionscrnow@gmail.com\n";
+        $emailBody .= "+506 8806 1829 (WhatsApp)\n";
+        $emailBody .= "websolutions.work";
+        
+        // Enviar email
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($factura) {
+            $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
+                    ->to($factura->correo)
+                    ->subject('Factura #' . $factura->numero_factura . ' - Web Solutions');
+        });
+        
+        // Marcar como enviada
+        $factura->update([
+            'enviada_at' => now(),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Factura enviada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.factura.enviar');
+
 Route::get('/walee-cotizaciones', function () {
     return view('walee-cotizaciones');
 })->middleware(['auth'])->name('walee.cotizaciones');

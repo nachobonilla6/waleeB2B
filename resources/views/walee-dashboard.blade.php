@@ -713,7 +713,7 @@
                 // Datos por defecto de Web Solutions
                 formData.append('name', 'Web Solutions');
                 formData.append('email', 'websolutionscrnow@gmail.com');
-                formData.append('website', 'https://websolutions.work/');
+                formData.append('website', 'https://websolutions.work/walee-dashboard');
                 formData.append('asunto', asunto);
                 formData.append('mensaje', mensaje);
                 

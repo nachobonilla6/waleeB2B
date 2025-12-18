@@ -36,9 +36,17 @@
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
     @php
+        use App\Models\PropuestaPersonalizada;
+        
         $phone = $cliente->phone ?: $cliente->telefono_1 ?: $cliente->telefono_2;
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
         $whatsappLink = $cleanPhone ? "https://wa.me/{$cleanPhone}" : null;
+        
+        // Obtener contador de emails enviados
+        $emailsEnviados = PropuestaPersonalizada::where('cliente_id', $cliente->id)->count();
+        $emailsColor = $emailsEnviados >= 3 ? 'text-red-400' : ($emailsEnviados >= 1 ? 'text-amber-400' : 'text-slate-500');
+        $emailsBg = $emailsEnviados >= 3 ? 'bg-red-500/20' : ($emailsEnviados >= 1 ? 'bg-amber-500/20' : 'bg-slate-800/50');
+        $emailsBorder = $emailsEnviados >= 3 ? 'border-red-500/30' : ($emailsEnviados >= 1 ? 'border-amber-500/30' : 'border-slate-700');
     @endphp
 
     <div class="min-h-screen relative">
@@ -78,9 +86,19 @@
                             </div>
                         @endif
                         <h1 class="text-2xl font-bold text-white">{{ $cliente->name }}</h1>
-                        <span class="inline-block mt-2 px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                        </span>
+                        <div class="flex items-center justify-center gap-2 mt-2">
+                            <span class="inline-block px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                            </span>
+                            @if($emailsEnviados > 0)
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    {{ $emailsEnviados }} {{ $emailsEnviados == 1 ? 'email' : 'emails' }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                     
                     <!-- Action Buttons -->
@@ -191,6 +209,40 @@
                         </div>
                     </div>
                 @endif
+                
+                <!-- Emails Enviados -->
+                <div class="rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-xs text-slate-400">Emails enviados</p>
+                                @if($emailsEnviados >= 3)
+                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
+                                        ⚠️ Múltiples envíos
+                                    </span>
+                                @elseif($emailsEnviados >= 1)
+                                    <span class="px-2 py-0.5 text-[10px] font-medium bg-amber-500/20 text-amber-400 rounded-full border border-amber-500/30">
+                                        ✓ Contactado
+                                    </span>
+                                @endif
+                            </div>
+                            @if($emailsEnviados > 0)
+                                <p class="text-2xl font-bold {{ $emailsColor }} mb-1">{{ $emailsEnviados }}</p>
+                                <p class="text-xs text-slate-500">
+                                    {{ $emailsEnviados == 1 ? 'email enviado' : 'emails enviados' }} con propuestas
+                                </p>
+                            @else
+                                <p class="text-white text-sm">Sin emails enviados</p>
+                                <p class="text-xs text-slate-500 mt-1">Este cliente aún no ha recibido propuestas</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Footer -->

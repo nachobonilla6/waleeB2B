@@ -149,69 +149,151 @@
                             Destinatario
                         </h2>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="cliente_id" class="block text-sm font-medium text-slate-300 mb-2">Cliente</label>
-                                <select 
-                                    id="cliente_id" 
-                                    name="cliente_id" 
-                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
-                                >
-                                    <option value="">Seleccionar cliente...</option>
-                                    @foreach($clientes as $cliente)
-                                        @php
-                                            $propuestasCount = $propuestasPorCliente[$cliente->id] ?? 0;
-                                            $estadoLabel = match($cliente->estado) {
-                                                'propuesta_enviada' => '📧',
-                                                'propuesta_personalizada_enviada' => '✨',
-                                                'accepted' => '✅',
-                                                'pending' => '⏳',
-                                                default => ''
-                                            };
-                                        @endphp
-                                        <option 
-                                            value="{{ $cliente->id }}" 
-                                            data-email="{{ $cliente->email }}" 
-                                            data-website="{{ $cliente->website }}"
-                                            data-propuestas="{{ $propuestasCount }}"
-                                            data-estado="{{ $cliente->estado }}"
-                                        >
-                                            {{ $estadoLabel }} {{ $cliente->name }}{{ $propuestasCount > 0 ? " [{$propuestasCount} prop.]" : '' }} {{ $cliente->email ? "({$cliente->email})" : '' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                        <!-- Custom Dropdown Container -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Cliente</label>
+                            <input type="hidden" id="cliente_id" name="cliente_id" value="">
                             
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email <span class="text-red-400">*</span></label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    name="email" 
-                                    required
-                                    placeholder="cliente@correo.com"
-                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            <!-- Dropdown Trigger -->
+                            <div class="relative">
+                                <button 
+                                    type="button" 
+                                    id="dropdownTrigger"
+                                    onclick="toggleDropdown()"
+                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-left text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all flex items-center justify-between"
                                 >
+                                    <span id="selectedClientText" class="text-slate-400">Seleccionar cliente...</span>
+                                    <svg class="w-5 h-5 text-slate-400 transition-transform" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Dropdown Panel -->
+                                <div id="dropdownPanel" class="hidden absolute z-50 mt-2 w-full bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+                                    <!-- Search -->
+                                    <div class="p-3 border-b border-slate-700">
+                                        <div class="relative">
+                                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                            </svg>
+                                            <input 
+                                                type="text" 
+                                                id="clientSearch" 
+                                                placeholder="Buscar cliente..."
+                                                class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 text-sm focus:border-violet-500 focus:outline-none"
+                                                oninput="filterClients(this.value)"
+                                            >
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Client List -->
+                                    <div id="clientList" class="max-h-72 overflow-y-auto">
+                                        @foreach($clientes as $cliente)
+                                            @php
+                                                $propuestasCount = $propuestasPorCliente[$cliente->id] ?? 0;
+                                                $estadoConfig = match($cliente->estado) {
+                                                    'propuesta_enviada' => ['bg' => 'bg-amber-500/20', 'text' => 'text-amber-400', 'label' => 'Propuesta'],
+                                                    'propuesta_personalizada_enviada' => ['bg' => 'bg-violet-500/20', 'text' => 'text-violet-400', 'label' => 'Personalizada'],
+                                                    'accepted' => ['bg' => 'bg-emerald-500/20', 'text' => 'text-emerald-400', 'label' => 'Activo'],
+                                                    'pending' => ['bg' => 'bg-amber-500/20', 'text' => 'text-amber-400', 'label' => 'Pendiente'],
+                                                    'listo_para_enviar' => ['bg' => 'bg-cyan-500/20', 'text' => 'text-cyan-400', 'label' => 'Listo'],
+                                                    'rechazado' => ['bg' => 'bg-red-500/20', 'text' => 'text-red-400', 'label' => 'Rechazado'],
+                                                    default => ['bg' => 'bg-slate-500/20', 'text' => 'text-slate-400', 'label' => 'Nuevo'],
+                                                };
+                                                $propuestasColor = $propuestasCount >= 3 ? 'bg-red-500' : ($propuestasCount >= 1 ? 'bg-amber-500' : 'bg-slate-600');
+                                            @endphp
+                                            <div 
+                                                class="client-option p-3 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-800 last:border-0"
+                                                data-id="{{ $cliente->id }}"
+                                                data-name="{{ $cliente->name }}"
+                                                data-email="{{ $cliente->email }}"
+                                                data-website="{{ $cliente->website }}"
+                                                data-propuestas="{{ $propuestasCount }}"
+                                                data-estado="{{ $cliente->estado }}"
+                                                onclick="selectClient(this)"
+                                            >
+                                                <div class="flex items-center gap-3">
+                                                    <!-- Avatar -->
+                                                    <div class="w-10 h-10 rounded-xl {{ $estadoConfig['bg'] }} flex items-center justify-center flex-shrink-0">
+                                                        <span class="text-sm font-bold {{ $estadoConfig['text'] }}">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                                    </div>
+                                                    
+                                                    <!-- Info -->
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="flex items-center gap-2">
+                                                            <p class="font-medium text-white truncate">{{ $cliente->name }}</p>
+                                                            @if($propuestasCount > 0)
+                                                                <span class="px-1.5 py-0.5 text-[10px] font-bold {{ $propuestasColor }} text-white rounded">{{ $propuestasCount }}</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="flex items-center gap-2 mt-0.5">
+                                                            <span class="text-xs text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</span>
+                                                            <span class="text-slate-600">·</span>
+                                                            <span class="text-xs {{ $estadoConfig['text'] }}">{{ $estadoConfig['label'] }}</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Proposals indicator -->
+                                                    @if($propuestasCount > 0)
+                                                        <div class="flex-shrink-0 text-right">
+                                                            <p class="text-xs text-slate-500">{{ $propuestasCount }} {{ $propuestasCount == 1 ? 'email' : 'emails' }}</p>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    
+                                    <!-- No results -->
+                                    <div id="noResults" class="hidden p-6 text-center">
+                                        <p class="text-slate-400 text-sm">No se encontraron clientes</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Cliente Info -->
-                        <div id="clienteInfo" class="hidden mt-4 p-4 bg-slate-900/50 rounded-xl border border-slate-600">
+                        <!-- Selected Client Card -->
+                        <div id="clienteInfo" class="hidden mb-4 p-4 bg-gradient-to-r from-violet-500/10 to-slate-800/50 rounded-xl border border-violet-500/20">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div id="clienteAvatar" class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                                        <span class="text-sm font-bold text-violet-400">?</span>
+                                    <div id="clienteAvatar" class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                                        <span class="text-lg font-bold text-violet-400">?</span>
                                     </div>
                                     <div>
-                                        <p id="clienteNombre" class="font-medium text-white">Cliente</p>
-                                        <p id="clienteEstado" class="text-xs text-slate-400">Estado</p>
+                                        <p id="clienteNombre" class="font-semibold text-white">Cliente</p>
+                                        <div class="flex items-center gap-2 mt-0.5">
+                                            <span id="clienteEmail" class="text-xs text-slate-400">email@example.com</span>
+                                            <span id="clienteEstadoBadge" class="px-2 py-0.5 text-[10px] font-medium bg-violet-500/20 text-violet-400 rounded-full">Estado</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="propuestasInfo" class="text-right">
-                                    <p class="text-2xl font-bold text-violet-400" id="propuestasCount">0</p>
-                                    <p class="text-xs text-slate-400">propuestas enviadas</p>
+                                    <div class="flex items-center gap-2">
+                                        <div>
+                                            <p class="text-3xl font-bold text-violet-400" id="propuestasCount">0</p>
+                                            <p class="text-[10px] text-slate-500 uppercase tracking-wide">enviados</p>
+                                        </div>
+                                        <button type="button" onclick="clearClient()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center text-slate-400 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Email Input -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email destinatario <span class="text-red-400">*</span></label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required
+                                placeholder="cliente@correo.com"
+                                class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            >
                         </div>
                     </div>
                     
@@ -312,58 +394,137 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
         const estadoLabels = {
-            'nuevo': { text: 'Nuevo', color: 'text-slate-400' },
-            'contactado': { text: 'Contactado', color: 'text-blue-400' },
-            'propuesta_enviada': { text: 'Propuesta Enviada', color: 'text-amber-400' },
-            'propuesta_personalizada_enviada': { text: 'Propuesta Personalizada', color: 'text-violet-400' },
-            'accepted': { text: 'Activo', color: 'text-emerald-400' },
-            'pending': { text: 'Pendiente', color: 'text-amber-400' },
-            'rechazado': { text: 'Rechazado', color: 'text-red-400' },
-            'listo_para_enviar': { text: 'Listo para Enviar', color: 'text-cyan-400' },
+            'nuevo': { text: 'Nuevo', bg: 'bg-slate-500/20', color: 'text-slate-400' },
+            'contactado': { text: 'Contactado', bg: 'bg-blue-500/20', color: 'text-blue-400' },
+            'propuesta_enviada': { text: 'Propuesta', bg: 'bg-amber-500/20', color: 'text-amber-400' },
+            'propuesta_personalizada_enviada': { text: 'Personalizada', bg: 'bg-violet-500/20', color: 'text-violet-400' },
+            'accepted': { text: 'Activo', bg: 'bg-emerald-500/20', color: 'text-emerald-400' },
+            'pending': { text: 'Pendiente', bg: 'bg-amber-500/20', color: 'text-amber-400' },
+            'rechazado': { text: 'Rechazado', bg: 'bg-red-500/20', color: 'text-red-400' },
+            'listo_para_enviar': { text: 'Listo', bg: 'bg-cyan-500/20', color: 'text-cyan-400' },
         };
         
-        // Auto-fill email when client is selected
-        document.getElementById('cliente_id').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const email = selectedOption.getAttribute('data-email');
-            const propuestas = selectedOption.getAttribute('data-propuestas') || '0';
-            const estado = selectedOption.getAttribute('data-estado') || 'nuevo';
-            const clienteInfo = document.getElementById('clienteInfo');
+        let isDropdownOpen = false;
+        
+        // Toggle dropdown
+        function toggleDropdown() {
+            const panel = document.getElementById('dropdownPanel');
+            const arrow = document.getElementById('dropdownArrow');
+            isDropdownOpen = !isDropdownOpen;
             
+            if (isDropdownOpen) {
+                panel.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+                document.getElementById('clientSearch').focus();
+            } else {
+                panel.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('dropdownTrigger');
+            const panel = document.getElementById('dropdownPanel');
+            
+            if (!dropdown.contains(e.target) && !panel.contains(e.target)) {
+                panel.classList.add('hidden');
+                document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+                isDropdownOpen = false;
+            }
+        });
+        
+        // Filter clients
+        function filterClients(query) {
+            const options = document.querySelectorAll('.client-option');
+            const noResults = document.getElementById('noResults');
+            let hasResults = false;
+            
+            query = query.toLowerCase();
+            
+            options.forEach(option => {
+                const name = option.dataset.name.toLowerCase();
+                const email = (option.dataset.email || '').toLowerCase();
+                
+                if (name.includes(query) || email.includes(query)) {
+                    option.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            
+            noResults.classList.toggle('hidden', hasResults);
+        }
+        
+        // Select client
+        function selectClient(element) {
+            const id = element.dataset.id;
+            const name = element.dataset.name;
+            const email = element.dataset.email;
+            const website = element.dataset.website;
+            const propuestas = element.dataset.propuestas || '0';
+            const estado = element.dataset.estado || 'nuevo';
+            
+            // Update hidden input
+            document.getElementById('cliente_id').value = id;
+            
+            // Update trigger text
+            document.getElementById('selectedClientText').innerHTML = `
+                <span class="text-white">${name}</span>
+                ${email ? `<span class="text-slate-400 text-sm ml-2">${email}</span>` : ''}
+            `;
+            
+            // Update email field
             if (email) {
                 document.getElementById('email').value = email;
             }
             
-            if (this.value) {
-                // Mostrar info del cliente
-                const nombre = selectedOption.text.split('[')[0].replace(/[📧✨✅⏳]/g, '').trim().split('(')[0].trim();
-                const inicial = nombre.charAt(0).toUpperCase();
-                const estadoInfo = estadoLabels[estado] || { text: estado, color: 'text-slate-400' };
-                
-                document.getElementById('clienteAvatar').innerHTML = `<span class="text-sm font-bold text-violet-400">${inicial}</span>`;
-                document.getElementById('clienteNombre').textContent = nombre;
-                document.getElementById('clienteEstado').innerHTML = `<span class="${estadoInfo.color}">${estadoInfo.text}</span>`;
-                document.getElementById('propuestasCount').textContent = propuestas;
-                
-                // Cambiar color si tiene muchas propuestas
-                const propuestasNum = parseInt(propuestas);
-                const propuestasEl = document.getElementById('propuestasCount');
-                if (propuestasNum >= 3) {
-                    propuestasEl.classList.remove('text-violet-400', 'text-amber-400');
-                    propuestasEl.classList.add('text-red-400');
-                } else if (propuestasNum >= 1) {
-                    propuestasEl.classList.remove('text-violet-400', 'text-red-400');
-                    propuestasEl.classList.add('text-amber-400');
-                } else {
-                    propuestasEl.classList.remove('text-amber-400', 'text-red-400');
-                    propuestasEl.classList.add('text-violet-400');
-                }
-                
-                clienteInfo.classList.remove('hidden');
+            // Show client info card
+            const clienteInfo = document.getElementById('clienteInfo');
+            const estadoInfo = estadoLabels[estado] || estadoLabels['nuevo'];
+            
+            document.getElementById('clienteAvatar').innerHTML = `<span class="text-lg font-bold text-violet-400">${name.charAt(0).toUpperCase()}</span>`;
+            document.getElementById('clienteNombre').textContent = name;
+            document.getElementById('clienteEmail').textContent = email || 'Sin email';
+            
+            const badge = document.getElementById('clienteEstadoBadge');
+            badge.textContent = estadoInfo.text;
+            badge.className = `px-2 py-0.5 text-[10px] font-medium ${estadoInfo.bg} ${estadoInfo.color} rounded-full`;
+            
+            const propuestasCount = document.getElementById('propuestasCount');
+            propuestasCount.textContent = propuestas;
+            
+            // Color based on count
+            const count = parseInt(propuestas);
+            propuestasCount.classList.remove('text-violet-400', 'text-amber-400', 'text-red-400');
+            if (count >= 3) {
+                propuestasCount.classList.add('text-red-400');
+            } else if (count >= 1) {
+                propuestasCount.classList.add('text-amber-400');
             } else {
-                clienteInfo.classList.add('hidden');
+                propuestasCount.classList.add('text-violet-400');
             }
-        });
+            
+            clienteInfo.classList.remove('hidden');
+            
+            // Close dropdown
+            document.getElementById('dropdownPanel').classList.add('hidden');
+            document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+            isDropdownOpen = false;
+            
+            // Clear search
+            document.getElementById('clientSearch').value = '';
+            filterClients('');
+        }
+        
+        // Clear client selection
+        function clearClient() {
+            document.getElementById('cliente_id').value = '';
+            document.getElementById('selectedClientText').innerHTML = '<span class="text-slate-400">Seleccionar cliente...</span>';
+            document.getElementById('email').value = '';
+            document.getElementById('clienteInfo').classList.add('hidden');
+        }
         
         // Generate with AI
         async function generateWithAI() {
@@ -371,10 +532,10 @@
             const clienteId = document.getElementById('cliente_id').value;
             const aiPrompt = document.getElementById('ai_prompt').value;
             
-            // Get client info
-            const selectedOption = document.getElementById('cliente_id').options[document.getElementById('cliente_id').selectedIndex];
-            const clientName = selectedOption.text.split('(')[0].trim() || 'el cliente';
-            const clientWebsite = selectedOption.getAttribute('data-website') || '';
+            // Get client info from selected option in dropdown
+            const selectedOption = document.querySelector(`.client-option[data-id="${clienteId}"]`);
+            const clientName = selectedOption ? selectedOption.dataset.name : 'el cliente';
+            const clientWebsite = selectedOption ? selectedOption.dataset.website : '';
             
             // Disable button
             generateBtn.disabled = true;

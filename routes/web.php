@@ -174,9 +174,29 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
 Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $request, $id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);
+        $nuevoEstado = $request->input('estado');
+        
         $ticket->update([
-            'estado' => $request->input('estado'),
+            'estado' => $nuevoEstado,
         ]);
+        
+        // Si se marca como recibido, enviar webhook
+        if ($nuevoEstado === 'recibido') {
+            $nombre = $ticket->name ?? $ticket->user?->name ?? 'Usuario';
+            
+            \Illuminate\Support\Facades\Http::timeout(10)->post(
+                'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
+                [
+                    'ticket_id' => $ticket->id,
+                    'titulo' => "Hemos recibido tu mensaje de {$nombre}",
+                    'mensaje' => "Tu ticket #{$ticket->id} ha sido recibido. Pronto lo resolveremos.",
+                    'asunto' => $ticket->asunto,
+                    'email' => $ticket->email,
+                    'website' => $ticket->website,
+                    'estado' => 'recibido',
+                ]
+            );
+        }
         
         return response()->json([
             'success' => true,

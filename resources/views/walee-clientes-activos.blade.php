@@ -93,10 +93,18 @@
 <body class="bg-slate-950 text-white min-h-screen">
     @php
         use App\Models\Client;
+        use App\Models\PropuestaPersonalizada;
         
         $clientes = Client::where('estado', 'accepted')
             ->orderBy('created_at', 'desc')
             ->get();
+        
+        // Obtener conteo de propuestas por cliente
+        $propuestasPorCliente = PropuestaPersonalizada::selectRaw('cliente_id, COUNT(*) as total')
+            ->whereNotNull('cliente_id')
+            ->groupBy('cliente_id')
+            ->pluck('total', 'cliente_id')
+            ->toArray();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -158,6 +166,11 @@
                         $phone = $cliente->phone ?: $cliente->telefono_1 ?: $cliente->telefono_2;
                         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
                         $whatsappLink = $cleanPhone ? "https://wa.me/{$cleanPhone}" : null;
+                        
+                        // Obtener contador de propuestas
+                        $propuestasCount = $propuestasPorCliente[$cliente->id] ?? 0;
+                        $propuestasColor = $propuestasCount >= 3 ? 'bg-red-500' : ($propuestasCount >= 1 ? 'bg-amber-500' : 'bg-slate-600');
+                        $propuestasBorder = $propuestasCount >= 3 ? 'border-red-500/30' : ($propuestasCount >= 1 ? 'border-amber-500/30' : 'border-slate-600/30');
                     @endphp
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . $phone) }}">
                         <div class="relative overflow-hidden rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 transition-all duration-300 p-4">
@@ -176,9 +189,25 @@
                                     
                                     <!-- Name -->
                                     <div class="flex-1 min-w-0">
-                                        <h3 class="text-base font-semibold text-white truncate group-hover:text-emerald-300 transition-colors">
-                                            {{ $cliente->name }}
-                                        </h3>
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="text-base font-semibold text-white truncate group-hover:text-emerald-300 transition-colors">
+                                                {{ $cliente->name }}
+                                            </h3>
+                                            @if($propuestasCount > 0)
+                                                <span class="flex-shrink-0 px-2 py-0.5 text-xs font-bold {{ $propuestasColor }} text-white rounded-full border {{ $propuestasBorder }}">
+                                                    {{ $propuestasCount }} {{ $propuestasCount == 1 ? 'email' : 'emails' }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        @if($propuestasCount > 0)
+                                            <p class="text-xs text-slate-500 mt-0.5">
+                                                @if($propuestasCount >= 3)
+                                                    ⚠️ Múltiples propuestas enviadas
+                                                @else
+                                                    ✉️ Propuesta enviada
+                                                @endif
+                                            </p>
+                                        @endif
                                     </div>
                                 </a>
                                 

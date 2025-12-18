@@ -138,6 +138,11 @@ Route::get('/walee-clientes-activos', function () {
     return view('walee-clientes-activos');
 })->middleware(['auth'])->name('walee.clientes.activos');
 
+// Ruta para WALEE Clientes en Proceso - Lista de clientes en seguimiento
+Route::get('/walee-clientes-en-proceso', function () {
+    return view('walee-clientes-en-proceso');
+})->middleware(['auth'])->name('walee.clientes.proceso');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

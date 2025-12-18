@@ -407,23 +407,34 @@
             
             // Finalize and save
             async function finalizeMessage(userMessage, assistantMessage) {
-                const resp = await fetch('{{ route('chat.finalize') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrf,
-                    },
-                    body: JSON.stringify({
-                        user_message: userMessage,
-                        assistant_message: assistantMessage,
-                        voice_enabled: voiceEnabled,
-                        skip_actions: true,
-                    }),
-                    credentials: 'same-origin',
-                });
-                
-                if (resp.ok) {
-                    return await resp.json();
+                try {
+                    console.log('Saving conversation...', { userMessage, assistantMessage, voiceEnabled });
+                    
+                    const resp = await fetch('{{ route('chat.finalize') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
+                        },
+                        body: JSON.stringify({
+                            user_message: userMessage,
+                            assistant_message: assistantMessage,
+                            voice_enabled: voiceEnabled,
+                            skip_actions: true,
+                        }),
+                        credentials: 'same-origin',
+                    });
+                    
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        console.log('Conversation saved successfully:', data);
+                        return data;
+                    } else {
+                        const errorText = await resp.text();
+                        console.error('Error saving conversation:', resp.status, errorText);
+                    }
+                } catch (err) {
+                    console.error('Failed to save conversation:', err);
                 }
                 return null;
             }

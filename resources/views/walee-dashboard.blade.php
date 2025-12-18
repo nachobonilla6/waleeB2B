@@ -635,12 +635,17 @@
     </div>
     
     <script>
+        const csrfTokenSupport = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
         function openSupportModal() {
             document.getElementById('supportModal').classList.remove('hidden');
         }
         
         function closeSupportModal() {
             document.getElementById('supportModal').classList.add('hidden');
+            // Reset form
+            document.getElementById('supportForm').reset();
+            document.getElementById('fileLabel').textContent = 'Subir imagen';
         }
         
         function updateFileName(input) {
@@ -650,6 +655,22 @@
             } else {
                 label.textContent = 'Subir imagen';
             }
+        }
+        
+        function showSupportNotification(title, message, type) {
+            const modal = document.getElementById('supportModal');
+            const existing = modal.querySelector('.support-notification');
+            if (existing) existing.remove();
+            
+            const bgColor = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
+            const notification = document.createElement('div');
+            notification.className = `support-notification ${bgColor} text-white px-4 py-3 rounded-xl mb-4 text-sm`;
+            notification.innerHTML = `<strong>${title}</strong><br>${message}`;
+            
+            const form = document.getElementById('supportForm');
+            form.insertBefore(notification, form.firstChild);
+            
+            setTimeout(() => notification.remove(), 5000);
         }
         
         // Close on backdrop click
@@ -662,11 +683,66 @@
             if (e.key === 'Escape') closeSupportModal();
         });
         
-        // Form submit (placeholder)
-        document.getElementById('supportForm').addEventListener('submit', function(e) {
+        // Form submit
+        document.getElementById('supportForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Funcionalidad próximamente disponible');
-            closeSupportModal();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Validación básica
+            const asunto = this.querySelector('[name="subject"]').value.trim();
+            const mensaje = this.querySelector('[name="message"]').value.trim();
+            
+            if (!asunto || !mensaje) {
+                showSupportNotification('Error', 'Por favor completa el asunto y mensaje', 'error');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Enviando...
+            `;
+            
+            try {
+                const formData = new FormData();
+                formData.append('asunto', asunto);
+                formData.append('mensaje', mensaje);
+                
+                const fileInput = document.getElementById('supportFile');
+                if (fileInput.files && fileInput.files[0]) {
+                    formData.append('imagen', fileInput.files[0]);
+                }
+                
+                const response = await fetch('{{ route("walee.tickets.store") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfTokenSupport,
+                    },
+                    body: formData,
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSupportNotification('¡Enviado!', 'Tu mensaje ha sido recibido. Te responderemos pronto.', 'success');
+                    this.reset();
+                    document.getElementById('fileLabel').textContent = 'Subir imagen';
+                    
+                    setTimeout(() => closeSupportModal(), 2000);
+                } else {
+                    showSupportNotification('Error', data.message || 'No se pudo enviar el mensaje', 'error');
+                }
+            } catch (error) {
+                showSupportNotification('Error', 'Error de conexión: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
         });
     </script>
 </body>

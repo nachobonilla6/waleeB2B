@@ -71,7 +71,7 @@
                     <!-- Avatar & Name -->
                     <div class="text-center mb-6">
                         @if($cliente->foto)
-                            <img src="{{ Storage::url($cliente->foto) }}" alt="{{ $cliente->name }}" class="w-24 h-24 rounded-2xl object-cover border-3 border-emerald-500/30 mx-auto mb-4">
+                            <img src="{{ Storage::disk('public')->url($cliente->foto) }}" alt="{{ $cliente->name }}" class="w-24 h-24 rounded-2xl object-cover border-3 border-emerald-500/30 mx-auto mb-4">
                         @else
                             <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
                                 <span class="text-3xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>

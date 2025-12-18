@@ -688,6 +688,20 @@
                 setTimeout(() => notification.remove(), 300);
             }, 5000);
         }
+        
+        // Auto-select client from URL parameter
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clienteId = urlParams.get('cliente_id');
+            
+            if (clienteId) {
+                const clientOption = document.querySelector(`.client-option[data-id="${clienteId}"]`);
+                if (clientOption) {
+                    selectClient(clientOption);
+                    showNotification('Cliente seleccionado', 'El cliente ha sido seleccionado automáticamente', 'success');
+                }
+            }
+        });
     </script>
 </body>
 </html>

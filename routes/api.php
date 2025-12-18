@@ -321,3 +321,70 @@ Route::post('/n8n/progress', [\App\Http\Controllers\N8nProgressController::class
 // Webhook para contenido de marketing desde n8n - DESHABILITADO: Modelo N8nPost eliminado
 // Route::post('/n8n-content', ...) - Comentado porque N8nPost ya no existe
 
+// Webhook para recibir emails desde n8n (conectado a Gmail)
+Route::post('/emails/recibidos', function (\Illuminate\Http\Request $request) {
+    \Log::info('Email recibido via webhook', [
+        'body' => $request->all(),
+    ]);
+    
+    try {
+        $data = $request->all();
+        
+        // Soportar múltiples formatos de entrada
+        $emails = [];
+        
+        if (isset($data[0]) && is_array($data[0])) {
+            $emails = $data;
+        } elseif (isset($data['emails']) && is_array($data['emails'])) {
+            $emails = $data['emails'];
+        } elseif (isset($data['from_email']) || isset($data['from']) || isset($data['sender'])) {
+            $emails = [$data];
+        }
+        
+        $count = 0;
+        foreach ($emails as $emailData) {
+            // Extraer campos con múltiples posibles nombres
+            $messageId = $emailData['message_id'] ?? $emailData['id'] ?? $emailData['messageId'] ?? null;
+            $fromEmail = $emailData['from_email'] ?? $emailData['from'] ?? $emailData['sender'] ?? $emailData['remitente'] ?? '';
+            $fromName = $emailData['from_name'] ?? $emailData['sender_name'] ?? $emailData['nombre'] ?? null;
+            $subject = $emailData['subject'] ?? $emailData['asunto'] ?? $emailData['titulo'] ?? 'Sin asunto';
+            $body = $emailData['body'] ?? $emailData['text'] ?? $emailData['texto'] ?? $emailData['content'] ?? '';
+            $bodyHtml = $emailData['body_html'] ?? $emailData['html'] ?? $emailData['contenido_html'] ?? null;
+            $attachments = $emailData['attachments'] ?? $emailData['adjuntos'] ?? [];
+            $receivedAt = $emailData['received_at'] ?? $emailData['date'] ?? $emailData['fecha'] ?? now();
+            
+            // Verificar si el email ya existe
+            if ($messageId && \App\Models\EmailRecibido::where('message_id', $messageId)->exists()) {
+                continue;
+            }
+            
+            \App\Models\EmailRecibido::create([
+                'message_id' => $messageId,
+                'from_email' => $fromEmail,
+                'from_name' => $fromName,
+                'subject' => $subject,
+                'body' => $body,
+                'body_html' => $bodyHtml,
+                'attachments' => is_array($attachments) ? $attachments : [],
+                'is_read' => false,
+                'is_starred' => false,
+                'received_at' => $receivedAt,
+            ]);
+            
+            $count++;
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Se guardaron {$count} emails",
+            'count' => $count,
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error guardando email: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->name('api.emails.recibidos');
+

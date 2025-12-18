@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Walee - Emails Recibidos</title>
+    <meta name="description" content="Walee - Bandeja de Entrada">
+    <meta name="theme-color" content="#D59F3B">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        walee: {
+                            50: '#FBF7EE',
+                            100: '#F5ECD6',
+                            200: '#EBD9AD',
+                            300: '#E0C684',
+                            400: '#D59F3B',
+                            500: '#C78F2E',
+                            600: '#A67524',
+                            700: '#7F5A1C',
+                            800: '#594013',
+                            900: '#33250B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        .email-card {
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(213, 159, 59, 0.3);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(213, 159, 59, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+    @php
+        $emails = \App\Models\EmailRecibido::orderBy('received_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+        $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+    @endphp
+
+    <div class="min-h-screen relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
+                            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
+                            </svg>
+                            Emails Recibidos
+                        </h1>
+                        <p class="text-sm text-slate-400">
+                            {{ $emails->total() }} emails
+                            @if($noLeidos > 0)
+                                · <span class="text-emerald-400">{{ $noLeidos }} sin leer</span>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button 
+                        onclick="syncEmails()"
+                        id="syncBtn"
+                        class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-all flex items-center gap-2"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        <span class="hidden sm:inline">Sincronizar</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Notifications -->
+            <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+            
+            <!-- Email List -->
+            <div class="space-y-3 animate-fade-in-up">
+                @forelse($emails as $index => $email)
+                    <div 
+                        class="email-card group bg-slate-800/50 border {{ $email->is_read ? 'border-slate-700' : 'border-emerald-500/30 bg-emerald-500/5' }} rounded-2xl p-4 hover:border-emerald-500/50 transition-all cursor-pointer" 
+                        style="animation-delay: {{ $index * 0.05 }}s" 
+                        onclick="showEmailDetail({{ $email->id }})"
+                    >
+                        <div class="flex items-start gap-4">
+                            <!-- Unread indicator -->
+                            <div class="flex-shrink-0 mt-1">
+                                @if(!$email->is_read)
+                                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                @else
+                                    <div class="w-3 h-3 rounded-full bg-slate-600"></div>
+                                @endif
+                            </div>
+                            
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex-shrink-0 flex items-center justify-center">
+                                <span class="text-sm font-bold text-emerald-400">{{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 1)) }}</span>
+                            </div>
+                            
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="font-semibold {{ $email->is_read ? 'text-slate-300' : 'text-white' }} truncate">
+                                        {{ $email->from_name ?? $email->from_email }}
+                                    </h3>
+                                    <div class="flex items-center gap-2 flex-shrink-0 ml-2">
+                                        @if($email->is_starred)
+                                            <svg class="w-4 h-4 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        @endif
+                                        <span class="text-xs text-slate-500">
+                                            {{ $email->received_at ? $email->received_at->diffForHumans() : $email->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="text-sm {{ $email->is_read ? 'text-slate-400' : 'text-white font-medium' }} truncate mb-1">
+                                    {{ $email->subject }}
+                                </p>
+                                <p class="text-sm text-slate-500 line-clamp-1">{{ Str::limit(strip_tags($email->body), 100) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-16">
+                        <div class="w-16 h-16 mx-auto rounded-full bg-slate-800 flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Bandeja de entrada vacía</h3>
+                        <p class="text-slate-500 mb-4">No hay emails recibidos todavía</p>
+                        <button onclick="syncEmails()" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Sincronizar emails
+                        </button>
+                    </div>
+                @endforelse
+            </div>
+            
+            <!-- Pagination -->
+            @if($emails->hasPages())
+                <div class="mt-8 flex justify-center gap-2">
+                    @if($emails->onFirstPage())
+                        <span class="px-4 py-2 bg-slate-800/50 text-slate-500 rounded-xl cursor-not-allowed">Anterior</span>
+                    @else
+                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors">Anterior</a>
+                    @endif
+                    
+                    <span class="px-4 py-2 bg-slate-800/50 text-slate-400 rounded-xl">
+                        Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
+                    </span>
+                    
+                    @if($emails->hasMorePages())
+                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors">Siguiente</a>
+                    @else
+                        <span class="px-4 py-2 bg-slate-800/50 text-slate-500 rounded-xl cursor-not-allowed">Siguiente</span>
+                    @endif
+                </div>
+            @endif
+            
+            <!-- Footer -->
+            <footer class="text-center py-8 mt-8">
+                <p class="text-sm text-slate-500">
+                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                </p>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- Email Detail Modal -->
+    <div id="emailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div class="flex items-center justify-between p-4 border-b border-slate-700">
+                <h3 class="text-lg font-semibold text-white truncate pr-4" id="modalSubject">Email</h3>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleStar()" id="starBtn" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-slate-400" id="starIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                    </button>
+                    <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-4 overflow-y-auto max-h-[70vh]" id="modalContent">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let currentEmailId = null;
+        
+        // Email data
+        const emailsData = @json($emails->items());
+        
+        function showEmailDetail(emailId) {
+            currentEmailId = emailId;
+            const email = emailsData.find(e => e.id === emailId);
+            if (!email) return;
+            
+            // Mark as read
+            if (!email.is_read) {
+                markAsRead(emailId);
+                email.is_read = true;
+            }
+            
+            document.getElementById('modalSubject').textContent = email.subject;
+            
+            // Update star icon
+            const starIcon = document.getElementById('starIcon');
+            if (email.is_starred) {
+                starIcon.setAttribute('fill', 'currentColor');
+                starIcon.classList.remove('text-slate-400');
+                starIcon.classList.add('text-walee-400');
+            } else {
+                starIcon.setAttribute('fill', 'none');
+                starIcon.classList.remove('text-walee-400');
+                starIcon.classList.add('text-slate-400');
+            }
+            
+            const receivedDate = email.received_at ? new Date(email.received_at) : new Date(email.created_at);
+            
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-slate-800 rounded-xl p-4">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                                <span class="text-lg font-bold text-emerald-400">${(email.from_name || email.from_email).charAt(0).toUpperCase()}</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-white">${email.from_name || 'Sin nombre'}</h4>
+                                <p class="text-sm text-emerald-400">${email.from_email}</p>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-500">
+                            ${receivedDate.toLocaleString('es-ES', { 
+                                weekday: 'long',
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </div>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-4">
+                        <div class="prose prose-invert prose-sm max-w-none">
+                            ${email.body_html || email.body.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    ${email.attachments && email.attachments.length > 0 ? `
+                        <div class="bg-slate-800 rounded-xl p-4">
+                            <h4 class="text-sm font-medium text-slate-400 mb-3">Archivos adjuntos</h4>
+                            <div class="space-y-2">
+                                ${email.attachments.map(att => `
+                                    <div class="flex items-center gap-3 p-2 bg-slate-700/50 rounded-lg">
+                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                        </svg>
+                                        <span class="text-sm text-white">${att.name || att}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            document.getElementById('emailModal').classList.remove('hidden');
+        }
+        
+        async function markAsRead(emailId) {
+            try {
+                await fetch(`{{ url('/walee-emails/recibidos') }}/${emailId}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+            } catch (error) {
+                console.error('Error marking as read:', error);
+            }
+        }
+        
+        async function toggleStar() {
+            if (!currentEmailId) return;
+            
+            try {
+                const response = await fetch(`{{ url('/walee-emails/recibidos') }}/${currentEmailId}/star`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                const email = emailsData.find(e => e.id === currentEmailId);
+                if (email) {
+                    email.is_starred = data.is_starred;
+                }
+                
+                const starIcon = document.getElementById('starIcon');
+                if (data.is_starred) {
+                    starIcon.setAttribute('fill', 'currentColor');
+                    starIcon.classList.remove('text-slate-400');
+                    starIcon.classList.add('text-walee-400');
+                } else {
+                    starIcon.setAttribute('fill', 'none');
+                    starIcon.classList.remove('text-walee-400');
+                    starIcon.classList.add('text-slate-400');
+                }
+            } catch (error) {
+                console.error('Error toggling star:', error);
+            }
+        }
+        
+        async function syncEmails() {
+            const syncBtn = document.getElementById('syncBtn');
+            
+            syncBtn.disabled = true;
+            syncBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="hidden sm:inline">Sincronizando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.emails.recibidos.sync") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Sincronización completa', data.message || 'Emails sincronizados correctamente', 'success');
+                    // Reload page to show new emails
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showNotification('Error', data.message || 'Error al sincronizar', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión: ' + error.message, 'error');
+            } finally {
+                syncBtn.disabled = false;
+                syncBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span class="hidden sm:inline">Sincronizar</span>
+                `;
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('emailModal').classList.add('hidden');
+            currentEmailId = null;
+        }
+        
+        function showNotification(title, body, type = 'info') {
+            const container = document.getElementById('notifications');
+            const id = 'notif-' + Date.now();
+            
+            const bgClass = {
+                'success': 'bg-emerald-600',
+                'error': 'bg-red-600',
+                'info': 'bg-blue-600',
+            }[type] || 'bg-slate-600';
+            
+            const notification = document.createElement('div');
+            notification.id = id;
+            notification.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="flex-1">
+                        <p class="font-medium text-sm">${title}</p>
+                        <p class="text-xs opacity-90 mt-0.5">${body}</p>
+                    </div>
+                    <button onclick="document.getElementById('${id}').remove()" class="text-white/70 hover:text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Close modal on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Close modal on backdrop click
+        document.getElementById('emailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

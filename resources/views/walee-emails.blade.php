@@ -129,6 +129,10 @@
                 </div>
             </header>
             
+            @php
+                $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+            @endphp
+            
             <!-- Options Grid -->
             <div class="grid grid-cols-1 gap-6">
                 <!-- Crear con AI -->
@@ -146,6 +150,32 @@
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-violet-500/10 items-center justify-center group-hover:bg-violet-500/20 transition-colors">
                             <svg class="w-6 h-6 text-violet-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Emails Recibidos -->
+                <a href="{{ route('walee.emails.recibidos') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 p-8 hover:border-emerald-400/50 hover:from-emerald-500/15 hover:to-emerald-600/10 transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-2xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
+                                Emails Recibidos
+                                @if($noLeidos > 0)
+                                    <span class="ml-2 px-2 py-0.5 text-xs bg-emerald-500 text-white rounded-full">{{ $noLeidos }}</span>
+                                @endif
+                            </h2>
+                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver bandeja de entrada y emails recibidos</p>
+                        </div>
+                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-emerald-500/10 items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-emerald-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>

@@ -467,6 +467,32 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
     }
 })->middleware(['auth'])->name('walee.emails.enviar');
 
+// Rutas para emails recibidos
+Route::get('/walee-emails/recibidos', function () {
+    return view('walee-emails-recibidos');
+})->middleware(['auth'])->name('walee.emails.recibidos');
+
+Route::post('/walee-emails/recibidos/{id}/read', function ($id) {
+    $email = \App\Models\EmailRecibido::findOrFail($id);
+    $email->update(['is_read' => true]);
+    return response()->json(['success' => true]);
+})->middleware(['auth'])->name('walee.emails.recibidos.read');
+
+Route::post('/walee-emails/recibidos/{id}/star', function ($id) {
+    $email = \App\Models\EmailRecibido::findOrFail($id);
+    $email->update(['is_starred' => !$email->is_starred]);
+    return response()->json(['success' => true, 'is_starred' => $email->is_starred]);
+})->middleware(['auth'])->name('walee.emails.recibidos.star');
+
+Route::post('/walee-emails/recibidos/sync', function () {
+    // Esta ruta puede conectarse a Gmail API o recibir emails desde un webhook de n8n
+    // Por ahora retorna un mensaje informativo
+    return response()->json([
+        'success' => true,
+        'message' => 'Configurar webhook en n8n para recibir emails automáticamente',
+    ]);
+})->middleware(['auth'])->name('walee.emails.recibidos.sync');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

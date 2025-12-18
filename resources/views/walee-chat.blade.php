@@ -407,7 +407,7 @@
             
             // Finalize and save
             async function finalizeMessage(userMessage, assistantMessage) {
-                await fetch('{{ route('chat.finalize') }}', {
+                const resp = await fetch('{{ route('chat.finalize') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -421,6 +421,19 @@
                     }),
                     credentials: 'same-origin',
                 });
+                
+                if (resp.ok) {
+                    return await resp.json();
+                }
+                return null;
+            }
+            
+            // Play audio
+            function playAudio(url) {
+                if (!url) return;
+                const audio = new Audio(url);
+                audio.preload = 'auto';
+                audio.play().catch(err => console.log('Audio play error:', err));
             }
             
             // Quick message
@@ -452,12 +465,12 @@
                     hideTyping();
                     addMessage(assistantText, 'assistant');
                     
-                    // Save to database
-                    await finalizeMessage(message, assistantText);
+                    // Save to database and get audio
+                    const result = await finalizeMessage(message, assistantText);
                     
-                    // Play audio if enabled
-                    if (voiceEnabled) {
-                        // Audio playback would be handled by finalize response
+                    // Play audio if enabled and available
+                    if (voiceEnabled && result?.audio_url) {
+                        playAudio(result.audio_url);
                     }
                 } catch (err) {
                     console.error(err);

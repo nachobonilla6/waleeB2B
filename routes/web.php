@@ -196,6 +196,21 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
             );
         }
         
+        // Si se marca como resuelto, enviar webhook
+        if ($nuevoEstado === 'resuelto') {
+            $nombre = $ticket->name ?? $ticket->user?->name ?? 'Cliente';
+            
+            \Illuminate\Support\Facades\Http::timeout(10)->post(
+                'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
+                [
+                    'ticket_id' => $ticket->id,
+                    'email' => $ticket->email,
+                    'asunto' => "Ticket Resuelto: {$ticket->asunto}",
+                    'mensaje' => "Hola {$nombre}, su ticket ha sido resuelto. Gracias por contactarnos.",
+                ]
+            );
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Estado actualizado',

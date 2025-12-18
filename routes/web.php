@@ -120,8 +120,14 @@ Route::post('/webhook/tickets', function (\Illuminate\Http\Request $request) {
 
 // Ruta para WALEE Chat (fuera de Filament)
 Route::get('/walee', function () {
-    return view('walee');
+    return view('walee-chat');
 })->middleware(['auth'])->name('walee');
+
+// Limpiar chat
+Route::post('/walee-chat/clear', function () {
+    \App\Models\ChatMessage::where('user_id', auth()->id())->delete();
+    return response()->json(['success' => true]);
+})->middleware(['auth'])->name('walee.chat.clear');
 
 // Ruta para WALEE Dashboard - Solo admin autenticado
 Route::get('/walee-dashboard', function () {

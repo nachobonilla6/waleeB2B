@@ -167,8 +167,15 @@
                                     
                                     <p class="text-sm text-slate-400 line-clamp-2 mb-3">{{ $ticket->mensaje }}</p>
                                     
-                                    <div class="flex items-center gap-3 text-xs text-slate-500">
-                                        @if($ticket->user)
+                                    <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                                        @if($ticket->name)
+                                            <span class="flex items-center gap-1">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                </svg>
+                                                {{ $ticket->name }}
+                                            </span>
+                                        @elseif($ticket->user)
                                             <span class="flex items-center gap-1">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -176,12 +183,28 @@
                                                 {{ $ticket->user->name }}
                                             </span>
                                         @endif
+                                        @if($ticket->email)
+                                            <span class="flex items-center gap-1 text-blue-400">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                </svg>
+                                                {{ $ticket->email }}
+                                            </span>
+                                        @endif
+                                        @if($ticket->website)
+                                            <a href="{{ $ticket->website }}" target="_blank" class="flex items-center gap-1 text-walee-400 hover:underline">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                                </svg>
+                                                Sitio web
+                                            </a>
+                                        @endif
                                         @if($ticket->imagen)
-                                            <span class="flex items-center gap-1 text-walee-400">
+                                            <span class="flex items-center gap-1 text-violet-400">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-                                                Imagen adjunta
+                                                Imagen
                                             </span>
                                         @endif
                                     </div>
@@ -314,7 +337,10 @@
                             <span class="text-xs text-slate-500">${createdAt}</span>
                         </div>
                         <h4 class="text-lg font-semibold text-white mb-2">${ticket.asunto}</h4>
-                        ${ticket.user ? `<p class="text-sm text-walee-400">De: ${ticket.user.name} (${ticket.user.email})</p>` : ''}
+                        ${ticket.name ? `<p class="text-sm text-walee-400 mb-1"><strong>Empresa:</strong> ${ticket.name}</p>` : ''}
+                        ${ticket.email ? `<p class="text-sm text-blue-400 mb-1"><strong>Email:</strong> ${ticket.email}</p>` : ''}
+                        ${ticket.website ? `<p class="text-sm text-slate-400 mb-1"><strong>Web:</strong> <a href="${ticket.website}" target="_blank" class="text-walee-400 hover:underline">${ticket.website}</a></p>` : ''}
+                        ${ticket.user && !ticket.name ? `<p class="text-sm text-slate-400">De: ${ticket.user.name} (${ticket.user.email})</p>` : ''}
                     </div>
                     
                     <div class="bg-slate-800 rounded-xl p-4">

@@ -149,6 +149,9 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
         
         $ticket = \App\Models\Ticket::create([
             'user_id' => auth()->id(),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'website' => $request->input('website'),
             'asunto' => $request->input('asunto'),
             'mensaje' => $request->input('mensaje'),
             'imagen' => $imagePath,

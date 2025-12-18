@@ -498,6 +498,42 @@ Route::get('/walee-facturas', function () {
     return view('walee-facturas');
 })->middleware(['auth'])->name('walee.facturas');
 
+Route::get('/walee-facturas/crear', function () {
+    return view('walee-facturas-crear');
+})->middleware(['auth'])->name('walee.facturas.crear');
+
+Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $request) {
+    try {
+        $factura = \App\Models\Factura::create([
+            'cliente_id' => $request->input('cliente_id') ?: null,
+            'correo' => $request->input('correo'),
+            'numero_factura' => $request->input('numero_factura'),
+            'serie' => $request->input('serie'),
+            'fecha_emision' => $request->input('fecha_emision'),
+            'concepto' => $request->input('concepto'),
+            'concepto_pago' => $request->input('concepto_pago'),
+            'subtotal' => $request->input('subtotal') ?: 0,
+            'total' => $request->input('total') ?: 0,
+            'monto_pagado' => $request->input('monto_pagado') ?: 0,
+            'metodo_pago' => $request->input('metodo_pago'),
+            'estado' => $request->input('estado', 'pendiente'),
+            'fecha_vencimiento' => $request->input('fecha_vencimiento'),
+            'notas' => $request->input('notas'),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Factura creada correctamente',
+            'factura_id' => $factura->id,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.guardar');
+
 Route::get('/walee-facturas/crear-ai', function () {
     return view('walee-facturas-crear-ai');
 })->middleware(['auth'])->name('walee.facturas.crear-ai');

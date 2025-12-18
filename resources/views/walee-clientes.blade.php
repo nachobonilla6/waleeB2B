@@ -97,6 +97,14 @@
     </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
+    @php
+        use App\Models\Client;
+        
+        $clientesActivos = Client::where('estado', 'accepted')->count();
+        $clientesPendientes = Client::where('estado', 'pending')->count();
+        $clientesTotales = Client::count();
+    @endphp
+
     <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
@@ -119,7 +127,7 @@
                         <h1 class="text-2xl sm:text-3xl font-bold text-white">
                             Clientes
                         </h1>
-                        <p class="text-sm text-slate-400">Selecciona una opción</p>
+                        <p class="text-sm text-slate-400">{{ $clientesTotales }} cliente{{ $clientesTotales != 1 ? 's' : '' }} total{{ $clientesTotales != 1 ? 'es' : '' }}</p>
                     </div>
                 </div>
                 
@@ -142,7 +150,10 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">Clientes Activos</h2>
+                            <div class="flex items-center gap-3 mb-2">
+                                <h2 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Clientes Activos</h2>
+                                <span class="px-3 py-1 text-sm font-bold bg-emerald-500/30 text-emerald-300 rounded-full border border-emerald-500/40">{{ $clientesActivos }}</span>
+                            </div>
                             <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver y gestionar clientes con proyectos activos y en curso</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-emerald-500/10 items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
@@ -163,7 +174,10 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">Clientes Pendientes</h2>
+                            <div class="flex items-center gap-3 mb-2">
+                                <h2 class="text-2xl font-bold text-white group-hover:text-amber-300 transition-colors">Clientes Pendientes</h2>
+                                <span class="px-3 py-1 text-sm font-bold bg-amber-500/30 text-amber-300 rounded-full border border-amber-500/40">{{ $clientesPendientes }}</span>
+                            </div>
                             <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Clientes con estado pendiente de seguimiento</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-amber-500/10 items-center justify-center group-hover:bg-amber-500/20 transition-colors">

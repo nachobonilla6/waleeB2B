@@ -57,7 +57,7 @@
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
     @php
-        $clientes = \App\Models\Cliente::orderBy('nombre')->get();
+        $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
         $ultimaFactura = \App\Models\Factura::orderBy('id', 'desc')->first();
         $siguienteNumero = $ultimaFactura ? intval($ultimaFactura->numero_factura) + 1 : 1;
     @endphp
@@ -120,7 +120,7 @@
                             <select id="cliente_id" name="cliente_id" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
                                 <option value="">Seleccionar cliente...</option>
                                 @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}">{{ $cliente->nombre }}</option>
+                                    <option value="{{ $cliente->id }}" data-email="{{ $cliente->correo }}">{{ $cliente->nombre_empresa }}</option>
                                 @endforeach
                             </select>
                         </div>

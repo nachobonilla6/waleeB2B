@@ -79,4 +79,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Note::class)->orderBy('created_at', 'desc');
     }
+
+    public function sitios(): HasMany
+    {
+        return $this->hasMany(Sitio::class);
+    }
 }

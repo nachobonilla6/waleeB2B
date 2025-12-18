@@ -395,24 +395,6 @@
                 </h2>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <a href="{{ route('walee') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-walee-400/50 hover:bg-walee-400/5 transition-all duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-walee-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-walee-400 transition-colors">Chat</span>
-                    </a>
-                    
-                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-blue-400/50 hover:bg-blue-400/5 transition-all duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-blue-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                            </svg>
-                        </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-blue-400 transition-colors">Admin</span>
-                    </a>
-                    
                     <a href="/admin/clientes" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all duration-300">
                         <div class="w-12 h-12 rounded-xl bg-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,6 +411,24 @@
                             </svg>
                         </div>
                         <span class="text-sm font-medium text-slate-300 group-hover:text-violet-400 transition-colors">Facturas</span>
+                    </a>
+                    
+                    <a href="/admin/email-composer" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-blue-400/50 hover:bg-blue-400/5 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-blue-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-slate-300 group-hover:text-blue-400 transition-colors">Emails</span>
+                    </a>
+                    
+                    <a href="{{ route('walee') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-walee-400/50 hover:bg-walee-400/5 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-walee-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-slate-300 group-hover:text-walee-400 transition-colors">Chat</span>
                     </a>
                 </div>
             </section>

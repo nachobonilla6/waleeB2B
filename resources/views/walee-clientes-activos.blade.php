@@ -162,23 +162,25 @@
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . $phone) }}">
                         <div class="relative overflow-hidden rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 transition-all duration-300 p-4">
                             <div class="flex items-center gap-4">
-                                <!-- Avatar -->
-                                <div class="flex-shrink-0">
-                                    @if($cliente->foto)
-                                        <img src="{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/50 transition-all">
-                                    @else
-                                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center group-hover:border-emerald-400/40 transition-all">
-                                            <span class="text-xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                        </div>
-                                    @endif
-                                </div>
-                                
-                                <!-- Name -->
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="text-base font-semibold text-white truncate group-hover:text-emerald-300 transition-colors">
-                                        {{ $cliente->name }}
-                                    </h3>
-                                </div>
+                                <!-- Avatar + Name (clickable) -->
+                                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-4 flex-1 min-w-0">
+                                    <div class="flex-shrink-0">
+                                        @if($cliente->foto)
+                                            <img src="{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/50 transition-all">
+                                        @else
+                                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center group-hover:border-emerald-400/40 transition-all">
+                                                <span class="text-xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Name -->
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="text-base font-semibold text-white truncate group-hover:text-emerald-300 transition-colors">
+                                            {{ $cliente->name }}
+                                        </h3>
+                                    </div>
+                                </a>
                                 
                                 <!-- WhatsApp Button -->
                                 @if($whatsappLink)

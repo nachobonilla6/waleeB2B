@@ -138,6 +138,37 @@ Route::get('/walee-clientes-activos', function () {
     return view('walee-clientes-activos');
 })->middleware(['auth'])->name('walee.clientes.activos');
 
+// Ruta para ver detalle de un cliente
+Route::get('/walee-cliente/{id}', function ($id) {
+    $cliente = \App\Models\Client::findOrFail($id);
+    return view('walee-cliente-detalle', compact('cliente'));
+})->middleware(['auth'])->name('walee.cliente.detalle');
+
+// Ruta para editar un cliente
+Route::get('/walee-cliente/{id}/editar', function ($id) {
+    $cliente = \App\Models\Client::findOrFail($id);
+    return view('walee-cliente-editar', compact('cliente'));
+})->middleware(['auth'])->name('walee.cliente.editar');
+
+// Ruta para actualizar un cliente
+Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $id) {
+    $cliente = \App\Models\Client::findOrFail($id);
+    
+    $cliente->update([
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'phone' => $request->input('phone'),
+        'telefono_1' => $request->input('telefono_1'),
+        'website' => $request->input('website'),
+        'address' => $request->input('address'),
+        'foto' => $request->input('foto'),
+        'estado' => $request->input('estado'),
+        'feedback' => $request->input('feedback'),
+    ]);
+    
+    return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
+})->middleware(['auth'])->name('walee.cliente.actualizar');
+
 // Streaming de chat con OpenAI
 Route::post('/chat/stream', [ChatStreamController::class, 'stream'])
     ->middleware(['auth'])

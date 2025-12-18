@@ -143,6 +143,177 @@ Route::get('/walee-clientes-en-proceso', function () {
     return view('walee-clientes-en-proceso');
 })->middleware(['auth'])->name('walee.clientes.proceso');
 
+// Rutas para WALEE Extraer Clientes
+Route::get('/walee-extraer-clientes', function () {
+    return view('walee-extraer-clientes');
+})->middleware(['auth'])->name('walee.extraer.clientes');
+
+// API para extraer clientes
+Route::post('/walee-extraer/iniciar', function (\Illuminate\Http\Request $request) {
+    try {
+        $jobId = \Illuminate\Support\Str::uuid()->toString();
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c';
+        
+        $nombreLugar = $request->input('nombre_lugar');
+        $industria = $request->input('industria');
+        
+        // Crear el registro del workflow
+        $workflowRun = \App\Models\WorkflowRun::create([
+            'job_id' => $jobId,
+            'status' => 'pending',
+            'progress' => 0,
+            'step' => 'En cola',
+            'workflow_name' => 'Búsqueda: ' . ($nombreLugar ?? 'Sin nombre'),
+            'data' => [
+                'nombre_lugar' => $nombreLugar,
+                'industria' => $industria,
+            ],
+        ]);
+        
+        // Preparar payload para n8n
+        $payload = [
+            'job_id' => $jobId,
+            'progress_url' => url('/api/n8n/progress'),
+            'nombre_lugar' => $nombreLugar,
+            'industria' => $industria,
+        ];
+        
+        // Llamar al webhook de n8n
+        $response = \Illuminate\Support\Facades\Http::timeout(120)->post($webhookUrl, $payload);
+        
+        if ($response->successful()) {
+            $workflowRun->update([
+                'status' => 'running',
+                'step' => 'Iniciado - Buscando lugares',
+                'started_at' => now(),
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'job_id' => $jobId,
+                'message' => 'Búsqueda iniciada correctamente',
+            ]);
+        } else {
+            $workflowRun->update([
+                'status' => 'failed',
+                'step' => 'Error al iniciar búsqueda',
+                'error_message' => 'Error al iniciar workflow: ' . $response->status(),
+                'completed_at' => null,
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al iniciar búsqueda: ' . $response->status(),
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.extraer.iniciar');
+
+Route::get('/walee-extraer/workflows', function () {
+    $workflows = \App\Models\WorkflowRun::orderBy('created_at', 'desc')
+        ->limit(20)
+        ->get();
+    return response()->json($workflows);
+})->middleware(['auth'])->name('walee.extraer.workflows');
+
+Route::get('/walee-extraer/workflow/{id}', function ($id) {
+    $workflow = \App\Models\WorkflowRun::findOrFail($id);
+    return response()->json($workflow);
+})->middleware(['auth'])->name('walee.extraer.workflow');
+
+Route::post('/walee-extraer/workflow/{id}/stop', function ($id) {
+    try {
+        $workflow = \App\Models\WorkflowRun::findOrFail($id);
+        $workflow->update([
+            'status' => 'failed',
+            'step' => 'Cancelado manualmente',
+            'error_message' => 'Workflow detenido manualmente por el usuario',
+            'completed_at' => now(),
+        ]);
+        
+        // Procesar el siguiente workflow en cola
+        \App\Models\WorkflowRun::processNextPendingWorkflow();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Workflow detenido correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.extraer.workflow.stop');
+
+Route::post('/walee-extraer/workflow/{id}/retry', function ($id) {
+    try {
+        $record = \App\Models\WorkflowRun::findOrFail($id);
+        $jobId = \Illuminate\Support\Str::uuid()->toString();
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c';
+        
+        // Obtener datos originales
+        $originalData = $record->data ?? [];
+        
+        // Crear nuevo registro
+        $newWorkflowRun = \App\Models\WorkflowRun::create([
+            'job_id' => $jobId,
+            'status' => 'pending',
+            'progress' => 0,
+            'step' => 'En cola',
+            'workflow_name' => $record->workflow_name,
+            'data' => $originalData,
+        ]);
+        
+        // Preparar payload para n8n
+        $payload = [
+            'job_id' => $jobId,
+            'progress_url' => url('/api/n8n/progress'),
+            'nombre_lugar' => $originalData['nombre_lugar'] ?? '',
+            'industria' => $originalData['industria'] ?? '',
+        ];
+        
+        // Llamar al webhook de n8n
+        $response = \Illuminate\Support\Facades\Http::timeout(120)->post($webhookUrl, $payload);
+        
+        if ($response->successful()) {
+            $newWorkflowRun->update([
+                'status' => 'running',
+                'step' => 'Iniciado - Buscando lugares',
+                'started_at' => now(),
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'job_id' => $jobId,
+                'message' => 'Workflow reintentado correctamente',
+            ]);
+        } else {
+            $newWorkflowRun->update([
+                'status' => 'failed',
+                'step' => 'Error al iniciar búsqueda',
+                'error_message' => 'Error al iniciar workflow: ' . $response->status(),
+                'completed_at' => null,
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al reintentar: ' . $response->status(),
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.extraer.workflow.retry');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

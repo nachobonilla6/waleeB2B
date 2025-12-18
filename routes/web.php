@@ -191,7 +191,7 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
                     'ticket_id' => $ticket->id,
                     'email' => $ticket->email,
                     'asunto' => "Ticket Recibido: {$ticket->asunto}",
-                    'mensaje' => "Hola {$nombre}, recibimos tu ticket \"{$ticket->asunto}\". Te avisaremos cuando esté resuelto.",
+                    'mensaje' => "Recibimos su ticket. Le avisaremos cuando esté resuelto.",
                 ]
             );
         }

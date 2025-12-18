@@ -130,8 +130,31 @@
             </header>
             
             @php
+                $totalEnviados = \App\Models\PropuestaPersonalizada::count();
+                $totalRecibidos = \App\Models\EmailRecibido::count();
                 $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+                $enviadosHoy = \App\Models\PropuestaPersonalizada::whereDate('created_at', today())->count();
             @endphp
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 animate-fade-in-up" style="animation-delay: 0.05s;">
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-400">{{ $totalEnviados }}</div>
+                    <div class="text-xs text-blue-400/70">Enviados</div>
+                </div>
+                <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-400">{{ $totalRecibidos }}</div>
+                    <div class="text-xs text-emerald-400/70">Recibidos</div>
+                </div>
+                <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-amber-400">{{ $noLeidos }}</div>
+                    <div class="text-xs text-amber-400/70">Sin leer</div>
+                </div>
+                <div class="bg-violet-500/10 border border-violet-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-violet-400">{{ $enviadosHoy }}</div>
+                    <div class="text-xs text-violet-400/70">Hoy</div>
+                </div>
+            </div>
             
             <!-- Options Grid -->
             <div class="grid grid-cols-1 gap-6">

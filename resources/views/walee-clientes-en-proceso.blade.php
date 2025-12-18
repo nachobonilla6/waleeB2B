@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Clientes en Proceso</title>
-    <meta name="description" content="Walee - Clientes en Proceso">
+    <title>Walee - Clientes Pendientes</title>
+    <meta name="description" content="Walee - Clientes Pendientes">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -107,9 +107,9 @@
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
                             <span class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></span>
-                            Clientes en Proceso
+                            Clientes Pendientes
                         </h1>
-                        <p class="text-sm text-slate-400">{{ $clientes->count() }} clientes en seguimiento</p>
+                        <p class="text-sm text-slate-400">{{ $clientes->count() }} clientes pendientes</p>
                     </div>
                 </div>
                 

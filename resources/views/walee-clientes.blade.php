@@ -163,8 +163,8 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">Clientes en Proceso</h2>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Clientes con propuestas pendientes o en negociación</p>
+                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">Clientes Pendientes</h2>
+                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Clientes con estado pendiente de seguimiento</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-amber-500/10 items-center justify-center group-hover:bg-amber-500/20 transition-colors">
                             <svg class="w-6 h-6 text-amber-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -493,6 +493,11 @@ Route::post('/walee-emails/recibidos/sync', function () {
     ]);
 })->middleware(['auth'])->name('walee.emails.recibidos.sync');
 
+// Ruta para Facturas & Cotizaciones
+Route::get('/walee-facturas', function () {
+    return view('walee-facturas');
+})->middleware(['auth'])->name('walee.facturas');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

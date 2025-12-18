@@ -589,18 +589,6 @@
                     ></textarea>
                 </div>
                 
-                <!-- Phone -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-2">Teléfono</label>
-                    <input 
-                        type="tel" 
-                        name="telefono" 
-                        value="+506 8888-8888"
-                        placeholder="+506 8888-8888"
-                        class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
-                    >
-                </div>
-                
                 <!-- File Upload -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">Captura de pantalla (opcional)</label>
@@ -723,10 +711,8 @@
             try {
                 const formData = new FormData();
                 // Datos por defecto de Web Solutions
-                const telefono = this.querySelector('[name="telefono"]').value.trim() || '+506 8888-8888';
                 formData.append('name', 'Web Solutions');
                 formData.append('email', 'websolutionscrnow@gmail.com');
-                formData.append('telefono', telefono);
                 formData.append('website', 'https://websolutions.work/walee-dashboard');
                 formData.append('asunto', asunto);
                 formData.append('mensaje', mensaje);

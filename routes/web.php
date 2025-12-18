@@ -538,6 +538,88 @@ Route::get('/walee-facturas/crear-ai', function () {
     return view('walee-facturas-crear-ai');
 })->middleware(['auth'])->name('walee.facturas.crear-ai');
 
+// API para generar factura con AI
+Route::post('/walee-facturas/generar-ai', function (\Illuminate\Http\Request $request) {
+    try {
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Falta OPENAI_API_KEY. Configura la API key en el servidor.',
+            ], 500);
+        }
+        
+        $clienteNombre = $request->input('cliente_nombre', 'Cliente');
+        $clienteIndustria = $request->input('cliente_industria', '');
+        $clienteDescripcion = $request->input('cliente_descripcion', '');
+        $instrucciones = $request->input('instrucciones', '');
+        
+        // Construir el prompt
+        $prompt = "Genera los datos para una factura profesional para el cliente '{$clienteNombre}'";
+        
+        if ($clienteIndustria) {
+            $prompt .= " que pertenece al sector '{$clienteIndustria}'";
+        }
+        
+        if ($clienteDescripcion) {
+            $prompt .= ". Descripción del negocio: {$clienteDescripcion}";
+        }
+        
+        if ($instrucciones) {
+            $prompt .= ". Instrucciones específicas: {$instrucciones}";
+        }
+        
+        $prompt .= ". La empresa que emite la factura es Web Solutions, especializada en desarrollo web, marketing digital, sistemas personalizados y diseño gráfico.";
+        
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            ->acceptJson()
+            ->timeout(120)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'response_format' => ['type' => 'json_object'],
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'Eres un experto en facturación y servicios digitales. Genera datos realistas para facturas basándote en el tipo de cliente. Responde SOLO con JSON que contenga: "concepto" (descripción detallada del servicio, máximo 300 caracteres, lista de items con viñetas), "total" (número entero en colones costarricenses, valores realistas entre 50000 y 500000), "notas" (notas adicionales breves para la factura, máximo 100 caracteres). Los servicios típicos incluyen: Diseño web (150000-300000), Mantenimiento mensual (35000-75000), Logo (80000-150000), Marketing digital (100000-200000), Sistema personalizado (250000-500000).',
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt . ' Responde en JSON con "concepto", "total" y "notas".',
+                    ],
+                ],
+            ]);
+        
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $content = $responseData['choices'][0]['message']['content'] ?? '';
+            
+            if (empty($content)) {
+                throw new \RuntimeException('La respuesta de AI está vacía.');
+            }
+            
+            $data = is_string($content) ? json_decode($content, true) : $content;
+            
+            if (!is_array($data)) {
+                throw new \RuntimeException('La respuesta de AI no es JSON válido.');
+            }
+            
+            return response()->json([
+                'success' => true,
+                'concepto' => trim($data['concepto'] ?? 'Servicios de desarrollo web'),
+                'total' => intval($data['total'] ?? 150000),
+                'notas' => trim($data['notas'] ?? ''),
+            ]);
+        } else {
+            throw new \Exception('Error en la respuesta de OpenAI: ' . $response->status());
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.generar-ai');
+
 Route::get('/walee-cotizaciones', function () {
     return view('walee-cotizaciones');
 })->middleware(['auth'])->name('walee.cotizaciones');

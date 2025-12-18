@@ -498,6 +498,14 @@ Route::get('/walee-facturas', function () {
     return view('walee-facturas');
 })->middleware(['auth'])->name('walee.facturas');
 
+Route::get('/walee-facturas/crear-ai', function () {
+    return view('walee-facturas-crear-ai');
+})->middleware(['auth'])->name('walee.facturas.crear-ai');
+
+Route::get('/walee-cotizaciones', function () {
+    return view('walee-cotizaciones');
+})->middleware(['auth'])->name('walee.cotizaciones');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

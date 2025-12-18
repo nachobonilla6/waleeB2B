@@ -129,7 +129,7 @@
                 </a>
                 
                 <!-- Crear con AI -->
-                <a href="#" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 p-8 hover:border-purple-400/50 hover:from-purple-500/15 hover:to-purple-600/10 transition-all duration-500">
+                <a href="{{ route('walee.facturas.crear-ai') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 p-8 hover:border-purple-400/50 hover:from-purple-500/15 hover:to-purple-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative flex items-center gap-6">
                         <div class="w-20 h-20 rounded-2xl bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -171,7 +171,7 @@
                 </a>
                 
                 <!-- Cotizaciones -->
-                <a href="#" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-8 hover:border-amber-400/50 hover:from-amber-500/15 hover:to-amber-600/10 transition-all duration-500">
+                <a href="{{ route('walee.cotizaciones') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-8 hover:border-amber-400/50 hover:from-amber-500/15 hover:to-amber-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative flex items-center gap-6">
                         <div class="w-20 h-20 rounded-2xl bg-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">

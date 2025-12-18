@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Walee - Crear Email con AI</title>
+    <meta name="description" content="Walee - Crear Email con Inteligencia Artificial">
+    <meta name="theme-color" content="#D59F3B">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        walee: {
+                            50: '#FBF7EE',
+                            100: '#F5ECD6',
+                            200: '#EBD9AD',
+                            300: '#E0C684',
+                            400: '#D59F3B',
+                            500: '#C78F2E',
+                            600: '#A67524',
+                            700: '#7F5A1C',
+                            800: '#594013',
+                            900: '#33250B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(213, 159, 59, 0.3);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(213, 159, 59, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+    @php
+        $clientes = \App\Models\Client::orderBy('name')->get();
+    @endphp
+
+    <div class="min-h-screen relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-violet-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-violet-400/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
+                            <svg class="w-7 h-7 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Crear con AI
+                        </h1>
+                        <p class="text-sm text-slate-400">Genera emails personalizados</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+                        <span class="text-sm font-medium text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Notifications -->
+            <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+            
+            <!-- Email Form -->
+            <div class="animate-fade-in-up">
+                <form id="emailForm" class="space-y-6">
+                    @csrf
+                    
+                    <!-- Cliente Selection -->
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Destinatario
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cliente_id" class="block text-sm font-medium text-slate-300 mb-2">Cliente</label>
+                                <select 
+                                    id="cliente_id" 
+                                    name="cliente_id" 
+                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                >
+                                    <option value="">Seleccionar cliente...</option>
+                                    @foreach($clientes as $cliente)
+                                        <option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}" data-website="{{ $cliente->website }}">
+                                            {{ $cliente->name }} {{ $cliente->email ? "({$cliente->email})" : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email <span class="text-red-400">*</span></label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    required
+                                    placeholder="cliente@correo.com"
+                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Prompt -->
+                    <div class="bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Instrucciones para AI
+                        </h2>
+                        
+                        <div class="mb-4">
+                            <label for="ai_prompt" class="block text-sm font-medium text-slate-300 mb-2">¿Qué tipo de email necesitas?</label>
+                            <textarea 
+                                id="ai_prompt" 
+                                name="ai_prompt" 
+                                rows="3"
+                                placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante, mencionando servicios de diseño web y marketing digital..."
+                                class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
+                            ></textarea>
+                            <p class="text-xs text-slate-500 mt-2">Describe el tipo de email que quieres. Si está vacío, se generará una propuesta genérica.</p>
+                        </div>
+                        
+                        <button 
+                            type="button" 
+                            id="generateBtn"
+                            onclick="generateWithAI()"
+                            class="w-full px-6 py-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            <span>Generar con AI</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Email Content -->
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            Contenido del Email
+                        </h2>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-slate-300 mb-2">Asunto <span class="text-red-400">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="subject" 
+                                    name="subject" 
+                                    required
+                                    placeholder="Asunto del email"
+                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label for="body" class="block text-sm font-medium text-slate-300 mb-2">Mensaje <span class="text-red-400">*</span></label>
+                                <textarea 
+                                    id="body" 
+                                    name="body" 
+                                    rows="10"
+                                    required
+                                    placeholder="Escribe o genera el contenido del email..."
+                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="submitBtn"
+                        class="w-full px-6 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        <span>Enviar Email</span>
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="text-center py-8 mt-8">
+                <p class="text-sm text-slate-500">
+                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                </p>
+            </footer>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        // Auto-fill email when client is selected
+        document.getElementById('cliente_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const email = selectedOption.getAttribute('data-email');
+            if (email) {
+                document.getElementById('email').value = email;
+            }
+        });
+        
+        // Generate with AI
+        async function generateWithAI() {
+            const generateBtn = document.getElementById('generateBtn');
+            const clienteId = document.getElementById('cliente_id').value;
+            const aiPrompt = document.getElementById('ai_prompt').value;
+            
+            // Get client info
+            const selectedOption = document.getElementById('cliente_id').options[document.getElementById('cliente_id').selectedIndex];
+            const clientName = selectedOption.text.split('(')[0].trim() || 'el cliente';
+            const clientWebsite = selectedOption.getAttribute('data-website') || '';
+            
+            // Disable button
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generando con AI...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.emails.generar") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        cliente_id: clienteId,
+                        ai_prompt: aiPrompt,
+                        client_name: clientName,
+                        client_website: clientWebsite,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('subject').value = data.subject;
+                    document.getElementById('body').value = data.body;
+                    showNotification('Email generado', 'El contenido ha sido generado con AI', 'success');
+                } else {
+                    showNotification('Error', data.message || 'Error al generar email', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión: ' + error.message, 'error');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                    </svg>
+                    <span>Generar con AI</span>
+                `;
+            }
+        }
+        
+        // Form submission
+        document.getElementById('emailForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const clienteId = document.getElementById('cliente_id').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const body = document.getElementById('body').value;
+            const aiPrompt = document.getElementById('ai_prompt').value;
+            
+            if (!email || !subject || !body) {
+                showNotification('Error', 'Por favor completa todos los campos requeridos', 'error');
+                return;
+            }
+            
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Enviando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.emails.enviar") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        cliente_id: clienteId,
+                        email: email,
+                        subject: subject,
+                        body: body,
+                        ai_prompt: aiPrompt,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Email enviado', 'El email ha sido enviado correctamente', 'success');
+                    // Reset form
+                    document.getElementById('emailForm').reset();
+                } else {
+                    showNotification('Error', data.message || 'Error al enviar email', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                    <span>Enviar Email</span>
+                `;
+            }
+        });
+        
+        function showNotification(title, body, type = 'info') {
+            const container = document.getElementById('notifications');
+            const id = 'notif-' + Date.now();
+            
+            const bgClass = {
+                'success': 'bg-emerald-600',
+                'error': 'bg-red-600',
+                'info': 'bg-blue-600',
+            }[type] || 'bg-slate-600';
+            
+            const notification = document.createElement('div');
+            notification.id = id;
+            notification.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="flex-1">
+                        <p class="font-medium text-sm">${title}</p>
+                        <p class="text-xs opacity-90 mt-0.5">${body}</p>
+                    </div>
+                    <button onclick="document.getElementById('${id}').remove()" class="text-white/70 hover:text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
+

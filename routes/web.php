@@ -314,6 +314,159 @@ Route::post('/walee-extraer/workflow/{id}/retry', function ($id) {
     }
 })->middleware(['auth'])->name('walee.extraer.workflow.retry');
 
+// Rutas para WALEE Emails
+Route::get('/walee-emails', function () {
+    return view('walee-emails');
+})->middleware(['auth'])->name('walee.emails');
+
+Route::get('/walee-emails/crear', function () {
+    return view('walee-emails-crear');
+})->middleware(['auth'])->name('walee.emails.crear');
+
+Route::get('/walee-emails/enviados', function () {
+    return view('walee-emails-enviados');
+})->middleware(['auth'])->name('walee.emails.enviados');
+
+// API para generar email con AI
+Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request) {
+    try {
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Falta OPENAI_API_KEY. Configura la API key en el servidor.',
+            ], 500);
+        }
+        
+        $clientName = $request->input('client_name', 'el cliente');
+        $clientWebsite = $request->input('client_website', '');
+        $aiPrompt = $request->input('ai_prompt', '');
+        
+        // Construir el prompt
+        if (empty($aiPrompt)) {
+            $prompt = "Genera un email profesional de propuesta personalizada para {$clientName}";
+            if ($clientWebsite) {
+                $prompt .= " cuyo sitio web es {$clientWebsite}";
+            }
+            $prompt .= ". El email debe ser persuasivo, profesional y enfocado en ofrecer servicios de diseño web, marketing digital y desarrollo de software.";
+        } else {
+            $prompt = "Genera un email profesional. {$aiPrompt}";
+            if ($clientName !== 'el cliente') {
+                $prompt .= " El cliente se llama {$clientName}.";
+            }
+            if ($clientWebsite) {
+                $prompt .= " Su sitio web es {$clientWebsite}.";
+            }
+        }
+        
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            ->acceptJson()
+            ->timeout(120)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'response_format' => ['type' => 'json_object'],
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'Eres un experto en marketing digital y redacción de emails comerciales. Genera emails profesionales, persuasivos y directos. Responde SOLO con JSON que contenga "subject" (asunto del email, máximo 10 palabras) y "body" (cuerpo del email completo). NO incluyas mensajes de cierre como "Si necesitas alguna modificación", "No dudes en contactarme", etc. Al final del body, SIEMPRE incluye esta firma: "\n\nWeb Solutions\nwebsolutionscrnow@gmail.com\n+506 8806 1829 (WhatsApp)\nwebsolutions.work"',
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt . ' Responde en JSON con "subject" y "body".',
+                    ],
+                ],
+            ]);
+        
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $content = $responseData['choices'][0]['message']['content'] ?? '';
+            
+            if (empty($content)) {
+                throw new \RuntimeException('La respuesta de AI está vacía.');
+            }
+            
+            $data = is_string($content) ? json_decode($content, true) : $content;
+            
+            if (!is_array($data)) {
+                throw new \RuntimeException('La respuesta de AI no es JSON válido.');
+            }
+            
+            $emailSubject = trim($data['subject'] ?? 'Propuesta Personalizada');
+            $emailBody = trim($data['body'] ?? '');
+            
+            if (empty($emailBody)) {
+                throw new \RuntimeException('El cuerpo del email está vacío.');
+            }
+            
+            // Limpiar mensajes de cierre comunes
+            $emailBody = preg_replace('/\s*(Si necesitas alguna modificación.*?\.|No dudes en.*?\.|Estoy a tu disposición.*?\.|Quedo a la espera.*?\.).*/is', '', $emailBody);
+            $emailBody = trim($emailBody);
+            
+            return response()->json([
+                'success' => true,
+                'subject' => $emailSubject,
+                'body' => $emailBody,
+            ]);
+        } else {
+            throw new \Exception('Error en la respuesta de OpenAI: ' . $response->status());
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.emails.generar');
+
+// API para enviar email
+Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request) {
+    try {
+        $clienteId = $request->input('cliente_id');
+        $email = $request->input('email');
+        $subject = $request->input('subject');
+        $body = $request->input('body');
+        $aiPrompt = $request->input('ai_prompt');
+        
+        $client = $clienteId ? \App\Models\Client::find($clienteId) : null;
+        
+        // Enviar email
+        \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($email, $subject) {
+            $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
+                    ->to($email)
+                    ->subject($subject);
+        });
+        
+        // Guardar en la base de datos
+        \App\Models\PropuestaPersonalizada::create([
+            'cliente_id' => $clienteId ?: null,
+            'cliente_nombre' => $client?->name ?? 'N/A',
+            'email' => $email,
+            'subject' => $subject,
+            'body' => $body,
+            'ai_prompt' => $aiPrompt ?: null,
+            'user_id' => auth()->id(),
+        ]);
+        
+        // Marcar el contacto como propuesta personalizada enviada
+        if ($client) {
+            $client->update([
+                'propuesta_enviada' => true,
+                'estado' => 'propuesta_personalizada_enviada'
+            ]);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Email enviado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.emails.enviar');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

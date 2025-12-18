@@ -125,15 +125,13 @@ Route::get('/walee', function () {
 
 // Ruta para WALEE Dashboard - Solo admin autenticado
 Route::get('/walee-dashboard', function () {
-    // Verificar que el usuario está autenticado y es admin
-    if (!auth()->check()) {
-        return redirect()->route('login');
-    }
-    
-    // Opcional: verificar si es admin (puedes ajustar esta lógica según tu modelo)
-    // Por ahora solo verificamos que esté autenticado
     return view('walee-dashboard');
 })->middleware(['auth'])->name('walee.dashboard');
+
+// Ruta para WALEE Clientes - Selector de opciones
+Route::get('/walee-clientes', function () {
+    return view('walee-clientes');
+})->middleware(['auth'])->name('walee.clientes');
 
 // Streaming de chat con OpenAI
 Route::post('/chat/stream', [ChatStreamController::class, 'stream'])

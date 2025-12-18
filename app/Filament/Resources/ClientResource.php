@@ -122,18 +122,7 @@ class ClientResource extends Resource
                     ->label('Foto')
                     ->square()
                     ->size(40)
-                    ->getStateUsing(function ($record) {
-                        $path = $record->foto ?? null;
-                        if (! $path) {
-                            return null;
-                        }
-
-                        if (Str::startsWith($path, ['http://', 'https://'])) {
-                            return $path;
-                        }
-
-                        return Storage::url($path);
-                    })
+                    ->disk('public')
                     ->extraImgAttributes(['class' => 'object-cover rounded-lg']),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

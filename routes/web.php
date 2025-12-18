@@ -151,6 +151,7 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
             'user_id' => auth()->id(),
             'name' => $request->input('name'),
             'email' => $request->input('email'),
+            'telefono' => $request->input('telefono'),
             'website' => $request->input('website'),
             'asunto' => $request->input('asunto'),
             'mensaje' => $request->input('mensaje'),
@@ -183,17 +184,39 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
         // Si se marca como recibido, enviar webhook
         if ($nuevoEstado === 'recibido') {
             $nombre = $ticket->name ?? $ticket->user?->name ?? 'Usuario';
+            $telefono = $ticket->telefono ?? 'No proporcionado';
+            $website = $ticket->website ?? 'No proporcionado';
+            
+            $mensajeFormal = "Estimado/a {$nombre},
+
+Hemos recibido su ticket de soporte #{$ticket->id} con el asunto: \"{$ticket->asunto}\".
+
+Nuestro equipo técnico está revisando su solicitud y le responderemos a la brevedad posible.
+
+Datos de contacto registrados:
+• Email: {$ticket->email}
+• Teléfono: {$telefono}
+• Sitio web: {$website}
+
+Si necesita agregar información adicional, puede responder a este correo o contactarnos directamente.
+
+Gracias por su paciencia.
+
+Atentamente,
+El equipo de Web Solutions
+websolutionscrnow@gmail.com";
             
             \Illuminate\Support\Facades\Http::timeout(10)->post(
                 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
                 [
                     'ticket_id' => $ticket->id,
-                    'titulo' => "Hemos recibido tu ticket: {$ticket->asunto}",
-                    'mensaje' => "Hola {$nombre}, hemos recibido tu mensaje sobre \"{$ticket->asunto}\". Pronto lo resolveremos.",
+                    'titulo' => "Ticket #{$ticket->id} Recibido: {$ticket->asunto}",
+                    'mensaje' => $mensajeFormal,
                     'asunto' => $ticket->asunto,
                     'nombre' => $nombre,
                     'email' => $ticket->email,
-                    'website' => $ticket->website,
+                    'telefono' => $telefono,
+                    'website' => $website,
                     'estado' => 'recibido',
                 ]
             );

@@ -56,11 +56,40 @@
             </header>
             
             <!-- Form -->
-            <form action="{{ route('walee.cliente.actualizar', $cliente->id) }}" method="POST" class="animate-fade-in-up" style="animation-delay: 0.1s;">
+            <form action="{{ route('walee.cliente.actualizar', $cliente->id) }}" method="POST" enctype="multipart/form-data" class="animate-fade-in-up" style="animation-delay: 0.1s;">
                 @csrf
                 @method('PUT')
                 
                 <div class="space-y-4">
+                    <!-- Foto -->
+                    <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+                        <label class="block text-xs text-slate-500 mb-3">Foto del Cliente</label>
+                        <div class="flex items-center gap-4">
+                            <!-- Foto actual -->
+                            <div class="flex-shrink-0">
+                                @if($cliente->foto)
+                                    <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" id="fotoPreview" class="w-20 h-20 rounded-xl object-cover border-2 border-emerald-500/30">
+                                @else
+                                    <div id="fotoPreview" class="w-20 h-20 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center">
+                                        <span class="text-2xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Upload button -->
+                            <div class="flex-1">
+                                <label for="foto_file" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium">Cambiar foto</span>
+                                </label>
+                                <input type="file" name="foto_file" id="foto_file" accept="image/*" class="hidden" onchange="previewImage(this)">
+                                <p class="text-xs text-slate-500 mt-2">JPG, PNG o GIF. Máx 2MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Nombre -->
                     <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
                         <label class="block text-xs text-slate-500 mb-2">Nombre *</label>
@@ -109,14 +138,6 @@
                             placeholder="Dirección del cliente">
                     </div>
                     
-                    <!-- Foto URL -->
-                    <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
-                        <label class="block text-xs text-slate-500 mb-2">URL de Foto</label>
-                        <input type="url" name="foto" value="{{ old('foto', $cliente->foto) }}"
-                            class="w-full bg-transparent text-white border-none outline-none placeholder-slate-600"
-                            placeholder="https://ejemplo.com/foto.jpg">
-                    </div>
-                    
                     <!-- Estado -->
                     <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
                         <label class="block text-xs text-slate-500 mb-2">Estado</label>
@@ -160,6 +181,28 @@
             </footer>
         </div>
     </div>
+<script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('fotoPreview');
+                    if (preview.tagName === 'IMG') {
+                        preview.src = e.target.result;
+                    } else {
+                        // Replace div with img
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.id = 'fotoPreview';
+                        img.className = 'w-20 h-20 rounded-xl object-cover border-2 border-emerald-500/30';
+                        img.alt = 'Preview';
+                        preview.parentNode.replaceChild(img, preview);
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </body>
 </html>
 

@@ -154,17 +154,25 @@ Route::get('/walee-cliente/{id}/editar', function ($id) {
 Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $id) {
     $cliente = \App\Models\Client::findOrFail($id);
     
-    $cliente->update([
+    $data = [
         'name' => $request->input('name'),
         'email' => $request->input('email'),
         'phone' => $request->input('phone'),
         'telefono_1' => $request->input('telefono_1'),
         'website' => $request->input('website'),
         'address' => $request->input('address'),
-        'foto' => $request->input('foto'),
         'estado' => $request->input('estado'),
         'feedback' => $request->input('feedback'),
-    ]);
+    ];
+    
+    // Procesar foto si se subió una nueva
+    if ($request->hasFile('foto_file')) {
+        $file = $request->file('foto_file');
+        $path = $file->store('clientes_en_proceso_fotos', 'public');
+        $data['foto'] = $path;
+    }
+    
+    $cliente->update($data);
     
     return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
 })->middleware(['auth'])->name('walee.cliente.actualizar');

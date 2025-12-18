@@ -133,6 +133,11 @@ Route::get('/walee-clientes', function () {
     return view('walee-clientes');
 })->middleware(['auth'])->name('walee.clientes');
 
+// Ruta para WALEE Clientes Activos - Lista de clientes aceptados
+Route::get('/walee-clientes-activos', function () {
+    return view('walee-clientes-activos');
+})->middleware(['auth'])->name('walee.clientes.activos');
+
 // Streaming de chat con OpenAI
 Route::post('/chat/stream', [ChatStreamController::class, 'stream'])
     ->middleware(['auth'])

@@ -157,8 +157,8 @@ Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $
     $data = [
         'name' => $request->input('name'),
         'email' => $request->input('email'),
-        'phone' => $request->input('phone'),
         'telefono_1' => $request->input('telefono_1'),
+        'telefono_2' => $request->input('telefono_2'),
         'website' => $request->input('website'),
         'address' => $request->input('address'),
         'estado' => $request->input('estado'),

@@ -106,18 +106,18 @@
                             placeholder="correo@ejemplo.com">
                     </div>
                     
-                    <!-- Teléfono -->
+                    <!-- Teléfono 1 -->
                     <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
-                        <label class="block text-xs text-slate-500 mb-2">Teléfono</label>
-                        <input type="text" name="phone" value="{{ old('phone', $cliente->phone) }}"
+                        <label class="block text-xs text-slate-500 mb-2">Teléfono 1</label>
+                        <input type="text" name="telefono_1" value="{{ old('telefono_1', $cliente->telefono_1) }}"
                             class="w-full bg-transparent text-white border-none outline-none placeholder-slate-600"
                             placeholder="+506 8888-8888">
                     </div>
                     
                     <!-- Teléfono 2 -->
                     <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
-                        <label class="block text-xs text-slate-500 mb-2">Teléfono Alternativo</label>
-                        <input type="text" name="telefono_1" value="{{ old('telefono_1', $cliente->telefono_1) }}"
+                        <label class="block text-xs text-slate-500 mb-2">Teléfono 2</label>
+                        <input type="text" name="telefono_2" value="{{ old('telefono_2', $cliente->telefono_2) }}"
                             class="w-full bg-transparent text-white border-none outline-none placeholder-slate-600"
                             placeholder="+506 8888-8888">
                     </div>

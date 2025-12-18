@@ -64,8 +64,6 @@
         .option-card:nth-child(2) { animation-delay: 0.2s; }
         .option-card:nth-child(3) { animation-delay: 0.3s; }
         .option-card:nth-child(4) { animation-delay: 0.4s; }
-        .option-card:nth-child(5) { animation-delay: 0.5s; }
-        .option-card:nth-child(6) { animation-delay: 0.6s; }
         
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -151,7 +149,7 @@
                     </div>
                 </a>
                 
-                <!-- Facturas Creadas -->
+                <!-- Facturas -->
                 <a href="/admin/facturas" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 p-8 hover:border-blue-400/50 hover:from-blue-500/15 hover:to-blue-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative flex items-center gap-6">
@@ -161,8 +159,8 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">Facturas Creadas</h2>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver todas las facturas creadas en el sistema</p>
+                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">Facturas</h2>
+                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver y gestionar todas las facturas del sistema</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-blue-500/10 items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                             <svg class="w-6 h-6 text-blue-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,28 +170,7 @@
                     </div>
                 </a>
                 
-                <!-- Facturas Enviadas -->
-                <a href="#" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 p-8 hover:border-emerald-400/50 hover:from-emerald-500/15 hover:to-emerald-600/10 transition-all duration-500">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
-                    <div class="relative flex items-center gap-6">
-                        <div class="w-20 h-20 rounded-2xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">Facturas Enviadas</h2>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver facturas que han sido enviadas a clientes</p>
-                        </div>
-                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-emerald-500/10 items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
-                            <svg class="w-6 h-6 text-emerald-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                </a>
-                
-                <!-- Cotizaciones Creadas -->
+                <!-- Cotizaciones -->
                 <a href="#" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-8 hover:border-amber-400/50 hover:from-amber-500/15 hover:to-amber-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative flex items-center gap-6">
@@ -203,32 +180,11 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">Cotizaciones Creadas</h2>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver todas las cotizaciones creadas en el sistema</p>
+                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors">Cotizaciones</h2>
+                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver y gestionar todas las cotizaciones del sistema</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-amber-500/10 items-center justify-center group-hover:bg-amber-500/20 transition-colors">
                             <svg class="w-6 h-6 text-amber-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                </a>
-                
-                <!-- Cotizaciones Enviadas -->
-                <a href="#" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border border-cyan-500/20 p-8 hover:border-cyan-400/50 hover:from-cyan-500/15 hover:to-cyan-600/10 transition-all duration-500">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
-                    <div class="relative flex items-center gap-6">
-                        <div class="w-20 h-20 rounded-2xl bg-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-10 h-10 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">Cotizaciones Enviadas</h2>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver cotizaciones que han sido enviadas a clientes</p>
-                        </div>
-                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-cyan-500/10 items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
-                            <svg class="w-6 h-6 text-cyan-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>

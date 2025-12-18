@@ -135,6 +135,10 @@ Route::get('/walee-dashboard', function () {
 })->middleware(['auth'])->name('walee.dashboard');
 
 // Tickets de soporte
+Route::get('/walee-tickets', function () {
+    return view('walee-tickets');
+})->middleware(['auth'])->name('walee.tickets');
+
 Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
     try {
         $imagePath = null;
@@ -163,6 +167,25 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
         ], 500);
     }
 })->middleware(['auth'])->name('walee.tickets.store');
+
+Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $ticket = \App\Models\Ticket::findOrFail($id);
+        $ticket->update([
+            'estado' => $request->input('estado'),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.tickets.estado');
 
 // Ruta para WALEE Clientes - Selector de opciones
 Route::get('/walee-clientes', function () {

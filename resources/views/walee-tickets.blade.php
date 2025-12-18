@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Walee - Tickets de Soporte</title>
+    <meta name="description" content="Gestión de Tickets de Soporte">
+    <meta name="theme-color" content="#D59F3B">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        walee: {
+                            50: '#FBF7EE',
+                            100: '#F5ECD6',
+                            200: '#EBD9AD',
+                            300: '#E0C684',
+                            400: '#D59F3B',
+                            500: '#C78F2E',
+                            600: '#A67524',
+                            700: '#7F5A1C',
+                            800: '#594013',
+                            900: '#33250B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(213, 159, 59, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(213, 159, 59, 0.5); }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+    @php
+        $tickets = \App\Models\Ticket::with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        $totalTickets = $tickets->count();
+        $enviados = $tickets->where('estado', 'enviado')->count();
+        $recibidos = $tickets->where('estado', 'recibido')->count();
+        $resueltos = $tickets->where('estado', 'resuelto')->count();
+    @endphp
+
+    <div class="min-h-screen relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-orange-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-orange-400/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-6 animate-fade-in-up">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
+                            <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Tickets de Soporte
+                        </h1>
+                        <p class="text-sm text-slate-400">{{ $totalTickets }} tickets en total</p>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-amber-400">{{ $enviados }}</div>
+                    <div class="text-xs text-amber-400/70">Enviados</div>
+                </div>
+                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-400">{{ $recibidos }}</div>
+                    <div class="text-xs text-blue-400/70">Recibidos</div>
+                </div>
+                <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-400">{{ $resueltos }}</div>
+                    <div class="text-xs text-emerald-400/70">Resueltos</div>
+                </div>
+            </div>
+            
+            <!-- Notifications -->
+            <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+            
+            <!-- Tickets List -->
+            <div id="ticketsList" class="space-y-4">
+                @forelse($tickets as $index => $ticket)
+                    <div class="ticket-card bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-500/30 transition-all animate-fade-in-up" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                        <div class="p-4">
+                            <div class="flex items-start gap-4">
+                                <!-- Status Icon -->
+                                <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0
+                                    @if($ticket->estado === 'enviado') bg-amber-500/20
+                                    @elseif($ticket->estado === 'recibido') bg-blue-500/20
+                                    @else bg-emerald-500/20
+                                    @endif">
+                                    @if($ticket->estado === 'enviado')
+                                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @elseif($ticket->estado === 'recibido')
+                                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    @endif
+                                </div>
+                                
+                                <!-- Content -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between gap-2 mb-2">
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-xs font-mono text-slate-500">#{{ $ticket->id }}</span>
+                                                <span class="text-xs px-2 py-0.5 rounded-full
+                                                    @if($ticket->estado === 'enviado') bg-amber-500/20 text-amber-400
+                                                    @elseif($ticket->estado === 'recibido') bg-blue-500/20 text-blue-400
+                                                    @else bg-emerald-500/20 text-emerald-400
+                                                    @endif">
+                                                    {{ ucfirst($ticket->estado) }}
+                                                </span>
+                                            </div>
+                                            <h3 class="font-semibold text-white truncate">{{ $ticket->asunto }}</h3>
+                                        </div>
+                                        <span class="text-xs text-slate-500 flex-shrink-0">
+                                            {{ $ticket->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="text-sm text-slate-400 line-clamp-2 mb-3">{{ $ticket->mensaje }}</p>
+                                    
+                                    <div class="flex items-center gap-3 text-xs text-slate-500">
+                                        @if($ticket->user)
+                                            <span class="flex items-center gap-1">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                                {{ $ticket->user->name }}
+                                            </span>
+                                        @endif
+                                        @if($ticket->imagen)
+                                            <span class="flex items-center gap-1 text-walee-400">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                                Imagen adjunta
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions Bar -->
+                        <div class="px-4 py-3 bg-slate-900/50 border-t border-slate-700/50 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-slate-500">Cambiar estado:</span>
+                                <div class="flex gap-1">
+                                    <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-3 py-1.5 text-xs rounded-lg transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-700 text-slate-400 hover:bg-amber-500/20 hover:text-amber-400' }}">
+                                        Enviado
+                                    </button>
+                                    <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-3 py-1.5 text-xs rounded-lg transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-400 hover:bg-blue-500/20 hover:text-blue-400' }}">
+                                        Recibido
+                                    </button>
+                                    <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-3 py-1.5 text-xs rounded-lg transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400 hover:bg-emerald-500/20 hover:text-emerald-400' }}">
+                                        Resuelto
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                @if($ticket->imagen)
+                                    <a href="{{ asset('storage/' . $ticket->imagen) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        Ver
+                                    </a>
+                                @endif
+                                <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
+                                    Detalle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-16 animate-fade-in-up">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-800 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">No hay tickets</h3>
+                        <p class="text-slate-400">Aún no se han recibido tickets de soporte</p>
+                    </div>
+                @endforelse
+            </div>
+            
+            <!-- Footer -->
+            <footer class="text-center py-8 mt-4">
+                <p class="text-sm text-slate-500">
+                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                </p>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- Ticket Detail Modal -->
+    <div id="ticketModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div class="flex items-center justify-between p-4 border-b border-slate-700">
+                <h3 class="text-lg font-semibold text-white" id="modalTitle">Ticket</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto max-h-[70vh]" id="modalContent">
+                <!-- Content will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const ticketsData = @json($tickets);
+        
+        async function changeStatus(ticketId, newStatus) {
+            try {
+                const response = await fetch(`/walee-tickets/${ticketId}/estado`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({ estado: newStatus }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Estado actualizado', `Ticket #${ticketId} → ${newStatus}`, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('Error', data.message || 'No se pudo actualizar', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión', 'error');
+            }
+        }
+        
+        function showTicketDetail(ticketId) {
+            const ticket = ticketsData.find(t => t.id === ticketId);
+            if (!ticket) return;
+            
+            const createdAt = new Date(ticket.created_at).toLocaleString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            document.getElementById('modalTitle').textContent = `Ticket #${ticket.id}`;
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-slate-800 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs px-2 py-1 rounded-full
+                                ${ticket.estado === 'enviado' ? 'bg-amber-500/20 text-amber-400' : ''}
+                                ${ticket.estado === 'recibido' ? 'bg-blue-500/20 text-blue-400' : ''}
+                                ${ticket.estado === 'resuelto' ? 'bg-emerald-500/20 text-emerald-400' : ''}">
+                                ${ticket.estado.charAt(0).toUpperCase() + ticket.estado.slice(1)}
+                            </span>
+                            <span class="text-xs text-slate-500">${createdAt}</span>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white mb-2">${ticket.asunto}</h4>
+                        ${ticket.user ? `<p class="text-sm text-walee-400">De: ${ticket.user.name} (${ticket.user.email})</p>` : ''}
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-xl p-4">
+                        <h5 class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Mensaje</h5>
+                        <p class="text-white whitespace-pre-wrap">${ticket.mensaje}</p>
+                    </div>
+                    
+                    ${ticket.imagen ? `
+                        <div class="bg-slate-800 rounded-xl p-4">
+                            <h5 class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Imagen adjunta</h5>
+                            <a href="/storage/${ticket.imagen}" target="_blank" class="block">
+                                <img src="/storage/${ticket.imagen}" alt="Captura" class="rounded-lg max-h-64 object-contain mx-auto border border-slate-700 hover:border-walee-500 transition-colors">
+                            </a>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            document.getElementById('ticketModal').classList.remove('hidden');
+        }
+        
+        function closeModal() {
+            document.getElementById('ticketModal').classList.add('hidden');
+        }
+        
+        function showNotification(title, body, type = 'info') {
+            const container = document.getElementById('notifications');
+            const id = 'notif-' + Date.now();
+            
+            const bgClass = {
+                'success': 'bg-emerald-600',
+                'error': 'bg-red-600',
+                'info': 'bg-blue-600',
+            }[type] || 'bg-slate-600';
+            
+            const notification = document.createElement('div');
+            notification.id = id;
+            notification.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="flex-1">
+                        <p class="font-medium text-sm">${title}</p>
+                        <p class="text-xs opacity-90 mt-0.5">${body}</p>
+                    </div>
+                    <button onclick="document.getElementById('${id}').remove()" class="text-white/70 hover:text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            setTimeout(() => notification.classList.remove('translate-x-full'), 10);
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Close modal on backdrop click
+        document.getElementById('ticketModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
+

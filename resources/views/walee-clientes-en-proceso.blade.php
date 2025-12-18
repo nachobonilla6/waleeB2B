@@ -81,20 +81,9 @@
     @php
         use App\Models\Client;
         
-        // Estados que se consideran "en proceso" (todo menos accepted y rechazado)
-        $estadosEnProceso = ['nuevo', 'contactado', 'propuesta_enviada', 'propuesta_personalizada_enviada'];
-        
-        $clientes = Client::whereIn('estado', $estadosEnProceso)
+        $clientes = Client::where('estado', 'pending')
             ->orderBy('created_at', 'desc')
             ->get();
-        
-        // Mapeo de estados a labels legibles
-        $estadoLabels = [
-            'nuevo' => ['label' => 'Nuevo', 'color' => 'blue'],
-            'contactado' => ['label' => 'Contactado', 'color' => 'cyan'],
-            'propuesta_enviada' => ['label' => 'Propuesta Enviada', 'color' => 'amber'],
-            'propuesta_personalizada_enviada' => ['label' => 'Propuesta Personalizada', 'color' => 'purple'],
-        ];
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -156,7 +145,6 @@
                         $phone = $cliente->telefono_1 ?: $cliente->telefono_2;
                         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
                         $whatsappLink = $cleanPhone ? "https://wa.me/{$cleanPhone}" : null;
-                        $estadoInfo = $estadoLabels[$cliente->estado] ?? ['label' => ucfirst($cliente->estado), 'color' => 'gray'];
                     @endphp
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . $phone) }}">
                         <div class="relative overflow-hidden rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-amber-500/40 transition-all duration-300 p-4">
@@ -178,14 +166,8 @@
                                         <h3 class="text-base font-semibold text-white truncate group-hover:text-amber-300 transition-colors">
                                             {{ $cliente->name }}
                                         </h3>
-                                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full
-                                            @if($estadoInfo['color'] === 'blue') bg-blue-500/20 text-blue-400 border border-blue-500/30
-                                            @elseif($estadoInfo['color'] === 'cyan') bg-cyan-500/20 text-cyan-400 border border-cyan-500/30
-                                            @elseif($estadoInfo['color'] === 'amber') bg-amber-500/20 text-amber-400 border border-amber-500/30
-                                            @elseif($estadoInfo['color'] === 'purple') bg-purple-500/20 text-purple-400 border border-purple-500/30
-                                            @else bg-slate-500/20 text-slate-400 border border-slate-500/30
-                                            @endif">
-                                            {{ $estadoInfo['label'] }}
+                                        <span class="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                            Pendiente
                                         </span>
                                     </div>
                                 </a>

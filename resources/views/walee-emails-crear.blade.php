@@ -87,6 +87,13 @@
 <body class="bg-slate-950 text-white min-h-screen">
     @php
         $clientes = \App\Models\Client::orderBy('name')->get();
+        
+        // Obtener conteo de propuestas por cliente
+        $propuestasPorCliente = \App\Models\PropuestaPersonalizada::selectRaw('cliente_id, COUNT(*) as total')
+            ->whereNotNull('cliente_id')
+            ->groupBy('cliente_id')
+            ->pluck('total', 'cliente_id')
+            ->toArray();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -152,8 +159,24 @@
                                 >
                                     <option value="">Seleccionar cliente...</option>
                                     @foreach($clientes as $cliente)
-                                        <option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}" data-website="{{ $cliente->website }}">
-                                            {{ $cliente->name }} {{ $cliente->email ? "({$cliente->email})" : '' }}
+                                        @php
+                                            $propuestasCount = $propuestasPorCliente[$cliente->id] ?? 0;
+                                            $estadoLabel = match($cliente->estado) {
+                                                'propuesta_enviada' => '📧',
+                                                'propuesta_personalizada_enviada' => '✨',
+                                                'accepted' => '✅',
+                                                'pending' => '⏳',
+                                                default => ''
+                                            };
+                                        @endphp
+                                        <option 
+                                            value="{{ $cliente->id }}" 
+                                            data-email="{{ $cliente->email }}" 
+                                            data-website="{{ $cliente->website }}"
+                                            data-propuestas="{{ $propuestasCount }}"
+                                            data-estado="{{ $cliente->estado }}"
+                                        >
+                                            {{ $estadoLabel }} {{ $cliente->name }}{{ $propuestasCount > 0 ? " [{$propuestasCount} prop.]" : '' }} {{ $cliente->email ? "({$cliente->email})" : '' }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -169,6 +192,25 @@
                                     placeholder="cliente@correo.com"
                                     class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
                                 >
+                            </div>
+                        </div>
+                        
+                        <!-- Cliente Info -->
+                        <div id="clienteInfo" class="hidden mt-4 p-4 bg-slate-900/50 rounded-xl border border-slate-600">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div id="clienteAvatar" class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                                        <span class="text-sm font-bold text-violet-400">?</span>
+                                    </div>
+                                    <div>
+                                        <p id="clienteNombre" class="font-medium text-white">Cliente</p>
+                                        <p id="clienteEstado" class="text-xs text-slate-400">Estado</p>
+                                    </div>
+                                </div>
+                                <div id="propuestasInfo" class="text-right">
+                                    <p class="text-2xl font-bold text-violet-400" id="propuestasCount">0</p>
+                                    <p class="text-xs text-slate-400">propuestas enviadas</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -269,12 +311,57 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
+        const estadoLabels = {
+            'nuevo': { text: 'Nuevo', color: 'text-slate-400' },
+            'contactado': { text: 'Contactado', color: 'text-blue-400' },
+            'propuesta_enviada': { text: 'Propuesta Enviada', color: 'text-amber-400' },
+            'propuesta_personalizada_enviada': { text: 'Propuesta Personalizada', color: 'text-violet-400' },
+            'accepted': { text: 'Activo', color: 'text-emerald-400' },
+            'pending': { text: 'Pendiente', color: 'text-amber-400' },
+            'rechazado': { text: 'Rechazado', color: 'text-red-400' },
+            'listo_para_enviar': { text: 'Listo para Enviar', color: 'text-cyan-400' },
+        };
+        
         // Auto-fill email when client is selected
         document.getElementById('cliente_id').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             const email = selectedOption.getAttribute('data-email');
+            const propuestas = selectedOption.getAttribute('data-propuestas') || '0';
+            const estado = selectedOption.getAttribute('data-estado') || 'nuevo';
+            const clienteInfo = document.getElementById('clienteInfo');
+            
             if (email) {
                 document.getElementById('email').value = email;
+            }
+            
+            if (this.value) {
+                // Mostrar info del cliente
+                const nombre = selectedOption.text.split('[')[0].replace(/[📧✨✅⏳]/g, '').trim().split('(')[0].trim();
+                const inicial = nombre.charAt(0).toUpperCase();
+                const estadoInfo = estadoLabels[estado] || { text: estado, color: 'text-slate-400' };
+                
+                document.getElementById('clienteAvatar').innerHTML = `<span class="text-sm font-bold text-violet-400">${inicial}</span>`;
+                document.getElementById('clienteNombre').textContent = nombre;
+                document.getElementById('clienteEstado').innerHTML = `<span class="${estadoInfo.color}">${estadoInfo.text}</span>`;
+                document.getElementById('propuestasCount').textContent = propuestas;
+                
+                // Cambiar color si tiene muchas propuestas
+                const propuestasNum = parseInt(propuestas);
+                const propuestasEl = document.getElementById('propuestasCount');
+                if (propuestasNum >= 3) {
+                    propuestasEl.classList.remove('text-violet-400', 'text-amber-400');
+                    propuestasEl.classList.add('text-red-400');
+                } else if (propuestasNum >= 1) {
+                    propuestasEl.classList.remove('text-violet-400', 'text-red-400');
+                    propuestasEl.classList.add('text-amber-400');
+                } else {
+                    propuestasEl.classList.remove('text-amber-400', 'text-red-400');
+                    propuestasEl.classList.add('text-violet-400');
+                }
+                
+                clienteInfo.classList.remove('hidden');
+            } else {
+                clienteInfo.classList.add('hidden');
             }
         });
         

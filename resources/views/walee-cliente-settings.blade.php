@@ -65,7 +65,7 @@
 
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="flex gap-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-1.5">
+                <div class="flex gap-2 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-1.5">
                     <button onclick="showTab('webhook')" id="tab-webhook" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button active">
                         Webhook
                     </button>
@@ -77,20 +77,20 @@
 
             <!-- Webhook Tab -->
             <div id="content-webhook" class="tab-content animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6">
-                    <h2 class="text-lg font-bold text-white mb-2">Configuración de Webhook</h2>
-                    <p class="text-sm text-slate-400 mb-6">Ingresa la URL del webhook para recibir notificaciones de este cliente.</p>
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Configuración de Webhook</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">Ingresa la URL del webhook para recibir notificaciones de este cliente.</p>
                     
                     <form id="webhook-form" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">URL del Webhook</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">URL del Webhook</label>
                             <input 
                                 type="url" 
                                 name="webhook_url" 
                                 id="webhook_url"
                                 value="{{ $cliente->webhook_url ?? '' }}"
                                 placeholder="https://ejemplo.com/webhook"
-                                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
                             >
                         </div>
                         
@@ -107,31 +107,31 @@
             <!-- Publicaciones Tab -->
             <div id="content-publicaciones" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Create Publicación -->
-                <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 mb-6">
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6 mb-6">
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
                             <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
                         </div>
-                        <h2 class="text-lg font-bold text-white">Crear Publicación para Facebook</h2>
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-white">Crear Publicación para Facebook</h2>
                     </div>
                     
                     <form id="publicacion-form" class="space-y-4" enctype="multipart/form-data">
                         <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Texto de la publicación</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la publicación</label>
                             <textarea 
                                 name="content" 
                                 rows="5"
                                 required
                                 placeholder="Escribe el texto que aparecerá en la publicación de Facebook..."
-                                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                             ></textarea>
-                            <p class="text-xs text-slate-500 mt-1">Máximo recomendado: 500 caracteres</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Máximo recomendado: 500 caracteres</p>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Imágenes / Fotos</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imágenes / Fotos</label>
                             <div class="relative">
                                 <input 
                                     type="file" 
@@ -144,7 +144,7 @@
                                 >
                                 <label 
                                     for="fotos" 
-                                    class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-800 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:border-walee-500/50 hover:text-walee-400 cursor-pointer transition-all"
+                                    class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-400 hover:border-walee-500/50 hover:text-walee-500 dark:hover:text-walee-400 cursor-pointer transition-all"
                                 >
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -152,14 +152,14 @@
                                     <span id="fileNames" class="text-sm">Subir imágenes (máx. 10)</span>
                                 </label>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">Puedes subir múltiples imágenes. Formatos: JPG, PNG, GIF</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Puedes subir múltiples imágenes. Formatos: JPG, PNG, GIF</p>
                         </div>
                         
-                        <div class="flex items-center gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                            <svg class="w-5 h-5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <p class="text-xs text-blue-300">Esta publicación se enviará automáticamente a Facebook a través del webhook configurado.</p>
+                            <p class="text-xs text-blue-700 dark:text-blue-300">Esta publicación se enviará automáticamente a Facebook a través del webhook configurado.</p>
                         </div>
                         
                         <button 
@@ -175,28 +175,28 @@
                 </div>
 
                 <!-- Lista de Publicaciones -->
-                <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6">
-                    <h2 class="text-lg font-bold text-white mb-4">Publicaciones Existentes</h2>
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Publicaciones Existentes</h2>
                     
                     @if($publicaciones->count() > 0)
                         <div class="space-y-4">
                             @foreach($publicaciones as $publicacion)
-                                <div class="rounded-2xl bg-slate-800/50 border border-slate-700 p-4">
+                                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4">
                                     <div class="flex items-start gap-4">
                                         @if($publicacion->image_url)
                                             <img src="{{ $publicacion->image_url }}" alt="{{ $publicacion->title }}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
                                         @else
-                                            <div class="w-20 h-20 rounded-xl bg-slate-700 flex items-center justify-center flex-shrink-0">
-                                                <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="w-20 h-20 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
                                             </div>
                                         @endif
                                         
                                         <div class="flex-1 min-w-0">
-                                            <h3 class="text-base font-semibold text-white mb-1">{{ $publicacion->title }}</h3>
-                                            <p class="text-sm text-slate-400 mb-2 line-clamp-2">{{ $publicacion->content }}</p>
-                                            <p class="text-xs text-slate-500">{{ $publicacion->created_at->format('d/m/Y H:i') }}</p>
+                                            <h3 class="text-base font-semibold text-slate-800 dark:text-white mb-1">{{ $publicacion->title }}</h3>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400 mb-2 line-clamp-2">{{ $publicacion->content }}</p>
+                                            <p class="text-xs text-slate-600 dark:text-slate-500">{{ $publicacion->created_at->format('d/m/Y H:i') }}</p>
                                         </div>
                                         
                                         <button 
@@ -213,10 +213,10 @@
                         </div>
                     @else
                         <div class="text-center py-8">
-                            <svg class="w-12 h-12 text-slate-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <p class="text-slate-400 text-sm">No hay publicaciones aún</p>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm">No hay publicaciones aún</p>
                         </div>
                     @endif
                 </div>
@@ -235,7 +235,7 @@
             // Remove active from all tabs
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.classList.remove('active', 'bg-walee-500/20', 'text-walee-400', 'border', 'border-walee-500/30');
-                btn.classList.add('text-slate-400');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
             });
             
             // Show selected content
@@ -244,7 +244,7 @@
             // Add active to selected tab
             const activeBtn = document.getElementById(`tab-${tabName}`);
             activeBtn.classList.add('active', 'bg-walee-500/20', 'text-walee-400', 'border', 'border-walee-500/30');
-            activeBtn.classList.remove('text-slate-400');
+            activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
         }
 
         // Webhook form

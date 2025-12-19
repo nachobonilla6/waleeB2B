@@ -294,6 +294,7 @@
             noResults.classList.toggle('hidden', visibleCount > 0 || query === '');
         });
     </script>
+    @include('partials.walee-support-button')
 </body>
 </html>
 

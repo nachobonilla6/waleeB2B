@@ -218,6 +218,7 @@
             </footer>
         </div>
     </div>
+    @include('partials.walee-support-button')
 </body>
 </html>
 

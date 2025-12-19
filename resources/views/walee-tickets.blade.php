@@ -418,6 +418,7 @@
             if (e.key === 'Escape') closeModal();
         });
     </script>
+    @include('partials.walee-support-button')
 </body>
 </html>
 

@@ -703,6 +703,7 @@
             }
         });
     </script>
+    @include('partials.walee-support-button')
 </body>
 </html>
 

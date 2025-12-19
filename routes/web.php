@@ -891,12 +891,70 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
+        // Guardar fotos si se subieron
+        $fotosPaths = [];
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $foto) {
+                $path = $foto->store('publicaciones', 'public');
+                $fotosPaths[] = $path;
+            }
+        }
+        
+        // Guardar primera foto como image_url para compatibilidad
+        $imageUrl = !empty($fotosPaths) ? asset('storage/' . $fotosPaths[0]) : null;
+        
         $publicacion = \App\Models\Post::create([
             'cliente_id' => $cliente->id,
             'title' => $request->input('title'),
             'content' => $request->input('content'),
-            'image_url' => $request->input('image_url'),
+            'image_url' => $imageUrl,
         ]);
+        
+        // Enviar webhook con los datos y fotos
+        try {
+            $client = new \GuzzleHttp\Client();
+            
+            $multipartData = [
+                [
+                    'name' => 'titulo',
+                    'contents' => $request->input('title'),
+                ],
+                [
+                    'name' => 'contenido',
+                    'contents' => $request->input('content'),
+                ],
+                [
+                    'name' => 'cliente_id',
+                    'contents' => (string) $cliente->id,
+                ],
+                [
+                    'name' => 'cliente_nombre',
+                    'contents' => $cliente->name,
+                ],
+                [
+                    'name' => 'publicacion_id',
+                    'contents' => (string) $publicacion->id,
+                ],
+            ];
+            
+            // Agregar fotos al webhook
+            if ($request->hasFile('fotos')) {
+                foreach ($request->file('fotos') as $index => $foto) {
+                    $multipartData[] = [
+                        'name' => 'fotos[]',
+                        'contents' => fopen($foto->getRealPath(), 'r'),
+                        'filename' => $foto->getClientOriginalName(),
+                    ];
+                }
+            }
+            
+            $client->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6', [
+                'multipart' => $multipartData,
+                'timeout' => 30,
+            ]);
+        } catch (\Exception $webhookError) {
+            \Log::warning('Error al enviar webhook de publicación: ' . $webhookError->getMessage());
+        }
         
         return response()->json([
             'success' => true,

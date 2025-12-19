@@ -131,13 +131,27 @@
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Imagen URL</label>
-                            <input 
-                                type="url" 
-                                name="image_url" 
-                                placeholder="https://ejemplo.com/imagen.jpg"
-                                class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Fotos</label>
+                            <div class="relative">
+                                <input 
+                                    type="file" 
+                                    name="fotos[]" 
+                                    id="fotos"
+                                    accept="image/*"
+                                    multiple
+                                    class="hidden"
+                                    onchange="updateFileNames(this)"
+                                >
+                                <label 
+                                    for="fotos" 
+                                    class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-800 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:border-walee-500/50 hover:text-walee-400 cursor-pointer transition-all"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span id="fileNames" class="text-sm">Subir fotos</span>
+                                </label>
+                            </div>
                         </div>
                         
                         <button 
@@ -251,6 +265,21 @@
             }
         });
 
+        // Update file names display
+        function updateFileNames(input) {
+            const label = document.getElementById('fileNames');
+            if (input.files && input.files.length > 0) {
+                const fileCount = input.files.length;
+                if (fileCount === 1) {
+                    label.textContent = input.files[0].name;
+                } else {
+                    label.textContent = `${fileCount} archivos seleccionados`;
+                }
+            } else {
+                label.textContent = 'Subir fotos';
+            }
+        }
+
         // Publicación form
         document.getElementById('publicacion-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -271,6 +300,7 @@
                 if (data.success) {
                     alert('Publicación creada correctamente');
                     e.target.reset();
+                    document.getElementById('fileNames').textContent = 'Subir fotos';
                     location.reload();
                 } else {
                     alert('Error: ' + (data.message || 'Error al crear'));

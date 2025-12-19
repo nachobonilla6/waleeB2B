@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="es" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -96,7 +96,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
     @php
         use App\Models\Client;
         
@@ -118,21 +118,22 @@
             <!-- Header -->
             <header class="flex items-center justify-between mb-10 animate-fade-in-up">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all">
+                        <svg class="w-5 h-5 text-slate-700 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
                             Clientes
                         </h1>
-                        <p class="text-sm text-slate-400">{{ $clientesTotales }} cliente{{ $clientesTotales != 1 ? 's' : '' }} total{{ $clientesTotales != 1 ? 'es' : '' }}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $clientesTotales }} cliente{{ $clientesTotales != 1 ? 's' : '' }} total{{ $clientesTotales != 1 ? 'es' : '' }}</p>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+                    @include('partials.walee-dark-mode-toggle')
+                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">
                         <span class="text-sm font-medium text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
                     </div>
                 </div>
@@ -151,10 +152,10 @@
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
-                                <h2 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Clientes Activos</h2>
+                                <h2 class="text-2xl font-bold text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">Clientes Activos</h2>
                                 <span class="px-3 py-1 text-sm font-bold bg-emerald-500/30 text-emerald-300 rounded-full border border-emerald-500/40">{{ $clientesActivos }}</span>
                             </div>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Ver y gestionar clientes con proyectos activos y en curso</p>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Ver y gestionar clientes con proyectos activos y en curso</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-emerald-500/10 items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
                             <svg class="w-6 h-6 text-emerald-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,10 +176,10 @@
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
-                                <h2 class="text-2xl font-bold text-white group-hover:text-amber-300 transition-colors">Clientes Pendientes</h2>
-                                <span class="px-3 py-1 text-sm font-bold bg-amber-500/30 text-amber-300 rounded-full border border-amber-500/40">{{ $clientesPendientes }}</span>
+                                <h2 class="text-2xl font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">Clientes Pendientes</h2>
+                                <span class="px-3 py-1 text-sm font-bold bg-amber-500/30 text-amber-600 dark:text-amber-300 rounded-full border border-amber-500/40">{{ $clientesPendientes }}</span>
                             </div>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Clientes con estado pendiente de seguimiento</p>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Clientes con estado pendiente de seguimiento</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-amber-500/10 items-center justify-center group-hover:bg-amber-500/20 transition-colors">
                             <svg class="w-6 h-6 text-amber-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,8 +199,8 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">Extraer Clientes</h2>
-                            <p class="text-slate-400 group-hover:text-slate-300 transition-colors">Importar nuevos clientes desde Google Maps y otras fuentes</p>
+                            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">Extraer Clientes</h2>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Importar nuevos clientes desde Google Maps y otras fuentes</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-blue-500/10 items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                             <svg class="w-6 h-6 text-blue-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="es" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -34,7 +35,7 @@
         .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
     @php
         use App\Models\PropuestaPersonalizada;
         
@@ -59,15 +60,16 @@
         <div class="relative max-w-2xl mx-auto px-4 py-6">
             <!-- Header -->
             <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <a href="{{ route('walee.clientes.activos') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('walee.clientes.activos') }}" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all">
+                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
                 
                 <div class="flex items-center gap-2">
-                    <a href="{{ route('walee.cliente.settings', $cliente->id) }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all" title="Configuración">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @include('partials.walee-dark-mode-toggle')
+                    <a href="{{ route('walee.cliente.settings', $cliente->id) }}" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all" title="Configuración">
+                        <svg class="w-5 h-5 text-slate-700 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
@@ -84,7 +86,7 @@
             
             <!-- Profile Card -->
             <div class="animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 mb-6">
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6 mb-6">
                     <!-- Avatar & Name -->
                     <div class="text-center mb-6">
                         @if($cliente->foto)
@@ -94,7 +96,7 @@
                                 <span class="text-3xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                             </div>
                         @endif
-                        <h1 class="text-2xl font-bold text-white">{{ $cliente->name }}</h1>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white">{{ $cliente->name }}</h1>
                         <div class="flex items-center justify-center gap-2 mt-2">
                             <span class="inline-block px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
                                 {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
@@ -136,7 +138,7 @@
             <!-- Info Cards -->
             <div class="space-y-4 animate-fade-in-up" style="animation-delay: 0.2s;">
                 @if($cliente->email)
-                    <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+                    <div class="rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-4">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,15 +146,15 @@
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-slate-500 mb-1">Email</p>
-                                <p class="text-white truncate">{{ $cliente->email }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-500 mb-1">Email</p>
+                                <p class="text-slate-800 dark:text-white truncate">{{ $cliente->email }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 @if($phone)
-                    <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+                    <div class="rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-4">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,14 +163,14 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs text-slate-500 mb-1">Teléfono</p>
-                                <p class="text-white">{{ $phone }}</p>
+                                <p class="text-slate-800 dark:text-white">{{ $phone }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 @if($cliente->website)
-                    <a href="{{ $cliente->website }}" target="_blank" class="block rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 p-4 transition-all">
+                    <a href="{{ $cliente->website }}" target="_blank" class="block rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 p-4 transition-all">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +179,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs text-slate-500 mb-1">Sitio Web</p>
-                                <p class="text-white truncate">{{ $cliente->website }}</p>
+                                <p class="text-slate-800 dark:text-white truncate">{{ $cliente->website }}</p>
                             </div>
                             <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -187,7 +189,7 @@
                 @endif
                 
                 @if($cliente->address)
-                    <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+                    <div class="rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-4">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,14 +199,14 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs text-slate-500 mb-1">Dirección</p>
-                                <p class="text-white">{{ $cliente->address }}</p>
+                                <p class="text-slate-800 dark:text-white">{{ $cliente->address }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 @if($cliente->feedback)
-                    <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4">
+                    <div class="rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-4">
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,7 +231,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs text-slate-400">Emails enviados</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400">Emails enviados</p>
                                 @if($emailsEnviados >= 3)
                                     <span class="px-2 py-0.5 text-[10px] font-bold bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
                                         ⚠️ Múltiples envíos
@@ -242,7 +244,7 @@
                             </div>
                             @if($emailsEnviados > 0)
                                 <p class="text-2xl font-bold {{ $emailsColor }} mb-1">{{ $emailsEnviados }}</p>
-                                <p class="text-xs text-slate-500">
+                                <p class="text-xs text-slate-600 dark:text-slate-500">
                                     {{ $emailsEnviados == 1 ? 'email enviado' : 'emails enviados' }} con propuestas
                                 </p>
                             @else
@@ -256,7 +258,7 @@
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-6">
-                <p class="text-sm text-slate-500">
+                <p class="text-sm text-slate-600 dark:text-slate-500">
                     <span class="text-walee-400 font-medium">Walee</span> · wesolutions.work
                 </p>
             </footer>

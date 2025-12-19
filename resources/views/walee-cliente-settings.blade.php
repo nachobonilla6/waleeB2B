@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full">
+<html lang="es" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -34,7 +35,7 @@
         .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         $publicaciones = $cliente->posts()->orderBy('created_at', 'desc')->get();
     @endphp
@@ -49,15 +50,17 @@
         <div class="relative max-w-3xl mx-auto px-4 py-6">
             <!-- Header -->
             <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all">
+                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
                 
-                <h1 class="text-xl font-bold text-white">Configuración</h1>
+                <h1 class="text-xl font-bold text-slate-800 dark:text-white">Configuración</h1>
                 
-                <div class="w-10"></div>
+                <div class="flex items-center gap-2">
+                    @include('partials.walee-dark-mode-toggle')
+                </div>
             </header>
 
             <!-- Tabs -->

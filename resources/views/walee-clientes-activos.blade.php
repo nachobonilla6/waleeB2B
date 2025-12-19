@@ -152,9 +152,9 @@
                         type="text" 
                         id="searchInput"
                         placeholder="Buscar cliente por nombre, email o teléfono..."
-                        class="w-full px-4 py-3 pl-12 rounded-2xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                        class="w-full px-4 py-3 pl-12 rounded-2xl bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
                     >
-                    <svg class="w-5 h-5 text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                 </div>
@@ -174,7 +174,7 @@
                         $propuestasBorder = $propuestasCount >= 3 ? 'border-red-500/30' : ($propuestasCount >= 1 ? 'border-amber-500/30' : 'border-slate-600/30');
                     @endphp
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . $phone) }}">
-                        <div class="relative overflow-hidden rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/40 transition-all duration-300 p-4">
+                        <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-emerald-400/50 dark:hover:border-emerald-500/40 transition-all duration-300 p-4">
                             <div class="flex items-center gap-4">
                                 <!-- Avatar + Name (clickable) -->
                                 <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-4 flex-1 min-w-0">
@@ -191,7 +191,7 @@
                                     <!-- Name -->
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center gap-2">
-                                            <h3 class="text-base font-semibold text-white truncate group-hover:text-emerald-300 transition-colors">
+                                            <h3 class="text-base font-semibold text-slate-800 dark:text-white truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors">
                                                 {{ $cliente->name }}
                                             </h3>
                                             @if($propuestasCount > 0)
@@ -201,7 +201,7 @@
                                             @endif
                                         </div>
                                         @if($propuestasCount > 0)
-                                            <p class="text-xs text-slate-500 mt-0.5">
+                                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-0.5">
                                                 @if($propuestasCount >= 3)
                                                     ⚠️ Múltiples propuestas enviadas
                                                 @else

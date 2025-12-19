@@ -903,9 +903,12 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         // Guardar primera foto como image_url para compatibilidad
         $imageUrl = !empty($fotosPaths) ? asset('storage/' . $fotosPaths[0]) : null;
         
+        // Usar el contenido como título si no hay título específico
+        $title = $request->input('title') ?: substr($request->input('content'), 0, 100);
+        
         $publicacion = \App\Models\Post::create([
             'cliente_id' => $cliente->id,
-            'title' => $request->input('title'),
+            'title' => $title,
             'content' => $request->input('content'),
             'image_url' => $imageUrl,
         ]);
@@ -917,7 +920,7 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             $multipartData = [
                 [
                     'name' => 'titulo',
-                    'contents' => $request->input('title'),
+                    'contents' => $title,
                 ],
                 [
                     'name' => 'contenido',

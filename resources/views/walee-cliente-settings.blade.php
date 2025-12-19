@@ -88,7 +88,7 @@
                                 type="url" 
                                 name="webhook_url" 
                                 id="webhook_url"
-                                value="{{ $cliente->webhook_url ?? '' }}"
+                                value="{{ $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6' }}"
                                 placeholder="https://ejemplo.com/webhook"
                                 class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
                             >

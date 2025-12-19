@@ -155,10 +155,15 @@
             ->where('fecha_emision', '>=', $startOfMonth)
             ->sum('total');
         
-        // Ingresos de la semana
+        // Ingresos de la semana (se reinicia cada lunes)
+        $endOfWeek = $startOfWeek->copy()->endOfWeek(Carbon::SUNDAY);
         $ingresosSemana = (float) Factura::where('estado', 'pagada')
-            ->where('fecha_emision', '>=', $startOfWeek)
+            ->whereBetween('fecha_emision', [$startOfWeek, $endOfWeek])
             ->sum('total');
+        
+        // Días transcurridos de la semana (para mostrar progreso)
+        $diasTranscurridos = $today->diffInDays($startOfWeek) + 1;
+        $diasTotalesSemana = 7;
         
         // Propuestas del mes
         $propuestasEnviadasMes = Client::where('estado', 'propuesta_enviada')
@@ -305,7 +310,13 @@
                                 <span class="px-2 py-1 text-xs font-medium bg-walee-400/20 text-walee-400 rounded-full">Semana</span>
                             </div>
                             <p class="number-animate text-3xl font-bold text-white mb-1">₡{{ $formatNumber($ingresosSemana) }}</p>
-                            <p class="text-sm text-slate-400">Esta semana</p>
+                            <p class="text-sm text-slate-400 mb-2">Esta semana</p>
+                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <span>Se reinicia cada lunes</span>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -187,7 +187,7 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
             $imagenUrl = $ticket->imagen ? asset('storage/' . $ticket->imagen) : null;
             
             \Illuminate\Support\Facades\Http::timeout(10)->post(
-                'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
+                'https://n8n.srv1137974.hstgr.cloud/webhook/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
                 [
                     // Datos del ticket
                     'ticket_id' => $ticket->id,
@@ -221,7 +221,7 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
             $imagenUrl = $ticket->imagen ? asset('storage/' . $ticket->imagen) : null;
             
             \Illuminate\Support\Facades\Http::timeout(10)->post(
-                'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
+                'https://n8n.srv1137974.hstgr.cloud/webhook/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
                 [
                     // Datos del ticket
                     'ticket_id' => $ticket->id,

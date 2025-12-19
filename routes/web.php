@@ -823,6 +823,78 @@ Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $
     return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
 })->middleware(['auth'])->name('walee.cliente.actualizar');
 
+// Ruta para settings del cliente
+Route::get('/walee-cliente/{id}/settings', function ($id) {
+    $cliente = \App\Models\Client::findOrFail($id);
+    return view('walee-cliente-settings', compact('cliente'));
+})->middleware(['auth'])->name('walee.cliente.settings');
+
+// Ruta para guardar webhook del cliente
+Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        $cliente->webhook_url = $request->input('webhook_url');
+        $cliente->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Webhook guardado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.webhook');
+
+// Ruta para crear publicación del cliente
+Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        
+        $publicacion = \App\Models\Post::create([
+            'cliente_id' => $cliente->id,
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'image_url' => $request->input('image_url'),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Publicación creada correctamente',
+            'publicacion' => $publicacion,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.publicaciones.store');
+
+// Ruta para eliminar publicación del cliente
+Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($id, $publicacion_id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        $publicacion = \App\Models\Post::where('id', $publicacion_id)
+            ->where('cliente_id', $cliente->id)
+            ->firstOrFail();
+        
+        $publicacion->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Publicación eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.publicaciones.delete');
+
 // Streaming de chat con OpenAI
 Route::post('/chat/stream', [ChatStreamController::class, 'stream'])
     ->middleware(['auth'])

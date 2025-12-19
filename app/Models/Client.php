@@ -21,6 +21,7 @@ class Client extends Model
         'proposed_site',
         'propuesta_enviada',
         'estado',
+        'webhook_url',
     ];
 
     protected $casts = [
@@ -31,5 +32,10 @@ class Client extends Model
     public function notes()
     {
         return $this->hasMany(Note::class);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }

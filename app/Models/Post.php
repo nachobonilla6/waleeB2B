@@ -10,5 +10,11 @@ class Post extends Model
         'title',
         'content',
         'image_url',
+        'cliente_id',
     ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(Client::class, 'cliente_id');
+    }
 }

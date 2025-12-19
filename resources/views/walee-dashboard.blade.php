@@ -54,8 +54,40 @@
         
         /* Light mode glass card */
         html:not(.dark) .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        /* Light mode adjustments */
+        html:not(.dark) .stat-card {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: rgba(226, 232, 240, 0.8) !important;
+        }
+        
+        html:not(.dark) .stat-card .text-white {
+            color: rgb(15, 23, 42) !important;
+        }
+        
+        html:not(.dark) .stat-card .text-slate-400 {
+            color: rgb(100, 116, 139) !important;
+        }
+        
+        html:not(.dark) h2.text-slate-300 {
+            color: rgb(51, 65, 85) !important;
+        }
+        
+        html:not(.dark) .bg-slate-900\/50 {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            border-color: rgba(226, 232, 240, 0.8) !important;
+        }
+        
+        html:not(.dark) .bg-slate-800 {
+            background-color: rgb(241, 245, 249) !important;
+            border-color: rgb(226, 232, 240) !important;
+        }
+        
+        html:not(.dark) .text-slate-300 {
+            color: rgb(71, 85, 105) !important;
         }
         
         @keyframes fadeInUp {
@@ -142,7 +174,7 @@
         }
     </style>
 </head>
-<body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-white min-h-screen transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
     @php
         use App\Models\Factura;
         use App\Models\Client;
@@ -239,7 +271,7 @@
                 <div class="flex items-center gap-3">
                     <button 
                         onclick="toggleDarkMode()" 
-                        class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-700 dark:border-slate-700 flex items-center justify-center transition-all duration-300"
+                        class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all duration-300"
                         title="Cambiar tema"
                     >
                         <svg id="sun-icon" class="w-5 h-5 text-yellow-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,7 +296,7 @@
                         <span class="text-sm font-medium">Tickets</span>
                     </a>
                     
-                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-300 transition-all duration-300 border border-slate-700 dark:border-slate-700">
+                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all duration-300 border border-slate-300 dark:border-slate-700">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
@@ -272,7 +304,7 @@
                     </a>
                     
                     <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full bg-slate-800 dark:bg-slate-800 border border-slate-700 dark:border-slate-700 flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">
                             <span class="text-sm font-medium text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         </div>
                     </div>
@@ -432,7 +464,7 @@
                 </h2>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <a href="{{ route('walee.clientes') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-emerald-400/50 hover:bg-emerald-400/5 transition-all duration-300">
+                    <a href="{{ route('walee.clientes') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-emerald-400/50 hover:bg-emerald-400/5 dark:hover:bg-emerald-400/5 transition-all duration-300">
                         <div class="w-12 h-12 rounded-xl bg-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -441,7 +473,7 @@
                         <span class="text-sm font-medium text-slate-300 group-hover:text-emerald-400 transition-colors">Clientes</span>
                     </a>
                     
-                    <a href="{{ route('walee.facturas') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-violet-400/50 hover:bg-violet-400/5 transition-all duration-300">
+                    <a href="{{ route('walee.facturas') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-violet-400/50 hover:bg-violet-400/5 dark:hover:bg-violet-400/5 transition-all duration-300">
                         <div class="w-12 h-12 rounded-xl bg-violet-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -450,7 +482,7 @@
                         <span class="text-sm font-medium text-slate-300 group-hover:text-violet-400 transition-colors">Facturas</span>
                     </a>
                     
-                    <a href="{{ route('walee.emails') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-blue-400/50 hover:bg-blue-400/5 transition-all duration-300">
+                    <a href="{{ route('walee.emails') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-blue-400/50 hover:bg-blue-400/5 dark:hover:bg-blue-400/5 transition-all duration-300">
                         <div class="w-12 h-12 rounded-xl bg-blue-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -459,7 +491,7 @@
                         <span class="text-sm font-medium text-slate-300 group-hover:text-blue-400 transition-colors">Emails</span>
                     </a>
                     
-                    <a href="{{ route('walee') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-walee-400/50 hover:bg-walee-400/5 transition-all duration-300">
+                    <a href="{{ route('walee') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-walee-400/50 hover:bg-walee-400/5 dark:hover:bg-walee-400/5 transition-all duration-300">
                         <div class="w-12 h-12 rounded-xl bg-walee-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>

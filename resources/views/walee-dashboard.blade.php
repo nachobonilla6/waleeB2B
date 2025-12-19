@@ -442,7 +442,7 @@
             
             <!-- Chart Section -->
             <section class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
                     <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
                     </svg>
@@ -456,7 +456,7 @@
             
             <!-- Quick Actions -->
             <section class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-300 mb-4 flex items-center gap-2">
+                <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
                     <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>

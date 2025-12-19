@@ -919,10 +919,6 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             
             $multipartData = [
                 [
-                    'name' => 'titulo',
-                    'contents' => $title,
-                ],
-                [
                     'name' => 'contenido',
                     'contents' => $request->input('content'),
                 ],

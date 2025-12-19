@@ -189,14 +189,28 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
             \Illuminate\Support\Facades\Http::timeout(10)->post(
                 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
                 [
+                    // Datos del ticket
                     'ticket_id' => $ticket->id,
+                    'estado' => 'recibido',
+                    'fecha' => $ticket->created_at->format('d/m/Y H:i'),
+                    
+                    // Datos del cliente
+                    'nombre' => $nombre,
                     'email' => $ticket->email,
+                    'telefono' => $ticket->telefono,
+                    'website' => $ticket->website,
+                    
+                    // Contenido del ticket
                     'asunto' => $ticket->asunto,
                     'mensaje' => $ticket->mensaje,
                     'imagen' => $imagenUrl,
-                    'nombre' => $nombre,
-                    'estado' => 'recibido',
-                    'notificacion' => "Hola {$nombre}, recibimos su ticket. Le avisaremos cuando esté resuelto.",
+                    
+                    // Datos para el email
+                    'email_to' => $ticket->email,
+                    'email_subject' => "Ticket Recibido: {$ticket->asunto}",
+                    'email_body' => "Hola {$nombre},\n\nRecibimos su ticket con el asunto: \"{$ticket->asunto}\"\n\nLe avisaremos cuando esté resuelto.\n\nSaludos,\nWeb Solutions",
+                    'email_from' => 'websolutionscrnow@gmail.com',
+                    'email_from_name' => 'Web Solutions',
                 ]
             );
         }
@@ -209,14 +223,28 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
             \Illuminate\Support\Facades\Http::timeout(10)->post(
                 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2109bf94-761d-4e3c-8417-11bcf36b5b1e',
                 [
+                    // Datos del ticket
                     'ticket_id' => $ticket->id,
+                    'estado' => 'resuelto',
+                    'fecha' => $ticket->created_at->format('d/m/Y H:i'),
+                    
+                    // Datos del cliente
+                    'nombre' => $nombre,
                     'email' => $ticket->email,
+                    'telefono' => $ticket->telefono,
+                    'website' => $ticket->website,
+                    
+                    // Contenido del ticket
                     'asunto' => $ticket->asunto,
                     'mensaje' => $ticket->mensaje,
                     'imagen' => $imagenUrl,
-                    'nombre' => $nombre,
-                    'estado' => 'resuelto',
-                    'notificacion' => "Hola {$nombre}, su ticket ha sido resuelto. Gracias por contactarnos.",
+                    
+                    // Datos para el email
+                    'email_to' => $ticket->email,
+                    'email_subject' => "Ticket Resuelto: {$ticket->asunto}",
+                    'email_body' => "Hola {$nombre},\n\nSu ticket con el asunto: \"{$ticket->asunto}\" ha sido resuelto.\n\nGracias por contactarnos.\n\nSaludos,\nWeb Solutions",
+                    'email_from' => 'websolutionscrnow@gmail.com',
+                    'email_from_name' => 'Web Solutions',
                 ]
             );
         }

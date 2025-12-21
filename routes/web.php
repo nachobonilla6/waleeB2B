@@ -872,11 +872,13 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         $cliente->webhook_url = $request->input('webhook_url');
+        $cliente->page_id = $request->input('page_id');
+        $cliente->token = $request->input('token');
         $cliente->save();
         
         return response()->json([
             'success' => true,
-            'message' => 'Webhook guardado correctamente',
+            'message' => 'Configuración guardada correctamente',
         ]);
     } catch (\Exception $e) {
         return response()->json([

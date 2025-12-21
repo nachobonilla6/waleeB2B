@@ -22,6 +22,8 @@ class Client extends Model
         'propuesta_enviada',
         'estado',
         'webhook_url',
+        'page_id',
+        'token',
     ];
 
     protected $casts = [

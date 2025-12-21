@@ -94,6 +94,30 @@
                             >
                         </div>
                         
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Page ID</label>
+                            <input 
+                                type="text" 
+                                name="page_id" 
+                                id="page_id"
+                                value="{{ $cliente->page_id ?? '' }}"
+                                placeholder="Ingresa el Page ID de Facebook"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Token</label>
+                            <input 
+                                type="text" 
+                                name="token" 
+                                id="token"
+                                value="{{ $cliente->token ?? '' }}"
+                                placeholder="Ingresa el Token de acceso"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
                         <button 
                             type="submit"
                             class="w-full px-6 py-3 rounded-xl bg-walee-500 hover:bg-walee-400 text-white font-medium transition-all"
@@ -253,6 +277,8 @@
             
             const formData = new FormData(e.target);
             const webhookUrl = formData.get('webhook_url');
+            const pageId = formData.get('page_id');
+            const token = formData.get('token');
             
             try {
                 const response = await fetch(`/walee-cliente/{{ $cliente->id }}/webhook`, {
@@ -261,13 +287,17 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
-                    body: JSON.stringify({ webhook_url: webhookUrl })
+                    body: JSON.stringify({ 
+                        webhook_url: webhookUrl,
+                        page_id: pageId,
+                        token: token
+                    })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('Webhook guardado correctamente');
+                    alert('Configuración guardada correctamente');
                 } else {
                     alert('Error: ' + (data.message || 'Error al guardar'));
                 }

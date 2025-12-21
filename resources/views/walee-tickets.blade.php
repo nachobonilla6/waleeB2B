@@ -58,7 +58,7 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         $tickets = \App\Models\Ticket::with('user')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get();
         
         $totalTickets = $tickets->count();

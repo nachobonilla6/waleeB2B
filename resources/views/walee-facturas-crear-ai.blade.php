@@ -104,15 +104,15 @@
             
             <!-- Step 1: Select Client -->
             <div id="step1" class="animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-6 mb-6">
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">1</span>
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-500/10 dark:to-purple-600/5 border border-purple-200 dark:border-purple-500/20 rounded-2xl p-6 mb-6 shadow-sm dark:shadow-none">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold">1</span>
                         Seleccionar Cliente
                     </h2>
                     
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-slate-300 mb-2">Cliente <span class="text-red-400">*</span></label>
-                        <select id="cliente_id" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente <span class="text-red-500 dark:text-red-400">*</span></label>
+                        <select id="cliente_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
                             <option value="">Seleccionar cliente...</option>
                             @foreach($clientes as $cliente)
                                 <option value="{{ $cliente->id }}" 
@@ -127,22 +127,22 @@
                     </div>
                     
                     <!-- Selected Client Info -->
-                    <div id="clienteInfo" class="hidden mb-4 p-4 bg-slate-800/50 rounded-xl border border-purple-500/20">
+                    <div id="clienteInfo" class="hidden mb-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-purple-200 dark:border-purple-500/20 shadow-sm dark:shadow-none">
                         <div class="flex items-center gap-4">
-                            <div id="clienteAvatar" class="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                                <span class="text-xl font-bold text-purple-400">?</span>
+                            <div id="clienteAvatar" class="w-14 h-14 rounded-xl bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center">
+                                <span class="text-xl font-bold text-purple-600 dark:text-purple-400">?</span>
                             </div>
                             <div class="flex-1">
-                                <p id="clienteNombre" class="font-semibold text-white">Cliente</p>
-                                <p id="clienteEmail" class="text-sm text-slate-400">email@ejemplo.com</p>
-                                <p id="clienteIndustria" class="text-xs text-purple-400 mt-1"></p>
+                                <p id="clienteNombre" class="font-semibold text-slate-900 dark:text-white">Cliente</p>
+                                <p id="clienteEmail" class="text-sm text-slate-600 dark:text-slate-400">email@ejemplo.com</p>
+                                <p id="clienteIndustria" class="text-xs text-purple-600 dark:text-purple-400 mt-1"></p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-slate-300 mb-2">Instrucciones adicionales (opcional)</label>
-                        <textarea id="instrucciones" rows="2" placeholder="Ej: Factura por diseño de logo, incluir mantenimiento mensual..." class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all resize-none"></textarea>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Instrucciones adicionales (opcional)</label>
+                        <textarea id="instrucciones" rows="2" placeholder="Ej: Factura por diseño de logo, incluir mantenimiento mensual..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all resize-none"></textarea>
                     </div>
                     
                     <button type="button" id="generateBtn" onclick="generateWithAI()" class="w-full px-6 py-4 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -161,52 +161,52 @@
                     <input type="hidden" id="form_cliente_id" name="cliente_id">
                     
                     <!-- Generated Invoice Preview -->
-                    <div class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 rounded-2xl p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <span class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">2</span>
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold">2</span>
                             Revisar y Editar
                         </h2>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Correo</label>
-                                <input type="email" id="correo" name="correo" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo</label>
+                                <input type="email" id="correo" name="correo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Número de Factura</label>
-                                <input type="text" id="numero_factura" name="numero_factura" value="{{ str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT) }}" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Factura</label>
+                                <input type="text" id="numero_factura" name="numero_factura" value="{{ str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT) }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Concepto <span class="text-emerald-400">(Generado por AI)</span></label>
-                            <textarea id="concepto" name="concepto" rows="4" class="w-full px-4 py-3 bg-slate-900/50 border border-emerald-500/30 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto <span class="text-emerald-600 dark:text-emerald-400">(Generado por AI)</span></label>
+                            <textarea id="concepto" name="concepto" rows="4" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-emerald-300 dark:border-emerald-500/30 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Total <span class="text-emerald-400">(Sugerido)</span></label>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Total <span class="text-emerald-600 dark:text-emerald-400">(Sugerido)</span></label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="total" name="total" class="w-full pl-8 pr-4 py-3 bg-slate-900/50 border border-emerald-500/30 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
+                                    <input type="number" step="0.01" id="total" name="total" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-emerald-300 dark:border-emerald-500/30 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Fecha Emisión</label>
-                                <input type="date" id="fecha_emision" name="fecha_emision" value="{{ date('Y-m-d') }}" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha Emisión</label>
+                                <input type="date" id="fecha_emision" name="fecha_emision" value="{{ date('Y-m-d') }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-2">Fecha Vencimiento</label>
-                                <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha Vencimiento</label>
+                                <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Notas <span class="text-emerald-400">(Generado por AI)</span></label>
-                            <textarea id="notas" name="notas" rows="2" class="w-full px-4 py-3 bg-slate-900/50 border border-emerald-500/30 rounded-xl text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notas <span class="text-emerald-600 dark:text-emerald-400">(Generado por AI)</span></label>
+                            <textarea id="notas" name="notas" rows="2" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-emerald-300 dark:border-emerald-500/30 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
                         </div>
                         
                         <!-- Hidden fields -->
@@ -217,7 +217,7 @@
                     
                     <!-- Action Buttons -->
                     <div class="flex gap-4">
-                        <button type="button" onclick="resetForm()" class="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 border border-slate-700">
+                        <button type="button" onclick="resetForm()" class="px-6 py-4 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
@@ -236,8 +236,8 @@
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                <p class="text-sm text-slate-600 dark:text-slate-500">
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>
@@ -260,7 +260,7 @@
                     descripcion: selectedOption.dataset.descripcion,
                 };
                 
-                document.getElementById('clienteAvatar').innerHTML = `<span class="text-xl font-bold text-purple-400">${selectedCliente.nombre.charAt(0).toUpperCase()}</span>`;
+                document.getElementById('clienteAvatar').innerHTML = `<span class="text-xl font-bold text-purple-600 dark:text-purple-400">${selectedCliente.nombre.charAt(0).toUpperCase()}</span>`;
                 document.getElementById('clienteNombre').textContent = selectedCliente.nombre;
                 document.getElementById('clienteEmail').textContent = selectedCliente.email || 'Sin email';
                 document.getElementById('clienteIndustria').textContent = selectedCliente.industria || '';

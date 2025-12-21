@@ -101,27 +101,27 @@
             
             <!-- Coming Soon Card -->
             <div class="animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-12 text-center">
-                    <div class="w-24 h-24 rounded-2xl bg-amber-500/20 flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-12 h-12 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-3xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border border-amber-200 dark:border-amber-500/20 p-12 text-center shadow-sm dark:shadow-none">
+                    <div class="w-24 h-24 rounded-2xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-12 h-12 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                         </svg>
                     </div>
                     
-                    <h2 class="text-3xl font-bold text-white mb-4">Próximamente</h2>
-                    <p class="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">Próximamente</h2>
+                    <p class="text-lg text-slate-700 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
                         El módulo de cotizaciones está en desarrollo. Pronto podrás crear, gestionar y enviar cotizaciones a tus clientes.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/admin/facturas" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all">
+                        <a href="/admin/facturas" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all shadow-sm">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                             <span>Ver Facturas</span>
                         </a>
                         
-                        <a href="{{ route('walee.facturas') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium border border-slate-700 transition-all">
+                        <a href="{{ route('walee.facturas') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-medium border border-slate-200 dark:border-slate-700 transition-all shadow-sm dark:shadow-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
@@ -133,40 +133,40 @@
             
             <!-- Info Card -->
             <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-6">
-                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6 shadow-sm dark:shadow-none">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Funcionalidades Planificadas
                     </h3>
-                    <ul class="space-y-2 text-slate-400">
+                    <ul class="space-y-2 text-slate-700 dark:text-slate-400">
                         <li class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <span>Crear cotizaciones personalizadas para clientes</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <span>Convertir cotizaciones aprobadas en facturas</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <span>Envío automático por email</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <span>Seguimiento de estados (Pendiente, Aprobada, Rechazada)</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <span>Generación con inteligencia artificial</span>
@@ -177,8 +177,8 @@
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                <p class="text-sm text-slate-600 dark:text-slate-500">
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>

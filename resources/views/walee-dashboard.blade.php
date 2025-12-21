@@ -69,11 +69,11 @@
         }
         
         html:not(.dark) .stat-card .text-slate-400 {
-            color: rgb(100, 116, 139) !important;
+            color: rgb(51, 65, 85) !important;
         }
         
         html:not(.dark) h2.text-slate-300 {
-            color: rgb(51, 65, 85) !important;
+            color: rgb(30, 41, 59) !important;
         }
         
         html:not(.dark) .bg-slate-900\/50 {
@@ -87,7 +87,15 @@
         }
         
         html:not(.dark) .text-slate-300 {
+            color: rgb(51, 65, 85) !important;
+        }
+        
+        html:not(.dark) .text-slate-400 {
             color: rgb(71, 85, 105) !important;
+        }
+        
+        html:not(.dark) .text-slate-500 {
+            color: rgb(100, 116, 139) !important;
         }
         
         @keyframes fadeInUp {
@@ -247,9 +255,9 @@
     <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-walee-400/10 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-walee-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-walee-400/20 dark:bg-walee-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/10 dark:bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-walee-400/20 dark:bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
         <!-- Main Content -->
@@ -264,7 +272,7 @@
                         <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent">
                             Walee
                         </h1>
-                        <p class="text-sm text-slate-400">Dashboard · {{ now()->format('d M, Y') }}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Dashboard · {{ now()->format('d M, Y') }}</p>
                     </div>
                 </div>
                 
@@ -277,19 +285,19 @@
                         <svg id="sun-icon" class="w-5 h-5 text-yellow-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
-                        <svg id="moon-icon" class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg id="moon-icon" class="w-5 h-5 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                         </svg>
                     </button>
                     
-                    <a href="{{ route('walee') }}" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-walee-400/10 hover:bg-walee-400/20 text-walee-400 transition-all duration-300 border border-walee-400/20">
+                    <a href="{{ route('walee') }}" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-walee-50 dark:bg-walee-400/10 hover:bg-walee-100 dark:hover:bg-walee-400/20 text-walee-600 dark:text-walee-400 transition-all duration-300 border border-walee-200 dark:border-walee-400/20 shadow-sm dark:shadow-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                         </svg>
                         <span class="text-sm font-medium">Chat</span>
                     </a>
                     
-                    <a href="{{ route('walee.tickets') }}" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 transition-all duration-300 border border-blue-500/20">
+                    <a href="{{ route('walee.tickets') }}" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 transition-all duration-300 border border-blue-200 dark:border-blue-500/20 shadow-sm dark:shadow-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
@@ -304,8 +312,8 @@
                     </a>
                     
                     <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">
-                            <span class="text-sm font-medium text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center shadow-sm dark:shadow-none">
+                            <span class="text-sm font-medium text-walee-600 dark:text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         </div>
                     </div>
                 </div>
@@ -313,8 +321,8 @@
             
             <!-- Stats Grid -->
             <section class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     Ingresos
@@ -322,54 +330,54 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Total Income -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-300">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 p-6 hover:border-emerald-400 dark:hover:border-emerald-500/40 transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <span class="px-2 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full">Total</span>
+                                <span class="px-2 py-1 text-xs font-medium bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-full">Total</span>
                             </div>
-                            <p class="number-animate text-3xl font-bold text-white mb-1">₡{{ $formatNumber($ingresosTotales) }}</p>
-                            <p class="text-sm text-slate-400">Facturas pagadas</p>
+                            <p class="number-animate text-3xl font-bold text-slate-900 dark:text-white mb-1">₡{{ $formatNumber($ingresosTotales) }}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-400">Facturas pagadas</p>
                         </div>
                     </div>
                     
                     <!-- Monthly Income -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 p-6 hover:border-blue-500/40 transition-all duration-300">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 p-6 hover:border-blue-400 dark:hover:border-blue-500/40 transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
-                                <span class="px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-full">{{ now()->format('M') }}</span>
+                                <span class="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full">{{ now()->format('M') }}</span>
                             </div>
-                            <p class="number-animate text-3xl font-bold text-white mb-1">₡{{ $formatNumber($ingresosMensual) }}</p>
-                            <p class="text-sm text-slate-400">Este mes</p>
+                            <p class="number-animate text-3xl font-bold text-slate-900 dark:text-white mb-1">₡{{ $formatNumber($ingresosMensual) }}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-400">Este mes</p>
                         </div>
                     </div>
                     
                     <!-- Weekly Income -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-walee-400/10 to-walee-500/5 border border-walee-400/20 p-6 hover:border-walee-400/40 transition-all duration-300">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-400/10 dark:to-walee-500/5 border border-walee-200 dark:border-walee-400/20 p-6 hover:border-walee-400 dark:hover:border-walee-400/40 transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-walee-400/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-walee-400/20 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-xl bg-walee-100 dark:bg-walee-400/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     </svg>
                                 </div>
-                                <span class="px-2 py-1 text-xs font-medium bg-walee-400/20 text-walee-400 rounded-full">Semana</span>
+                                <span class="px-2 py-1 text-xs font-medium bg-walee-100 dark:bg-walee-400/20 text-walee-700 dark:text-walee-400 rounded-full">Semana</span>
                             </div>
-                            <p class="number-animate text-3xl font-bold text-white mb-1">₡{{ $formatNumber($ingresosSemana) }}</p>
-                            <p class="text-sm text-slate-400 mb-2">Esta semana</p>
-                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                            <p class="number-animate text-3xl font-bold text-slate-900 dark:text-white mb-1">₡{{ $formatNumber($ingresosSemana) }}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-400 mb-2">Esta semana</p>
+                            <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
@@ -382,8 +390,8 @@
             
             <!-- Proposals Stats -->
             <section class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"/>
                     </svg>
                     Propuestas Enviadas
@@ -391,50 +399,50 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <!-- Total Proposals -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-6 hover:border-violet-500/40 transition-all duration-300">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 p-6 hover:border-violet-400 dark:hover:border-violet-500/40 transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                 </div>
                             </div>
-                            <p class="number-animate text-4xl font-bold text-white mb-1">{{ $totalPropuestasMes }}</p>
-                            <p class="text-sm text-slate-400">Total este mes</p>
+                            <p class="number-animate text-4xl font-bold text-slate-900 dark:text-white mb-1">{{ $totalPropuestasMes }}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-400">Total este mes</p>
                         </div>
                     </div>
                     
                     <!-- Standard Proposals Today -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border border-cyan-500/20 p-6 hover:border-cyan-500/40 transition-all duration-300">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-500/10 dark:to-cyan-600/5 border border-cyan-200 dark:border-cyan-500/20 p-6 hover:border-cyan-400 dark:hover:border-cyan-500/40 transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-xl bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
                             </div>
-                            <p class="number-animate text-4xl font-bold text-white mb-1">{{ $propuestasEnviadasHoy }}</p>
-                            <p class="text-sm text-slate-400">Estándar hoy</p>
+                            <p class="number-animate text-4xl font-bold text-slate-900 dark:text-white mb-1">{{ $propuestasEnviadasHoy }}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-400">Estándar hoy</p>
                         </div>
                     </div>
                     
                     <!-- Personalized Proposals Today -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-6 hover:border-amber-500/40 transition-all duration-300">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border border-amber-200 dark:border-amber-500/20 p-6 hover:border-amber-400 dark:hover:border-amber-500/40 transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                                     </svg>
                                 </div>
                             </div>
-                            <p class="number-animate text-4xl font-bold text-white mb-1">{{ $propuestasPersonalizadasHoy }}</p>
-                            <p class="text-sm text-slate-400">Personalizadas hoy</p>
+                            <p class="number-animate text-4xl font-bold text-slate-900 dark:text-white mb-1">{{ $propuestasPersonalizadasHoy }}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-400">Personalizadas hoy</p>
                         </div>
                     </div>
                 </div>
@@ -442,22 +450,22 @@
             
             <!-- Chart Section -->
             <section class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
                     </svg>
                     Ingresos Últimos 30 Días
                 </h2>
                 
-                <div class="rounded-2xl bg-slate-900/50 border border-slate-800 p-4 sm:p-6 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 p-4 sm:p-6 animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: 0.4s;">
                     <canvas id="incomeChart" class="w-full" style="max-height: 350px;"></canvas>
                 </div>
             </section>
             
             <!-- Quick Actions -->
             <section class="mb-8">
-                <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
                     Acciones Rápidas
@@ -465,47 +473,47 @@
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <a href="{{ route('walee.clientes') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-emerald-400/50 hover:bg-emerald-400/5 dark:hover:bg-emerald-400/5 transition-all duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-emerald-400 transition-colors">Clientes</span>
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Clientes</span>
                     </a>
                     
                     <a href="{{ route('walee.facturas') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-violet-400/50 hover:bg-violet-400/5 dark:hover:bg-violet-400/5 transition-all duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-violet-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-violet-400 transition-colors">Facturas</span>
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">Facturas</span>
                     </a>
                     
                     <a href="{{ route('walee.emails') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-blue-400/50 hover:bg-blue-400/5 dark:hover:bg-blue-400/5 transition-all duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-blue-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-blue-400 transition-colors">Emails</span>
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Emails</span>
                     </a>
                     
                     <a href="{{ route('walee') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 hover:border-walee-400/50 hover:bg-walee-400/5 dark:hover:bg-walee-400/5 transition-all duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-walee-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 rounded-xl bg-walee-100 dark:bg-walee-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-300 group-hover:text-walee-400 transition-colors">Chat</span>
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-walee-600 dark:group-hover:text-walee-400 transition-colors">Chat</span>
                     </a>
                 </div>
             </section>
             
             <!-- Footer -->
-            <footer class="text-center py-6 border-t border-slate-800/50">
-                <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · wesolutions.work
+            <footer class="text-center py-6 border-t border-slate-200 dark:border-slate-800/50">
+                <p class="text-sm text-slate-600 dark:text-slate-500">
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · wesolutions.work
                 </p>
             </footer>
         </div>

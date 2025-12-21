@@ -96,29 +96,12 @@
                             </svg>
                             Tickets de Soporte
                         </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $totalTickets }} tickets en total</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
                     @include('partials.walee-dark-mode-toggle')
                 </div>
             </header>
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $enviados }}</div>
-                    <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Enviados</div>
-                </div>
-                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $recibidos }}</div>
-                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Recibidos</div>
-                </div>
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $resueltos }}</div>
-                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Resueltos</div>
-                </div>
-            </div>
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

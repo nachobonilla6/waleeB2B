@@ -70,9 +70,9 @@
     <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-walee-400/10 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-emerald-400/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-walee-400/20 dark:bg-walee-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-emerald-400/10 dark:bg-emerald-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-walee-400/10 dark:bg-walee-400/5 rounded-full blur-3xl"></div>
         </div>
         
         <!-- Main Content -->
@@ -80,27 +80,30 @@
             <!-- Header -->
             <header class="flex items-center justify-between mb-6 animate-fade-in-up">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.facturas') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.facturas') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-7 h-7 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                             Facturas
                         </h1>
-                        <p class="text-sm text-slate-400">{{ $totalFacturas }} facturas en total</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $totalFacturas }} facturas en total</p>
                     </div>
                 </div>
                 
-                <a href="{{ route('walee.facturas.crear') }}" class="w-10 h-10 rounded-xl bg-walee-500 hover:bg-walee-400 flex items-center justify-center transition-all">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                </a>
+                <div class="flex items-center gap-3">
+                    @include('partials.walee-dark-mode-toggle')
+                    <a href="{{ route('walee.facturas.crear') }}" class="w-10 h-10 rounded-xl bg-walee-500 hover:bg-walee-400 flex items-center justify-center transition-all shadow-sm">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                </div>
             </header>
             
             <!-- Stats Cards -->

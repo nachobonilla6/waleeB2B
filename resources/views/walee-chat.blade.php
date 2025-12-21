@@ -75,6 +75,11 @@
         }
         
         .message-assistant {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .dark .message-assistant {
             background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(100, 116, 139, 0.2);
         }
@@ -91,16 +96,16 @@
     <div class="h-screen flex flex-col relative">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-walee-400/10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-walee-400/20 dark:bg-walee-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 dark:bg-walee-400/5 rounded-full blur-3xl"></div>
         </div>
         
         <!-- Header -->
-        <header class="relative flex-shrink-0 bg-slate-900/80 backdrop-blur-lg border-b border-slate-800 px-4 py-3 safe-area-inset-top">
+        <header class="relative flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-inset-top">
             <div class="max-w-3xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
@@ -110,12 +115,12 @@
                             <div class="w-11 h-11 rounded-full bg-gradient-to-br from-walee-400 to-walee-600 p-0.5" style="animation: pulse-glow 3s infinite;">
                                 <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-full h-full rounded-full object-cover">
                             </div>
-                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
                         </div>
                         <div>
-                            <h1 class="text-lg font-semibold text-white">Walee</h1>
-                            <p class="text-xs text-emerald-400 flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                            <h1 class="text-lg font-semibold text-slate-900 dark:text-white">Walee</h1>
+                            <p class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 dark:bg-emerald-400 rounded-full"></span>
                                 En línea
                             </p>
                         </div>
@@ -123,17 +128,18 @@
                 </div>
                 
                 <div class="flex items-center gap-2">
+                    @include('partials.walee-dark-mode-toggle')
                     <!-- Voice Toggle -->
-                    <button id="voice-toggle" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 hover:border-walee-500/50 transition-all" data-enabled="true">
-                        <svg id="voice-icon" class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button id="voice-toggle" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-walee-500/50 transition-all shadow-sm dark:shadow-none" data-enabled="true">
+                        <svg id="voice-icon" class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
                         </svg>
-                        <span class="text-xs text-slate-400 hidden sm:inline">Voz</span>
+                        <span class="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">Voz</span>
                     </button>
                     
                     <!-- Clear Chat -->
-                    <button id="clear-chat" class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 hover:border-red-500/50 hover:bg-red-500/10 flex items-center justify-center transition-all" title="Limpiar chat">
-                        <svg class="w-5 h-5 text-slate-400 hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button id="clear-chat" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-red-500/50 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center justify-center transition-all shadow-sm dark:shadow-none" title="Limpiar chat">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
                     </button>
@@ -150,20 +156,20 @@
                         <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-walee-400 to-walee-600 p-1" style="animation: pulse-glow 3s infinite;">
                             <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-full h-full rounded-full object-cover">
                         </div>
-                        <h2 class="text-xl font-semibold text-white mb-2">¡Hola! Soy Walee 👋</h2>
-                        <p class="text-slate-400 max-w-md mx-auto">
+                        <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">¡Hola! Soy Walee 👋</h2>
+                        <p class="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
                             Tu asistente virtual de Web Solutions. Puedo ayudarte con información sobre clientes, facturas, emails y más.
                         </p>
                         
                         <!-- Quick Actions -->
                         <div class="flex flex-wrap justify-center gap-2 mt-6">
-                            <button onclick="sendQuickMessage('¿Cuántos clientes tenemos este mes?')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-300 hover:border-walee-500/50 hover:text-walee-400 transition-all">
+                            <button onclick="sendQuickMessage('¿Cuántos clientes tenemos este mes?')" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 hover:border-walee-500/50 hover:text-walee-600 dark:hover:text-walee-400 transition-all shadow-sm dark:shadow-none">
                                 📊 Clientes del mes
                             </button>
-                            <button onclick="sendQuickMessage('¿Cuál es el total de ingresos?')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-300 hover:border-walee-500/50 hover:text-walee-400 transition-all">
+                            <button onclick="sendQuickMessage('¿Cuál es el total de ingresos?')" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 hover:border-walee-500/50 hover:text-walee-600 dark:hover:text-walee-400 transition-all shadow-sm dark:shadow-none">
                                 💰 Ingresos totales
                             </button>
-                            <button onclick="sendQuickMessage('Dame un resumen del día')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-300 hover:border-walee-500/50 hover:text-walee-400 transition-all">
+                            <button onclick="sendQuickMessage('Dame un resumen del día')" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 hover:border-walee-500/50 hover:text-walee-600 dark:hover:text-walee-400 transition-all shadow-sm dark:shadow-none">
                                 📋 Resumen del día
                             </button>
                         </div>
@@ -176,7 +182,7 @@
                                     <div class="message-user rounded-2xl rounded-br-md px-4 py-3 text-white shadow-lg">
                                         <p class="text-sm leading-relaxed">{{ $msg->message }}</p>
                                     </div>
-                                    <p class="text-xs text-slate-500 text-right mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 text-right mt-1 mr-1">{{ $msg->created_at->format('H:i') }}</p>
                                 </div>
                             </div>
                         @else
@@ -186,10 +192,10 @@
                                         <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-full h-full rounded-full object-cover">
                                     </div>
                                     <div>
-                                        <div class="message-assistant rounded-2xl rounded-bl-md px-4 py-3 shadow-lg">
-                                            <p class="text-sm text-slate-200 leading-relaxed whitespace-pre-line">{{ $msg->message }}</p>
+                                        <div class="message-assistant rounded-2xl rounded-bl-md px-4 py-3 shadow-lg bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                                            <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">{{ $msg->message }}</p>
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1 ml-1">{{ $msg->created_at->format('H:i') }}</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-1">{{ $msg->created_at->format('H:i') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -200,7 +206,7 @@
         </main>
         
         <!-- Input Area -->
-        <footer class="relative flex-shrink-0 bg-slate-900/80 backdrop-blur-lg border-t border-slate-800 px-4 py-4 safe-area-inset-bottom">
+        <footer class="relative flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-4 safe-area-inset-bottom">
             <div class="max-w-3xl mx-auto">
                 <form id="chat-form" class="flex items-end gap-3">
                     <div class="flex-1 relative">
@@ -208,21 +214,21 @@
                             id="chat-input"
                             rows="1"
                             placeholder="Escribe un mensaje..."
-                            class="w-full px-4 py-3 pr-12 rounded-2xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                            class="w-full px-4 py-3 pr-12 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none shadow-sm dark:shadow-none"
                             style="min-height: 48px; max-height: 120px;"
                         ></textarea>
                     </div>
                     <button
                         id="chat-send"
                         type="submit"
-                        class="w-12 h-12 rounded-xl bg-walee-500 hover:bg-walee-400 text-white flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                        class="w-12 h-12 rounded-xl bg-walee-500 hover:bg-walee-400 text-white flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 shadow-sm"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                         </svg>
                     </button>
                 </form>
-                <p class="text-xs text-slate-500 text-center mt-2">
+                <p class="text-xs text-slate-600 dark:text-slate-500 text-center mt-2">
                     Walee puede cometer errores. Verifica la información importante.
                 </p>
             </div>
@@ -271,12 +277,12 @@
                 
                 if (voiceEnabled) {
                     voiceIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>';
-                    voiceIcon.classList.add('text-walee-400');
-                    voiceIcon.classList.remove('text-slate-500');
+                    voiceIcon.classList.add('text-walee-600', 'dark:text-walee-400');
+                    voiceIcon.classList.remove('text-slate-500', 'dark:text-slate-500');
                 } else {
                     voiceIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>';
-                    voiceIcon.classList.remove('text-walee-400');
-                    voiceIcon.classList.add('text-slate-500');
+                    voiceIcon.classList.remove('text-walee-600', 'dark:text-walee-400');
+                    voiceIcon.classList.add('text-slate-500', 'dark:text-slate-500');
                 }
             });
             
@@ -315,7 +321,7 @@
                             <div class="message-user rounded-2xl rounded-br-md px-4 py-3 text-white shadow-lg">
                                 <p class="text-sm leading-relaxed">${escapeHtml(content)}</p>
                             </div>
-                            <p class="text-xs text-slate-500 text-right mt-1 mr-1">${timeStr}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 text-right mt-1 mr-1">${timeStr}</p>
                         </div>
                     `;
                 } else {
@@ -325,10 +331,10 @@
                                 <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-full h-full rounded-full object-cover">
                             </div>
                             <div>
-                                <div class="message-assistant rounded-2xl rounded-bl-md px-4 py-3 shadow-lg">
-                                    <p class="text-sm text-slate-200 leading-relaxed whitespace-pre-line">${escapeHtml(content)}</p>
+                                <div class="message-assistant rounded-2xl rounded-bl-md px-4 py-3 shadow-lg bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                                    <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">${escapeHtml(content)}</p>
                                 </div>
-                                <p class="text-xs text-slate-500 mt-1 ml-1">${timeStr}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-1">${timeStr}</p>
                             </div>
                         </div>
                     `;
@@ -348,10 +354,10 @@
                         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-walee-400 to-walee-600 p-0.5 flex-shrink-0">
                             <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-full h-full rounded-full object-cover">
                         </div>
-                        <div class="message-assistant rounded-2xl px-4 py-3 flex items-center gap-1">
-                            <span class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></span>
-                            <span class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></span>
-                            <span class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></span>
+                        <div class="message-assistant rounded-2xl px-4 py-3 flex items-center gap-1 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                            <span class="w-2 h-2 bg-slate-500 dark:bg-slate-400 rounded-full typing-dot"></span>
+                            <span class="w-2 h-2 bg-slate-500 dark:bg-slate-400 rounded-full typing-dot"></span>
+                            <span class="w-2 h-2 bg-slate-500 dark:bg-slate-400 rounded-full typing-dot"></span>
                         </div>
                     </div>
                 `;

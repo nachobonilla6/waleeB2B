@@ -104,9 +104,9 @@
     <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-emerald-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/20 dark:bg-emerald-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/10 dark:bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-emerald-400/20 dark:bg-emerald-400/10 rounded-full blur-3xl"></div>
         </div>
         
         <!-- Main Content -->
@@ -114,28 +114,29 @@
             <!-- Header -->
             <header class="flex items-center justify-between mb-8 animate-fade-in-up">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-7 h-7 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
                             </svg>
                             Emails Recibidos
                         </h1>
-                        <p class="text-sm text-slate-400">
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
                             {{ $emails->total() }} emails
                             @if($noLeidos > 0)
-                                · <span class="text-emerald-400">{{ $noLeidos }} sin leer</span>
+                                · <span class="text-emerald-600 dark:text-emerald-400">{{ $noLeidos }} sin leer</span>
                             @endif
                         </p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3">
+                    @include('partials.walee-dark-mode-toggle')
                     <button 
                         onclick="syncEmails()"
                         id="syncBtn"
@@ -151,17 +152,17 @@
             
             <!-- Stats Cards -->
             <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
-                    <div class="text-2xl font-bold text-emerald-400">{{ $totalEmails }}</div>
-                    <div class="text-xs text-emerald-400/70">Total</div>
+                <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $totalEmails }}</div>
+                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Total</div>
                 </div>
-                <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
-                    <div class="text-2xl font-bold text-blue-400">{{ $noLeidos }}</div>
-                    <div class="text-xs text-blue-400/70">Sin leer</div>
+                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $noLeidos }}</div>
+                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Sin leer</div>
                 </div>
-                <div class="bg-walee-500/10 border border-walee-500/20 rounded-xl p-4 text-center">
-                    <div class="text-2xl font-bold text-walee-400">{{ $destacados }}</div>
-                    <div class="text-xs text-walee-400/70">Destacados</div>
+                <div class="bg-walee-50 dark:bg-walee-500/10 border border-walee-200 dark:border-walee-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+                    <div class="text-2xl font-bold text-walee-600 dark:text-walee-400">{{ $destacados }}</div>
+                    <div class="text-xs text-walee-600/80 dark:text-walee-400/70">Destacados</div>
                 </div>
             </div>
             
@@ -172,7 +173,7 @@
             <div class="space-y-3 animate-fade-in-up">
                 @forelse($emails as $index => $email)
                     <div 
-                        class="email-card group bg-slate-800/50 border {{ $email->is_read ? 'border-slate-700' : 'border-emerald-500/30 bg-emerald-500/5' }} rounded-2xl p-4 hover:border-emerald-500/50 transition-all cursor-pointer" 
+                        class="email-card group bg-white dark:bg-slate-800/50 border {{ $email->is_read ? 'border-slate-200 dark:border-slate-700' : 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5' }} rounded-2xl p-4 hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all cursor-pointer shadow-sm dark:shadow-none" 
                         style="animation-delay: {{ $index * 0.05 }}s" 
                         onclick="showEmailDetail({{ $email->id }})"
                     >
@@ -182,46 +183,46 @@
                                 @if(!$email->is_read)
                                     <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                                 @else
-                                    <div class="w-3 h-3 rounded-full bg-slate-600"></div>
+                                    <div class="w-3 h-3 rounded-full bg-slate-400 dark:bg-slate-600"></div>
                                 @endif
                             </div>
                             
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex-shrink-0 flex items-center justify-center">
-                                <span class="text-sm font-bold text-emerald-400">{{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 1)) }}</span>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex-shrink-0 flex items-center justify-center">
+                                <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400">{{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 1)) }}</span>
                             </div>
                             
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between mb-1">
-                                    <h3 class="font-semibold {{ $email->is_read ? 'text-slate-300' : 'text-white' }} truncate">
+                                    <h3 class="font-semibold {{ $email->is_read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white' }} truncate">
                                         {{ $email->from_name ?? $email->from_email }}
                                     </h3>
                                     <div class="flex items-center gap-2 flex-shrink-0 ml-2">
                                         @if($email->is_starred)
-                                            <svg class="w-4 h-4 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                             </svg>
                                         @endif
-                                        <span class="text-xs text-slate-500">
+                                        <span class="text-xs text-slate-500 dark:text-slate-400">
                                             {{ $email->received_at ? $email->received_at->diffForHumans() : $email->created_at->diffForHumans() }}
                                         </span>
                                     </div>
                                 </div>
-                                <p class="text-sm {{ $email->is_read ? 'text-slate-400' : 'text-white font-medium' }} truncate mb-1">
+                                <p class="text-sm {{ $email->is_read ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-white font-medium' }} truncate mb-1">
                                     {{ $email->subject }}
                                 </p>
-                                <p class="text-sm text-slate-500 line-clamp-1">{{ Str::limit(strip_tags($email->body), 100) }}</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-500 line-clamp-1">{{ Str::limit(strip_tags($email->body), 100) }}</p>
                             </div>
                         </div>
                     </div>
                 @empty
                     <div class="text-center py-16">
-                        <div class="w-16 h-16 mx-auto rounded-full bg-slate-800 flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">Bandeja de entrada vacía</h3>
-                        <p class="text-slate-500 mb-4">No hay emails recibidos todavía</p>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Bandeja de entrada vacía</h3>
+                        <p class="text-slate-600 dark:text-slate-500 mb-4">No hay emails recibidos todavía</p>
                         <button onclick="syncEmails()" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-all">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -236,45 +237,45 @@
             @if($emails->hasPages())
                 <div class="mt-8 flex justify-center gap-2">
                     @if($emails->onFirstPage())
-                        <span class="px-4 py-2 bg-slate-800/50 text-slate-500 rounded-xl cursor-not-allowed">Anterior</span>
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Anterior</span>
                     @else
-                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors">Anterior</a>
+                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Anterior</a>
                     @endif
                     
-                    <span class="px-4 py-2 bg-slate-800/50 text-slate-400 rounded-xl">
+                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700">
                         Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
                     </span>
                     
                     @if($emails->hasMorePages())
-                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors">Siguiente</a>
+                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Siguiente</a>
                     @else
-                        <span class="px-4 py-2 bg-slate-800/50 text-slate-500 rounded-xl cursor-not-allowed">Siguiente</span>
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Siguiente</span>
                     @endif
                 </div>
             @endif
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                <p class="text-sm text-slate-600 dark:text-slate-500">
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>
     </div>
     
     <!-- Email Detail Modal -->
-    <div id="emailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-700">
-                <h3 class="text-lg font-semibold text-white truncate pr-4" id="modalSubject">Email</h3>
+    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white truncate pr-4" id="modalSubject">Email</h3>
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleStar()" id="starBtn" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-slate-400" id="starIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="toggleStar()" id="starBtn" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" id="starIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                         </svg>
                     </button>
-                    <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -310,29 +311,29 @@
             const starIcon = document.getElementById('starIcon');
             if (email.is_starred) {
                 starIcon.setAttribute('fill', 'currentColor');
-                starIcon.classList.remove('text-slate-400');
-                starIcon.classList.add('text-walee-400');
+                starIcon.classList.remove('text-slate-600', 'dark:text-slate-400');
+                starIcon.classList.add('text-walee-600', 'dark:text-walee-400');
             } else {
                 starIcon.setAttribute('fill', 'none');
-                starIcon.classList.remove('text-walee-400');
-                starIcon.classList.add('text-slate-400');
+                starIcon.classList.remove('text-walee-600', 'dark:text-walee-400');
+                starIcon.classList.add('text-slate-600', 'dark:text-slate-400');
             }
             
             const receivedDate = email.received_at ? new Date(email.received_at) : new Date(email.created_at);
             
             document.getElementById('modalContent').innerHTML = `
                 <div class="space-y-4">
-                    <div class="bg-slate-800 rounded-xl p-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                         <div class="flex items-center gap-4 mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                                <span class="text-lg font-bold text-emerald-400">${(email.from_name || email.from_email).charAt(0).toUpperCase()}</span>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
+                                <span class="text-lg font-bold text-emerald-600 dark:text-emerald-400">${(email.from_name || email.from_email).charAt(0).toUpperCase()}</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-semibold text-white">${email.from_name || 'Sin nombre'}</h4>
-                                <p class="text-sm text-emerald-400">${email.from_email}</p>
+                                <h4 class="font-semibold text-slate-900 dark:text-white">${email.from_name || 'Sin nombre'}</h4>
+                                <p class="text-sm text-emerald-600 dark:text-emerald-400">${email.from_email}</p>
                             </div>
                         </div>
-                        <div class="text-xs text-slate-500">
+                        <div class="text-xs text-slate-600 dark:text-slate-500">
                             ${receivedDate.toLocaleString('es-ES', { 
                                 weekday: 'long',
                                 year: 'numeric', 
@@ -343,21 +344,21 @@
                             })}
                         </div>
                     </div>
-                    <div class="bg-slate-800 rounded-xl p-4">
-                        <div class="prose prose-invert prose-sm max-w-none">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="prose prose-slate dark:prose-invert prose-sm max-w-none">
                             ${email.body_html || email.body.replace(/\n/g, '<br>')}
                         </div>
                     </div>
                     ${email.attachments && email.attachments.length > 0 ? `
-                        <div class="bg-slate-800 rounded-xl p-4">
-                            <h4 class="text-sm font-medium text-slate-400 mb-3">Archivos adjuntos</h4>
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                            <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Archivos adjuntos</h4>
                             <div class="space-y-2">
                                 ${email.attachments.map(att => `
-                                    <div class="flex items-center gap-3 p-2 bg-slate-700/50 rounded-lg">
-                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="flex items-center gap-3 p-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
+                                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                         </svg>
-                                        <span class="text-sm text-white">${att.name || att}</span>
+                                        <span class="text-sm text-slate-900 dark:text-white">${att.name || att}</span>
                                     </div>
                                 `).join('')}
                             </div>
@@ -402,12 +403,12 @@
                 const starIcon = document.getElementById('starIcon');
                 if (data.is_starred) {
                     starIcon.setAttribute('fill', 'currentColor');
-                    starIcon.classList.remove('text-slate-400');
-                    starIcon.classList.add('text-walee-400');
+                    starIcon.classList.remove('text-slate-600', 'dark:text-slate-400');
+                    starIcon.classList.add('text-walee-600', 'dark:text-walee-400');
                 } else {
                     starIcon.setAttribute('fill', 'none');
-                    starIcon.classList.remove('text-walee-400');
-                    starIcon.classList.add('text-slate-400');
+                    starIcon.classList.remove('text-walee-600', 'dark:text-walee-400');
+                    starIcon.classList.add('text-slate-600', 'dark:text-slate-400');
                 }
             } catch (error) {
                 console.error('Error toggling star:', error);

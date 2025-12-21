@@ -99,9 +99,9 @@
     <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 bg-violet-400/10 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-violet-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-violet-400/20 dark:bg-violet-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/10 dark:bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-violet-400/20 dark:bg-violet-400/10 rounded-full blur-3xl"></div>
         </div>
         
         <!-- Main Content -->
@@ -109,25 +109,26 @@
             <!-- Header -->
             <header class="flex items-center justify-between mb-8 animate-fade-in-up">
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
+                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-7 h-7 text-violet-500 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                             </svg>
                             Crear con AI
                         </h1>
-                        <p class="text-sm text-slate-400">Genera emails personalizados</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Genera emails personalizados</p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
-                        <span class="text-sm font-medium text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                <div class="flex items-center gap-3">
+                    @include('partials.walee-dark-mode-toggle')
+                    <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm dark:shadow-none">
+                        <span class="text-sm font-medium text-walee-600 dark:text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
                     </div>
                 </div>
             </header>
@@ -141,9 +142,9 @@
                     @csrf
                     
                     <!-- Cliente Selection -->
-                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                             Destinatario
@@ -151,7 +152,7 @@
                         
                         <!-- Custom Dropdown Container -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-slate-300 mb-2">Cliente</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente</label>
                             <input type="hidden" id="cliente_id" name="cliente_id" value="">
                             
                             <!-- Dropdown Trigger -->
@@ -160,27 +161,27 @@
                                     type="button" 
                                     id="dropdownTrigger"
                                     onclick="toggleDropdown()"
-                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-left text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all flex items-center justify-between"
+                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-left text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all flex items-center justify-between"
                                 >
-                                    <span id="selectedClientText" class="text-slate-400">Seleccionar cliente...</span>
-                                    <svg class="w-5 h-5 text-slate-400 transition-transform" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <span id="selectedClientText" class="text-slate-500 dark:text-slate-400">Seleccionar cliente...</span>
+                                    <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 transition-transform" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </button>
                                 
                                 <!-- Dropdown Panel -->
-                                <div id="dropdownPanel" class="hidden absolute z-50 mt-2 w-full bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+                                <div id="dropdownPanel" class="hidden absolute z-50 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl overflow-hidden">
                                     <!-- Search -->
-                                    <div class="p-3 border-b border-slate-700">
+                                    <div class="p-3 border-b border-slate-200 dark:border-slate-700">
                                         <div class="relative">
-                                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                             </svg>
                                             <input 
                                                 type="text" 
                                                 id="clientSearch" 
                                                 placeholder="Buscar cliente..."
-                                                class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 text-sm focus:border-violet-500 focus:outline-none"
+                                                class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 text-sm focus:border-violet-500 focus:outline-none"
                                                 oninput="filterClients(this.value)"
                                             >
                                         </div>
@@ -203,7 +204,7 @@
                                                 $propuestasColor = $propuestasCount >= 3 ? 'bg-red-500' : ($propuestasCount >= 1 ? 'bg-amber-500' : 'bg-slate-600');
                                             @endphp
                                             <div 
-                                                class="client-option p-3 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-800 last:border-0"
+                                                class="client-option p-3 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-200 dark:border-slate-800 last:border-0"
                                                 data-id="{{ $cliente->id }}"
                                                 data-name="{{ $cliente->name }}"
                                                 data-email="{{ $cliente->email }}"
@@ -221,14 +222,14 @@
                                                     <!-- Info -->
                                                     <div class="flex-1 min-w-0">
                                                         <div class="flex items-center gap-2">
-                                                            <p class="font-medium text-white truncate">{{ $cliente->name }}</p>
+                                                            <p class="font-medium text-slate-900 dark:text-white truncate">{{ $cliente->name }}</p>
                                                             @if($propuestasCount > 0)
                                                                 <span class="px-1.5 py-0.5 text-[10px] font-bold {{ $propuestasColor }} text-white rounded">{{ $propuestasCount }}</span>
                                                             @endif
                                                         </div>
                                                         <div class="flex items-center gap-2 mt-0.5">
-                                                            <span class="text-xs text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</span>
-                                                            <span class="text-slate-600">·</span>
+                                                            <span class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</span>
+                                                            <span class="text-slate-400 dark:text-slate-600">·</span>
                                                             <span class="text-xs {{ $estadoConfig['text'] }}">{{ $estadoConfig['label'] }}</span>
                                                         </div>
                                                     </div>
@@ -236,7 +237,7 @@
                                                     <!-- Proposals indicator -->
                                                     @if($propuestasCount > 0)
                                                         <div class="flex-shrink-0 text-right">
-                                                            <p class="text-xs text-slate-500">{{ $propuestasCount }} {{ $propuestasCount == 1 ? 'email' : 'emails' }}</p>
+                                                            <p class="text-xs text-slate-500 dark:text-slate-400">{{ $propuestasCount }} {{ $propuestasCount == 1 ? 'email' : 'emails' }}</p>
                                                         </div>
                                                     @endif
                                                 </div>
@@ -246,34 +247,34 @@
                                     
                                     <!-- No results -->
                                     <div id="noResults" class="hidden p-6 text-center">
-                                        <p class="text-slate-400 text-sm">No se encontraron clientes</p>
+                                        <p class="text-slate-600 dark:text-slate-400 text-sm">No se encontraron clientes</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Selected Client Card -->
-                        <div id="clienteInfo" class="hidden mb-4 p-4 bg-gradient-to-r from-violet-500/10 to-slate-800/50 rounded-xl border border-violet-500/20">
+                        <div id="clienteInfo" class="hidden mb-4 p-4 bg-gradient-to-r from-violet-50 to-slate-50 dark:from-violet-500/10 dark:to-slate-800/50 rounded-xl border border-violet-200 dark:border-violet-500/20">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div id="clienteAvatar" class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                                        <span class="text-lg font-bold text-violet-400">?</span>
+                                    <div id="clienteAvatar" class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
+                                        <span class="text-lg font-bold text-violet-600 dark:text-violet-400">?</span>
                                     </div>
                                     <div>
-                                        <p id="clienteNombre" class="font-semibold text-white">Cliente</p>
+                                        <p id="clienteNombre" class="font-semibold text-slate-900 dark:text-white">Cliente</p>
                                         <div class="flex items-center gap-2 mt-0.5">
-                                            <span id="clienteEmail" class="text-xs text-slate-400">email@example.com</span>
-                                            <span id="clienteEstadoBadge" class="px-2 py-0.5 text-[10px] font-medium bg-violet-500/20 text-violet-400 rounded-full">Estado</span>
+                                            <span id="clienteEmail" class="text-xs text-slate-600 dark:text-slate-400">email@example.com</span>
+                                            <span id="clienteEstadoBadge" class="px-2 py-0.5 text-[10px] font-medium bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 rounded-full">Estado</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div id="propuestasInfo" class="text-right">
                                     <div class="flex items-center gap-2">
                                         <div>
-                                            <p class="text-3xl font-bold text-violet-400" id="propuestasCount">0</p>
-                                            <p class="text-[10px] text-slate-500 uppercase tracking-wide">enviados</p>
+                                            <p class="text-3xl font-bold text-violet-600 dark:text-violet-400" id="propuestasCount">0</p>
+                                            <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wide">enviados</p>
                                         </div>
-                                        <button type="button" onclick="clearClient()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center text-slate-400 transition-colors">
+                                        <button type="button" onclick="clearClient()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-600 dark:hover:text-red-400 flex items-center justify-center text-slate-600 dark:text-slate-400 transition-colors">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                             </svg>
@@ -285,37 +286,37 @@
                         
                         <!-- Email Input -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email destinatario <span class="text-red-400">*</span></label>
+                            <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email destinatario <span class="text-red-500 dark:text-red-400">*</span></label>
                             <input 
                                 type="email" 
                                 id="email" 
                                 name="email" 
                                 required
                                 placeholder="cliente@correo.com"
-                                class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
                             >
                         </div>
                     </div>
                     
                     <!-- AI Prompt -->
-                    <div class="bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 rounded-2xl p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                             </svg>
                             Instrucciones para AI
                         </h2>
                         
                         <div class="mb-4">
-                            <label for="ai_prompt" class="block text-sm font-medium text-slate-300 mb-2">¿Qué tipo de email necesitas?</label>
+                            <label for="ai_prompt" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">¿Qué tipo de email necesitas?</label>
                             <textarea 
                                 id="ai_prompt" 
                                 name="ai_prompt" 
                                 rows="3"
                                 placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante, mencionando servicios de diseño web y marketing digital..."
-                                class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
                             ></textarea>
-                            <p class="text-xs text-slate-500 mt-2">Describe el tipo de email que quieres. Si está vacío, se generará una propuesta genérica.</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-2">Describe el tipo de email que quieres. Si está vacío, se generará una propuesta genérica.</p>
                         </div>
                         
                         <button 
@@ -332,9 +333,9 @@
                     </div>
                     
                     <!-- Email Content -->
-                    <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                             Contenido del Email
@@ -342,26 +343,26 @@
                         
                         <div class="space-y-4">
                             <div>
-                                <label for="subject" class="block text-sm font-medium text-slate-300 mb-2">Asunto <span class="text-red-400">*</span></label>
+                                <label for="subject" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Asunto <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <input 
                                     type="text" 
                                     id="subject" 
                                     name="subject" 
                                     required
                                     placeholder="Asunto del email"
-                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
                                 >
                             </div>
                             
                             <div>
-                                <label for="body" class="block text-sm font-medium text-slate-300 mb-2">Mensaje <span class="text-red-400">*</span></label>
+                                <label for="body" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Mensaje <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <textarea 
                                     id="body" 
                                     name="body" 
                                     rows="10"
                                     required
                                     placeholder="Escribe o genera el contenido del email..."
-                                    class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
                                 ></textarea>
                             </div>
                         </div>
@@ -383,8 +384,8 @@
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                <p class="text-sm text-slate-600 dark:text-slate-500">
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>
@@ -471,8 +472,8 @@
             
             // Update trigger text
             document.getElementById('selectedClientText').innerHTML = `
-                <span class="text-white">${name}</span>
-                ${email ? `<span class="text-slate-400 text-sm ml-2">${email}</span>` : ''}
+                <span class="text-slate-900 dark:text-white">${name}</span>
+                ${email ? `<span class="text-slate-600 dark:text-slate-400 text-sm ml-2">${email}</span>` : ''}
             `;
             
             // Update email field
@@ -484,7 +485,7 @@
             const clienteInfo = document.getElementById('clienteInfo');
             const estadoInfo = estadoLabels[estado] || estadoLabels['nuevo'];
             
-            document.getElementById('clienteAvatar').innerHTML = `<span class="text-lg font-bold text-violet-400">${name.charAt(0).toUpperCase()}</span>`;
+            document.getElementById('clienteAvatar').innerHTML = `<span class="text-lg font-bold text-violet-600 dark:text-violet-400">${name.charAt(0).toUpperCase()}</span>`;
             document.getElementById('clienteNombre').textContent = name;
             document.getElementById('clienteEmail').textContent = email || 'Sin email';
             
@@ -497,13 +498,13 @@
             
             // Color based on count
             const count = parseInt(propuestas);
-            propuestasCount.classList.remove('text-violet-400', 'text-amber-400', 'text-red-400');
+            propuestasCount.classList.remove('text-violet-600', 'dark:text-violet-400', 'text-amber-600', 'dark:text-amber-400', 'text-red-600', 'dark:text-red-400');
             if (count >= 3) {
-                propuestasCount.classList.add('text-red-400');
+                propuestasCount.classList.add('text-red-600', 'dark:text-red-400');
             } else if (count >= 1) {
-                propuestasCount.classList.add('text-amber-400');
+                propuestasCount.classList.add('text-amber-600', 'dark:text-amber-400');
             } else {
-                propuestasCount.classList.add('text-violet-400');
+                propuestasCount.classList.add('text-violet-600', 'dark:text-violet-400');
             }
             
             clienteInfo.classList.remove('hidden');
@@ -521,7 +522,7 @@
         // Clear client selection
         function clearClient() {
             document.getElementById('cliente_id').value = '';
-            document.getElementById('selectedClientText').innerHTML = '<span class="text-slate-400">Seleccionar cliente...</span>';
+            document.getElementById('selectedClientText').innerHTML = '<span class="text-slate-500 dark:text-slate-400">Seleccionar cliente...</span>';
             document.getElementById('email').value = '';
             document.getElementById('clienteInfo').classList.add('hidden');
         }

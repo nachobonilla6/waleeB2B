@@ -144,6 +144,77 @@ Route::get('/tareas', function () {
     return view('walee-tareas');
 })->middleware(['auth'])->name('walee.tareas');
 
+// Calendario
+Route::get('/walee-calendario', function () {
+    return view('walee-calendario');
+})->middleware(['auth'])->name('walee.calendario');
+
+// Rutas para Citas
+Route::post('/citas', function (\Illuminate\Http\Request $request) {
+    try {
+        $cita = new \App\Models\Cita();
+        $cita->titulo = $request->input('titulo');
+        $cita->cliente_id = $request->input('cliente_id');
+        $cita->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
+        $cita->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
+        $cita->ubicacion = $request->input('ubicacion');
+        $cita->descripcion = $request->input('descripcion');
+        $cita->estado = $request->input('estado', 'programada');
+        $cita->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cita creada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('citas.store');
+
+Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $cita = \App\Models\Cita::findOrFail($id);
+        $cita->titulo = $request->input('titulo');
+        $cita->cliente_id = $request->input('cliente_id');
+        $cita->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
+        $cita->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
+        $cita->ubicacion = $request->input('ubicacion');
+        $cita->descripcion = $request->input('descripcion');
+        $cita->estado = $request->input('estado', 'programada');
+        $cita->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cita actualizada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('citas.update');
+
+Route::delete('/citas/{id}', function ($id) {
+    try {
+        $cita = \App\Models\Cita::findOrFail($id);
+        $cita->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cita eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('citas.delete');
+
 Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
     try {
         $imagePath = null;

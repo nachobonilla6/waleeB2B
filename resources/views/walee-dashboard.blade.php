@@ -100,7 +100,7 @@
         }
         
         .bottom-15 {
-            bottom: 4rem; /* 64px - más cerca del botón de abajo pero sin chocar */
+            bottom: 4.75rem; /* 76px - separación intermedia entre las flechas */
         }
         
         @keyframes fadeInUp {

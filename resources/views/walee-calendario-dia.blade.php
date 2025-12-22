@@ -358,9 +358,8 @@
         </div>
     </div>
     
-    <script>
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const citasData = @json($citas->map(function($cita) {
+    @php
+        $citasDataArray = $citas->map(function($cita) {
             return [
                 'id' => $cita->id,
                 'titulo' => $cita->titulo,
@@ -374,8 +373,9 @@
                 'recurrencia' => $cita->recurrencia ?? 'none',
                 'recurrencia_fin' => $cita->recurrencia_fin
             ];
-        }));
-        const tareasData = @json($tareas->map(function($tarea) {
+        })->values();
+        
+        $tareasDataArray = $tareas->map(function($tarea) {
             return [
                 'id' => $tarea->id,
                 'texto' => $tarea->texto,
@@ -385,7 +385,13 @@
                 'recurrencia' => $tarea->recurrencia ?? 'none',
                 'recurrencia_fin' => $tarea->recurrencia_fin
             ];
-        }));
+        })->values();
+    @endphp
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const citasData = @json($citasDataArray);
+        const tareasData = @json($tareasDataArray);
         const fechaActual = '{{ $fecha->format("Y-m-d") }}';
         
         // Sincronizar color picker

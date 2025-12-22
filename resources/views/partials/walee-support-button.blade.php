@@ -11,9 +11,9 @@
 
 <!-- Support Modal -->
 <div id="supportModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
-    <div class="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-md overflow-hidden transform transition-all">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden transform transition-all">
         <!-- Header -->
-        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700/50">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-walee-400/20 flex items-center justify-center">
                     <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,12 +21,12 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-white">Soporte</h3>
-                    <p class="text-xs text-slate-400">¿Necesitas ayuda?</p>
+                    <h3 class="text-lg font-semibold text-black dark:text-white">Soporte</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">¿Necesitas ayuda?</p>
                 </div>
             </div>
-            <button onclick="closeSupportModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors">
-                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="closeSupportModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                <svg class="w-5 h-5 text-black dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
@@ -36,29 +36,29 @@
         <form id="supportForm" class="p-5 space-y-4">
             <!-- Subject -->
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Asunto</label>
+                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Asunto</label>
                 <input 
                     type="text" 
                     name="subject" 
                     placeholder="¿En qué podemos ayudarte?"
-                    class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
+                    class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
                 >
             </div>
             
             <!-- Message -->
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Mensaje</label>
+                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Mensaje</label>
                 <textarea 
                     name="message" 
                     rows="4" 
                     placeholder="Describe tu problema o pregunta..."
-                    class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm"
+                    class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm"
                 ></textarea>
             </div>
             
             <!-- File Upload -->
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Captura de pantalla (opcional)</label>
+                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Captura de pantalla (opcional)</label>
                 <div class="relative">
                     <input 
                         type="file" 
@@ -70,7 +70,7 @@
                     >
                     <label 
                         for="supportFile" 
-                        class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-800 border border-dashed border-slate-600 rounded-xl text-slate-400 hover:border-walee-500/50 hover:text-walee-400 cursor-pointer transition-all"
+                        class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-400 hover:border-walee-500/50 hover:text-walee-400 cursor-pointer transition-all"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -93,8 +93,8 @@
         </form>
         
         <!-- Footer -->
-        <div class="px-5 py-3 bg-slate-800/50 border-t border-slate-700/50">
-            <p class="text-xs text-slate-500 text-center">
+        <div class="px-5 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700/50">
+            <p class="text-xs text-slate-600 dark:text-slate-500 text-center">
                 También puedes escribirnos a <span class="text-walee-400">websolutionscrnow@gmail.com</span>
             </p>
         </div>

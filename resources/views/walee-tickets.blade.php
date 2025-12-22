@@ -868,56 +868,20 @@
                 
                 if (data.success) {
                     const isUrgente = data.urgente;
-                    const svg = buttonElement.querySelector('svg');
-                    const ticketCard = buttonElement.closest('.ticket-card');
-                    const ticketIdSpan = ticketCard.querySelector('.text-xs.font-mono');
-                    const badgesContainer = ticketIdSpan ? ticketIdSpan.parentElement : null;
+                    const message = isUrgente 
+                        ? `Ticket #${ticketId} marcado como urgente` 
+                        : `Ticket #${ticketId} ya no es urgente`;
                     
-                    // Update star icon
-                    if (isUrgente) {
-                        svg.classList.add('fill-current');
-                        svg.classList.remove('fill-none');
-                        buttonElement.classList.remove('text-slate-400', 'dark:text-slate-600');
-                        buttonElement.classList.add('text-yellow-500', 'dark:text-yellow-400');
-                        buttonElement.title = 'Quitar urgente';
-                        
-                        // Update border
-                        ticketCard.classList.remove('border-slate-200', 'dark:border-slate-700/50');
-                        ticketCard.classList.add('border-red-500', 'dark:border-red-500');
-                        
-                        // Add urgent badge if not exists
-                        if (badgesContainer) {
-                            const existingBadge = badgesContainer.querySelector('.bg-red-100');
-                            if (!existingBadge) {
-                                const badge = document.createElement('span');
-                                badge.className = 'text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30';
-                                badge.textContent = '⚠️ Urgente';
-                                badgesContainer.appendChild(badge);
-                            }
-                        }
-                        
-                        showNotification('Marcado como urgente', `Ticket #${ticketId} marcado como urgente`, 'success');
-                    } else {
-                        svg.classList.remove('fill-current');
-                        svg.classList.add('fill-none');
-                        buttonElement.classList.remove('text-yellow-500', 'dark:text-yellow-400');
-                        buttonElement.classList.add('text-slate-400', 'dark:text-slate-600');
-                        buttonElement.title = 'Marcar como urgente';
-                        
-                        // Update border
-                        ticketCard.classList.remove('border-red-500', 'dark:border-red-500');
-                        ticketCard.classList.add('border-slate-200', 'dark:border-slate-700/50');
-                        
-                        // Remove urgent badge
-                        if (badgesContainer) {
-                            const urgentBadge = badgesContainer.querySelector('.bg-red-100');
-                            if (urgentBadge) {
-                                urgentBadge.remove();
-                            }
-                        }
-                        
-                        showNotification('Urgente removido', `Ticket #${ticketId} ya no es urgente`, 'success');
-                    }
+                    showNotification(
+                        isUrgente ? 'Marcado como urgente' : 'Urgente removido', 
+                        message, 
+                        'success'
+                    );
+                    
+                    // Recargar la página después de un breve delay para mostrar la notificación
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
                 } else {
                     showNotification('Error', data.message || 'No se pudo actualizar', 'error');
                 }

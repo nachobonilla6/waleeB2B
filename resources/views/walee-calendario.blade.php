@@ -243,7 +243,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Calendario · ' . $meses[$mes] . ' ' . $ano; @endphp
+            @php $pageTitle = $meses[$mes] . ' ' . $ano; @endphp
             @include('partials.walee-navbar')
             
             <!-- Calendar Controls -->

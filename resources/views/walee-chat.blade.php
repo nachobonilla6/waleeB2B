@@ -128,7 +128,7 @@
         
         <!-- Messages Container -->
         <main id="messages-container" class="relative flex-1 overflow-y-auto px-4 py-6">
-            <div class="max-w-3xl mx-auto space-y-4" id="messages-list">
+            <div class="max-w-7xl mx-auto space-y-4" id="messages-list">
                 @if($chatMessages->count() === 0)
                     <!-- Welcome Message -->
                     <div class="text-center py-12 animate-fade-in-up">

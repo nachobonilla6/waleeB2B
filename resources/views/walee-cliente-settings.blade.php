@@ -79,6 +79,19 @@
                     </div>
                     
                     <form id="publicacion-form" class="space-y-4" enctype="multipart/form-data">
+                        <!-- AI Prompt -->
+                        <div>
+                            <label for="ai_prompt" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">¿Qué tipo de publicación necesitas?</label>
+                            <textarea 
+                                id="ai_prompt" 
+                                name="ai_prompt" 
+                                rows="2"
+                                placeholder="Ej: Publicación promocionando nuestros servicios de diseño web y marketing digital..."
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm"
+                            ></textarea>
+                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Describe el tipo de publicación que quieres generar. Si lo dejas vacío, se generará una publicación genérica.</p>
+                        </div>
+                        
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Texto de la publicación</label>
@@ -103,17 +116,6 @@
                                 class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                             ></textarea>
                             <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Máximo recomendado: 500 caracteres</p>
-                        </div>
-                        
-                        <!-- AI Prompt (opcional) -->
-                        <div class="hidden" id="aiPromptContainer">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Instrucciones para AI (opcional)</label>
-                            <input 
-                                type="text" 
-                                id="ai_prompt"
-                                placeholder="Ej: Publicación sobre nuestros servicios de diseño web..."
-                                class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
-                            >
                         </div>
                         
                         <div>

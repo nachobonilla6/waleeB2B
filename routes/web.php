@@ -981,6 +981,8 @@ Route::post('/tareas', function (\Illuminate\Http\Request $request) {
         $tarea->tipo = $request->input('tipo') ?: null;
         $tarea->favorito = false; // Por defecto no es favorito
         $tarea->estado = 'pending';
+        $tarea->recurrencia = $request->input('recurrencia', 'none');
+        $tarea->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
         $tarea->save();
         
         return response()->json([
@@ -1004,6 +1006,8 @@ Route::put('/tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
             $tarea->fecha_hora = \Carbon\Carbon::parse($request->input('fecha_hora'));
         }
         $tarea->tipo = $request->input('tipo') ?: null;
+        $tarea->recurrencia = $request->input('recurrencia', 'none');
+        $tarea->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
         $tarea->save();
         
         return response()->json([

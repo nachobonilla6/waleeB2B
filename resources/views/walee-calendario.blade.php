@@ -142,17 +142,80 @@
             return $cita->fecha_inicio->format('Y-m-d');
         });
         
-        // Obtener todas las tareas del mes
-        $tareas = \App\Models\Tarea::with('lista')
+        // Obtener todas las tareas del mes (incluyendo recurrentes)
+        $tareasBase = \App\Models\Tarea::with('lista')
             ->whereNotNull('fecha_hora')
-            ->whereBetween('fecha_hora', [
-                $fechaActual->copy()->startOfMonth()->startOfDay(),
-                $fechaActual->copy()->endOfMonth()->endOfDay()
-            ])
-            ->get()
-            ->groupBy(function($tarea) {
-                return $tarea->fecha_hora->format('Y-m-d');
-            });
+            ->where(function($query) use ($fechaActual) {
+                // Tareas que empiezan en este mes
+                $query->whereBetween('fecha_hora', [
+                    $fechaActual->copy()->startOfMonth()->startOfDay(),
+                    $fechaActual->copy()->endOfMonth()->endOfDay()
+                ])
+                // O tareas recurrentes que pueden aparecer en este mes
+                ->orWhere(function($q) use ($fechaActual) {
+                    $q->where('recurrencia', '!=', 'none')
+                      ->where('fecha_hora', '<=', $fechaActual->copy()->endOfMonth()->endOfDay())
+                      ->where(function($subQ) use ($fechaActual) {
+                          $subQ->whereNull('recurrencia_fin')
+                                ->orWhere('recurrencia_fin', '>=', $fechaActual->copy()->startOfMonth()->startOfDay());
+                      });
+                });
+            })
+            ->get();
+        
+        // Generar tareas recurrentes
+        $tareas = collect();
+        foreach ($tareasBase as $tarea) {
+            if ($tarea->recurrencia === 'none') {
+                // Tarea normal, agregarla solo si está en el mes
+                if ($tarea->fecha_hora && $tarea->fecha_hora->month == $mes && $tarea->fecha_hora->year == $ano) {
+                    $tareas->push($tarea);
+                }
+            } else {
+                // Tarea recurrente, generar todas las ocurrencias del mes
+                $fechaInicio = $tarea->fecha_hora->copy();
+                $fechaFin = $tarea->recurrencia_fin ? \Carbon\Carbon::parse($tarea->recurrencia_fin) : $fechaActual->copy()->endOfMonth();
+                $mesInicio = $fechaActual->copy()->startOfMonth();
+                $mesFin = $fechaActual->copy()->endOfMonth();
+                
+                // Ajustar fecha inicio si es anterior al mes actual
+                if ($fechaInicio->lt($mesInicio)) {
+                    if ($tarea->recurrencia === 'diaria') {
+                        $dias = ceil($mesInicio->diffInDays($fechaInicio));
+                        $fechaInicio = $fechaInicio->copy()->addDays($dias);
+                    } elseif ($tarea->recurrencia === 'semanal') {
+                        $semanas = ceil($mesInicio->diffInWeeks($fechaInicio));
+                        $fechaInicio = $fechaInicio->copy()->addWeeks($semanas);
+                    } elseif ($tarea->recurrencia === 'mensual') {
+                        $meses = ceil($mesInicio->diffInMonths($fechaInicio));
+                        $fechaInicio = $fechaInicio->copy()->addMonths($meses);
+                    }
+                }
+                
+                // Generar ocurrencias hasta el fin del mes o hasta recurrencia_fin
+                $fechaActualTarea = $fechaInicio->copy();
+                while ($fechaActualTarea->lte($mesFin) && $fechaActualTarea->lte($fechaFin)) {
+                    if ($fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
+                        $tareaRecurrente = clone $tarea;
+                        $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
+                        $tareas->push($tareaRecurrente);
+                    }
+                    
+                    // Avanzar según el tipo de recurrencia
+                    if ($tarea->recurrencia === 'diaria') {
+                        $fechaActualTarea->addDay();
+                    } elseif ($tarea->recurrencia === 'semanal') {
+                        $fechaActualTarea->addWeek();
+                    } elseif ($tarea->recurrencia === 'mensual') {
+                        $fechaActualTarea->addMonth();
+                    }
+                }
+            }
+        }
+        
+        $tareas = $tareas->groupBy(function($tarea) {
+            return $tarea->fecha_hora->format('Y-m-d');
+        });
         
         $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
         $listas = \App\Models\Lista::orderBy('nombre')->get();
@@ -538,7 +601,32 @@
                         name="fecha_hora" 
                         id="tarea_fecha_hora"
                         required
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
+                    <select 
+                        name="recurrencia" 
+                        id="tarea_recurrencia"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                        onchange="toggleTareaRecurrenciaFin()"
+                    >
+                        <option value="none">Sin recurrencia</option>
+                        <option value="diaria">Diaria</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="mensual">Mensual</option>
+                    </select>
+                </div>
+                
+                <div id="tarea_recurrencia_fin_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                    <input 
+                        type="datetime-local" 
+                        name="recurrencia_fin" 
+                        id="tarea_recurrencia_fin"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
                     >
                 </div>
                 
@@ -878,11 +966,22 @@
         });
         
         // Tarea Functions
+        function toggleTareaRecurrenciaFin() {
+            const recurrencia = document.getElementById('tarea_recurrencia').value;
+            const container = document.getElementById('tarea_recurrencia_fin_container');
+            if (recurrencia !== 'none') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+        
         function showNuevaTareaModal() {
             document.getElementById('tareaModalTitle').textContent = 'Nueva Tarea';
             document.getElementById('tarea-form').reset();
             document.getElementById('tarea_id').value = '';
             document.getElementById('deleteTareaBtn').classList.add('hidden');
+            document.getElementById('tarea_recurrencia_fin_container').classList.add('hidden');
             document.getElementById('tareaModal').classList.remove('hidden');
         }
         
@@ -963,6 +1062,9 @@
             document.getElementById('tarea_lista_id').value = tarea.lista_id || '';
             document.getElementById('tarea_fecha_hora').value = new Date(tarea.fecha_hora).toISOString().slice(0, 16);
             document.getElementById('tarea_tipo').value = tarea.tipo || '';
+            document.getElementById('tarea_recurrencia').value = tarea.recurrencia || 'none';
+            document.getElementById('tarea_recurrencia_fin').value = tarea.recurrencia_fin ? new Date(tarea.recurrencia_fin).toISOString().slice(0, 16) : '';
+            toggleTareaRecurrenciaFin();
             document.getElementById('deleteTareaBtn').classList.remove('hidden');
             
             closeCitaDetailModal();
@@ -1012,6 +1114,8 @@
                 lista_id: formData.get('lista_id') || null,
                 fecha_hora: formData.get('fecha_hora'),
                 tipo: formData.get('tipo') || null,
+                recurrencia: formData.get('recurrencia') || 'none',
+                recurrencia_fin: formData.get('recurrencia_fin') || null,
             };
             
             try {

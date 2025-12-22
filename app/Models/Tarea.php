@@ -14,10 +14,13 @@ class Tarea extends Model
         'tipo',
         'favorito',
         'estado',
+        'recurrencia',
+        'recurrencia_fin',
     ];
 
     protected $casts = [
         'fecha_hora' => 'datetime',
+        'recurrencia_fin' => 'datetime',
         'favorito' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

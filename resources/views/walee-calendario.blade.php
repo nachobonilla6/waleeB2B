@@ -285,10 +285,13 @@
                                     @php $mostrados++; @endphp
                                     @php
                                         $colorCita = $cita->color ?? '#10b981';
-                                        $colorRgb = sscanf($colorCita, "#%02x%02x%02x");
+                                        $colorHex = ltrim($colorCita, '#');
+                                        $r = hexdec(substr($colorHex, 0, 2));
+                                        $g = hexdec(substr($colorHex, 2, 2));
+                                        $b = hexdec(substr($colorHex, 4, 2));
                                         $colorBg = $cita->estado === 'completada' 
                                             ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                            : "background-color: rgba({$colorRgb[0]}, {$colorRgb[1]}, {$colorRgb[2]}, 0.2); color: {$colorCita};";
+                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorCita};";
                                     @endphp
                                     <button 
                                         onclick="showCitaDetail({{ $cita->id }})"

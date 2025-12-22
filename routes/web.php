@@ -390,6 +390,25 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
     }
 })->middleware(['auth'])->name('walee.tickets.store');
 
+Route::post('/walee-tickets/{id}/urgente', function ($id) {
+    try {
+        $ticket = \App\Models\Ticket::findOrFail($id);
+        $ticket->urgente = !$ticket->urgente;
+        $ticket->save();
+        
+        return response()->json([
+            'success' => true,
+            'urgente' => $ticket->urgente,
+            'message' => $ticket->urgente ? 'Ticket marcado como urgente' : 'Urgente removido',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.tickets.urgente');
+
 Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $request, $id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);

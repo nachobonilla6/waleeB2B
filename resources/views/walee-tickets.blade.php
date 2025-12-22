@@ -122,7 +122,7 @@
             <!-- Tickets List - Todos -->
             <div id="ticketsList-todos" class="tickets-container space-y-4 hidden">
                 @forelse($tickets as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -160,12 +160,28 @@
                                                     @endif">
                                                     {{ ucfirst($ticket->estado) }}
                                                 </span>
+                                                @if($ticket->urgente)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
+                                                        ⚠️ Urgente
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
-                                            {{ $ticket->created_at->diffForHumans() }}
-                                        </span>
+                                        <div class="flex items-center gap-2 flex-shrink-0">
+                                            <button 
+                                                onclick="toggleUrgente({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->urgente ? 'Quitar urgente' : 'Marcar como urgente' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->urgente ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                                {{ $ticket->created_at->diffForHumans() }}
+                                            </span>
+                                        </div>
                                     </div>
                                     
                                     <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">{{ $ticket->mensaje }}</p>
@@ -282,7 +298,7 @@
             <!-- Tickets List - Enviados -->
             <div id="ticketsList-enviados" class="tickets-container space-y-4 hidden">
                 @forelse($ticketsEnviados as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -301,12 +317,28 @@
                                                 <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">
                                                     Enviado
                                                 </span>
+                                                @if($ticket->urgente)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
+                                                        ⚠️ Urgente
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
-                                            {{ $ticket->created_at->diffForHumans() }}
-                                        </span>
+                                        <div class="flex items-center gap-2 flex-shrink-0">
+                                            <button 
+                                                onclick="toggleUrgente({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->urgente ? 'Quitar urgente' : 'Marcar como urgente' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->urgente ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                                {{ $ticket->created_at->diffForHumans() }}
+                                            </span>
+                                        </div>
                                     </div>
                                     
                                     <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">{{ $ticket->mensaje }}</p>
@@ -423,7 +455,7 @@
             <!-- Tickets List - Recibidos -->
             <div id="ticketsList-recibidos" class="tickets-container space-y-4">
                 @forelse($ticketsRecibidos as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -443,12 +475,28 @@
                                                 <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400">
                                                     Recibido
                                                 </span>
+                                                @if($ticket->urgente)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
+                                                        ⚠️ Urgente
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
-                                            {{ $ticket->created_at->diffForHumans() }}
-                                        </span>
+                                        <div class="flex items-center gap-2 flex-shrink-0">
+                                            <button 
+                                                onclick="toggleUrgente({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->urgente ? 'Quitar urgente' : 'Marcar como urgente' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->urgente ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                                {{ $ticket->created_at->diffForHumans() }}
+                                            </span>
+                                        </div>
                                     </div>
                                     
                                     <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">{{ $ticket->mensaje }}</p>
@@ -566,7 +614,7 @@
             <!-- Tickets List - Resueltos -->
             <div id="ticketsList-resueltos" class="tickets-container space-y-4 hidden">
                 @forelse($ticketsResueltos as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -585,6 +633,11 @@
                                                 <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
                                                     Resuelto
                                                 </span>
+                                                @if($ticket->urgente)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
+                                                        ⚠️ Urgente
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
@@ -776,6 +829,78 @@
                 if (data.success) {
                     showNotification('Estado actualizado', `Ticket #${ticketId} → ${newStatus}`, 'success');
                     setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('Error', data.message || 'No se pudo actualizar', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión', 'error');
+            }
+        }
+        
+        async function toggleUrgente(ticketId, buttonElement) {
+            try {
+                const response = await fetch(`/walee-tickets/${ticketId}/urgente`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const isUrgente = data.urgente;
+                    const svg = buttonElement.querySelector('svg');
+                    const ticketCard = buttonElement.closest('.ticket-card');
+                    const ticketIdSpan = ticketCard.querySelector('.text-xs.font-mono');
+                    const badgesContainer = ticketIdSpan ? ticketIdSpan.parentElement : null;
+                    
+                    // Update star icon
+                    if (isUrgente) {
+                        svg.classList.add('fill-current');
+                        svg.classList.remove('fill-none');
+                        buttonElement.classList.remove('text-slate-400', 'dark:text-slate-600');
+                        buttonElement.classList.add('text-yellow-500', 'dark:text-yellow-400');
+                        buttonElement.title = 'Quitar urgente';
+                        
+                        // Update border
+                        ticketCard.classList.remove('border-slate-200', 'dark:border-slate-700/50');
+                        ticketCard.classList.add('border-red-500', 'dark:border-red-500');
+                        
+                        // Add urgent badge if not exists
+                        if (badgesContainer) {
+                            const existingBadge = badgesContainer.querySelector('.bg-red-100');
+                            if (!existingBadge) {
+                                const badge = document.createElement('span');
+                                badge.className = 'text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30';
+                                badge.textContent = '⚠️ Urgente';
+                                badgesContainer.appendChild(badge);
+                            }
+                        }
+                        
+                        showNotification('Marcado como urgente', `Ticket #${ticketId} marcado como urgente`, 'success');
+                    } else {
+                        svg.classList.remove('fill-current');
+                        svg.classList.add('fill-none');
+                        buttonElement.classList.remove('text-yellow-500', 'dark:text-yellow-400');
+                        buttonElement.classList.add('text-slate-400', 'dark:text-slate-600');
+                        buttonElement.title = 'Marcar como urgente';
+                        
+                        // Update border
+                        ticketCard.classList.remove('border-red-500', 'dark:border-red-500');
+                        ticketCard.classList.add('border-slate-200', 'dark:border-slate-700/50');
+                        
+                        // Remove urgent badge
+                        if (badgesContainer) {
+                            const urgentBadge = badgesContainer.querySelector('.bg-red-100');
+                            if (urgentBadge) {
+                                urgentBadge.remove();
+                            }
+                        }
+                        
+                        showNotification('Urgente removido', `Ticket #${ticketId} ya no es urgente`, 'success');
+                    }
                 } else {
                     showNotification('Error', data.message || 'No se pudo actualizar', 'error');
                 }

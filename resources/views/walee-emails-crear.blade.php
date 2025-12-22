@@ -627,11 +627,22 @@
             const generateBtn = document.getElementById('generateBtn');
             const clienteId = document.getElementById('cliente_id').value;
             const aiPrompt = document.getElementById('ai_prompt').value;
+            const sitioId = document.getElementById('sitio_id').value;
             
             // Get client info from selected option in dropdown
             const selectedOption = document.querySelector(`.client-option[data-id="${clienteId}"]`);
             const clientName = selectedOption ? selectedOption.dataset.name : 'el cliente';
             const clientWebsite = selectedOption ? selectedOption.dataset.website : '';
+            
+            // Get site info if selected
+            let sitioNombre = '';
+            let sitioEnlace = '';
+            if (sitioId) {
+                const sitioSelect = document.getElementById('sitio_id');
+                const sitioOption = sitioSelect.options[sitioSelect.selectedIndex];
+                sitioNombre = sitioOption ? sitioOption.dataset.nombre || sitioOption.textContent.split(' - ')[0] : '';
+                sitioEnlace = sitioOption ? sitioOption.dataset.enlace || '' : '';
+            }
             
             // Disable button
             generateBtn.disabled = true;
@@ -655,6 +666,9 @@
                         ai_prompt: aiPrompt,
                         client_name: clientName,
                         client_website: clientWebsite,
+                        sitio_id: sitioId,
+                        sitio_nombre: sitioNombre,
+                        sitio_enlace: sitioEnlace,
                     }),
                 });
                 

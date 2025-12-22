@@ -721,12 +721,20 @@ Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request
         $clientName = $request->input('client_name', 'el cliente');
         $clientWebsite = $request->input('client_website', '');
         $aiPrompt = $request->input('ai_prompt', '');
+        $sitioId = $request->input('sitio_id');
+        $sitioNombre = $request->input('sitio_nombre', '');
+        $sitioEnlace = $request->input('sitio_enlace', '');
         
         // Construir el prompt
         if (empty($aiPrompt)) {
             $prompt = "Genera un email profesional de propuesta personalizada para {$clientName}";
             if ($clientWebsite) {
                 $prompt .= " cuyo sitio web es {$clientWebsite}";
+            }
+            
+            // Agregar información del sitio si está seleccionado
+            if ($sitioId && $sitioNombre && $sitioEnlace) {
+                $prompt .= ". IMPORTANTE: Incluye en el email que {$sitioNombre} ({$sitioEnlace}) es un ejemplo de los sitios/proyectos que hemos creado. Menciona esto de manera natural en el contenido del email, destacando que es uno de nuestros proyectos exitosos y que pueden visitarlo en: {$sitioEnlace}";
             }
             $prompt .= ". El email debe ser persuasivo, profesional y enfocado en ofrecer servicios de diseño web, marketing digital y desarrollo de software.";
         } else {

@@ -68,7 +68,7 @@
     <!-- Mobile Menu Dropdown (Bootstrap Style) -->
     <div 
         id="mobileMenu" 
-        class="sm:hidden w-full mt-2 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden mobile-menu-opaque"
+        class="sm:hidden w-full mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden"
         style="display: none;"
     >
         <div class="py-2">
@@ -120,18 +120,6 @@
 </header>
 
 <style>
-    .mobile-menu-opaque {
-        background-color: rgb(255, 255, 255) !important;
-    }
-    .dark .mobile-menu-opaque,
-    html.dark .mobile-menu-opaque {
-        background-color: rgb(15, 23, 42) !important;
-    }
-    @media (prefers-color-scheme: dark) {
-        .mobile-menu-opaque {
-            background-color: rgb(15, 23, 42) !important;
-        }
-    }
     #mobileMenu {
         position: relative !important;
     }
@@ -149,13 +137,14 @@
             // Open menu
             menu.style.display = 'block';
             menu.classList.remove('hidden');
-            // Force opaque background
+            // Ensure theme colors are applied
             if (document.documentElement.classList.contains('dark')) {
-                menu.style.backgroundColor = 'rgb(15, 23, 42)';
+                menu.classList.add('dark:bg-slate-900');
+                menu.classList.remove('bg-white');
             } else {
-                menu.style.backgroundColor = 'rgb(255, 255, 255)';
+                menu.classList.add('bg-white');
+                menu.classList.remove('dark:bg-slate-900');
             }
-            menu.style.zIndex = '9999';
             toggle.setAttribute('aria-expanded', 'true');
             
             // Animate hamburger to X

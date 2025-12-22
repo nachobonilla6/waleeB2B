@@ -99,6 +99,10 @@
             color: rgb(100, 116, 139) !important;
         }
         
+        .bottom-15 {
+            bottom: 4.5rem; /* 72px - entre bottom-24 (96px) y bottom-6 (24px) */
+        }
+        
         @keyframes fadeInUp {
             from {
                 opacity: 0;

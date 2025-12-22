@@ -644,10 +644,32 @@ Route::get('/walee-emails/sitios', function (\Illuminate\Http\Request $request) 
         ]);
     }
     
-    $sitios = \App\Models\Sitio::where('cliente_id', $clienteId)
+    // Buscar sitios por cliente_id directamente
+    // También buscar por nombre del cliente en caso de que el cliente_id no coincida
+    $client = \App\Models\Client::find($clienteId);
+    
+    $sitios = collect();
+    
+    if ($client) {
+        // Buscar sitios que coincidan con el nombre del cliente o el ID
+        $sitios = \App\Models\Sitio::where(function($query) use ($client, $clienteId) {
+            $query->where('cliente_id', $clienteId)
+                  ->orWhereHas('cliente', function($q) use ($client) {
+                      $q->where('nombre_empresa', 'like', '%' . $client->name . '%')
+                        ->orWhere('correo', $client->email);
+                  });
+        })
         ->where('en_linea', true)
         ->orderBy('nombre')
         ->get(['id', 'nombre', 'enlace', 'descripcion']);
+    }
+    
+    // Si no hay resultados, buscar todos los sitios en línea
+    if ($sitios->isEmpty()) {
+        $sitios = \App\Models\Sitio::where('en_linea', true)
+            ->orderBy('nombre')
+            ->get(['id', 'nombre', 'enlace', 'descripcion']);
+    }
     
     return response()->json([
         'success' => true,

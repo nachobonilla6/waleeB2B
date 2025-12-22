@@ -286,8 +286,13 @@
                         </div>
                         
                         <!-- Site Selection -->
-                        <div id="siteSelectionContainer" class="hidden">
-                            <label for="sitio_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Adjuntar sitio web (opcional)</label>
+                        <div id="siteSelectionContainer" class="mt-4">
+                            <label for="sitio_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                </svg>
+                                Adjuntar sitio web (opcional)
+                            </label>
                             <select 
                                 id="sitio_id" 
                                 name="sitio_id"
@@ -538,10 +543,17 @@
         
         // Load sites for selected client
         async function loadSitesForClient(clienteId) {
+            const sitioSelect = document.getElementById('sitio_id');
+            const siteContainer = document.getElementById('siteSelectionContainer');
+            
             if (!clienteId) {
-                document.getElementById('siteSelectionContainer').classList.add('hidden');
+                sitioSelect.innerHTML = '<option value="">Primero selecciona un cliente</option>';
+                sitioSelect.disabled = true;
                 return;
             }
+            
+            sitioSelect.disabled = true;
+            sitioSelect.innerHTML = '<option value="">Cargando sitios...</option>';
             
             try {
                 const response = await fetch(`{{ route('walee.emails.sitios') }}?cliente_id=${clienteId}`, {
@@ -552,25 +564,26 @@
                 
                 const data = await response.json();
                 
-                const sitioSelect = document.getElementById('sitio_id');
                 sitioSelect.innerHTML = '<option value="">Seleccionar sitio...</option>';
                 
                 if (data.success && data.sitios && data.sitios.length > 0) {
                     data.sitios.forEach(sitio => {
                         const option = document.createElement('option');
                         option.value = sitio.id;
-                        option.textContent = sitio.nombre;
+                        option.textContent = sitio.nombre + (sitio.enlace ? ' - ' + sitio.enlace : '');
                         option.dataset.enlace = sitio.enlace || '';
                         option.dataset.nombre = sitio.nombre || '';
                         sitioSelect.appendChild(option);
                     });
-                    document.getElementById('siteSelectionContainer').classList.remove('hidden');
+                    sitioSelect.disabled = false;
                 } else {
-                    document.getElementById('siteSelectionContainer').classList.add('hidden');
+                    sitioSelect.innerHTML = '<option value="">No hay sitios disponibles para este cliente</option>';
+                    sitioSelect.disabled = true;
                 }
             } catch (error) {
                 console.error('Error loading sites:', error);
-                document.getElementById('siteSelectionContainer').classList.add('hidden');
+                sitioSelect.innerHTML = '<option value="">Error al cargar sitios</option>';
+                sitioSelect.disabled = true;
             }
         }
         

@@ -633,6 +633,28 @@ Route::get('/walee-emails/crear', function () {
     return view('walee-emails-crear');
 })->middleware(['auth'])->name('walee.emails.crear');
 
+Route::get('/walee-emails/sitios', function (\Illuminate\Http\Request $request) {
+    $clienteId = $request->get('cliente_id');
+    
+    if (!$clienteId) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Cliente ID requerido',
+            'sitios' => []
+        ]);
+    }
+    
+    $sitios = \App\Models\Sitio::where('cliente_id', $clienteId)
+        ->where('en_linea', true)
+        ->orderBy('nombre')
+        ->get(['id', 'nombre', 'enlace', 'descripcion']);
+    
+    return response()->json([
+        'success' => true,
+        'sitios' => $sitios
+    ]);
+})->middleware(['auth'])->name('walee.emails.sitios');
+
 Route::get('/walee-emails/enviados', function () {
     return view('walee-emails-enviados');
 })->middleware(['auth'])->name('walee.emails.enviados');

@@ -96,6 +96,16 @@
             ->groupBy('cliente_id')
             ->pluck('total', 'cliente_id')
             ->toArray();
+        
+        // Obtener sitios del cliente si hay cliente_id en la URL
+        $clienteIdFromUrl = request()->get('cliente_id');
+        $sitios = collect();
+        if ($clienteIdFromUrl) {
+            $sitios = \App\Models\Sitio::where('cliente_id', $clienteIdFromUrl)
+                ->where('en_linea', true)
+                ->orderBy('nombre')
+                ->get();
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -271,6 +281,32 @@
                                 name="email" 
                                 required
                                 placeholder="cliente@correo.com"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
+                        <!-- Site Selection -->
+                        <div id="siteSelectionContainer" class="hidden">
+                            <label for="sitio_id" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Adjuntar sitio web (opcional)</label>
+                            <select 
+                                id="sitio_id" 
+                                name="sitio_id"
+                                onchange="handleSiteSelection(this.value)"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            >
+                                <option value="">Seleccionar sitio...</option>
+                            </select>
+                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-2">Si seleccionas un sitio, se agregará automáticamente al contenido del email mencionando que es uno de los proyectos creados.</p>
+                        </div>
+                        
+                        <!-- Enlace Field -->
+                        <div id="enlaceContainer" class="hidden">
+                            <label for="enlace" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Enlace del sitio</label>
+                            <input 
+                                type="url" 
+                                id="enlace" 
+                                name="enlace" 
+                                placeholder="https://ejemplo.com"
                                 class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
                             >
                         </div>
@@ -487,6 +523,9 @@
             
             clienteInfo.classList.remove('hidden');
             
+            // Load sites for this client
+            loadSitesForClient(id);
+            
             // Close dropdown
             document.getElementById('dropdownPanel').classList.add('hidden');
             document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
@@ -497,13 +536,78 @@
             filterClients('');
         }
         
-        // Clear client selection
-        function clearClient() {
-            document.getElementById('cliente_id').value = '';
-            document.getElementById('selectedClientText').innerHTML = '<span class="text-slate-500 dark:text-slate-400">Seleccionar cliente...</span>';
-            document.getElementById('email').value = '';
-            document.getElementById('clienteInfo').classList.add('hidden');
+        // Load sites for selected client
+        async function loadSitesForClient(clienteId) {
+            if (!clienteId) {
+                document.getElementById('siteSelectionContainer').classList.add('hidden');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`{{ route('walee.emails.sitios') }}?cliente_id=${clienteId}`, {
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                const sitioSelect = document.getElementById('sitio_id');
+                sitioSelect.innerHTML = '<option value="">Seleccionar sitio...</option>';
+                
+                if (data.success && data.sitios && data.sitios.length > 0) {
+                    data.sitios.forEach(sitio => {
+                        const option = document.createElement('option');
+                        option.value = sitio.id;
+                        option.textContent = sitio.nombre;
+                        option.dataset.enlace = sitio.enlace || '';
+                        option.dataset.nombre = sitio.nombre || '';
+                        sitioSelect.appendChild(option);
+                    });
+                    document.getElementById('siteSelectionContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('siteSelectionContainer').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading sites:', error);
+                document.getElementById('siteSelectionContainer').classList.add('hidden');
+            }
         }
+        
+        // Handle site selection
+        function handleSiteSelection(sitioId) {
+            const sitioSelect = document.getElementById('sitio_id');
+            const selectedOption = sitioSelect.options[sitioSelect.selectedIndex];
+            const enlaceField = document.getElementById('enlace');
+            const enlaceContainer = document.getElementById('enlaceContainer');
+            const bodyField = document.getElementById('body');
+            const clienteId = document.getElementById('cliente_id').value;
+            const selectedClientOption = document.querySelector(`.client-option[data-id="${clienteId}"]`);
+            const clientName = selectedClientOption ? selectedClientOption.dataset.name : 'el cliente';
+            
+            if (sitioId && selectedOption) {
+                const enlace = selectedOption.dataset.enlace || '';
+                const sitioNombre = selectedOption.dataset.nombre || 'este sitio';
+                
+                // Update enlace field
+                enlaceField.value = enlace;
+                enlaceContainer.classList.remove('hidden');
+                
+                // Add site mention to email body
+                const currentBody = bodyField.value;
+                const siteMention = `\n\nTe comparto que ${sitioNombre} es uno de los proyectos que hemos creado para ti. Puedes visitarlo en: ${enlace}\n\n`;
+                
+                // Only add if not already present
+                if (!currentBody.includes(enlace)) {
+                    bodyField.value = currentBody + siteMention;
+                }
+            } else {
+                // Clear enlace if no site selected
+                enlaceField.value = '';
+                enlaceContainer.classList.add('hidden');
+            }
+        }
+        
         
         // Generate with AI
         async function generateWithAI() {
@@ -681,6 +785,18 @@
                 }
             }
         });
+        
+        // Clear client selection also clears site selection
+        function clearClient() {
+            document.getElementById('cliente_id').value = '';
+            document.getElementById('selectedClientText').innerHTML = '<span class="text-slate-500 dark:text-slate-400">Seleccionar cliente...</span>';
+            document.getElementById('email').value = '';
+            document.getElementById('clienteInfo').classList.add('hidden');
+            document.getElementById('siteSelectionContainer').classList.add('hidden');
+            document.getElementById('enlaceContainer').classList.add('hidden');
+            document.getElementById('sitio_id').value = '';
+            document.getElementById('enlace').value = '';
+        }
     </script>
     @include('partials.walee-support-button')
 </body>

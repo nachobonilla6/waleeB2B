@@ -243,28 +243,8 @@
         
         <!-- Main Content -->
         <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-4 sm:mb-6 animate-fade-in-up">
-                <div class="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-                    <a href="{{ route('walee.dashboard') }}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none flex-shrink-0">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div class="min-w-0 flex-1">
-                        <h1 class="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-1 sm:gap-2">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-emerald-500 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="truncate">Calendario</span>
-                        </h1>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $meses[$mes] }} {{ $ano }}</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                    @include('partials.walee-dark-mode-toggle')
-                </div>
-            </header>
+            @php $pageTitle = 'Calendario · ' . $meses[$mes] . ' ' . $ano; @endphp
+            @include('partials.walee-navbar')
             
             <!-- Calendar Controls -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">

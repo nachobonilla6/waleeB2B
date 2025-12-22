@@ -82,27 +82,8 @@
         
         <!-- Main Content -->
         <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-6 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Tickets de Soporte
-                        </h1>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    @include('partials.walee-dark-mode-toggle')
-                </div>
-            </header>
+            @php $pageTitle = 'Tickets de Soporte'; @endphp
+            @include('partials.walee-navbar')
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

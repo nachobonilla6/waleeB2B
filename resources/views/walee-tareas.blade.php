@@ -116,27 +116,8 @@
         
         <!-- Main Content -->
         <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-6 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                            </svg>
-                            Tareas
-                        </h1>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    @include('partials.walee-dark-mode-toggle')
-                </div>
-            </header>
+            @php $pageTitle = 'Tareas'; @endphp
+            @include('partials.walee-navbar')
             
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">

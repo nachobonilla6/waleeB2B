@@ -103,33 +103,11 @@
         
         <!-- Header -->
         <header class="relative flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-inset-top">
-            <div class="max-w-3xl mx-auto flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    
-                    <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <div class="w-11 h-11 rounded-full bg-gradient-to-br from-walee-400 to-walee-600 p-0.5" style="animation: pulse-glow 3s infinite;">
-                                <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-full h-full rounded-full object-cover">
-                            </div>
-                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></span>
-                        </div>
-                        <div>
-                            <h1 class="text-lg font-semibold text-slate-900 dark:text-white">Walee</h1>
-                            <p class="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 bg-emerald-500 dark:bg-emerald-400 rounded-full"></span>
-                                En línea
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            <div class="max-w-3xl mx-auto">
+                @php $pageTitle = 'Chat'; @endphp
+                @include('partials.walee-navbar')
                 
-                <div class="flex items-center gap-2">
-                    @include('partials.walee-dark-mode-toggle')
+                <div class="flex items-center justify-center gap-2 mt-2">
                     <!-- Voice Toggle -->
                     <button id="voice-toggle" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-walee-500/50 transition-all shadow-sm dark:shadow-none" data-enabled="true">
                         <svg id="voice-icon" class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

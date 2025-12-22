@@ -68,8 +68,8 @@
     <!-- Mobile Menu Dropdown (Bootstrap Style) -->
     <div 
         id="mobileMenu" 
-        class="sm:hidden absolute top-full left-0 right-0 mt-2 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden mobile-menu-opaque"
-        style="display: none; z-index: 9999 !important;"
+        class="sm:hidden w-full mt-2 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden mobile-menu-opaque"
+        style="display: none;"
     >
         <div class="py-2">
             <a 
@@ -133,8 +133,7 @@
         }
     }
     #mobileMenu {
-        z-index: 9999 !important;
-        position: absolute !important;
+        position: relative !important;
     }
 </style>
 

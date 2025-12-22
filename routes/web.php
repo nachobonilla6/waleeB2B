@@ -1547,7 +1547,7 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             'image_url' => $imageUrl,
         ]);
         
-        // Enviar webhook con los datos y fotos
+        // Enviar webhook con los datos y URLs de fotos
         try {
             $webhookUrl = $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6';
             $pageId = $cliente->page_id ?? '';
@@ -1557,67 +1557,31 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             if (empty($webhookUrl)) {
                 \Log::warning('No hay webhook URL configurado para el cliente ' . $cliente->id);
             } else {
-                $client = new \GuzzleHttp\Client();
-                
                 // Generar URLs públicas de las imágenes
                 $imagenesUrls = [];
                 foreach ($fotosPaths as $path) {
                     $imagenesUrls[] = asset('storage/' . $path);
                 }
                 
-                $multipartData = [
-                    [
-                        'name' => 'webhook_url',
-                        'contents' => $webhookUrl,
-                    ],
-                    [
-                        'name' => 'page_id',
-                        'contents' => $pageId,
-                    ],
-                    [
-                        'name' => 'token',
-                        'contents' => $token,
-                    ],
-                    [
-                        'name' => 'texto_publicacion',
-                        'contents' => $request->input('content'),
-                    ],
-                    [
-                        'name' => 'cliente_id',
-                        'contents' => (string) $cliente->id,
-                    ],
-                    [
-                        'name' => 'cliente_nombre',
-                        'contents' => $cliente->name,
-                    ],
-                    [
-                        'name' => 'publicacion_id',
-                        'contents' => (string) $publicacion->id,
-                    ],
+                // Enviar como JSON en lugar de multipart para facilitar el uso de URLs
+                $webhookData = [
+                    'webhook_url' => $webhookUrl,
+                    'page_id' => $pageId,
+                    'token' => $token,
+                    'texto_publicacion' => $request->input('content'),
+                    'cliente_id' => $cliente->id,
+                    'cliente_nombre' => $cliente->name,
+                    'publicacion_id' => $publicacion->id,
+                    'imagenes_urls' => $imagenesUrls, // Array de URLs públicas
                 ];
                 
-                // Agregar URLs de imágenes como JSON
-                if (!empty($imagenesUrls)) {
-                    $multipartData[] = [
-                        'name' => 'imagenes_urls',
-                        'contents' => json_encode($imagenesUrls),
-                    ];
-                }
-                
-                // Agregar fotos como archivos al webhook (para compatibilidad con n8n)
-                if ($request->hasFile('fotos')) {
-                    foreach ($request->file('fotos') as $index => $foto) {
-                        $multipartData[] = [
-                            'name' => 'fotos[]',
-                            'contents' => fopen($foto->getRealPath(), 'r'),
-                            'filename' => $foto->getClientOriginalName(),
-                        ];
-                    }
-                }
-                
+                $client = new \GuzzleHttp\Client();
                 $client->post($webhookUrl, [
-                    'multipart' => $multipartData,
+                    'json' => $webhookData,
                     'timeout' => 30,
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
                 ]);
             }
         } catch (\Exception $webhookError) {

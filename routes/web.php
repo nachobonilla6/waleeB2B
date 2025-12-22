@@ -149,6 +149,67 @@ Route::get('/walee-calendario', function () {
     return view('walee-calendario');
 })->middleware(['auth'])->name('walee.calendario');
 
+Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia) {
+    $fecha = \Carbon\Carbon::create($ano, $mes, $dia);
+    
+    // Obtener citas del día
+    $citas = \App\Models\Cita::with('cliente')
+        ->whereDate('fecha_inicio', $fecha->format('Y-m-d'))
+        ->orderBy('fecha_inicio', 'asc')
+        ->get();
+    
+    // Obtener tareas del día
+    $tareas = \App\Models\Tarea::with('lista')
+        ->whereNotNull('fecha_hora')
+        ->whereDate('fecha_hora', $fecha->format('Y-m-d'))
+        ->orderBy('fecha_hora', 'asc')
+        ->get();
+    
+    // Combinar y ordenar por hora
+    $items = collect();
+    
+    foreach ($citas as $cita) {
+        $items->push([
+            'tipo' => 'cita',
+            'id' => $cita->id,
+            'titulo' => $cita->titulo,
+            'hora' => $cita->fecha_inicio,
+            'hora_fin' => $cita->fecha_fin,
+            'color' => $cita->color ?? '#10b981',
+            'estado' => $cita->estado,
+            'cliente' => $cita->cliente->nombre_empresa ?? null,
+            'ubicacion' => $cita->ubicacion,
+            'descripcion' => $cita->descripcion,
+            'data' => $cita
+        ]);
+    }
+    
+    foreach ($tareas as $tarea) {
+        $items->push([
+            'tipo' => 'tarea',
+            'id' => $tarea->id,
+            'titulo' => $tarea->texto,
+            'hora' => $tarea->fecha_hora,
+            'hora_fin' => null,
+            'color' => '#8b5cf6', // Violeta para tareas
+            'estado' => $tarea->estado,
+            'tipo_tarea' => $tarea->tipo,
+            'lista' => $tarea->lista->nombre ?? null,
+            'data' => $tarea
+        ]);
+    }
+    
+    $items = $items->sortBy('hora');
+    
+    $meses = [
+        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+    ];
+    
+    return view('walee-calendario-dia', compact('fecha', 'items', 'meses', 'citas', 'tareas'));
+})->middleware(['auth'])->name('walee.calendario.dia');
+
 // Rutas para Citas
 Route::post('/citas', function (\Illuminate\Http\Request $request) {
     try {

@@ -146,7 +146,7 @@
                                                         📍 {{ $item['ubicacion'] }}
                                                     </p>
                                                 @endif
-                                                @if($item['descripcion'])
+                                                @if(isset($item['descripcion']) && $item['descripcion'])
                                                     <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
                                                         {{ $item['descripcion'] }}
                                                     </p>

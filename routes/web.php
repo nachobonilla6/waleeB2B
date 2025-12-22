@@ -195,6 +195,7 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
             'estado' => $tarea->estado,
             'tipo_tarea' => $tarea->tipo,
             'lista' => $tarea->lista->nombre ?? null,
+            'descripcion' => null, // Las tareas no tienen descripción
             'data' => $tarea
         ]);
     }

@@ -179,7 +179,7 @@
                                 <!-- Checkbox -->
                                 <input 
                                     type="checkbox" 
-                                    class="client-checkbox w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer"
+                                    class="client-checkbox w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer hidden"
                                     data-client-id="{{ $cliente->id }}"
                                     data-client-name="{{ $cliente->name }}"
                                     onchange="updateDeleteButton()"
@@ -312,8 +312,30 @@
         // Toggle actions menu
         function toggleActionsMenu() {
             const menu = document.getElementById('actionsMenu');
+            const checkboxes = document.querySelectorAll('.client-checkbox');
+            
             if (menu) {
+                const isHidden = menu.classList.contains('hidden');
                 menu.classList.toggle('hidden');
+                
+                // Show/hide checkboxes based on menu state
+                checkboxes.forEach(checkbox => {
+                    if (isHidden) {
+                        // Opening menu - show checkboxes
+                        checkbox.classList.remove('hidden');
+                    } else {
+                        // Closing menu - hide checkboxes and uncheck them
+                        checkbox.classList.add('hidden');
+                        checkbox.checked = false;
+                    }
+                });
+                
+                // Update delete button and select all checkbox
+                updateDeleteButton();
+                const selectAllCheckbox = document.getElementById('selectAll');
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = false;
+                }
             }
         }
         

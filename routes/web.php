@@ -1372,6 +1372,91 @@ Route::post('/listas', function (\Illuminate\Http\Request $request) {
 })->middleware(['auth'])->name('listas.store');
 
 // Ruta para crear publicación del cliente
+// API para generar publicación de Facebook con AI
+Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Falta OPENAI_API_KEY. Configura la API key en el servidor.',
+            ], 500);
+        }
+        
+        $cliente = \App\Models\Client::findOrFail($id);
+        $aiPrompt = $request->input('ai_prompt', '');
+        
+        // Construir el prompt
+        if (empty($aiPrompt)) {
+            $prompt = "Genera una publicación profesional para Facebook para {$cliente->name}";
+            if ($cliente->website) {
+                $prompt .= " cuyo sitio web es {$cliente->website}";
+            }
+            $prompt .= ". La publicación debe ser atractiva, profesional y optimizada para redes sociales. Debe tener máximo 500 caracteres, ser persuasiva, incluir emojis apropiados y un llamado a la acción claro.";
+        } else {
+            $prompt = "Genera una publicación profesional para Facebook. {$aiPrompt}";
+            if ($cliente->name) {
+                $prompt .= " El cliente se llama {$cliente->name}.";
+            }
+            if ($cliente->website) {
+                $prompt .= " Su sitio web es {$cliente->website}.";
+            }
+            $prompt .= " La publicación debe tener máximo 500 caracteres, ser atractiva, incluir emojis apropiados y un llamado a la acción claro.";
+        }
+        
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            ->acceptJson()
+            ->timeout(120)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'response_format' => ['type' => 'json_object'],
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => 'Eres un experto en marketing digital y redes sociales, especialmente Facebook. Genera publicaciones profesionales, atractivas y optimizadas para Facebook. Las publicaciones deben ser concisas (máximo 500 caracteres), persuasivas, incluir emojis apropiados y tener un llamado a la acción claro. Responde SOLO con JSON que contenga "content" (texto de la publicación completa).',
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt . ' Responde en JSON con "content".',
+                    ],
+                ],
+            ]);
+        
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $content = $responseData['choices'][0]['message']['content'] ?? '';
+            
+            if (empty($content)) {
+                throw new \RuntimeException('La respuesta de AI está vacía.');
+            }
+            
+            $data = is_string($content) ? json_decode($content, true) : $content;
+            
+            if (!is_array($data)) {
+                throw new \RuntimeException('La respuesta de AI no es JSON válido.');
+            }
+            
+            $publicacionContent = trim($data['content'] ?? '');
+            
+            if (empty($publicacionContent)) {
+                throw new \RuntimeException('El contenido de la publicación está vacío.');
+            }
+            
+            return response()->json([
+                'success' => true,
+                'content' => $publicacionContent,
+            ]);
+        } else {
+            throw new \Exception('Error en la respuesta de OpenAI: ' . $response->status());
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.publicaciones.generar');
+
 Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);

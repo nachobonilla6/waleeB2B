@@ -80,15 +80,40 @@
                     
                     <form id="publicacion-form" class="space-y-4" enctype="multipart/form-data">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la publicación</label>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Texto de la publicación</label>
+                                <button 
+                                    type="button"
+                                    id="generateAIBtn"
+                                    onclick="generatePublicacionWithAI()"
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 border border-walee-500/30 transition-all text-xs font-medium"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                    </svg>
+                                    <span>Generar con AI</span>
+                                </button>
+                            </div>
                             <textarea 
                                 name="content" 
+                                id="publicacion_content"
                                 rows="5"
                                 required
                                 placeholder="Escribe el texto que aparecerá en la publicación de Facebook..."
                                 class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                             ></textarea>
                             <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Máximo recomendado: 500 caracteres</p>
+                        </div>
+                        
+                        <!-- AI Prompt (opcional) -->
+                        <div class="hidden" id="aiPromptContainer">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Instrucciones para AI (opcional)</label>
+                            <input 
+                                type="text" 
+                                id="ai_prompt"
+                                placeholder="Ej: Publicación sobre nuestros servicios de diseño web..."
+                                class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
+                            >
                         </div>
                         
                         <div>
@@ -308,6 +333,58 @@
                 }
             } else {
                 label.textContent = 'Subir fotos';
+            }
+        }
+
+        // Generate publicación with AI
+        async function generatePublicacionWithAI() {
+            const generateBtn = document.getElementById('generateAIBtn');
+            const contentTextarea = document.getElementById('publicacion_content');
+            const aiPromptInput = document.getElementById('ai_prompt');
+            const aiPrompt = aiPromptInput ? aiPromptInput.value.trim() : '';
+            
+            if (!generateBtn || !contentTextarea) return;
+            
+            // Disable button
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generando...</span>
+            `;
+            
+            try {
+                const response = await fetch(`/walee-cliente/{{ $cliente->id }}/publicaciones/generar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        ai_prompt: aiPrompt
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    contentTextarea.value = data.content;
+                    alert('✅ Publicación generada con AI correctamente');
+                } else {
+                    alert('Error: ' + (data.message || 'Error al generar publicación'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                    </svg>
+                    <span>Generar con AI</span>
+                `;
             }
         }
 

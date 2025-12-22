@@ -426,6 +426,18 @@
                 </h2>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <!-- Sidebar Verde -->
+                    <div class="col-span-2 sm:col-span-1 bg-emerald-500 dark:bg-emerald-600 rounded-2xl p-6 border border-emerald-600 dark:border-emerald-700 shadow-lg">
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="w-16 h-16 rounded-xl bg-white/20 dark:bg-white/10 flex items-center justify-center mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">Menú</h3>
+                            <p class="text-sm text-emerald-100">Acceso rápido</p>
+                        </div>
+                    </div>
                     <a href="{{ route('walee.clientes') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900/50 border border-black dark:border-black hover:border-black dark:hover:border-black hover:bg-emerald-400/5 dark:hover:bg-emerald-400/5 transition-all duration-300">
                         <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

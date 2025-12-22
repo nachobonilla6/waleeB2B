@@ -95,10 +95,10 @@
                     <button onclick="switchTab('todos')" id="tab-todos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
                         <span class="hidden sm:inline">Todos </span>({{ $totalTickets }})
                     </button>
-                    <button onclick="switchTab('enviados')" id="tab-enviados" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-walee-500 text-white">
+                    <button onclick="switchTab('enviados')" id="tab-enviados" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
                         <span class="hidden sm:inline">Enviados </span>({{ $enviados }})
                     </button>
-                    <button onclick="switchTab('recibidos')" id="tab-recibidos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                    <button onclick="switchTab('recibidos')" id="tab-recibidos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-walee-500 text-white">
                         <span class="hidden sm:inline">Recibidos </span>({{ $recibidos }})
                     </button>
                     <button onclick="switchTab('resueltos')" id="tab-resueltos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
@@ -257,7 +257,7 @@
             </div>
             
             <!-- Tickets List - Enviados -->
-            <div id="ticketsList-enviados" class="tickets-container space-y-4">
+            <div id="ticketsList-enviados" class="tickets-container space-y-4 hidden">
                 @forelse($ticketsEnviados as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
@@ -387,7 +387,7 @@
             </div>
             
             <!-- Tickets List - Recibidos -->
-            <div id="ticketsList-recibidos" class="tickets-container space-y-4 hidden">
+            <div id="ticketsList-recibidos" class="tickets-container space-y-4">
                 @forelse($ticketsRecibidos as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">

@@ -68,7 +68,7 @@
             
             <!-- Header del Día -->
             <div class="mb-6 animate-fade-in-up">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                     <div>
                         <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
                             {{ $fecha->format('l') }}, {{ $fecha->day }} de {{ $meses[$fecha->month] }} de {{ $fecha->year }}
@@ -77,12 +77,32 @@
                             {{ $items->count() }} {{ $items->count() === 1 ? 'evento' : 'eventos' }}
                         </p>
                     </div>
-                    <a href="{{ route('walee.calendario', ['mes' => $fecha->month, 'ano' => $fecha->year]) }}" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all border border-slate-300 dark:border-slate-700 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        <span class="hidden sm:inline">Volver al calendario</span>
-                    </a>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button 
+                            onclick="showNuevaCitaModal()"
+                            class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                        >
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span class="text-sm">Nueva Cita</span>
+                        </button>
+                        <button 
+                            onclick="showNuevaTareaModal()"
+                            class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                        >
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span class="text-sm">Nueva Tarea</span>
+                        </button>
+                        <a href="{{ route('walee.calendario', ['mes' => $fecha->month, 'ano' => $fecha->year]) }}" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all border border-slate-300 dark:border-slate-700 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span class="hidden sm:inline">Volver</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             
@@ -158,19 +178,41 @@
                                                 @endif
                                             </div>
                                             
-                                            <!-- Time -->
-                                            <div class="text-right flex-shrink-0">
-                                                <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                                                    {{ $hora->format('H:i') }}
+                                            <!-- Time and Actions -->
+                                            <div class="text-right flex-shrink-0 flex flex-col items-end gap-2">
+                                                <div>
+                                                    <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                                                        {{ $hora->format('H:i') }}
+                                                    </div>
+                                                    @if($horaFin)
+                                                        <div class="text-sm text-slate-600 dark:text-slate-400">
+                                                            - {{ $horaFin->format('H:i') }}
+                                                        </div>
+                                                        <div class="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                                            {{ $hora->diffInMinutes($horaFin) }} min
+                                                        </div>
+                                                    @endif
                                                 </div>
-                                                @if($horaFin)
-                                                    <div class="text-sm text-slate-600 dark:text-slate-400">
-                                                        - {{ $horaFin->format('H:i') }}
-                                                    </div>
-                                                    <div class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                                                        {{ $hora->diffInMinutes($horaFin) }} min
-                                                    </div>
-                                                @endif
+                                                <div class="flex items-center gap-1">
+                                                    <button 
+                                                        onclick="{{ $item['tipo'] === 'cita' ? 'editCita(' . $item['id'] . ')' : 'editTarea(' . $item['id'] . ')' }}"
+                                                        class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all"
+                                                        title="Editar"
+                                                    >
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button 
+                                                        onclick="{{ $item['tipo'] === 'cita' ? 'deleteCitaConfirm(' . $item['id'] . ')' : 'deleteTareaConfirm(' . $item['id'] . ')' }}"
+                                                        class="p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-500/20 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 transition-all"
+                                                        title="Eliminar"
+                                                    >
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -198,6 +240,345 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal Nueva/Editar Cita -->
+    <div id="citaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Nueva Cita</h3>
+                <button onclick="closeCitaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="cita-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="cita_id" id="cita_id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Título</label>
+                    <input type="text" name="titulo" id="titulo" required placeholder="Título de la cita" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente</label>
+                    <select name="cliente_id" id="cliente_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        <option value="">Sin cliente</option>
+                        @foreach($clientes as $cliente)
+                            <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora de Inicio</label>
+                    <input type="datetime-local" name="fecha_inicio" id="fecha_inicio" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora de Fin (opcional)</label>
+                    <input type="datetime-local" name="fecha_fin" id="fecha_fin" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Ubicación (opcional)</label>
+                    <input type="text" name="ubicacion" id="ubicacion" placeholder="Ubicación de la cita" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción (opcional)</label>
+                    <textarea name="descripcion" id="descripcion" rows="3" placeholder="Descripción de la cita..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="color" id="color" value="#10b981" class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
+                        <input type="text" id="color_text" value="#10b981" placeholder="#10b981" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all" onchange="document.getElementById('color').value = this.value">
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all">Guardar</button>
+                    <button type="button" id="deleteBtn" onclick="deleteCita()" class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal Nueva/Editar Tarea -->
+    <div id="tareaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="tareaModalTitle">Nueva Tarea</h3>
+                <button onclick="closeTareaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="tarea-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="tarea_id" id="tarea_id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la Tarea</label>
+                    <input type="text" name="texto" id="tarea_texto" required placeholder="Descripción de la tarea" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Lista</label>
+                    <select name="lista_id" id="tarea_lista_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        <option value="">Sin lista</option>
+                        @foreach($listas as $lista)
+                            <option value="{{ $lista->id }}">{{ $lista->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora</label>
+                    <input type="datetime-local" name="fecha_hora" id="tarea_fecha_hora" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                    <input type="text" name="tipo" id="tarea_tipo" list="tipos-list" placeholder="Tipo de tarea (opcional)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    <datalist id="tipos-list">
+                        @foreach($tiposExistentes as $tipo)
+                            <option value="{{ $tipo }}">
+                        @endforeach
+                    </datalist>
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all">Guardar</button>
+                    <button type="button" id="deleteTareaBtn" onclick="deleteTarea()" class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const citasData = @json($citas);
+        const tareasData = @json($tareas);
+        const fechaActual = '{{ $fecha->format("Y-m-d") }}';
+        
+        // Sincronizar color picker
+        document.getElementById('color')?.addEventListener('input', function(e) {
+            document.getElementById('color_text').value = e.target.value;
+        });
+        document.getElementById('color_text')?.addEventListener('input', function(e) {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                document.getElementById('color').value = e.target.value;
+            }
+        });
+        
+        function showNuevaCitaModal() {
+            document.getElementById('modalTitle').textContent = 'Nueva Cita';
+            document.getElementById('cita-form').reset();
+            document.getElementById('cita_id').value = '';
+            document.getElementById('deleteBtn').classList.add('hidden');
+            document.getElementById('fecha_inicio').value = fechaActual + 'T09:00';
+            document.getElementById('color').value = '#10b981';
+            document.getElementById('color_text').value = '#10b981';
+            document.getElementById('citaModal').classList.remove('hidden');
+        }
+        
+        function closeCitaModal() {
+            document.getElementById('citaModal').classList.add('hidden');
+        }
+        
+        function showNuevaTareaModal() {
+            document.getElementById('tareaModalTitle').textContent = 'Nueva Tarea';
+            document.getElementById('tarea-form').reset();
+            document.getElementById('tarea_id').value = '';
+            document.getElementById('deleteTareaBtn').classList.add('hidden');
+            document.getElementById('tarea_fecha_hora').value = fechaActual + 'T09:00';
+            document.getElementById('tareaModal').classList.remove('hidden');
+        }
+        
+        function closeTareaModal() {
+            document.getElementById('tareaModal').classList.add('hidden');
+        }
+        
+        function editCita(citaId) {
+            const cita = citasData.find(c => c.id === citaId);
+            if (!cita) return;
+            
+            document.getElementById('modalTitle').textContent = 'Editar Cita';
+            document.getElementById('cita_id').value = cita.id;
+            document.getElementById('titulo').value = cita.titulo;
+            document.getElementById('cliente_id').value = cita.cliente_id || '';
+            document.getElementById('fecha_inicio').value = new Date(cita.fecha_inicio).toISOString().slice(0, 16);
+            document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
+            document.getElementById('ubicacion').value = cita.ubicacion || '';
+            document.getElementById('descripcion').value = cita.descripcion || '';
+            document.getElementById('color').value = cita.color || '#10b981';
+            document.getElementById('color_text').value = cita.color || '#10b981';
+            document.getElementById('deleteBtn').classList.remove('hidden');
+            document.getElementById('citaModal').classList.remove('hidden');
+        }
+        
+        function editTarea(tareaId) {
+            const tarea = tareasData.find(t => t.id === tareaId);
+            if (!tarea) return;
+            
+            document.getElementById('tareaModalTitle').textContent = 'Editar Tarea';
+            document.getElementById('tarea_id').value = tarea.id;
+            document.getElementById('tarea_texto').value = tarea.texto;
+            document.getElementById('tarea_lista_id').value = tarea.lista_id || '';
+            document.getElementById('tarea_fecha_hora').value = new Date(tarea.fecha_hora).toISOString().slice(0, 16);
+            document.getElementById('tarea_tipo').value = tarea.tipo || '';
+            document.getElementById('deleteTareaBtn').classList.remove('hidden');
+            document.getElementById('tareaModal').classList.remove('hidden');
+        }
+        
+        function deleteCitaConfirm(citaId) {
+            if (!confirm('¿Estás seguro de eliminar esta cita?')) return;
+            deleteCita(citaId);
+        }
+        
+        function deleteTareaConfirm(tareaId) {
+            if (!confirm('¿Estás seguro de eliminar esta tarea?')) return;
+            deleteTarea(tareaId);
+        }
+        
+        async function deleteCita(citaId = null) {
+            const id = citaId || document.getElementById('cita_id').value;
+            if (!id) return;
+            
+            try {
+                const response = await fetch(`/citas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar la cita');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la cita');
+            }
+        }
+        
+        async function deleteTarea(tareaId = null) {
+            const id = tareaId || document.getElementById('tarea_id').value;
+            if (!id) return;
+            
+            try {
+                const response = await fetch(`/tareas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar la tarea');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la tarea');
+            }
+        }
+        
+        // Form handlers
+        document.getElementById('cita-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                titulo: document.getElementById('titulo').value,
+                cliente_id: document.getElementById('cliente_id').value || null,
+                fecha_inicio: document.getElementById('fecha_inicio').value,
+                fecha_fin: document.getElementById('fecha_fin').value || null,
+                ubicacion: document.getElementById('ubicacion').value || null,
+                descripcion: document.getElementById('descripcion').value || null,
+                color: document.getElementById('color').value
+            };
+            
+            const citaId = document.getElementById('cita_id').value;
+            const url = citaId ? `/citas/${citaId}` : '/citas';
+            const method = citaId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al guardar la cita: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la cita');
+            }
+        });
+        
+        document.getElementById('tarea-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                texto: document.getElementById('tarea_texto').value,
+                lista_id: document.getElementById('tarea_lista_id').value || null,
+                fecha_hora: document.getElementById('tarea_fecha_hora').value,
+                tipo: document.getElementById('tarea_tipo').value || null
+            };
+            
+            const tareaId = document.getElementById('tarea_id').value;
+            const url = tareaId ? `/tareas/${tareaId}` : '/tareas';
+            const method = tareaId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al guardar la tarea: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la tarea');
+            }
+        });
+        
+        // Cerrar modales al hacer clic fuera
+        document.getElementById('citaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeCitaModal();
+        });
+        
+        document.getElementById('tareaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeTareaModal();
+        });
+    </script>
     
     @include('partials.walee-support-button')
 </body>

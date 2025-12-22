@@ -208,7 +208,11 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
         9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
     ];
     
-    return view('walee-calendario-dia', compact('fecha', 'items', 'meses', 'citas', 'tareas'));
+    $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
+    $listas = \App\Models\Lista::orderBy('nombre')->get();
+    $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
+    
+    return view('walee-calendario-dia', compact('fecha', 'items', 'meses', 'citas', 'tareas', 'clientes', 'listas', 'tiposExistentes'));
 })->middleware(['auth'])->name('walee.calendario.dia');
 
 // Rutas para Citas

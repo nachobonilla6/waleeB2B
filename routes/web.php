@@ -745,6 +745,11 @@ Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request
             if ($clientWebsite) {
                 $prompt .= " Su sitio web es {$clientWebsite}.";
             }
+            
+            // Agregar información del sitio si está seleccionado
+            if ($sitioId && $sitioNombre && $sitioEnlace) {
+                $prompt .= " IMPORTANTE: Incluye en el email que {$sitioNombre} ({$sitioEnlace}) es un ejemplo de los sitios/proyectos que hemos creado. Menciona esto de manera natural en el contenido del email, destacando que es uno de nuestros proyectos exitosos y que pueden visitarlo en: {$sitioEnlace}";
+            }
         }
         
         $response = \Illuminate\Support\Facades\Http::withToken($apiKey)

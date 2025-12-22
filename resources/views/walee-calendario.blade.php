@@ -94,39 +94,39 @@
         <!-- Main Content -->
         <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <!-- Header -->
-            <header class="flex items-center justify-between mb-6 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
+            <header class="flex items-center justify-between mb-4 sm:mb-6 animate-fade-in-up">
+                <div class="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                    <a href="{{ route('walee.dashboard') }}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none flex-shrink-0">
                         <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-1 sm:gap-2">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-emerald-500 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            Calendario
+                            <span class="truncate">Calendario</span>
                         </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $meses[$mes] }} {{ $ano }}</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $meses[$mes] }} {{ $ano }}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                     @include('partials.walee-dark-mode-toggle')
                 </div>
             </header>
             
             <!-- Calendar Controls -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 shadow-sm dark:shadow-none">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm dark:shadow-none">
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                        <div class="flex items-center justify-center sm:justify-start gap-2">
                             <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                 <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </a>
-                            <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
+                            <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
                                 Hoy
                             </a>
                             <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
@@ -137,12 +137,12 @@
                         </div>
                         <button 
                             onclick="showNuevaCitaModal()"
-                            class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center gap-2"
+                            class="w-full sm:w-auto px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            Nueva Cita
+                            <span class="text-sm sm:text-base">Nueva Cita</span>
                         </button>
                     </div>
                 </div>
@@ -153,8 +153,9 @@
                 <!-- Days of Week Header -->
                 <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
                     @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
-                        <div class="p-3 text-center text-sm font-semibold text-slate-600 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 last:border-r-0">
-                            {{ $dia }}
+                        <div class="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 last:border-r-0">
+                            <span class="hidden sm:inline">{{ $dia }}</span>
+                            <span class="sm:hidden">{{ substr($dia, 0, 1) }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -172,31 +173,31 @@
                             $fechaKey = $diaActual->format('Y-m-d');
                             $citasDelDia = $citas->get($fechaKey, collect());
                         @endphp
-                        <div class="min-h-[100px] border-r border-b border-slate-200 dark:border-slate-700 p-2 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                        <div class="min-h-[80px] sm:min-h-[100px] border-r border-b border-slate-200 dark:border-slate-700 p-1 sm:p-2 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-sm font-medium {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
+                                <span class="text-xs sm:text-sm font-medium {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
                                     {{ $diaActual->day }}
                                 </span>
                                 @if($esHoy)
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
                                 @endif
                             </div>
-                            <div class="space-y-1">
-                                @foreach($citasDelDia->take(3) as $cita)
+                            <div class="space-y-0.5 sm:space-y-1">
+                                @foreach($citasDelDia->take(2) as $cita)
                                     <button 
                                         onclick="showCitaDetail({{ $cita->id }})"
-                                        class="w-full text-left px-2 py-1 rounded text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' }}"
+                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' }}"
                                         title="{{ $cita->titulo }}"
                                     >
-                                        {{ $cita->fecha_inicio->format('H:i') }} - {{ $cita->titulo }}
+                                        <span class="hidden sm:inline">{{ $cita->fecha_inicio->format('H:i') }} - </span>{{ $cita->titulo }}
                                     </button>
                                 @endforeach
-                                @if($citasDelDia->count() > 3)
+                                @if($citasDelDia->count() > 2)
                                     <button 
                                         onclick="showDayCitas('{{ $fechaKey }}')"
-                                        class="w-full text-left px-2 py-1 rounded text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
                                     >
-                                        +{{ $citasDelDia->count() - 3 }} más
+                                        +{{ $citasDelDia->count() - 2 }} más
                                     </button>
                                 @endif
                             </div>
@@ -209,8 +210,8 @@
     </div>
     
     <!-- Modal Nueva/Editar Cita -->
-    <div id="citaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-md w-full max-h-[90vh] overflow-hidden shadow-xl">
+    <div id="citaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Nueva Cita</h3>
                 <button onclick="closeCitaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
@@ -325,8 +326,8 @@
     </div>
     
     <!-- Modal Ver Cita -->
-    <div id="citaDetailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-md w-full max-h-[90vh] overflow-hidden shadow-xl">
+    <div id="citaDetailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Detalle de Cita</h3>
                 <button onclick="closeCitaDetailModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">

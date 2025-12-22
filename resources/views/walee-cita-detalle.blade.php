@@ -216,6 +216,199 @@
         </div>
     </div>
     
+    <!-- Modal Editar Cita -->
+    <div id="citaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Editar Cita</h3>
+                <button onclick="closeCitaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="cita-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="cita_id" id="cita_id" value="{{ $cita->id }}">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Título</label>
+                    <input type="text" name="titulo" id="titulo" required value="{{ $cita->titulo }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente</label>
+                    <select name="cliente_id" id="cliente_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                        <option value="">Sin cliente</option>
+                        @foreach($clientes as $cliente)
+                            <option value="{{ $cliente->id }}" {{ $cita->cliente_id == $cliente->id ? 'selected' : '' }}>{{ $cliente->nombre_empresa }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora de Inicio</label>
+                    <input type="datetime-local" name="fecha_inicio" id="fecha_inicio" required value="{{ $cita->fecha_inicio->format('Y-m-d\TH:i') }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora de Fin (opcional)</label>
+                    <input type="datetime-local" name="fecha_fin" id="fecha_fin" value="{{ $cita->fecha_fin ? $cita->fecha_fin->format('Y-m-d\TH:i') : '' }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Ubicación (opcional)</label>
+                    <input type="text" name="ubicacion" id="ubicacion" value="{{ $cita->ubicacion }}" placeholder="Ubicación de la cita" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción (opcional)</label>
+                    <textarea name="descripcion" id="descripcion" rows="3" placeholder="Descripción de la cita..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all resize-none">{{ $cita->descripcion }}</textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                    <div class="flex items-center gap-3">
+                        <input type="color" name="color" id="color" value="{{ $cita->color ?? '#10b981' }}" class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
+                        <input type="text" id="color_text" value="{{ $cita->color ?? '#10b981' }}" placeholder="#10b981" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all" onchange="document.getElementById('color').value = this.value">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
+                    <select name="estado" id="estado" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                        <option value="programada" {{ $cita->estado === 'programada' ? 'selected' : '' }}>Programada</option>
+                        <option value="completada" {{ $cita->estado === 'completada' ? 'selected' : '' }}>Completada</option>
+                        <option value="cancelada" {{ $cita->estado === 'cancelada' ? 'selected' : '' }}>Cancelada</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
+                    <select name="recurrencia" id="recurrencia" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all" onchange="toggleRecurrenciaFin()">
+                        <option value="none" {{ ($cita->recurrencia ?? 'none') === 'none' ? 'selected' : '' }}>Sin recurrencia</option>
+                        <option value="semanal" {{ ($cita->recurrencia ?? 'none') === 'semanal' ? 'selected' : '' }}>Semanal</option>
+                        <option value="mensual" {{ ($cita->recurrencia ?? 'none') === 'mensual' ? 'selected' : '' }}>Mensual</option>
+                        <option value="anual" {{ ($cita->recurrencia ?? 'none') === 'anual' ? 'selected' : '' }}>Anual</option>
+                    </select>
+                </div>
+                
+                <div id="recurrencia_fin_container" class="{{ ($cita->recurrencia ?? 'none') !== 'none' ? '' : 'hidden' }}">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                    <input type="datetime-local" name="recurrencia_fin" id="recurrencia_fin" value="{{ $cita->recurrencia_fin ? $cita->recurrencia_fin->format('Y-m-d\TH:i') : '' }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white font-medium transition-all">Guardar</button>
+                    <button type="button" onclick="deleteCitaConfirm()" class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const citaId = {{ $cita->id }};
+        
+        // Sincronizar color picker
+        document.getElementById('color')?.addEventListener('input', function(e) {
+            document.getElementById('color_text').value = e.target.value;
+        });
+        document.getElementById('color_text')?.addEventListener('input', function(e) {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                document.getElementById('color').value = e.target.value;
+            }
+        });
+        
+        function toggleRecurrenciaFin() {
+            const recurrencia = document.getElementById('recurrencia').value;
+            const container = document.getElementById('recurrencia_fin_container');
+            if (recurrencia !== 'none') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+        
+        function editCita() {
+            document.getElementById('citaModal').classList.remove('hidden');
+        }
+        
+        function closeCitaModal() {
+            document.getElementById('citaModal').classList.add('hidden');
+        }
+        
+        function deleteCitaConfirm() {
+            if (!confirm('¿Estás seguro de eliminar esta cita?')) return;
+            deleteCita();
+        }
+        
+        async function deleteCita() {
+            try {
+                const response = await fetch(`/citas/${citaId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = '{{ route("walee.calendario.dia", ["ano" => $cita->fecha_inicio->year, "mes" => $cita->fecha_inicio->month, "dia" => $cita->fecha_inicio->day]) }}';
+                } else {
+                    alert('Error al eliminar la cita');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la cita');
+            }
+        }
+        
+        // Form handler
+        document.getElementById('cita-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                titulo: document.getElementById('titulo').value,
+                cliente_id: document.getElementById('cliente_id').value || null,
+                fecha_inicio: document.getElementById('fecha_inicio').value,
+                fecha_fin: document.getElementById('fecha_fin').value || null,
+                ubicacion: document.getElementById('ubicacion').value || null,
+                descripcion: document.getElementById('descripcion').value || null,
+                color: document.getElementById('color').value,
+                estado: document.getElementById('estado').value,
+                recurrencia: document.getElementById('recurrencia').value,
+                recurrencia_fin: document.getElementById('recurrencia_fin').value || null
+            };
+            
+            try {
+                const response = await fetch(`/citas/${citaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al guardar la cita: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la cita');
+            }
+        });
+        
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('citaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeCitaModal();
+        });
+    </script>
+    
     @include('partials.walee-support-button')
 </body>
 </html>

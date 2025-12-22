@@ -293,6 +293,18 @@
                                         </div>
                                     @endif
                                 @endif
+                                <button onclick="editTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Editar
+                                </button>
+                                <button onclick="deleteTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-red-500 hover:bg-red-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Eliminar
+                                </button>
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
                                 </button>
@@ -450,6 +462,18 @@
                                         </div>
                                     @endif
                                 @endif
+                                <button onclick="editTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Editar
+                                </button>
+                                <button onclick="deleteTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-red-500 hover:bg-red-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Eliminar
+                                </button>
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
                                 </button>
@@ -608,6 +632,18 @@
                                         </div>
                                     @endif
                                 @endif
+                                <button onclick="editTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Editar
+                                </button>
+                                <button onclick="deleteTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-red-500 hover:bg-red-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Eliminar
+                                </button>
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
                                 </button>
@@ -755,6 +791,18 @@
                                         </div>
                                     @endif
                                 @endif
+                                <button onclick="editTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Editar
+                                </button>
+                                <button onclick="deleteTicket({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-red-500 hover:bg-red-400 text-white rounded-lg transition-all flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Eliminar
+                                </button>
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
                                 </button>
@@ -889,6 +937,113 @@
                 showNotification('Error', 'Error de conexión', 'error');
             }
         }
+        
+        function editTicket(ticketId) {
+            const ticket = ticketsData.find(t => t.id === ticketId);
+            if (!ticket) {
+                showNotification('Error', 'Ticket no encontrado', 'error');
+                return;
+            }
+            
+            // Llenar el formulario con los datos del ticket
+            document.getElementById('editTicketId').value = ticket.id;
+            document.getElementById('editAsunto').value = ticket.asunto || '';
+            document.getElementById('editMensaje').value = ticket.mensaje || '';
+            document.getElementById('editName').value = ticket.name || '';
+            document.getElementById('editEmail').value = ticket.email || '';
+            document.getElementById('editTelefono').value = ticket.telefono || '';
+            document.getElementById('editWebsite').value = ticket.website || '';
+            document.getElementById('editEstado').value = ticket.estado || 'enviado';
+            document.getElementById('editUrgente').checked = ticket.urgente || false;
+            
+            // Mostrar el modal
+            document.getElementById('editTicketModal').classList.remove('hidden');
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editTicketModal').classList.add('hidden');
+            document.getElementById('editTicketForm').reset();
+        }
+        
+        async function deleteTicket(ticketId) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el ticket #${ticketId}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/walee-tickets/${ticketId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Ticket eliminado', `Ticket #${ticketId} eliminado correctamente`, 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                } else {
+                    showNotification('Error', data.message || 'No se pudo eliminar', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión', 'error');
+            }
+        }
+        
+        // Manejar el envío del formulario de edición
+        document.getElementById('editTicketForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const ticketId = document.getElementById('editTicketId').value;
+            const formData = {
+                asunto: document.getElementById('editAsunto').value,
+                mensaje: document.getElementById('editMensaje').value,
+                name: document.getElementById('editName').value,
+                email: document.getElementById('editEmail').value,
+                telefono: document.getElementById('editTelefono').value,
+                website: document.getElementById('editWebsite').value,
+                estado: document.getElementById('editEstado').value,
+                urgente: document.getElementById('editUrgente').checked,
+            };
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Guardando...';
+            
+            try {
+                const response = await fetch(`/walee-tickets/${ticketId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(formData),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Ticket actualizado', `Ticket #${ticketId} actualizado correctamente`, 'success');
+                    closeEditModal();
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                } else {
+                    showNotification('Error', data.message || 'No se pudo actualizar', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
         
         function showTicketDetail(ticketId) {
             const ticket = ticketsData.find(t => t.id === ticketId);

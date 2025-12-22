@@ -410,6 +410,50 @@ Route::post('/walee-tickets/{id}/urgente', function ($id) {
     }
 })->middleware(['auth'])->name('walee.tickets.urgente');
 
+Route::put('/walee-tickets/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $ticket = \App\Models\Ticket::findOrFail($id);
+        
+        $ticket->update([
+            'asunto' => $request->input('asunto'),
+            'mensaje' => $request->input('mensaje'),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'telefono' => $request->input('telefono'),
+            'website' => $request->input('website'),
+            'estado' => $request->input('estado'),
+            'urgente' => $request->has('urgente') && $request->input('urgente'),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket actualizado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.tickets.update');
+
+Route::delete('/walee-tickets/{id}', function ($id) {
+    try {
+        $ticket = \App\Models\Ticket::findOrFail($id);
+        $ticket->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket eliminado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.tickets.delete');
+
 Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $request, $id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);

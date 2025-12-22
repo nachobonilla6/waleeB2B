@@ -796,6 +796,10 @@
                     showNotification('Email enviado', 'El email ha sido enviado correctamente', 'success');
                     // Reset form
                     document.getElementById('emailForm').reset();
+                    removeAttachment();
+                    document.getElementById('clienteInfo').classList.add('hidden');
+                    document.getElementById('siteSelectionContainer').classList.add('hidden');
+                    document.getElementById('enlaceContainer').classList.add('hidden');
                 } else {
                     showNotification('Error', data.message || 'Error al enviar email', 'error');
                 }

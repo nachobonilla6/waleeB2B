@@ -841,6 +841,14 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
             }
         });
         
+        // Guardar archivo adjunto si existe
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            $attachmentName = time() . '_' . $attachment->getClientOriginalName();
+            $attachmentPath = $attachment->storeAs('email-attachments', $attachmentName, 'public');
+        }
+        
         // Guardar en la base de datos
         \App\Models\PropuestaPersonalizada::create([
             'cliente_id' => $clienteId ?: null,
@@ -849,6 +857,9 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
             'subject' => $subject,
             'body' => $body,
             'ai_prompt' => $aiPrompt ?: null,
+            'sitio_id' => $sitioId ?: null,
+            'enlace' => $enlace ?: null,
+            'attachment' => $attachmentPath,
             'user_id' => auth()->id(),
         ]);
         

@@ -109,18 +109,41 @@
             @php $pageTitle = 'Clientes Pendientes'; @endphp
             @include('partials.walee-navbar')
             
-            <!-- Search Bar -->
+            <!-- Search Bar and Delete Actions -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        id="searchInput"
-                        placeholder="Buscar cliente por nombre o teléfono..."
-                        class="w-full px-4 py-3 pl-12 rounded-2xl bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="relative flex-1">
+                        <input 
+                            type="text" 
+                            id="searchInput"
+                            placeholder="Buscar cliente por nombre o teléfono..."
+                            class="w-full px-4 py-3 pl-12 rounded-2xl bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                        >
+                        <svg class="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <button 
+                        id="deleteSelectedBtn"
+                        onclick="deleteSelectedClients()"
+                        class="hidden px-4 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-medium transition-all flex items-center gap-2"
                     >
-                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span id="deleteCount">Borrar (0)</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="selectAll"
+                            onchange="toggleSelectAll(this.checked)"
+                            class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-0"
+                        >
+                        <span>Seleccionar todos</span>
+                    </label>
                 </div>
             </div>
             
@@ -137,9 +160,18 @@
                         $propuestasColor = $propuestasCount >= 3 ? 'bg-red-500' : ($propuestasCount >= 1 ? 'bg-amber-500' : 'bg-slate-600');
                         $propuestasBorder = $propuestasCount >= 3 ? 'border-red-500/30' : ($propuestasCount >= 1 ? 'border-amber-500/30' : 'border-slate-600/30');
                     @endphp
-                    <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . $phone) }}">
+                    <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . $phone) }}" data-client-id="{{ $cliente->id }}">
                         <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-amber-400/50 dark:hover:border-amber-500/40 transition-all duration-300 p-4">
                             <div class="flex items-center gap-4">
+                                <!-- Checkbox -->
+                                <input 
+                                    type="checkbox" 
+                                    class="client-checkbox w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer"
+                                    data-client-id="{{ $cliente->id }}"
+                                    data-client-name="{{ $cliente->name }}"
+                                    onchange="updateDeleteButton()"
+                                >
+                                
                                 <!-- Avatar + Name (clickable) -->
                                 <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-4 flex-1 min-w-0">
                                     <div class="flex-shrink-0">
@@ -244,6 +276,7 @@
     </div>
 
     <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const searchInput = document.getElementById('searchInput');
         const clientsList = document.getElementById('clientsList');
         const noResults = document.getElementById('noResults');
@@ -262,6 +295,136 @@
             
             noResults.classList.toggle('hidden', visibleCount > 0 || query === '');
         });
+        
+        // Toggle select all
+        function toggleSelectAll(checked) {
+            const checkboxes = document.querySelectorAll('.client-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+            updateDeleteButton();
+        }
+        
+        // Update delete button visibility and count
+        function updateDeleteButton() {
+            const checkedBoxes = document.querySelectorAll('.client-checkbox:checked');
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            const deleteCount = document.getElementById('deleteCount');
+            
+            if (checkedBoxes.length > 0) {
+                deleteBtn.classList.remove('hidden');
+                deleteCount.textContent = `Borrar (${checkedBoxes.length})`;
+            } else {
+                deleteBtn.classList.add('hidden');
+            }
+        }
+        
+        // Delete selected clients
+        async function deleteSelectedClients() {
+            const checkedBoxes = document.querySelectorAll('.client-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                return;
+            }
+            
+            const clientIds = Array.from(checkedBoxes).map(cb => cb.dataset.clientId);
+            const clientNames = Array.from(checkedBoxes).map(cb => cb.dataset.clientName);
+            
+            const confirmMessage = clientIds.length === 1 
+                ? `¿Estás seguro de que deseas borrar a ${clientNames[0]}?`
+                : `¿Estás seguro de que deseas borrar ${clientIds.length} clientes?`;
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Borrando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.clientes.en-proceso.delete") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        client_ids: clientIds
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Remove deleted clients from DOM
+                    checkedBoxes.forEach(checkbox => {
+                        const card = checkbox.closest('.client-card');
+                        if (card) {
+                            card.style.transition = 'opacity 0.3s, transform 0.3s';
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateX(-20px)';
+                            setTimeout(() => card.remove(), 300);
+                        }
+                    });
+                    
+                    // Reset select all checkbox
+                    document.getElementById('selectAll').checked = false;
+                    updateDeleteButton();
+                    
+                    // Show success message
+                    showNotification('Clientes borrados', `${clientIds.length} ${clientIds.length === 1 ? 'cliente ha sido' : 'clientes han sido'} borrado${clientIds.length === 1 ? '' : 's'} exitosamente`, 'success');
+                } else {
+                    showNotification('Error', data.message || 'Error al borrar clientes', 'error');
+                }
+            } catch (error) {
+                showNotification('Error', 'Error de conexión: ' + error.message, 'error');
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <span id="deleteCount">Borrar (0)</span>
+                `;
+            }
+        }
+        
+        // Show notification
+        function showNotification(title, message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-2xl shadow-2xl transform transition-all ${
+                type === 'success' ? 'bg-emerald-600' : 
+                type === 'error' ? 'bg-red-600' : 
+                'bg-blue-600'
+            } text-white max-w-md`;
+            notification.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="flex-1">
+                        <p class="font-semibold">${title}</p>
+                        <p class="text-sm opacity-90 mt-1">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-white/70 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
     </script>
     @include('partials.walee-support-button')
 </body>

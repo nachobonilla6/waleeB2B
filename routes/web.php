@@ -156,7 +156,8 @@ Route::get('/citas/{id}/detalle', function ($id) {
         5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
         9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
     ];
-    return view('walee-cita-detalle', compact('cita', 'meses'));
+    $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
+    return view('walee-cita-detalle', compact('cita', 'meses', 'clientes'));
 })->middleware(['auth'])->name('walee.cita.detalle');
 
 Route::get('/tareas/{id}/detalle', function ($id) {
@@ -166,7 +167,9 @@ Route::get('/tareas/{id}/detalle', function ($id) {
         5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
         9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
     ];
-    return view('walee-tarea-detalle', compact('tarea', 'meses'));
+    $listas = \App\Models\Lista::orderBy('nombre')->get();
+    $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
+    return view('walee-tarea-detalle', compact('tarea', 'meses', 'listas', 'tiposExistentes'));
 })->middleware(['auth'])->name('walee.tarea.detalle');
 
 Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia) {

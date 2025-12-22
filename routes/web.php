@@ -320,25 +320,39 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
     try {
         $imagePaths = [];
         
-        // Manejar múltiples archivos
+        // Manejar múltiples archivos enviados como archivos[0], archivos[1], etc.
         if ($request->has('archivos')) {
             $archivos = $request->file('archivos');
+            
+            // Si es un array de archivos
             if (is_array($archivos)) {
                 foreach ($archivos as $archivo) {
                     if ($archivo && $archivo->isValid()) {
                         // Validar tipo de archivo
                         $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
                         if (in_array($archivo->getMimeType(), $allowedMimes)) {
-                            $imagePaths[] = $archivo->store('tickets', 'public');
+                            $path = $archivo->store('tickets', 'public');
+                            $imagePaths[] = $path;
                         }
                     }
+                }
+            } 
+            // Si es un solo archivo (compatibilidad)
+            elseif ($archivos && $archivos->isValid()) {
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+                if (in_array($archivos->getMimeType(), $allowedMimes)) {
+                    $path = $archivos->store('tickets', 'public');
+                    $imagePaths[] = $path;
                 }
             }
         }
         
         // Mantener compatibilidad con el campo 'imagen' antiguo (un solo archivo)
         if ($request->hasFile('imagen')) {
-            $imagePaths[] = $request->file('imagen')->store('tickets', 'public');
+            $imagen = $request->file('imagen');
+            if ($imagen->isValid()) {
+                $imagePaths[] = $imagen->store('tickets', 'public');
+            }
         }
         
         // Guardar como JSON si hay múltiples archivos, o como string si hay uno solo, o null si no hay
@@ -365,8 +379,10 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
             'success' => true,
             'message' => 'Ticket enviado correctamente',
             'ticket_id' => $ticket->id,
+            'archivos_guardados' => count($imagePaths),
         ]);
     } catch (\Exception $e) {
+        \Log::error('Error al crear ticket: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage(),
@@ -850,28 +866,62 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
         
         $client = $clienteId ? \App\Models\Client::find($clienteId) : null;
         
-        // Enviar email con adjunto si existe
-        \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($email, $subject, $request) {
+        // Manejar múltiples archivos
+        $attachmentPaths = [];
+        
+        // Manejar archivos enviados como archivos[0], archivos[1], etc.
+        if ($request->has('archivos')) {
+            $archivos = $request->file('archivos');
+            
+            if (is_array($archivos)) {
+                foreach ($archivos as $archivo) {
+                    if ($archivo && $archivo->isValid()) {
+                        $attachmentName = time() . '_' . $archivo->getClientOriginalName();
+                        $path = $archivo->storeAs('email-attachments', $attachmentName, 'public');
+                        $attachmentPaths[] = $path;
+                    }
+                }
+            } elseif ($archivos && $archivos->isValid()) {
+                $attachmentName = time() . '_' . $archivos->getClientOriginalName();
+                $path = $archivos->storeAs('email-attachments', $attachmentName, 'public');
+                $attachmentPaths[] = $path;
+            }
+        }
+        
+        // Mantener compatibilidad con el campo 'attachment' antiguo (un solo archivo)
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            if ($attachment->isValid()) {
+                $attachmentName = time() . '_' . $attachment->getClientOriginalName();
+                $path = $attachment->storeAs('email-attachments', $attachmentName, 'public');
+                $attachmentPaths[] = $path;
+            }
+        }
+        
+        // Enviar email con adjuntos si existen
+        \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($email, $subject, $attachmentPaths) {
             $message->from('websolutionscrnow@gmail.com', 'Memphis - Web Solutions')
                     ->to($email)
                     ->subject($subject);
             
-            // Attach file if present
-            if ($request->hasFile('attachment')) {
-                $attachment = $request->file('attachment');
-                $message->attach($attachment->getRealPath(), [
-                    'as' => $attachment->getClientOriginalName(),
-                    'mime' => $attachment->getMimeType(),
-                ]);
+            // Attach all files
+            foreach ($attachmentPaths as $attachmentPath) {
+                $fullPath = storage_path('app/public/' . $attachmentPath);
+                if (file_exists($fullPath)) {
+                    $message->attach($fullPath, [
+                        'as' => basename($attachmentPath),
+                        'mime' => mime_content_type($fullPath),
+                    ]);
+                }
             }
         });
         
-        // Guardar archivo adjunto si existe
-        $attachmentPath = null;
-        if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
-            $attachmentName = time() . '_' . $attachment->getClientOriginalName();
-            $attachmentPath = $attachment->storeAs('email-attachments', $attachmentName, 'public');
+        // Guardar como JSON si hay múltiples archivos, o como string si hay uno solo, o null si no hay
+        $attachmentValue = null;
+        if (count($attachmentPaths) === 1) {
+            $attachmentValue = $attachmentPaths[0];
+        } elseif (count($attachmentPaths) > 1) {
+            $attachmentValue = json_encode($attachmentPaths);
         }
         
         // Guardar en la base de datos
@@ -884,7 +934,7 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
             'ai_prompt' => $aiPrompt ?: null,
             'sitio_id' => $sitioId ?: null,
             'enlace' => $enlace ?: null,
-            'attachment' => $attachmentPath,
+            'attachment' => $attachmentValue,
             'user_id' => auth()->id(),
         ]);
         

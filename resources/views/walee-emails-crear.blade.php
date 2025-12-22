@@ -387,13 +387,14 @@
                             
                             <!-- File Attachment -->
                             <div>
-                                <label for="attachment" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Adjuntar archivo (opcional)</label>
+                                <label for="attachment" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Adjuntar archivos (opcional)</label>
                                 <div class="relative">
                                     <input 
                                         type="file" 
                                         id="attachment" 
                                         name="attachment"
                                         accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                                        multiple
                                         class="hidden"
                                         onchange="handleFileSelection(this)"
                                     >
@@ -404,30 +405,12 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                         </svg>
-                                        <span id="fileLabel" class="text-sm">Seleccionar archivo (PDF o imagen)</span>
+                                        <span id="fileLabel" class="text-sm">Seleccionar archivos (PDF o imágenes)</span>
                                     </label>
                                 </div>
-                                <div id="fileInfo" class="hidden mt-2 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                            </svg>
-                                            <span id="fileName" class="text-sm font-medium text-blue-700 dark:text-blue-300"></span>
-                                            <span id="fileSize" class="text-xs text-blue-600 dark:text-blue-400"></span>
-                                        </div>
-                                        <button 
-                                            type="button"
-                                            onclick="removeAttachment()"
-                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-500 mt-2">Formatos permitidos: PDF, JPG, PNG, GIF, WEBP (máx. 10MB)</p>
+                                <!-- Selected Files List -->
+                                <div id="filesList" class="mt-3 space-y-2 hidden"></div>
+                                <p class="text-xs text-slate-600 dark:text-slate-500 mt-2">Formatos permitidos: PDF, JPG, PNG, GIF, WEBP (máx. 10MB por archivo)</p>
                             </div>
                         </div>
                     </div>
@@ -438,7 +421,7 @@
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                             </svg>
-                            <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Archivo adjunto listo para enviar</span>
+                            <span id="attachmentStatusText" class="text-sm font-medium text-blue-700 dark:text-blue-300">Archivos adjuntos listos para enviar</span>
                         </div>
                     </div>
                     
@@ -750,49 +733,113 @@
             }
         }
         
-        // Handle file selection
+        // Handle file selection (multiple files)
         function handleFileSelection(input) {
-            const file = input.files[0];
-            if (!file) {
-                updateAttachmentStatus();
-                return;
-            }
-            
-            // Validate file size (10MB max)
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.size > maxSize) {
-                showNotification('Error', 'El archivo es demasiado grande. Máximo 10MB', 'error');
-                input.value = '';
-                updateAttachmentStatus();
-                return;
-            }
-            
-            // Update UI
+            const filesList = document.getElementById('filesList');
             const fileLabel = document.getElementById('fileLabel');
-            const fileInfo = document.getElementById('fileInfo');
-            const fileName = document.getElementById('fileName');
-            const fileSize = document.getElementById('fileSize');
             
-            if (fileLabel) fileLabel.textContent = file.name;
-            if (fileName) fileName.textContent = file.name;
-            if (fileSize) fileSize.textContent = formatFileSize(file.size);
-            if (fileInfo) fileInfo.classList.remove('hidden');
+            if (!input.files || input.files.length === 0) {
+                if (filesList) filesList.classList.add('hidden');
+                if (filesList) filesList.innerHTML = '';
+                if (fileLabel) fileLabel.textContent = 'Seleccionar archivos (PDF o imágenes)';
+                updateAttachmentStatus();
+                return;
+            }
+            
+            const maxSize = 10 * 1024 * 1024; // 10MB per file
+            const validFiles = [];
+            
+            // Validate all files
+            Array.from(input.files).forEach((file, index) => {
+                if (file.size > maxSize) {
+                    showNotification('Error', `El archivo "${file.name}" es demasiado grande. Máximo 10MB por archivo`, 'error');
+                    return;
+                }
+                validFiles.push({ file, index });
+            });
+            
+            // If no valid files, clear input
+            if (validFiles.length === 0) {
+                input.value = '';
+                if (filesList) filesList.classList.add('hidden');
+                if (filesList) filesList.innerHTML = '';
+                if (fileLabel) fileLabel.textContent = 'Seleccionar archivos (PDF o imágenes)';
+                updateAttachmentStatus();
+                return;
+            }
+            
+            // Update file list display
+            if (filesList) {
+                filesList.innerHTML = '';
+                filesList.classList.remove('hidden');
+                
+                validFiles.forEach(({ file, index }) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700';
+                    fileItem.innerHTML = `
+                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-sm text-black dark:text-white truncate">${file.name}</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">(${formatFileSize(file.size)})</span>
+                        </div>
+                        <button 
+                            type="button" 
+                            onclick="removeEmailFile(${index})" 
+                            class="ml-2 p-1 text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                            title="Eliminar archivo"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    filesList.appendChild(fileItem);
+                });
+            }
+            
+            // Update label
+            const fileCount = validFiles.length;
+            if (fileLabel) {
+                fileLabel.textContent = fileCount === 1 
+                    ? validFiles[0].file.name 
+                    : `${fileCount} archivos seleccionados`;
+            }
             
             // Update attachment status
             updateAttachmentStatus();
         }
         
-        // Remove attachment
+        // Remove a specific file from the list
+        function removeEmailFile(index) {
+            const input = document.getElementById('attachment');
+            if (!input || !input.files) return;
+            
+            const dt = new DataTransfer();
+            Array.from(input.files).forEach((file, i) => {
+                if (i !== index) {
+                    dt.items.add(file);
+                }
+            });
+            
+            input.files = dt.files;
+            handleFileSelection(input);
+        }
+        
+        // Remove all attachments
         function removeAttachment() {
             const attachmentInput = document.getElementById('attachment');
-            const fileInfo = document.getElementById('fileInfo');
+            const filesList = document.getElementById('filesList');
             const fileLabel = document.getElementById('fileLabel');
             
             if (attachmentInput) attachmentInput.value = '';
-            if (fileInfo) fileInfo.classList.add('hidden');
-            if (fileLabel) fileLabel.textContent = 'Seleccionar archivo (PDF o imagen)';
+            if (filesList) {
+                filesList.classList.add('hidden');
+                filesList.innerHTML = '';
+            }
+            if (fileLabel) fileLabel.textContent = 'Seleccionar archivos (PDF o imágenes)';
             
-            // Update attachment status
             updateAttachmentStatus();
         }
         
@@ -809,9 +856,16 @@
         function updateAttachmentStatus() {
             const attachmentInput = document.getElementById('attachment');
             const attachmentStatus = document.getElementById('attachmentStatus');
+            const attachmentStatusText = document.getElementById('attachmentStatusText');
             
             if (attachmentInput && attachmentInput.files && attachmentInput.files.length > 0) {
                 if (attachmentStatus) attachmentStatus.classList.remove('hidden');
+                const fileCount = attachmentInput.files.length;
+                if (attachmentStatusText) {
+                    attachmentStatusText.textContent = fileCount === 1 
+                        ? 'Archivo adjunto listo para enviar'
+                        : `${fileCount} archivos adjuntos listos para enviar`;
+                }
             } else {
                 if (attachmentStatus) attachmentStatus.classList.add('hidden');
             }
@@ -866,10 +920,12 @@
                     formData.append('enlace', enlace);
                 }
                 
-                // Add attachment if selected
+                // Add attachments if selected
                 const attachmentInput = document.getElementById('attachment');
-                if (attachmentInput.files && attachmentInput.files[0]) {
-                    formData.append('attachment', attachmentInput.files[0]);
+                if (attachmentInput && attachmentInput.files && attachmentInput.files.length > 0) {
+                    Array.from(attachmentInput.files).forEach((file, index) => {
+                        formData.append(`archivos[${index}]`, file);
+                    });
                 }
                 
                 const response = await fetch('{{ route("walee.emails.enviar") }}', {

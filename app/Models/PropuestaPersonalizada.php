@@ -36,4 +36,28 @@ class PropuestaPersonalizada extends Model
     {
         return $this->belongsTo(\App\Models\User::class);
     }
+
+    public function sitio(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Sitio::class);
+    }
+
+    /**
+     * Get archivos as array (handles both single file string and JSON array)
+     */
+    public function getArchivosAttribute(): array
+    {
+        if (empty($this->attachment)) {
+            return [];
+        }
+        
+        // Try to decode as JSON (multiple files)
+        $decoded = json_decode($this->attachment, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+        
+        // Single file (string)
+        return [$this->attachment];
+    }
 }

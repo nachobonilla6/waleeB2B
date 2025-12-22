@@ -1549,42 +1549,77 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         
         // Enviar webhook con los datos y fotos
         try {
-            $client = new \GuzzleHttp\Client();
+            $webhookUrl = $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6';
+            $pageId = $cliente->page_id ?? '';
+            $token = $cliente->token ?? '';
             
-            $multipartData = [
-                [
-                    'name' => 'contenido',
-                    'contents' => $request->input('content'),
-                ],
-                [
-                    'name' => 'cliente_id',
-                    'contents' => (string) $cliente->id,
-                ],
-                [
-                    'name' => 'cliente_nombre',
-                    'contents' => $cliente->name,
-                ],
-                [
-                    'name' => 'publicacion_id',
-                    'contents' => (string) $publicacion->id,
-                ],
-            ];
-            
-            // Agregar fotos al webhook
-            if ($request->hasFile('fotos')) {
-                foreach ($request->file('fotos') as $index => $foto) {
+            // Si no hay webhook configurado, no enviar
+            if (empty($webhookUrl)) {
+                \Log::warning('No hay webhook URL configurado para el cliente ' . $cliente->id);
+            } else {
+                $client = new \GuzzleHttp\Client();
+                
+                // Generar URLs públicas de las imágenes
+                $imagenesUrls = [];
+                foreach ($fotosPaths as $path) {
+                    $imagenesUrls[] = asset('storage/' . $path);
+                }
+                
+                $multipartData = [
+                    [
+                        'name' => 'webhook_url',
+                        'contents' => $webhookUrl,
+                    ],
+                    [
+                        'name' => 'page_id',
+                        'contents' => $pageId,
+                    ],
+                    [
+                        'name' => 'token',
+                        'contents' => $token,
+                    ],
+                    [
+                        'name' => 'texto_publicacion',
+                        'contents' => $request->input('content'),
+                    ],
+                    [
+                        'name' => 'cliente_id',
+                        'contents' => (string) $cliente->id,
+                    ],
+                    [
+                        'name' => 'cliente_nombre',
+                        'contents' => $cliente->name,
+                    ],
+                    [
+                        'name' => 'publicacion_id',
+                        'contents' => (string) $publicacion->id,
+                    ],
+                ];
+                
+                // Agregar URLs de imágenes como JSON
+                if (!empty($imagenesUrls)) {
                     $multipartData[] = [
-                        'name' => 'fotos[]',
-                        'contents' => fopen($foto->getRealPath(), 'r'),
-                        'filename' => $foto->getClientOriginalName(),
+                        'name' => 'imagenes_urls',
+                        'contents' => json_encode($imagenesUrls),
                     ];
                 }
+                
+                // Agregar fotos como archivos al webhook (para compatibilidad con n8n)
+                if ($request->hasFile('fotos')) {
+                    foreach ($request->file('fotos') as $index => $foto) {
+                        $multipartData[] = [
+                            'name' => 'fotos[]',
+                            'contents' => fopen($foto->getRealPath(), 'r'),
+                            'filename' => $foto->getClientOriginalName(),
+                        ];
+                    }
+                }
+                
+                $client->post($webhookUrl, [
+                    'multipart' => $multipartData,
+                    'timeout' => 30,
+                ]);
             }
-            
-            $client->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6', [
-                'multipart' => $multipartData,
-                'timeout' => 30,
-            ]);
         } catch (\Exception $webhookError) {
             \Log::warning('Error al enviar webhook de publicación: ' . $webhookError->getMessage());
         }

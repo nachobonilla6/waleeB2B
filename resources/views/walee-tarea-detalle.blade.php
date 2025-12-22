@@ -204,6 +204,163 @@
         </div>
     </div>
     
+    <!-- Modal Editar Tarea -->
+    <div id="tareaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Editar Tarea</h3>
+                <button onclick="closeTareaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="tarea-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="tarea_id" id="tarea_id" value="{{ $tarea->id }}">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la Tarea</label>
+                    <input type="text" name="texto" id="tarea_texto" required value="{{ $tarea->texto }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Lista</label>
+                    <select name="lista_id" id="tarea_lista_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        <option value="">Sin lista</option>
+                        @foreach($listas as $lista)
+                            <option value="{{ $lista->id }}" {{ $tarea->lista_id == $lista->id ? 'selected' : '' }}>{{ $lista->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora</label>
+                    <input type="datetime-local" name="fecha_hora" id="tarea_fecha_hora" required value="{{ $tarea->fecha_hora->format('Y-m-d\TH:i') }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                    <input type="text" name="tipo" id="tarea_tipo" list="tipos-list" value="{{ $tarea->tipo }}" placeholder="Tipo de tarea (opcional)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    <datalist id="tipos-list">
+                        @foreach($tiposExistentes as $tipo)
+                            <option value="{{ $tipo }}">
+                        @endforeach
+                    </datalist>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
+                    <select name="recurrencia" id="tarea_recurrencia" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all" onchange="toggleTareaRecurrenciaFin()">
+                        <option value="none" {{ ($tarea->recurrencia ?? 'none') === 'none' ? 'selected' : '' }}>Sin recurrencia</option>
+                        <option value="diaria" {{ ($tarea->recurrencia ?? 'none') === 'diaria' ? 'selected' : '' }}>Diaria</option>
+                        <option value="semanal" {{ ($tarea->recurrencia ?? 'none') === 'semanal' ? 'selected' : '' }}>Semanal</option>
+                        <option value="mensual" {{ ($tarea->recurrencia ?? 'none') === 'mensual' ? 'selected' : '' }}>Mensual</option>
+                    </select>
+                </div>
+                
+                <div id="tarea_recurrencia_fin_container" class="{{ ($tarea->recurrencia ?? 'none') !== 'none' ? '' : 'hidden' }}">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                    <input type="datetime-local" name="recurrencia_fin" id="tarea_recurrencia_fin" value="{{ $tarea->recurrencia_fin ? $tarea->recurrencia_fin->format('Y-m-d\TH:i') : '' }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all">Guardar</button>
+                    <button type="button" onclick="deleteTareaConfirm()" class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const tareaId = {{ $tarea->id }};
+        
+        function toggleTareaRecurrenciaFin() {
+            const recurrencia = document.getElementById('tarea_recurrencia').value;
+            const container = document.getElementById('tarea_recurrencia_fin_container');
+            if (recurrencia !== 'none') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+        
+        function editTarea() {
+            document.getElementById('tareaModal').classList.remove('hidden');
+        }
+        
+        function closeTareaModal() {
+            document.getElementById('tareaModal').classList.add('hidden');
+        }
+        
+        function deleteTareaConfirm() {
+            if (!confirm('¿Estás seguro de eliminar esta tarea?')) return;
+            deleteTarea();
+        }
+        
+        async function deleteTarea() {
+            try {
+                const response = await fetch(`/tareas/${tareaId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = '{{ route("walee.calendario.dia", ["ano" => $tarea->fecha_hora->year, "mes" => $tarea->fecha_hora->month, "dia" => $tarea->fecha_hora->day]) }}';
+                } else {
+                    alert('Error al eliminar la tarea');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la tarea');
+            }
+        }
+        
+        // Form handler
+        document.getElementById('tarea-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                texto: document.getElementById('tarea_texto').value,
+                lista_id: document.getElementById('tarea_lista_id').value || null,
+                fecha_hora: document.getElementById('tarea_fecha_hora').value,
+                tipo: document.getElementById('tarea_tipo').value || null,
+                recurrencia: document.getElementById('tarea_recurrencia').value,
+                recurrencia_fin: document.getElementById('tarea_recurrencia_fin').value || null
+            };
+            
+            try {
+                const response = await fetch(`/tareas/${tareaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al guardar la tarea: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la tarea');
+            }
+        });
+        
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('tareaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeTareaModal();
+        });
+    </script>
+    
     @include('partials.walee-support-button')
 </body>
 </html>

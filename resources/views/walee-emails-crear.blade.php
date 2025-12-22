@@ -672,7 +672,8 @@
             const generateBtn = document.getElementById('generateBtn');
             const clienteId = document.getElementById('cliente_id').value;
             const aiPrompt = document.getElementById('ai_prompt').value;
-            const sitioId = document.getElementById('sitio_id').value;
+            const sitioIdElement = document.getElementById('sitio_id');
+            const sitioId = sitioIdElement ? sitioIdElement.value : '';
             
             // Get client info from selected option in dropdown
             const selectedOption = document.querySelector(`.client-option[data-id="${clienteId}"]`);
@@ -766,6 +767,12 @@
             `;
             
             try {
+                // Get sitio_id and enlace values safely
+                const sitioIdElement = document.getElementById('sitio_id');
+                const enlaceElement = document.getElementById('enlace');
+                const sitioId = sitioIdElement ? sitioIdElement.value : '';
+                const enlace = enlaceElement ? enlaceElement.value : '';
+                
                 // Use FormData to support file uploads
                 const formData = new FormData();
                 formData.append('cliente_id', clienteId);

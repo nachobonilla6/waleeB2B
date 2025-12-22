@@ -453,6 +453,32 @@ Route::get('/walee-clientes-en-proceso', function () {
     return view('walee-clientes-en-proceso');
 })->middleware(['auth'])->name('walee.clientes.proceso');
 
+Route::post('/walee-clientes-en-proceso/delete', function (\Illuminate\Http\Request $request) {
+    $clientIds = $request->input('client_ids', []);
+    
+    if (empty($clientIds) || !is_array($clientIds)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No se proporcionaron IDs de clientes'
+        ], 400);
+    }
+    
+    try {
+        $deleted = \App\Models\Client::whereIn('id', $clientIds)->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Se borraron {$deleted} cliente(s) exitosamente",
+            'deleted_count' => $deleted
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al borrar clientes: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.clientes.en-proceso.delete');
+
 // Rutas para WALEE Extraer Clientes
 Route::get('/walee-extraer-clientes', function () {
     return view('walee-extraer-clientes');

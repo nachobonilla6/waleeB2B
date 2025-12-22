@@ -16,6 +16,9 @@ class PropuestaPersonalizada extends Model
         'subject',
         'body',
         'ai_prompt',
+        'sitio_id',
+        'enlace',
+        'attachment',
         'user_id',
     ];
 

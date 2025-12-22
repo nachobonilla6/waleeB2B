@@ -1,5 +1,5 @@
 <!-- Walee Navbar -->
-<header class="flex items-center justify-between mb-6 sm:mb-8 animate-fade-in-up relative">
+<header class="flex items-center justify-between mb-6 sm:mb-8 animate-fade-in-up relative" style="z-index: 9999;">
     <div class="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
         <a href="{{ route('walee.dashboard') }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl walee-gradient flex items-center justify-center shadow-lg flex-shrink-0" style="animation: pulse-glow 3s infinite;">
             <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover">
@@ -68,9 +68,19 @@
     <!-- Mobile Menu Dropdown (Bootstrap Style) -->
     <div 
         id="mobileMenu" 
-        class="sm:hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl overflow-hidden hidden"
-        style="display: none; z-index: 100;"
+        class="sm:hidden absolute top-full left-0 right-0 mt-2 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden"
+        style="display: none; z-index: 9999 !important; background-color: rgb(255, 255, 255);"
     >
+        <style>
+            @media (prefers-color-scheme: dark) {
+                #mobileMenu {
+                    background-color: rgb(15, 23, 42) !important;
+                }
+            }
+            .dark #mobileMenu {
+                background-color: rgb(15, 23, 42) !important;
+            }
+        </style>
         <div class="py-2">
             <a 
                 href="{{ route('walee') }}" 

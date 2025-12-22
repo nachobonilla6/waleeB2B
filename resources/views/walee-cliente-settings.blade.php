@@ -56,70 +56,17 @@
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="flex gap-2 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-1.5">
-                    <button onclick="showTab('webhook')" id="tab-webhook" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button active">
-                        Webhook
-                    </button>
-                    <button onclick="showTab('publicaciones')" id="tab-publicaciones" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button">
+                    <button onclick="showTab('publicaciones')" id="tab-publicaciones" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button active">
                         Publicaciones
                     </button>
-                </div>
-            </div>
-
-            <!-- Webhook Tab -->
-            <div id="content-webhook" class="tab-content animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
-                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Configuración de Webhook</h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">Ingresa la URL del webhook para recibir notificaciones de este cliente.</p>
-                    
-                    <form id="webhook-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">URL del Webhook</label>
-                            <input 
-                                type="url" 
-                                name="webhook_url" 
-                                id="webhook_url"
-                                value="{{ $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6' }}"
-                                placeholder="https://ejemplo.com/webhook"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Page ID</label>
-                            <input 
-                                type="text" 
-                                name="page_id" 
-                                id="page_id"
-                                value="{{ $cliente->page_id ?? '' }}"
-                                placeholder="Ingresa el Page ID de Facebook"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Token</label>
-                            <input 
-                                type="text" 
-                                name="token" 
-                                id="token"
-                                value="{{ $cliente->token ?? '' }}"
-                                placeholder="Ingresa el Token de acceso"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
-                        </div>
-                        
-                        <button 
-                            type="submit"
-                            class="w-full px-6 py-3 rounded-xl bg-walee-500 hover:bg-walee-400 text-white font-medium transition-all"
-                        >
-                            Guardar
-                        </button>
-                    </form>
+                    <button onclick="showTab('webhook')" id="tab-webhook" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button">
+                        Webhook
+                    </button>
                 </div>
             </div>
 
             <!-- Publicaciones Tab -->
-            <div id="content-publicaciones" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div id="content-publicaciones" class="tab-content animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Create Publicación -->
                 <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6 mb-6">
                     <div class="flex items-center gap-3 mb-4">
@@ -233,6 +180,59 @@
                             <p class="text-slate-600 dark:text-slate-400 text-sm">No hay publicaciones aún</p>
                         </div>
                     @endif
+                </div>
+            </div>
+
+            <!-- Webhook Tab -->
+            <div id="content-webhook" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Configuración de Webhook</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">Ingresa la URL del webhook para recibir notificaciones de este cliente.</p>
+                    
+                    <form id="webhook-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">URL del Webhook</label>
+                            <input 
+                                type="url" 
+                                name="webhook_url" 
+                                id="webhook_url"
+                                value="{{ $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6' }}"
+                                placeholder="https://ejemplo.com/webhook"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Page ID</label>
+                            <input 
+                                type="text" 
+                                name="page_id" 
+                                id="page_id"
+                                value="{{ $cliente->page_id ?? '' }}"
+                                placeholder="Ingresa el Page ID de Facebook"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Token</label>
+                            <input 
+                                type="text" 
+                                name="token" 
+                                id="token"
+                                value="{{ $cliente->token ?? '' }}"
+                                placeholder="Ingresa el Token de acceso"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
+                        <button 
+                            type="submit"
+                            class="w-full px-6 py-3 rounded-xl bg-walee-500 hover:bg-walee-400 text-white font-medium transition-all"
+                        >
+                            Guardar
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

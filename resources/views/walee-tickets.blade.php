@@ -59,6 +59,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
+        // Obtener todos los tickets ordenados por urgente primero, luego por fecha
         $tickets = \App\Models\Ticket::with('user')
             ->orderBy('urgente', 'desc') // Urgentes primero
             ->orderBy('created_at', 'desc') // Luego por fecha más reciente
@@ -69,10 +70,24 @@
         $recibidos = $tickets->where('estado', 'recibido')->count();
         $resueltos = $tickets->where('estado', 'resuelto')->count();
         
-        // Ordenar cada grupo también por urgente primero
-        $ticketsEnviados = $tickets->where('estado', 'enviado')->sortByDesc('urgente')->sortByDesc('created_at');
-        $ticketsRecibidos = $tickets->where('estado', 'recibido')->sortByDesc('urgente')->sortByDesc('created_at');
-        $ticketsResueltos = $tickets->where('estado', 'resuelto')->sortByDesc('urgente')->sortByDesc('created_at');
+        // Ordenar cada grupo también por urgente primero, luego por fecha
+        $ticketsEnviados = $tickets->where('estado', 'enviado')
+            ->sortBy([
+                ['urgente', 'desc'],
+                ['created_at', 'desc']
+            ])->values();
+        
+        $ticketsRecibidos = $tickets->where('estado', 'recibido')
+            ->sortBy([
+                ['urgente', 'desc'],
+                ['created_at', 'desc']
+            ])->values();
+        
+        $ticketsResueltos = $tickets->where('estado', 'resuelto')
+            ->sortBy([
+                ['urgente', 'desc'],
+                ['created_at', 'desc']
+            ])->values();
         
         // Helper function to get archivos array
         function getArchivos($ticket) {

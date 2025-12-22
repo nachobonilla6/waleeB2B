@@ -42,13 +42,6 @@
             </svg>
             <span class="text-xs sm:text-sm font-medium hidden lg:inline">Calendario</span>
         </a>
-        
-        <a href="{{ route('filament.admin.pages.dashboard') }}" class="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all duration-300 border border-slate-300 dark:border-slate-700">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
-            <span class="text-xs sm:text-sm font-medium hidden lg:inline">Admin</span>
-        </a>
     </div>
 </header>
 

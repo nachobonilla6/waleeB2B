@@ -736,7 +736,7 @@ Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request
             if ($sitioId && $sitioNombre && $sitioEnlace) {
                 $prompt .= ". IMPORTANTE: Incluye en el email que {$sitioNombre} ({$sitioEnlace}) es un ejemplo de los sitios/proyectos que hemos creado. Menciona esto de manera natural en el contenido del email, destacando que es uno de nuestros proyectos exitosos y que pueden visitarlo en: {$sitioEnlace}";
             }
-            $prompt .= ". El email debe ser persuasivo, profesional y enfocado en ofrecer servicios de diseño web, marketing digital y desarrollo de software.";
+            $prompt .= ". El email debe ser persuasivo, profesional y enfocado en ofrecer servicios de diseño web, marketing digital y desarrollo de software. IMPORTANTE: Menciona que quien envía el email se llama Memphis.";
         } else {
             $prompt = "Genera un email profesional. {$aiPrompt}";
             if ($clientName !== 'el cliente') {
@@ -750,6 +750,7 @@ Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request
             if ($sitioId && $sitioNombre && $sitioEnlace) {
                 $prompt .= " IMPORTANTE: Incluye en el email que {$sitioNombre} ({$sitioEnlace}) es un ejemplo de los sitios/proyectos que hemos creado. Menciona esto de manera natural en el contenido del email, destacando que es uno de nuestros proyectos exitosos y que pueden visitarlo en: {$sitioEnlace}";
             }
+            $prompt .= " IMPORTANTE: Menciona que quien envía el email se llama Memphis.";
         }
         
         $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
@@ -761,7 +762,7 @@ Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request
                 'messages' => [
                     [
                         'role' => 'system',
-                        'content' => 'Eres un experto en marketing digital y redacción de emails comerciales. Genera emails profesionales, persuasivos y directos. Responde SOLO con JSON que contenga "subject" (asunto del email, máximo 10 palabras) y "body" (cuerpo del email completo). NO incluyas mensajes de cierre como "Si necesitas alguna modificación", "No dudes en contactarme", etc. Al final del body, SIEMPRE incluye esta firma: "\n\nWeb Solutions\nwebsolutionscrnow@gmail.com\n+506 8806 1829 (WhatsApp)\nwebsolutions.work"',
+                        'content' => 'Eres un experto en marketing digital y redacción de emails comerciales. Genera emails profesionales, persuasivos y directos. Responde SOLO con JSON que contenga "subject" (asunto del email, máximo 10 palabras) y "body" (cuerpo del email completo). NO incluyas mensajes de cierre como "Si necesitas alguna modificación", "No dudes en contactarme", etc. IMPORTANTE: En el cuerpo del email, SIEMPRE menciona que quien envía el email se llama Memphis. Al final del body, SIEMPRE incluye esta firma: "\n\nMemphis\nWeb Solutions\nwebsolutionscrnow@gmail.com\n+506 8806 1829 (WhatsApp)\nwebsolutions.work"',
                     ],
                     [
                         'role' => 'user',

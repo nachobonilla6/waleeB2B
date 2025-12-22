@@ -60,7 +60,8 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         $tickets = \App\Models\Ticket::with('user')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('urgente', 'desc') // Urgentes primero
+            ->orderBy('created_at', 'desc') // Luego por fecha más reciente
             ->get();
         
         $totalTickets = $tickets->count();
@@ -68,9 +69,10 @@
         $recibidos = $tickets->where('estado', 'recibido')->count();
         $resueltos = $tickets->where('estado', 'resuelto')->count();
         
-        $ticketsEnviados = $tickets->where('estado', 'enviado');
-        $ticketsRecibidos = $tickets->where('estado', 'recibido');
-        $ticketsResueltos = $tickets->where('estado', 'resuelto');
+        // Ordenar cada grupo también por urgente primero
+        $ticketsEnviados = $tickets->where('estado', 'enviado')->sortByDesc('urgente')->sortByDesc('created_at');
+        $ticketsRecibidos = $tickets->where('estado', 'recibido')->sortByDesc('urgente')->sortByDesc('created_at');
+        $ticketsResueltos = $tickets->where('estado', 'resuelto')->sortByDesc('urgente')->sortByDesc('created_at');
         
         // Helper function to get archivos array
         function getArchivos($ticket) {

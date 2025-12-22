@@ -582,18 +582,39 @@
     
     @include('partials.walee-support-button')
     
-    <!-- Scroll Down Button (Floating) -->
-    <button 
-        onclick="scrollToBottom()" 
-        class="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40"
-        title="Ir al final"
-    >
-        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-        </svg>
-    </button>
+    <!-- Sidebar de Scroll Verde (Derecha) -->
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
+        <!-- Botón Scroll Arriba -->
+        <button 
+            onclick="scrollToTop()" 
+            class="w-12 h-12 bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-700 border border-emerald-600 dark:border-emerald-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group"
+            title="Ir arriba"
+        >
+            <svg class="w-5 h-5 text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+            </svg>
+        </button>
+        
+        <!-- Botón Scroll Abajo -->
+        <button 
+            onclick="scrollToBottom()" 
+            class="w-12 h-12 bg-emerald-500 dark:bg-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-700 border border-emerald-600 dark:border-emerald-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group"
+            title="Ir abajo"
+        >
+            <svg class="w-5 h-5 text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </button>
+    </div>
     
     <script>
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
         function scrollToBottom() {
             window.scrollTo({
                 top: document.documentElement.scrollHeight,

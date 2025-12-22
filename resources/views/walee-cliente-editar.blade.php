@@ -8,6 +8,7 @@
     <meta name="description" content="Editar cliente">
     <meta name="theme-color" content="#D59F3B">
     @include('partials.walee-dark-mode-init')
+    @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

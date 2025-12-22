@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $fecha->format('d M Y') }} - Calendario</title>
     @include('partials.walee-dark-mode-init')
+    @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

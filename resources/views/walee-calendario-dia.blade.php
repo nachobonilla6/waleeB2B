@@ -131,17 +131,22 @@
                                                 <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-1">
                                                     {{ $item['titulo'] }}
                                                 </h3>
-                                                @if($item['tipo'] === 'cita' && $item['cliente'])
+                                                @if($item['tipo'] === 'cita' && isset($item['cliente']) && $item['cliente'])
                                                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
                                                         Cliente: <span class="font-medium">{{ $item['cliente'] }}</span>
                                                     </p>
                                                 @endif
-                                                @if($item['tipo'] === 'tarea' && $item['tipo_tarea'])
+                                                @if($item['tipo'] === 'tarea' && isset($item['tipo_tarea']) && $item['tipo_tarea'])
                                                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
                                                         Tipo: <span class="font-medium">{{ $item['tipo_tarea'] }}</span>
                                                     </p>
                                                 @endif
-                                                @if($item['tipo'] === 'cita' && $item['ubicacion'])
+                                                @if($item['tipo'] === 'tarea' && isset($item['lista']) && $item['lista'])
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                                                        Lista: <span class="font-medium">{{ $item['lista'] }}</span>
+                                                    </p>
+                                                @endif
+                                                @if($item['tipo'] === 'cita' && isset($item['ubicacion']) && $item['ubicacion'])
                                                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
                                                         📍 {{ $item['ubicacion'] }}
                                                     </p>

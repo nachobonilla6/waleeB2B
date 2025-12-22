@@ -133,6 +133,15 @@
             background-color: rgb(245, 243, 255) !important;
         }
         
+        html:not(.dark) .relative.max-w-\[90rem\] {
+            background-color: transparent !important;
+        }
+        
+        /* Forzar todos los elementos con fondo visible a violeta claro */
+        html:not(.dark) div[class*="bg-"]:not([class*="dark:"]):not([class*="bg-violet"]):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-walee"]):not([class*="bg-cyan"]):not([class*="bg-amber"]) {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
         html:not(.dark) .text-slate-300 {
             color: rgb(51, 65, 85) !important;
         }

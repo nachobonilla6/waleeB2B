@@ -437,7 +437,16 @@
                     body: formData
                 });
                 
-                const data = await response.json();
+                const responseText = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Respuesta no JSON del servidor:', responseText);
+                    alert('Error de conexión: respuesta no válida del servidor');
+                    return;
+                }
                 
                 if (data.success) {
                     alert('✅ Publicación creada y enviada a Facebook correctamente');

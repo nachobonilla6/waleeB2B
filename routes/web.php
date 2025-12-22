@@ -888,6 +888,90 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
     }
 })->middleware(['auth'])->name('walee.cliente.webhook');
 
+// Rutas para Tareas
+Route::get('/tareas', function () {
+    return view('walee-tareas');
+})->middleware(['auth'])->name('walee.tareas');
+
+Route::post('/tareas', function (\Illuminate\Http\Request $request) {
+    try {
+        $tarea = new \App\Models\Tarea();
+        $tarea->lista_id = $request->input('lista_id');
+        $tarea->texto = $request->input('texto');
+        $tarea->fecha_hora = $request->input('fecha_hora') ? \Carbon\Carbon::parse($request->input('fecha_hora')) : null;
+        $tarea->tipo = $request->input('tipo');
+        $tarea->favorito = $request->has('favorito');
+        $tarea->estado = 'pending';
+        $tarea->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea creada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('tareas.store');
+
+Route::post('/tareas/{id}/toggle', function ($id) {
+    try {
+        $tarea = \App\Models\Tarea::findOrFail($id);
+        $tarea->estado = $tarea->estado === 'pending' ? 'completado' : 'pending';
+        $tarea->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('tareas.toggle');
+
+Route::post('/tareas/{id}/favorito', function ($id) {
+    try {
+        $tarea = \App\Models\Tarea::findOrFail($id);
+        $tarea->favorito = !$tarea->favorito;
+        $tarea->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Favorito actualizado',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('tareas.favorito');
+
+// Rutas para Listas
+Route::post('/listas', function (\Illuminate\Http\Request $request) {
+    try {
+        $lista = new \App\Models\Lista();
+        $lista->nombre = $request->input('nombre');
+        $lista->descripcion = $request->input('descripcion');
+        $lista->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Lista creada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('listas.store');
+
 // Ruta para crear publicación del cliente
 Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Request $request, $id) {
     try {

@@ -968,11 +968,11 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
 Route::post('/tareas', function (\Illuminate\Http\Request $request) {
     try {
         $tarea = new \App\Models\Tarea();
-        $tarea->lista_id = $request->input('lista_id');
+        $tarea->lista_id = $request->input('lista_id') ?: null;
         $tarea->texto = $request->input('texto');
         // Si viene fecha_hora del request, usarla; si no, usar now()
         $tarea->fecha_hora = $request->input('fecha_hora') ? \Carbon\Carbon::parse($request->input('fecha_hora')) : now();
-        $tarea->tipo = $request->input('tipo');
+        $tarea->tipo = $request->input('tipo') ?: null;
         $tarea->favorito = false; // Por defecto no es favorito
         $tarea->estado = 'pending';
         $tarea->save();
@@ -993,11 +993,11 @@ Route::put('/tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $tarea = \App\Models\Tarea::findOrFail($id);
         $tarea->texto = $request->input('texto');
-        $tarea->lista_id = $request->input('lista_id');
+        $tarea->lista_id = $request->input('lista_id') ?: null;
         if ($request->input('fecha_hora')) {
             $tarea->fecha_hora = \Carbon\Carbon::parse($request->input('fecha_hora'));
         }
-        $tarea->tipo = $request->input('tipo');
+        $tarea->tipo = $request->input('tipo') ?: null;
         $tarea->save();
         
         return response()->json([

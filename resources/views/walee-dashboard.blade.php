@@ -61,7 +61,7 @@
         
         /* Light mode adjustments */
         html:not(.dark) .stat-card {
-            background: rgba(245, 243, 255, 0.9) !important;
+            background: rgb(245, 243, 255) !important;
             border-color: rgba(221, 214, 254, 0.8) !important;
         }
         
@@ -78,7 +78,7 @@
         }
         
         html:not(.dark) .bg-slate-900\/50 {
-            background-color: rgba(245, 243, 255, 0.9) !important;
+            background-color: rgb(245, 243, 255) !important;
             border-color: rgba(221, 214, 254, 0.8) !important;
         }
         
@@ -87,9 +87,22 @@
             border-color: rgb(221, 214, 254) !important;
         }
         
+        html:not(.dark) .bg-slate-100 {
+            background-color: rgb(237, 233, 254) !important;
+        }
+        
+        html:not(.dark) .bg-slate-50 {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
         /* Cambiar bg-white a violeta claro en light mode */
         html:not(.dark) .bg-white {
             background-color: rgb(245, 243, 255) !important;
+        }
+        
+        /* Cambiar gradientes de stat-cards a violeta claro en light mode */
+        html:not(.dark) .stat-card.bg-gradient-to-br {
+            background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
         }
         
         html:not(.dark) .text-slate-300 {
@@ -277,7 +290,7 @@
             
             <!-- User Avatar -->
             <div class="flex items-center justify-end mb-4">
-                <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center shadow-sm dark:shadow-none">
+                <div class="w-10 h-10 rounded-full bg-violet-100 dark:bg-slate-800 border border-violet-300 dark:border-slate-700 flex items-center justify-center shadow-sm dark:shadow-none">
                     <span class="text-sm font-medium text-walee-600 dark:text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
                 </div>
             </div>

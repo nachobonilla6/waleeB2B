@@ -49,7 +49,7 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-3xl mx-auto px-4 py-6">
+        <div class="relative max-w-7xl mx-auto px-4 py-6">
             @php $pageTitle = 'Configuración'; @endphp
             @include('partials.walee-navbar')
 

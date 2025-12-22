@@ -139,6 +139,11 @@ Route::get('/walee-tickets', function () {
     return view('walee-tickets');
 })->middleware(['auth'])->name('walee.tickets');
 
+// Tareas
+Route::get('/tareas', function () {
+    return view('walee-tareas');
+})->middleware(['auth'])->name('walee.tareas');
+
 Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
     try {
         $imagePath = null;
@@ -888,11 +893,7 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
     }
 })->middleware(['auth'])->name('walee.cliente.webhook');
 
-// Rutas para Tareas
-Route::get('/tareas', function () {
-    return view('walee-tareas');
-})->middleware(['auth'])->name('walee.tareas');
-
+// Rutas para Tareas (POST, PUT, DELETE)
 Route::post('/tareas', function (\Illuminate\Http\Request $request) {
     try {
         $tarea = new \App\Models\Tarea();

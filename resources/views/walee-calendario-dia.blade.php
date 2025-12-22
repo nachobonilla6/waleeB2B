@@ -151,10 +151,19 @@
                                                 <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-1">
                                                     {{ $item['titulo'] }}
                                                 </h3>
-                                                @if($item['tipo'] === 'cita' && isset($item['cliente']) && $item['cliente'])
-                                                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                                                        Cliente: <span class="font-medium">{{ $item['cliente'] }}</span>
-                                                    </p>
+                                                @if($item['tipo'] === 'cita')
+                                                    @if(isset($item['cliente']) && $item['cliente'])
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                            </svg>
+                                                            <span class="font-medium text-slate-700 dark:text-slate-300">{{ $item['cliente'] }}</span>
+                                                        </p>
+                                                    @elseif(isset($item['cliente_id']) && $item['cliente_id'])
+                                                        <p class="text-sm text-slate-500 dark:text-slate-500 mb-1 italic">
+                                                            Cliente no disponible
+                                                        </p>
+                                                    @endif
                                                 @endif
                                                 @if($item['tipo'] === 'tarea' && isset($item['tipo_tarea']) && $item['tipo_tarea'])
                                                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">

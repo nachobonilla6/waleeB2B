@@ -73,32 +73,8 @@
         
         <!-- Main Content -->
         <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.facturas') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-violet-500 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Crear Factura
-                        </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Completa los datos de la factura</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    @include('partials.walee-dark-mode-toggle')
-                    <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-sm dark:shadow-none">
-                        <span class="text-sm font-medium text-walee-600 dark:text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
-                    </div>
-                </div>
-            </header>
+            @php $pageTitle = 'Crear Factura'; @endphp
+            @include('partials.walee-navbar')
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

@@ -72,34 +72,20 @@
         
         <!-- Main Content -->
         <div class="relative max-w-3xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-6 animate-fade-in-up no-print">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.facturas.lista') }}" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-                            Factura #{{ $factura->numero_factura }}
-                        </h1>
-                        <p class="text-sm text-slate-400">{{ $factura->cliente?->nombre_empresa ?? 'Sin cliente' }}</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    @if($factura->enviada_at)
-                        <span class="px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full">
-                            Enviada
-                        </span>
-                    @else
-                        <span class="px-3 py-1 text-xs font-medium bg-amber-500/20 text-amber-400 rounded-full">
-                            Pendiente
-                        </span>
-                    @endif
-                </div>
-            </header>
+            @php $pageTitle = 'Factura #' . $factura->numero_factura; @endphp
+            @include('partials.walee-navbar')
+            
+            <div class="flex items-center justify-end gap-2 mb-6 no-print">
+                @if($factura->enviada_at)
+                    <span class="px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full">
+                        Enviada
+                    </span>
+                @else
+                    <span class="px-3 py-1 text-xs font-medium bg-amber-500/20 text-amber-400 rounded-full">
+                        Pendiente
+                    </span>
+                @endif
+            </div>
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2 no-print"></div>

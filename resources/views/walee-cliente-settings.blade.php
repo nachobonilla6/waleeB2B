@@ -49,20 +49,8 @@
         </div>
         
         <div class="relative max-w-3xl mx-auto px-4 py-6">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all">
-                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                </a>
-                
-                <h1 class="text-xl font-bold text-slate-800 dark:text-white">Configuración</h1>
-                
-                <div class="flex items-center gap-2">
-                    @include('partials.walee-dark-mode-toggle')
-                </div>
-            </header>
+            @php $pageTitle = 'Configuración'; @endphp
+            @include('partials.walee-navbar')
 
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">

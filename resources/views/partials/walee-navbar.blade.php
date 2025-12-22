@@ -68,7 +68,7 @@
     <!-- Mobile Menu Dropdown (Bootstrap Style) -->
     <div 
         id="mobileMenu" 
-        class="sm:hidden absolute top-full left-0 right-0 mt-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden hidden"
+        class="sm:hidden absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden hidden"
         style="display: none;"
     >
         <div class="py-2">

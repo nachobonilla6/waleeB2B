@@ -104,35 +104,17 @@
         
         <!-- Main Content -->
         <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
-                            </svg>
-                            Emails Enviados
-                        </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $emails->total() }} propuestas enviadas</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    @include('partials.walee-dark-mode-toggle')
-                    <a href="{{ route('walee.emails.crear') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span class="hidden sm:inline">Nuevo</span>
-                    </a>
-                </div>
-            </header>
+            @php $pageTitle = 'Emails Enviados'; @endphp
+            @include('partials.walee-navbar')
+            
+            <div class="flex items-center justify-end gap-3 mb-8">
+                <a href="{{ route('walee.emails.crear') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="hidden sm:inline">Nuevo</span>
+                </a>
+            </div>
             
             <!-- Stats Cards -->
             <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">

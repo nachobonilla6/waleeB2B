@@ -112,34 +112,17 @@
         
         <!-- Main Content -->
         <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.emails') }}" class="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-7 h-7 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
-                            </svg>
-                            Emails Recibidos
-                        </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">
-                            {{ $emails->total() }} emails
-                            @if($noLeidos > 0)
-                                · <span class="text-emerald-600 dark:text-emerald-400">{{ $noLeidos }} sin leer</span>
-                            @endif
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    @include('partials.walee-dark-mode-toggle')
-                    <button 
-                        onclick="syncEmails()"
+            @php 
+                $pageTitle = 'Emails Recibidos';
+                if($noLeidos > 0) {
+                    $pageTitle .= ' (' . $noLeidos . ' sin leer)';
+                }
+            @endphp
+            @include('partials.walee-navbar')
+            
+            <div class="flex items-center justify-end gap-3 mb-8">
+                <button 
+                    onclick="syncEmails()"
                         id="syncBtn"
                         class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-all flex items-center gap-2"
                     >

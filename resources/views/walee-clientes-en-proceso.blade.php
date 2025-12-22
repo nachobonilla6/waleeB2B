@@ -124,6 +124,16 @@
                         </svg>
                     </div>
                     <button 
+                        id="actionsMenuBtn"
+                        onclick="toggleActionsMenu()"
+                        class="px-4 py-3 rounded-2xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-all flex items-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                        </svg>
+                        <span class="hidden sm:inline">Acciones</span>
+                    </button>
+                    <button 
                         id="deleteSelectedBtn"
                         onclick="deleteSelectedClients()"
                         class="hidden px-4 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-medium transition-all flex items-center gap-2"
@@ -134,16 +144,19 @@
                         <span id="deleteCount">Borrar (0)</span>
                     </button>
                 </div>
-                <div class="flex items-center gap-2">
-                    <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
-                        <input 
-                            type="checkbox" 
-                            id="selectAll"
-                            onchange="toggleSelectAll(this.checked)"
-                            class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-0"
-                        >
-                        <span>Seleccionar todos</span>
-                    </label>
+                <!-- Actions Menu (hidden by default) -->
+                <div id="actionsMenu" class="hidden mb-3 p-4 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-lg">
+                    <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                id="selectAll"
+                                onchange="toggleSelectAll(this.checked)"
+                                class="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-0"
+                            >
+                            <span>Seleccionar todos</span>
+                        </label>
+                    </div>
                 </div>
             </div>
             
@@ -294,6 +307,24 @@
             });
             
             noResults.classList.toggle('hidden', visibleCount > 0 || query === '');
+        });
+        
+        // Toggle actions menu
+        function toggleActionsMenu() {
+            const menu = document.getElementById('actionsMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+        
+        // Close actions menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menuBtn = document.getElementById('actionsMenuBtn');
+            const menu = document.getElementById('actionsMenu');
+            
+            if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
         });
         
         // Toggle select all

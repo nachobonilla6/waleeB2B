@@ -300,7 +300,11 @@
         function toggleSelectAll(checked) {
             const checkboxes = document.querySelectorAll('.client-checkbox');
             checkboxes.forEach(checkbox => {
-                checkbox.checked = checked;
+                // Only check visible checkboxes
+                const card = checkbox.closest('.client-card');
+                if (card && card.style.display !== 'none') {
+                    checkbox.checked = checked;
+                }
             });
             updateDeleteButton();
         }
@@ -310,6 +314,10 @@
             const checkedBoxes = document.querySelectorAll('.client-checkbox:checked');
             const deleteBtn = document.getElementById('deleteSelectedBtn');
             const deleteCount = document.getElementById('deleteCount');
+            
+            if (!deleteBtn || !deleteCount) {
+                return;
+            }
             
             if (checkedBoxes.length > 0) {
                 deleteBtn.classList.remove('hidden');
@@ -375,7 +383,10 @@
                     });
                     
                     // Reset select all checkbox
-                    document.getElementById('selectAll').checked = false;
+                    const selectAllCheckbox = document.getElementById('selectAll');
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = false;
+                    }
                     updateDeleteButton();
                     
                     // Show success message

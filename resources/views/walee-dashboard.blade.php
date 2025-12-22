@@ -345,7 +345,7 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Total Income -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-slate-800 p-6 hover:border-emerald-400 dark:hover:border-slate-700 transition-all duration-300 shadow-sm dark:shadow-none">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-black p-6 hover:border-emerald-400 dark:hover:border-black transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
@@ -362,7 +362,7 @@
                     </div>
                     
                     <!-- Monthly Income -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-slate-800 p-6 hover:border-blue-400 dark:hover:border-slate-700 transition-all duration-300 shadow-sm dark:shadow-none">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-black p-6 hover:border-blue-400 dark:hover:border-black transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
@@ -379,7 +379,7 @@
                     </div>
                     
                     <!-- Weekly Income -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-400/10 dark:to-walee-500/5 border border-walee-200 dark:border-slate-800 p-6 hover:border-walee-400 dark:hover:border-slate-700 transition-all duration-300 shadow-sm dark:shadow-none">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-400/10 dark:to-walee-500/5 border border-walee-200 dark:border-black p-6 hover:border-walee-400 dark:hover:border-black transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-walee-400/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
@@ -414,7 +414,7 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <!-- Total Proposals -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-slate-800 p-6 hover:border-violet-400 dark:hover:border-slate-700 transition-all duration-300 shadow-sm dark:shadow-none">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-black p-6 hover:border-violet-400 dark:hover:border-black transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
@@ -430,7 +430,7 @@
                     </div>
                     
                     <!-- Standard Proposals Today -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-500/10 dark:to-cyan-600/5 border border-cyan-200 dark:border-slate-800 p-6 hover:border-cyan-400 dark:hover:border-slate-700 transition-all duration-300 shadow-sm dark:shadow-none">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-500/10 dark:to-cyan-600/5 border border-cyan-200 dark:border-black p-6 hover:border-cyan-400 dark:hover:border-black transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">
@@ -446,7 +446,7 @@
                     </div>
                     
                     <!-- Personalized Proposals Today -->
-                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border border-amber-200 dark:border-slate-800 p-6 hover:border-amber-400 dark:hover:border-slate-700 transition-all duration-300 shadow-sm dark:shadow-none">
+                    <div class="stat-card opacity-0 group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 border border-amber-200 dark:border-black p-6 hover:border-amber-400 dark:hover:border-black transition-all duration-300 shadow-sm dark:shadow-none">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="relative">
                             <div class="flex items-center justify-between mb-4">

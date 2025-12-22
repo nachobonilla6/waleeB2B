@@ -119,6 +119,25 @@
     </div>
 </header>
 
+<style>
+    .mobile-menu-opaque {
+        background-color: rgb(255, 255, 255) !important;
+    }
+    .dark .mobile-menu-opaque,
+    html.dark .mobile-menu-opaque {
+        background-color: rgb(15, 23, 42) !important;
+    }
+    @media (prefers-color-scheme: dark) {
+        .mobile-menu-opaque {
+            background-color: rgb(15, 23, 42) !important;
+        }
+    }
+    #mobileMenu {
+        z-index: 9999 !important;
+        position: absolute !important;
+    }
+</style>
+
 <script>
     function toggleMobileMenu() {
         const menu = document.getElementById('mobileMenu');
@@ -131,6 +150,13 @@
             // Open menu
             menu.style.display = 'block';
             menu.classList.remove('hidden');
+            // Force opaque background
+            if (document.documentElement.classList.contains('dark')) {
+                menu.style.backgroundColor = 'rgb(15, 23, 42)';
+            } else {
+                menu.style.backgroundColor = 'rgb(255, 255, 255)';
+            }
+            menu.style.zIndex = '9999';
             toggle.setAttribute('aria-expanded', 'true');
             
             // Animate hamburger to X

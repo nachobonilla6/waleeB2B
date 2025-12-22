@@ -409,7 +409,7 @@
                                     </button>
                                 @endif
                             </div>
-                        </div>
+                        </a>
                         @php $diaActual->addDay(); @endphp
                     @endwhile
                 </div>

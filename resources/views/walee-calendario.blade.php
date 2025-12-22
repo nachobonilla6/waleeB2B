@@ -161,7 +161,7 @@
                             </button>
                             <button 
                                 onclick="showNuevaTareaModal()"
-                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                        class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
                             >
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -228,7 +228,7 @@
                                     @php $mostrados++; @endphp
                                     <button 
                                         onclick="showTareaDetail({{ $tarea->id }})"
-                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300' }}"
+                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300' }}"
                                         title="{{ $tarea->texto }}"
                                     >
                                         <span class="hidden sm:inline">{{ $tarea->fecha_hora->format('H:i') }} - </span>{{ $tarea->texto }}
@@ -389,7 +389,7 @@
                         id="tarea_texto"
                         required
                         placeholder="Descripción de la tarea"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
                     >
                 </div>
                 
@@ -426,7 +426,7 @@
                         id="tarea_tipo"
                         list="tipos-list"
                         placeholder="Tipo de tarea (opcional)"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
                     >
                     <datalist id="tipos-list">
                         @foreach($tiposExistentes as $tipo)
@@ -438,7 +438,7 @@
                 <div class="flex gap-2 pt-2">
                     <button 
                         type="submit"
-                        class="flex-1 px-6 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all"
+                        class="flex-1 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all"
                     >
                         Guardar
                     </button>
@@ -648,7 +648,7 @@
             
             tareasDelDia.forEach(tarea => {
                 content += `
-                    <button onclick="showTareaDetail(${tarea.id})" class="w-full text-left p-3 rounded-lg bg-purple-50 dark:bg-purple-500/10 hover:bg-purple-100 dark:hover:bg-purple-500/20 transition-all border border-purple-200 dark:border-purple-500/20">
+                    <button onclick="showTareaDetail(${tarea.id})" class="w-full text-left p-3 rounded-lg bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all border border-violet-200 dark:border-violet-500/20">
                         <p class="font-medium text-slate-900 dark:text-white">${tarea.texto}</p>
                         <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${new Date(tarea.fecha_hora).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} - Tarea</p>
                     </button>
@@ -785,7 +785,7 @@
                     </div>
                     
                     <div class="flex gap-2 pt-2">
-                        <button onclick="editTarea(${tarea.id})" class="flex-1 px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all">
+                        <button onclick="editTarea(${tarea.id})" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all"
                             Editar
                         </button>
                         <button onclick="deleteTareaConfirm(${tarea.id})" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all">

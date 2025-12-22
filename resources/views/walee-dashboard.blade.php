@@ -105,6 +105,25 @@
             background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
         }
         
+        /* Forzar todos los gradientes de stat-cards a violeta claro */
+        html:not(.dark) .stat-card[class*="from-emerald-50"],
+        html:not(.dark) .stat-card[class*="from-blue-50"],
+        html:not(.dark) .stat-card[class*="from-walee-50"],
+        html:not(.dark) .stat-card[class*="from-violet-50"],
+        html:not(.dark) .stat-card[class*="from-cyan-50"],
+        html:not(.dark) .stat-card[class*="from-amber-50"] {
+            background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
+        }
+        
+        html:not(.dark) .stat-card[class*="to-emerald-100"],
+        html:not(.dark) .stat-card[class*="to-blue-100"],
+        html:not(.dark) .stat-card[class*="to-walee-100"],
+        html:not(.dark) .stat-card[class*="to-violet-100"],
+        html:not(.dark) .stat-card[class*="to-cyan-100"],
+        html:not(.dark) .stat-card[class*="to-amber-100"] {
+            background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
+        }
+        
         html:not(.dark) .text-slate-300 {
             color: rgb(51, 65, 85) !important;
         }

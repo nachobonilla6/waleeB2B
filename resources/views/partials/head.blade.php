@@ -26,4 +26,43 @@
     body {
         font-family: 'Inter', sans-serif;
     }
+    
+    /* Estilos globales para violeta claro en light mode */
+    html:not(.dark) body {
+        background-color: rgb(245, 243, 255) !important;
+    }
+    
+    html:not(.dark) .bg-white {
+        background-color: rgb(245, 243, 255) !important;
+    }
+    
+    html:not(.dark) .bg-slate-50 {
+        background-color: rgb(245, 243, 255) !important;
+    }
+    
+    html:not(.dark) .bg-slate-100 {
+        background-color: rgb(237, 233, 254) !important;
+    }
+    
+    html:not(.dark) .bg-slate-200 {
+        background-color: rgb(221, 214, 254) !important;
+    }
+    
+    html:not(.dark) .bg-slate-900\/50,
+    html:not(.dark) .bg-slate-900\/80 {
+        background-color: rgb(245, 243, 255) !important;
+    }
+    
+    html:not(.dark) .bg-slate-800 {
+        background-color: rgb(237, 233, 254) !important;
+    }
+    
+    html:not(.dark) .min-h-screen {
+        background-color: rgb(245, 243, 255) !important;
+    }
+    
+    /* Cambiar gradientes comunes a violeta claro */
+    html:not(.dark) .bg-gradient-to-br:not([class*="dark:"]):not([class*="bg-violet"]):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-walee"]):not([class*="bg-cyan"]):not([class*="bg-amber"]):not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-yellow"]) {
+        background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
+    }
 </style>

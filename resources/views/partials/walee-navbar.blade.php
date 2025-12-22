@@ -8,7 +8,13 @@
             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent truncate">
                 Walee
             </h1>
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $pageTitle ?? 'Dashboard' }} · {{ now()->format('d M, Y') }}</p>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
+                @if(isset($pageTitle))
+                    {{ $pageTitle }}
+                @else
+                    Dashboard · {{ now()->format('d M, Y') }}
+                @endif
+            </p>
         </div>
     </div>
     

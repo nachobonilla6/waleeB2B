@@ -21,11 +21,13 @@ class Cita extends Model
         'recurrencia',
         'recurrencia_fin',
         'color',
+        'recurrencia_dias',
     ];
 
     protected $casts = [
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
+        'recurrencia_dias' => 'array',
     ];
 
     public function cliente(): BelongsTo

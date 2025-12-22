@@ -16,12 +16,15 @@ class Tarea extends Model
         'estado',
         'recurrencia',
         'recurrencia_fin',
+        'color',
+        'recurrencia_dias',
     ];
 
     protected $casts = [
         'fecha_hora' => 'datetime',
         'recurrencia_fin' => 'datetime',
         'favorito' => 'boolean',
+        'recurrencia_dias' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

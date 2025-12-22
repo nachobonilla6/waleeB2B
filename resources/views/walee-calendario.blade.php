@@ -116,24 +116,77 @@
                 
                 // Generar ocurrencias hasta el fin del mes o hasta recurrencia_fin
                 $fechaActualCita = $fechaInicio->copy();
-                while ($fechaActualCita->lte($mesFin) && $fechaActualCita->lte($fechaFin)) {
-                    if ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano) {
-                        $citaRecurrente = clone $cita;
-                        $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
-                        if ($cita->fecha_fin) {
-                            $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
-                            $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                $recurrenciaDias = $cita->recurrencia_dias ?? [];
+                
+                if ($cita->recurrencia === 'semanal' && !empty($recurrenciaDias)) {
+                    // Recurrencia semanal con días específicos
+                    $fechaActualCita = $mesInicio->copy();
+                    while ($fechaActualCita->lte($mesFin) && $fechaActualCita->lte($fechaFin)) {
+                        $diaSemana = $fechaActualCita->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
+                        if (in_array($diaSemana, $recurrenciaDias) && $fechaActualCita->month == $mes && $fechaActualCita->year == $ano) {
+                            $citaRecurrente = clone $cita;
+                            $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
+                            if ($cita->fecha_fin) {
+                                $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                                $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                            }
+                            $citas->push($citaRecurrente);
                         }
-                        $citas->push($citaRecurrente);
+                        $fechaActualCita->addDay();
                     }
-                    
-                    // Avanzar según el tipo de recurrencia
-                    if ($cita->recurrencia === 'semanal') {
-                        $fechaActualCita->addWeek();
-                    } elseif ($cita->recurrencia === 'mensual') {
-                        $fechaActualCita->addMonth();
-                    } elseif ($cita->recurrencia === 'anual') {
-                        $fechaActualCita->addYear();
+                } elseif ($cita->recurrencia === 'mensual' && !empty($recurrenciaDias)) {
+                    // Recurrencia mensual con días específicos
+                    foreach ($recurrenciaDias as $dia) {
+                        if (is_numeric($dia) && $dia >= 1 && $dia <= 31) {
+                            // Es un día del mes (1-31)
+                            $fechaCita = \Carbon\Carbon::create($ano, $mes, min($dia, $mesFin->day));
+                            if ($fechaCita->lte($mesFin) && $fechaCita->lte($fechaFin) && $fechaCita->gte($mesInicio)) {
+                                $citaRecurrente = clone $cita;
+                                $citaRecurrente->fecha_inicio = $fechaCita->copy();
+                                if ($cita->fecha_fin) {
+                                    $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                                    $citaRecurrente->fecha_fin = $fechaCita->copy()->addMinutes($duracion);
+                                }
+                                $citas->push($citaRecurrente);
+                            }
+                        } elseif (is_numeric($dia) && $dia >= 0 && $dia <= 6) {
+                            // Es un día de la semana (0=Domingo, 6=Sábado) - "cada Lunes", etc.
+                            $fechaCita = $mesInicio->copy();
+                            while ($fechaCita->lte($mesFin) && $fechaCita->lte($fechaFin)) {
+                                if ($fechaCita->dayOfWeek == $dia && $fechaCita->month == $mes && $fechaCita->year == $ano) {
+                                    $citaRecurrente = clone $cita;
+                                    $citaRecurrente->fecha_inicio = $fechaCita->copy();
+                                    if ($cita->fecha_fin) {
+                                        $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                                        $citaRecurrente->fecha_fin = $fechaCita->copy()->addMinutes($duracion);
+                                    }
+                                    $citas->push($citaRecurrente);
+                                }
+                                $fechaCita->addDay();
+                            }
+                        }
+                    }
+                } else {
+                    // Recurrencia normal sin días específicos
+                    while ($fechaActualCita->lte($mesFin) && $fechaActualCita->lte($fechaFin)) {
+                        if ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano) {
+                            $citaRecurrente = clone $cita;
+                            $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
+                            if ($cita->fecha_fin) {
+                                $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                                $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                            }
+                            $citas->push($citaRecurrente);
+                        }
+                        
+                        // Avanzar según el tipo de recurrencia
+                        if ($cita->recurrencia === 'semanal') {
+                            $fechaActualCita->addWeek();
+                        } elseif ($cita->recurrencia === 'mensual') {
+                            $fechaActualCita->addMonth();
+                        } elseif ($cita->recurrencia === 'anual') {
+                            $fechaActualCita->addYear();
+                        }
                     }
                 }
             }
@@ -195,20 +248,61 @@
                 
                 // Generar ocurrencias hasta el fin del mes o hasta recurrencia_fin
                 $fechaActualTarea = $fechaInicio->copy();
-                while ($fechaActualTarea->lte($mesFin) && $fechaActualTarea->lte($fechaFin)) {
-                    if ($fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
-                        $tareaRecurrente = clone $tarea;
-                        $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
-                        $tareas->push($tareaRecurrente);
-                    }
-                    
-                    // Avanzar según el tipo de recurrencia
-                    if ($tarea->recurrencia === 'diaria') {
+                $recurrenciaDias = $tarea->recurrencia_dias ?? [];
+                
+                if ($tarea->recurrencia === 'semanal' && !empty($recurrenciaDias)) {
+                    // Recurrencia semanal con días específicos
+                    $fechaActualTarea = $mesInicio->copy();
+                    while ($fechaActualTarea->lte($mesFin) && $fechaActualTarea->lte($fechaFin)) {
+                        $diaSemana = $fechaActualTarea->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
+                        if (in_array($diaSemana, $recurrenciaDias) && $fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
+                            $tareaRecurrente = clone $tarea;
+                            $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
+                            $tareas->push($tareaRecurrente);
+                        }
                         $fechaActualTarea->addDay();
-                    } elseif ($tarea->recurrencia === 'semanal') {
-                        $fechaActualTarea->addWeek();
-                    } elseif ($tarea->recurrencia === 'mensual') {
-                        $fechaActualTarea->addMonth();
+                    }
+                } elseif ($tarea->recurrencia === 'mensual' && !empty($recurrenciaDias)) {
+                    // Recurrencia mensual con días específicos
+                    foreach ($recurrenciaDias as $dia) {
+                        if (is_numeric($dia) && $dia >= 1 && $dia <= 31) {
+                            // Es un día del mes (1-31)
+                            $fechaTarea = \Carbon\Carbon::create($ano, $mes, min($dia, $mesFin->day));
+                            if ($fechaTarea->lte($mesFin) && $fechaTarea->lte($fechaFin) && $fechaTarea->gte($mesInicio)) {
+                                $tareaRecurrente = clone $tarea;
+                                $tareaRecurrente->fecha_hora = $fechaTarea->copy();
+                                $tareas->push($tareaRecurrente);
+                            }
+                        } elseif (is_numeric($dia) && $dia >= 0 && $dia <= 6) {
+                            // Es un día de la semana (0=Domingo, 6=Sábado) - "cada Lunes", etc.
+                            $fechaTarea = $mesInicio->copy();
+                            while ($fechaTarea->lte($mesFin) && $fechaTarea->lte($fechaFin)) {
+                                if ($fechaTarea->dayOfWeek == $dia && $fechaTarea->month == $mes && $fechaTarea->year == $ano) {
+                                    $tareaRecurrente = clone $tarea;
+                                    $tareaRecurrente->fecha_hora = $fechaTarea->copy();
+                                    $tareas->push($tareaRecurrente);
+                                }
+                                $fechaTarea->addDay();
+                            }
+                        }
+                    }
+                } else {
+                    // Recurrencia normal sin días específicos
+                    while ($fechaActualTarea->lte($mesFin) && $fechaActualTarea->lte($fechaFin)) {
+                        if ($fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
+                            $tareaRecurrente = clone $tarea;
+                            $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
+                            $tareas->push($tareaRecurrente);
+                        }
+                        
+                        // Avanzar según el tipo de recurrencia
+                        if ($tarea->recurrencia === 'diaria') {
+                            $fechaActualTarea->addDay();
+                        } elseif ($tarea->recurrencia === 'semanal') {
+                            $fechaActualTarea->addWeek();
+                        } elseif ($tarea->recurrencia === 'mensual') {
+                            $fechaActualTarea->addMonth();
+                        }
                     }
                 }
             }
@@ -393,9 +487,20 @@
                                 @endforeach
                                 @foreach($tareasDelDia->take($maxMostrar - $mostrados) as $tarea)
                                     @php $mostrados++; @endphp
+                                    @php
+                                        $colorTarea = $tarea->color ?? '#8b5cf6';
+                                        $colorHex = ltrim($colorTarea, '#');
+                                        $r = hexdec(substr($colorHex, 0, 2));
+                                        $g = hexdec(substr($colorHex, 2, 2));
+                                        $b = hexdec(substr($colorHex, 4, 2));
+                                        $colorBg = $tarea->estado === 'completado' 
+                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorTarea};";
+                                    @endphp
                                     <button 
                                         onclick="showTareaDetail({{ $tarea->id }})"
-                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300' }}"
+                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                        style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
                                         title="{{ $tarea->texto }}"
                                     >
                                         <span class="hidden sm:inline">{{ $tarea->fecha_hora->format('H:i') }} - </span>{{ $tarea->texto }}
@@ -507,13 +612,61 @@
                         name="recurrencia" 
                         id="recurrencia"
                         class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                        onchange="toggleRecurrenciaFin()"
+                        onchange="toggleRecurrenciaOptions()"
                     >
                         <option value="none">Sin recurrencia</option>
                         <option value="semanal">Semanal</option>
                         <option value="mensual">Mensual</option>
                         <option value="anual">Anual</option>
                     </select>
+                </div>
+                
+                <div id="recurrencia_dias_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Días específicos</label>
+                    <div id="recurrencia_dias_semanal" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="0" class="rounded">
+                                <span class="text-sm">Dom</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="1" class="rounded">
+                                <span class="text-sm">Lun</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="2" class="rounded">
+                                <span class="text-sm">Mar</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="3" class="rounded">
+                                <span class="text-sm">Mié</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="4" class="rounded">
+                                <span class="text-sm">Jue</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="5" class="rounded">
+                                <span class="text-sm">Vie</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="6" class="rounded">
+                                <span class="text-sm">Sáb</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="recurrencia_dias_mensual" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                        <input 
+                            type="text" 
+                            name="recurrencia_dias_mensual" 
+                            id="recurrencia_dias_mensual"
+                            placeholder="Ej: 1,15,30 o cada Lunes"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                        >
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes escribir números separados por comas (1,15,30) o días de la semana (cada Lunes, cada Martes, etc.)</p>
+                    </div>
                 </div>
                 
                 <div id="recurrencia_fin_container" class="hidden">
@@ -637,13 +790,61 @@
                         name="recurrencia" 
                         id="tarea_recurrencia"
                         class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
-                        onchange="toggleTareaRecurrenciaFin()"
+                        onchange="toggleTareaRecurrenciaOptions()"
                     >
                         <option value="none">Sin recurrencia</option>
                         <option value="diaria">Diaria</option>
                         <option value="semanal">Semanal</option>
                         <option value="mensual">Mensual</option>
                     </select>
+                </div>
+                
+                <div id="tarea_recurrencia_dias_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Días específicos</label>
+                    <div id="tarea_recurrencia_dias_semanal" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="0" class="rounded">
+                                <span class="text-sm">Dom</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="1" class="rounded">
+                                <span class="text-sm">Lun</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="2" class="rounded">
+                                <span class="text-sm">Mar</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="3" class="rounded">
+                                <span class="text-sm">Mié</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="4" class="rounded">
+                                <span class="text-sm">Jue</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="5" class="rounded">
+                                <span class="text-sm">Vie</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="6" class="rounded">
+                                <span class="text-sm">Sáb</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="tarea_recurrencia_dias_mensual" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                        <input 
+                            type="text" 
+                            name="recurrencia_dias_mensual" 
+                            id="tarea_recurrencia_dias_mensual"
+                            placeholder="Ej: 1,15,30 o cada Lunes"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                        >
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes escribir números separados por comas (1,15,30) o días de la semana (cada Lunes, cada Martes, etc.)</p>
+                    </div>
                 </div>
                 
                 <div id="tarea_recurrencia_fin_container" class="hidden">
@@ -671,6 +872,27 @@
                             <option value="{{ $tipo }}">
                         @endforeach
                     </datalist>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                    <div class="flex items-center gap-3">
+                        <input 
+                            type="color" 
+                            name="color" 
+                            id="tarea_color"
+                            value="#8b5cf6"
+                            class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
+                        >
+                        <input 
+                            type="text" 
+                            id="tarea_color_text"
+                            value="#8b5cf6"
+                            placeholder="#8b5cf6"
+                            class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            onchange="document.getElementById('tarea_color').value = this.value"
+                        >
+                    </div>
                 </div>
                 
                 <div class="flex gap-2 pt-2">
@@ -758,13 +980,33 @@
             }
         });
         
-        function toggleRecurrenciaFin() {
+        function toggleRecurrenciaOptions() {
             const recurrencia = document.getElementById('recurrencia').value;
-            const container = document.getElementById('recurrencia_fin_container');
-            if (recurrencia !== 'none') {
-                container.classList.remove('hidden');
+            const finContainer = document.getElementById('recurrencia_fin_container');
+            const diasContainer = document.getElementById('recurrencia_dias_container');
+            const diasSemanal = document.getElementById('recurrencia_dias_semanal');
+            const diasMensual = document.getElementById('recurrencia_dias_mensual');
+            
+            // Reset checkboxes
+            document.querySelectorAll('#recurrencia_dias_container input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('recurrencia_dias_mensual').value = '';
+            
+            if (recurrencia === 'none') {
+                finContainer.classList.add('hidden');
+                diasContainer.classList.add('hidden');
             } else {
-                container.classList.add('hidden');
+                finContainer.classList.remove('hidden');
+                if (recurrencia === 'semanal') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.remove('hidden');
+                    diasMensual.classList.add('hidden');
+                } else if (recurrencia === 'mensual') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.add('hidden');
+                    diasMensual.classList.remove('hidden');
+                } else {
+                    diasContainer.classList.add('hidden');
+                }
             }
         }
         
@@ -785,6 +1027,7 @@
             document.getElementById('cita_id').value = '';
             document.getElementById('deleteBtn').classList.add('hidden');
             document.getElementById('recurrencia_fin_container').classList.add('hidden');
+            document.getElementById('recurrencia_dias_container').classList.add('hidden');
             document.getElementById('color').value = '#10b981';
             document.getElementById('color_text').value = '#10b981';
             document.getElementById('citaModal').classList.remove('hidden');
@@ -896,7 +1139,20 @@
             document.getElementById('recurrencia_fin').value = cita.recurrencia_fin ? new Date(cita.recurrencia_fin).toISOString().slice(0, 16) : '';
             document.getElementById('color').value = cita.color || '#10b981';
             document.getElementById('color_text').value = cita.color || '#10b981';
-            toggleRecurrenciaFin();
+            
+            // Cargar días de recurrencia
+            if (cita.recurrencia_dias && Array.isArray(cita.recurrencia_dias)) {
+                if (cita.recurrencia === 'semanal') {
+                    cita.recurrencia_dias.forEach(dia => {
+                        const checkbox = document.querySelector(`#recurrencia_dias_container input[value="${dia}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else if (cita.recurrencia === 'mensual') {
+                    document.getElementById('recurrencia_dias_mensual').value = cita.recurrencia_dias.join(',');
+                }
+            }
+            
+            toggleRecurrenciaOptions();
             document.getElementById('deleteBtn').classList.remove('hidden');
             
             closeCitaDetailModal();
@@ -989,6 +1245,32 @@
             const url = citaId ? `/citas/${citaId}` : '/citas';
             const method = citaId ? 'PUT' : 'POST';
             
+            // Obtener días de recurrencia
+            let recurrenciaDias = null;
+            const recurrencia = formData.get('recurrencia') || 'none';
+            if (recurrencia === 'semanal') {
+                const diasCheckboxes = document.querySelectorAll('#recurrencia_dias_container input[type="checkbox"]:checked');
+                recurrenciaDias = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+            } else if (recurrencia === 'mensual') {
+                const diasMensual = formData.get('recurrencia_dias_mensual');
+                if (diasMensual) {
+                    // Procesar días del mes: puede ser números separados por comas o días de la semana
+                    const dias = diasMensual.split(',').map(d => d.trim());
+                    recurrenciaDias = dias.map(d => {
+                        // Si es un número, devolverlo; si es un día de la semana, convertir a número
+                        const diaNum = parseInt(d);
+                        if (!isNaN(diaNum)) return diaNum;
+                        // Mapear días de la semana en español a números
+                        const diasSemana = {
+                            'domingo': 0, 'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3,
+                            'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+                        };
+                        const diaLower = d.toLowerCase().replace('cada ', '');
+                        return diasSemana[diaLower] !== undefined ? diasSemana[diaLower] : null;
+                    }).filter(d => d !== null);
+                }
+            }
+            
             const data = {
                 titulo: formData.get('titulo'),
                 cliente_id: formData.get('cliente_id') || null,
@@ -997,8 +1279,9 @@
                 ubicacion: formData.get('ubicacion') || null,
                 descripcion: formData.get('descripcion') || null,
                 estado: formData.get('estado'),
-                recurrencia: formData.get('recurrencia') || 'none',
+                recurrencia: recurrencia,
                 recurrencia_fin: formData.get('recurrencia_fin') || null,
+                recurrencia_dias: recurrenciaDias,
                 color: formData.get('color') || '#10b981',
             };
             
@@ -1035,15 +1318,46 @@
         });
         
         // Tarea Functions
-        function toggleTareaRecurrenciaFin() {
+        function toggleTareaRecurrenciaOptions() {
             const recurrencia = document.getElementById('tarea_recurrencia').value;
-            const container = document.getElementById('tarea_recurrencia_fin_container');
-            if (recurrencia !== 'none') {
-                container.classList.remove('hidden');
+            const finContainer = document.getElementById('tarea_recurrencia_fin_container');
+            const diasContainer = document.getElementById('tarea_recurrencia_dias_container');
+            const diasSemanal = document.getElementById('tarea_recurrencia_dias_semanal');
+            const diasMensual = document.getElementById('tarea_recurrencia_dias_mensual');
+            
+            // Reset checkboxes
+            document.querySelectorAll('#tarea_recurrencia_dias_container input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('tarea_recurrencia_dias_mensual').value = '';
+            
+            if (recurrencia === 'none') {
+                finContainer.classList.add('hidden');
+                diasContainer.classList.add('hidden');
             } else {
-                container.classList.add('hidden');
+                finContainer.classList.remove('hidden');
+                if (recurrencia === 'semanal') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.remove('hidden');
+                    diasMensual.classList.add('hidden');
+                } else if (recurrencia === 'mensual') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.add('hidden');
+                    diasMensual.classList.remove('hidden');
+                } else {
+                    diasContainer.classList.add('hidden');
+                }
             }
         }
+        
+        // Sincronizar color picker de tareas con input de texto
+        document.getElementById('tarea_color').addEventListener('input', function(e) {
+            document.getElementById('tarea_color_text').value = e.target.value;
+        });
+        
+        document.getElementById('tarea_color_text').addEventListener('input', function(e) {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                document.getElementById('tarea_color').value = e.target.value;
+            }
+        });
         
         function showNuevaTareaModal() {
             document.getElementById('tareaModalTitle').textContent = 'Nueva Tarea';
@@ -1051,6 +1365,9 @@
             document.getElementById('tarea_id').value = '';
             document.getElementById('deleteTareaBtn').classList.add('hidden');
             document.getElementById('tarea_recurrencia_fin_container').classList.add('hidden');
+            document.getElementById('tarea_recurrencia_dias_container').classList.add('hidden');
+            document.getElementById('tarea_color').value = '#8b5cf6';
+            document.getElementById('tarea_color_text').value = '#8b5cf6';
             document.getElementById('tareaModal').classList.remove('hidden');
         }
         
@@ -1133,7 +1450,22 @@
             document.getElementById('tarea_tipo').value = tarea.tipo || '';
             document.getElementById('tarea_recurrencia').value = tarea.recurrencia || 'none';
             document.getElementById('tarea_recurrencia_fin').value = tarea.recurrencia_fin ? new Date(tarea.recurrencia_fin).toISOString().slice(0, 16) : '';
-            toggleTareaRecurrenciaFin();
+            document.getElementById('tarea_color').value = tarea.color || '#8b5cf6';
+            document.getElementById('tarea_color_text').value = tarea.color || '#8b5cf6';
+            
+            // Cargar días de recurrencia
+            if (tarea.recurrencia_dias && Array.isArray(tarea.recurrencia_dias)) {
+                if (tarea.recurrencia === 'semanal') {
+                    tarea.recurrencia_dias.forEach(dia => {
+                        const checkbox = document.querySelector(`#tarea_recurrencia_dias_container input[value="${dia}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else if (tarea.recurrencia === 'mensual') {
+                    document.getElementById('tarea_recurrencia_dias_mensual').value = tarea.recurrencia_dias.join(',');
+                }
+            }
+            
+            toggleTareaRecurrenciaOptions();
             document.getElementById('deleteTareaBtn').classList.remove('hidden');
             
             closeCitaDetailModal();
@@ -1178,13 +1510,41 @@
             const url = tareaId ? `/tareas/${tareaId}` : '/tareas';
             const method = tareaId ? 'PUT' : 'POST';
             
+            // Obtener días de recurrencia
+            let recurrenciaDias = null;
+            const recurrencia = formData.get('recurrencia') || 'none';
+            if (recurrencia === 'semanal') {
+                const diasCheckboxes = document.querySelectorAll('#tarea_recurrencia_dias_container input[type="checkbox"]:checked');
+                recurrenciaDias = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+            } else if (recurrencia === 'mensual') {
+                const diasMensual = formData.get('recurrencia_dias_mensual');
+                if (diasMensual) {
+                    // Procesar días del mes: puede ser números separados por comas o días de la semana
+                    const dias = diasMensual.split(',').map(d => d.trim());
+                    recurrenciaDias = dias.map(d => {
+                        // Si es un número, devolverlo; si es un día de la semana, convertir a número
+                        const diaNum = parseInt(d);
+                        if (!isNaN(diaNum)) return diaNum;
+                        // Mapear días de la semana en español a números
+                        const diasSemana = {
+                            'domingo': 0, 'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3,
+                            'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+                        };
+                        const diaLower = d.toLowerCase().replace('cada ', '');
+                        return diasSemana[diaLower] !== undefined ? diasSemana[diaLower] : null;
+                    }).filter(d => d !== null);
+                }
+            }
+            
             const data = {
                 texto: formData.get('texto'),
                 lista_id: formData.get('lista_id') || null,
                 fecha_hora: formData.get('fecha_hora'),
                 tipo: formData.get('tipo') || null,
-                recurrencia: formData.get('recurrencia') || 'none',
+                recurrencia: recurrencia,
                 recurrencia_fin: formData.get('recurrencia_fin') || null,
+                recurrencia_dias: recurrenciaDias,
+                color: formData.get('color') || '#8b5cf6',
             };
             
             try {

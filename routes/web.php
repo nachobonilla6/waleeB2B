@@ -257,6 +257,7 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         $cita->estado = $request->input('estado', 'programada');
         $cita->recurrencia = $request->input('recurrencia', 'none');
         $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $cita->recurrencia_dias = $request->input('recurrencia_dias');
         $cita->color = $request->input('color', '#10b981');
         $cita->save();
         
@@ -284,6 +285,7 @@ Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
         $cita->estado = $request->input('estado', 'programada');
         $cita->recurrencia = $request->input('recurrencia', 'none');
         $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $cita->recurrencia_dias = $request->input('recurrencia_dias');
         $cita->color = $request->input('color', '#10b981');
         $cita->save();
         
@@ -1323,6 +1325,8 @@ Route::post('/tareas', function (\Illuminate\Http\Request $request) {
         $tarea->estado = 'pending';
         $tarea->recurrencia = $request->input('recurrencia', 'none');
         $tarea->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $tarea->recurrencia_dias = $request->input('recurrencia_dias');
+        $tarea->color = $request->input('color', '#8b5cf6');
         $tarea->save();
         
         return response()->json([
@@ -1348,6 +1352,8 @@ Route::put('/tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
         $tarea->tipo = $request->input('tipo') ?: null;
         $tarea->recurrencia = $request->input('recurrencia', 'none');
         $tarea->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $tarea->recurrencia_dias = $request->input('recurrencia_dias');
+        $tarea->color = $request->input('color', '#8b5cf6');
         $tarea->save();
         
         return response()->json([

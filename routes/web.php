@@ -318,10 +318,35 @@ Route::delete('/citas/{id}', function ($id) {
 
 Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
     try {
-        $imagePath = null;
+        $imagePaths = [];
         
+        // Manejar múltiples archivos
+        if ($request->has('archivos')) {
+            $archivos = $request->file('archivos');
+            if (is_array($archivos)) {
+                foreach ($archivos as $archivo) {
+                    if ($archivo && $archivo->isValid()) {
+                        // Validar tipo de archivo
+                        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+                        if (in_array($archivo->getMimeType(), $allowedMimes)) {
+                            $imagePaths[] = $archivo->store('tickets', 'public');
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Mantener compatibilidad con el campo 'imagen' antiguo (un solo archivo)
         if ($request->hasFile('imagen')) {
-            $imagePath = $request->file('imagen')->store('tickets', 'public');
+            $imagePaths[] = $request->file('imagen')->store('tickets', 'public');
+        }
+        
+        // Guardar como JSON si hay múltiples archivos, o como string si hay uno solo, o null si no hay
+        $imagenValue = null;
+        if (count($imagePaths) === 1) {
+            $imagenValue = $imagePaths[0];
+        } elseif (count($imagePaths) > 1) {
+            $imagenValue = json_encode($imagePaths);
         }
         
         $ticket = \App\Models\Ticket::create([
@@ -332,7 +357,7 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
             'website' => $request->input('website'),
             'asunto' => $request->input('asunto'),
             'mensaje' => $request->input('mensaje'),
-            'imagen' => $imagePath,
+            'imagen' => $imagenValue,
             'estado' => 'enviado',
         ]);
         

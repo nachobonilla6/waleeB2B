@@ -58,15 +58,16 @@
             
             <!-- File Upload -->
             <div>
-                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Captura de pantalla (opcional)</label>
+                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Archivos adjuntos (opcional)</label>
                 <div class="relative">
                     <input 
                         type="file" 
-                        name="screenshot" 
+                        name="screenshots" 
                         id="supportFile"
-                        accept="image/*"
+                        accept="image/*,application/pdf"
+                        multiple
                         class="hidden"
-                        onchange="updateFileName(this)"
+                        onchange="handleSupportFiles(this)"
                     >
                     <label 
                         for="supportFile" 
@@ -75,9 +76,11 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span id="fileLabel" class="text-sm">Subir imagen</span>
+                        <span id="fileLabel" class="text-sm">Subir archivos (imágenes o PDF)</span>
                     </label>
                 </div>
+                <!-- Selected Files List -->
+                <div id="supportFilesList" class="mt-3 space-y-2 hidden"></div>
             </div>
             
             <!-- Submit -->
@@ -117,6 +120,7 @@
             const modal = document.getElementById('supportModal');
             const form = document.getElementById('supportForm');
             const fileLabel = document.getElementById('fileLabel');
+            const filesList = document.getElementById('supportFilesList');
             
             if (modal) {
                 modal.classList.add('hidden');
@@ -125,15 +129,81 @@
                 form.reset();
             }
             if (fileLabel) {
-                fileLabel.textContent = 'Subir imagen';
+                fileLabel.textContent = 'Subir archivos (imágenes o PDF)';
+            }
+            if (filesList) {
+                filesList.classList.add('hidden');
+                filesList.innerHTML = '';
             }
         }
         
-        function updateFileName(input) {
-            const label = document.getElementById('fileLabel');
-            if (label && input.files && input.files[0]) {
-                label.textContent = input.files[0].name;
+        function handleSupportFiles(input) {
+            const filesList = document.getElementById('supportFilesList');
+            const fileLabel = document.getElementById('fileLabel');
+            
+            if (!filesList || !input.files || input.files.length === 0) {
+                if (filesList) filesList.classList.add('hidden');
+                if (fileLabel) fileLabel.textContent = 'Subir archivos (imágenes o PDF)';
+                return;
             }
+            
+            filesList.innerHTML = '';
+            filesList.classList.remove('hidden');
+            
+            Array.from(input.files).forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700';
+                fileItem.innerHTML = `
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="text-sm text-black dark:text-white truncate">${file.name}</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">(${formatSupportFileSize(file.size)})</span>
+                    </div>
+                    <button 
+                        type="button" 
+                        onclick="removeSupportFile(${index})" 
+                        class="ml-2 p-1 text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                        title="Eliminar archivo"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                `;
+                filesList.appendChild(fileItem);
+            });
+            
+            const fileCount = input.files.length;
+            if (fileLabel) {
+                fileLabel.textContent = fileCount === 1 
+                    ? input.files[0].name 
+                    : `${fileCount} archivos seleccionados`;
+            }
+        }
+        
+        function removeSupportFile(index) {
+            const input = document.getElementById('supportFile');
+            if (!input || !input.files) return;
+            
+            const dt = new DataTransfer();
+            Array.from(input.files).forEach((file, i) => {
+                if (i !== index) {
+                    dt.items.add(file);
+                }
+            });
+            
+            input.files = dt.files;
+            handleSupportFiles(input);
+        }
+        
+        function formatSupportFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
         
         function showSupportNotification(title, message, type) {
@@ -206,8 +276,10 @@
                         formData.append('mensaje', mensaje);
                         
                         const fileInput = document.getElementById('supportFile');
-                        if (fileInput && fileInput.files && fileInput.files[0]) {
-                            formData.append('imagen', fileInput.files[0]);
+                        if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                            Array.from(fileInput.files).forEach((file, index) => {
+                                formData.append(`archivos[${index}]`, file);
+                            });
                         }
                         
                         const response = await fetch('{{ route("walee.tickets.store") }}', {
@@ -224,7 +296,12 @@
                             showSupportNotification('¡Enviado!', 'Tu mensaje ha sido recibido. Te responderemos pronto.', 'success');
                             this.reset();
                             const fileLabel = document.getElementById('fileLabel');
-                            if (fileLabel) fileLabel.textContent = 'Subir imagen';
+                            const filesList = document.getElementById('supportFilesList');
+                            if (fileLabel) fileLabel.textContent = 'Subir archivos (imágenes o PDF)';
+                            if (filesList) {
+                                filesList.classList.add('hidden');
+                                filesList.innerHTML = '';
+                            }
                             
                             setTimeout(() => closeSupportModal(), 2000);
                         } else {

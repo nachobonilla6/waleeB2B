@@ -62,5 +62,24 @@ class Ticket extends Model
             default => 'slate',
         };
     }
+
+    /**
+     * Get archivos as array (handles both single file string and JSON array)
+     */
+    public function getArchivosAttribute(): array
+    {
+        if (empty($this->imagen)) {
+            return [];
+        }
+        
+        // Try to decode as JSON (multiple files)
+        $decoded = json_decode($this->imagen, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+        
+        // Single file (string)
+        return [$this->imagen];
+    }
 }
 

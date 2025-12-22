@@ -71,6 +71,18 @@
         $ticketsEnviados = $tickets->where('estado', 'enviado');
         $ticketsRecibidos = $tickets->where('estado', 'recibido');
         $ticketsResueltos = $tickets->where('estado', 'resuelto');
+        
+        // Helper function to get archivos array
+        function getArchivos($ticket) {
+            if (empty($ticket->imagen)) {
+                return [];
+            }
+            $decoded = json_decode($ticket->imagen, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+            return [$ticket->imagen];
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -198,12 +210,13 @@
                                                 Sitio web
                                             </a>
                                         @endif
-                                        @if($ticket->imagen)
+                                        @php $archivos = getArchivos($ticket); @endphp
+                                        @if(count($archivos) > 0)
                                             <span class="flex items-center gap-1 text-violet-600 dark:text-violet-400">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-                                                Imagen
+                                                {{ count($archivos) }} {{ count($archivos) === 1 ? 'archivo' : 'archivos' }}
                                             </span>
                                         @endif
                                     </div>
@@ -229,13 +242,23 @@
                             </div>
                             
                             <div class="flex gap-2">
-                                @if($ticket->imagen)
-                                    <a href="{{ asset('storage/' . $ticket->imagen) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Ver
-                                    </a>
+                                @php $archivos = getArchivos($ticket); @endphp
+                                @if(count($archivos) > 0)
+                                    @if(count($archivos) === 1)
+                                        <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Ver
+                                        </a>
+                                    @else
+                                        <div class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded-lg flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            {{ count($archivos) }} archivos
+                                        </div>
+                                    @endif
                                 @endif
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
@@ -328,12 +351,13 @@
                                                 Sitio web
                                             </a>
                                         @endif
-                                        @if($ticket->imagen)
+                                        @php $archivos = getArchivos($ticket); @endphp
+                                        @if(count($archivos) > 0)
                                             <span class="flex items-center gap-1 text-violet-600 dark:text-violet-400">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-                                                Imagen
+                                                {{ count($archivos) }} {{ count($archivos) === 1 ? 'archivo' : 'archivos' }}
                                             </span>
                                         @endif
                                     </div>
@@ -359,13 +383,23 @@
                             </div>
                             
                             <div class="flex gap-2">
-                                @if($ticket->imagen)
-                                    <a href="{{ asset('storage/' . $ticket->imagen) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Ver
-                                    </a>
+                                @php $archivos = getArchivos($ticket); @endphp
+                                @if(count($archivos) > 0)
+                                    @if(count($archivos) === 1)
+                                        <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Ver
+                                        </a>
+                                    @else
+                                        <div class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded-lg flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            {{ count($archivos) }} archivos
+                                        </div>
+                                    @endif
                                 @endif
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
@@ -459,12 +493,13 @@
                                                 Sitio web
                                             </a>
                                         @endif
-                                        @if($ticket->imagen)
+                                        @php $archivos = getArchivos($ticket); @endphp
+                                        @if(count($archivos) > 0)
                                             <span class="flex items-center gap-1 text-violet-600 dark:text-violet-400">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-                                                Imagen
+                                                {{ count($archivos) }} {{ count($archivos) === 1 ? 'archivo' : 'archivos' }}
                                             </span>
                                         @endif
                                     </div>
@@ -490,13 +525,23 @@
                             </div>
                             
                             <div class="flex gap-2">
-                                @if($ticket->imagen)
-                                    <a href="{{ asset('storage/' . $ticket->imagen) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Ver
-                                    </a>
+                                @php $archivos = getArchivos($ticket); @endphp
+                                @if(count($archivos) > 0)
+                                    @if(count($archivos) === 1)
+                                        <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Ver
+                                        </a>
+                                    @else
+                                        <div class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded-lg flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            {{ count($archivos) }} archivos
+                                        </div>
+                                    @endif
                                 @endif
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
@@ -590,12 +635,13 @@
                                                 Sitio web
                                             </a>
                                         @endif
-                                        @if($ticket->imagen)
+                                        @php $archivos = getArchivos($ticket); @endphp
+                                        @if(count($archivos) > 0)
                                             <span class="flex items-center gap-1 text-violet-600 dark:text-violet-400">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-                                                Imagen
+                                                {{ count($archivos) }} {{ count($archivos) === 1 ? 'archivo' : 'archivos' }}
                                             </span>
                                         @endif
                                     </div>
@@ -621,13 +667,23 @@
                             </div>
                             
                             <div class="flex gap-2">
-                                @if($ticket->imagen)
-                                    <a href="{{ asset('storage/' . $ticket->imagen) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Ver
-                                    </a>
+                                @php $archivos = getArchivos($ticket); @endphp
+                                @if(count($archivos) > 0)
+                                    @if(count($archivos) === 1)
+                                        <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-lg transition-all flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Ver
+                                        </a>
+                                    @else
+                                        <div class="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded-lg flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            {{ count($archivos) }} archivos
+                                        </div>
+                                    @endif
                                 @endif
                                 <button onclick="showTicketDetail({{ $ticket->id }})" class="px-3 py-1.5 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded-lg transition-all">
                                     Detalle
@@ -765,14 +821,50 @@
                         <p class="text-slate-900 dark:text-white whitespace-pre-wrap">${ticket.mensaje}</p>
                     </div>
                     
-                    ${ticket.imagen ? `
-                        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                            <h5 class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Imagen adjunta</h5>
-                            <a href="/storage/${ticket.imagen}" target="_blank" class="block">
-                                <img src="/storage/${ticket.imagen}" alt="Captura" class="rounded-lg max-h-64 object-contain mx-auto border border-slate-300 dark:border-slate-700 hover:border-walee-500 dark:hover:border-walee-500 transition-colors">
-                            </a>
-                        </div>
-                    ` : ''}
+                    ${ticket.imagen ? (() => {
+                        let archivos = [];
+                        try {
+                            const decoded = JSON.parse(ticket.imagen);
+                            if (Array.isArray(decoded)) {
+                                archivos = decoded;
+                            } else {
+                                archivos = [ticket.imagen];
+                            }
+                        } catch(e) {
+                            archivos = [ticket.imagen];
+                        }
+                        
+                        if (archivos.length === 0) return '';
+                        
+                        return `
+                            <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <h5 class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                                    ${archivos.length === 1 ? 'Archivo adjunto' : archivos.length + ' archivos adjuntos'}
+                                </h5>
+                                <div class="space-y-3">
+                                    ${archivos.map((archivo, idx) => {
+                                        const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo);
+                                        return `
+                                            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                                                ${isImage ? `
+                                                    <a href="/storage/${archivo}" target="_blank" class="block">
+                                                        <img src="/storage/${archivo}" alt="Archivo ${idx + 1}" class="rounded-lg max-h-64 object-contain mx-auto border border-slate-300 dark:border-slate-700 hover:border-walee-500 dark:hover:border-walee-500 transition-colors">
+                                                    </a>
+                                                ` : `
+                                                    <a href="/storage/${archivo}" target="_blank" class="flex items-center gap-2 text-walee-600 dark:text-walee-400 hover:text-walee-500 dark:hover:text-walee-300">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                        </svg>
+                                                        <span>Ver archivo ${idx + 1}</span>
+                                                    </a>
+                                                `}
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `;
+                    })() : ''}
                 </div>
             `;
             document.getElementById('ticketModal').classList.remove('hidden');

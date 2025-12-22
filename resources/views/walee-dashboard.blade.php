@@ -582,6 +582,28 @@
     
     @include('partials.walee-support-button')
     
+    <!-- Botón Scroll Arriba (Floating) -->
+    <button 
+        onclick="scrollToTop()" 
+        class="fixed bottom-15 right-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40"
+        title="Ir arriba"
+    >
+        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+    
+    <!-- Botón Scroll Abajo (Floating) -->
+    <button 
+        onclick="scrollToBottom()" 
+        class="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40"
+        title="Ir abajo"
+    >
+        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+    </button>
+    
     <!-- Sidebar de Scroll Verde (Derecha) -->
     <div class="fixed right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
         <!-- Botón Scroll Arriba -->

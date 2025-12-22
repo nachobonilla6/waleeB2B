@@ -169,6 +169,11 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
     $items = collect();
     
     foreach ($citas as $cita) {
+        $clienteNombre = null;
+        if ($cita->cliente_id && $cita->cliente) {
+            $clienteNombre = $cita->cliente->nombre_empresa;
+        }
+        
         $items->push([
             'tipo' => 'cita',
             'id' => $cita->id,
@@ -178,7 +183,7 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
             'color' => $cita->color ?? '#10b981',
             'estado' => $cita->estado,
             'cliente_id' => $cita->cliente_id,
-            'cliente' => $cita->cliente->nombre_empresa ?? null,
+            'cliente' => $clienteNombre,
             'ubicacion' => $cita->ubicacion,
             'descripcion' => $cita->descripcion,
             'data' => $cita

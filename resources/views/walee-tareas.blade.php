@@ -66,9 +66,36 @@
         }])->get();
         
         // Obtener todas las tareas de todas las listas para "Mis tareas"
-        $todasLasTareas = \App\Models\Tarea::with('lista')
-            ->orderBy('created_at', 'asc')
-            ->get();
+        // Separar pendientes y completadas, ordenar según el parámetro
+        $orden = request()->get('orden', 'nuevas-primero'); // Por defecto: nuevas primero
+        
+        $queryPendientes = \App\Models\Tarea::with('lista')->where('estado', 'pending');
+        $queryCompletadas = \App\Models\Tarea::with('lista')->where('estado', 'completado');
+        
+        // Aplicar ordenamiento según la opción seleccionada
+        switch($orden) {
+            case 'antiguas-primero':
+                $queryPendientes->orderBy('created_at', 'asc');
+                $queryCompletadas->orderBy('created_at', 'asc');
+                break;
+            case 'alfabetico':
+                $queryPendientes->orderBy('texto', 'asc');
+                $queryCompletadas->orderBy('texto', 'asc');
+                break;
+            case 'tipo':
+                $queryPendientes->orderBy('tipo', 'asc')->orderBy('created_at', 'desc');
+                $queryCompletadas->orderBy('tipo', 'asc')->orderBy('created_at', 'desc');
+                break;
+            default: // nuevas-primero
+                $queryPendientes->orderBy('created_at', 'desc');
+                $queryCompletadas->orderBy('created_at', 'desc');
+        }
+        
+        $tareasPendientes = $queryPendientes->get();
+        $tareasCompletadas = $queryCompletadas->get();
+        
+        // Combinar: pendientes primero, completadas después
+        $todasLasTareas = $tareasPendientes->concat($tareasCompletadas);
         
         // Obtener tipos únicos de todas las tareas
         $tiposExistentes = \App\Models\Tarea::whereNotNull('tipo')
@@ -137,22 +164,47 @@
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white">Mis tareas</h2>
                         <div class="flex items-center gap-2">
-                            <button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                                </svg>
-                            </button>
-                            <button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                                </svg>
-                            </button>
+                            <!-- Ordenamiento Dropdown -->
+                            <div class="relative">
+                                <button onclick="toggleOrdenDropdown()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center gap-1">
+                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                                    </svg>
+                                    <span class="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">Ordenar</span>
+                                </button>
+                                <div id="ordenDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg z-50">
+                                    <a href="?orden=nuevas-primero" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden', 'nuevas-primero') === 'nuevas-primero' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                        Más nuevas primero
+                                    </a>
+                                    <a href="?orden=antiguas-primero" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'antiguas-primero' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                        Más antiguas primero
+                                    </a>
+                                    <a href="?orden=alfabetico" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'alfabetico' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                        Alfabético (A-Z)
+                                    </a>
+                                    <a href="?orden=tipo" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'tipo' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                        Por tipo
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Tasks List -->
                     <div class="space-y-2">
+                        @php
+                            $mostrarSeparador = false;
+                            $yaMostroSeparador = false;
+                        @endphp
                         @forelse($todasLasTareas as $index => $tarea)
+                            @if($tarea->estado === 'completado' && !$yaMostroSeparador && $tareasPendientes->count() > 0)
+                                <div class="my-4 flex items-center gap-2">
+                                    <div class="flex-1 border-t border-slate-200 dark:border-slate-700"></div>
+                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400 px-2">Completadas</span>
+                                    <div class="flex-1 border-t border-slate-200 dark:border-slate-700"></div>
+                                </div>
+                                @php $yaMostroSeparador = true; @endphp
+                            @endif
                             <div class="tarea-item flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all animate-fade-in-up" style="animation-delay: {{ 0.1 + ($index * 0.05) }}s;" data-id="{{ $tarea->id }}">
                                 <!-- Checkbox -->
                                 <button onclick="toggleTarea({{ $tarea->id }})" class="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 {{ $tarea->estado === 'completado' ? 'bg-purple-500 border-purple-500' : 'border-slate-300 dark:border-slate-600' }} flex items-center justify-center transition-all hover:border-purple-500">
@@ -366,6 +418,20 @@
                 activeBtn.classList.add('bg-purple-500', 'text-white');
             }
         }
+        
+        function toggleOrdenDropdown() {
+            const dropdown = document.getElementById('ordenDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        // Cerrar dropdown al hacer click fuera
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('ordenDropdown');
+            const button = event.target.closest('[onclick="toggleOrdenDropdown()"]');
+            if (!button && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
         
         async function toggleTarea(tareaId) {
             try {

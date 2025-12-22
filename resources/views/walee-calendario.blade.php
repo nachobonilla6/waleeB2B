@@ -75,7 +75,21 @@
                 return $cita->fecha_inicio->format('Y-m-d');
             });
         
+        // Obtener todas las tareas del mes
+        $tareas = \App\Models\Tarea::with('lista')
+            ->whereNotNull('fecha_hora')
+            ->whereBetween('fecha_hora', [
+                $fechaActual->copy()->startOfMonth()->startOfDay(),
+                $fechaActual->copy()->endOfMonth()->endOfDay()
+            ])
+            ->get()
+            ->groupBy(function($tarea) {
+                return $tarea->fecha_hora->format('Y-m-d');
+            });
+        
         $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
+        $listas = \App\Models\Lista::orderBy('nombre')->get();
+        $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
         
         $meses = [
             1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
@@ -135,15 +149,26 @@
                                 </svg>
                             </a>
                         </div>
-                        <button 
-                            onclick="showNuevaCitaModal()"
-                            class="w-full sm:w-auto px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span class="text-sm sm:text-base">Nueva Cita</span>
-                        </button>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button 
+                                onclick="showNuevaCitaModal()"
+                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                            >
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm">Cita</span>
+                            </button>
+                            <button 
+                                onclick="showNuevaTareaModal()"
+                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                            >
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm">Tarea</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,6 +197,8 @@
                             $esMesActual = $diaActual->month == $mes;
                             $fechaKey = $diaActual->format('Y-m-d');
                             $citasDelDia = $citas->get($fechaKey, collect());
+                            $tareasDelDia = $tareas->get($fechaKey, collect());
+                            $totalItems = $citasDelDia->count() + $tareasDelDia->count();
                         @endphp
                         <div class="min-h-[80px] sm:min-h-[100px] border-r border-b border-slate-200 dark:border-slate-700 p-1 sm:p-2 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <div class="flex items-center justify-between mb-1">
@@ -183,7 +210,12 @@
                                 @endif
                             </div>
                             <div class="space-y-0.5 sm:space-y-1">
-                                @foreach($citasDelDia->take(2) as $cita)
+                                @php
+                                    $mostrados = 0;
+                                    $maxMostrar = 2;
+                                @endphp
+                                @foreach($citasDelDia->take($maxMostrar) as $cita)
+                                    @php $mostrados++; @endphp
                                     <button 
                                         onclick="showCitaDetail({{ $cita->id }})"
                                         class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' }}"
@@ -192,12 +224,22 @@
                                         <span class="hidden sm:inline">{{ $cita->fecha_inicio->format('H:i') }} - </span>{{ $cita->titulo }}
                                     </button>
                                 @endforeach
-                                @if($citasDelDia->count() > 2)
+                                @foreach($tareasDelDia->take($maxMostrar - $mostrados) as $tarea)
+                                    @php $mostrados++; @endphp
                                     <button 
-                                        onclick="showDayCitas('{{ $fechaKey }}')"
+                                        onclick="showTareaDetail({{ $tarea->id }})"
+                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300' }}"
+                                        title="{{ $tarea->texto }}"
+                                    >
+                                        <span class="hidden sm:inline">{{ $tarea->fecha_hora->format('H:i') }} - </span>{{ $tarea->texto }}
+                                    </button>
+                                @endforeach
+                                @if($totalItems > $maxMostrar)
+                                    <button 
+                                        onclick="showDayItems('{{ $fechaKey }}')"
                                         class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
                                     >
-                                        +{{ $citasDelDia->count() - 2 }} más
+                                        +{{ $totalItems - $maxMostrar }} más
                                     </button>
                                 @endif
                             </div>
@@ -325,6 +367,94 @@
         </div>
     </div>
     
+    <!-- Modal Nueva/Editar Tarea -->
+    <div id="tareaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="tareaModalTitle">Nueva Tarea</h3>
+                <button onclick="closeTareaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="tarea-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="tarea_id" id="tarea_id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la Tarea</label>
+                    <input 
+                        type="text" 
+                        name="texto" 
+                        id="tarea_texto"
+                        required
+                        placeholder="Descripción de la tarea"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Lista</label>
+                    <select 
+                        name="lista_id" 
+                        id="tarea_lista_id"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                    >
+                        <option value="">Sin lista</option>
+                        @foreach($listas as $lista)
+                            <option value="{{ $lista->id }}">{{ $lista->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora</label>
+                    <input 
+                        type="datetime-local" 
+                        name="fecha_hora" 
+                        id="tarea_fecha_hora"
+                        required
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                    <input 
+                        type="text" 
+                        name="tipo" 
+                        id="tarea_tipo"
+                        list="tipos-list"
+                        placeholder="Tipo de tarea (opcional)"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                    >
+                    <datalist id="tipos-list">
+                        @foreach($tiposExistentes as $tipo)
+                            <option value="{{ $tipo }}">
+                        @endforeach
+                    </datalist>
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button 
+                        type="submit"
+                        class="flex-1 px-6 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all"
+                    >
+                        Guardar
+                    </button>
+                    <button 
+                        type="button"
+                        id="deleteTareaBtn"
+                        onclick="deleteTarea()"
+                        class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden"
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <!-- Modal Ver Cita -->
     <div id="citaDetailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
@@ -345,6 +475,7 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const citasData = @json($citas->flatten());
+        const tareasData = @json($tareas->flatten());
         
         function showNuevaCitaModal() {
             document.getElementById('modalTitle').textContent = 'Nueva Cita';
@@ -491,32 +622,52 @@
             }
         }
         
-        function showDayCitas(fecha) {
+        function showDayItems(fecha) {
             const citasDelDia = citasData.filter(c => {
                 const citaFecha = new Date(c.fecha_inicio).toISOString().split('T')[0];
                 return citaFecha === fecha;
             });
             
-            if (citasDelDia.length === 0) return;
+            const tareasDelDia = tareasData.filter(t => {
+                const tareaFecha = new Date(t.fecha_hora).toISOString().split('T')[0];
+                return tareaFecha === fecha;
+            });
+            
+            if (citasDelDia.length === 0 && tareasDelDia.length === 0) return;
             
             let content = '<div class="space-y-2">';
+            
             citasDelDia.forEach(cita => {
                 content += `
                     <button onclick="showCitaDetail(${cita.id})" class="w-full text-left p-3 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all border border-emerald-200 dark:border-emerald-500/20">
                         <p class="font-medium text-slate-900 dark:text-white">${cita.titulo}</p>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${new Date(cita.fecha_inicio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${new Date(cita.fecha_inicio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} - Cita</p>
                     </button>
                 `;
             });
+            
+            tareasDelDia.forEach(tarea => {
+                content += `
+                    <button onclick="showTareaDetail(${tarea.id})" class="w-full text-left p-3 rounded-lg bg-purple-50 dark:bg-purple-500/10 hover:bg-purple-100 dark:hover:bg-purple-500/20 transition-all border border-purple-200 dark:border-purple-500/20">
+                        <p class="font-medium text-slate-900 dark:text-white">${tarea.texto}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${new Date(tarea.fecha_hora).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} - Tarea</p>
+                    </button>
+                `;
+            });
+            
             content += '</div>';
             
             document.getElementById('citaDetailContent').innerHTML = `
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Citas del ${new Date(fecha).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Eventos del ${new Date(fecha).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
                     ${content}
                 </div>
             `;
             document.getElementById('citaDetailModal').classList.remove('hidden');
+        }
+        
+        function showDayCitas(fecha) {
+            showDayItems(fecha);
         }
         
         // Cita Form Submit
@@ -570,11 +721,177 @@
             if (e.target === this) closeCitaDetailModal();
         });
         
+        // Tarea Functions
+        function showNuevaTareaModal() {
+            document.getElementById('tareaModalTitle').textContent = 'Nueva Tarea';
+            document.getElementById('tarea-form').reset();
+            document.getElementById('tarea_id').value = '';
+            document.getElementById('deleteTareaBtn').classList.add('hidden');
+            document.getElementById('tareaModal').classList.remove('hidden');
+        }
+        
+        function closeTareaModal() {
+            document.getElementById('tareaModal').classList.add('hidden');
+        }
+        
+        function showTareaDetail(tareaId) {
+            const tarea = tareasData.find(t => t.id === tareaId);
+            if (!tarea) return;
+            
+            const fechaHora = new Date(tarea.fecha_hora).toLocaleString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            document.getElementById('citaDetailContent').innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">${tarea.texto}</h4>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xs px-2 py-1 rounded-full ${tarea.estado === 'completado' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400'}">
+                                ${tarea.estado === 'completado' ? 'Completado' : 'Pendiente'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-slate-600 dark:text-slate-400">Fecha y Hora: ${fechaHora}</p>
+                        </div>
+                        
+                        ${tarea.lista ? `
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                <p class="text-slate-600 dark:text-slate-400">Lista: ${tarea.lista.nombre}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${tarea.tipo ? `
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                                <p class="text-slate-600 dark:text-slate-400">Tipo: ${tarea.tipo}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="editTarea(${tarea.id})" class="flex-1 px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all">
+                            Editar
+                        </button>
+                        <button onclick="deleteTareaConfirm(${tarea.id})" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('citaDetailModal').classList.remove('hidden');
+        }
+        
+        function editTarea(tareaId) {
+            const tarea = tareasData.find(t => t.id === tareaId);
+            if (!tarea) return;
+            
+            document.getElementById('tareaModalTitle').textContent = 'Editar Tarea';
+            document.getElementById('tarea_id').value = tarea.id;
+            document.getElementById('tarea_texto').value = tarea.texto;
+            document.getElementById('tarea_lista_id').value = tarea.lista_id || '';
+            document.getElementById('tarea_fecha_hora').value = new Date(tarea.fecha_hora).toISOString().slice(0, 16);
+            document.getElementById('tarea_tipo').value = tarea.tipo || '';
+            document.getElementById('deleteTareaBtn').classList.remove('hidden');
+            
+            closeCitaDetailModal();
+            document.getElementById('tareaModal').classList.remove('hidden');
+        }
+        
+        function deleteTareaConfirm(tareaId) {
+            if (!confirm('¿Estás seguro de eliminar esta tarea?')) return;
+            deleteTarea(tareaId);
+        }
+        
+        async function deleteTarea(tareaId = null) {
+            const id = tareaId || document.getElementById('tarea_id').value;
+            if (!id) return;
+            
+            try {
+                const response = await fetch(`/tareas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Error al eliminar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        }
+        
+        // Tarea Form Submit
+        document.getElementById('tarea-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const tareaId = formData.get('tarea_id');
+            const url = tareaId ? `/tareas/${tareaId}` : '/tareas';
+            const method = tareaId ? 'PUT' : 'POST';
+            
+            const data = {
+                texto: formData.get('texto'),
+                lista_id: formData.get('lista_id') || null,
+                fecha_hora: formData.get('fecha_hora'),
+                tipo: formData.get('tipo') || null,
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeTareaModal();
+                    location.reload();
+                } else {
+                    alert('Error: ' + (result.message || 'Error al guardar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        });
+        
+        // Close modals on backdrop click
+        document.getElementById('tareaModal').addEventListener('click', function(e) {
+            if (e.target === this) closeTareaModal();
+        });
+        
         // Close modals on Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeCitaModal();
                 closeCitaDetailModal();
+                closeTareaModal();
             }
         });
     </script>

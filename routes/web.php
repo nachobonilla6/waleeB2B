@@ -970,8 +970,8 @@ Route::post('/tareas', function (\Illuminate\Http\Request $request) {
         $tarea = new \App\Models\Tarea();
         $tarea->lista_id = $request->input('lista_id');
         $tarea->texto = $request->input('texto');
-        // fecha_hora se establece automáticamente como la fecha y hora de creación
-        $tarea->fecha_hora = now();
+        // Si viene fecha_hora del request, usarla; si no, usar now()
+        $tarea->fecha_hora = $request->input('fecha_hora') ? \Carbon\Carbon::parse($request->input('fecha_hora')) : now();
         $tarea->tipo = $request->input('tipo');
         $tarea->favorito = false; // Por defecto no es favorito
         $tarea->estado = 'pending';
@@ -988,6 +988,46 @@ Route::post('/tareas', function (\Illuminate\Http\Request $request) {
         ], 500);
     }
 })->middleware(['auth'])->name('tareas.store');
+
+Route::put('/tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $tarea = \App\Models\Tarea::findOrFail($id);
+        $tarea->texto = $request->input('texto');
+        $tarea->lista_id = $request->input('lista_id');
+        if ($request->input('fecha_hora')) {
+            $tarea->fecha_hora = \Carbon\Carbon::parse($request->input('fecha_hora'));
+        }
+        $tarea->tipo = $request->input('tipo');
+        $tarea->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea actualizada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('tareas.update');
+
+Route::delete('/tareas/{id}', function ($id) {
+    try {
+        $tarea = \App\Models\Tarea::findOrFail($id);
+        $tarea->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Tarea eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('tareas.delete');
 
 Route::post('/tareas/{id}/toggle', function ($id) {
     try {

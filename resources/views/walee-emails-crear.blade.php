@@ -750,6 +750,73 @@
             }
         }
         
+        // Handle file selection
+        function handleFileSelection(input) {
+            const file = input.files[0];
+            if (!file) {
+                updateAttachmentStatus();
+                return;
+            }
+            
+            // Validate file size (10MB max)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                showNotification('Error', 'El archivo es demasiado grande. Máximo 10MB', 'error');
+                input.value = '';
+                updateAttachmentStatus();
+                return;
+            }
+            
+            // Update UI
+            const fileLabel = document.getElementById('fileLabel');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            
+            if (fileLabel) fileLabel.textContent = file.name;
+            if (fileName) fileName.textContent = file.name;
+            if (fileSize) fileSize.textContent = formatFileSize(file.size);
+            if (fileInfo) fileInfo.classList.remove('hidden');
+            
+            // Update attachment status
+            updateAttachmentStatus();
+        }
+        
+        // Remove attachment
+        function removeAttachment() {
+            const attachmentInput = document.getElementById('attachment');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileLabel = document.getElementById('fileLabel');
+            
+            if (attachmentInput) attachmentInput.value = '';
+            if (fileInfo) fileInfo.classList.add('hidden');
+            if (fileLabel) fileLabel.textContent = 'Seleccionar archivo (PDF o imagen)';
+            
+            // Update attachment status
+            updateAttachmentStatus();
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        // Update attachment status indicator
+        function updateAttachmentStatus() {
+            const attachmentInput = document.getElementById('attachment');
+            const attachmentStatus = document.getElementById('attachmentStatus');
+            
+            if (attachmentInput && attachmentInput.files && attachmentInput.files.length > 0) {
+                if (attachmentStatus) attachmentStatus.classList.remove('hidden');
+            } else {
+                if (attachmentStatus) attachmentStatus.classList.add('hidden');
+            }
+        }
+        
         // Form submission
         document.getElementById('emailForm').addEventListener('submit', async function(e) {
             e.preventDefault();

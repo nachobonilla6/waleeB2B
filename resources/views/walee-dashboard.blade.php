@@ -100,7 +100,7 @@
         }
         
         .bottom-15 {
-            bottom: 4.5rem; /* 72px - entre bottom-24 (96px) y bottom-6 (24px) */
+            bottom: 5.5rem; /* 88px - entre bottom-28 (112px) y bottom-6 (24px) */
         }
         
         @keyframes fadeInUp {

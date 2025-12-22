@@ -250,7 +250,6 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        let autoRefreshInterval = null;
         
         // Industry display names
         const industryNames = {
@@ -322,7 +321,6 @@
                     document.getElementById('searchForm').reset();
                     document.getElementById('otroContainer').classList.add('hidden');
                     loadWorkflows();
-                    startAutoRefresh();
                 } else {
                     showNotification('Error', data.message || 'Error al iniciar la búsqueda', 'error');
                 }
@@ -419,13 +417,6 @@
                     `;
                 }).join('');
                 
-                // Auto-refresh if there are running workflows
-                if (hasRunning) {
-                    startAutoRefresh();
-                } else {
-                    stopAutoRefresh();
-                }
-                
             } catch (error) {
                 container.innerHTML = `
                     <div class="text-center py-8">
@@ -483,18 +474,6 @@
                         borderClass: 'border-slate-500/30',
                         icon: '•'
                     };
-            }
-        }
-        
-        function startAutoRefresh() {
-            if (autoRefreshInterval) return;
-            autoRefreshInterval = setInterval(loadWorkflows, 3000);
-        }
-        
-        function stopAutoRefresh() {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-                autoRefreshInterval = null;
             }
         }
         
@@ -597,7 +576,6 @@
                 if (data.success) {
                     showNotification('Reintentando', 'La búsqueda se ha reenviado. ID: ' + data.job_id.substring(0, 8), 'success');
                     loadWorkflows();
-                    startAutoRefresh();
                 } else {
                     showNotification('Error', data.message || 'Error al reintentar', 'error');
                 }

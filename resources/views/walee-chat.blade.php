@@ -103,7 +103,7 @@
         
         <!-- Header -->
         <header class="relative flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-inset-top">
-            <div class="max-w-3xl mx-auto">
+            <div class="max-w-7xl mx-auto">
                 @php $pageTitle = 'Chat'; @endphp
                 @include('partials.walee-navbar')
                 

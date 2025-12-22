@@ -83,6 +83,24 @@
                 <div id="supportFilesList" class="mt-3 space-y-2 hidden"></div>
             </div>
             
+            <!-- Urgente Checkbox -->
+            <div>
+                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                    <input 
+                        type="checkbox" 
+                        name="urgente" 
+                        id="supportUrgente"
+                        class="w-5 h-5 text-yellow-500 border-slate-300 dark:border-slate-600 rounded focus:ring-yellow-500 focus:ring-2"
+                    >
+                    <div class="flex items-center gap-2 flex-1">
+                        <svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-black dark:text-white">Marcar como urgente</span>
+                    </div>
+                </label>
+            </div>
+            
             <!-- Submit -->
             <button 
                 type="submit" 
@@ -134,6 +152,11 @@
             if (filesList) {
                 filesList.classList.add('hidden');
                 filesList.innerHTML = '';
+            }
+            // Reset urgente checkbox
+            const urgenteCheckbox = document.getElementById('supportUrgente');
+            if (urgenteCheckbox) {
+                urgenteCheckbox.checked = false;
             }
         }
         
@@ -275,6 +298,12 @@
                         formData.append('asunto', asunto);
                         formData.append('mensaje', mensaje);
                         
+                        // Agregar campo urgente
+                        const urgenteCheckbox = document.getElementById('supportUrgente');
+                        if (urgenteCheckbox && urgenteCheckbox.checked) {
+                            formData.append('urgente', '1');
+                        }
+                        
                         const fileInput = document.getElementById('supportFile');
                         if (fileInput && fileInput.files && fileInput.files.length > 0) {
                             Array.from(fileInput.files).forEach((file, index) => {
@@ -293,7 +322,11 @@
                         const data = await response.json();
                         
                         if (data.success) {
-                            showSupportNotification('¡Enviado!', 'Tu mensaje ha sido recibido. Te responderemos pronto.', 'success');
+                            const isUrgente = urgenteCheckbox && urgenteCheckbox.checked;
+                            const message = isUrgente 
+                                ? 'Tu mensaje urgente ha sido recibido. Te responderemos lo antes posible.' 
+                                : 'Tu mensaje ha sido recibido. Te responderemos pronto.';
+                            showSupportNotification('¡Enviado!', message, 'success');
                             this.reset();
                             const fileLabel = document.getElementById('fileLabel');
                             const filesList = document.getElementById('supportFilesList');
@@ -301,6 +334,9 @@
                             if (filesList) {
                                 filesList.classList.add('hidden');
                                 filesList.innerHTML = '';
+                            }
+                            if (urgenteCheckbox) {
+                                urgenteCheckbox.checked = false;
                             }
                             
                             setTimeout(() => closeSupportModal(), 2000);

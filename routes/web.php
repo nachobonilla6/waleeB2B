@@ -177,6 +177,7 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
             'hora_fin' => $cita->fecha_fin,
             'color' => $cita->color ?? '#10b981',
             'estado' => $cita->estado,
+            'cliente_id' => $cita->cliente_id,
             'cliente' => $cita->cliente->nombre_empresa ?? null,
             'ubicacion' => $cita->ubicacion,
             'descripcion' => $cita->descripcion,

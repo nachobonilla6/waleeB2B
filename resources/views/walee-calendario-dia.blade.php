@@ -360,8 +360,32 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const citasData = @json($citas);
-        const tareasData = @json($tareas);
+        const citasData = @json($citas->map(function($cita) {
+            return [
+                'id' => $cita->id,
+                'titulo' => $cita->titulo,
+                'cliente_id' => $cita->cliente_id,
+                'fecha_inicio' => $cita->fecha_inicio,
+                'fecha_fin' => $cita->fecha_fin,
+                'ubicacion' => $cita->ubicacion,
+                'descripcion' => $cita->descripcion,
+                'color' => $cita->color ?? '#10b981',
+                'estado' => $cita->estado,
+                'recurrencia' => $cita->recurrencia ?? 'none',
+                'recurrencia_fin' => $cita->recurrencia_fin
+            ];
+        }));
+        const tareasData = @json($tareas->map(function($tarea) {
+            return [
+                'id' => $tarea->id,
+                'texto' => $tarea->texto,
+                'lista_id' => $tarea->lista_id,
+                'fecha_hora' => $tarea->fecha_hora,
+                'tipo' => $tarea->tipo,
+                'recurrencia' => $tarea->recurrencia ?? 'none',
+                'recurrencia_fin' => $tarea->recurrencia_fin
+            ];
+        }));
         const fechaActual = '{{ $fecha->format("Y-m-d") }}';
         
         // Sincronizar color picker

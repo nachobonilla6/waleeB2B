@@ -100,7 +100,7 @@
         }
         
         .bottom-15 {
-            bottom: 5.5rem; /* 88px - entre bottom-28 (112px) y bottom-6 (24px) */
+            bottom: 4rem; /* 64px - más cerca del botón de abajo pero sin chocar */
         }
         
         @keyframes fadeInUp {

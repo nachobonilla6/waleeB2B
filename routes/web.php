@@ -149,6 +149,26 @@ Route::get('/walee-calendario', function () {
     return view('walee-calendario');
 })->middleware(['auth'])->name('walee.calendario');
 
+Route::get('/citas/{id}/detalle', function ($id) {
+    $cita = \App\Models\Cita::with('cliente')->findOrFail($id);
+    $meses = [
+        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+    ];
+    return view('walee-cita-detalle', compact('cita', 'meses'));
+})->middleware(['auth'])->name('walee.cita.detalle');
+
+Route::get('/tareas/{id}/detalle', function ($id) {
+    $tarea = \App\Models\Tarea::with('lista')->findOrFail($id);
+    $meses = [
+        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+        5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+        9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+    ];
+    return view('walee-tarea-detalle', compact('tarea', 'meses'));
+})->middleware(['auth'])->name('walee.tarea.detalle');
+
 Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia) {
     $fecha = \Carbon\Carbon::create($ano, $mes, $dia);
     

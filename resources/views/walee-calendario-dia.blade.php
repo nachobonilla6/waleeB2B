@@ -148,9 +148,11 @@
                                                         </span>
                                                     @endif
                                                 </div>
-                                                <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-1">
-                                                    {{ $item['titulo'] }}
-                                                </h3>
+                                                <a href="{{ $item['tipo'] === 'cita' ? route('walee.cita.detalle', $item['id']) : route('walee.tarea.detalle', $item['id']) }}" class="block">
+                                                    <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-1 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                                                        {{ $item['titulo'] }}
+                                                    </h3>
+                                                </a>
                                                 @if($item['tipo'] === 'cita' && isset($item['cliente_id']) && $item['cliente_id'])
                                                     @if(isset($item['cliente']) && $item['cliente'])
                                                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">

@@ -110,33 +110,12 @@
         
         <!-- Main Content -->
         <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('walee.clientes') }}" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all">
-                        <svg class="w-5 h-5 text-slate-700 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
-                            Extraer Clientes
-                        </h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Buscar negocios en Google Maps</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2">
-                    @include('partials.walee-dark-mode-toggle')
-                    <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center">
-                        <span class="text-sm font-medium text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
-                    </div>
-                </div>
-            </header>
+            @php $pageTitle = 'Extraer Clientes'; @endphp
+            @include('partials.walee-navbar')
             
             <!-- Search Form -->
             <div class="animate-fade-in-up mb-8">
-                <div class="bg-white dark:bg-gradient-to-br dark:from-blue-500/10 dark:to-blue-600/5 border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-3xl p-6">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center">
                             <svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,20 +224,20 @@
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                    <span class="text-walee-400 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>
     </div>
     
     <!-- Result Modal -->
-    <div id="resultModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-2xl border border-slate-700 max-w-2xl w-full max-h-[80vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-700">
-                <h3 class="text-lg font-semibold text-white" id="modalTitle">Resultado</h3>
-                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="resultModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Resultado</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -371,13 +350,13 @@
                 if (data.length === 0) {
                     container.innerHTML = `
                         <div class="text-center py-8">
-                            <div class="w-12 h-12 mx-auto rounded-full bg-slate-800 flex items-center justify-center mb-4">
-                                <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                 </svg>
                             </div>
-                            <p class="text-slate-500">No hay búsquedas recientes</p>
-                            <p class="text-sm text-slate-600 mt-1">Inicia una nueva búsqueda para ver resultados aquí</p>
+                            <p class="text-slate-600 dark:text-slate-400">No hay búsquedas recientes</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-500 mt-1">Inicia una nueva búsqueda para ver resultados aquí</p>
                         </div>
                     `;
                     return;
@@ -393,26 +372,26 @@
                     const message = workflow.data?.message || workflow.step || 'N/A';
                     
                     return `
-                        <div class="workflow-card bg-slate-800/50 border ${statusConfig.borderClass} rounded-2xl p-4" style="animation-delay: ${index * 0.1}s">
+                        <div class="workflow-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 ${statusConfig.borderClass} rounded-2xl p-4" style="animation-delay: ${index * 0.1}s">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-lg">📍</span>
-                                        <h3 class="font-semibold text-white truncate">${workflow.data?.nombre_lugar || 'Sin ubicación'}</h3>
+                                        <h3 class="font-semibold text-slate-900 dark:text-white truncate">${workflow.data?.nombre_lugar || 'Sin ubicación'}</h3>
                                     </div>
                                     <div class="flex flex-wrap gap-2 mb-3">
-                                        <span class="px-2 py-1 bg-slate-700/50 rounded-lg text-xs text-slate-300">${industryLabel}</span>
+                                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700/50 rounded-lg text-xs text-slate-700 dark:text-slate-300">${industryLabel}</span>
                                         <span class="px-2 py-1 ${statusConfig.bgClass} rounded-lg text-xs ${statusConfig.textClass}">${statusConfig.label}</span>
                                     </div>
-                                    <div class="flex items-center gap-2 text-sm text-slate-400">
+                                    <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                                         <span class="${statusConfig.textClass}">${statusConfig.icon}</span>
                                         <span class="truncate">${message}</span>
                                     </div>
                                     ${workflow.status === 'running' ? `
-                                        <div class="mt-3 w-full bg-slate-700 rounded-full h-2">
+                                        <div class="mt-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                                             <div class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: ${workflow.progress}%"></div>
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">${workflow.progress}% completado</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">${workflow.progress}% completado</p>
                                     ` : ''}
                                 </div>
                                 <div class="flex flex-col gap-2">
@@ -527,20 +506,20 @@
                 document.getElementById('modalTitle').textContent = 'Resultado de la Búsqueda';
                 document.getElementById('modalContent').innerHTML = `
                     <div class="space-y-4">
-                        <div class="bg-slate-800 rounded-xl p-4">
-                            <h4 class="text-sm font-medium text-slate-400 mb-2">Lugar</h4>
-                            <p class="text-white">${workflow.data?.nombre_lugar || 'N/A'}</p>
+                        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-4">
+                            <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Lugar</h4>
+                            <p class="text-slate-900 dark:text-white">${workflow.data?.nombre_lugar || 'N/A'}</p>
                         </div>
-                        <div class="bg-slate-800 rounded-xl p-4">
-                            <h4 class="text-sm font-medium text-slate-400 mb-2">Industria</h4>
-                            <p class="text-white">${industryNames[workflow.data?.industria] || workflow.data?.industria || 'N/A'}</p>
+                        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-4">
+                            <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Industria</h4>
+                            <p class="text-slate-900 dark:text-white">${industryNames[workflow.data?.industria] || workflow.data?.industria || 'N/A'}</p>
                         </div>
                         ${workflow.result ? `
-                            <div class="bg-slate-800 rounded-xl p-4">
-                                <h4 class="text-sm font-medium text-slate-400 mb-2">Clientes Encontrados</h4>
-                                <pre class="text-white text-sm overflow-x-auto whitespace-pre-wrap">${JSON.stringify(workflow.result, null, 2)}</pre>
+                            <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-4">
+                                <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Clientes Encontrados</h4>
+                                <pre class="text-slate-900 dark:text-white text-sm overflow-x-auto whitespace-pre-wrap">${JSON.stringify(workflow.result, null, 2)}</pre>
                             </div>
-                        ` : '<p class="text-slate-400">Sin resultados disponibles</p>'}
+                        ` : '<p class="text-slate-600 dark:text-slate-400">Sin resultados disponibles</p>'}
                     </div>
                 `;
                 document.getElementById('resultModal').classList.remove('hidden');
@@ -557,18 +536,18 @@
                 document.getElementById('modalTitle').textContent = 'Detalles del Error';
                 document.getElementById('modalContent').innerHTML = `
                     <div class="space-y-4">
-                        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-                            <h4 class="text-sm font-medium text-red-400 mb-2">Mensaje de Error</h4>
-                            <p class="text-white">${workflow.error_message || 'Error desconocido'}</p>
+                        <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl p-4">
+                            <h4 class="text-sm font-medium text-red-600 dark:text-red-400 mb-2">Mensaje de Error</h4>
+                            <p class="text-slate-900 dark:text-white">${workflow.error_message || 'Error desconocido'}</p>
                         </div>
-                        <div class="bg-slate-800 rounded-xl p-4">
-                            <h4 class="text-sm font-medium text-slate-400 mb-2">Último Paso</h4>
-                            <p class="text-white">${workflow.step || 'N/A'}</p>
+                        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-4">
+                            <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Último Paso</h4>
+                            <p class="text-slate-900 dark:text-white">${workflow.step || 'N/A'}</p>
                         </div>
-                        <div class="bg-slate-800 rounded-xl p-4">
-                            <h4 class="text-sm font-medium text-slate-400 mb-2">Datos de la Búsqueda</h4>
-                            <p class="text-white">📍 ${workflow.data?.nombre_lugar || 'N/A'}</p>
-                            <p class="text-slate-400 text-sm">${industryNames[workflow.data?.industria] || workflow.data?.industria || 'N/A'}</p>
+                        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-4">
+                            <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Datos de la Búsqueda</h4>
+                            <p class="text-slate-900 dark:text-white">📍 ${workflow.data?.nombre_lugar || 'N/A'}</p>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm">${industryNames[workflow.data?.industria] || workflow.data?.industria || 'N/A'}</p>
                         </div>
                     </div>
                 `;

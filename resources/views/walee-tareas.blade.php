@@ -62,14 +62,21 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         $listas = \App\Models\Lista::with(['tareas' => function($query) {
-            $query->orderBy('fecha_hora', 'asc')->orderBy('created_at', 'asc');
+            $query->orderBy('created_at', 'asc');
         }])->get();
         
         // Obtener todas las tareas de todas las listas para "Mis tareas"
         $todasLasTareas = \App\Models\Tarea::with('lista')
-            ->orderBy('fecha_hora', 'asc')
             ->orderBy('created_at', 'asc')
             ->get();
+        
+        // Obtener tipos únicos de todas las tareas
+        $tiposExistentes = \App\Models\Tarea::whereNotNull('tipo')
+            ->distinct()
+            ->pluck('tipo')
+            ->filter()
+            ->values()
+            ->toArray();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -161,22 +168,13 @@
                                     <p class="text-sm font-medium text-slate-900 dark:text-white {{ $tarea->estado === 'completado' ? 'line-through opacity-60' : '' }}">
                                         {{ $tarea->texto }}
                                     </p>
-                                    @if($tarea->fecha_hora)
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                            {{ $tarea->fecha_hora->locale('es')->translatedFormat('D, d M, g:i a') }}
-                                        </p>
-                                    @endif
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        {{ $tarea->created_at->locale('es')->translatedFormat('D, d M, g:i a') }}
+                                    </p>
                                 </div>
                                 
                                 <!-- Actions -->
                                 <div class="flex items-center gap-2 flex-shrink-0">
-                                    @if($tarea->fecha_hora)
-                                        <button class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-                                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                            </svg>
-                                        </button>
-                                    @endif
                                     <button onclick="toggleFavorito({{ $tarea->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
                                         <svg class="w-4 h-4 {{ $tarea->favorito ? 'text-yellow-500 fill-yellow-500' : 'text-slate-400' }}" fill="{{ $tarea->favorito ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
@@ -217,11 +215,9 @@
                                     <p class="text-sm font-medium text-slate-900 dark:text-white {{ $tarea->estado === 'completado' ? 'line-through opacity-60' : '' }}">
                                         {{ $tarea->texto }}
                                     </p>
-                                    @if($tarea->fecha_hora)
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                            {{ $tarea->fecha_hora->locale('es')->translatedFormat('D, d M, g:i a') }}
-                                        </p>
-                                    @endif
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        {{ $tarea->created_at->locale('es')->translatedFormat('D, d M, g:i a') }}
+                                    </p>
                                 </div>
                                 <button onclick="toggleFavorito({{ $tarea->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
                                     <svg class="w-4 h-4 text-yellow-500 fill-yellow-500" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,30 +316,20 @@
                     ></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora (opcional)</label>
-                    <input 
-                        type="datetime-local" 
-                        name="fecha_hora"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
-                    >
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo (opcional)</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
                     <input 
                         type="text" 
                         name="tipo"
-                        placeholder="Ej: Trabajo, Personal, etc."
+                        list="tipos-list"
+                        placeholder="Selecciona un tipo existente o escribe uno nuevo"
                         class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
                     >
-                </div>
-                <div class="flex items-center gap-2">
-                    <input 
-                        type="checkbox" 
-                        name="favorito" 
-                        id="favorito"
-                        class="w-4 h-4 text-purple-500 rounded focus:ring-purple-500"
-                    >
-                    <label for="favorito" class="text-sm text-slate-700 dark:text-slate-300">Marcar como favorito</label>
+                    <datalist id="tipos-list">
+                        @foreach($tiposExistentes as $tipo)
+                            <option value="{{ $tipo }}">
+                        @endforeach
+                    </datalist>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Escribe un tipo nuevo o selecciona uno existente de la lista</p>
                 </div>
                 <button 
                     type="submit"

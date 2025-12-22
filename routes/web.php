@@ -899,9 +899,10 @@ Route::post('/tareas', function (\Illuminate\Http\Request $request) {
         $tarea = new \App\Models\Tarea();
         $tarea->lista_id = $request->input('lista_id');
         $tarea->texto = $request->input('texto');
-        $tarea->fecha_hora = $request->input('fecha_hora') ? \Carbon\Carbon::parse($request->input('fecha_hora')) : null;
+        // fecha_hora se establece automáticamente como la fecha y hora de creación
+        $tarea->fecha_hora = now();
         $tarea->tipo = $request->input('tipo');
-        $tarea->favorito = $request->has('favorito');
+        $tarea->favorito = false; // Por defecto no es favorito
         $tarea->estado = 'pending';
         $tarea->save();
         

@@ -68,19 +68,9 @@
     <!-- Mobile Menu Dropdown (Bootstrap Style) -->
     <div 
         id="mobileMenu" 
-        class="sm:hidden absolute top-full left-0 right-0 mt-2 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden"
-        style="display: none; z-index: 9999 !important; background-color: rgb(255, 255, 255);"
+        class="sm:hidden absolute top-full left-0 right-0 mt-2 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden mobile-menu-opaque"
+        style="display: none; z-index: 9999 !important;"
     >
-        <style>
-            @media (prefers-color-scheme: dark) {
-                #mobileMenu {
-                    background-color: rgb(15, 23, 42) !important;
-                }
-            }
-            .dark #mobileMenu {
-                background-color: rgb(15, 23, 42) !important;
-            }
-        </style>
         <div class="py-2">
             <a 
                 href="{{ route('walee') }}" 

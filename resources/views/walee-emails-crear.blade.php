@@ -773,8 +773,14 @@
                 formData.append('subject', subject);
                 formData.append('body', body);
                 formData.append('ai_prompt', aiPrompt);
-                if (sitioId) formData.append('sitio_id', sitioId);
-                if (enlace) formData.append('enlace', enlace);
+                
+                // Add sitio_id and enlace if they exist
+                if (sitioId && sitioId.trim() !== '') {
+                    formData.append('sitio_id', sitioId);
+                }
+                if (enlace && enlace.trim() !== '') {
+                    formData.append('enlace', enlace);
+                }
                 
                 // Add attachment if selected
                 const attachmentInput = document.getElementById('attachment');

@@ -8,6 +8,7 @@
     <meta name="description" content="Walee - Gestión de Cotizaciones">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    @include('partials.walee-dark-mode-init')
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

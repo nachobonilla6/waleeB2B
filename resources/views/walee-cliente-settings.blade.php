@@ -7,6 +7,7 @@
     <title>Walee - Configuración - {{ $cliente->name }}</title>
     <meta name="description" content="Configuración del cliente">
     <meta name="theme-color" content="#D59F3B">
+    @include('partials.walee-dark-mode-init')
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

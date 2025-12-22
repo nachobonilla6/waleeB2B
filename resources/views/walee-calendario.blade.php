@@ -269,23 +269,62 @@
             <!-- Calendar Controls -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm dark:shadow-none">
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                        <div class="flex items-center justify-center sm:justify-start gap-2">
-                            <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                </svg>
-                            </a>
-                            <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
-                                Hoy
-                            </a>
-                            <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
+                    <div class="flex flex-col gap-3">
+                        <!-- Navegación y Selectores de Fecha -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                            <div class="flex items-center justify-center sm:justify-start gap-2">
+                                <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                    </svg>
+                                </a>
+                                <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
+                                    Hoy
+                                </a>
+                                <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                            
+                            <!-- Selectores de Fecha -->
+                            <div class="flex items-center gap-2 justify-center sm:justify-end">
+                                <select 
+                                    id="selectDia"
+                                    onchange="navegarAFecha()"
+                                    class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                                >
+                                    <option value="">Día</option>
+                                    @foreach($diasDelMes as $dia)
+                                        <option value="{{ $dia }}" {{ request()->get('dia') == $dia ? 'selected' : '' }}>{{ $dia }}</option>
+                                    @endforeach
+                                </select>
+                                
+                                <select 
+                                    id="selectMes"
+                                    onchange="navegarAFecha()"
+                                    class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                                >
+                                    @foreach($meses as $numMes => $nombreMes)
+                                        <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
+                                    @endforeach
+                                </select>
+                                
+                                <select 
+                                    id="selectAno"
+                                    onchange="navegarAFecha()"
+                                    class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                                >
+                                    @foreach($anos as $numAno)
+                                        <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="flex gap-2 w-full sm:w-auto">
+                        
+                        <!-- Botones de Acción -->
+                        <div class="flex gap-2 w-full sm:w-auto sm:ml-auto">
                             <button 
                                 onclick="showNuevaCitaModal()"
                                 class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
@@ -297,7 +336,7 @@
                             </button>
                             <button 
                                 onclick="showNuevaTareaModal()"
-                                        class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
                             >
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>

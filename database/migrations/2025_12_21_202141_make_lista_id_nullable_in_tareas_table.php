@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tareas', function (Blueprint $table) {
-            $table->foreignId('lista_id')->nullable()->change();
+            // Primero eliminar la foreign key constraint
+            $table->dropForeign(['lista_id']);
+            // Luego hacer que sea nullable
+            $table->unsignedBigInteger('lista_id')->nullable()->change();
+            // Recrear la foreign key constraint
+            $table->foreign('lista_id')->references('id')->on('listas')->onDelete('cascade');
         });
     }
 
@@ -25,7 +30,7 @@ return new class extends Migration
             // Primero eliminar la foreign key constraint
             $table->dropForeign(['lista_id']);
             // Luego hacer que no sea nullable
-            $table->foreignId('lista_id')->nullable(false)->change();
+            $table->unsignedBigInteger('lista_id')->nullable(false)->change();
             // Recrear la foreign key constraint
             $table->foreign('lista_id')->references('id')->on('listas')->onDelete('cascade');
         });

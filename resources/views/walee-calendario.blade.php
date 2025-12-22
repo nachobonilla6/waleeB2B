@@ -64,16 +64,83 @@
         $primerDia = $fechaActual->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
         $ultimoDia = $fechaActual->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SATURDAY);
         
-        // Obtener todas las citas del mes
-        $citas = \App\Models\Cita::with('cliente')
-            ->whereBetween('fecha_inicio', [
-                $fechaActual->copy()->startOfMonth()->startOfDay(),
-                $fechaActual->copy()->endOfMonth()->endOfDay()
-            ])
-            ->get()
-            ->groupBy(function($cita) {
-                return $cita->fecha_inicio->format('Y-m-d');
-            });
+        // Obtener todas las citas del mes (incluyendo recurrentes)
+        $citasBase = \App\Models\Cita::with('cliente')
+            ->where(function($query) use ($fechaActual) {
+                // Citas que empiezan en este mes
+                $query->whereBetween('fecha_inicio', [
+                    $fechaActual->copy()->startOfMonth()->startOfDay(),
+                    $fechaActual->copy()->endOfMonth()->endOfDay()
+                ])
+                // O citas recurrentes que pueden aparecer en este mes
+                ->orWhere(function($q) use ($fechaActual) {
+                    $q->where('recurrencia', '!=', 'none')
+                      ->where('fecha_inicio', '<=', $fechaActual->copy()->endOfMonth()->endOfDay())
+                      ->where(function($subQ) use ($fechaActual) {
+                          $subQ->whereNull('recurrencia_fin')
+                                ->orWhere('recurrencia_fin', '>=', $fechaActual->copy()->startOfMonth()->startOfDay());
+                      });
+                });
+            })
+            ->get();
+        
+        // Generar citas recurrentes
+        $citas = collect();
+        foreach ($citasBase as $cita) {
+            if ($cita->recurrencia === 'none') {
+                // Cita normal, agregarla solo si está en el mes
+                if ($cita->fecha_inicio->month == $mes && $cita->fecha_inicio->year == $ano) {
+                    $citas->push($cita);
+                }
+            } else {
+                // Cita recurrente, generar todas las ocurrencias del mes
+                $fechaInicio = $cita->fecha_inicio->copy();
+                $fechaFin = $cita->recurrencia_fin ? \Carbon\Carbon::parse($cita->recurrencia_fin) : $fechaActual->copy()->endOfMonth();
+                $mesInicio = $fechaActual->copy()->startOfMonth();
+                $mesFin = $fechaActual->copy()->endOfMonth();
+                
+                // Ajustar fecha inicio si es anterior al mes actual
+                if ($fechaInicio->lt($mesInicio)) {
+                    if ($cita->recurrencia === 'semanal') {
+                        $semanas = ceil($mesInicio->diffInWeeks($fechaInicio));
+                        $fechaInicio = $fechaInicio->copy()->addWeeks($semanas);
+                    } elseif ($cita->recurrencia === 'mensual') {
+                        $meses = ceil($mesInicio->diffInMonths($fechaInicio));
+                        $fechaInicio = $fechaInicio->copy()->addMonths($meses);
+                    } elseif ($cita->recurrencia === 'anual') {
+                        $anos = ceil($mesInicio->diffInYears($fechaInicio));
+                        $fechaInicio = $fechaInicio->copy()->addYears($anos);
+                    }
+                }
+                
+                // Generar ocurrencias hasta el fin del mes o hasta recurrencia_fin
+                $fechaActualCita = $fechaInicio->copy();
+                while ($fechaActualCita->lte($mesFin) && $fechaActualCita->lte($fechaFin)) {
+                    if ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano) {
+                        $citaRecurrente = clone $cita;
+                        $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
+                        if ($cita->fecha_fin) {
+                            $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                            $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                        }
+                        $citas->push($citaRecurrente);
+                    }
+                    
+                    // Avanzar según el tipo de recurrencia
+                    if ($cita->recurrencia === 'semanal') {
+                        $fechaActualCita->addWeek();
+                    } elseif ($cita->recurrencia === 'mensual') {
+                        $fechaActualCita->addMonth();
+                    } elseif ($cita->recurrencia === 'anual') {
+                        $fechaActualCita->addYear();
+                    }
+                }
+            }
+        }
+        
+        $citas = $citas->groupBy(function($cita) {
+            return $cita->fecha_inicio->format('Y-m-d');
+        });
         
         // Obtener todas las tareas del mes
         $tareas = \App\Models\Tarea::with('lista')
@@ -216,9 +283,17 @@
                                 @endphp
                                 @foreach($citasDelDia->take($maxMostrar) as $cita)
                                     @php $mostrados++; @endphp
+                                    @php
+                                        $colorCita = $cita->color ?? '#10b981';
+                                        $colorRgb = sscanf($colorCita, "#%02x%02x%02x");
+                                        $colorBg = $cita->estado === 'completada' 
+                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                            : "background-color: rgba({$colorRgb[0]}, {$colorRgb[1]}, {$colorRgb[2]}, 0.2); color: {$colorCita};";
+                                    @endphp
                                     <button 
                                         onclick="showCitaDetail({{ $cita->id }})"
-                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' }}"
+                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                        style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
                                         title="{{ $cita->titulo }}"
                                     >
                                         <span class="hidden sm:inline">{{ $cita->fecha_inicio->format('H:i') }} - </span>{{ $cita->titulo }}
@@ -332,6 +407,52 @@
                         placeholder="Descripción de la cita..."
                         class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"
                     ></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
+                    <select 
+                        name="recurrencia" 
+                        id="recurrencia"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                        onchange="toggleRecurrenciaFin()"
+                    >
+                        <option value="none">Sin recurrencia</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="mensual">Mensual</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+                
+                <div id="recurrencia_fin_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                    <input 
+                        type="datetime-local" 
+                        name="recurrencia_fin" 
+                        id="recurrencia_fin"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                    <div class="flex items-center gap-3">
+                        <input 
+                            type="color" 
+                            name="color" 
+                            id="color"
+                            value="#10b981"
+                            class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
+                        >
+                        <input 
+                            type="text" 
+                            id="color_text"
+                            value="#10b981"
+                            placeholder="#10b981"
+                            class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                            onchange="document.getElementById('color').value = this.value"
+                        >
+                    </div>
                 </div>
                 
                 <div>
@@ -477,11 +598,35 @@
         const citasData = @json($citas->flatten());
         const tareasData = @json($tareas->flatten());
         
+        function toggleRecurrenciaFin() {
+            const recurrencia = document.getElementById('recurrencia').value;
+            const container = document.getElementById('recurrencia_fin_container');
+            if (recurrencia !== 'none') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+        
+        // Sincronizar color picker con input de texto
+        document.getElementById('color').addEventListener('input', function(e) {
+            document.getElementById('color_text').value = e.target.value;
+        });
+        
+        document.getElementById('color_text').addEventListener('input', function(e) {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                document.getElementById('color').value = e.target.value;
+            }
+        });
+        
         function showNuevaCitaModal() {
             document.getElementById('modalTitle').textContent = 'Nueva Cita';
             document.getElementById('cita-form').reset();
             document.getElementById('cita_id').value = '';
             document.getElementById('deleteBtn').classList.add('hidden');
+            document.getElementById('recurrencia_fin_container').classList.add('hidden');
+            document.getElementById('color').value = '#10b981';
+            document.getElementById('color_text').value = '#10b981';
             document.getElementById('citaModal').classList.remove('hidden');
         }
         
@@ -587,6 +732,11 @@
             document.getElementById('ubicacion').value = cita.ubicacion || '';
             document.getElementById('descripcion').value = cita.descripcion || '';
             document.getElementById('estado').value = cita.estado || 'programada';
+            document.getElementById('recurrencia').value = cita.recurrencia || 'none';
+            document.getElementById('recurrencia_fin').value = cita.recurrencia_fin ? new Date(cita.recurrencia_fin).toISOString().slice(0, 16) : '';
+            document.getElementById('color').value = cita.color || '#10b981';
+            document.getElementById('color_text').value = cita.color || '#10b981';
+            toggleRecurrenciaFin();
             document.getElementById('deleteBtn').classList.remove('hidden');
             
             closeCitaDetailModal();
@@ -687,6 +837,9 @@
                 ubicacion: formData.get('ubicacion') || null,
                 descripcion: formData.get('descripcion') || null,
                 estado: formData.get('estado'),
+                recurrencia: formData.get('recurrencia') || 'none',
+                recurrencia_fin: formData.get('recurrencia_fin') || null,
+                color: formData.get('color') || '#10b981',
             };
             
             try {

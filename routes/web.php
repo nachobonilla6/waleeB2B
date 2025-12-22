@@ -160,6 +160,9 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         $cita->ubicacion = $request->input('ubicacion');
         $cita->descripcion = $request->input('descripcion');
         $cita->estado = $request->input('estado', 'programada');
+        $cita->recurrencia = $request->input('recurrencia', 'none');
+        $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $cita->color = $request->input('color', '#10b981');
         $cita->save();
         
         return response()->json([
@@ -184,6 +187,9 @@ Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
         $cita->ubicacion = $request->input('ubicacion');
         $cita->descripcion = $request->input('descripcion');
         $cita->estado = $request->input('estado', 'programada');
+        $cita->recurrencia = $request->input('recurrencia', 'none');
+        $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $cita->color = $request->input('color', '#10b981');
         $cita->save();
         
         return response()->json([

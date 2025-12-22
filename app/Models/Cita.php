@@ -18,6 +18,9 @@ class Cita extends Model
         'estado',
         'google_event_id',
         'google_calendar_id',
+        'recurrencia',
+        'recurrencia_fin',
+        'color',
     ];
 
     protected $casts = [

@@ -425,9 +425,9 @@
                     Acciones Rápidas
                 </h2>
                 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
                     <!-- Sidebar Verde -->
-                    <div class="col-span-2 sm:col-span-1 bg-emerald-500 dark:bg-emerald-600 rounded-2xl p-6 border border-emerald-600 dark:border-emerald-700 shadow-lg">
+                    <div class="col-span-2 sm:col-span-2 bg-emerald-500 dark:bg-emerald-600 rounded-2xl p-6 border border-emerald-600 dark:border-emerald-700 shadow-lg">
                         <div class="flex flex-col items-center justify-center h-full text-center">
                             <div class="w-16 h-16 rounded-xl bg-white/20 dark:bg-white/10 flex items-center justify-center mb-4">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

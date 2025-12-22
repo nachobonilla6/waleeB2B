@@ -820,14 +820,25 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
         $subject = $request->input('subject');
         $body = $request->input('body');
         $aiPrompt = $request->input('ai_prompt');
+        $sitioId = $request->input('sitio_id');
+        $enlace = $request->input('enlace');
         
         $client = $clienteId ? \App\Models\Client::find($clienteId) : null;
         
-        // Enviar email
-        \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($email, $subject) {
-            $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
+        // Enviar email con adjunto si existe
+        \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($email, $subject, $request) {
+            $message->from('websolutionscrnow@gmail.com', 'Memphis - Web Solutions')
                     ->to($email)
                     ->subject($subject);
+            
+            // Attach file if present
+            if ($request->hasFile('attachment')) {
+                $attachment = $request->file('attachment');
+                $message->attach($attachment->getRealPath(), [
+                    'as' => $attachment->getClientOriginalName(),
+                    'mime' => $attachment->getMimeType(),
+                ]);
+            }
         });
         
         // Guardar en la base de datos

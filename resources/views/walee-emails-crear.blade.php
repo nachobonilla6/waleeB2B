@@ -384,6 +384,51 @@
                                     class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
                                 ></textarea>
                             </div>
+                            
+                            <!-- File Attachment -->
+                            <div>
+                                <label for="attachment" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Adjuntar archivo (opcional)</label>
+                                <div class="relative">
+                                    <input 
+                                        type="file" 
+                                        id="attachment" 
+                                        name="attachment"
+                                        accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                                        class="hidden"
+                                        onchange="handleFileSelection(this)"
+                                    >
+                                    <label 
+                                        for="attachment" 
+                                        class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-400 hover:border-blue-500/50 hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer transition-all"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                        </svg>
+                                        <span id="fileLabel" class="text-sm">Seleccionar archivo (PDF o imagen)</span>
+                                    </label>
+                                </div>
+                                <div id="fileInfo" class="hidden mt-2 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                            <span id="fileName" class="text-sm font-medium text-blue-700 dark:text-blue-300"></span>
+                                            <span id="fileSize" class="text-xs text-blue-600 dark:text-blue-400"></span>
+                                        </div>
+                                        <button 
+                                            type="button"
+                                            onclick="removeAttachment()"
+                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-500 mt-2">Formatos permitidos: PDF, JPG, PNG, GIF, WEBP (máx. 10MB)</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -721,19 +766,28 @@
             `;
             
             try {
+                // Use FormData to support file uploads
+                const formData = new FormData();
+                formData.append('cliente_id', clienteId);
+                formData.append('email', email);
+                formData.append('subject', subject);
+                formData.append('body', body);
+                formData.append('ai_prompt', aiPrompt);
+                if (sitioId) formData.append('sitio_id', sitioId);
+                if (enlace) formData.append('enlace', enlace);
+                
+                // Add attachment if selected
+                const attachmentInput = document.getElementById('attachment');
+                if (attachmentInput.files && attachmentInput.files[0]) {
+                    formData.append('attachment', attachmentInput.files[0]);
+                }
+                
                 const response = await fetch('{{ route("walee.emails.enviar") }}', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({
-                        cliente_id: clienteId,
-                        email: email,
-                        subject: subject,
-                        body: body,
-                        ai_prompt: aiPrompt,
-                    }),
+                    body: formData,
                 });
                 
                 const data = await response.json();

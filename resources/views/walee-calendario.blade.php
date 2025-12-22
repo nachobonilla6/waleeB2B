@@ -226,6 +226,12 @@
             5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
             9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
         ];
+        
+        // Generar años (desde 2020 hasta 2030)
+        $anos = range(2020, 2030);
+        
+        // Generar días del mes actual
+        $diasDelMes = range(1, $fechaActual->copy()->endOfMonth()->day);
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -688,6 +694,49 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const citasData = @json($citas->flatten());
         const tareasData = @json($tareas->flatten());
+        
+        function navegarAFecha() {
+            const dia = document.getElementById('selectDia').value;
+            const mes = document.getElementById('selectMes').value;
+            const ano = document.getElementById('selectAno').value;
+            
+            if (mes && ano) {
+                let url = `?mes=${mes}&ano=${ano}`;
+                if (dia) {
+                    // Si se selecciona un día, navegar a ese día específico
+                    // Por ahora solo cambiamos el mes, pero podríamos agregar scroll al día
+                    url += `&dia=${dia}`;
+                }
+                window.location.href = url;
+            }
+        }
+        
+        // Actualizar días disponibles cuando cambia el mes
+        document.getElementById('selectMes').addEventListener('change', function() {
+            const mes = parseInt(this.value);
+            const ano = parseInt(document.getElementById('selectAno').value);
+            
+            if (mes && ano) {
+                // Calcular días del mes seleccionado
+                const diasEnMes = new Date(ano, mes, 0).getDate();
+                const selectDia = document.getElementById('selectDia');
+                const diaActual = selectDia.value;
+                
+                // Limpiar opciones de días
+                selectDia.innerHTML = '<option value="">Día</option>';
+                
+                // Agregar días del mes
+                for (let i = 1; i <= diasEnMes; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    if (diaActual && i == diaActual && i <= diasEnMes) {
+                        option.selected = true;
+                    }
+                    selectDia.appendChild(option);
+                }
+            }
+        });
         
         function toggleRecurrenciaFin() {
             const recurrencia = document.getElementById('recurrencia').value;

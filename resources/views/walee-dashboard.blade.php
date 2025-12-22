@@ -262,7 +262,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = 'Dashboard'; @endphp
             @include('partials.walee-navbar')
             
@@ -585,7 +585,7 @@
     <!-- Scroll Down Button (Floating) -->
     <button 
         onclick="scrollToBottom()" 
-        class="fixed bottom-6 left-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40"
+        class="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40"
         title="Ir al final"
     >
         <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

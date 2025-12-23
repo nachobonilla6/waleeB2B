@@ -49,10 +49,6 @@ Route::get('/', function () {
     return view('welcome', compact('sitios'));
 })->name('home');
 
-// Dashboard
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 // Sistema para tu negocio - Página pública
 Route::get('/sistema-para-tu-negocio', function () {

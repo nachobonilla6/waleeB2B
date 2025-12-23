@@ -1371,6 +1371,11 @@ Route::get('/walee-cliente/{id}/settings', function ($id) {
     return view('walee-cliente-settings', compact('cliente'));
 })->middleware(['auth'])->name('walee.cliente.settings');
 
+Route::get('/walee-facebook/clientes', function () {
+    $clientes = \App\Models\Client::orderBy('name')->get();
+    return view('walee-facebook-clientes', compact('clientes'));
+})->middleware(['auth'])->name('walee.facebook.clientes');
+
 // Ruta para guardar webhook del cliente
 Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $request, $id) {
     try {

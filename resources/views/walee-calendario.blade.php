@@ -418,6 +418,15 @@
                                 </svg>
                                 <span class="text-xs sm:text-sm">Tarea</span>
                             </button>
+                            <button 
+                                onclick="showNuevaNotaModal()"
+                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                            >
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                <span class="text-xs sm:text-sm">Nota</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -524,7 +533,7 @@
     </div>
     
     <!-- Modal Nueva/Editar Cita -->
-    <div id="citaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="citaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Nueva Cita</h3>
@@ -733,8 +742,97 @@
         </div>
     </div>
     
+    <!-- Modal Nueva/Editar Nota -->
+    <div id="notaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="notaModalTitle">Nueva Nota</h3>
+                <button onclick="closeNotaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="nota-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="nota_id" id="nota_id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido de la Nota</label>
+                    <textarea 
+                        name="content" 
+                        id="nota_content" 
+                        required 
+                        rows="5"
+                        placeholder="Escribe el contenido de la nota..."
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                    ></textarea>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Máximo 5000 caracteres</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                    <select 
+                        name="type" 
+                        id="nota_type" 
+                        required
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                    >
+                        <option value="note">Nota</option>
+                        <option value="call">Llamada</option>
+                        <option value="meeting">Reunión</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente (opcional)</label>
+                    <select 
+                        name="cliente_id" 
+                        id="nota_cliente_id"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                    >
+                        <option value="">Sin cliente</option>
+                        @foreach($clientes as $cliente)
+                            <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            name="pinned" 
+                            id="nota_pinned"
+                            class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-blue-500 focus:ring-blue-500"
+                        >
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Marcar como fijada (pinned)</span>
+                    </label>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-7">Las notas fijadas aparecen primero en la lista</p>
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button 
+                        type="submit"
+                        class="flex-1 px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all"
+                    >
+                        Guardar
+                    </button>
+                    <button 
+                        type="button"
+                        id="deleteNotaBtn"
+                        onclick="deleteNota()"
+                        class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden"
+                    >
+                        Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <!-- Modal Nueva/Editar Tarea -->
-    <div id="tareaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="tareaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="tareaModalTitle">Nueva Tarea</h3>
@@ -916,7 +1014,7 @@
     </div>
     
     <!-- Modal Ver Cita -->
-    <div id="citaDetailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="citaDetailModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Detalle de Cita</h3>
@@ -1375,6 +1473,20 @@
             document.getElementById('tareaModal').classList.add('hidden');
         }
         
+        function showNuevaNotaModal() {
+            document.getElementById('notaModalTitle').textContent = 'Nueva Nota';
+            document.getElementById('nota-form').reset();
+            document.getElementById('nota_id').value = '';
+            document.getElementById('deleteNotaBtn').classList.add('hidden');
+            document.getElementById('nota_type').value = 'note';
+            document.getElementById('nota_pinned').checked = false;
+            document.getElementById('notaModal').classList.remove('hidden');
+        }
+        
+        function closeNotaModal() {
+            document.getElementById('notaModal').classList.add('hidden');
+        }
+        
         function showTareaDetail(tareaId) {
             const tarea = tareasData.find(t => t.id === tareaId);
             if (!tarea) return;
@@ -1581,7 +1693,93 @@
                 closeCitaModal();
                 closeCitaDetailModal();
                 closeTareaModal();
+                closeNotaModal();
             }
+        });
+        
+        // Nota Functions
+        function showNuevaNotaModal() {
+            document.getElementById('notaModalTitle').textContent = 'Nueva Nota';
+            document.getElementById('nota-form').reset();
+            document.getElementById('nota_id').value = '';
+            document.getElementById('deleteNotaBtn').classList.add('hidden');
+            document.getElementById('nota_type').value = 'note';
+            document.getElementById('nota_pinned').checked = false;
+            document.getElementById('notaModal').classList.remove('hidden');
+        }
+        
+        function closeNotaModal() {
+            document.getElementById('notaModal').classList.add('hidden');
+        }
+        
+        // Nota form handler
+        document.getElementById('nota-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const notaId = formData.get('nota_id');
+            const url = notaId ? `/notas/${notaId}` : '/notas';
+            const method = notaId ? 'PUT' : 'POST';
+            
+            const data = {
+                content: formData.get('content'),
+                type: formData.get('type'),
+                cliente_id: formData.get('cliente_id') || null,
+                pinned: formData.get('pinned') === 'on',
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeNotaModal();
+                    location.reload();
+                } else {
+                    alert('Error: ' + (result.message || 'Error al guardar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        });
+        
+        async function deleteNota(notaId = null) {
+            const id = notaId || document.getElementById('nota_id').value;
+            if (!id) return;
+            
+            if (!confirm('¿Estás seguro de eliminar esta nota?')) return;
+            
+            try {
+                const response = await fetch(`/notas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Error al eliminar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        }
+        
+        // Close nota modal on backdrop click
+        document.getElementById('notaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeNotaModal();
         });
     </script>
     @include('partials.walee-support-button')

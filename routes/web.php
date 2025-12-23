@@ -1421,6 +1421,67 @@ Route::post('/tareas/{id}/favorito', function ($id) {
     }
 })->middleware(['auth'])->name('tareas.favorito');
 
+// Rutas para Notas (POST, PUT, DELETE)
+Route::post('/notas', function (\Illuminate\Http\Request $request) {
+    try {
+        $nota = new \App\Models\Note();
+        $nota->content = $request->input('content');
+        $nota->type = $request->input('type', 'note');
+        $nota->cliente_id = $request->input('cliente_id') ?: null;
+        $nota->pinned = $request->input('pinned', false);
+        $nota->user_id = auth()->id();
+        $nota->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Nota creada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('notas.store');
+
+Route::put('/notas/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $nota = \App\Models\Note::findOrFail($id);
+        $nota->content = $request->input('content');
+        $nota->type = $request->input('type', 'note');
+        $nota->cliente_id = $request->input('cliente_id') ?: null;
+        $nota->pinned = $request->input('pinned', false);
+        $nota->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Nota actualizada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('notas.update');
+
+Route::delete('/notas/{id}', function ($id) {
+    try {
+        $nota = \App\Models\Note::findOrFail($id);
+        $nota->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Nota eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('notas.delete');
+
 // Rutas para Listas
 Route::post('/listas', function (\Illuminate\Http\Request $request) {
     try {

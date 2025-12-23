@@ -97,6 +97,15 @@
                             </svg>
                             <span>Nueva Tarea</span>
                         </button>
+                        <button 
+                            onclick="showNuevaNotaModal()"
+                            class="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
+                        >
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span>Nueva Nota</span>
+                        </button>
                         <a href="{{ route('walee.calendario', ['mes' => $fecha->month, 'ano' => $fecha->year]) }}" class="flex-shrink-0 px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all border border-slate-300 dark:border-slate-700 flex items-center gap-2">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -266,7 +275,7 @@
     </div>
     
     <!-- Modal Nueva/Editar Cita -->
-    <div id="citaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="citaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Nueva Cita</h3>
@@ -315,11 +324,97 @@
                 </div>
                 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
+                    <select 
+                        name="recurrencia" 
+                        id="recurrencia"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                        onchange="toggleRecurrenciaOptions()"
+                    >
+                        <option value="none">Sin recurrencia</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="mensual">Mensual</option>
+                        <option value="anual">Anual</option>
+                    </select>
+                </div>
+                
+                <div id="recurrencia_dias_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Días específicos</label>
+                    <div id="recurrencia_dias_semanal" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="0" class="rounded">
+                                <span class="text-sm">Dom</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="1" class="rounded">
+                                <span class="text-sm">Lun</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="2" class="rounded">
+                                <span class="text-sm">Mar</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="3" class="rounded">
+                                <span class="text-sm">Mié</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="4" class="rounded">
+                                <span class="text-sm">Jue</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="5" class="rounded">
+                                <span class="text-sm">Vie</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="6" class="rounded">
+                                <span class="text-sm">Sáb</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="recurrencia_dias_mensual" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                        <input 
+                            type="text" 
+                            name="recurrencia_dias_mensual" 
+                            id="recurrencia_dias_mensual"
+                            placeholder="Ej: 1,15,30 o cada Lunes"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                        >
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes escribir números separados por comas (1,15,30) o días de la semana (cada Lunes, cada Martes, etc.)</p>
+                    </div>
+                </div>
+                
+                <div id="recurrencia_fin_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                    <input 
+                        type="datetime-local" 
+                        name="recurrencia_fin" 
+                        id="recurrencia_fin"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
                     <div class="flex items-center gap-3">
                         <input type="color" name="color" id="color" value="#10b981" class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
                         <input type="text" id="color_text" value="#10b981" placeholder="#10b981" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all" onchange="document.getElementById('color').value = this.value">
                     </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
+                    <select 
+                        name="estado" 
+                        id="estado"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                    >
+                        <option value="programada">Programada</option>
+                        <option value="completada">Completada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
                 </div>
                 
                 <div class="flex gap-2 pt-2">
@@ -331,7 +426,7 @@
     </div>
     
     <!-- Modal Nueva/Editar Tarea -->
-    <div id="tareaModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="tareaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="tareaModalTitle">Nueva Tarea</h3>
@@ -365,6 +460,79 @@
                 </div>
                 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
+                    <select 
+                        name="recurrencia" 
+                        id="tarea_recurrencia"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                        onchange="toggleTareaRecurrenciaOptions()"
+                    >
+                        <option value="none">Sin recurrencia</option>
+                        <option value="diaria">Diaria</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="mensual">Mensual</option>
+                    </select>
+                </div>
+                
+                <div id="tarea_recurrencia_dias_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Días específicos</label>
+                    <div id="tarea_recurrencia_dias_semanal" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="0" class="rounded">
+                                <span class="text-sm">Dom</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="1" class="rounded">
+                                <span class="text-sm">Lun</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="2" class="rounded">
+                                <span class="text-sm">Mar</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="3" class="rounded">
+                                <span class="text-sm">Mié</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="4" class="rounded">
+                                <span class="text-sm">Jue</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="5" class="rounded">
+                                <span class="text-sm">Vie</span>
+                            </label>
+                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                <input type="checkbox" name="recurrencia_dias[]" value="6" class="rounded">
+                                <span class="text-sm">Sáb</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="tarea_recurrencia_dias_mensual" class="hidden">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                        <input 
+                            type="text" 
+                            name="recurrencia_dias_mensual" 
+                            id="tarea_recurrencia_dias_mensual"
+                            placeholder="Ej: 1,15,30 o cada Lunes"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                        >
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes escribir números separados por comas (1,15,30) o días de la semana (cada Lunes, cada Martes, etc.)</p>
+                    </div>
+                </div>
+                
+                <div id="tarea_recurrencia_fin_container" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                    <input 
+                        type="datetime-local" 
+                        name="recurrencia_fin" 
+                        id="tarea_recurrencia_fin"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
                     <input type="text" name="tipo" id="tarea_tipo" list="tipos-list" placeholder="Tipo de tarea (opcional)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
                     <datalist id="tipos-list">
@@ -374,9 +542,107 @@
                     </datalist>
                 </div>
                 
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                    <div class="flex items-center gap-3">
+                        <input 
+                            type="color" 
+                            name="color" 
+                            id="tarea_color"
+                            value="#8b5cf6"
+                            class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
+                        >
+                        <input 
+                            type="text" 
+                            id="tarea_color_text"
+                            value="#8b5cf6"
+                            placeholder="#8b5cf6"
+                            class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            onchange="document.getElementById('tarea_color').value = this.value"
+                        >
+                    </div>
+                </div>
+                
                 <div class="flex gap-2 pt-2">
                     <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all">Guardar</button>
                     <button type="button" id="deleteTareaBtn" onclick="deleteTarea()" class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal Nueva/Editar Nota -->
+    <div id="notaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="notaModalTitle">Nueva Nota</h3>
+                <button onclick="closeNotaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="nota-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+                <input type="hidden" name="nota_id" id="nota_id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido de la Nota</label>
+                    <textarea 
+                        name="content" 
+                        id="nota_content" 
+                        required 
+                        rows="5"
+                        placeholder="Escribe el contenido de la nota..."
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                    ></textarea>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Máximo 5000 caracteres</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                    <select 
+                        name="type" 
+                        id="nota_type" 
+                        required
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                    >
+                        <option value="note">Nota</option>
+                        <option value="call">Llamada</option>
+                        <option value="meeting">Reunión</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente (opcional)</label>
+                    <select 
+                        name="cliente_id" 
+                        id="nota_cliente_id"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                    >
+                        <option value="">Sin cliente</option>
+                        @foreach($clientes as $cliente)
+                            <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            name="pinned" 
+                            id="nota_pinned"
+                            class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-blue-500 focus:ring-blue-500"
+                        >
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Marcar como fijada (pinned)</span>
+                    </label>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-7">Las notas fijadas aparecen primero en la lista</p>
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all">Guardar</button>
+                    <button type="button" id="deleteNotaBtn" onclick="deleteNota()" class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden">Eliminar</button>
                 </div>
             </form>
         </div>
@@ -395,7 +661,8 @@
                 'color' => $cita->color ?? '#10b981',
                 'estado' => $cita->estado,
                 'recurrencia' => $cita->recurrencia ?? 'none',
-                'recurrencia_fin' => $cita->recurrencia_fin
+                'recurrencia_fin' => $cita->recurrencia_fin,
+                'recurrencia_dias' => $cita->recurrencia_dias
             ];
         })->values();
         
@@ -407,7 +674,9 @@
                 'fecha_hora' => $tarea->fecha_hora,
                 'tipo' => $tarea->tipo,
                 'recurrencia' => $tarea->recurrencia ?? 'none',
-                'recurrencia_fin' => $tarea->recurrencia_fin
+                'recurrencia_fin' => $tarea->recurrencia_fin,
+                'recurrencia_dias' => $tarea->recurrencia_dias,
+                'color' => $tarea->color ?? '#8b5cf6'
             ];
         })->values();
     @endphp
@@ -428,6 +697,36 @@
             }
         });
         
+        function toggleRecurrenciaOptions() {
+            const recurrencia = document.getElementById('recurrencia').value;
+            const finContainer = document.getElementById('recurrencia_fin_container');
+            const diasContainer = document.getElementById('recurrencia_dias_container');
+            const diasSemanal = document.getElementById('recurrencia_dias_semanal');
+            const diasMensual = document.getElementById('recurrencia_dias_mensual');
+            
+            // Reset checkboxes
+            document.querySelectorAll('#recurrencia_dias_container input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('recurrencia_dias_mensual').value = '';
+            
+            if (recurrencia === 'none') {
+                finContainer.classList.add('hidden');
+                diasContainer.classList.add('hidden');
+            } else {
+                finContainer.classList.remove('hidden');
+                if (recurrencia === 'semanal') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.remove('hidden');
+                    diasMensual.classList.add('hidden');
+                } else if (recurrencia === 'mensual') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.add('hidden');
+                    diasMensual.classList.remove('hidden');
+                } else {
+                    diasContainer.classList.add('hidden');
+                }
+            }
+        }
+        
         function showNuevaCitaModal() {
             document.getElementById('modalTitle').textContent = 'Nueva Cita';
             document.getElementById('cita-form').reset();
@@ -436,6 +735,9 @@
             document.getElementById('fecha_inicio').value = fechaActual + 'T09:00';
             document.getElementById('color').value = '#10b981';
             document.getElementById('color_text').value = '#10b981';
+            document.getElementById('recurrencia').value = 'none';
+            document.getElementById('recurrencia_fin_container').classList.add('hidden');
+            document.getElementById('recurrencia_dias_container').classList.add('hidden');
             document.getElementById('citaModal').classList.remove('hidden');
         }
         
@@ -449,11 +751,71 @@
             document.getElementById('tarea_id').value = '';
             document.getElementById('deleteTareaBtn').classList.add('hidden');
             document.getElementById('tarea_fecha_hora').value = fechaActual + 'T09:00';
+            document.getElementById('tarea_recurrencia').value = 'none';
+            document.getElementById('tarea_recurrencia_fin_container').classList.add('hidden');
+            document.getElementById('tarea_recurrencia_dias_container').classList.add('hidden');
+            document.getElementById('tarea_color').value = '#8b5cf6';
+            document.getElementById('tarea_color_text').value = '#8b5cf6';
             document.getElementById('tareaModal').classList.remove('hidden');
         }
         
+        function toggleTareaRecurrenciaOptions() {
+            const recurrencia = document.getElementById('tarea_recurrencia').value;
+            const finContainer = document.getElementById('tarea_recurrencia_fin_container');
+            const diasContainer = document.getElementById('tarea_recurrencia_dias_container');
+            const diasSemanal = document.getElementById('tarea_recurrencia_dias_semanal');
+            const diasMensual = document.getElementById('tarea_recurrencia_dias_mensual');
+            
+            // Reset checkboxes
+            document.querySelectorAll('#tarea_recurrencia_dias_container input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('tarea_recurrencia_dias_mensual').value = '';
+            
+            if (recurrencia === 'none') {
+                finContainer.classList.add('hidden');
+                diasContainer.classList.add('hidden');
+            } else {
+                finContainer.classList.remove('hidden');
+                if (recurrencia === 'semanal') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.remove('hidden');
+                    diasMensual.classList.add('hidden');
+                } else if (recurrencia === 'mensual') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.add('hidden');
+                    diasMensual.classList.remove('hidden');
+                } else {
+                    diasContainer.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Sincronizar color picker de tareas
+        document.getElementById('tarea_color')?.addEventListener('input', function(e) {
+            document.getElementById('tarea_color_text').value = e.target.value;
+        });
+        
+        document.getElementById('tarea_color_text')?.addEventListener('input', function(e) {
+            if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                document.getElementById('tarea_color').value = e.target.value;
+            }
+        });
+        
         function closeTareaModal() {
             document.getElementById('tareaModal').classList.add('hidden');
+        }
+        
+        function showNuevaNotaModal() {
+            document.getElementById('notaModalTitle').textContent = 'Nueva Nota';
+            document.getElementById('nota-form').reset();
+            document.getElementById('nota_id').value = '';
+            document.getElementById('deleteNotaBtn').classList.add('hidden');
+            document.getElementById('nota_type').value = 'note';
+            document.getElementById('nota_pinned').checked = false;
+            document.getElementById('notaModal').classList.remove('hidden');
+        }
+        
+        function closeNotaModal() {
+            document.getElementById('notaModal').classList.add('hidden');
         }
         
         function editCita(citaId) {
@@ -470,6 +832,23 @@
             document.getElementById('descripcion').value = cita.descripcion || '';
             document.getElementById('color').value = cita.color || '#10b981';
             document.getElementById('color_text').value = cita.color || '#10b981';
+            document.getElementById('estado').value = cita.estado || 'programada';
+            document.getElementById('recurrencia').value = cita.recurrencia || 'none';
+            document.getElementById('recurrencia_fin').value = cita.recurrencia_fin ? new Date(cita.recurrencia_fin).toISOString().slice(0, 16) : '';
+            
+            // Cargar días de recurrencia
+            if (cita.recurrencia_dias && Array.isArray(cita.recurrencia_dias)) {
+                if (cita.recurrencia === 'semanal') {
+                    cita.recurrencia_dias.forEach(dia => {
+                        const checkbox = document.querySelector(`#recurrencia_dias_container input[value="${dia}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else if (cita.recurrencia === 'mensual') {
+                    document.getElementById('recurrencia_dias_mensual').value = cita.recurrencia_dias.join(',');
+                }
+            }
+            
+            toggleRecurrenciaOptions();
             document.getElementById('deleteBtn').classList.remove('hidden');
             document.getElementById('citaModal').classList.remove('hidden');
         }
@@ -484,6 +863,24 @@
             document.getElementById('tarea_lista_id').value = tarea.lista_id || '';
             document.getElementById('tarea_fecha_hora').value = new Date(tarea.fecha_hora).toISOString().slice(0, 16);
             document.getElementById('tarea_tipo').value = tarea.tipo || '';
+            document.getElementById('tarea_recurrencia').value = tarea.recurrencia || 'none';
+            document.getElementById('tarea_recurrencia_fin').value = tarea.recurrencia_fin ? new Date(tarea.recurrencia_fin).toISOString().slice(0, 16) : '';
+            document.getElementById('tarea_color').value = tarea.color || '#8b5cf6';
+            document.getElementById('tarea_color_text').value = tarea.color || '#8b5cf6';
+            
+            // Cargar días de recurrencia
+            if (tarea.recurrencia_dias && Array.isArray(tarea.recurrencia_dias)) {
+                if (tarea.recurrencia === 'semanal') {
+                    tarea.recurrencia_dias.forEach(dia => {
+                        const checkbox = document.querySelector(`#tarea_recurrencia_dias_container input[value="${dia}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else if (tarea.recurrencia === 'mensual') {
+                    document.getElementById('tarea_recurrencia_dias_mensual').value = tarea.recurrencia_dias.join(',');
+                }
+            }
+            
+            toggleTareaRecurrenciaOptions();
             document.getElementById('deleteTareaBtn').classList.remove('hidden');
             document.getElementById('tareaModal').classList.remove('hidden');
         }
@@ -552,6 +949,29 @@
         document.getElementById('cita-form')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Obtener días de recurrencia
+            let recurrenciaDias = null;
+            const recurrencia = document.getElementById('recurrencia').value;
+            if (recurrencia === 'semanal') {
+                const diasCheckboxes = document.querySelectorAll('#recurrencia_dias_container input[type="checkbox"]:checked');
+                recurrenciaDias = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+            } else if (recurrencia === 'mensual') {
+                const diasMensual = document.getElementById('recurrencia_dias_mensual').value;
+                if (diasMensual) {
+                    const dias = diasMensual.split(',').map(d => d.trim());
+                    recurrenciaDias = dias.map(d => {
+                        const diaNum = parseInt(d);
+                        if (!isNaN(diaNum)) return diaNum;
+                        const diasSemana = {
+                            'domingo': 0, 'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3,
+                            'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+                        };
+                        const diaLower = d.toLowerCase().replace('cada ', '');
+                        return diasSemana[diaLower] !== undefined ? diasSemana[diaLower] : null;
+                    }).filter(d => d !== null);
+                }
+            }
+            
             const formData = {
                 titulo: document.getElementById('titulo').value,
                 cliente_id: document.getElementById('cliente_id').value || null,
@@ -559,7 +979,11 @@
                 fecha_fin: document.getElementById('fecha_fin').value || null,
                 ubicacion: document.getElementById('ubicacion').value || null,
                 descripcion: document.getElementById('descripcion').value || null,
-                color: document.getElementById('color').value
+                color: document.getElementById('color').value,
+                estado: document.getElementById('estado').value,
+                recurrencia: recurrencia,
+                recurrencia_fin: document.getElementById('recurrencia_fin').value || null,
+                recurrencia_dias: recurrenciaDias
             };
             
             const citaId = document.getElementById('cita_id').value;
@@ -591,11 +1015,38 @@
         document.getElementById('tarea-form')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Obtener días de recurrencia
+            let recurrenciaDias = null;
+            const recurrencia = document.getElementById('tarea_recurrencia').value;
+            if (recurrencia === 'semanal') {
+                const diasCheckboxes = document.querySelectorAll('#tarea_recurrencia_dias_container input[type="checkbox"]:checked');
+                recurrenciaDias = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+            } else if (recurrencia === 'mensual') {
+                const diasMensual = document.getElementById('tarea_recurrencia_dias_mensual').value;
+                if (diasMensual) {
+                    const dias = diasMensual.split(',').map(d => d.trim());
+                    recurrenciaDias = dias.map(d => {
+                        const diaNum = parseInt(d);
+                        if (!isNaN(diaNum)) return diaNum;
+                        const diasSemana = {
+                            'domingo': 0, 'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3,
+                            'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+                        };
+                        const diaLower = d.toLowerCase().replace('cada ', '');
+                        return diasSemana[diaLower] !== undefined ? diasSemana[diaLower] : null;
+                    }).filter(d => d !== null);
+                }
+            }
+            
             const formData = {
                 texto: document.getElementById('tarea_texto').value,
                 lista_id: document.getElementById('tarea_lista_id').value || null,
                 fecha_hora: document.getElementById('tarea_fecha_hora').value,
-                tipo: document.getElementById('tarea_tipo').value || null
+                tipo: document.getElementById('tarea_tipo').value || null,
+                recurrencia: recurrencia,
+                recurrencia_fin: document.getElementById('tarea_recurrencia_fin').value || null,
+                recurrencia_dias: recurrenciaDias,
+                color: document.getElementById('tarea_color').value
             };
             
             const tareaId = document.getElementById('tarea_id').value;
@@ -632,6 +1083,78 @@
         document.getElementById('tareaModal')?.addEventListener('click', function(e) {
             if (e.target === this) closeTareaModal();
         });
+        
+        document.getElementById('notaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeNotaModal();
+        });
+        
+        document.getElementById('notaModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeNotaModal();
+        });
+        
+        // Nota form handler
+        document.getElementById('nota-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                content: document.getElementById('nota_content').value,
+                type: document.getElementById('nota_type').value,
+                cliente_id: document.getElementById('nota_cliente_id').value || null,
+                pinned: document.getElementById('nota_pinned').checked
+            };
+            
+            const notaId = document.getElementById('nota_id').value;
+            const url = notaId ? `/notas/${notaId}` : '/notas';
+            const method = notaId ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al guardar la nota: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar la nota');
+            }
+        });
+        
+        async function deleteNota(notaId = null) {
+            const id = notaId || document.getElementById('nota_id').value;
+            if (!id) return;
+            
+            if (!confirm('¿Estás seguro de eliminar esta nota?')) return;
+            
+            try {
+                const response = await fetch(`/notas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar la nota');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar la nota');
+            }
+        }
     </script>
     
     @include('partials.walee-support-button')

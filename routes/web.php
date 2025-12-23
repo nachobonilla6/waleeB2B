@@ -29,6 +29,11 @@ Route::get('/storage/chat-audio/{filename}', function ($filename) {
 Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
+// Ruta de login con estilo Walee
+Route::get('/login', function () {
+    return view('walee-login');
+})->middleware('guest')->name('login');
+
 // Página de inicio
 Route::get('/', function () {
     $sitios = Sitio::with('tags')

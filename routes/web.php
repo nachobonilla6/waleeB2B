@@ -32,6 +32,9 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
 
 // Ruta de login con estilo Walee
 Route::get('/login', function () {
+    if (auth()->check()) {
+        return redirect()->route('walee.dashboard');
+    }
     return view('walee-login');
 })->middleware('guest')->name('login');
 

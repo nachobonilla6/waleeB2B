@@ -1607,6 +1607,20 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
     }
 })->middleware(['auth'])->name('walee.cliente.publicaciones.store');
 
+// Ruta para ver publicación (vista previa para compartir) - Sin autenticación para que Facebook pueda leer los Open Graph tags
+Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/share', function ($id, $publicacion_id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        $publicacion = \App\Models\Post::where('id', $publicacion_id)
+            ->where('cliente_id', $cliente->id)
+            ->firstOrFail();
+        
+        return view('walee-publicacion-share', compact('publicacion', 'cliente'));
+    } catch (\Exception $e) {
+        abort(404);
+    }
+})->name('walee.cliente.publicaciones.share');
+
 // Ruta para eliminar publicación del cliente
 Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($id, $publicacion_id) {
     try {

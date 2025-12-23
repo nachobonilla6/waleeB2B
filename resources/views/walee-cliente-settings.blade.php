@@ -527,16 +527,18 @@
 
         // Share to Facebook
         function shareToFacebook(id, title, content, imageUrl) {
-            const url = window.location.origin + '/walee-cliente/{{ $cliente->id }}/settings';
-            const text = title + '\n\n' + content;
-            // Facebook share dialog
-            const shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '&quote=' + encodeURIComponent(text);
-            window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+            // Usar la URL de vista previa con Open Graph tags
+            const shareUrl = window.location.origin + '/walee-cliente/{{ $cliente->id }}/publicaciones/' + id + '/share';
+            // Facebook share dialog - ahora mostrará la imagen y texto correctamente gracias a Open Graph
+            const fbShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
+            window.open(fbShareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
         }
 
         // Share to WhatsApp
         function shareToWhatsApp(id, title, content) {
-            const text = title + '\n\n' + content;
+            // Crear URL de vista previa para incluir en el mensaje
+            const previewUrl = window.location.origin + '/walee-cliente/{{ $cliente->id }}/publicaciones/' + id + '/share';
+            const text = title + '\n\n' + content + '\n\n' + previewUrl;
             // Detectar si es móvil o desktop
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             let url;
@@ -554,11 +556,11 @@
 
         // Share to LinkedIn
         function shareToLinkedIn(id, title, content, imageUrl) {
-            const url = window.location.origin + '/walee-cliente/{{ $cliente->id }}/settings';
-            const summary = content.length > 200 ? content.substring(0, 200) + '...' : content;
-            // LinkedIn share dialog
-            const shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url) + '&summary=' + encodeURIComponent(summary) + '&title=' + encodeURIComponent(title);
-            window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+            // Usar la URL de vista previa con Open Graph tags
+            const shareUrl = window.location.origin + '/walee-cliente/{{ $cliente->id }}/publicaciones/' + id + '/share';
+            // LinkedIn share dialog - ahora mostrará la imagen y texto correctamente gracias a Open Graph
+            const linkedInShareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
+            window.open(linkedInShareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
         }
     </script>
     @include('partials.walee-support-button')

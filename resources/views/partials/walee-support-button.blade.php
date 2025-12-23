@@ -1,8 +1,8 @@
 <!-- Support Button (Floating) -->
 <button 
-    onclick="openSupportModal()" 
-    class="fixed bottom-36 right-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40"
-    title="Soporte"
+    onclick="showSupportMessage()" 
+    class="fixed bottom-36 right-6 w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group z-40 opacity-75 cursor-not-allowed"
+    title="Soporte - Volvemos el 5 de enero"
 >
     <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -124,6 +124,40 @@
 
 <script>
     // Support modal functions - only initialize if not already defined
+    if (typeof showSupportMessage === 'undefined') {
+        function showSupportMessage() {
+            // Crear un mensaje temporal
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'fixed top-4 right-4 bg-walee-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[10000] max-w-sm animate-fade-in-up';
+            messageDiv.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold mb-1">Soporte Temporalmente Deshabilitado</h4>
+                        <p class="text-sm text-white/90">Volvemos el <strong>5 de enero</strong>. Gracias por tu comprensión.</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(messageDiv);
+            
+            // Remover el mensaje después de 5 segundos
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+    }
+    
     if (typeof openSupportModal === 'undefined') {
         const csrfTokenSupport = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         

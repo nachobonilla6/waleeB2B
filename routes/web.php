@@ -5,6 +5,7 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\SupportCaseController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChatStreamController;
 use App\Models\Sitio;
 
@@ -33,6 +34,9 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
 Route::get('/login', function () {
     return view('walee-login');
 })->middleware('guest')->name('login');
+
+// Ruta POST para procesar login
+Route::post('/login', [LoginController::class, 'store'])->middleware('guest')->name('login.store');
 
 // Página de inicio
 Route::get('/', function () {

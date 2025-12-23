@@ -49,8 +49,8 @@ class GoogleLoginController extends Controller
             // Autenticar al usuario
             Auth::login($user, true);
 
-            // Redirigir al panel de Filament
-            return redirect()->intended(\Filament\Facades\Filament::getUrl());
+            // Redirigir a walee-dashboard
+            return redirect()->intended(route('walee.dashboard'));
         } catch (\Exception $e) {
             \Log::error('Error en Google login: ' . $e->getMessage());
             return redirect()->route('filament.admin.auth.login')

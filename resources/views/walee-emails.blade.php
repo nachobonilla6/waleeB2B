@@ -230,6 +230,27 @@
                         </div>
                     </div>
                 </a>
+                
+                <!-- Templates -->
+                <a href="{{ route('walee.emails.templates') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-500/10 dark:to-walee-600/5 border border-walee-200 dark:border-walee-500/20 p-8 hover:border-walee-400 dark:hover:border-walee-400/50 hover:from-walee-100 dark:hover:from-walee-500/15 hover:to-walee-200/50 dark:hover:to-walee-600/10 transition-all duration-500 shadow-sm dark:shadow-none">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-walee-500/20 dark:bg-walee-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-2xl bg-walee-100 dark:bg-walee-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-walee-700 dark:group-hover:text-walee-300 transition-colors">Templates</h2>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Crea, guarda y envía templates de emails con AI</p>
+                        </div>
+                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-walee-100 dark:bg-walee-500/10 items-center justify-center group-hover:bg-walee-200 dark:group-hover:bg-walee-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-walee-600 dark:text-walee-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
             </div>
             
             <!-- Footer -->

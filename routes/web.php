@@ -822,6 +822,78 @@ Route::get('/walee-emails/enviados', function () {
     return view('walee-emails-enviados');
 })->middleware(['auth'])->name('walee.emails.enviados');
 
+Route::get('/walee-emails/templates', function () {
+    $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    return view('walee-emails-templates', compact('templates'));
+})->middleware(['auth'])->name('walee.emails.templates');
+
+// Rutas para Email Templates
+Route::post('/email-templates', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'asunto' => 'required|string|max:255',
+        'contenido' => 'required|string',
+        'ai_prompt' => 'nullable|string',
+    ]);
+    
+    $template = \App\Models\EmailTemplate::create([
+        'nombre' => $validated['nombre'],
+        'asunto' => $validated['asunto'],
+        'contenido' => $validated['contenido'],
+        'ai_prompt' => $validated['ai_prompt'] ?? null,
+        'user_id' => auth()->id(),
+    ]);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Template guardado correctamente',
+        'template' => $template,
+    ]);
+})->middleware(['auth'])->name('email-templates.store');
+
+Route::put('/email-templates/{id}', function (\Illuminate\Http\Request $request, $id) {
+    $template = \App\Models\EmailTemplate::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+    
+    $validated = $request->validate([
+        'nombre' => 'required|string|max:255',
+        'asunto' => 'required|string|max:255',
+        'contenido' => 'required|string',
+        'ai_prompt' => 'nullable|string',
+    ]);
+    
+    $template->update([
+        'nombre' => $validated['nombre'],
+        'asunto' => $validated['asunto'],
+        'contenido' => $validated['contenido'],
+        'ai_prompt' => $validated['ai_prompt'] ?? null,
+    ]);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Template actualizado correctamente',
+        'template' => $template,
+    ]);
+})->middleware(['auth'])->name('email-templates.update');
+
+Route::delete('/email-templates/{id}', function ($id) {
+    $template = \App\Models\EmailTemplate::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+    
+    $template->delete();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Template eliminado correctamente',
+    ]);
+})->middleware(['auth'])->name('email-templates.destroy');
+
+// Ruta para enviar email desde template (usa la misma ruta existente /walee-emails/enviar)
+
 // API para generar email con AI
 Route::post('/walee-emails/generar', function (\Illuminate\Http\Request $request) {
     try {

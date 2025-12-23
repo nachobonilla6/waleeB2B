@@ -490,7 +490,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('template_contenido').value = data.email;
+                    document.getElementById('template_contenido').value = data.body || '';
                     if (data.subject) {
                         document.getElementById('template_asunto').value = data.subject;
                     }

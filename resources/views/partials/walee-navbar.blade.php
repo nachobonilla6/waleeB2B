@@ -71,7 +71,7 @@
             <span class="text-xs sm:text-sm font-medium hidden lg:inline">Dashboard</span>
         </a>
         
-        <form method="POST" action="{{ route('logout') }}" class="hidden sm:block">
+        <form method="POST" action="/logout" class="hidden sm:block">
             @csrf
             <button 
                 type="submit"
@@ -148,7 +148,7 @@
                 <span class="font-medium">Dashboard</span>
             </a>
             
-            <form method="POST" action="{{ route('logout') }}" class="w-full">
+            <form method="POST" action="/logout" class="w-full">
                 @csrf
                 <button 
                     type="submit"

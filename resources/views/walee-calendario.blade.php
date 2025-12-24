@@ -69,11 +69,30 @@
         
         // Si es vista semanal, calcular la semana
         if ($vista === 'semanal') {
-            $semanaParam = request()->get('semana', now()->format('Y-W'));
-            list($anoSemana, $numSemana) = explode('-', $semanaParam);
-            $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
-            $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-            $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+            $semanaParam = request()->get('semana');
+            if ($semanaParam) {
+                // Si viene el parámetro, parsearlo
+                if (strpos($semanaParam, '-') !== false) {
+                    list($anoSemana, $numSemana) = explode('-', $semanaParam);
+                    try {
+                        $fechaSemana = \Carbon\Carbon::now()->setISODate((int)$anoSemana, (int)$numSemana);
+                        $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                    } catch (\Exception $e) {
+                        // Si falla, usar la semana actual
+                        $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                    }
+                } else {
+                    // Si no tiene formato correcto, usar la semana actual
+                    $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                    $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                }
+            } else {
+                // Si no viene parámetro, usar la semana actual
+                $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+            }
         }
         
         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);
@@ -499,15 +518,23 @@
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Navegación</label>
                             <div class="flex items-center justify-between gap-2">
                                 @if($vista === 'semanal')
-                                    <a href="?vista=semanal&semana={{ $inicioSemana->copy()->subWeek()->format('Y-W') }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    @php
+                                        $semanaAnterior = $inicioSemana->copy()->subWeek();
+                                        $semanaSiguiente = $inicioSemana->copy()->addWeek();
+                                        $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                        $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . $semanaAnterior->format('W');
+                                        $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . $semanaSiguiente->format('W');
+                                        $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
+                                    @endphp
+                                    <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                         </svg>
                                     </a>
-                                    <a href="?vista=semanal&semana={{ now()->format('Y-W') }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
+                                    <a href="?vista=semanal&semana={{ $semanaActualFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
                                         Esta Semana
                                     </a>
-                                    <a href="?vista=semanal&semana={{ $inicioSemana->copy()->addWeek()->format('Y-W') }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                         </svg>

@@ -774,13 +774,13 @@
                                         $itemsDelDia = $itemsDelDia->sortBy('hora');
                                         $espaciadoClase = 'space-y-1.5';
                                     @endphp
-                                    <div class="min-h-[600px] p-3 {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-white dark:bg-slate-800' }}">
-                                        <div class="mb-3">
-                                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                                    <div class="min-h-[400px] sm:min-h-[600px] p-2 sm:p-3 {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-white dark:bg-slate-800' }}">
+                                        <div class="mb-2 sm:mb-3">
+                                            <div class="text-xs sm:text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                                                 {{ ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][$diaSemana->dayOfWeek] }}
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="text-lg font-semibold {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white' }}">
+                                                <span class="text-base sm:text-lg font-semibold {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white' }}">
                                                     {{ $diaSemana->day }}
                                                 </span>
                                                 @if($esHoy)
@@ -800,16 +800,18 @@
                                                         $b = hexdec(substr($colorHex, 4, 2));
                                                         $colorBg = $cita->estado === 'completada' 
                                                             ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorCita};";
+                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorCita}; border-left: 3px solid {$colorCita};";
                                                     @endphp
                                                     <button 
                                                         onclick="showCitaDetail({{ $cita->id }})"
-                                                        class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1"
+                                                        class="w-full text-left px-2 py-2 sm:py-1.5 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1.5 sm:mb-1"
                                                         style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
                                                         title="{{ $cita->titulo }}"
                                                     >
-                                                        <div class="text-[10px] text-slate-600 dark:text-slate-400 mb-0.5">{{ $cita->fecha_inicio->format('H:i') }}</div>
-                                                        <div class="truncate">{{ $cita->titulo }}</div>
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="text-[10px] sm:text-xs font-semibold opacity-75 whitespace-nowrap">{{ $cita->fecha_inicio->format('H:i') }}</span>
+                                                            <span class="flex-1 truncate">{{ $cita->titulo }}</span>
+                                                        </div>
                                                     </button>
                                                 @else
                                                     @php $tarea = $itemOrdenado['item']; @endphp
@@ -821,16 +823,18 @@
                                                         $b = hexdec(substr($colorHex, 4, 2));
                                                         $colorBg = $tarea->estado === 'completado' 
                                                             ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorTarea};";
+                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorTarea}; border-left: 3px solid {$colorTarea};";
                                                     @endphp
                                                     <button 
                                                         onclick="showTareaDetail({{ $tarea->id }})"
-                                                        class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1"
+                                                        class="w-full text-left px-2 py-2 sm:py-1.5 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1.5 sm:mb-1"
                                                         style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
                                                         title="{{ $tarea->texto }}"
                                                     >
-                                                        <div class="text-[10px] text-slate-600 dark:text-slate-400 mb-0.5">{{ $tarea->fecha_hora->format('H:i') }}</div>
-                                                        <div class="truncate">{{ $tarea->texto }}</div>
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="text-[10px] sm:text-xs font-semibold opacity-75 whitespace-nowrap">{{ $tarea->fecha_hora->format('H:i') }}</span>
+                                                            <span class="flex-1 truncate">{{ $tarea->texto }}</span>
+                                                        </div>
                                                     </button>
                                                 @endif
                                             @endforeach

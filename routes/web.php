@@ -269,6 +269,21 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         $cita->color = $request->input('color', '#10b981');
         $cita->save();
         
+        // Sincronizar con Google Calendar
+        try {
+            $googleService = new \App\Services\GoogleCalendarService();
+            if ($googleService->isAuthorized()) {
+                $eventId = $googleService->createEvent($cita);
+                if ($eventId) {
+                    $cita->google_event_id = $eventId;
+                    $cita->save();
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Error sincronizando con Google Calendar: ' . $e->getMessage());
+            // No fallar la creación de la cita si falla la sincronización
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Cita creada correctamente',
@@ -297,6 +312,27 @@ Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
         $cita->color = $request->input('color', '#10b981');
         $cita->save();
         
+        // Sincronizar con Google Calendar
+        try {
+            $googleService = new \App\Services\GoogleCalendarService();
+            if ($googleService->isAuthorized()) {
+                if ($cita->google_event_id) {
+                    // Si ya tiene ID, actualizar
+                    $googleService->updateEvent($cita);
+                } else {
+                    // Si no tiene ID, crear uno nuevo
+                    $eventId = $googleService->createEvent($cita);
+                    if ($eventId) {
+                        $cita->google_event_id = $eventId;
+                        $cita->save();
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Error sincronizando con Google Calendar: ' . $e->getMessage());
+            // No fallar la actualización de la cita si falla la sincronización
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Cita actualizada correctamente',
@@ -312,6 +348,18 @@ Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
 Route::delete('/citas/{id}', function ($id) {
     try {
         $cita = \App\Models\Cita::findOrFail($id);
+        
+        // Eliminar de Google Calendar si existe
+        try {
+            $googleService = new \App\Services\GoogleCalendarService();
+            if ($googleService->isAuthorized() && $cita->google_event_id) {
+                $googleService->deleteEvent($cita);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Error eliminando de Google Calendar: ' . $e->getMessage());
+            // Continuar con la eliminación local aunque falle la sincronización
+        }
+        
         $cita->delete();
         
         return response()->json([

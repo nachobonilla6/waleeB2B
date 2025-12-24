@@ -548,5 +548,52 @@ class GoogleCalendarService
             'total' => $citas->count(),
         ];
     }
+
+    /**
+     * Listar todos los calendarios disponibles
+     */
+    public function listCalendars(): array
+    {
+        try {
+            $service = $this->getService();
+            if (!$service) {
+                Log::warning('No se pudo obtener el servicio de Google Calendar');
+                return [];
+            }
+
+            $calendarList = $service->calendarList->listCalendarList();
+            $calendars = [];
+
+            foreach ($calendarList->getItems() as $calendar) {
+                $calendars[] = [
+                    'id' => $calendar->getId(),
+                    'summary' => $calendar->getSummary(),
+                    'description' => $calendar->getDescription(),
+                    'primary' => $calendar->getPrimary() ?? false,
+                ];
+            }
+
+            return $calendars;
+        } catch (\Exception $e) {
+            Log::error('Error listando calendarios: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Buscar calendario por nombre
+     */
+    public function findCalendarByName(string $name): ?string
+    {
+        $calendars = $this->listCalendars();
+        
+        foreach ($calendars as $calendar) {
+            if (strcasecmp($calendar['summary'], $name) === 0) {
+                return $calendar['id'];
+            }
+        }
+
+        return null;
+    }
 }
 

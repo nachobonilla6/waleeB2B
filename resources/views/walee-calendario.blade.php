@@ -206,15 +206,38 @@
                     }
                 } else {
                     // Recurrencia normal sin días específicos
-                    while ($fechaActualCita->lte($mesFin) && $fechaActualCita->lte($fechaFin)) {
-                        if ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano) {
-                            $citaRecurrente = clone $cita;
-                            $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
-                            if ($cita->fecha_fin) {
-                                $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
-                                $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                    // Asegurar que empezamos desde la fecha original o el período, la que sea mayor
+                    if ($fechaActualCita->lt($cita->fecha_inicio->copy()->startOfDay())) {
+                        $fechaActualCita = $cita->fecha_inicio->copy()->startOfDay();
+                    }
+                    if ($fechaActualCita->lt($periodoInicio)) {
+                        // Ajustar al siguiente intervalo desde la fecha original
+                        $fechaInicioOriginal = $cita->fecha_inicio->copy()->startOfDay();
+                        if ($cita->recurrencia === 'semanal') {
+                            $semanas = ceil($periodoInicio->diffInWeeks($fechaInicioOriginal));
+                            $fechaActualCita = $fechaInicioOriginal->copy()->addWeeks($semanas);
+                        } elseif ($cita->recurrencia === 'mensual') {
+                            $meses = ceil($periodoInicio->diffInMonths($fechaInicioOriginal));
+                            $fechaActualCita = $fechaInicioOriginal->copy()->addMonths($meses);
+                        } elseif ($cita->recurrencia === 'anual') {
+                            $anos = ceil($periodoInicio->diffInYears($fechaInicioOriginal));
+                            $fechaActualCita = $fechaInicioOriginal->copy()->addYears($anos);
+                        }
+                    }
+                    
+                    while ($fechaActualCita->lte($periodoFin) && $fechaActualCita->lte($fechaFinRec)) {
+                        // Solo generar si la fecha es >= fecha_inicio original
+                        if ($fechaActualCita->gte($cita->fecha_inicio->copy()->startOfDay())) {
+                            $condicionFecha = $vista === 'semanal' ? true : ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano);
+                            if ($condicionFecha) {
+                                $citaRecurrente = clone $cita;
+                                $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
+                                if ($cita->fecha_fin) {
+                                    $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                                    $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                                }
+                                $citas->push($citaRecurrente);
                             }
-                            $citas->push($citaRecurrente);
                         }
                         
                         // Avanzar según el tipo de recurrencia

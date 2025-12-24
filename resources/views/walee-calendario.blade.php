@@ -847,8 +847,7 @@
                 <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
                     @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
                         <div class="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 last:border-r-0">
-                            <span class="hidden sm:inline">{{ $dia }}</span>
-                            <span class="sm:hidden">{{ substr($dia, 0, 1) }}</span>
+                            <span class="text-[10px] sm:text-sm">{{ $dia }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -888,13 +887,13 @@
                             $cantidadItems = $itemsDelDia->count();
                             $espaciadoClase = $cantidadItems <= 7 ? 'space-y-1.5 sm:space-y-2' : 'space-y-0.5 sm:space-y-1';
                         @endphp
-                        <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[100px] sm:min-h-[150px] md:min-h-[180px] lg:min-h-[220px] xl:min-h-[250px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 md:p-4 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="text-xs sm:text-sm font-medium {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
+                        <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[120px] sm:min-h-[150px] md:min-h-[180px] lg:min-h-[220px] xl:min-h-[250px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 md:p-4 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                            <div class="flex items-center justify-between mb-1.5 sm:mb-1">
+                                <span class="text-sm sm:text-sm font-semibold {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
                                     {{ $diaActual->day }}
                                 </span>
                                 @if($esHoy)
-                                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
+                                    <span class="w-2 h-2 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
                                 @endif
                             </div>
                             <div class="{{ $espaciadoClase }}">
@@ -909,15 +908,18 @@
                                             $b = hexdec(substr($colorHex, 4, 2));
                                             $colorBg = $cita->estado === 'completada' 
                                                 ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorCita};";
+                                                : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorCita}; border-left: 3px solid {$colorCita};";
                                         @endphp
                                         <button 
-                                            onclick="showCitaDetail({{ $cita->id }})"
-                                            class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                            onclick="event.preventDefault(); showCitaDetail({{ $cita->id }});"
+                                            class="w-full text-left px-2 py-1.5 sm:px-2 sm:py-1 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1"
                                             style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
                                             title="{{ $cita->titulo }}"
                                         >
-                                            <span class="hidden sm:inline">{{ $cita->fecha_inicio->format('H:i') }} - </span>{{ $cita->titulo }}
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-[10px] sm:text-xs font-semibold opacity-75">{{ $cita->fecha_inicio->format('H:i') }}</span>
+                                                <span class="flex-1 truncate">{{ $cita->titulo }}</span>
+                                            </div>
                                         </button>
                                     @else
                                         @php $tarea = $itemOrdenado['item']; @endphp
@@ -929,22 +931,25 @@
                                             $b = hexdec(substr($colorHex, 4, 2));
                                             $colorBg = $tarea->estado === 'completado' 
                                                 ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorTarea};";
+                                                : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorTarea}; border-left: 3px solid {$colorTarea};";
                                         @endphp
                                         <button 
-                                            onclick="showTareaDetail({{ $tarea->id }})"
-                                            class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                            onclick="event.preventDefault(); showTareaDetail({{ $tarea->id }});"
+                                            class="w-full text-left px-2 py-1.5 sm:px-2 sm:py-1 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1"
                                             style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
                                             title="{{ $tarea->texto }}"
                                         >
-                                            <span class="hidden sm:inline">{{ $tarea->fecha_hora->format('H:i') }} - </span>{{ $tarea->texto }}
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-[10px] sm:text-xs font-semibold opacity-75">{{ $tarea->fecha_hora->format('H:i') }}</span>
+                                                <span class="flex-1 truncate">{{ $tarea->texto }}</span>
+                                            </div>
                                         </button>
                                     @endif
                                 @endforeach
                                 @if($totalItems > 7)
                                     <button 
-                                        onclick="showDayItems('{{ $fechaKey }}')"
-                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                                        onclick="event.preventDefault(); showDayItems('{{ $fechaKey }}');"
+                                        class="w-full text-left px-2 py-1.5 sm:px-2 sm:py-1 rounded text-xs sm:text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all mt-1"
                                     >
                                         +{{ $totalItems - 7 }} más
                                     </button>

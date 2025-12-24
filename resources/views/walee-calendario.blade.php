@@ -63,27 +63,44 @@
         $googleCalendarService = new \App\Services\GoogleCalendarService();
         $googleCalendarConnected = $googleCalendarService->isAuthorized();
         
+        $vista = request()->get('vista', 'mensual');
         $mes = request()->get('mes', now()->month);
         $ano = request()->get('ano', now()->year);
+        
+        // Si es vista semanal, calcular la semana
+        if ($vista === 'semanal') {
+            $semanaParam = request()->get('semana', now()->format('Y-W'));
+            list($anoSemana, $numSemana) = explode('-', $semanaParam);
+            $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
+            $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+            $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+        }
+        
         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);
         $primerDia = $fechaActual->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
         $ultimoDia = $fechaActual->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SATURDAY);
         
-        // Obtener todas las citas del mes (incluyendo recurrentes)
+        // Determinar rango de fechas según la vista
+        if ($vista === 'semanal') {
+            $fechaInicio = $inicioSemana->copy()->startOfDay();
+            $fechaFin = $finSemana->copy()->endOfDay();
+        } else {
+            $fechaInicio = $fechaActual->copy()->startOfMonth()->startOfDay();
+            $fechaFin = $fechaActual->copy()->endOfMonth()->endOfDay();
+        }
+        
+        // Obtener todas las citas del período (incluyendo recurrentes)
         $citasBase = \App\Models\Cita::with('cliente')
-            ->where(function($query) use ($fechaActual) {
-                // Citas que empiezan en este mes
-                $query->whereBetween('fecha_inicio', [
-                    $fechaActual->copy()->startOfMonth()->startOfDay(),
-                    $fechaActual->copy()->endOfMonth()->endOfDay()
-                ])
-                // O citas recurrentes que pueden aparecer en este mes
-                ->orWhere(function($q) use ($fechaActual) {
+            ->where(function($query) use ($fechaInicio, $fechaFin) {
+                // Citas que empiezan en este período
+                $query->whereBetween('fecha_inicio', [$fechaInicio, $fechaFin])
+                // O citas recurrentes que pueden aparecer en este período
+                ->orWhere(function($q) use ($fechaInicio, $fechaFin) {
                     $q->where('recurrencia', '!=', 'none')
-                      ->where('fecha_inicio', '<=', $fechaActual->copy()->endOfMonth()->endOfDay())
-                      ->where(function($subQ) use ($fechaActual) {
+                      ->where('fecha_inicio', '<=', $fechaFin)
+                      ->where(function($subQ) use ($fechaInicio) {
                           $subQ->whereNull('recurrencia_fin')
-                                ->orWhere('recurrencia_fin', '>=', $fechaActual->copy()->startOfMonth()->startOfDay());
+                                ->orWhere('recurrencia_fin', '>=', $fechaInicio);
                       });
                 });
             })
@@ -93,41 +110,48 @@
         $citas = collect();
         foreach ($citasBase as $cita) {
             if ($cita->recurrencia === 'none') {
-                // Cita normal, agregarla solo si está en el mes
-                if ($cita->fecha_inicio->month == $mes && $cita->fecha_inicio->year == $ano) {
-                    $citas->push($cita);
+                // Cita normal, agregarla solo si está en el período
+                if ($vista === 'semanal') {
+                    if ($cita->fecha_inicio->gte($inicioSemana) && $cita->fecha_inicio->lte($finSemana)) {
+                        $citas->push($cita);
+                    }
+                } else {
+                    if ($cita->fecha_inicio->month == $mes && $cita->fecha_inicio->year == $ano) {
+                        $citas->push($cita);
+                    }
                 }
             } else {
-                // Cita recurrente, generar todas las ocurrencias del mes
-                $fechaInicio = $cita->fecha_inicio->copy();
-                $fechaFin = $cita->recurrencia_fin ? \Carbon\Carbon::parse($cita->recurrencia_fin) : $fechaActual->copy()->endOfMonth();
-                $mesInicio = $fechaActual->copy()->startOfMonth();
-                $mesFin = $fechaActual->copy()->endOfMonth();
+                // Cita recurrente, generar todas las ocurrencias del período
+                $fechaInicioRec = $cita->fecha_inicio->copy();
+                $fechaFinRec = $cita->recurrencia_fin ? \Carbon\Carbon::parse($cita->recurrencia_fin) : ($vista === 'semanal' ? $finSemana : $fechaActual->copy()->endOfMonth());
+                $periodoInicio = $vista === 'semanal' ? $inicioSemana : $fechaActual->copy()->startOfMonth();
+                $periodoFin = $vista === 'semanal' ? $finSemana : $fechaActual->copy()->endOfMonth();
                 
-                // Ajustar fecha inicio si es anterior al mes actual
-                if ($fechaInicio->lt($mesInicio)) {
+                // Ajustar fecha inicio si es anterior al período actual
+                if ($fechaInicioRec->lt($periodoInicio)) {
                     if ($cita->recurrencia === 'semanal') {
-                        $semanas = ceil($mesInicio->diffInWeeks($fechaInicio));
-                        $fechaInicio = $fechaInicio->copy()->addWeeks($semanas);
+                        $semanas = ceil($periodoInicio->diffInWeeks($fechaInicioRec));
+                        $fechaInicioRec = $fechaInicioRec->copy()->addWeeks($semanas);
                     } elseif ($cita->recurrencia === 'mensual') {
-                        $meses = ceil($mesInicio->diffInMonths($fechaInicio));
-                        $fechaInicio = $fechaInicio->copy()->addMonths($meses);
+                        $meses = ceil($periodoInicio->diffInMonths($fechaInicioRec));
+                        $fechaInicioRec = $fechaInicioRec->copy()->addMonths($meses);
                     } elseif ($cita->recurrencia === 'anual') {
-                        $anos = ceil($mesInicio->diffInYears($fechaInicio));
-                        $fechaInicio = $fechaInicio->copy()->addYears($anos);
+                        $anos = ceil($periodoInicio->diffInYears($fechaInicioRec));
+                        $fechaInicioRec = $fechaInicioRec->copy()->addYears($anos);
                     }
                 }
                 
-                // Generar ocurrencias hasta el fin del mes o hasta recurrencia_fin
-                $fechaActualCita = $fechaInicio->copy();
+                // Generar ocurrencias hasta el fin del período o hasta recurrencia_fin
+                $fechaActualCita = $fechaInicioRec->copy();
                 $recurrenciaDias = $cita->recurrencia_dias ?? [];
                 
                 if ($cita->recurrencia === 'semanal' && !empty($recurrenciaDias)) {
                     // Recurrencia semanal con días específicos
-                    $fechaActualCita = $mesInicio->copy();
-                    while ($fechaActualCita->lte($mesFin) && $fechaActualCita->lte($fechaFin)) {
+                    $fechaActualCita = $periodoInicio->copy();
+                    while ($fechaActualCita->lte($periodoFin) && $fechaActualCita->lte($fechaFinRec)) {
                         $diaSemana = $fechaActualCita->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
-                        if (in_array($diaSemana, $recurrenciaDias) && $fechaActualCita->month == $mes && $fechaActualCita->year == $ano) {
+                        $condicionFecha = $vista === 'semanal' ? true : ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano);
+                        if (in_array($diaSemana, $recurrenciaDias) && $condicionFecha) {
                             $citaRecurrente = clone $cita;
                             $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
                             if ($cita->fecha_fin) {
@@ -200,22 +224,19 @@
             return $cita->fecha_inicio->format('Y-m-d');
         });
         
-        // Obtener todas las tareas del mes (incluyendo recurrentes)
+        // Obtener todas las tareas del período (incluyendo recurrentes)
         $tareasBase = \App\Models\Tarea::with('lista')
             ->whereNotNull('fecha_hora')
-            ->where(function($query) use ($fechaActual) {
-                // Tareas que empiezan en este mes
-                $query->whereBetween('fecha_hora', [
-                    $fechaActual->copy()->startOfMonth()->startOfDay(),
-                    $fechaActual->copy()->endOfMonth()->endOfDay()
-                ])
-                // O tareas recurrentes que pueden aparecer en este mes
-                ->orWhere(function($q) use ($fechaActual) {
+            ->where(function($query) use ($fechaInicio, $fechaFin) {
+                // Tareas que empiezan en este período
+                $query->whereBetween('fecha_hora', [$fechaInicio, $fechaFin])
+                // O tareas recurrentes que pueden aparecer en este período
+                ->orWhere(function($q) use ($fechaInicio, $fechaFin) {
                     $q->where('recurrencia', '!=', 'none')
-                      ->where('fecha_hora', '<=', $fechaActual->copy()->endOfMonth()->endOfDay())
-                      ->where(function($subQ) use ($fechaActual) {
+                      ->where('fecha_hora', '<=', $fechaFin)
+                      ->where(function($subQ) use ($fechaInicio) {
                           $subQ->whereNull('recurrencia_fin')
-                                ->orWhere('recurrencia_fin', '>=', $fechaActual->copy()->startOfMonth()->startOfDay());
+                                ->orWhere('recurrencia_fin', '>=', $fechaInicio);
                       });
                 });
             })
@@ -225,9 +246,15 @@
         $tareas = collect();
         foreach ($tareasBase as $tarea) {
             if ($tarea->recurrencia === 'none') {
-                // Tarea normal, agregarla solo si está en el mes
-                if ($tarea->fecha_hora && $tarea->fecha_hora->month == $mes && $tarea->fecha_hora->year == $ano) {
-                    $tareas->push($tarea);
+                // Tarea normal, agregarla solo si está en el período
+                if ($vista === 'semanal') {
+                    if ($tarea->fecha_hora && $tarea->fecha_hora->gte($inicioSemana) && $tarea->fecha_hora->lte($finSemana)) {
+                        $tareas->push($tarea);
+                    }
+                } else {
+                    if ($tarea->fecha_hora && $tarea->fecha_hora->month == $mes && $tarea->fecha_hora->year == $ano) {
+                        $tareas->push($tarea);
+                    }
                 }
             } else {
                 // Tarea recurrente, generar todas las ocurrencias del mes
@@ -391,23 +418,52 @@
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 shadow-sm dark:shadow-none sticky top-6">
                         <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Controles</h3>
                         
+                        <!-- Selector de Vista -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Vista</label>
+                            <div class="flex gap-2">
+                                <a href="{{ route('walee.calendario', ['mes' => $mes, 'ano' => $ano]) }}" class="flex-1 px-3 py-2 rounded-lg {{ !request()->has('vista') || request()->get('vista') !== 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
+                                    Mes
+                                </a>
+                                <a href="{{ route('walee.calendario', ['vista' => 'semanal', 'semana' => request()->get('semana', now()->format('Y-W'))]) }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
+                                    Semana
+                                </a>
+                            </div>
+                        </div>
+                        
                         <!-- Navegación -->
                         <div class="mb-4">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Navegación</label>
                             <div class="flex items-center justify-between gap-2">
-                                <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                    </svg>
-                                </a>
-                                <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
-                                    Hoy
-                                </a>
-                                <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                    </svg>
-                                </a>
+                                @if($vista === 'semanal')
+                                    <a href="?vista=semanal&semana={{ $inicioSemana->copy()->subWeek()->format('Y-W') }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="?vista=semanal&semana={{ now()->format('Y-W') }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
+                                        Esta Semana
+                                    </a>
+                                    <a href="?vista=semanal&semana={{ $inicioSemana->copy()->addWeek()->format('Y-W') }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                @else
+                                    <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
+                                        Hoy
+                                    </a>
+                                    <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                         
@@ -486,6 +542,15 @@
                     <div class="mb-4 md:hidden animate-fade-in-up" style="animation-delay: 0.1s;">
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 shadow-sm dark:shadow-none">
                             <div class="flex flex-col gap-3">
+                                <!-- Selector de Vista (Móvil) -->
+                                <div class="flex gap-2">
+                                    <a href="{{ route('walee.calendario', ['mes' => $mes, 'ano' => $ano]) }}" class="flex-1 px-3 py-2 rounded-lg {{ !request()->has('vista') || request()->get('vista') !== 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm text-center">
+                                        Mes
+                                    </a>
+                                    <a href="{{ route('walee.calendario', ['vista' => 'semanal', 'semana' => request()->get('semana', now()->format('Y-W'))]) }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm text-center">
+                                        Semana
+                                    </a>
+                                </div>
                                 <!-- Navegación y Selectores de Fecha -->
                                 <div class="flex flex-col items-stretch gap-3">
                                     <div class="flex items-center justify-center gap-2">
@@ -573,8 +638,132 @@
                         </div>
                     </div>
             
-                    <!-- Calendar Grid -->
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
+                    @if($vista === 'semanal')
+                        <!-- Vista Semanal -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <!-- Header de la Semana -->
+                            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <a href="?vista=semanal&semana={{ $inicioSemana->copy()->subWeek()->format('Y-W') }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                    </a>
+                                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
+                                        {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
+                                    </h2>
+                                    <a href="?vista=semanal&semana={{ $inicioSemana->copy()->addWeek()->format('Y-W') }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+                                    <a href="?vista=semanal&semana={{ now()->format('Y-W') }}" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
+                                        Esta Semana
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Días de la Semana -->
+                            <div class="grid grid-cols-7 divide-x divide-slate-200 dark:divide-slate-700">
+                                @php
+                                    $diaSemana = $inicioSemana->copy();
+                                    $hoy = now();
+                                @endphp
+                                @for($i = 0; $i < 7; $i++)
+                                    @php
+                                        $esHoy = $diaSemana->isSameDay($hoy);
+                                        $fechaKey = $diaSemana->format('Y-m-d');
+                                        $citasDelDia = $citas->get($fechaKey, collect());
+                                        $tareasDelDia = $tareas->get($fechaKey, collect());
+                                        
+                                        // Combinar y ordenar por hora
+                                        $itemsDelDia = collect();
+                                        foreach ($citasDelDia as $cita) {
+                                            $itemsDelDia->push([
+                                                'tipo' => 'cita',
+                                                'item' => $cita,
+                                                'hora' => $cita->fecha_inicio
+                                            ]);
+                                        }
+                                        foreach ($tareasDelDia as $tarea) {
+                                            $itemsDelDia->push([
+                                                'tipo' => 'tarea',
+                                                'item' => $tarea,
+                                                'hora' => $tarea->fecha_hora
+                                            ]);
+                                        }
+                                        $itemsDelDia = $itemsDelDia->sortBy('hora');
+                                        $espaciadoClase = 'space-y-1.5';
+                                    @endphp
+                                    <div class="min-h-[600px] p-3 {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-white dark:bg-slate-800' }}">
+                                        <div class="mb-3">
+                                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                                                {{ ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][$diaSemana->dayOfWeek] }}
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-lg font-semibold {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white' }}">
+                                                    {{ $diaSemana->day }}
+                                                </span>
+                                                @if($esHoy)
+                                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="{{ $espaciadoClase }}">
+                                            @foreach($itemsDelDia as $itemOrdenado)
+                                                @if($itemOrdenado['tipo'] === 'cita')
+                                                    @php $cita = $itemOrdenado['item']; @endphp
+                                                    @php
+                                                        $colorCita = $cita->color ?? '#10b981';
+                                                        $colorHex = ltrim($colorCita, '#');
+                                                        $r = hexdec(substr($colorHex, 0, 2));
+                                                        $g = hexdec(substr($colorHex, 2, 2));
+                                                        $b = hexdec(substr($colorHex, 4, 2));
+                                                        $colorBg = $cita->estado === 'completada' 
+                                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorCita};";
+                                                    @endphp
+                                                    <button 
+                                                        onclick="showCitaDetail({{ $cita->id }})"
+                                                        class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1"
+                                                        style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
+                                                        title="{{ $cita->titulo }}"
+                                                    >
+                                                        <div class="text-[10px] text-slate-600 dark:text-slate-400 mb-0.5">{{ $cita->fecha_inicio->format('H:i') }}</div>
+                                                        <div class="truncate">{{ $cita->titulo }}</div>
+                                                    </button>
+                                                @else
+                                                    @php $tarea = $itemOrdenado['item']; @endphp
+                                                    @php
+                                                        $colorTarea = $tarea->color ?? '#8b5cf6';
+                                                        $colorHex = ltrim($colorTarea, '#');
+                                                        $r = hexdec(substr($colorHex, 0, 2));
+                                                        $g = hexdec(substr($colorHex, 2, 2));
+                                                        $b = hexdec(substr($colorHex, 4, 2));
+                                                        $colorBg = $tarea->estado === 'completado' 
+                                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorTarea};";
+                                                    @endphp
+                                                    <button 
+                                                        onclick="showTareaDetail({{ $tarea->id }})"
+                                                        class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1"
+                                                        style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
+                                                        title="{{ $tarea->texto }}"
+                                                    >
+                                                        <div class="text-[10px] text-slate-600 dark:text-slate-400 mb-0.5">{{ $tarea->fecha_hora->format('H:i') }}</div>
+                                                        <div class="truncate">{{ $tarea->texto }}</div>
+                                                    </button>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @php $diaSemana->addDay(); @endphp
+                                @endfor
+                            </div>
+                        </div>
+                    @else
+                        <!-- Vista Mensual -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Days of Week Header -->
                 <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
                     @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
@@ -687,6 +876,7 @@
                     @endwhile
                 </div>
             </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -999,23 +999,6 @@
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
-                    <input 
-                        type="text" 
-                        name="tipo" 
-                        id="tarea_tipo"
-                        list="tipos-list"
-                        placeholder="Tipo de tarea (opcional)"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
-                    >
-                    <datalist id="tipos-list">
-                        @foreach($tiposExistentes as $tipo)
-                            <option value="{{ $tipo }}">
-                        @endforeach
-                    </datalist>
-                </div>
-                
-                <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
                     <div class="flex items-center gap-3">
                         <input 
@@ -1171,6 +1154,16 @@
             document.getElementById('recurrencia_dias_container').classList.add('hidden');
             document.getElementById('color').value = '#10b981';
             document.getElementById('color_text').value = '#10b981';
+            
+            // Establecer fecha y hora por defecto a "ahora"
+            const now = new Date();
+            const fechaInicio = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            document.getElementById('fecha_inicio').value = fechaInicio;
+            
+            // Establecer fecha fin a 2 horas después
+            const fechaFin = new Date(now.getTime() + (2 * 60 * 60 * 1000) - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            document.getElementById('fecha_fin').value = fechaFin;
+            
             document.getElementById('citaModal').classList.remove('hidden');
         }
         
@@ -1506,6 +1499,11 @@
             document.getElementById('tarea_id').value = '';
             document.getElementById('deleteTareaBtn').classList.add('hidden');
             document.getElementById('tarea_recurrencia_fin_container').classList.add('hidden');
+            
+            // Establecer fecha y hora por defecto a "ahora"
+            const now = new Date();
+            const fechaHora = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            document.getElementById('tarea_fecha_hora').value = fechaHora;
             document.getElementById('tarea_recurrencia_dias_container').classList.add('hidden');
             document.getElementById('tarea_color').value = '#8b5cf6';
             document.getElementById('tarea_color_text').value = '#8b5cf6';

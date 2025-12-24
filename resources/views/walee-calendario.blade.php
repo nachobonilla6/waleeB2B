@@ -617,6 +617,8 @@
                             }
                             $itemsDelDia = $itemsDelDia->sortBy('hora')->take(7);
                             $totalItems = $citasDelDia->count() + $tareasDelDia->count();
+                            $cantidadItems = $itemsDelDia->count();
+                            $espaciadoClase = $cantidadItems <= 7 ? 'space-y-1.5 sm:space-y-2' : 'space-y-0.5 sm:space-y-1';
                         @endphp
                         <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[100px] sm:min-h-[150px] md:min-h-[180px] lg:min-h-[220px] xl:min-h-[250px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 md:p-4 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <div class="flex items-center justify-between mb-1">
@@ -627,7 +629,7 @@
                                     <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
                                 @endif
                             </div>
-                            <div class="space-y-0.5 sm:space-y-1">
+                            <div class="{{ $espaciadoClase }}">
                                 @foreach($itemsDelDia as $itemOrdenado)
                                     @if($itemOrdenado['tipo'] === 'cita')
                                         @php $cita = $itemOrdenado['item']; @endphp

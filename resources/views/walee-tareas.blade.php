@@ -173,6 +173,22 @@
                         </div>
                     </div>
                     
+                    <!-- Search Bar -->
+                    <div class="mb-4">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="searchTareasInput"
+                                placeholder="Buscar tareas..."
+                                class="w-full px-4 py-2.5 pl-11 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                                onkeyup="filterTareas()"
+                            >
+                            <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
                     <!-- Tasks List -->
                     <div class="space-y-2">
                         @php
@@ -188,7 +204,7 @@
                                 </div>
                                 @php $yaMostroSeparador = true; @endphp
                             @endif
-                            <div class="tarea-item flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all animate-fade-in-up" style="animation-delay: {{ 0.1 + ($index * 0.05) }}s;" data-id="{{ $tarea->id }}">
+                            <div class="tarea-item flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all animate-fade-in-up" style="animation-delay: {{ 0.1 + ($index * 0.05) }}s;" data-id="{{ $tarea->id }}" data-search="{{ strtolower($tarea->texto . ' ' . ($tarea->tipo ?? '') . ' ' . ($tarea->lista ? $tarea->lista->nombre : '')) }}">
                                 <!-- Checkbox -->
                                 <button onclick="toggleTarea({{ $tarea->id }})" class="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 {{ $tarea->estado === 'completado' ? 'bg-purple-500 border-purple-500' : 'border-slate-300 dark:border-slate-600' }} flex items-center justify-center transition-all hover:border-purple-500">
                                     @if($tarea->estado === 'completado')
@@ -248,7 +264,7 @@
                             $tareasFavoritas = $todasLasTareas->where('favorito', true);
                         @endphp
                         @forelse($tareasFavoritas as $index => $tarea)
-                            <div class="tarea-item flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
+                            <div class="tarea-item flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all" data-search="{{ strtolower($tarea->texto . ' ' . ($tarea->tipo ?? '') . ' ' . ($tarea->lista ? $tarea->lista->nombre : '')) }}">
                                 <button onclick="toggleTarea({{ $tarea->id }})" class="mt-1 flex-shrink-0 w-6 h-6 rounded-full border-2 {{ $tarea->estado === 'completado' ? 'bg-purple-500 border-purple-500' : 'border-slate-300 dark:border-slate-600' }} flex items-center justify-center transition-all">
                                     @if($tarea->estado === 'completado')
                                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -702,6 +718,32 @@
         document.getElementById('editarTareaModal').addEventListener('click', function(e) {
             if (e.target === this) closeEditarTareaModal();
         });
+        
+        // Filter tareas function
+        function filterTareas() {
+            const searchInput = document.getElementById('searchTareasInput');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const tareaItems = document.querySelectorAll('.tarea-item');
+            
+            tareaItems.forEach(item => {
+                const searchText = item.getAttribute('data-search') || '';
+                if (searchText.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Hide/show separador de "Completadas" si no hay resultados
+            const separador = document.querySelector('.my-4.flex.items-center.gap-2');
+            if (separador) {
+                const tareasVisibles = Array.from(tareaItems).filter(item => 
+                    item.style.display !== 'none' && 
+                    item.closest('.tarea-item')?.getAttribute('data-search')?.includes(searchTerm)
+                );
+                separador.style.display = tareasVisibles.length > 0 ? 'flex' : 'none';
+            }
+        }
     </script>
     @include('partials.walee-support-button')
 </body>

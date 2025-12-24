@@ -379,6 +379,14 @@ class GoogleCalendarService
     }
 
     /**
+     * Obtener URL del evento creado en Google Calendar
+     */
+    public function getEventUrl(string $eventId): string
+    {
+        return "https://www.google.com/calendar/event?eid=" . base64_encode($eventId . ' ' . $this->calendarId);
+    }
+
+    /**
      * Formatear fecha para Google Calendar (formato YYYYMMDDTHHmmss)
      */
     protected function formatGoogleCalendarDate($date): string

@@ -270,6 +270,7 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         $cita->save();
         
         // Sincronizar con Google Calendar
+        $googleEventUrl = null;
         try {
             $googleService = new \App\Services\GoogleCalendarService();
             if ($googleService->isAuthorized()) {
@@ -277,11 +278,25 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
                 if ($eventId) {
                     $cita->google_event_id = $eventId;
                     $cita->save();
+                    // Obtener URL del evento para enviar por email
+                    $googleEventUrl = $googleService->getEventUrl($eventId);
                 }
             }
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::warning('Error sincronizando con Google Calendar: ' . $e->getMessage());
             // No fallar la creación de la cita si falla la sincronización
+        }
+        
+        // Enviar email al cliente si tiene correo y se creó el evento en Google Calendar
+        if ($cita->cliente_id && $cita->cliente && $cita->cliente->correo && $googleEventUrl) {
+            try {
+                $cita->load('cliente');
+                \Illuminate\Support\Facades\Mail::to($cita->cliente->correo)
+                    ->send(new \App\Mail\CitaCreadaMail($cita, $googleEventUrl));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Error enviando email de cita al cliente: ' . $e->getMessage());
+                // No fallar la creación de la cita si falla el envío del email
+            }
         }
         
         return response()->json([

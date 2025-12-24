@@ -18,7 +18,34 @@ class GoogleCalendarService
     public function __construct()
     {
         $this->apiKey = (string) (config('services.google.calendar_api_key') ?? '');
-        $this->calendarId = (string) (config('services.google.calendar_id') ?? 'primary');
+        $configuredCalendarId = config('services.google.calendar_id');
+        
+        if ($configuredCalendarId && $configuredCalendarId !== 'primary') {
+            // Usar el ID configurado explícitamente
+            $this->calendarId = (string) $configuredCalendarId;
+        } else {
+            // Si no está configurado o es 'primary', intentar buscar 'WEBSOLUTIONS-TEST'
+            $this->calendarId = $this->getWebSolutionsTestCalendarId() ?? 'primary';
+        }
+    }
+
+    /**
+     * Obtener el ID del calendario WEBSOLUTIONS-TEST
+     */
+    protected function getWebSolutionsTestCalendarId(): ?string
+    {
+        try {
+            // Intentar buscar el calendario por nombre
+            $calendarId = $this->findCalendarByName('WEBSOLUTIONS-TEST');
+            if ($calendarId) {
+                return $calendarId;
+            }
+        } catch (\Exception $e) {
+            // Si falla (por ejemplo, no está autorizado), usar primary
+            Log::debug('No se pudo buscar calendario WEBSOLUTIONS-TEST: ' . $e->getMessage());
+        }
+        
+        return null;
     }
 
     /**

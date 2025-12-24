@@ -146,29 +146,38 @@
                 $recurrenciaDias = $cita->recurrencia_dias ?? [];
                 
                 if ($cita->recurrencia === 'semanal' && !empty($recurrenciaDias)) {
-                    // Recurrencia semanal con días específicos
-                    $fechaActualCita = $periodoInicio->copy();
+                    // Recurrencia semanal con días específicos - empezar desde la fecha original o el período, la que sea mayor
+                    $fechaInicioBusqueda = $cita->fecha_inicio->copy()->startOfDay();
+                    if ($fechaInicioBusqueda->lt($periodoInicio)) {
+                        $fechaInicioBusqueda = $periodoInicio->copy();
+                    }
+                    $fechaActualCita = $fechaInicioBusqueda->copy();
                     while ($fechaActualCita->lte($periodoFin) && $fechaActualCita->lte($fechaFinRec)) {
-                        $diaSemana = $fechaActualCita->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
-                        $condicionFecha = $vista === 'semanal' ? true : ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano);
-                        if (in_array($diaSemana, $recurrenciaDias) && $condicionFecha) {
-                            $citaRecurrente = clone $cita;
-                            $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
-                            if ($cita->fecha_fin) {
-                                $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
-                                $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                        // Solo generar si la fecha es >= fecha_inicio original
+                        if ($fechaActualCita->gte($cita->fecha_inicio->copy()->startOfDay())) {
+                            $diaSemana = $fechaActualCita->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
+                            $condicionFecha = $vista === 'semanal' ? true : ($fechaActualCita->month == $mes && $fechaActualCita->year == $ano);
+                            if (in_array($diaSemana, $recurrenciaDias) && $condicionFecha) {
+                                $citaRecurrente = clone $cita;
+                                $citaRecurrente->fecha_inicio = $fechaActualCita->copy();
+                                if ($cita->fecha_fin) {
+                                    $duracion = $cita->fecha_inicio->diffInMinutes($cita->fecha_fin);
+                                    $citaRecurrente->fecha_fin = $fechaActualCita->copy()->addMinutes($duracion);
+                                }
+                                $citas->push($citaRecurrente);
                             }
-                            $citas->push($citaRecurrente);
                         }
                         $fechaActualCita->addDay();
                     }
                 } elseif ($cita->recurrencia === 'mensual' && !empty($recurrenciaDias)) {
                     // Recurrencia mensual con días específicos
+                    $fechaInicioOriginal = $cita->fecha_inicio->copy()->startOfDay();
                     foreach ($recurrenciaDias as $dia) {
                         if (is_numeric($dia) && $dia >= 1 && $dia <= 31) {
                             // Es un día del mes (1-31)
                             $fechaCita = \Carbon\Carbon::create($ano, $mes, min($dia, $mesFin->day));
-                            if ($fechaCita->lte($mesFin) && $fechaCita->lte($fechaFin) && $fechaCita->gte($mesInicio)) {
+                            // Solo generar si la fecha es >= fecha_inicio original
+                            if ($fechaCita->gte($fechaInicioOriginal) && $fechaCita->lte($mesFin) && $fechaCita->lte($fechaFin) && $fechaCita->gte($mesInicio)) {
                                 $citaRecurrente = clone $cita;
                                 $citaRecurrente->fecha_inicio = $fechaCita->copy();
                                 if ($cita->fecha_fin) {
@@ -181,7 +190,8 @@
                             // Es un día de la semana (0=Domingo, 6=Sábado) - "cada Lunes", etc.
                             $fechaCita = $mesInicio->copy();
                             while ($fechaCita->lte($mesFin) && $fechaCita->lte($fechaFin)) {
-                                if ($fechaCita->dayOfWeek == $dia && $fechaCita->month == $mes && $fechaCita->year == $ano) {
+                                // Solo generar si la fecha es >= fecha_inicio original
+                                if ($fechaCita->gte($fechaInicioOriginal) && $fechaCita->dayOfWeek == $dia && $fechaCita->month == $mes && $fechaCita->year == $ano) {
                                     $citaRecurrente = clone $cita;
                                     $citaRecurrente->fecha_inicio = $fechaCita->copy();
                                     if ($cita->fecha_fin) {
@@ -282,24 +292,33 @@
                 $recurrenciaDias = $tarea->recurrencia_dias ?? [];
                 
                 if ($tarea->recurrencia === 'semanal' && !empty($recurrenciaDias)) {
-                    // Recurrencia semanal con días específicos
-                    $fechaActualTarea = $mesInicio->copy();
+                    // Recurrencia semanal con días específicos - empezar desde la fecha original o el período, la que sea mayor
+                    $fechaInicioBusqueda = $tarea->fecha_hora->copy()->startOfDay();
+                    if ($fechaInicioBusqueda->lt($mesInicio)) {
+                        $fechaInicioBusqueda = $mesInicio->copy();
+                    }
+                    $fechaActualTarea = $fechaInicioBusqueda->copy();
                     while ($fechaActualTarea->lte($mesFin) && $fechaActualTarea->lte($fechaFin)) {
-                        $diaSemana = $fechaActualTarea->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
-                        if (in_array($diaSemana, $recurrenciaDias) && $fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
-                            $tareaRecurrente = clone $tarea;
-                            $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
-                            $tareas->push($tareaRecurrente);
+                        // Solo generar si la fecha es >= fecha_hora original
+                        if ($fechaActualTarea->gte($tarea->fecha_hora->copy()->startOfDay())) {
+                            $diaSemana = $fechaActualTarea->dayOfWeek; // 0=Domingo, 1=Lunes, etc.
+                            if (in_array($diaSemana, $recurrenciaDias) && $fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
+                                $tareaRecurrente = clone $tarea;
+                                $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
+                                $tareas->push($tareaRecurrente);
+                            }
                         }
                         $fechaActualTarea->addDay();
                     }
                 } elseif ($tarea->recurrencia === 'mensual' && !empty($recurrenciaDias)) {
                     // Recurrencia mensual con días específicos
+                    $fechaInicioOriginal = $tarea->fecha_hora->copy()->startOfDay();
                     foreach ($recurrenciaDias as $dia) {
                         if (is_numeric($dia) && $dia >= 1 && $dia <= 31) {
                             // Es un día del mes (1-31)
                             $fechaTarea = \Carbon\Carbon::create($ano, $mes, min($dia, $mesFin->day));
-                            if ($fechaTarea->lte($mesFin) && $fechaTarea->lte($fechaFin) && $fechaTarea->gte($mesInicio)) {
+                            // Solo generar si la fecha es >= fecha_hora original
+                            if ($fechaTarea->gte($fechaInicioOriginal) && $fechaTarea->lte($mesFin) && $fechaTarea->lte($fechaFin) && $fechaTarea->gte($mesInicio)) {
                                 $tareaRecurrente = clone $tarea;
                                 $tareaRecurrente->fecha_hora = $fechaTarea->copy();
                                 $tareas->push($tareaRecurrente);
@@ -308,7 +327,8 @@
                             // Es un día de la semana (0=Domingo, 6=Sábado) - "cada Lunes", etc.
                             $fechaTarea = $mesInicio->copy();
                             while ($fechaTarea->lte($mesFin) && $fechaTarea->lte($fechaFin)) {
-                                if ($fechaTarea->dayOfWeek == $dia && $fechaTarea->month == $mes && $fechaTarea->year == $ano) {
+                                // Solo generar si la fecha es >= fecha_hora original
+                                if ($fechaTarea->gte($fechaInicioOriginal) && $fechaTarea->dayOfWeek == $dia && $fechaTarea->month == $mes && $fechaTarea->year == $ano) {
                                     $tareaRecurrente = clone $tarea;
                                     $tareaRecurrente->fecha_hora = $fechaTarea->copy();
                                     $tareas->push($tareaRecurrente);
@@ -319,8 +339,28 @@
                     }
                 } else {
                     // Recurrencia normal sin días específicos
+                    // Asegurar que empezamos desde la fecha original o el mes, la que sea mayor
+                    if ($fechaActualTarea->lt($tarea->fecha_hora->copy()->startOfDay())) {
+                        $fechaActualTarea = $tarea->fecha_hora->copy()->startOfDay();
+                    }
+                    if ($fechaActualTarea->lt($mesInicio)) {
+                        // Ajustar al siguiente intervalo desde la fecha original
+                        $fechaInicioOriginal = $tarea->fecha_hora->copy()->startOfDay();
+                        if ($tarea->recurrencia === 'diaria') {
+                            $dias = ceil($mesInicio->diffInDays($fechaInicioOriginal));
+                            $fechaActualTarea = $fechaInicioOriginal->copy()->addDays($dias);
+                        } elseif ($tarea->recurrencia === 'semanal') {
+                            $semanas = ceil($mesInicio->diffInWeeks($fechaInicioOriginal));
+                            $fechaActualTarea = $fechaInicioOriginal->copy()->addWeeks($semanas);
+                        } elseif ($tarea->recurrencia === 'mensual') {
+                            $meses = ceil($mesInicio->diffInMonths($fechaInicioOriginal));
+                            $fechaActualTarea = $fechaInicioOriginal->copy()->addMonths($meses);
+                        }
+                    }
+                    
                     while ($fechaActualTarea->lte($mesFin) && $fechaActualTarea->lte($fechaFin)) {
-                        if ($fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
+                        // Solo generar si la fecha es >= fecha_hora original
+                        if ($fechaActualTarea->gte($tarea->fecha_hora->copy()->startOfDay()) && $fechaActualTarea->month == $mes && $fechaActualTarea->year == $ano) {
                             $tareaRecurrente = clone $tarea;
                             $tareaRecurrente->fecha_hora = $fechaActualTarea->copy();
                             $tareas->push($tareaRecurrente);

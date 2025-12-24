@@ -612,7 +612,7 @@
                             <div class="space-y-0.5 sm:space-y-1">
                                 @php
                                     $mostrados = 0;
-                                    $maxMostrar = 2;
+                                    $maxMostrar = 7;
                                 @endphp
                                 @foreach($citasDelDia->take($maxMostrar) as $cita)
                                     @php $mostrados++; @endphp

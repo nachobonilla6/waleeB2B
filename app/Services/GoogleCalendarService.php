@@ -383,7 +383,13 @@ class GoogleCalendarService
      */
     public function getEventUrl(string $eventId): string
     {
-        return "https://www.google.com/calendar/event?eid=" . base64_encode($eventId . ' ' . $this->calendarId);
+        // La URL de Google Calendar para ver un evento específico
+        // Formato: https://calendar.google.com/calendar/event?eid=base64(eventId calendarId)
+        $eventData = $eventId . ' ' . $this->calendarId;
+        $encoded = base64_encode($eventData);
+        // Reemplazar caracteres que Google Calendar espera
+        $encoded = str_replace(['+', '/', '='], ['-', '_', ''], $encoded);
+        return "https://calendar.google.com/calendar/event?eid=" . $encoded;
     }
 
     /**

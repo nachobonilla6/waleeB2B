@@ -341,7 +341,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[95rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = $meses[$mes] . ' ' . $ano; @endphp
             @include('partials.walee-navbar')
             
@@ -385,9 +385,9 @@
             @endif
             
             <!-- Layout con Sidebar para pantallas medianas/grandes -->
-            <div class="flex flex-col md:flex-row gap-4 md:gap-6">
-                <!-- Sidebar (solo visible en md+) -->
-                <div class="hidden md:flex md:flex-col md:w-64 lg:w-72 flex-shrink-0 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                <!-- Sidebar (solo visible en lg+) -->
+                <div class="hidden lg:flex lg:flex-col lg:w-64 xl:w-72 flex-shrink-0 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 shadow-sm dark:shadow-none sticky top-6">
                         <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Controles</h3>
                         
@@ -482,8 +482,8 @@
                 
                 <!-- Contenido Principal: Calendario -->
                 <div class="flex-1 min-w-0">
-                    <!-- Calendar Controls (solo móviles) -->
-                    <div class="mb-4 md:hidden animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <!-- Calendar Controls (solo móviles y tablets) -->
+                    <div class="mb-4 lg:hidden animate-fade-in-up" style="animation-delay: 0.1s;">
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 shadow-sm dark:shadow-none">
                             <div class="flex flex-col gap-3">
                                 <!-- Navegación y Selectores de Fecha -->

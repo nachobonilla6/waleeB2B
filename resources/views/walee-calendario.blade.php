@@ -341,7 +341,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[95rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-full mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = $meses[$mes] . ' ' . $ano; @endphp
             @include('partials.walee-navbar')
             
@@ -600,7 +600,7 @@
                             $tareasDelDia = $tareas->get($fechaKey, collect());
                             $totalItems = $citasDelDia->count() + $tareasDelDia->count();
                         @endphp
-                        <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[80px] sm:min-h-[120px] md:min-h-[140px] lg:min-h-[160px] border-r border-b border-slate-200 dark:border-slate-700 p-1 sm:p-2 md:p-3 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                        <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[100px] sm:min-h-[150px] md:min-h-[180px] lg:min-h-[220px] xl:min-h-[250px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 md:p-4 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-xs sm:text-sm font-medium {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
                                     {{ $diaActual->day }}

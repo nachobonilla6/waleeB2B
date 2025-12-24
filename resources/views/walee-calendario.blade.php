@@ -384,99 +384,197 @@
                 </div>
             @endif
             
-            <!-- Calendar Controls -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm dark:shadow-none">
-                    <div class="flex flex-col gap-3">
-                        <!-- Navegación y Selectores de Fecha -->
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                            <div class="flex items-center justify-center sm:justify-start gap-2">
-                                <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Layout con Sidebar para pantallas medianas/grandes -->
+            <div class="flex flex-col md:flex-row gap-4 md:gap-6">
+                <!-- Sidebar (solo visible en md+) -->
+                <div class="hidden md:flex md:flex-col md:w-64 lg:w-72 flex-shrink-0 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 shadow-sm dark:shadow-none sticky top-6">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Controles</h3>
+                        
+                        <!-- Navegación -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Navegación</label>
+                            <div class="flex items-center justify-between gap-2">
+                                <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                 </a>
-                                <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
+                                <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
                                     Hoy
                                 </a>
-                                <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </a>
                             </div>
+                        </div>
+                        
+                        <!-- Selectores de Fecha -->
+                        <div class="mb-4 space-y-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">Fecha</label>
+                            <select 
+                                id="selectDia"
+                                onchange="navegarAFecha()"
+                                class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                            >
+                                <option value="">Día</option>
+                                @foreach($diasDelMes as $dia)
+                                    <option value="{{ $dia }}" {{ request()->get('dia') == $dia ? 'selected' : '' }}>{{ $dia }}</option>
+                                @endforeach
+                            </select>
                             
-                            <!-- Selectores de Fecha -->
-                            <div class="flex items-center gap-2 justify-center sm:justify-end">
-                                <select 
-                                    id="selectDia"
-                                    onchange="navegarAFecha()"
-                                    class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                                >
-                                    <option value="">Día</option>
-                                    @foreach($diasDelMes as $dia)
-                                        <option value="{{ $dia }}" {{ request()->get('dia') == $dia ? 'selected' : '' }}>{{ $dia }}</option>
-                                    @endforeach
-                                </select>
-                                
-                                <select 
-                                    id="selectMes"
-                                    onchange="navegarAFecha()"
-                                    class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                                >
-                                    @foreach($meses as $numMes => $nombreMes)
-                                        <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
-                                    @endforeach
-                                </select>
-                                
-                                <select 
-                                    id="selectAno"
-                                    onchange="navegarAFecha()"
-                                    class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                                >
-                                    @foreach($anos as $numAno)
-                                        <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <select 
+                                id="selectMes"
+                                onchange="navegarAFecha()"
+                                class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                            >
+                                @foreach($meses as $numMes => $nombreMes)
+                                    <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
+                                @endforeach
+                            </select>
+                            
+                            <select 
+                                id="selectAno"
+                                onchange="navegarAFecha()"
+                                class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                            >
+                                @foreach($anos as $numAno)
+                                    <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         
                         <!-- Botones de Acción -->
-                        <div class="flex gap-2 w-full sm:w-auto sm:ml-auto">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">Acciones</label>
                             <button 
                                 onclick="showNuevaCitaModal()"
-                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                class="w-full px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
                             >
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                <span class="text-xs sm:text-sm">Cita</span>
+                                <span class="text-sm">Nueva Cita</span>
                             </button>
                             <button 
                                 onclick="showNuevaTareaModal()"
-                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                class="w-full px-4 py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
                             >
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                                 </svg>
-                                <span class="text-xs sm:text-sm">Tarea</span>
+                                <span class="text-sm">Nueva Tarea</span>
                             </button>
                             <button 
                                 onclick="showNuevaNotaModal()"
-                                class="flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                class="w-full px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2"
                             >
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
-                                <span class="text-xs sm:text-sm">Nota</span>
+                                <span class="text-sm">Nueva Nota</span>
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+                
+                <!-- Contenido Principal: Calendario -->
+                <div class="flex-1 min-w-0">
+                    <!-- Calendar Controls (solo móviles) -->
+                    <div class="mb-4 md:hidden animate-fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 shadow-sm dark:shadow-none">
+                            <div class="flex flex-col gap-3">
+                                <!-- Navegación y Selectores de Fecha -->
+                                <div class="flex flex-col items-stretch gap-3">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                            </svg>
+                                        </a>
+                                        <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
+                                            Hoy
+                                        </a>
+                                        <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- Selectores de Fecha -->
+                                    <div class="flex items-center gap-2 justify-center">
+                                        <select 
+                                            id="selectDia"
+                                            onchange="navegarAFecha()"
+                                            class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                                        >
+                                            <option value="">Día</option>
+                                            @foreach($diasDelMes as $dia)
+                                                <option value="{{ $dia }}" {{ request()->get('dia') == $dia ? 'selected' : '' }}>{{ $dia }}</option>
+                                            @endforeach
+                                        </select>
+                                        
+                                        <select 
+                                            id="selectMes"
+                                            onchange="navegarAFecha()"
+                                            class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                                        >
+                                            @foreach($meses as $numMes => $nombreMes)
+                                                <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
+                                            @endforeach
+                                        </select>
+                                        
+                                        <select 
+                                            id="selectAno"
+                                            onchange="navegarAFecha()"
+                                            class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                                        >
+                                            @foreach($anos as $numAno)
+                                                <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Botones de Acción -->
+                                <div class="flex gap-2 w-full">
+                                    <button 
+                                        onclick="showNuevaCitaModal()"
+                                        class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span class="text-xs">Cita</span>
+                                    </button>
+                                    <button 
+                                        onclick="showNuevaTareaModal()"
+                                        class="flex-1 px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                        </svg>
+                                        <span class="text-xs">Tarea</span>
+                                    </button>
+                                    <button 
+                                        onclick="showNuevaNotaModal()"
+                                        class="flex-1 px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        <span class="text-xs">Nota</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             
-            <!-- Calendar Grid -->
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <!-- Calendar Grid -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Days of Week Header -->
                 <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
                     @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
@@ -502,7 +600,7 @@
                             $tareasDelDia = $tareas->get($fechaKey, collect());
                             $totalItems = $citasDelDia->count() + $tareasDelDia->count();
                         @endphp
-                        <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[80px] sm:min-h-[100px] border-r border-b border-slate-200 dark:border-slate-700 p-1 sm:p-2 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                        <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[80px] sm:min-h-[120px] md:min-h-[140px] lg:min-h-[160px] border-r border-b border-slate-200 dark:border-slate-700 p-1 sm:p-2 md:p-3 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-xs sm:text-sm font-medium {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
                                     {{ $diaActual->day }}
@@ -570,6 +668,8 @@
                         </a>
                         @php $diaActual->addDay(); @endphp
                     @endwhile
+                </div>
+            </div>
                 </div>
             </div>
         </div>

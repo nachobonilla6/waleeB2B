@@ -598,6 +598,24 @@
                             $fechaKey = $diaActual->format('Y-m-d');
                             $citasDelDia = $citas->get($fechaKey, collect());
                             $tareasDelDia = $tareas->get($fechaKey, collect());
+                            
+                            // Combinar y ordenar por hora
+                            $itemsDelDia = collect();
+                            foreach ($citasDelDia as $cita) {
+                                $itemsDelDia->push([
+                                    'tipo' => 'cita',
+                                    'item' => $cita,
+                                    'hora' => $cita->fecha_inicio
+                                ]);
+                            }
+                            foreach ($tareasDelDia as $tarea) {
+                                $itemsDelDia->push([
+                                    'tipo' => 'tarea',
+                                    'item' => $tarea,
+                                    'hora' => $tarea->fecha_hora
+                                ]);
+                            }
+                            $itemsDelDia = $itemsDelDia->sortBy('hora')->take(7);
                             $totalItems = $citasDelDia->count() + $tareasDelDia->count();
                         @endphp
                         <a href="{{ route('walee.calendario.dia', ['ano' => $diaActual->year, 'mes' => $diaActual->month, 'dia' => $diaActual->day]) }}" class="block min-h-[100px] sm:min-h-[150px] md:min-h-[180px] lg:min-h-[220px] xl:min-h-[250px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 md:p-4 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
@@ -610,58 +628,55 @@
                                 @endif
                             </div>
                             <div class="space-y-0.5 sm:space-y-1">
-                                @php
-                                    $mostrados = 0;
-                                    $maxMostrar = 7;
-                                @endphp
-                                @foreach($citasDelDia->take($maxMostrar) as $cita)
-                                    @php $mostrados++; @endphp
-                                    @php
-                                        $colorCita = $cita->color ?? '#10b981';
-                                        $colorHex = ltrim($colorCita, '#');
-                                        $r = hexdec(substr($colorHex, 0, 2));
-                                        $g = hexdec(substr($colorHex, 2, 2));
-                                        $b = hexdec(substr($colorHex, 4, 2));
-                                        $colorBg = $cita->estado === 'completada' 
-                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorCita};";
-                                    @endphp
-                                    <button 
-                                        onclick="showCitaDetail({{ $cita->id }})"
-                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
-                                        style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
-                                        title="{{ $cita->titulo }}"
-                                    >
-                                        <span class="hidden sm:inline">{{ $cita->fecha_inicio->format('H:i') }} - </span>{{ $cita->titulo }}
-                                    </button>
+                                @foreach($itemsDelDia as $itemOrdenado)
+                                    @if($itemOrdenado['tipo'] === 'cita')
+                                        @php $cita = $itemOrdenado['item']; @endphp
+                                        @php
+                                            $colorCita = $cita->color ?? '#10b981';
+                                            $colorHex = ltrim($colorCita, '#');
+                                            $r = hexdec(substr($colorHex, 0, 2));
+                                            $g = hexdec(substr($colorHex, 2, 2));
+                                            $b = hexdec(substr($colorHex, 4, 2));
+                                            $colorBg = $cita->estado === 'completada' 
+                                                ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorCita};";
+                                        @endphp
+                                        <button 
+                                            onclick="showCitaDetail({{ $cita->id }})"
+                                            class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                            style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
+                                            title="{{ $cita->titulo }}"
+                                        >
+                                            <span class="hidden sm:inline">{{ $cita->fecha_inicio->format('H:i') }} - </span>{{ $cita->titulo }}
+                                        </button>
+                                    @else
+                                        @php $tarea = $itemOrdenado['item']; @endphp
+                                        @php
+                                            $colorTarea = $tarea->color ?? '#8b5cf6';
+                                            $colorHex = ltrim($colorTarea, '#');
+                                            $r = hexdec(substr($colorHex, 0, 2));
+                                            $g = hexdec(substr($colorHex, 2, 2));
+                                            $b = hexdec(substr($colorHex, 4, 2));
+                                            $colorBg = $tarea->estado === 'completado' 
+                                                ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorTarea};";
+                                        @endphp
+                                        <button 
+                                            onclick="showTareaDetail({{ $tarea->id }})"
+                                            class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                            style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
+                                            title="{{ $tarea->texto }}"
+                                        >
+                                            <span class="hidden sm:inline">{{ $tarea->fecha_hora->format('H:i') }} - </span>{{ $tarea->texto }}
+                                        </button>
+                                    @endif
                                 @endforeach
-                                @foreach($tareasDelDia->take($maxMostrar - $mostrados) as $tarea)
-                                    @php $mostrados++; @endphp
-                                    @php
-                                        $colorTarea = $tarea->color ?? '#8b5cf6';
-                                        $colorHex = ltrim($colorTarea, '#');
-                                        $r = hexdec(substr($colorHex, 0, 2));
-                                        $g = hexdec(substr($colorHex, 2, 2));
-                                        $b = hexdec(substr($colorHex, 4, 2));
-                                        $colorBg = $tarea->estado === 'completado' 
-                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.2); color: {$colorTarea};";
-                                    @endphp
-                                    <button 
-                                        onclick="showTareaDetail({{ $tarea->id }})"
-                                        class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium truncate transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
-                                        style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
-                                        title="{{ $tarea->texto }}"
-                                    >
-                                        <span class="hidden sm:inline">{{ $tarea->fecha_hora->format('H:i') }} - </span>{{ $tarea->texto }}
-                                    </button>
-                                @endforeach
-                                @if($totalItems > $maxMostrar)
+                                @if($totalItems > 7)
                                     <button 
                                         onclick="showDayItems('{{ $fechaKey }}')"
                                         class="w-full text-left px-1 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
                                     >
-                                        +{{ $totalItems - $maxMostrar }} más
+                                        +{{ $totalItems - 7 }} más
                                     </button>
                                 @endif
                             </div>

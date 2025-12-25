@@ -93,8 +93,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        $emails = \App\Models\EmailRecibido::orderBy('received_at', 'desc')
-            ->orderBy('created_at', 'desc')
+        $emails = \App\Models\EmailRecibido::orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')
             ->paginate(20);
         
         // Contadores

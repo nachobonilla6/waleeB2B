@@ -131,6 +131,9 @@
                     <button onclick="showTab('mis-tareas')" id="tab-mis-tareas" class="flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-all bg-purple-500 text-white">
                         Mis tareas
                     </button>
+                    <button onclick="showTab('listas')" id="tab-listas" class="flex-1 px-4 py-2 rounded-lg font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                        Listas
+                    </button>
                     <button onclick="showTab('nueva-lista')" id="tab-nueva-lista" class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -307,6 +310,77 @@
                 </div>
             </div>
             
+            <!-- Content: Listas -->
+            <div id="content-listas" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="space-y-4">
+                    @forelse($listas as $lista)
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $lista->nombre }}</h3>
+                                    @if($lista->descripcion)
+                                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $lista->descripcion }}</p>
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
+                                        {{ $lista->tareas->count() }} tareas
+                                    </span>
+                                    <button onclick="editarLista({{ $lista->id }}, '{{ addslashes($lista->nombre) }}', '{{ addslashes($lista->descripcion ?? '') }}')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar lista">
+                                        <svg class="w-4 h-4 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="eliminarLista({{ $lista->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Eliminar lista">
+                                        <svg class="w-4 h-4 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                @forelse($lista->tareas as $tarea)
+                                    <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
+                                        <button onclick="toggleTarea({{ $tarea->id }})" class="mt-1 flex-shrink-0 w-5 h-5 rounded-full border-2 {{ $tarea->estado === 'completado' ? 'bg-purple-500 border-purple-500' : 'border-slate-300 dark:border-slate-600' }} flex items-center justify-center transition-all hover:border-purple-500">
+                                            @if($tarea->estado === 'completado')
+                                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            @endif
+                                        </button>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-slate-900 dark:text-white {{ $tarea->estado === 'completado' ? 'line-through opacity-60' : '' }}">
+                                                {{ $tarea->texto }}
+                                            </p>
+                                            @if($tarea->tipo)
+                                                <span class="text-xs text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 px-2 py-0.5 rounded-full mt-1 inline-block">
+                                                    {{ $tarea->tipo }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <button onclick="editarTarea({{ $tarea->id }}, '{{ addslashes($tarea->texto) }}', {{ $tarea->lista_id ? $tarea->lista_id : 'null' }}, '{{ $tarea->tipo ? addslashes($tarea->tipo) : '' }}')" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar tarea">
+                                            <svg class="w-3 h-3 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @empty
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay tareas en esta lista</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    @empty
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-12 shadow-sm dark:shadow-none text-center">
+                            <svg class="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <p class="text-slate-600 dark:text-slate-400 mb-2">No hay listas aún</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-500">Crea una nueva lista para organizar tus tareas</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+            
             <!-- Content: Nueva Lista -->
             <div id="content-nueva-lista" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 shadow-sm dark:shadow-none">
@@ -411,6 +485,50 @@
                     class="w-full px-6 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all"
                 >
                     Crear Tarea
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal Editar Lista -->
+    <div id="editarListaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-md w-full max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Editar Lista</h3>
+                <button onclick="closeEditarListaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="editar-lista-form" class="p-4 space-y-4">
+                <input type="hidden" name="lista_id" id="editar-lista-id">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre de la lista</label>
+                    <input 
+                        type="text" 
+                        name="nombre" 
+                        id="editar-lista-nombre"
+                        required
+                        placeholder="Ej: Trabajo, Personal, etc."
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción (opcional)</label>
+                    <textarea 
+                        name="descripcion" 
+                        id="editar-lista-descripcion"
+                        rows="3"
+                        placeholder="Descripción de la lista..."
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all resize-none"
+                    ></textarea>
+                </div>
+                <button 
+                    type="submit"
+                    class="w-full px-6 py-3 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-medium transition-all"
+                >
+                    Guardar Cambios
                 </button>
             </form>
         </div>
@@ -721,6 +839,39 @@
             if (e.target === this) closeEditarTareaModal();
         });
         
+        document.getElementById('editarListaModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditarListaModal();
+        });
+        
+        // Editar Lista Form
+        document.getElementById('editar-lista-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const listaId = document.getElementById('editar-lista-id').value;
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch(`/listas/${listaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeEditarListaModal();
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Error al actualizar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        });
+        
         // Filter tareas function
         function filterTareas() {
             const searchInput = document.getElementById('searchTareasInput');
@@ -744,6 +895,43 @@
                     item.closest('.tarea-item')?.getAttribute('data-search')?.includes(searchTerm)
                 );
                 separador.style.display = tareasVisibles.length > 0 ? 'flex' : 'none';
+            }
+        }
+        
+        function editarLista(listaId, nombre, descripcion) {
+            document.getElementById('editar-lista-id').value = listaId;
+            document.getElementById('editar-lista-nombre').value = nombre;
+            document.getElementById('editar-lista-descripcion').value = descripcion || '';
+            document.getElementById('editarListaModal').classList.remove('hidden');
+        }
+        
+        function closeEditarListaModal() {
+            document.getElementById('editarListaModal').classList.add('hidden');
+        }
+        
+        async function eliminarLista(listaId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta lista? Esto eliminará todas las tareas asociadas.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/listas/${listaId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.message || 'Error al eliminar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
             }
         }
     </script>

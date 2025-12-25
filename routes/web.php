@@ -1651,6 +1651,45 @@ Route::post('/listas', function (\Illuminate\Http\Request $request) {
     }
 })->middleware(['auth'])->name('listas.store');
 
+Route::put('/listas/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $lista = \App\Models\Lista::findOrFail($id);
+        $lista->nombre = $request->input('nombre');
+        $lista->descripcion = $request->input('descripcion');
+        $lista->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Lista actualizada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('listas.update');
+
+Route::delete('/listas/{id}', function ($id) {
+    try {
+        $lista = \App\Models\Lista::findOrFail($id);
+        // Eliminar todas las tareas asociadas
+        $lista->tareas()->delete();
+        // Eliminar la lista
+        $lista->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Lista eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('listas.destroy');
+
 // Ruta para crear publicación del cliente
 // API para generar publicación de Facebook con AI
 Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\Http\Request $request, $id) {

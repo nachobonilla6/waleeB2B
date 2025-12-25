@@ -930,6 +930,57 @@
             window.location.href = url.toString();
         }
         
+        // Navegación en listas
+        function verTareasLista(listaId) {
+            const lista = listasData.find(l => l.id === listaId);
+            if (!lista) return;
+            
+            // Ocultar vista de listas y mostrar vista de tareas
+            document.getElementById('vista-listas').classList.add('hidden');
+            document.getElementById('vista-tareas-lista').classList.remove('hidden');
+            
+            // Actualizar información de la lista
+            document.getElementById('nombre-lista-actual').textContent = lista.nombre;
+            document.getElementById('descripcion-lista-actual').textContent = lista.descripcion || '';
+            
+            // Cargar tareas
+            const container = document.getElementById('tareas-lista-container');
+            container.innerHTML = '';
+            
+            if (lista.tareas && lista.tareas.length > 0) {
+                lista.tareas.forEach(tarea => {
+                    const tareaDiv = document.createElement('div');
+                    tareaDiv.className = 'flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all';
+                    const textoEscapado = (tarea.texto || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    const tipoEscapado = (tarea.tipo || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    tareaDiv.innerHTML = `
+                        <button onclick="toggleTarea(${tarea.id})" class="mt-1 flex-shrink-0 w-5 h-5 rounded-full border-2 ${tarea.estado === 'completado' ? 'bg-purple-500 border-purple-500' : 'border-slate-300 dark:border-slate-600'} flex items-center justify-center transition-all hover:border-purple-500">
+                            ${tarea.estado === 'completado' ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>' : ''}
+                        </button>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-slate-900 dark:text-white ${tarea.estado === 'completado' ? 'line-through opacity-60' : ''}">
+                                ${textoEscapado}
+                            </p>
+                            ${tarea.tipo ? `<span class="text-xs text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 px-2 py-0.5 rounded-full mt-1 inline-block">${tipoEscapado}</span>` : ''}
+                        </div>
+                        <button onclick="editarTarea(${tarea.id}, '${textoEscapado}', ${tarea.lista_id || 'null'}, '${tipoEscapado}')" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar tarea">
+                            <svg class="w-3 h-3 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </button>
+                    `;
+                    container.appendChild(tareaDiv);
+                });
+            } else {
+                container.innerHTML = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay tareas en esta lista</p>';
+            }
+        }
+        
+        function volverAListas() {
+            document.getElementById('vista-listas').classList.remove('hidden');
+            document.getElementById('vista-tareas-lista').classList.add('hidden');
+        }
+        
         // Filter tareas function
         function filterTareas() {
             const searchInput = document.getElementById('searchTareasInput');

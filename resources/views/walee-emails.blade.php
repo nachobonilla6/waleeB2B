@@ -135,31 +135,10 @@
             </header>
             
             @php
-                $totalEnviados = \App\Models\PropuestaPersonalizada::count();
                 $totalRecibidos = \App\Models\EmailRecibido::count();
-                $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
-                $enviadosHoy = \App\Models\PropuestaPersonalizada::whereDate('created_at', today())->count();
+                $totalEnviados = \App\Models\PropuestaPersonalizada::count();
+                $totalTemplates = \App\Models\EmailTemplate::where('user_id', auth()->id())->count();
             @endphp
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 animate-fade-in-up" style="animation-delay: 0.05s;">
-                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $totalEnviados }}</div>
-                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Enviados</div>
-                </div>
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $totalRecibidos }}</div>
-                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Recibidos</div>
-                </div>
-                <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $noLeidos }}</div>
-                    <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Sin leer</div>
-                </div>
-                <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $enviadosHoy }}</div>
-                    <div class="text-xs text-violet-600/80 dark:text-violet-400/70">Hoy</div>
-                </div>
-            </div>
             
             <!-- Options Grid -->
             <div class="grid grid-cols-1 gap-6">
@@ -196,9 +175,7 @@
                         <div class="flex-1">
                             <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
                                 Emails Recibidos
-                                @if($noLeidos > 0)
-                                    <span class="ml-2 px-2 py-0.5 text-xs bg-emerald-500 text-white rounded-full">{{ $noLeidos }}</span>
-                                @endif
+                                <span class="ml-2 px-2.5 py-1 text-sm font-semibold bg-emerald-500 text-white rounded-full">{{ $totalRecibidos }}</span>
                             </h2>
                             <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Ver bandeja de entrada y emails recibidos</p>
                         </div>
@@ -220,7 +197,10 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">Emails Enviados</h2>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                                Emails Enviados
+                                <span class="ml-2 px-2.5 py-1 text-sm font-semibold bg-blue-500 text-white rounded-full">{{ $totalEnviados }}</span>
+                            </h2>
                             <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Ver historial de propuestas y emails enviados</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/10 items-center justify-center group-hover:bg-blue-200 dark:group-hover:bg-blue-500/20 transition-colors">
@@ -241,7 +221,10 @@
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-walee-700 dark:group-hover:text-walee-300 transition-colors">Templates</h2>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-walee-700 dark:group-hover:text-walee-300 transition-colors">
+                                Templates
+                                <span class="ml-2 px-2.5 py-1 text-sm font-semibold bg-walee-500 text-white rounded-full">{{ $totalTemplates }}</span>
+                            </h2>
                             <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Crea, guarda y envía templates de emails con AI</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-walee-100 dark:bg-walee-500/10 items-center justify-center group-hover:bg-walee-200 dark:group-hover:bg-walee-500/20 transition-colors">

@@ -563,10 +563,31 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
                     
                     // Datos para el email
                     'email_to' => $ticket->email,
-                    'email_subject' => "Ticket Recibido: {$ticket->asunto}",
+                    'email_subject' => "[SUPPORT] Ticket Recibido: {$ticket->asunto}",
                     'email_body' => "Hola {$nombre},\n\nRecibimos su ticket con el asunto: \"{$ticket->asunto}\"\n\nLe avisaremos cuando esté resuelto.\n\nSaludos,\nWeb Solutions",
                     'email_from' => 'websolutionscrnow@gmail.com',
                     'email_from_name' => 'Web Solutions',
+                    // Identificador para filtro de Gmail
+                    'email_filter_keyword' => '[SUPPORT]',
+                    // Etiquetas para Gmail
+                    'email_label' => 'SUPPORT',
+                    'gmail_label' => 'SUPPORT',
+                    'label' => 'SUPPORT',
+                    'labels' => ['SUPPORT'],
+                    'labelIds' => ['SUPPORT'],
+                    'gmail_labels' => ['SUPPORT'],
+                    'addLabel' => 'SUPPORT',
+                    // Configuración para que no caiga en Primary
+                    'skip_inbox' => true,
+                    'archive' => true,
+                    'gmail_category' => 'SUPPORT',
+                    'category' => 'SUPPORT',
+                    // Headers personalizados para Gmail
+                    'headers' => [
+                        'X-Gmail-Label' => 'SUPPORT',
+                        'X-Auto-Response-Suppress' => 'All',
+                        'List-Unsubscribe' => '<mailto:websolutionscrnow@gmail.com>',
+                    ],
                 ]
             );
         }

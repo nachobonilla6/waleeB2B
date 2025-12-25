@@ -1099,8 +1099,30 @@
     </script>
     @include('partials.walee-support-button')
     
+    <script>
+        // Aplicar fondo rosa en light mode después de que la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!document.documentElement.classList.contains('dark')) {
+                document.body.style.backgroundColor = '#FDF2F8';
+                const mainContainer = document.querySelector('.min-h-screen.relative');
+                if (mainContainer) {
+                    mainContainer.style.backgroundColor = '#FDF2F8';
+                }
+                // Aplicar a todos los elementos con bg-slate-50 y bg-white
+                document.querySelectorAll('.bg-slate-50, .bg-white').forEach(el => {
+                    if (!el.closest('.dark')) {
+                        el.style.backgroundColor = '#FDF2F8';
+                    }
+                });
+            }
+        });
+    </script>
     <style>
         /* Estilos rosa para light mode - aplicar después de Tailwind para mayor especificidad */
+        html:not(.dark) body {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
         html:not(.dark) body.bg-slate-50 {
             background-color: #FDF2F8 !important; /* pink-50 */
         }
@@ -1109,7 +1131,15 @@
             background-color: #FDF2F8 !important; /* pink-50 */
         }
         
+        html:not(.dark) .min-h-screen {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
         html:not(.dark) .min-h-screen.relative {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .min-h-screen.relative.overflow-hidden {
             background-color: #FDF2F8 !important; /* pink-50 */
         }
         
@@ -1123,6 +1153,15 @@
         
         html:not(.dark) .bg-slate-800\/50 {
             background-color: rgba(253, 242, 248, 0.5) !important; /* pink-50 con opacidad */
+        }
+        
+        /* Forzar fondo rosa en todos los contenedores principales */
+        html:not(.dark) #html-root {
+            background-color: #FDF2F8 !important;
+        }
+        
+        html:not(.dark) html {
+            background-color: #FDF2F8 !important;
         }
     </style>
 </body>

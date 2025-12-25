@@ -333,7 +333,7 @@
             ->toArray();
     @endphp
 
-    <div class="min-h-screen relative overflow-hidden" style="background-color: #FDF2F8 !important;">
+    <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-400/20 dark:bg-purple-400/10 rounded-full blur-3xl"></div>

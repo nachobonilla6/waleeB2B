@@ -311,6 +311,140 @@
             }
         });
         
+        // Migrate Button Handler
+        document.getElementById('migrateBtn').addEventListener('click', async function() {
+            const btn = this;
+            
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+            
+            // Show loading indicator
+            const loadingIcon = `
+                <svg class="animate-spin w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            `;
+            btn.querySelector('.w-20.h-20').innerHTML = loadingIcon;
+            
+            try {
+                const response = await fetch('{{ route("walee.configuraciones.migrate") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Comando php artisan migrate enviado exitosamente a n8n.', 'success');
+                } else {
+                    showNotification(data.message || 'Error al ejecutar migrate.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión al ejecutar migrate.', 'error');
+            } finally {
+                // Restore button state
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.querySelector('.w-20.h-20').innerHTML = `
+                    <svg class="w-10 h-10 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.5 12.75l6 6 9-13.5"/>
+                    </svg>
+                `;
+            }
+        });
+        
+        // Custom Command Functions
+        function toggleCustomCommand() {
+            const container = document.getElementById('customCommandContainer');
+            container.classList.toggle('hidden');
+            
+            if (!container.classList.contains('hidden')) {
+                document.getElementById('customCommandInput').focus();
+            } else {
+                document.getElementById('customCommandInput').value = '';
+            }
+        }
+        
+        async function executeCustomCommand() {
+            const input = document.getElementById('customCommandInput');
+            const command = input.value.trim();
+            const btn = document.getElementById('executeCustomCommandBtn');
+            
+            if (!command) {
+                showNotification('Por favor ingresa un comando.', 'error');
+                return;
+            }
+            
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `
+                <svg class="animate-spin w-5 h-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Ejecutando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.configuraciones.custom-command") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ command: command })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Comando personalizado enviado exitosamente a n8n.', 'success');
+                    input.value = '';
+                    toggleCustomCommand();
+                } else {
+                    showNotification(data.message || 'Error al ejecutar comando personalizado.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión al ejecutar comando personalizado.', 'error');
+            } finally {
+                // Restore button state
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.innerHTML = originalContent;
+            }
+        }
+        
+        // Custom Command Button Handler
+        document.getElementById('customCommandBtn').addEventListener('click', function() {
+            toggleCustomCommand();
+        });
+        
+        // Allow Enter key to execute command
+        document.addEventListener('DOMContentLoaded', function() {
+            const customInput = document.getElementById('customCommandInput');
+            if (customInput) {
+                customInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        executeCustomCommand();
+                    }
+                });
+            }
+        });
+        
         // Notification function
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');

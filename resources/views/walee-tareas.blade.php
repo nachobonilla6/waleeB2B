@@ -113,7 +113,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen" style="background-color: #FDF2F8 !important;">
     @php
         $listas = \App\Models\Lista::with(['tareas' => function($query) {
             $query->orderBy('created_at', 'asc');
@@ -167,7 +167,7 @@
             ->toArray();
     @endphp
 
-    <div class="min-h-screen relative overflow-hidden">
+    <div class="min-h-screen relative overflow-hidden" style="background-color: #FDF2F8 !important;">
         <!-- Background Pattern -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-400/20 dark:bg-purple-400/10 rounded-full blur-3xl"></div>

@@ -462,6 +462,29 @@
             currentEmailId = null;
         }
         
+        function openGmail() {
+            window.open('https://mail.google.com', '_blank');
+        }
+        
+        function replyInGmail() {
+            const email = emailsData.find(e => e.id === currentEmailId);
+            if (!email) return;
+            
+            // Construir URL de Gmail para responder
+            const to = encodeURIComponent(email.from_email || '');
+            const subject = encodeURIComponent('Re: ' + (email.subject || ''));
+            
+            // Preparar el cuerpo del email con el texto original
+            const originalBody = email.body || email.body_html || '';
+            const cleanBody = originalBody.replace(/<[^>]*>/g, '').substring(0, 500);
+            const body = encodeURIComponent('\n\n--- Mensaje original ---\n' + cleanBody);
+            
+            // URL de Gmail compose con parámetros
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`;
+            
+            window.open(gmailUrl, '_blank');
+        }
+        
         function showNotification(title, body, type = 'info') {
             const container = document.getElementById('notifications');
             const id = 'notif-' + Date.now();

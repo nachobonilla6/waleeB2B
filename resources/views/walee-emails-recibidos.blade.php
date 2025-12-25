@@ -175,18 +175,18 @@
                                 <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400">{{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 1)) }}</span>
                             </div>
                             
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-1">
-                                    <h3 class="font-semibold {{ $email->is_read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white' }} truncate">
+                            <div class="flex-1 min-w-0 overflow-hidden">
+                                <div class="flex items-start justify-between gap-2 mb-1">
+                                    <h3 class="font-semibold {{ $email->is_read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white' }} truncate flex-1 min-w-0">
                                         {{ $email->from_name ?? $email->from_email }}
                                     </h3>
-                                    <div class="flex items-center gap-2 flex-shrink-0 ml-2">
+                                    <div class="flex items-center gap-2 flex-shrink-0">
                                         @if($email->is_starred)
-                                            <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4 text-walee-600 dark:text-walee-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                             </svg>
                                         @endif
-                                        <span class="text-xs text-slate-500 dark:text-slate-400">
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0">
                                             @php
                                                 $date = $email->received_at ?? $email->created_at ?? $email->updated_at ?? now();
                                                 $dateObj = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
@@ -198,7 +198,7 @@
                                 <p class="text-sm {{ $email->is_read ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-white font-medium' }} truncate mb-1">
                                     {{ $email->subject }}
                                 </p>
-                                <p class="text-sm text-slate-600 dark:text-slate-500 line-clamp-1">{{ Str::limit(strip_tags($email->body), 100) }}</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-500 line-clamp-2 overflow-hidden">{{ Str::limit(strip_tags($email->body ?? ''), 120) }}</p>
                             </div>
                         </div>
                     </div>

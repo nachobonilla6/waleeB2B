@@ -1273,6 +1273,52 @@
     </script>
     @include('partials.walee-support-button')
     
+    <script>
+        // Forzar fondo oscuro en dark mode después de cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.documentElement.classList.contains('dark')) {
+                // Forzar fondo oscuro en body
+                document.body.style.backgroundColor = 'rgb(15, 23, 42)';
+                
+                // Forzar fondo oscuro en contenedores principales
+                const mainContainer = document.querySelector('.min-h-screen.relative.overflow-hidden');
+                if (mainContainer) {
+                    mainContainer.style.backgroundColor = 'rgb(15, 23, 42)';
+                }
+                
+                // Forzar fondo oscuro en todos los elementos con bg-slate-50 o bg-white
+                document.querySelectorAll('.bg-slate-50, .bg-white').forEach(el => {
+                    if (el.closest('.dark') || document.documentElement.classList.contains('dark')) {
+                        if (el.classList.contains('bg-slate-50')) {
+                            el.style.backgroundColor = 'rgb(15, 23, 42)';
+                        } else if (el.classList.contains('bg-white')) {
+                            el.style.backgroundColor = 'rgb(30, 41, 59)';
+                        }
+                    }
+                });
+            }
+        });
+        
+        // Observar cambios en el modo oscuro
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.body.style.backgroundColor = 'rgb(15, 23, 42)';
+                        const mainContainer = document.querySelector('.min-h-screen.relative.overflow-hidden');
+                        if (mainContainer) {
+                            mainContainer.style.backgroundColor = 'rgb(15, 23, 42)';
+                        }
+                    }
+                }
+            });
+        });
+        
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    </script>
 </body>
 </html>
 

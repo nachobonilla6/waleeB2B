@@ -1232,6 +1232,11 @@ Route::post('/walee-emails/recibidos/sync', function () {
     }
 })->middleware(['auth'])->name('walee.emails.recibidos.sync');
 
+// Ruta para Configuraciones
+Route::get('/walee-configuraciones', function () {
+    return view('walee-configuraciones');
+})->middleware(['auth'])->name('walee.configuraciones');
+
 // Ruta para Facturas & Cotizaciones
 Route::get('/walee-facturas', function () {
     return view('walee-facturas');

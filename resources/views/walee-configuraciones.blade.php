@@ -201,6 +201,34 @@
                         </div>
                     </div>
                 </button>
+                
+                <!-- Clear Emails Button -->
+                <button 
+                    id="clearEmailsBtn"
+                    class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border border-red-200 dark:border-red-500/20 p-8 hover:border-red-400 dark:hover:border-red-400/50 hover:from-red-100 dark:hover:from-red-500/15 hover:to-red-200/50 dark:hover:to-red-600/10 transition-all duration-500 shadow-sm dark:shadow-none"
+                >
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-red-500/20 dark:bg-red-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-2xl bg-red-100 dark:bg-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors">
+                                Borrar Emails Recibidos
+                            </h2>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                                Eliminar todos los emails recibidos de la base de datos
+                            </p>
+                        </div>
+                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-red-100 dark:bg-red-500/10 items-center justify-center group-hover:bg-red-200 dark:group-hover:bg-red-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-red-600 dark:text-red-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
             </div>
             
             <!-- Custom Command Input (Hidden by default) -->
@@ -454,6 +482,62 @@
         // Custom Command Button Handler
         document.getElementById('customCommandBtn').addEventListener('click', function() {
             toggleCustomCommand();
+        });
+        
+        // Clear Emails Button Handler
+        document.getElementById('clearEmailsBtn').addEventListener('click', async function() {
+            if (!confirm('¿Estás seguro de que deseas borrar todos los emails recibidos? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            const btn = this;
+            const originalContent = btn.innerHTML;
+            
+            // Disable button and show loading state
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+            
+            // Show loading indicator
+            const loadingIcon = `
+                <svg class="animate-spin w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            `;
+            btn.querySelector('.w-20.h-20').innerHTML = loadingIcon;
+            
+            try {
+                const response = await fetch('{{ route("walee.configuraciones.clear-emails") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Todos los emails recibidos han sido borrados correctamente.', 'success');
+                } else {
+                    showNotification(data.message || 'Error al borrar los emails.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión al borrar los emails.', 'error');
+            } finally {
+                // Restore button state
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.querySelector('.w-20.h-20').innerHTML = `
+                    <svg class="w-10 h-10 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                `;
+            }
         });
         
         // Allow Enter key to execute command

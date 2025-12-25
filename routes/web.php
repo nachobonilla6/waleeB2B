@@ -1425,6 +1425,21 @@ Route::post('/walee-configuraciones/custom-command', function (\Illuminate\Http\
 })->middleware(['auth'])->name('walee.configuraciones.custom-command');
 
 // Ruta para obtener logs de comandos
+Route::post('/walee-configuraciones/clear-emails', function () {
+    try {
+        \App\Models\EmailRecibido::truncate();
+        return response()->json([
+            'success' => true,
+            'message' => 'Todos los emails recibidos han sido borrados correctamente.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al borrar los emails: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth', 'verified'])->name('walee.configuraciones.clear-emails');
+
 Route::get('/walee-configuraciones/logs', function () {
     try {
         // Verificar si la tabla existe

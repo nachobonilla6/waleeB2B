@@ -65,6 +65,19 @@
         ::-webkit-scrollbar-thumb { background: rgba(147, 51, 234, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(147, 51, 234, 0.5); }
         
+        /* Fondo rosa para light mode - página completa */
+        html:not(.dark) body {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .bg-slate-50 {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .min-h-screen {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
         /* Estilos rosa para light mode */
         html:not(.dark) .bg-purple-500,
         html:not(.dark) .bg-purple-600 {

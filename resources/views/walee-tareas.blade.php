@@ -212,6 +212,48 @@
         .dark .min-h-screen.relative.overflow-hidden {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
+        
+        /* Asegurar que todas las tarjetas y contenedores sean oscuros */
+        .dark .bg-slate-800\/50 {
+            background-color: rgba(30, 41, 59, 0.5) !important; /* slate-800 con opacidad */
+        }
+        
+        .dark .bg-slate-800 {
+            background-color: rgb(30, 41, 59) !important; /* slate-800 */
+        }
+        
+        .dark .bg-slate-900 {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        /* Asegurar que los elementos de lista sean oscuros */
+        .dark .tarea-item,
+        .dark [class*="tarea-item"] {
+            background-color: rgb(30, 41, 59) !important; /* slate-800 */
+        }
+        
+        /* Asegurar que los modales sean oscuros */
+        .dark .bg-white.dark\:bg-slate-900 {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        /* Asegurar que los inputs y selects sean oscuros */
+        .dark input[type="text"],
+        .dark input[type="search"],
+        .dark select,
+        .dark textarea {
+            background-color: rgb(30, 41, 59) !important; /* slate-800 */
+            color: rgb(248, 250, 252) !important; /* slate-50 */
+        }
+        
+        /* Asegurar que los botones hover sean oscuros */
+        .dark .hover\:bg-slate-100:hover {
+            background-color: rgb(51, 65, 85) !important; /* slate-700 */
+        }
+        
+        .dark .hover\:bg-slate-700:hover {
+            background-color: rgb(51, 65, 85) !important; /* slate-700 */
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">

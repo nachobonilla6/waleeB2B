@@ -2086,7 +2086,7 @@
             if (!id) return;
             
             try {
-                const response = await fetch(`/tareas/${id}`, {
+                const response = await fetch(`/walee-tareas/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -2111,7 +2111,7 @@
             
             const formData = new FormData(e.target);
             const tareaId = formData.get('tarea_id');
-            const url = tareaId ? `/tareas/${tareaId}` : '/tareas';
+            const url = tareaId ? `/walee-tareas/${tareaId}` : '/walee-tareas';
             const method = tareaId ? 'PUT' : 'POST';
             
             // Obtener días de recurrencia

@@ -543,7 +543,7 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
             $imagenUrl = $ticket->imagen ? asset('storage/' . $ticket->imagen) : null;
             
             \Illuminate\Support\Facades\Http::timeout(10)->post(
-                'https://n8n.srv1137974.hstgr.cloud/webhook-test/8b796dcc-396f-492c-b81e-30c7ed35f006',
+                'https://n8n.srv1137974.hstgr.cloud/webhook/8b796dcc-396f-492c-b81e-30c7ed35f006',
                 [
                     // Datos del ticket
                     'ticket_id' => $ticket->id,

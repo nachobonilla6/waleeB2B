@@ -173,6 +173,77 @@
                         </div>
                     </div>
                 </button>
+                
+                <!-- Custom Command Button -->
+                <button 
+                    id="customCommandBtn"
+                    class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 p-8 hover:border-orange-400 dark:hover:border-orange-400/50 hover:from-orange-100 dark:hover:from-orange-500/15 hover:to-orange-200/50 dark:hover:to-orange-600/10 transition-all duration-500 shadow-sm dark:shadow-none"
+                >
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 dark:bg-orange-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-2xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">
+                                Comando Personalizado
+                            </h2>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                                Ejecutar un comando personalizado
+                            </p>
+                        </div>
+                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-500/10 items-center justify-center group-hover:bg-orange-200 dark:group-hover:bg-orange-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-orange-600 dark:text-orange-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- Custom Command Input (Hidden by default) -->
+            <div id="customCommandContainer" class="hidden mt-6 animate-fade-in-up">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Comando Personalizado</h3>
+                        <button onclick="toggleCustomCommand()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Comando</label>
+                            <input 
+                                type="text" 
+                                id="customCommandInput" 
+                                placeholder="Ej: php artisan cache:clear"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button 
+                                onclick="executeCustomCommand()" 
+                                id="executeCustomCommandBtn"
+                                class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-xl transition-all flex items-center gap-2"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                <span>Ejecutar</span>
+                            </button>
+                            <button 
+                                onclick="toggleCustomCommand()" 
+                                class="px-6 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-all"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Footer -->

@@ -1239,7 +1239,7 @@ Route::get('/walee-configuraciones', function () {
 
 // Ruta para ejecutar Git Pull via webhook
 Route::post('/walee-configuraciones/git-pull', function (\Illuminate\Http\Request $request, \App\Services\N8nService $n8nService) {
-    $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/753549e6-c8ff-4fcd-9b08-bcfe8b82cdc1';
+    $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/753549e6-c8ff-4fcd-9b08-bcfe8b82cdc1';
     
     try {
         $payload = [
@@ -1271,6 +1271,80 @@ Route::post('/walee-configuraciones/git-pull', function (\Illuminate\Http\Reques
         ], 500);
     }
 })->middleware(['auth'])->name('walee.configuraciones.git-pull');
+
+// Ruta para ejecutar Migrate via webhook
+Route::post('/walee-configuraciones/migrate', function (\Illuminate\Http\Request $request, \App\Services\N8nService $n8nService) {
+    $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/753549e6-c8ff-4fcd-9b08-bcfe8b82cdc1';
+    
+    try {
+        $payload = [
+            'action' => 'migrate',
+            'command' => 'php artisan migrate',
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name ?? 'Usuario',
+            'timestamp' => now()->toIso8601String(),
+        ];
+        
+        $success = $n8nService->sendWebhook($webhookUrl, $payload);
+        
+        if ($success) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Comando php artisan migrate enviado exitosamente a n8n.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al enviar el comando a n8n.',
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Error en migrate webhook: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error interno del servidor: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.configuraciones.migrate');
+
+// Ruta para ejecutar comando personalizado via webhook
+Route::post('/walee-configuraciones/custom-command', function (\Illuminate\Http\Request $request, \App\Services\N8nService $n8nService) {
+    $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/753549e6-c8ff-4fcd-9b08-bcfe8b82cdc1';
+    
+    $request->validate([
+        'command' => 'required|string|max:500',
+    ]);
+    
+    try {
+        $payload = [
+            'action' => 'custom_command',
+            'command' => $request->input('command'),
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name ?? 'Usuario',
+            'timestamp' => now()->toIso8601String(),
+        ];
+        
+        $success = $n8nService->sendWebhook($webhookUrl, $payload);
+        
+        if ($success) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Comando personalizado enviado exitosamente a n8n.',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al enviar el comando a n8n.',
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Error en custom command webhook: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error interno del servidor: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.configuraciones.custom-command');
 
 // Ruta para Facturas & Cotizaciones
 Route::get('/walee-facturas', function () {

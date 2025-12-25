@@ -72,6 +72,27 @@
             animation: fadeInUp 0.5s ease-out forwards;
         }
         
+        .email-html-content {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .email-html-content img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .email-html-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .email-html-content table td,
+        .email-html-content table th {
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
         /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 6px;

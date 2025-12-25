@@ -258,8 +258,8 @@
     <!-- Email Detail Modal -->
     <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 dark:border-slate-700 max-w-5xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white truncate pr-4" id="modalSubject">Email</h3>
+            <div class="flex items-center justify-between p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate pr-2 sm:pr-4" id="modalSubject">Email</h3>
                 <div class="flex items-center gap-2">
                     <button onclick="openGmail()" class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 text-sm font-medium transition-colors flex items-center gap-1.5" title="Ir a Gmail">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,8 +326,8 @@
             const receivedDate = email.received_at ? new Date(email.received_at) : new Date(email.created_at);
             
             document.getElementById('modalContent').innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="space-y-3 sm:space-y-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
                         <div class="flex items-center gap-4 mb-4">
                             <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
                                 <span class="text-lg font-bold text-emerald-600 dark:text-emerald-400">${(email.from_name || email.from_email).charAt(0).toUpperCase()}</span>

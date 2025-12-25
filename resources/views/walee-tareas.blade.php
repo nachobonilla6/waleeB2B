@@ -632,6 +632,7 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const listasData = @json($listas);
         
         function showTab(tabName) {
             // Hide all content

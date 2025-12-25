@@ -106,12 +106,17 @@
             }
             
             #modalContent {
-                padding: 1rem !important;
+                padding: 0.5rem !important;
                 max-height: calc(100vh - 80px) !important;
+            }
+            
+            #modalContent > div > div {
+                padding: 0.5rem !important;
             }
             
             .email-html-content {
                 padding: 0 !important;
+                margin: 0 !important;
             }
             
             .email-html-content * {
@@ -121,6 +126,13 @@
             .email-html-content img {
                 width: 100% !important;
                 height: auto !important;
+            }
+            
+            .email-html-content p,
+            .email-html-content div,
+            .email-html-content span {
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
             }
         }
         
@@ -379,8 +391,8 @@
                             })}
                         </div>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-2 sm:p-4 border border-slate-200 dark:border-slate-700">
-                        <div class="prose prose-slate dark:prose-invert prose-sm max-w-none email-html-content" style="padding: 0 !important;">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-1 sm:p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="prose prose-slate dark:prose-invert prose-sm max-w-none email-html-content" style="padding: 0 !important; margin: 0 !important;">
                             ${email.body_html || email.body.replace(/\n/g, '<br>')}
                         </div>
                     </div>

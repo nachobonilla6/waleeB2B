@@ -353,20 +353,21 @@
             
             <!-- Content: Listas -->
             <div id="content-listas" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="space-y-4">
+                <!-- Vista de Listas -->
+                <div id="vista-listas" class="space-y-4">
                     @forelse($listas as $lista)
-                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none">
-                            <div class="flex items-center justify-between mb-3">
-                                <div>
+                        <div onclick="verTareasLista({{ $lista->id }})" class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none cursor-pointer hover:border-purple-500 dark:hover:border-purple-500 transition-all">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
                                     <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $lista->nombre }}</h3>
                                     @if($lista->descripcion)
                                         <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ $lista->descripcion }}</p>
                                     @endif
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full mt-2 inline-block">
                                         {{ $lista->tareas->count() }} tareas
                                     </span>
+                                </div>
+                                <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                                     <button onclick="editarLista({{ $lista->id }}, '{{ addslashes($lista->nombre) }}', '{{ addslashes($lista->descripcion ?? '') }}')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar lista">
                                         <svg class="w-4 h-4 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -379,36 +380,6 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="space-y-2">
-                                @forelse($lista->tareas as $tarea)
-                                    <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
-                                        <button onclick="toggleTarea({{ $tarea->id }})" class="mt-1 flex-shrink-0 w-5 h-5 rounded-full border-2 {{ $tarea->estado === 'completado' ? 'bg-purple-500 border-purple-500' : 'border-slate-300 dark:border-slate-600' }} flex items-center justify-center transition-all hover:border-purple-500">
-                                            @if($tarea->estado === 'completado')
-                                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                                                </svg>
-                                            @endif
-                                        </button>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-slate-900 dark:text-white {{ $tarea->estado === 'completado' ? 'line-through opacity-60' : '' }}">
-                                                {{ $tarea->texto }}
-                                            </p>
-                                            @if($tarea->tipo)
-                                                <span class="text-xs text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 px-2 py-0.5 rounded-full mt-1 inline-block">
-                                                    {{ $tarea->tipo }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <button onclick="editarTarea({{ $tarea->id }}, '{{ addslashes($tarea->texto) }}', {{ $tarea->lista_id ? $tarea->lista_id : 'null' }}, '{{ $tarea->tipo ? addslashes($tarea->tipo) : '' }}')" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar tarea">
-                                            <svg class="w-3 h-3 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                @empty
-                                    <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay tareas en esta lista</p>
-                                @endforelse
-                            </div>
                         </div>
                     @empty
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-12 shadow-sm dark:shadow-none text-center">
@@ -419,6 +390,26 @@
                             <p class="text-sm text-slate-500 dark:text-slate-500">Crea una nueva lista para organizar tus tareas</p>
                         </div>
                     @endforelse
+                </div>
+                
+                <!-- Vista de Tareas de una Lista -->
+                <div id="vista-tareas-lista" class="hidden">
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none">
+                        <div class="flex items-center gap-3 mb-4">
+                            <button onclick="volverAListas()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Volver a listas">
+                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </button>
+                            <div class="flex-1">
+                                <h2 id="nombre-lista-actual" class="text-lg font-bold text-slate-900 dark:text-white"></h2>
+                                <p id="descripcion-lista-actual" class="text-sm text-slate-500 dark:text-slate-400 mt-1"></p>
+                            </div>
+                        </div>
+                        <div id="tareas-lista-container" class="space-y-2">
+                            <!-- Las tareas se cargarán aquí dinámicamente -->
+                        </div>
+                    </div>
                 </div>
             </div>
             

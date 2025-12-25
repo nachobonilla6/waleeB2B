@@ -106,6 +106,29 @@
             background-color: rgb(245, 243, 255) !important;
         }
         
+        /* Cambiar gradientes de stat-cards a violeta claro en light mode */
+        html:not(.dark) .stat-card.bg-gradient-to-br {
+            background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
+        }
+        
+        /* Forzar todos los gradientes de stat-cards a violeta claro */
+        html:not(.dark) .stat-card[class*="from-emerald-50"],
+        html:not(.dark) .stat-card[class*="from-blue-50"],
+        html:not(.dark) .stat-card[class*="from-walee-50"],
+        html:not(.dark) .stat-card[class*="from-violet-50"],
+        html:not(.dark) .stat-card[class*="from-cyan-50"],
+        html:not(.dark) .stat-card[class*="from-amber-50"],
+        html:not(.dark) .stat-card[class*="to-emerald-100"],
+        html:not(.dark) .stat-card[class*="to-blue-100"],
+        html:not(.dark) .stat-card[class*="to-walee-100"],
+        html:not(.dark) .stat-card[class*="to-violet-100"],
+        html:not(.dark) .stat-card[class*="to-cyan-100"],
+        html:not(.dark) .stat-card[class*="to-amber-100"],
+        html:not(.dark) .stat-card.bg-gradient-to-br {
+            background: linear-gradient(to bottom right, rgb(245, 243, 255), rgb(237, 233, 254)) !important;
+            background-image: none !important;
+        }
+        
         /* Forzar fondo del body y contenedor principal */
         html:not(.dark) body {
             background-color: rgb(245, 243, 255) !important;
@@ -119,8 +142,38 @@
             background-color: transparent !important;
         }
         
+        /* Forzar todos los elementos con fondo visible a violeta claro */
+        html:not(.dark) div[class*="bg-"]:not([class*="dark:"]):not([class*="bg-violet"]):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-walee"]):not([class*="bg-cyan"]):not([class*="bg-amber"]) {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
         html:not(.dark) .text-slate-300 {
             color: rgb(51, 65, 85) !important;
+        }
+        
+        /* Asegurar que dark mode funcione correctamente */
+        .dark .bg-white {
+            background-color: rgb(30, 41, 59) !important; /* slate-800 */
+        }
+        
+        .dark .bg-slate-50 {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        .dark .text-slate-800 {
+            color: rgb(248, 250, 252) !important; /* slate-50 */
+        }
+        
+        .dark .text-slate-900 {
+            color: rgb(248, 250, 252) !important; /* slate-50 */
+        }
+        
+        .dark .border-slate-200 {
+            border-color: rgb(51, 65, 85) !important; /* slate-700 */
+        }
+        
+        .dark .border-slate-300 {
+            border-color: rgb(71, 85, 105) !important; /* slate-600 */
         }
     </style>
 </head>

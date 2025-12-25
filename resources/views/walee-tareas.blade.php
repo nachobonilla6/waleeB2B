@@ -65,19 +65,6 @@
         ::-webkit-scrollbar-thumb { background: rgba(147, 51, 234, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(147, 51, 234, 0.5); }
         
-        /* Fondo rosa para light mode - página completa */
-        html:not(.dark) body {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .bg-slate-50 {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .min-h-screen {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
         /* Estilos rosa para light mode */
         html:not(.dark) .bg-purple-500,
         html:not(.dark) .bg-purple-600 {
@@ -1111,6 +1098,33 @@
         }
     </script>
     @include('partials.walee-support-button')
+    
+    <style>
+        /* Estilos rosa para light mode - aplicar después de Tailwind para mayor especificidad */
+        html:not(.dark) body.bg-slate-50 {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) body.min-h-screen {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .min-h-screen.relative {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .bg-slate-50 {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .bg-white {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .bg-slate-800\/50 {
+            background-color: rgba(253, 242, 248, 0.5) !important; /* pink-50 con opacidad */
+        }
+    </style>
 </body>
 </html>
 

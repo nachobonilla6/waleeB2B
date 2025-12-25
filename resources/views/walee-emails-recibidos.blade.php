@@ -188,7 +188,11 @@
                                             </svg>
                                         @endif
                                         <span class="text-xs text-slate-500 dark:text-slate-400">
-                                            {{ $email->received_at ? $email->received_at->diffForHumans() : $email->created_at->diffForHumans() }}
+                                            @php
+                                                $date = $email->received_at ?? $email->created_at ?? $email->updated_at ?? now();
+                                                $dateObj = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+                                            @endphp
+                                            {{ $dateObj->diffForHumans() }}
                                         </span>
                                     </div>
                                 </div>

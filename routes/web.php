@@ -1426,11 +1426,21 @@ Route::post('/walee-configuraciones/custom-command', function (\Illuminate\Http\
 
 // Ruta para obtener logs de comandos
 Route::get('/walee-configuraciones/logs', function () {
-    $logs = \App\Models\CommandLog::orderBy('created_at', 'desc')
-        ->limit(50)
-        ->get();
-    
-    return response()->json($logs);
+    try {
+        // Verificar si la tabla existe
+        if (!\Illuminate\Support\Facades\Schema::hasTable('command_logs')) {
+            return response()->json([]);
+        }
+        
+        $logs = \App\Models\CommandLog::orderBy('created_at', 'desc')
+            ->limit(50)
+            ->get();
+        
+        return response()->json($logs);
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Error al obtener logs: ' . $e->getMessage());
+        return response()->json([], 200);
+    }
 })->middleware(['auth'])->name('walee.configuraciones.logs');
 
 // Ruta para Facturas & Cotizaciones

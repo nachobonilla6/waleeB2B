@@ -474,12 +474,22 @@
             const to = encodeURIComponent(email.from_email || '');
             const subject = encodeURIComponent('Re: ' + (email.subject || ''));
             
-            // Preparar el cuerpo del email con el texto original
-            const originalBody = email.body || email.body_html || '';
-            const cleanBody = originalBody.replace(/<[^>]*>/g, '').substring(0, 500);
-            const body = encodeURIComponent('\n\n--- Mensaje original ---\n' + cleanBody);
+            // Usar el HTML del email si está disponible, sino usar el texto plano
+            let originalBody = '';
+            if (email.body_html) {
+                // Usar el HTML directamente
+                originalBody = email.body_html;
+            } else if (email.body) {
+                // Si no hay HTML, usar el texto plano y convertirlo a HTML básico
+                originalBody = email.body.replace(/\n/g, '<br>');
+            }
+            
+            // Preparar el cuerpo con el mensaje original en HTML
+            const bodyContent = originalBody ? `\n\n--- Mensaje original ---\n${originalBody}` : '';
+            const body = encodeURIComponent(bodyContent);
             
             // URL de Gmail compose con parámetros
+            // Gmail soporta HTML en el body usando el parámetro view=cm
             const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`;
             
             window.open(gmailUrl, '_blank');

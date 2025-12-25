@@ -541,27 +541,27 @@
                     });
                     
                     return `
-                        <div class="p-4 rounded-xl border ${statusColors[log.status]} transition-all">
-                            <div class="flex items-start justify-between gap-4 mb-2">
+                        <div class="p-2.5 rounded-lg border ${statusColors[log.status]} transition-all">
+                            <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
                                     <div class="flex-shrink-0">
                                         ${statusIcons[log.status]}
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <span class="font-semibold text-sm">${log.action === 'git_pull' ? 'Git Pull' : log.action === 'migrate' ? 'Migrate' : 'Comando Personalizado'}</span>
-                                            <span class="px-2 py-0.5 text-xs rounded-full ${statusColors[log.status]}">${log.status}</span>
+                                        <div class="flex items-center gap-2 mb-0.5">
+                                            <span class="font-semibold text-xs">${log.action === 'git_pull' ? 'Git Pull' : log.action === 'migrate' ? 'Migrate' : 'Comando Personalizado'}</span>
+                                            <span class="px-1.5 py-0.5 text-xs rounded-full ${statusColors[log.status]}">${log.status}</span>
                                         </div>
                                         <code class="text-xs block truncate">${log.command}</code>
+                                        ${log.user_name ? `<div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Por: ${log.user_name}</div>` : ''}
+                                        ${log.error_message ? `<div class="mt-1 text-xs text-red-600 dark:text-red-400">Error: ${log.error_message}</div>` : ''}
+                                        ${log.response ? `<div class="mt-1 text-xs text-slate-500 dark:text-slate-400">${log.response}</div>` : ''}
                                     </div>
                                 </div>
                                 <div class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
                                     ${formattedDate}
                                 </div>
                             </div>
-                            ${log.user_name ? `<div class="text-xs text-slate-600 dark:text-slate-400 mt-1">Por: ${log.user_name}</div>` : ''}
-                            ${log.error_message ? `<div class="mt-2 text-xs text-red-600 dark:text-red-400">Error: ${log.error_message}</div>` : ''}
-                            ${log.response ? `<div class="mt-2 text-xs text-slate-600 dark:text-slate-400">${log.response}</div>` : ''}
                         </div>
                     `;
                 }).join('');
@@ -582,9 +582,6 @@
         // Load logs on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadLogs();
-            
-            // Auto-refresh logs every 10 seconds
-            setInterval(loadLogs, 10000);
         });
     </script>
     

@@ -267,6 +267,7 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
         $cita->recurrencia_dias = $request->input('recurrencia_dias');
         $cita->color = $request->input('color', '#10b981');
+        $cita->invitados_emails = $request->input('invitados_emails');
         $cita->save();
         
         // Sincronizar con Google Calendar

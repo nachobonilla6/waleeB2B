@@ -161,6 +161,11 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         ->rows(2)
                         ->placeholder('Detalles adicionales...')
                         ->columnSpanFull(),
+                    TextInput::make('invitados_emails')
+                        ->label('Invitar personas (emails separados por comas)')
+                        ->placeholder('email1@ejemplo.com, email2@ejemplo.com')
+                        ->helperText('Los invitados recibirán una invitación automática de Google Calendar')
+                        ->columnSpanFull(),
                 ])
                 ->columns(6)
                 ->compact(),

@@ -261,13 +261,62 @@ class GoogleCalendarService
             $end->setTimeZone(config('app.timezone', 'America/Mexico_City'));
             $event->setEnd($end);
 
-            $createdEvent = $service->events->insert($this->calendarId, $event);
+            // Agregar invitados (attendees)
+            $attendees = $this->getAttendeesFromCita($cita);
+            if (!empty($attendees)) {
+                $event->setAttendees($attendees);
+                // Enviar notificaciones a los invitados
+                $event->setGuestsCanInviteOthers(false);
+                $event->setGuestsCanModify(false);
+            }
+
+            $createdEvent = $service->events->insert($this->calendarId, $event, [
+                'sendUpdates' => 'all', // Enviar invitaciones automáticamente
+            ]);
             
             return $createdEvent->getId();
         } catch (\Exception $e) {
             Log::error('Error al crear evento en Google Calendar: ' . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Obtener lista de attendees desde la cita
+     */
+    protected function getAttendeesFromCita(Cita $cita): array
+    {
+        $attendees = [];
+
+        // Agregar email del cliente si existe
+        if ($cita->cliente_id && $cita->cliente && $cita->cliente->correo) {
+            $attendees[] = [
+                'email' => $cita->cliente->correo,
+            ];
+        }
+
+        // Agregar emails de invitados adicionales
+        if ($cita->invitados_emails) {
+            $emails = array_map('trim', explode(',', $cita->invitados_emails));
+            foreach ($emails as $email) {
+                $email = trim($email);
+                if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    // Evitar duplicados
+                    $exists = false;
+                    foreach ($attendees as $attendee) {
+                        if (strtolower($attendee['email']) === strtolower($email)) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+                    if (!$exists) {
+                        $attendees[] = ['email' => $email];
+                    }
+                }
+            }
+        }
+
+        return $attendees;
     }
 
     /**
@@ -321,7 +370,17 @@ class GoogleCalendarService
             $end->setTimeZone(config('app.timezone', 'America/Mexico_City'));
             $event->setEnd($end);
 
-            $service->events->update($this->calendarId, $cita->google_event_id, $event);
+            // Actualizar invitados (attendees)
+            $attendees = $this->getAttendeesFromCita($cita);
+            if (!empty($attendees)) {
+                $event->setAttendees($attendees);
+                $event->setGuestsCanInviteOthers(false);
+                $event->setGuestsCanModify(false);
+            }
+
+            $service->events->update($this->calendarId, $cita->google_event_id, $event, [
+                'sendUpdates' => 'all', // Enviar actualizaciones a los invitados
+            ]);
             
         return true;
         } catch (\Exception $e) {

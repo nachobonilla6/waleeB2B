@@ -22,6 +22,7 @@ class Cita extends Model
         'recurrencia_fin',
         'color',
         'recurrencia_dias',
+        'invitados_emails',
     ];
 
     protected $casts = [

@@ -324,6 +324,18 @@
                 </div>
                 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Invitar personas (emails separados por comas)</label>
+                    <input 
+                        type="text" 
+                        name="invitados_emails" 
+                        id="invitados_emails"
+                        placeholder="email1@ejemplo.com, email2@ejemplo.com"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                    >
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Los invitados recibirán una invitación automática de Google Calendar</p>
+                </div>
+                
+                <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Recurrencia</label>
                     <select 
                         name="recurrencia" 
@@ -830,6 +842,7 @@
             document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
             document.getElementById('ubicacion').value = cita.ubicacion || '';
             document.getElementById('descripcion').value = cita.descripcion || '';
+            document.getElementById('invitados_emails').value = cita.invitados_emails || '';
             document.getElementById('color').value = cita.color || '#10b981';
             document.getElementById('color_text').value = cita.color || '#10b981';
             document.getElementById('estado').value = cita.estado || 'programada';

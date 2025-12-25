@@ -65,109 +65,66 @@
         ::-webkit-scrollbar-thumb { background: rgba(147, 51, 234, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(147, 51, 234, 0.5); }
         
-        /* Mejorar visibilidad de iconos en light mode - hacerlos más coloridos */
-        html:not(.dark) .text-slate-400 {
-            color: #6366f1 !important; /* indigo-500 - más visible y colorido */
+        /* Light mode adjustments - igual que dashboard */
+        html:not(.dark) .stat-card {
+            background: rgb(245, 243, 255) !important;
+            border-color: rgba(221, 214, 254, 0.8) !important;
         }
         
-        html:not(.dark) .text-slate-500 {
-            color: #6366f1 !important; /* indigo-500 */
+        html:not(.dark) .stat-card .text-white {
+            color: rgb(15, 23, 42) !important;
         }
         
-        html:not(.dark) .text-slate-600 {
-            color: #4f46e5 !important; /* indigo-600 - más oscuro y visible */
+        html:not(.dark) .stat-card .text-slate-400 {
+            color: rgb(51, 65, 85) !important;
+        }
+        
+        html:not(.dark) h2.text-slate-300 {
+            color: rgb(30, 41, 59) !important;
+        }
+        
+        html:not(.dark) .bg-slate-900\/50 {
+            background-color: rgb(245, 243, 255) !important;
+            border-color: rgba(221, 214, 254, 0.8) !important;
+        }
+        
+        html:not(.dark) .bg-slate-800 {
+            background-color: rgb(237, 233, 254) !important;
+            border-color: rgb(221, 214, 254) !important;
+        }
+        
+        html:not(.dark) .bg-slate-100 {
+            background-color: rgb(237, 233, 254) !important;
+        }
+        
+        html:not(.dark) .bg-slate-50 {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
+        /* Cambiar bg-white a violeta claro en light mode */
+        html:not(.dark) .bg-white {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
+        /* Forzar fondo del body y contenedor principal */
+        html:not(.dark) body {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
+        html:not(.dark) .min-h-screen {
+            background-color: rgb(245, 243, 255) !important;
+        }
+        
+        html:not(.dark) .relative.max-w-\[90rem\] {
+            background-color: transparent !important;
         }
         
         html:not(.dark) .text-slate-300 {
-            color: #818cf8 !important; /* indigo-400 - más visible */
-        }
-        
-        /* Iconos de editar - azul */
-        html:not(.dark) svg[class*="hover:text-blue-500"] {
-            color: #3b82f6 !important; /* blue-500 */
-        }
-        
-        html:not(.dark) svg[class*="hover:text-blue-500"]:hover {
-            color: #2563eb !important; /* blue-600 */
-        }
-        
-        /* Iconos de eliminar - rojo */
-        html:not(.dark) svg[class*="hover:text-red-500"] {
-            color: #ef4444 !important; /* red-500 */
-        }
-        
-        html:not(.dark) svg[class*="hover:text-red-500"]:hover {
-            color: #dc2626 !important; /* red-600 */
-        }
-        
-        /* Iconos de favorito - amarillo más vibrante */
-        html:not(.dark) svg[class*="text-yellow-500"] {
-            color: #f59e0b !important; /* amber-500 - más vibrante */
-        }
-        
-        /* Iconos de búsqueda y ordenamiento - púrpura */
-        html:not(.dark) svg[class*="text-slate-600"][class*="absolute"] {
-            color: #8b5cf6 !important; /* violet-500 */
-        }
-        
-        /* Botones de acción - más coloridos */
-        html:not(.dark) button svg.text-slate-400 {
-            color: #6366f1 !important; /* indigo-500 */
-        }
-        
-        html:not(.dark) button:hover svg.text-slate-400 {
-            color: #4f46e5 !important; /* indigo-600 */
-        }
-        
-        /* Estilos rosa para light mode */
-        html:not(.dark) .bg-purple-500,
-        html:not(.dark) .bg-purple-600 {
-            background-color: #EC4899 !important; /* pink-500 */
-        }
-        
-        html:not(.dark) .bg-purple-400\/20,
-        html:not(.dark) .bg-purple-400\/10,
-        html:not(.dark) .bg-purple-400\/5 {
-            background-color: rgba(244, 114, 182, 0.2) !important; /* pink-400 con opacidad */
-        }
-        
-        html:not(.dark) .text-purple-600,
-        html:not(.dark) .text-purple-400 {
-            color: #EC4899 !important; /* pink-500 */
-        }
-        
-        html:not(.dark) .bg-purple-50,
-        html:not(.dark) .bg-purple-500\/10 {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .border-purple-500,
-        html:not(.dark) .hover\:border-purple-500:hover {
-            border-color: #EC4899 !important; /* pink-500 */
-        }
-        
-        html:not(.dark) .focus\:border-purple-500:focus {
-            border-color: #EC4899 !important; /* pink-500 */
-        }
-        
-        html:not(.dark) .focus\:ring-purple-500\/20:focus {
-            --tw-ring-color: rgba(236, 72, 153, 0.2) !important; /* pink-500 con opacidad */
-        }
-        
-        html:not(.dark) .hover\:bg-purple-600:hover {
-            background-color: #DB2777 !important; /* pink-600 */
-        }
-        
-        html:not(.dark) ::-webkit-scrollbar-thumb {
-            background: rgba(236, 72, 153, 0.3) !important; /* pink-500 */
-        }
-        
-        html:not(.dark) ::-webkit-scrollbar-thumb:hover {
-            background: rgba(236, 72, 153, 0.5) !important; /* pink-500 */
+            color: rgb(51, 65, 85) !important;
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen" style="background-color: #FDF2F8 !important;">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         $listas = \App\Models\Lista::with(['tareas' => function($query) {
             $query->orderBy('created_at', 'asc');
@@ -1153,71 +1110,6 @@
     </script>
     @include('partials.walee-support-button')
     
-    <script>
-        // Aplicar fondo rosa en light mode después de que la página cargue
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!document.documentElement.classList.contains('dark')) {
-                document.body.style.backgroundColor = '#FDF2F8';
-                const mainContainer = document.querySelector('.min-h-screen.relative');
-                if (mainContainer) {
-                    mainContainer.style.backgroundColor = '#FDF2F8';
-                }
-                // Aplicar a todos los elementos con bg-slate-50 y bg-white
-                document.querySelectorAll('.bg-slate-50, .bg-white').forEach(el => {
-                    if (!el.closest('.dark')) {
-                        el.style.backgroundColor = '#FDF2F8';
-                    }
-                });
-            }
-        });
-    </script>
-    <style>
-        /* Estilos rosa para light mode - aplicar después de Tailwind para mayor especificidad */
-        html:not(.dark) body {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) body.bg-slate-50 {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) body.min-h-screen {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .min-h-screen {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .min-h-screen.relative {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .min-h-screen.relative.overflow-hidden {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .bg-slate-50 {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .bg-white {
-            background-color: #FDF2F8 !important; /* pink-50 */
-        }
-        
-        html:not(.dark) .bg-slate-800\/50 {
-            background-color: rgba(253, 242, 248, 0.5) !important; /* pink-50 con opacidad */
-        }
-        
-        /* Forzar fondo rosa en todos los contenedores principales */
-        html:not(.dark) #html-root {
-            background-color: #FDF2F8 !important;
-        }
-        
-        html:not(.dark) html {
-            background-color: #FDF2F8 !important;
-        }
-    </style>
 </body>
 </html>
 

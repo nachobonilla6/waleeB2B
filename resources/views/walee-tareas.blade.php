@@ -65,6 +65,60 @@
         ::-webkit-scrollbar-thumb { background: rgba(147, 51, 234, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(147, 51, 234, 0.5); }
         
+        /* Mejorar visibilidad de iconos en light mode - hacerlos más coloridos */
+        html:not(.dark) .text-slate-400 {
+            color: #6366f1 !important; /* indigo-500 - más visible y colorido */
+        }
+        
+        html:not(.dark) .text-slate-500 {
+            color: #6366f1 !important; /* indigo-500 */
+        }
+        
+        html:not(.dark) .text-slate-600 {
+            color: #4f46e5 !important; /* indigo-600 - más oscuro y visible */
+        }
+        
+        html:not(.dark) .text-slate-300 {
+            color: #818cf8 !important; /* indigo-400 - más visible */
+        }
+        
+        /* Iconos de editar - azul */
+        html:not(.dark) svg[class*="hover:text-blue-500"] {
+            color: #3b82f6 !important; /* blue-500 */
+        }
+        
+        html:not(.dark) svg[class*="hover:text-blue-500"]:hover {
+            color: #2563eb !important; /* blue-600 */
+        }
+        
+        /* Iconos de eliminar - rojo */
+        html:not(.dark) svg[class*="hover:text-red-500"] {
+            color: #ef4444 !important; /* red-500 */
+        }
+        
+        html:not(.dark) svg[class*="hover:text-red-500"]:hover {
+            color: #dc2626 !important; /* red-600 */
+        }
+        
+        /* Iconos de favorito - amarillo más vibrante */
+        html:not(.dark) svg[class*="text-yellow-500"] {
+            color: #f59e0b !important; /* amber-500 - más vibrante */
+        }
+        
+        /* Iconos de búsqueda y ordenamiento - púrpura */
+        html:not(.dark) svg[class*="text-slate-600"][class*="absolute"] {
+            color: #8b5cf6 !important; /* violet-500 */
+        }
+        
+        /* Botones de acción - más coloridos */
+        html:not(.dark) button svg.text-slate-400 {
+            color: #6366f1 !important; /* indigo-500 */
+        }
+        
+        html:not(.dark) button:hover svg.text-slate-400 {
+            color: #4f46e5 !important; /* indigo-600 */
+        }
+        
         /* Estilos rosa para light mode */
         html:not(.dark) .bg-purple-500,
         html:not(.dark) .bg-purple-600 {
@@ -224,10 +278,10 @@
                             <!-- Ordenamiento Dropdown -->
                             <div class="relative">
                                 <button onclick="toggleOrdenDropdown()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center gap-1">
-                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-violet-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
                                     </svg>
-                                    <span class="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">Ordenar</span>
+                                    <span class="text-xs text-violet-600 dark:text-slate-400 hidden sm:inline">Ordenar</span>
                                 </button>
                                 <div id="ordenDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg z-50">
                                     @php
@@ -260,7 +314,7 @@
                                 class="w-full px-4 py-2.5 pl-11 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
                                 onkeyup="filterTareas()"
                             >
-                            <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-violet-500 dark:text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
@@ -311,17 +365,17 @@
                                 <!-- Actions -->
                                 <div class="flex items-center gap-2 flex-shrink-0">
                                     <button onclick="editarTarea({{ $tarea->id }}, '{{ addslashes($tarea->texto) }}', {{ $tarea->lista_id ? $tarea->lista_id : 'null' }}, '{{ $tarea->tipo ? addslashes($tarea->tipo) : '' }}')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar tarea">
-                                        <svg class="w-4 h-4 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-blue-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
                                     </button>
                                     <button onclick="eliminarTarea({{ $tarea->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Eliminar tarea">
-                                        <svg class="w-4 h-4 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-red-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
                                     </button>
                                     <button onclick="toggleFavorito({{ $tarea->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Marcar como favorito">
-                                        <svg class="w-4 h-4 {{ $tarea->favorito ? 'text-yellow-500 fill-yellow-500' : 'text-slate-400' }}" fill="{{ $tarea->favorito ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 {{ $tarea->favorito ? 'text-amber-500 fill-amber-500' : 'text-amber-400 dark:text-slate-400' }}" fill="{{ $tarea->favorito ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                         </svg>
                                     </button>
@@ -373,17 +427,17 @@
                                 </div>
                                 <div class="flex items-center gap-2 flex-shrink-0">
                                     <button onclick="editarTarea({{ $tarea->id }}, '{{ addslashes($tarea->texto) }}', {{ $tarea->lista_id ? $tarea->lista_id : 'null' }}, '{{ $tarea->tipo ? addslashes($tarea->tipo) : '' }}')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar tarea">
-                                        <svg class="w-4 h-4 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-blue-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
                                     </button>
                                     <button onclick="eliminarTarea({{ $tarea->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Eliminar tarea">
-                                        <svg class="w-4 h-4 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-red-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
                                     </button>
                                     <button onclick="toggleFavorito({{ $tarea->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Marcar como favorito">
-                                        <svg class="w-4 h-4 text-yellow-500 fill-yellow-500" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-amber-500 fill-amber-500" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                         </svg>
                                     </button>
@@ -416,12 +470,12 @@
                                 </div>
                                 <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                                     <button onclick="editarLista({{ $lista->id }}, '{{ addslashes($lista->nombre) }}', '{{ addslashes($lista->descripcion ?? '') }}')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar lista">
-                                        <svg class="w-4 h-4 text-slate-400 hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-blue-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
                                     </button>
                                     <button onclick="eliminarLista({{ $lista->id }})" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Eliminar lista">
-                                        <svg class="w-4 h-4 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-red-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
                                     </button>
@@ -444,7 +498,7 @@
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none">
                         <div class="flex items-center gap-3 mb-4">
                             <button onclick="volverAListas()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Volver a listas">
-                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-violet-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
@@ -514,7 +568,7 @@
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Nueva Tarea</h3>
                 <button onclick="closeNuevaTareaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-red-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -575,7 +629,7 @@
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Editar Lista</h3>
                 <button onclick="closeEditarListaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-red-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -619,7 +673,7 @@
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Editar Tarea</h3>
                 <button onclick="closeEditarTareaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-red-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>

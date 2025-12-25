@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Client;
+use App\Models\Cita;
 use App\Models\User;
 use App\Observers\ClientObserver;
+use App\Observers\CitaObserver;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -37,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
         
         // Registrar Observer para el modelo Client
         Client::observe(ClientObserver::class);
+        
+        // Registrar Observer para el modelo Cita
+        Cita::observe(CitaObserver::class);
     }
 
     /**

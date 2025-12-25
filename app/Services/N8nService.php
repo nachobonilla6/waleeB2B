@@ -196,5 +196,38 @@ class N8nService
             return false;
         }
     }
+
+    /**
+     * Envía datos a un webhook de n8n
+     */
+    public function sendWebhook(string $webhookUrl, array $data): bool
+    {
+        try {
+            $response = Http::timeout(30)
+                ->post($webhookUrl, $data);
+
+            if ($response->successful()) {
+                Log::info('Webhook enviado exitosamente', [
+                    'url' => $webhookUrl,
+                ]);
+                return true;
+            }
+
+            Log::error('Error al enviar webhook', [
+                'url' => $webhookUrl,
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return false;
+        } catch (\Exception $e) {
+            Log::error('Excepción al enviar webhook', [
+                'url' => $webhookUrl,
+                'message' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
 }
 

@@ -491,6 +491,88 @@
                 }, 300);
             }, 5000);
         }
+        
+        // Load Logs Function
+        async function loadLogs() {
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = '<div class="text-center py-4 text-slate-500 dark:text-slate-400">Cargando...</div>';
+            
+            try {
+                const response = await fetch('{{ route("walee.configuraciones.logs") }}');
+                const logs = await response.json();
+                
+                if (logs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-slate-500 dark:text-slate-400">
+                            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p>No hay logs disponibles</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = logs.map(log => {
+                    const statusColors = {
+                        'success': 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/30',
+                        'error': 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-300 dark:border-red-500/30',
+                        'pending': 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-300 dark:border-yellow-500/30',
+                    };
+                    
+                    const statusIcons = {
+                        'success': '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+                        'error': '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>',
+                        'pending': '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>',
+                    };
+                    
+                    const date = new Date(log.created_at);
+                    const formattedDate = date.toLocaleString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    });
+                    
+                    return `
+                        <div class="p-4 rounded-xl border ${statusColors[log.status]} transition-all">
+                            <div class="flex items-start justify-between gap-4 mb-2">
+                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                    <div class="flex-shrink-0">
+                                        ${statusIcons[log.status]}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="font-semibold text-sm">${log.action === 'git_pull' ? 'Git Pull' : log.action === 'migrate' ? 'Migrate' : 'Comando Personalizado'}</span>
+                                            <span class="px-2 py-0.5 text-xs rounded-full ${statusColors[log.status]}">${log.status}</span>
+                                        </div>
+                                        <code class="text-xs block truncate">${log.command}</code>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
+                                    ${formattedDate}
+                                </div>
+                            </div>
+                            ${log.user_name ? `<div class="text-xs text-slate-600 dark:text-slate-400 mt-1">Por: ${log.user_name}</div>` : ''}
+                            ${log.error_message ? `<div class="mt-2 text-xs text-red-600 dark:text-red-400">Error: ${log.error_message}</div>` : ''}
+                            ${log.response ? `<div class="mt-2 text-xs text-slate-600 dark:text-slate-400">${log.response}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                container.innerHTML = '<div class="text-center py-4 text-red-500">Error al cargar logs</div>';
+            }
+        }
+        
+        // Load logs on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLogs();
+            
+            // Auto-refresh logs every 10 seconds
+            setInterval(loadLogs, 10000);
+        });
     </script>
     
     @include('partials.walee-support-button')

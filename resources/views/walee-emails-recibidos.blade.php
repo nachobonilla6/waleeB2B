@@ -141,22 +141,24 @@
             @endphp
             @include('partials.walee-navbar')
             
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $totalEmails }}</div>
-                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Total</div>
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                        Emails Recibidos
+                        @if($noLeidos > 0)
+                            <span class="ml-2 px-2.5 py-1 text-sm font-semibold bg-emerald-500 text-white rounded-full">{{ $noLeidos }} sin leer</span>
+                        @endif
+                    </h1>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Bandeja de entrada</p>
                 </div>
-                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $noLeidos }}</div>
-                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Sin leer</div>
-                </div>
-                <div class="bg-walee-50 dark:bg-walee-500/10 border border-walee-200 dark:border-walee-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-walee-600 dark:text-walee-400">{{ $destacados }}</div>
-                    <div class="text-xs text-walee-600/80 dark:text-walee-400/70">Destacados</div>
-                </div>
-            </div>
+                <button onclick="window.open('https://mail.google.com', '_blank')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                    <span class="hidden sm:inline">Ir a Gmail</span>
+                </button>
+            </header>
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

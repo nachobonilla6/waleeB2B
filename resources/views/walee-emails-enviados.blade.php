@@ -108,30 +108,29 @@
             @php $pageTitle = 'Emails Enviados'; @endphp
             @include('partials.walee-navbar')
             
-            <div class="flex items-center justify-end gap-3 mb-8">
-                <a href="{{ route('walee.emails.crear') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    <span class="hidden sm:inline">Nuevo</span>
-                </a>
-            </div>
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $totalEmails }}</div>
-                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Total</div>
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                        Emails Enviados
+                    </h1>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Historial de propuestas y emails enviados</p>
                 </div>
-                <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $emailsEsteMes }}</div>
-                    <div class="text-xs text-violet-600/80 dark:text-violet-400/70">Este mes</div>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('walee.emails.crear') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span class="hidden sm:inline">Nuevo</span>
+                    </a>
+                    <button onclick="window.open('https://mail.google.com', '_blank')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                        <span class="hidden sm:inline">Ir a Gmail</span>
+                    </button>
                 </div>
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $emailsHoy }}</div>
-                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Hoy</div>
-                </div>
-            </div>
+            </header>
             
             <!-- Email List -->
             <div class="space-y-4 animate-fade-in-up">

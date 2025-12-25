@@ -345,30 +345,75 @@ Route::post('/emails/recibidos', function (\Illuminate\Http\Request $request) {
         foreach ($emails as $emailData) {
             // Extraer campos con múltiples posibles nombres
             $messageId = $emailData['message_id'] ?? $emailData['id'] ?? $emailData['messageId'] ?? null;
+            $uid = $emailData['uid'] ?? $emailData['imap_uid'] ?? null;
+            $folder = $emailData['folder'] ?? $emailData['mailbox'] ?? $emailData['box'] ?? 'INBOX';
+            
             $fromEmail = $emailData['from_email'] ?? $emailData['from'] ?? $emailData['sender'] ?? $emailData['remitente'] ?? '';
             $fromName = $emailData['from_name'] ?? $emailData['sender_name'] ?? $emailData['nombre'] ?? null;
+            $replyTo = $emailData['reply_to'] ?? $emailData['replyTo'] ?? null;
+            
+            $toEmail = $emailData['to_email'] ?? $emailData['to'] ?? $emailData['recipient'] ?? null;
+            $toName = $emailData['to_name'] ?? $emailData['recipient_name'] ?? null;
+            $cc = $emailData['cc'] ?? $emailData['CC'] ?? null;
+            $bcc = $emailData['bcc'] ?? $emailData['BCC'] ?? null;
+            
             $subject = $emailData['subject'] ?? $emailData['asunto'] ?? $emailData['titulo'] ?? 'Sin asunto';
             $body = $emailData['body'] ?? $emailData['text'] ?? $emailData['texto'] ?? $emailData['content'] ?? '';
             $bodyHtml = $emailData['body_html'] ?? $emailData['html'] ?? $emailData['contenido_html'] ?? null;
             $attachments = $emailData['attachments'] ?? $emailData['adjuntos'] ?? [];
-            $receivedAt = $emailData['received_at'] ?? $emailData['date'] ?? $emailData['fecha'] ?? now();
+            $headers = $emailData['headers'] ?? null;
             
-            // Verificar si el email ya existe
-            if ($messageId && \App\Models\EmailRecibido::where('message_id', $messageId)->exists()) {
+            $inReplyTo = $emailData['in_reply_to'] ?? $emailData['inReplyTo'] ?? null;
+            $references = $emailData['references'] ?? null;
+            $priority = $emailData['priority'] ?? null;
+            
+            $isRead = $emailData['is_read'] ?? $emailData['isRead'] ?? $emailData['read'] ?? false;
+            $isStarred = $emailData['is_starred'] ?? $emailData['isStarred'] ?? $emailData['starred'] ?? false;
+            $isImportant = $emailData['is_important'] ?? $emailData['isImportant'] ?? false;
+            $hasAttachments = !empty($attachments) || ($emailData['has_attachments'] ?? false);
+            $flags = $emailData['flags'] ?? null;
+            
+            $receivedAt = $emailData['received_at'] ?? $emailData['date'] ?? $emailData['fecha'] ?? now();
+            $sentAt = $emailData['sent_at'] ?? $emailData['sentAt'] ?? null;
+            
+            // Verificar si el email ya existe (por message_id o uid)
+            $exists = false;
+            if ($messageId) {
+                $exists = \App\Models\EmailRecibido::where('message_id', $messageId)->exists();
+            } elseif ($uid && $folder) {
+                $exists = \App\Models\EmailRecibido::where('uid', $uid)->where('folder', $folder)->exists();
+            }
+            
+            if ($exists) {
                 continue;
             }
             
             \App\Models\EmailRecibido::create([
                 'message_id' => $messageId,
+                'uid' => $uid,
+                'folder' => $folder,
                 'from_email' => $fromEmail,
                 'from_name' => $fromName,
+                'reply_to' => $replyTo,
+                'to_email' => $toEmail,
+                'to_name' => $toName,
+                'cc' => $cc,
+                'bcc' => $bcc,
                 'subject' => $subject,
                 'body' => $body,
                 'body_html' => $bodyHtml,
                 'attachments' => is_array($attachments) ? $attachments : [],
-                'is_read' => false,
-                'is_starred' => false,
+                'headers' => is_array($headers) ? $headers : null,
+                'in_reply_to' => $inReplyTo,
+                'references' => $references,
+                'priority' => $priority,
+                'is_read' => $isRead,
+                'is_starred' => $isStarred,
+                'is_important' => $isImportant,
+                'has_attachments' => $hasAttachments,
+                'flags' => is_array($flags) ? $flags : null,
                 'received_at' => $receivedAt,
+                'sent_at' => $sentAt,
             ]);
             
             $count++;

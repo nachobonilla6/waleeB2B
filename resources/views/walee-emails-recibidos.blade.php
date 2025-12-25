@@ -93,6 +93,37 @@
             border: 1px solid #e2e8f0;
         }
         
+        /* Ajustes para mobile - hacer contenido más ancho */
+        @media (max-width: 640px) {
+            #emailModal {
+                padding: 0 !important;
+            }
+            
+            #emailModal > div {
+                border-radius: 0 !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+            }
+            
+            #modalContent {
+                padding: 1rem !important;
+                max-height: calc(100vh - 80px) !important;
+            }
+            
+            .email-html-content {
+                padding: 0 !important;
+            }
+            
+            .email-html-content * {
+                max-width: 100% !important;
+            }
+            
+            .email-html-content img {
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+        
         /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 6px;
@@ -285,7 +316,7 @@
                     </button>
                 </div>
             </div>
-            <div class="p-4 overflow-y-auto max-h-[70vh]" id="modalContent">
+            <div class="p-2 sm:p-4 overflow-y-auto max-h-[calc(100vh-80px)] sm:max-h-[70vh]" id="modalContent">
                 <!-- Modal content will be inserted here -->
             </div>
         </div>
@@ -348,8 +379,8 @@
                             })}
                         </div>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                        <div class="prose prose-slate dark:prose-invert prose-sm max-w-none email-html-content">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-2 sm:p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="prose prose-slate dark:prose-invert prose-sm max-w-none email-html-content" style="padding: 0 !important;">
                             ${email.body_html || email.body.replace(/\n/g, '<br>')}
                         </div>
                     </div>

@@ -116,7 +116,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = 'Clientes'; @endphp
             @include('partials.walee-navbar')
             

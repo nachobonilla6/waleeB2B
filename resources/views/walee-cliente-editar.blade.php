@@ -45,7 +45,7 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-emerald-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-2xl mx-auto px-4 py-6">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6">
             <!-- Header -->
             <header class="flex items-center justify-between mb-8 animate-fade-in-up">
                 <div class="flex items-center gap-4">

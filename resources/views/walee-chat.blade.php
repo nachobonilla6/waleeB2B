@@ -104,7 +104,7 @@
         
         <!-- Header -->
         <header class="relative flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800 px-4 py-3 safe-area-inset-top">
-            <div class="max-w-7xl mx-auto">
+            <div class="max-w-[90rem] mx-auto">
                 @php $pageTitle = 'Chat'; @endphp
                 @include('partials.walee-navbar')
                 
@@ -187,7 +187,7 @@
         
         <!-- Input Area -->
         <footer class="relative flex-shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-4 safe-area-inset-bottom">
-            <div class="max-w-7xl mx-auto">
+            <div class="max-w-[90rem] mx-auto">
                 <form id="chat-form" class="flex items-end gap-3">
                     <div class="flex-1 relative">
                         <textarea

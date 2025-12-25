@@ -73,7 +73,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <!-- Header -->
             <header class="flex items-center justify-between mb-8 animate-fade-in-up">
                 <div class="flex items-center gap-4">

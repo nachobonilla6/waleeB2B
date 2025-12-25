@@ -156,7 +156,15 @@
         html.dark body,
         html.dark body.bg-slate-50,
         .dark body,
-        .dark body.bg-slate-50 {
+        .dark body.bg-slate-50,
+        html.dark #html-root,
+        .dark #html-root {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        /* Forzar fondo oscuro en todos los niveles */
+        html.dark .min-h-screen.relative.overflow-hidden,
+        .dark .min-h-screen.relative.overflow-hidden {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
         

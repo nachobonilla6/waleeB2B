@@ -9,10 +9,14 @@
                 Walee
             </h1>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
+                @php
+                    $dayName = now()->locale('es')->dayName;
+                    $date = now()->format('d M, Y');
+                @endphp
                 @if(isset($pageTitle))
-                    {{ $pageTitle }}
+                    {{ $pageTitle }} · {{ ucfirst($dayName) }}, {{ $date }}
                 @else
-                    Dashboard · {{ now()->format('d M, Y') }}
+                    Dashboard · {{ ucfirst($dayName) }}, {{ $date }}
                 @endif
             </p>
         </div>

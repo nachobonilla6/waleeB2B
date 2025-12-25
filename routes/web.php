@@ -1186,12 +1186,50 @@ Route::post('/walee-emails/recibidos/{id}/star', function ($id) {
 })->middleware(['auth'])->name('walee.emails.recibidos.star');
 
 Route::post('/walee-emails/recibidos/sync', function () {
-    // Esta ruta puede conectarse a Gmail API o recibir emails desde un webhook de n8n
-    // Por ahora retorna un mensaje informativo
-    return response()->json([
-        'success' => true,
-        'message' => 'Configurar webhook en n8n para recibir emails automáticamente',
-    ]);
+    try {
+        // Webhook de n8n para sincronizar emails desde Gmail
+        // Este webhook debe estar configurado en n8n para obtener emails y enviarlos a /api/emails/recibidos
+        $webhookUrl = env('N8N_EMAIL_SYNC_WEBHOOK_URL', 'https://n8n.srv1137974.hstgr.cloud/webhook/email-sync');
+        
+        $n8nService = app(\App\Services\N8nService::class);
+        
+        // Enviar petición a n8n para sincronizar emails
+        $response = \Illuminate\Support\Facades\Http::timeout(60)
+            ->post($webhookUrl, [
+                'action' => 'sync',
+                'timestamp' => now()->toIso8601String(),
+                'user_id' => auth()->id(),
+            ]);
+        
+        if ($response->successful()) {
+            $responseData = $response->json();
+            
+            return response()->json([
+                'success' => true,
+                'message' => $responseData['message'] ?? 'Sincronización iniciada correctamente. Los emails se actualizarán en breve.',
+                'count' => $responseData['count'] ?? 0,
+            ]);
+        } else {
+            \Log::error('Error al sincronizar emails desde n8n', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al conectar con el servicio de sincronización. Verifica la configuración del webhook.',
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        \Log::error('Excepción al sincronizar emails: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al sincronizar: ' . $e->getMessage(),
+        ], 500);
+    }
 })->middleware(['auth'])->name('walee.emails.recibidos.sync');
 
 // Ruta para Facturas & Cotizaciones

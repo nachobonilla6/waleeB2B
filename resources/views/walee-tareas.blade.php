@@ -848,24 +848,31 @@
             e.preventDefault();
             
             const listaId = document.getElementById('editar-lista-id').value;
-            const formData = new FormData(e.target);
+            const nombre = document.getElementById('editar-lista-nombre').value;
+            const descripcion = document.getElementById('editar-lista-descripcion').value;
+            
+            const data = {
+                nombre: nombre,
+                descripcion: descripcion || null,
+            };
             
             try {
                 const response = await fetch(`/listas/${listaId}`, {
                     method: 'PUT',
                     headers: {
+                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: formData
+                    body: JSON.stringify(data)
                 });
                 
-                const data = await response.json();
+                const result = await response.json();
                 
-                if (data.success) {
+                if (result.success) {
                     closeEditarListaModal();
                     location.reload();
                 } else {
-                    alert('Error: ' + (data.message || 'Error al actualizar'));
+                    alert('Error: ' + (result.message || 'Error al actualizar'));
                 }
             } catch (error) {
                 alert('Error de conexión: ' + error.message);

@@ -1654,8 +1654,27 @@ Route::post('/listas', function (\Illuminate\Http\Request $request) {
 Route::put('/listas/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $lista = \App\Models\Lista::findOrFail($id);
-        $lista->nombre = $request->input('nombre');
-        $lista->descripcion = $request->input('descripcion');
+        
+        // Obtener datos del request (puede venir como JSON o FormData)
+        $nombre = $request->input('nombre');
+        $descripcion = $request->input('descripcion');
+        
+        // Si viene como JSON, leer del body
+        if (empty($nombre) && $request->isJson()) {
+            $jsonData = $request->json()->all();
+            $nombre = $jsonData['nombre'] ?? null;
+            $descripcion = $jsonData['descripcion'] ?? null;
+        }
+        
+        if (empty($nombre)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El nombre de la lista es requerido',
+            ], 400);
+        }
+        
+        $lista->nombre = $nombre;
+        $lista->descripcion = $descripcion;
         $lista->save();
         
         return response()->json([

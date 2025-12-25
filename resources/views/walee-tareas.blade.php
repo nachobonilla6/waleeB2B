@@ -249,9 +249,16 @@
                                     <p class="text-sm font-medium text-slate-900 dark:text-white {{ $tarea->estado === 'completado' ? 'line-through opacity-60' : '' }}">
                                         {{ $tarea->texto }}
                                     </p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                        {{ $tarea->created_at->locale('es')->translatedFormat('D, d M, g:i a') }}
-                                    </p>
+                                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                        @if($tarea->lista)
+                                            <span class="text-xs text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 px-2 py-0.5 rounded-full font-medium">
+                                                {{ $tarea->lista->nombre }}
+                                            </span>
+                                        @endif
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                                            {{ $tarea->created_at->locale('es')->translatedFormat('D, d M, g:i a') }}
+                                        </p>
+                                    </div>
                                 </div>
                                 
                                 <!-- Actions -->
@@ -306,9 +313,16 @@
                                     <p class="text-sm font-medium text-slate-900 dark:text-white {{ $tarea->estado === 'completado' ? 'line-through opacity-60' : '' }}">
                                         {{ $tarea->texto }}
                                     </p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                        {{ $tarea->created_at->locale('es')->translatedFormat('D, d M, g:i a') }}
-                                    </p>
+                                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                        @if($tarea->lista)
+                                            <span class="text-xs text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 px-2 py-0.5 rounded-full font-medium">
+                                                {{ $tarea->lista->nombre }}
+                                            </span>
+                                        @endif
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                                            {{ $tarea->created_at->locale('es')->translatedFormat('D, d M, g:i a') }}
+                                        </p>
+                                    </div>
                                 </div>
                                 <div class="flex items-center gap-2 flex-shrink-0">
                                     <button onclick="editarTarea({{ $tarea->id }}, '{{ addslashes($tarea->texto) }}', {{ $tarea->lista_id ? $tarea->lista_id : 'null' }}, '{{ $tarea->tipo ? addslashes($tarea->tipo) : '' }}')" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" title="Editar tarea">

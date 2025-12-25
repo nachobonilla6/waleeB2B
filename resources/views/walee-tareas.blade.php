@@ -646,6 +646,12 @@
                 btn.classList.add('text-slate-600', 'dark:text-slate-400');
             });
             
+            // Si se cambia al tab de listas, asegurar que se muestre la vista de listas
+            if (tabName === 'listas') {
+                document.getElementById('vista-listas').classList.remove('hidden');
+                document.getElementById('vista-tareas-lista').classList.add('hidden');
+            }
+            
             // Show selected content
             document.getElementById(`content-${tabName}`).classList.remove('hidden');
             

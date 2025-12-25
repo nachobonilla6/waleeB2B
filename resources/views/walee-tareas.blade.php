@@ -151,26 +151,43 @@
             color: rgb(51, 65, 85) !important;
         }
         
-        /* Asegurar que dark mode funcione correctamente */
-        .dark .bg-white,
-        .dark .bg-white\/50 {
-            background-color: rgb(30, 41, 59) !important; /* slate-800 */
-        }
-        
-        .dark .bg-slate-50,
+        /* Asegurar que dark mode funcione correctamente - FORZAR FONDOS OSCUROS */
+        html.dark,
+        html.dark body,
+        html.dark body.bg-slate-50,
+        .dark body,
         .dark body.bg-slate-50 {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
         
-        .dark .bg-slate-100 {
+        .dark .bg-white,
+        .dark .bg-white\/50,
+        html.dark .bg-white,
+        html.dark .bg-white\/50 {
+            background-color: rgb(30, 41, 59) !important; /* slate-800 */
+        }
+        
+        .dark .bg-slate-50,
+        .dark body.bg-slate-50,
+        html.dark .bg-slate-50,
+        html.dark body.bg-slate-50 {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        .dark .bg-slate-100,
+        html.dark .bg-slate-100 {
             background-color: rgb(51, 65, 85) !important; /* slate-700 */
         }
         
-        .dark .bg-slate-200 {
+        .dark .bg-slate-200,
+        html.dark .bg-slate-200 {
             background-color: rgb(71, 85, 105) !important; /* slate-600 */
         }
         
-        .dark .min-h-screen {
+        .dark .min-h-screen,
+        html.dark .min-h-screen,
+        .dark body.min-h-screen,
+        html.dark body.min-h-screen {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
         
@@ -201,15 +218,21 @@
         }
         
         /* Asegurar que los contenedores principales sean oscuros */
-        .dark .relative.max-w-\[90rem\] {
+        .dark .relative.max-w-\[90rem\],
+        html.dark .relative.max-w-\[90rem\] {
             background-color: transparent !important;
         }
         
-        .dark .min-h-screen.relative {
+        .dark .min-h-screen.relative,
+        html.dark .min-h-screen.relative,
+        .dark .min-h-screen.relative.overflow-hidden,
+        html.dark .min-h-screen.relative.overflow-hidden {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
         
-        .dark .min-h-screen.relative.overflow-hidden {
+        /* Forzar fondo oscuro en el contenedor principal */
+        html.dark .min-h-screen.relative.overflow-hidden > div,
+        .dark .min-h-screen.relative.overflow-hidden > div {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
         

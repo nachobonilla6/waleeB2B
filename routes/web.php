@@ -562,7 +562,7 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
                     'imagen' => $imagenUrl,
                     
                     // Datos para el email
-                    'email_to' => $ticket->email,
+                    'email_to' => 'whensolresolve@gmail.com',
                     'email_subject' => "[SUPPORT] Ticket Recibido: {$ticket->asunto}",
                     'email_body' => "Hola {$nombre},\n\nRecibimos su ticket con el asunto: \"{$ticket->asunto}\"\n\nLe avisaremos cuando esté resuelto.\n\nSaludos,\nWeb Solutions",
                     'email_from' => 'websolutionscrnow@gmail.com',
@@ -617,7 +617,7 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
                     'imagen' => $imagenUrl,
                     
                     // Datos para el email
-                    'email_to' => $ticket->email,
+                    'email_to' => 'whensolresolve@gmail.com',
                     'email_subject' => "[SUPPORT] Ticket Resuelto: {$ticket->asunto}",
                     'email_body' => "Hola {$nombre},\n\nSu ticket con el asunto: \"{$ticket->asunto}\" ha sido resuelto.\n\nGracias por contactarnos.\n\nSaludos,\nWeb Solutions",
                     'email_from' => 'websolutionscrnow@gmail.com',

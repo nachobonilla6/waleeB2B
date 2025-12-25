@@ -256,8 +256,8 @@
     </div>
     
     <!-- Email Detail Modal -->
-    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-xl">
+    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 dark:border-slate-700 max-w-5xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white truncate pr-4" id="modalSubject">Email</h3>
                 <div class="flex items-center gap-2">

@@ -95,7 +95,7 @@ Para que los emails lleguen automáticamente a una carpeta separada en Gmail, si
 5. Opcionalmente, puedes crear una etiqueta anidada como "SUPPORT/Tickets Resueltos"
 6. Haz clic en **"Crear"**
 
-### Paso 2: Crear un Filtro en Gmail
+### Paso 2: Crear un Filtro en Gmail (IMPORTANTE - Para que NO caiga en Primary)
 
 1. En Gmail, haz clic en el **icono de búsqueda avanzada** (el ícono de filtro al lado de la barra de búsqueda)
 2. O ve a **Configuración** → **Filtros y direcciones bloqueadas** → **"Crear un nuevo filtro"**
@@ -116,13 +116,18 @@ Para que los emails lleguen automáticamente a una carpeta separada en Gmail, si
 
 4. Haz clic en **"Crear filtro"**
 
-5. **Marca las siguientes opciones**:
+5. **Marca las siguientes opciones (CRÍTICO para que no caiga en Primary)**:
    - ✅ **"Aplicar la etiqueta"** → Selecciona **"SUPPORT"**
+   - ✅ **"Archivar también"** ← **ESTO ES CRÍTICO**: Esto hace que el email NO aparezca en Primary
    - ✅ **"Marcar como importante"** (opcional)
    - ✅ **"Nunca enviarlo a Spam"** (opcional)
-   - ✅ **"Archivar también"** (opcional, si quieres que no aparezca en la bandeja de entrada)
 
 6. Haz clic en **"Crear filtro"**
+
+**⚠️ IMPORTANTE**: La opción **"Archivar también"** es esencial porque:
+- Los emails archivados NO aparecen en la pestaña "Primary"
+- Solo aparecerán cuando hagas clic en la etiqueta "SUPPORT"
+- Esto es exactamente lo que necesitas para que no caigan en Primary
 
 ### Paso 3: Verificar que Funciona
 
@@ -138,17 +143,57 @@ Para que los emails lleguen automáticamente a una carpeta separada en Gmail, si
 2. Si no la ves, haz clic en **"Más"** para expandir las etiquetas
 3. Haz clic en **"SUPPORT"** para ver todos los emails con esa etiqueta
 
-## 🔄 Alternativa: Usar n8n para Aplicar la Etiqueta
+## 🔄 Configuración en n8n para que NO caiga en Primary
 
-Si prefieres que n8n aplique la etiqueta directamente (sin filtro de Gmail):
+Para que los emails NO caigan en la pestaña "Primary" y vayan directamente a "Support", configura n8n así:
 
-1. **En el nodo Gmail de n8n**, configura:
+### Opción 1: Usar el campo `archive` (Recomendado)
+
+1. **En el nodo Gmail (Send Email)** de n8n:
+   - Ve a **"Additional Fields"** o **"Options"**
+   - Busca el campo **"Archive"** o **"Skip Inbox"**
+   - Actívalo o usa: `{{ $json.archive }}` (que será `true`)
    - **Labels**: `{{ $json.labels }}` o `{{ $json.label }}`
-   - **Label IDs**: `{{ $json.labelIds }}` (si conoces el ID de la etiqueta)
 
-2. **Asegúrate de que la etiqueta "SUPPORT" exista** en Gmail antes de ejecutar el workflow
+2. Esto hará que el email:
+   - Se envíe directamente archivado
+   - NO aparezca en Primary
+   - Solo sea visible en la etiqueta "SUPPORT"
 
-3. **Prueba el workflow** y verifica que la etiqueta se aplique correctamente
+### Opción 2: Usar un nodo Code para configurar
+
+1. **Agrega un nodo "Code"** antes del nodo Gmail:
+   ```javascript
+   const items = $input.all();
+   return items.map(item => {
+     return {
+       json: {
+         ...item.json,
+         // Archivar el email (no aparecerá en Primary)
+         archive: true,
+         skipInbox: true,
+         // Aplicar etiqueta
+         labels: item.json.labels || [item.json.label || 'SUPPORT'],
+         labelIds: item.json.labelIds || [item.json.label || 'SUPPORT']
+       }
+     };
+   });
+   ```
+
+2. **En el nodo Gmail**, configura:
+   - **Archive**: `{{ $json.archive }}`
+   - **Labels**: `{{ $json.labels }}`
+
+### Opción 3: Combinar con Filtro de Gmail (Más Confiable)
+
+La mejor solución es **combinar ambas**:
+1. **Configura n8n** para aplicar la etiqueta (como en Opción 1 o 2)
+2. **Crea el filtro en Gmail** con "Archivar también" (como en Paso 2)
+
+Esto garantiza que el email:
+- ✅ Se archive automáticamente
+- ✅ NO aparezca en Primary
+- ✅ Solo sea visible en la etiqueta "SUPPORT"
 
 ## 📝 Notas Importantes
 

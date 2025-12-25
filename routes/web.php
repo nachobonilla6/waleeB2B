@@ -611,6 +611,17 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
                     'labelIds' => ['SUPPORT'],
                     'gmail_labels' => ['SUPPORT'],
                     'addLabel' => 'SUPPORT',
+                    // Configuración para que no caiga en Primary
+                    'skip_inbox' => true,
+                    'archive' => true,
+                    'gmail_category' => 'SUPPORT',
+                    'category' => 'SUPPORT',
+                    // Headers personalizados para Gmail
+                    'headers' => [
+                        'X-Gmail-Label' => 'SUPPORT',
+                        'X-Auto-Response-Suppress' => 'All',
+                        'List-Unsubscribe' => '<mailto:websolutionscrnow@gmail.com>',
+                    ],
                 ]
             );
         }

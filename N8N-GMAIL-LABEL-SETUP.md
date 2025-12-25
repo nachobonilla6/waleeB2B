@@ -1,7 +1,9 @@
-# Configuración de Etiqueta SUPPORT en n8n para Tickets Resueltos
+# Configuración de Etiqueta SUPPORT y Carpeta Separada en Gmail
 
 ## 📋 Problema
-Cuando se envía un ticket resuelto al cliente, el email debe tener la etiqueta "SUPPORT" en Gmail.
+Cuando se envía un ticket resuelto al cliente, el email debe:
+1. Tener la etiqueta "SUPPORT" en Gmail
+2. Llegar a una carpeta separada (etiqueta) en Gmail
 
 ## 🔧 Solución en Laravel
 Laravel ya está enviando los siguientes campos en el webhook:
@@ -80,8 +82,95 @@ Gmail puede requerir el **ID de la etiqueta** en lugar del nombre. Si la etiquet
 - Asegúrate de tener permisos para crear/aplicar etiquetas
 - Verifica que el formato del campo `labels` sea correcto (array o string según lo que requiera n8n)
 
+## 📁 Configurar Carpeta Separada en Gmail
+
+Para que los emails lleguen automáticamente a una carpeta separada en Gmail, sigue estos pasos:
+
+### Paso 1: Crear la Etiqueta "SUPPORT" en Gmail
+
+1. Ve a **Gmail** → **Configuración** (⚙️) → **Ver todas las configuraciones**
+2. Ve a la pestaña **"Etiquetas"**
+3. Haz clic en **"Crear nueva etiqueta"**
+4. Nómbrala: **"SUPPORT"**
+5. Opcionalmente, puedes crear una etiqueta anidada como "SUPPORT/Tickets Resueltos"
+6. Haz clic en **"Crear"**
+
+### Paso 2: Crear un Filtro en Gmail
+
+1. En Gmail, haz clic en el **icono de búsqueda avanzada** (el ícono de filtro al lado de la barra de búsqueda)
+2. O ve a **Configuración** → **Filtros y direcciones bloqueadas** → **"Crear un nuevo filtro"**
+
+3. **Configura el filtro** con una de estas opciones:
+
+   **Opción A: Por asunto (Recomendado)**
+   - En **"Tiene las palabras"**, escribe: `[SUPPORT]`
+   - O en **"Asunto"**, escribe: `[SUPPORT]`
+
+   **Opción B: Por remitente**
+   - En **"De"**, escribe: `websolutionscrnow@gmail.com`
+   - Y en **"Tiene las palabras"**, escribe: `Ticket Resuelto`
+
+   **Opción C: Combinado (Más preciso)**
+   - **"De"**: `websolutionscrnow@gmail.com`
+   - **"Asunto"**: `[SUPPORT]`
+
+4. Haz clic en **"Crear filtro"**
+
+5. **Marca las siguientes opciones**:
+   - ✅ **"Aplicar la etiqueta"** → Selecciona **"SUPPORT"**
+   - ✅ **"Marcar como importante"** (opcional)
+   - ✅ **"Nunca enviarlo a Spam"** (opcional)
+   - ✅ **"Archivar también"** (opcional, si quieres que no aparezca en la bandeja de entrada)
+
+6. Haz clic en **"Crear filtro"**
+
+### Paso 3: Verificar que Funciona
+
+1. **Marca un ticket como "resuelto"** en la aplicación
+2. **Revisa tu Gmail**:
+   - El email debe tener la etiqueta "SUPPORT"
+   - Si configuraste "Archivar también", no aparecerá en la bandeja de entrada
+   - Puedes verlo haciendo clic en la etiqueta "SUPPORT" en el menú lateral de Gmail
+
+### Paso 4: Ver la Carpeta/Etiqueta en Gmail
+
+1. En el menú lateral izquierdo de Gmail, busca **"SUPPORT"**
+2. Si no la ves, haz clic en **"Más"** para expandir las etiquetas
+3. Haz clic en **"SUPPORT"** para ver todos los emails con esa etiqueta
+
+## 🔄 Alternativa: Usar n8n para Aplicar la Etiqueta
+
+Si prefieres que n8n aplique la etiqueta directamente (sin filtro de Gmail):
+
+1. **En el nodo Gmail de n8n**, configura:
+   - **Labels**: `{{ $json.labels }}` o `{{ $json.label }}`
+   - **Label IDs**: `{{ $json.labelIds }}` (si conoces el ID de la etiqueta)
+
+2. **Asegúrate de que la etiqueta "SUPPORT" exista** en Gmail antes de ejecutar el workflow
+
+3. **Prueba el workflow** y verifica que la etiqueta se aplique correctamente
+
+## 📝 Notas Importantes
+
+- **Los emails enviados desde n8n** aparecerán en "Enviados" con la etiqueta aplicada
+- **Los emails recibidos** (respuestas de clientes) NO tendrán automáticamente la etiqueta a menos que:
+  - Configure un filtro adicional para emails que contengan "[SUPPORT]" en el asunto
+  - O uses un sistema de seguimiento de hilos de conversación
+
+- **Para organizar mejor**, puedes crear sub-etiquetas:
+  - `SUPPORT/Tickets Resueltos`
+  - `SUPPORT/Respuestas Clientes`
+  - etc.
+
+## 🎯 Resumen de Configuración
+
+1. ✅ **Laravel** envía el webhook con `[SUPPORT]` en el asunto y campos de etiqueta
+2. ✅ **n8n** aplica la etiqueta "SUPPORT" al email (si está configurado)
+3. ✅ **Gmail** filtra automáticamente los emails con `[SUPPORT]` y los mueve a la carpeta/etiqueta "SUPPORT"
+
 ## 📚 Referencias
 
 - [n8n Gmail Node Documentation](https://docs.n8n.io/integrations/builtin/app-nodes/n8n-nodes-base.gmail/)
 - [Gmail API Labels](https://developers.google.com/gmail/api/guides/labels)
+- [Cómo crear filtros en Gmail](https://support.google.com/mail/answer/6579)
 

@@ -35,6 +35,11 @@
                         purple: {
                             500: '#9333EA',
                             600: '#7C3AED',
+                        },
+                        pink: {
+                            400: '#F472B6',
+                            500: '#EC4899',
+                            600: '#DB2777',
                         }
                     }
                 }
@@ -59,6 +64,53 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(147, 51, 234, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(147, 51, 234, 0.5); }
+        
+        /* Estilos rosa para light mode */
+        html:not(.dark) .bg-purple-500,
+        html:not(.dark) .bg-purple-600 {
+            background-color: #EC4899 !important; /* pink-500 */
+        }
+        
+        html:not(.dark) .bg-purple-400\/20,
+        html:not(.dark) .bg-purple-400\/10,
+        html:not(.dark) .bg-purple-400\/5 {
+            background-color: rgba(244, 114, 182, 0.2) !important; /* pink-400 con opacidad */
+        }
+        
+        html:not(.dark) .text-purple-600,
+        html:not(.dark) .text-purple-400 {
+            color: #EC4899 !important; /* pink-500 */
+        }
+        
+        html:not(.dark) .bg-purple-50,
+        html:not(.dark) .bg-purple-500\/10 {
+            background-color: #FDF2F8 !important; /* pink-50 */
+        }
+        
+        html:not(.dark) .border-purple-500,
+        html:not(.dark) .hover\:border-purple-500:hover {
+            border-color: #EC4899 !important; /* pink-500 */
+        }
+        
+        html:not(.dark) .focus\:border-purple-500:focus {
+            border-color: #EC4899 !important; /* pink-500 */
+        }
+        
+        html:not(.dark) .focus\:ring-purple-500\/20:focus {
+            --tw-ring-color: rgba(236, 72, 153, 0.2) !important; /* pink-500 con opacidad */
+        }
+        
+        html:not(.dark) .hover\:bg-purple-600:hover {
+            background-color: #DB2777 !important; /* pink-600 */
+        }
+        
+        html:not(.dark) ::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.3) !important; /* pink-500 */
+        }
+        
+        html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+            background: rgba(236, 72, 153, 0.5) !important; /* pink-500 */
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">

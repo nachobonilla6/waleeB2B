@@ -70,9 +70,16 @@
         // Obtener todas las tareas de todas las listas para "Mis tareas"
         // Separar pendientes y completadas, ordenar según el parámetro
         $orden = request()->get('orden', 'nuevas-primero'); // Por defecto: nuevas primero
+        $listaFiltro = request()->get('lista'); // Filtro por lista
         
         $queryPendientes = \App\Models\Tarea::with('lista')->where('estado', 'pending');
         $queryCompletadas = \App\Models\Tarea::with('lista')->where('estado', 'completado');
+        
+        // Aplicar filtro por lista si está seleccionado
+        if ($listaFiltro) {
+            $queryPendientes->where('lista_id', $listaFiltro);
+            $queryCompletadas->where('lista_id', $listaFiltro);
+        }
         
         // Aplicar ordenamiento según la opción seleccionada
         switch($orden) {
@@ -148,7 +155,24 @@
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm dark:shadow-none">
                     <!-- Section Header -->
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Mis tareas</h2>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Mis tareas</h2>
+                            <!-- Filtro por Lista -->
+                            <div class="relative">
+                                <select 
+                                    id="filtro-lista" 
+                                    onchange="filtrarPorLista()"
+                                    class="px-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                                >
+                                    <option value="">Todas las listas</option>
+                                    @foreach($listas as $lista)
+                                        <option value="{{ $lista->id }}" {{ request('lista') == $lista->id ? 'selected' : '' }}>
+                                            {{ $lista->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-2">
                             <!-- Ordenamiento Dropdown -->
                             <div class="relative">
@@ -159,16 +183,19 @@
                                     <span class="text-xs text-slate-600 dark:text-slate-400 hidden sm:inline">Ordenar</span>
                                 </button>
                                 <div id="ordenDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg z-50">
-                                    <a href="?orden=nuevas-primero" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden', 'nuevas-primero') === 'nuevas-primero' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                    @php
+                                        $listaParam = request('lista') ? '&lista=' . request('lista') : '';
+                                    @endphp
+                                    <a href="?orden=nuevas-primero{{ $listaParam }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden', 'nuevas-primero') === 'nuevas-primero' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
                                         Más nuevas primero
                                     </a>
-                                    <a href="?orden=antiguas-primero" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'antiguas-primero' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                    <a href="?orden=antiguas-primero{{ $listaParam }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'antiguas-primero' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
                                         Más antiguas primero
                                     </a>
-                                    <a href="?orden=alfabetico" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'alfabetico' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                    <a href="?orden=alfabetico{{ $listaParam }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'alfabetico' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
                                         Alfabético (A-Z)
                                     </a>
-                                    <a href="?orden=tipo" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'tipo' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
+                                    <a href="?orden=tipo{{ $listaParam }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 {{ request('orden') === 'tipo' ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' : '' }}">
                                         Por tipo
                                     </a>
                                 </div>
@@ -878,6 +905,24 @@
                 alert('Error de conexión: ' + error.message);
             }
         });
+        
+        // Filtrar por lista
+        function filtrarPorLista() {
+            const listaId = document.getElementById('filtro-lista').value;
+            const url = new URL(window.location.href);
+            const orden = url.searchParams.get('orden') || 'nuevas-primero';
+            
+            if (listaId) {
+                url.searchParams.set('lista', listaId);
+            } else {
+                url.searchParams.delete('lista');
+            }
+            
+            // Mantener el parámetro de orden
+            url.searchParams.set('orden', orden);
+            
+            window.location.href = url.toString();
+        }
         
         // Filter tareas function
         function filterTareas() {

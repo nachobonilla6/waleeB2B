@@ -152,28 +152,65 @@
         }
         
         /* Asegurar que dark mode funcione correctamente */
-        .dark .bg-white {
+        .dark .bg-white,
+        .dark .bg-white\/50 {
             background-color: rgb(30, 41, 59) !important; /* slate-800 */
         }
         
-        .dark .bg-slate-50 {
+        .dark .bg-slate-50,
+        .dark body.bg-slate-50 {
             background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
         
-        .dark .text-slate-800 {
-            color: rgb(248, 250, 252) !important; /* slate-50 */
+        .dark .bg-slate-100 {
+            background-color: rgb(51, 65, 85) !important; /* slate-700 */
         }
         
+        .dark .bg-slate-200 {
+            background-color: rgb(71, 85, 105) !important; /* slate-600 */
+        }
+        
+        .dark .min-h-screen {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        .dark .text-slate-800,
         .dark .text-slate-900 {
             color: rgb(248, 250, 252) !important; /* slate-50 */
         }
         
-        .dark .border-slate-200 {
+        .dark .text-slate-700 {
+            color: rgb(226, 232, 240) !important; /* slate-200 */
+        }
+        
+        .dark .text-slate-600 {
+            color: rgb(203, 213, 225) !important; /* slate-300 */
+        }
+        
+        .dark .border-slate-200,
+        .dark .border-slate-300 {
             border-color: rgb(51, 65, 85) !important; /* slate-700 */
         }
         
-        .dark .border-slate-300 {
-            border-color: rgb(71, 85, 105) !important; /* slate-600 */
+        .dark .border-slate-700 {
+            border-color: rgb(51, 65, 85) !important; /* slate-700 */
+        }
+        
+        .dark .border-slate-700\/50 {
+            border-color: rgba(51, 65, 85, 0.5) !important;
+        }
+        
+        /* Asegurar que los contenedores principales sean oscuros */
+        .dark .relative.max-w-\[90rem\] {
+            background-color: transparent !important;
+        }
+        
+        .dark .min-h-screen.relative {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
+        }
+        
+        .dark .min-h-screen.relative.overflow-hidden {
+            background-color: rgb(15, 23, 42) !important; /* slate-950 */
         }
     </style>
 </head>

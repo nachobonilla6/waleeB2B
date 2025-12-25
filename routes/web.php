@@ -601,6 +601,8 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
                     'email_body' => "Hola {$nombre},\n\nSu ticket con el asunto: \"{$ticket->asunto}\" ha sido resuelto.\n\nGracias por contactarnos.\n\nSaludos,\nWeb Solutions",
                     'email_from' => 'websolutionscrnow@gmail.com',
                     'email_from_name' => 'Web Solutions',
+                    'email_label' => 'SUPPORT',
+                    'gmail_label' => 'SUPPORT',
                 ]
             );
         }

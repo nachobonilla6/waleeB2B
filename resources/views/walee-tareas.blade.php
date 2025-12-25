@@ -1145,6 +1145,13 @@
             const url = new URL(window.location.href);
             const orden = url.searchParams.get('orden') || 'nuevas-primero';
             
+            // Asegurar que el pathname no tenga doble slash
+            let pathname = url.pathname;
+            if (pathname.startsWith('//')) {
+                pathname = pathname.substring(1);
+            }
+            url.pathname = pathname;
+            
             if (listaId) {
                 url.searchParams.set('lista', listaId);
             } else {
@@ -1154,7 +1161,11 @@
             // Mantener el parámetro de orden
             url.searchParams.set('orden', orden);
             
-            window.location.href = url.toString();
+            // Asegurar que la URL no tenga doble slash
+            let finalUrl = url.toString();
+            finalUrl = finalUrl.replace(/([^:]\/)\/+/g, '$1');
+            
+            window.location.href = finalUrl;
         }
         
         // Navegación en listas

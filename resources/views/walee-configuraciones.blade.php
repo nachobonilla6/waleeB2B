@@ -246,6 +246,29 @@
                 </div>
             </div>
             
+            <!-- Logs Section -->
+            <div class="mt-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Logs de Comandos</h3>
+                        <button onclick="loadLogs()" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-xl transition-all flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            <span>Actualizar</span>
+                        </button>
+                    </div>
+                    <div id="logsContainer" class="space-y-3 max-h-96 overflow-y-auto">
+                        <div class="text-center py-8 text-slate-500 dark:text-slate-400">
+                            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p>Cargando logs...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
                 <p class="text-sm text-slate-600 dark:text-slate-500">

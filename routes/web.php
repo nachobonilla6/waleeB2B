@@ -1241,6 +1241,16 @@ Route::get('/walee-configuraciones', function () {
 Route::post('/walee-configuraciones/git-pull', function (\Illuminate\Http\Request $request, \App\Services\N8nService $n8nService) {
     $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/753549e6-c8ff-4fcd-9b08-bcfe8b82cdc1';
     
+    // Crear log
+    $log = \App\Models\CommandLog::create([
+        'action' => 'git_pull',
+        'command' => 'git pull origin main',
+        'user_id' => auth()->id(),
+        'user_name' => auth()->user()->name ?? 'Usuario',
+        'status' => 'pending',
+        'executed_at' => now(),
+    ]);
+    
     try {
         $payload = [
             'action' => 'git_pull',
@@ -1253,11 +1263,22 @@ Route::post('/walee-configuraciones/git-pull', function (\Illuminate\Http\Reques
         $success = $n8nService->sendWebhook($webhookUrl, $payload);
         
         if ($success) {
+            $log->update([
+                'status' => 'success',
+                'response' => 'Comando enviado exitosamente a n8n',
+            ]);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Comando git pull origin main enviado exitosamente a n8n.',
+                'log_id' => $log->id,
             ]);
         } else {
+            $log->update([
+                'status' => 'error',
+                'error_message' => 'Error al enviar el comando a n8n',
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al enviar el comando a n8n.',
@@ -1265,6 +1286,11 @@ Route::post('/walee-configuraciones/git-pull', function (\Illuminate\Http\Reques
         }
     } catch (\Exception $e) {
         \Illuminate\Support\Facades\Log::error('Error en git pull webhook: ' . $e->getMessage());
+        $log->update([
+            'status' => 'error',
+            'error_message' => $e->getMessage(),
+        ]);
+        
         return response()->json([
             'success' => false,
             'message' => 'Error interno del servidor: ' . $e->getMessage(),
@@ -1275,6 +1301,16 @@ Route::post('/walee-configuraciones/git-pull', function (\Illuminate\Http\Reques
 // Ruta para ejecutar Migrate via webhook
 Route::post('/walee-configuraciones/migrate', function (\Illuminate\Http\Request $request, \App\Services\N8nService $n8nService) {
     $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/753549e6-c8ff-4fcd-9b08-bcfe8b82cdc1';
+    
+    // Crear log
+    $log = \App\Models\CommandLog::create([
+        'action' => 'migrate',
+        'command' => 'php artisan migrate',
+        'user_id' => auth()->id(),
+        'user_name' => auth()->user()->name ?? 'Usuario',
+        'status' => 'pending',
+        'executed_at' => now(),
+    ]);
     
     try {
         $payload = [
@@ -1288,11 +1324,22 @@ Route::post('/walee-configuraciones/migrate', function (\Illuminate\Http\Request
         $success = $n8nService->sendWebhook($webhookUrl, $payload);
         
         if ($success) {
+            $log->update([
+                'status' => 'success',
+                'response' => 'Comando enviado exitosamente a n8n',
+            ]);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Comando php artisan migrate enviado exitosamente a n8n.',
+                'log_id' => $log->id,
             ]);
         } else {
+            $log->update([
+                'status' => 'error',
+                'error_message' => 'Error al enviar el comando a n8n',
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al enviar el comando a n8n.',
@@ -1300,6 +1347,11 @@ Route::post('/walee-configuraciones/migrate', function (\Illuminate\Http\Request
         }
     } catch (\Exception $e) {
         \Illuminate\Support\Facades\Log::error('Error en migrate webhook: ' . $e->getMessage());
+        $log->update([
+            'status' => 'error',
+            'error_message' => $e->getMessage(),
+        ]);
+        
         return response()->json([
             'success' => false,
             'message' => 'Error interno del servidor: ' . $e->getMessage(),
@@ -1315,6 +1367,16 @@ Route::post('/walee-configuraciones/custom-command', function (\Illuminate\Http\
         'command' => 'required|string|max:500',
     ]);
     
+    // Crear log
+    $log = \App\Models\CommandLog::create([
+        'action' => 'custom_command',
+        'command' => $request->input('command'),
+        'user_id' => auth()->id(),
+        'user_name' => auth()->user()->name ?? 'Usuario',
+        'status' => 'pending',
+        'executed_at' => now(),
+    ]);
+    
     try {
         $payload = [
             'action' => 'custom_command',
@@ -1327,11 +1389,22 @@ Route::post('/walee-configuraciones/custom-command', function (\Illuminate\Http\
         $success = $n8nService->sendWebhook($webhookUrl, $payload);
         
         if ($success) {
+            $log->update([
+                'status' => 'success',
+                'response' => 'Comando enviado exitosamente a n8n',
+            ]);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Comando personalizado enviado exitosamente a n8n.',
+                'log_id' => $log->id,
             ]);
         } else {
+            $log->update([
+                'status' => 'error',
+                'error_message' => 'Error al enviar el comando a n8n',
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al enviar el comando a n8n.',
@@ -1339,12 +1412,26 @@ Route::post('/walee-configuraciones/custom-command', function (\Illuminate\Http\
         }
     } catch (\Exception $e) {
         \Illuminate\Support\Facades\Log::error('Error en custom command webhook: ' . $e->getMessage());
+        $log->update([
+            'status' => 'error',
+            'error_message' => $e->getMessage(),
+        ]);
+        
         return response()->json([
             'success' => false,
             'message' => 'Error interno del servidor: ' . $e->getMessage(),
         ], 500);
     }
 })->middleware(['auth'])->name('walee.configuraciones.custom-command');
+
+// Ruta para obtener logs de comandos
+Route::get('/walee-configuraciones/logs', function () {
+    $logs = \App\Models\CommandLog::orderBy('created_at', 'desc')
+        ->limit(50)
+        ->get();
+    
+    return response()->json($logs);
+})->middleware(['auth'])->name('walee.configuraciones.logs');
 
 // Ruta para Facturas & Cotizaciones
 Route::get('/walee-facturas', function () {

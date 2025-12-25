@@ -900,7 +900,7 @@
         
         async function toggleTarea(tareaId) {
             try {
-                const response = await fetch(`/tareas/${tareaId}/toggle`, {
+                const response = await fetch(`/walee-tareas/${tareaId}/toggle`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -922,7 +922,7 @@
         
         async function toggleFavorito(tareaId) {
             try {
-                const response = await fetch(`/tareas/${tareaId}/favorito`, {
+                const response = await fetch(`/walee-tareas/${tareaId}/favorito`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -968,7 +968,7 @@
             }
             
             try {
-                const response = await fetch(`/tareas/${tareaId}`, {
+                const response = await fetch(`/walee-tareas/${tareaId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1023,7 +1023,7 @@
             const formData = new FormData(e.target);
             
             try {
-                const response = await fetch('/tareas', {
+                const response = await fetch('/walee-tareas', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -1072,7 +1072,7 @@
             };
             
             try {
-                const response = await fetch(`/tareas/${tareaId}`, {
+                const response = await fetch(`/walee-tareas/${tareaId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

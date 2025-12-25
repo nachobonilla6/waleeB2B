@@ -938,7 +938,7 @@
             if (!id) return;
             
             try {
-                const response = await fetch(`/tareas/${id}`, {
+                const response = await fetch(`/walee-tareas/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -1063,7 +1063,7 @@
             };
             
             const tareaId = document.getElementById('tarea_id').value;
-            const url = tareaId ? `/tareas/${tareaId}` : '/tareas';
+            const url = tareaId ? `/walee-tareas/${tareaId}` : '/walee-tareas';
             const method = tareaId ? 'PUT' : 'POST';
             
             try {

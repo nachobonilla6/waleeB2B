@@ -148,7 +148,7 @@ Route::get('/walee-tickets', function () {
 })->middleware(['auth'])->name('walee.tickets');
 
 // Tareas
-Route::get('/tareas', function () {
+Route::get('/walee-tareas', function () {
     return view('walee-tareas');
 })->middleware(['auth'])->name('walee.tareas');
 
@@ -168,7 +168,7 @@ Route::get('/citas/{id}/detalle', function ($id) {
     return view('walee-cita-detalle', compact('cita', 'meses', 'clientes'));
 })->middleware(['auth'])->name('walee.cita.detalle');
 
-Route::get('/tareas/{id}/detalle', function ($id) {
+Route::get('/walee-tareas/{id}/detalle', function ($id) {
     $tarea = \App\Models\Tarea::with('lista')->findOrFail($id);
     $meses = [
         1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
@@ -1614,7 +1614,7 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
 })->middleware(['auth'])->name('walee.cliente.webhook');
 
 // Rutas para Tareas (POST, PUT, DELETE)
-Route::post('/tareas', function (\Illuminate\Http\Request $request) {
+Route::post('/walee-tareas', function (\Illuminate\Http\Request $request) {
     try {
         $tarea = new \App\Models\Tarea();
         $tarea->lista_id = $request->input('lista_id') ?: null;
@@ -1642,7 +1642,7 @@ Route::post('/tareas', function (\Illuminate\Http\Request $request) {
     }
 })->middleware(['auth'])->name('tareas.store');
 
-Route::put('/tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
+Route::put('/walee-tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $tarea = \App\Models\Tarea::findOrFail($id);
         $tarea->texto = $request->input('texto');
@@ -1669,7 +1669,7 @@ Route::put('/tareas/{id}', function (\Illuminate\Http\Request $request, $id) {
     }
 })->middleware(['auth'])->name('tareas.update');
 
-Route::delete('/tareas/{id}', function ($id) {
+Route::delete('/walee-tareas/{id}', function ($id) {
     try {
         $tarea = \App\Models\Tarea::findOrFail($id);
         $tarea->delete();
@@ -1686,7 +1686,7 @@ Route::delete('/tareas/{id}', function ($id) {
     }
 })->middleware(['auth'])->name('tareas.delete');
 
-Route::post('/tareas/{id}/toggle', function ($id) {
+Route::post('/walee-tareas/{id}/toggle', function ($id) {
     try {
         $tarea = \App\Models\Tarea::findOrFail($id);
         $tarea->estado = $tarea->estado === 'pending' ? 'completado' : 'pending';
@@ -1704,7 +1704,7 @@ Route::post('/tareas/{id}/toggle', function ($id) {
     }
 })->middleware(['auth'])->name('tareas.toggle');
 
-Route::post('/tareas/{id}/favorito', function ($id) {
+Route::post('/walee-tareas/{id}/favorito', function ($id) {
     try {
         $tarea = \App\Models\Tarea::findOrFail($id);
         $tarea->favorito = !$tarea->favorito;

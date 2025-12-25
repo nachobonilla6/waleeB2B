@@ -301,7 +301,7 @@
         
         async function deleteTarea() {
             try {
-                const response = await fetch(`/tareas/${tareaId}`, {
+                const response = await fetch(`/walee-tareas/${tareaId}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
@@ -335,7 +335,7 @@
             };
             
             try {
-                const response = await fetch(`/tareas/${tareaId}`, {
+                const response = await fetch(`/walee-tareas/${tareaId}`, {
                     method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,

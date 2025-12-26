@@ -2263,6 +2263,37 @@
             document.getElementById('notaModal').classList.add('hidden');
         }
         
+        async function editNota(notaId) {
+            try {
+                const response = await fetch(`/notas/${notaId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.nota) {
+                    const nota = data.nota;
+                    document.getElementById('nota_id').value = nota.id;
+                    document.getElementById('nota_content').value = nota.content || '';
+                    document.getElementById('nota_type').value = nota.type || 'note';
+                    document.getElementById('nota_cliente_id').value = nota.cliente_id || '';
+                    document.getElementById('nota_pinned').checked = nota.pinned || false;
+                    document.getElementById('notaModalTitle').textContent = 'Editar Nota';
+                    const deleteBtn = document.getElementById('deleteNotaBtn');
+                    if (deleteBtn) deleteBtn.classList.remove('hidden');
+                    document.getElementById('notaModal').classList.remove('hidden');
+                } else {
+                    alert('Error al cargar la nota');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión');
+            }
+        }
+        
         // Nota form handler
         document.getElementById('nota-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();

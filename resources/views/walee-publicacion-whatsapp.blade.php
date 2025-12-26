@@ -63,16 +63,17 @@
     <meta property="og:locale" content="es_ES">
     
     @if($imageUrl)
-    <!-- Open Graph Image - Debe estar después de og:title y og:description -->
+    <!-- Open Graph Image - WhatsApp requiere estos meta tags en este orden -->
     <meta property="og:image" content="{{ $imageUrl }}">
-    <meta property="og:image:secure_url" content="{{ $imageUrl }}">
     <meta property="og:image:url" content="{{ $imageUrl }}">
+    <meta property="og:image:secure_url" content="{{ $imageUrl }}">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:alt" content="{{ e($publicacion->title) }}">
-    <!-- Meta adicional para compatibilidad -->
+    <!-- Meta adicional para compatibilidad con WhatsApp -->
     <meta name="og:image" content="{{ $imageUrl }}">
+    <meta name="twitter:image" content="{{ $imageUrl }}">
     <link rel="image_src" href="{{ $imageUrl }}">
     @endif
     

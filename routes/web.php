@@ -1915,68 +1915,76 @@ Route::get('/walee-cliente/{id}/settings', function ($id) {
     return view('walee-cliente-settings', compact('cliente'));
 })->middleware(['auth'])->name('walee.cliente.settings');
 
-Route::get('/walee-facebook/clientes', function () {
-    // Estadísticas de publicaciones
-    $totalPublicaciones = \App\Models\Post::count();
-    $publicacionesEsteMes = \App\Models\Post::whereMonth('created_at', now()->month)
-        ->whereYear('created_at', now()->year)
-        ->count();
-    $publicacionesEstaSemana = \App\Models\Post::whereBetween('created_at', [
-        now()->startOfWeek(),
-        now()->endOfWeek()
-    ])->count();
-    $publicacionesHoy = \App\Models\Post::whereDate('created_at', today())->count();
-    
-    // Clientes activos (con publicaciones en los últimos 30 días)
-    $clientesActivos = \App\Models\Client::whereHas('posts', function($query) {
-        $query->where('created_at', '>=', now()->subDays(30));
-    })->count();
-    
-    $totalClientes = \App\Models\Client::count();
-    
-    // Publicaciones recientes (últimas 10)
-    $publicacionesRecientes = \App\Models\Post::with('cliente')
-        ->orderBy('created_at', 'desc')
-        ->limit(10)
-        ->get();
-    
-    // Clientes con más publicaciones
-    $clientesTop = \App\Models\Client::withCount('posts')
-        ->orderBy('posts_count', 'desc')
-        ->limit(5)
-        ->get();
-    
-    // Distribución de publicaciones por día (últimos 30 días) - Rellenar días sin publicaciones con 0
-    $publicacionesPorDiaRaw = \App\Models\Post::selectRaw('DATE(created_at) as dia, COUNT(*) as total')
-        ->where('created_at', '>=', now()->subDays(30))
-        ->groupBy('dia')
-        ->orderBy('dia', 'asc')
-        ->get()
-        ->keyBy('dia');
-    
-    // Rellenar todos los días de los últimos 30 días, incluyendo los que no tienen publicaciones (0)
-    $publicacionesPorDia = [];
-    for ($i = 29; $i >= 0; $i--) {
-        $fecha = now()->subDays($i)->format('Y-m-d');
-        $publicacion = $publicacionesPorDiaRaw->get($fecha);
-        $publicacionesPorDia[] = [
-            'dia' => $fecha,
-            'total' => $publicacion ? (int)$publicacion->total : 0
-        ];
-    }
-    
-    return view('walee-facebook-clientes', compact(
-        'totalPublicaciones',
-        'publicacionesEsteMes',
-        'publicacionesEstaSemana',
-        'publicacionesHoy',
-        'clientesActivos',
-        'totalClientes',
-        'publicacionesRecientes',
-        'clientesTop',
-        'publicacionesPorDia'
-    ));
-})->middleware(['auth'])->name('walee.facebook.clientes');
+Route::get('/walee-facebook/clientes', function (\Illuminate\Http\Request $request) {
+        // Estadísticas de publicaciones
+        $totalPublicaciones = \App\Models\Post::count();
+        $publicacionesEsteMes = \App\Models\Post::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $publicacionesEstaSemana = \App\Models\Post::whereBetween('created_at', [
+            now()->startOfWeek(),
+            now()->endOfWeek()
+        ])->count();
+        $publicacionesHoy = \App\Models\Post::whereDate('created_at', today())->count();
+        
+        // Clientes activos (con publicaciones en los últimos 30 días)
+        $clientesActivos = \App\Models\Client::whereHas('posts', function($query) {
+            $query->where('created_at', '>=', now()->subDays(30));
+        })->count();
+        
+        $totalClientes = \App\Models\Client::count();
+        
+        // Publicaciones recientes con paginación (5 por página)
+        $publicacionesRecientes = \App\Models\Post::with('cliente')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+        
+        // Clientes con más publicaciones
+        $clientesTop = \App\Models\Client::withCount('posts')
+            ->orderBy('posts_count', 'desc')
+            ->limit(5)
+            ->get();
+        
+        // Distribución de publicaciones por día (últimos 30 días) - Rellenar días sin publicaciones con 0
+        $publicacionesPorDiaRaw = \App\Models\Post::selectRaw('DATE(created_at) as dia, COUNT(*) as total')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->groupBy('dia')
+            ->orderBy('dia', 'asc')
+            ->get()
+            ->keyBy('dia');
+        
+        // Rellenar todos los días de los últimos 30 días, incluyendo los que no tienen publicaciones (0)
+        $publicacionesPorDia = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $fecha = now()->subDays($i)->format('Y-m-d');
+            $publicacion = $publicacionesPorDiaRaw->get($fecha);
+            $publicacionesPorDia[] = [
+                'dia' => $fecha,
+                'total' => $publicacion ? (int)$publicacion->total : 0
+            ];
+        }
+        
+        return view('walee-facebook-clientes', compact(
+            'totalPublicaciones',
+            'publicacionesEsteMes',
+            'publicacionesEstaSemana',
+            'publicacionesHoy',
+            'clientesActivos',
+            'totalClientes',
+            'publicacionesRecientes',
+            'clientesTop',
+            'publicacionesPorDia'
+        ));
+    })->middleware(['auth'])->name('walee.facebook.clientes');
+
+// Ruta para ver todas las publicaciones
+Route::get('/walee-facebook/publicaciones', function (\Illuminate\Http\Request $request) {
+        $publicaciones = \App\Models\Post::with('cliente')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+        
+        return view('walee-facebook-publicaciones', compact('publicaciones'));
+    })->middleware(['auth'])->name('walee.facebook.publicaciones');
 
 // Ruta para guardar webhook del cliente
 Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $request, $id) {

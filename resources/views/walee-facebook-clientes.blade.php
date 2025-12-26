@@ -191,7 +191,7 @@
             <div class="rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.7s;">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">Publicaciones Recientes</h3>
-                    <a href="{{ route('walee.dashboard') }}" class="text-xs md:text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <a href="{{ route('walee.facebook.publicaciones') }}" class="text-xs md:text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                         Ver todas →
                     </a>
                 </div>
@@ -229,6 +229,13 @@
                         </div>
                     @endforelse
                 </div>
+                
+                <!-- Paginación -->
+                @if($publicacionesRecientes->hasPages())
+                    <div class="mt-4 flex items-center justify-center">
+                        {{ $publicacionesRecientes->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

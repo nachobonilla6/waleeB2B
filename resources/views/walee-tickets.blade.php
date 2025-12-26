@@ -171,8 +171,8 @@
             <!-- Tickets List - Todos -->
             <div id="ticketsList-todos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? '' : 'hidden' }}">
                 @forelse($tickets as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
-                        <div class="p-2.5 md:p-4">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none cursor-pointer" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                        <div class="p-2.5 md:p-4" onclick="event.stopPropagation();">
                             <div class="flex items-start gap-2 md:gap-4">
                                 <!-- Status Icon -->
                                 <div class="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0
@@ -318,7 +318,7 @@
                         </div>
                         
                         <!-- Actions Bar -->
-                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2" onclick="event.stopPropagation();">
                             <div class="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-2">
                                 <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 hidden md:inline">Cambiar estado:</span>
                                 <div class="flex gap-1">
@@ -381,8 +381,8 @@
             <!-- Tickets List - Enviados -->
             <div id="ticketsList-enviados" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'enviados') ? '' : 'hidden' }}">
                 @forelse($ticketsEnviados as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
-                        <div class="p-2.5 md:p-4">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none cursor-pointer" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                        <div class="p-2.5 md:p-4" onclick="event.stopPropagation();">
                             <div class="flex items-start gap-2 md:gap-4">
                                 <!-- Status Icon -->
                                 <div class="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0 bg-amber-100 dark:bg-amber-500/20">
@@ -509,7 +509,7 @@
                         </div>
                         
                         <!-- Actions Bar -->
-                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2" onclick="event.stopPropagation();">
                             <div class="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-2">
                                 <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 hidden md:inline">Cambiar estado:</span>
                                 <div class="flex gap-1">
@@ -572,8 +572,8 @@
             <!-- Tickets List - Recibidos -->
             <div id="ticketsList-recibidos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'recibidos') ? '' : 'hidden' }}">
                 @forelse($ticketsRecibidos as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
-                        <div class="p-2.5 md:p-4">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none cursor-pointer" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                        <div class="p-2.5 md:p-4" onclick="event.stopPropagation();">
                             <div class="flex items-start gap-2 md:gap-4">
                                 <!-- Status Icon -->
                                 <div class="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0 bg-blue-100 dark:bg-blue-500/20">
@@ -701,7 +701,7 @@
                         </div>
                         
                         <!-- Actions Bar -->
-                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2" onclick="event.stopPropagation();">
                             <div class="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-2">
                                 <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 hidden md:inline">Cambiar estado:</span>
                                 <div class="flex gap-1">
@@ -765,8 +765,8 @@
             <!-- Tickets List - Resueltos -->
             <div id="ticketsList-resueltos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'resueltos') ? '' : 'hidden' }}">
                 @forelse($ticketsResueltos as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
-                        <div class="p-2.5 md:p-4">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none cursor-pointer" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                        <div class="p-2.5 md:p-4" onclick="event.stopPropagation();">
                             <div class="flex items-start gap-2 md:gap-4">
                                 <!-- Status Icon -->
                                 <div class="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-100 dark:bg-emerald-500/20">
@@ -893,7 +893,7 @@
                         </div>
                         
                         <!-- Actions Bar -->
-                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                        <div class="px-2.5 md:px-4 py-2 md:py-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-2" onclick="event.stopPropagation();">
                             <div class="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-2">
                                 <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 hidden md:inline">Cambiar estado:</span>
                                 <div class="flex gap-1">

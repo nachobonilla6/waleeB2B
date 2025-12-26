@@ -218,7 +218,7 @@
                                                 </button>
                                                 
                                                 <button 
-                                                    onclick="shareToWhatsApp({{ $publicacion->id }}, '{{ addslashes($publicacion->title) }}', '{{ addslashes($publicacion->content) }}')"
+                                                    onclick="shareToWhatsApp({{ $publicacion->id }})"
                                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 text-green-400 transition-all text-xs font-medium"
                                                     title="Compartir en WhatsApp"
                                                 >
@@ -635,10 +635,21 @@
         }
 
         // Share to WhatsApp - Abre página con imagen visible
-        function shareToWhatsApp(id, title, content) {
+        function shareToWhatsApp(publicacionId) {
             // Abrir página de compartir por WhatsApp con imagen visible
-            const shareUrl = `/walee-cliente/{{ $cliente->id }}/publicaciones/${id}/whatsapp`;
-            window.open(shareUrl, '_blank', 'width=500,height=700,scrollbars=yes,resizable=yes');
+            const clienteId = {{ $cliente->id }};
+            const baseUrl = window.location.origin;
+            const shareUrl = baseUrl + '/walee-cliente/' + clienteId + '/publicaciones/' + publicacionId + '/whatsapp';
+            
+            console.log('Opening WhatsApp share URL:', shareUrl);
+            
+            // Intentar abrir en nueva ventana
+            const newWindow = window.open(shareUrl, '_blank', 'width=500,height=700,scrollbars=yes,resizable=yes');
+            
+            // Si el popup fue bloqueado o hay algún problema, abrir en la misma ventana
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                window.location.href = shareUrl;
+            }
         }
 
         // Share to LinkedIn

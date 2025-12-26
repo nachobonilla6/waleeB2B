@@ -42,6 +42,11 @@
         }
         // Asegurar que sea HTTPS si es posible
         $imageUrl = str_replace('http://', 'https://', $imageUrl);
+        
+        // Si la imagen está en storage, asegurar que sea accesible públicamente
+        if (strpos($imageUrl, '/storage/') !== false) {
+            $imageUrl = str_replace('/storage/', '/storage/', $imageUrl);
+        }
     @endphp
     <meta property="og:image" content="{{ $imageUrl }}">
     <meta property="og:image:secure_url" content="{{ $imageUrl }}">
@@ -49,6 +54,8 @@
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:alt" content="{{ e($publicacion->title) }}">
+    <!-- WhatsApp requiere estas propiedades adicionales -->
+    <meta property="og:image:url" content="{{ $imageUrl }}">
     @endif
     
     <!-- Twitter -->
@@ -153,15 +160,12 @@
                 $cleanContent = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $publicacion->content);
                 $cleanContent = trim($cleanContent);
                 
-                // Remover el link del sitio web del contenido (ya estará en el link de la página)
+                // Remover el link del sitio web del contenido
                 $cleanContent = preg_replace('/\n.*velasportfishingandtours\.com.*\n?/', '', $cleanContent);
                 $cleanContent = trim($cleanContent);
                 
-                // Obtener la URL completa de esta página
-                $pageUrl = url()->current();
-                
-                // Crear mensaje solo con el texto y el link de la página (sin título)
-                $message = $cleanContent . "\n\n" . $pageUrl;
+                // Crear mensaje solo con el texto (sin link de la página)
+                $message = $cleanContent;
             @endphp
             
             const text = @json($message);

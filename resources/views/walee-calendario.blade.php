@@ -429,6 +429,13 @@
         $listas = \App\Models\Lista::orderBy('nombre')->get();
         $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
         
+        // Obtener todas las notas ordenadas por pinned y fecha
+        $notas = \App\Models\Note::with(['cliente', 'user'])
+            ->orderBy('pinned', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
+        
         $meses = [
             1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
             5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
@@ -622,6 +629,58 @@
                                 </svg>
                                 <span class="text-sm">Nueva Nota</span>
                             </button>
+                        </div>
+                        
+                        <!-- Sección de Notas -->
+                        <div class="mt-6">
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Notas Recientes
+                            </h3>
+                            <div class="space-y-2 max-h-[400px] overflow-y-auto">
+                                @forelse($notas as $nota)
+                                    <div 
+                                        onclick="editNota({{ $nota->id }})"
+                                        class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all group {{ $nota->pinned ? 'border-blue-300 dark:border-blue-700' : '' }}"
+                                    >
+                                        <div class="flex items-start justify-between gap-2 mb-1">
+                                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                                @if($nota->pinned)
+                                                    <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                                    </svg>
+                                                @endif
+                                                <span class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">
+                                                    {{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}
+                                                </span>
+                                            </div>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
+                                                {{ $nota->created_at->diffForHumans() }}
+                                            </span>
+                                        </div>
+                                        <p class="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 mb-2">
+                                            {{ Str::limit($nota->content, 80) }}
+                                        </p>
+                                        @if($nota->cliente)
+                                            <div class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                </svg>
+                                                <span class="truncate">{{ $nota->cliente->nombre_empresa }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @empty
+                                    <div class="text-center py-6 text-slate-500 dark:text-slate-400">
+                                        <svg class="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        <p class="text-sm">No hay notas aún</p>
+                                    </div>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>

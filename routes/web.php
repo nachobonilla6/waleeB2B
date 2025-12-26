@@ -1981,6 +1981,22 @@ Route::post('/notas', function (\Illuminate\Http\Request $request) {
     }
 })->middleware(['auth'])->name('notas.store');
 
+Route::get('/notas/{id}', function ($id) {
+    try {
+        $nota = \App\Models\Note::with(['cliente', 'user'])->findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'nota' => $nota,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('notas.show');
+
 Route::put('/notas/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $nota = \App\Models\Note::findOrFail($id);

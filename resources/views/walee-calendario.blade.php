@@ -2357,6 +2357,7 @@
                     document.getElementById('nota_type').value = nota.type || 'note';
                     document.getElementById('nota_cliente_id').value = nota.cliente_id || '';
                     document.getElementById('nota_pinned').checked = nota.pinned || false;
+                    document.getElementById('nota_fecha').value = nota.fecha || new Date().toISOString().split('T')[0];
                     document.getElementById('notaModalTitle').textContent = 'Editar Nota';
                     const deleteBtn = document.getElementById('deleteNotaBtn');
                     if (deleteBtn) deleteBtn.classList.remove('hidden');

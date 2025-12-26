@@ -634,22 +634,15 @@
             }
         }
 
-        // Share to WhatsApp - Abre página con imagen visible
+        // Share to WhatsApp - Abre página con imagen visible en nueva pestaña
         function shareToWhatsApp(publicacionId) {
             // Abrir página de compartir por WhatsApp con imagen visible
             const clienteId = {{ $cliente->id }};
             const baseUrl = window.location.origin;
             const shareUrl = baseUrl + '/walee-cliente/' + clienteId + '/publicaciones/' + publicacionId + '/whatsapp';
             
-            console.log('Opening WhatsApp share URL:', shareUrl);
-            
-            // Intentar abrir en nueva ventana
-            const newWindow = window.open(shareUrl, '_blank', 'width=500,height=700,scrollbars=yes,resizable=yes');
-            
-            // Si el popup fue bloqueado o hay algún problema, abrir en la misma ventana
-            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                window.location.href = shareUrl;
-            }
+            // Abrir en nueva pestaña (no ventana popup)
+            window.open(shareUrl, '_blank');
         }
 
         // Share to LinkedIn

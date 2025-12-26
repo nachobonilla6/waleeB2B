@@ -583,34 +583,37 @@
                     >
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
-                    <input type="text" name="tipo" id="tarea_tipo" list="tipos-list" placeholder="Tipo de tarea (opcional)" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                    <datalist id="tipos-list">
-                        @foreach($tiposExistentes as $tipo)
-                            <option value="{{ $tipo }}">
-                        @endforeach
-                    </datalist>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
-                    <div class="flex items-center gap-3">
-                        <input 
-                            type="color" 
-                            name="color" 
-                            id="tarea_color"
-                            value="#8b5cf6"
-                            class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
-                        >
-                        <input 
-                            type="text" 
-                            id="tarea_color_text"
-                            value="#8b5cf6"
-                            placeholder="#8b5cf6"
-                            class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
-                            onchange="document.getElementById('tarea_color').value = this.value"
-                        >
+                <!-- Tercera fila: Tipo y Color -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                        <input type="text" name="tipo" id="tarea_tipo" list="tipos-list" placeholder="Tipo de tarea (opcional)" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        <datalist id="tipos-list">
+                            @foreach($tiposExistentes as $tipo)
+                                <option value="{{ $tipo }}">
+                            @endforeach
+                        </datalist>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                        <div class="flex items-center gap-3">
+                            <input 
+                                type="color" 
+                                name="color" 
+                                id="tarea_color"
+                                value="#8b5cf6"
+                                class="w-14 h-10 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
+                            >
+                            <input 
+                                type="text" 
+                                id="tarea_color_text"
+                                value="#8b5cf6"
+                                placeholder="#8b5cf6"
+                                class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                onchange="document.getElementById('tarea_color').value = this.value"
+                            >
+                        </div>
                     </div>
                 </div>
                 

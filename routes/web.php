@@ -142,6 +142,77 @@ Route::get('/walee-dashboard', function () {
     return view('walee-dashboard');
 })->middleware(['auth'])->name('walee.dashboard');
 
+// Dashboard de Tickets - Estadísticas
+Route::get('/walee-tickets-dashboard', function () {
+    // Estadísticas de tickets
+    $totalTickets = \App\Models\Ticket::count();
+    $ticketsEnviados = \App\Models\Ticket::where('estado', 'enviado')->count();
+    $ticketsRecibidos = \App\Models\Ticket::where('estado', 'recibido')->count();
+    $ticketsResueltos = \App\Models\Ticket::where('estado', 'resuelto')->count();
+    
+    // Tickets este mes
+    $ticketsEsteMes = \App\Models\Ticket::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+    
+    // Tickets esta semana
+    $ticketsEstaSemana = \App\Models\Ticket::whereBetween('created_at', [
+        now()->startOfWeek(),
+        now()->endOfWeek()
+    ])->count();
+    
+    // Tickets hoy
+    $ticketsHoy = \App\Models\Ticket::whereDate('created_at', today())->count();
+    
+    // Tickets urgentes
+    $ticketsUrgentes = \App\Models\Ticket::where('urgente', true)->count();
+    
+    // Tickets prioritarios
+    $ticketsPrioritarios = \App\Models\Ticket::where('prioritario', true)->count();
+    
+    // Tickets a discutir
+    $ticketsADiscutir = \App\Models\Ticket::where('a_discutir', true)->count();
+    
+    // Distribución de tickets por día (últimos 30 días)
+    $ticketsPorDiaRaw = \App\Models\Ticket::selectRaw('DATE(created_at) as dia, COUNT(*) as total')
+        ->where('created_at', '>=', now()->subDays(30))
+        ->groupBy('dia')
+        ->orderBy('dia', 'asc')
+        ->get()
+        ->keyBy('dia');
+    
+    // Rellenar todos los días de los últimos 30 días
+    $ticketsPorDia = [];
+    for ($i = 29; $i >= 0; $i--) {
+        $fecha = now()->subDays($i)->format('Y-m-d');
+        $ticket = $ticketsPorDiaRaw->get($fecha);
+        $ticketsPorDia[] = [
+            'dia' => $fecha,
+            'total' => $ticket ? (int)$ticket->total : 0
+        ];
+    }
+    
+    // Tickets recientes (últimos 10)
+    $ticketsRecientes = \App\Models\Ticket::orderBy('created_at', 'desc')
+        ->limit(10)
+        ->get();
+    
+    return view('walee-tickets-dashboard', compact(
+        'totalTickets',
+        'ticketsEnviados',
+        'ticketsRecibidos',
+        'ticketsResueltos',
+        'ticketsEsteMes',
+        'ticketsEstaSemana',
+        'ticketsHoy',
+        'ticketsUrgentes',
+        'ticketsPrioritarios',
+        'ticketsADiscutir',
+        'ticketsPorDia',
+        'ticketsRecientes'
+    ));
+})->middleware(['auth'])->name('walee.tickets.dashboard');
+
 // Tickets de soporte - Rutas separadas por pestaña
 Route::get('/walee-tickets', function () {
     return redirect()->route('walee.tickets.tab', ['tab' => 'todos']);

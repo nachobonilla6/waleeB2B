@@ -193,7 +193,13 @@
                                         <!-- Foto miniatura -->
                                         <div class="flex items-start justify-between gap-2">
                                             @if($publicacion->image_url)
-                                                <img src="{{ $publicacion->image_url }}" alt="{{ $publicacion->title }}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
+                                                <img 
+                                                    src="{{ $publicacion->image_url }}" 
+                                                    alt="{{ $publicacion->title }}" 
+                                                    class="w-16 h-16 rounded-lg object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                                                    onclick="window.open('{{ $publicacion->image_url }}', '_blank')"
+                                                    title="Haz clic para ver imagen completa"
+                                                >
                                             @else
                                                 <div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
                                                     <svg class="w-6 h-6 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +262,13 @@
                                     <!-- Desktop Layout: Horizontal -->
                                     <div class="hidden md:flex items-start gap-4">
                                         @if($publicacion->image_url)
-                                            <img src="{{ $publicacion->image_url }}" alt="{{ $publicacion->title }}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
+                                            <img 
+                                                src="{{ $publicacion->image_url }}" 
+                                                alt="{{ $publicacion->title }}" 
+                                                class="w-20 h-20 rounded-xl object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                                                onclick="window.open('{{ $publicacion->image_url }}', '_blank')"
+                                                title="Haz clic para ver imagen completa"
+                                            >
                                         @else
                                             <div class="w-20 h-20 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
                                                 <svg class="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

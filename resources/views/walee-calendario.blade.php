@@ -653,7 +653,7 @@
                                 Notas Recientes
                             </h3>
                             <div class="space-y-2 max-h-[400px] overflow-y-auto">
-                                @forelse($notas as $nota)
+                                @forelse($notasSidebar as $nota)
                                     <div 
                                         onclick="editNota({{ $nota->id }})"
                                         class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all group {{ $nota->pinned ? 'border-blue-300 dark:border-blue-700' : '' }}"
@@ -936,7 +936,7 @@
                                                             <span class="flex-1 truncate">{{ $cita->titulo }}</span>
                                                         </div>
                                                     </button>
-                                                @else
+                                                @elseif($itemOrdenado['tipo'] === 'tarea')
                                                     @php $tarea = $itemOrdenado['item']; @endphp
                                                     @php
                                                         $colorTarea = $tarea->color ?? '#8b5cf6';
@@ -957,6 +957,23 @@
                                                         <div class="flex items-center gap-1.5">
                                                             <span class="text-[10px] sm:text-xs font-semibold opacity-75 whitespace-nowrap">{{ $tarea->fecha_hora->format('H:i') }}</span>
                                                             <span class="flex-1 truncate">{{ $tarea->texto }}</span>
+                                                        </div>
+                                                    </button>
+                                                @elseif($itemOrdenado['tipo'] === 'nota')
+                                                    @php $nota = $itemOrdenado['item']; @endphp
+                                                    <button 
+                                                        onclick="editNota({{ $nota->id }})"
+                                                        class="w-full text-left px-2 py-2 sm:py-1.5 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 mb-1.5 sm:mb-1 bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-l-3 border-blue-500 {{ $nota->pinned ? 'ring-2 ring-blue-300 dark:ring-blue-700' : '' }}"
+                                                        title="{{ Str::limit($nota->content, 100) }}"
+                                                    >
+                                                        <div class="flex items-center gap-1.5">
+                                                            @if($nota->pinned)
+                                                                <svg class="w-3 h-3 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                                                </svg>
+                                                            @endif
+                                                            <span class="text-[10px] sm:text-xs font-semibold opacity-75 uppercase">{{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}</span>
+                                                            <span class="flex-1 truncate">{{ Str::limit($nota->content, 30) }}</span>
                                                         </div>
                                                     </button>
                                                 @endif
@@ -2314,6 +2331,7 @@
             document.getElementById('deleteNotaBtn').classList.add('hidden');
             document.getElementById('nota_type').value = 'note';
             document.getElementById('nota_pinned').checked = false;
+            document.getElementById('nota_fecha').value = new Date().toISOString().split('T')[0];
             document.getElementById('notaModal').classList.remove('hidden');
         }
         

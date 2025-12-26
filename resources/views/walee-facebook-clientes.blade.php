@@ -155,7 +155,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
                 <!-- Gráfico de Publicaciones -->
                 <div class="lg:col-span-2 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.5s;">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Publicaciones por Mes</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Publicaciones - Últimos 30 Días</h3>
                     <div class="h-48 md:h-64">
                         <canvas id="publicacionesChart"></canvas>
                     </div>
@@ -234,25 +234,34 @@
     </div>
     
     <script>
-        // Gráfico de Publicaciones por Mes
+        // Gráfico de Publicaciones - Últimos 30 Días (Estilo Montaña)
         const ctx = document.getElementById('publicacionesChart');
         if (ctx) {
-            const meses = @json($publicacionesPorMes->pluck('mes')->map(function($mes) {
-                return \Carbon\Carbon::createFromFormat('Y-m', $mes)->format('M Y');
+            const datos = @json(collect($publicacionesPorDiaCompleto)->pluck('total'));
+            const fechas = @json(collect($publicacionesPorDiaCompleto)->map(function($item) {
+                $fecha = \Carbon\Carbon::createFromFormat('Y-m-d', $item['dia']);
+                return $fecha->format('d/m');
             }));
-            const datos = @json($publicacionesPorMes->pluck('total'));
             
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: meses,
+                    labels: fechas,
                     datasets: [{
                         label: 'Publicaciones',
                         data: datos,
                         borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.5,
+                        fill: true,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverBackgroundColor: 'rgb(59, 130, 246)',
+                        pointHoverBorderColor: '#fff'
                     }]
                 },
                 options: {
@@ -261,13 +270,25 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 12
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            displayColors: false
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                precision: 0
+                                precision: 0,
+                                stepSize: 1
                             },
                             grid: {
                                 color: 'rgba(148, 163, 184, 0.1)'
@@ -276,6 +297,10 @@
                         x: {
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
                             }
                         }
                     }

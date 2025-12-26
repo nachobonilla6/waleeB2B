@@ -1337,37 +1337,32 @@ Route::post('/walee-emails/recibidos/{id}/star', function ($id) {
 
 Route::post('/walee-emails/recibidos/sync', function () {
     try {
-        // Webhook de n8n para sincronizar emails desde Gmail
-        // Este webhook debe estar configurado en n8n para obtener emails y enviarlos a /api/emails/recibidos
-        $webhookUrl = env('N8N_EMAIL_SYNC_WEBHOOK_URL', 'https://n8n.srv1137974.hstgr.cloud/webhook/email-sync');
+        $gmailService = app(\App\Services\GmailService::class);
         
-        $n8nService = app(\App\Services\N8nService::class);
-        
-        // Enviar petición a n8n para sincronizar emails
-        $response = \Illuminate\Support\Facades\Http::timeout(60)
-            ->post($webhookUrl, [
-                'action' => 'sync',
-                'timestamp' => now()->toIso8601String(),
-                'user_id' => auth()->id(),
-            ]);
-        
-        if ($response->successful()) {
-            $responseData = $response->json();
-            
-            return response()->json([
-                'success' => true,
-                'message' => $responseData['message'] ?? 'Sincronización iniciada correctamente. Los emails se actualizarán en breve.',
-                'count' => $responseData['count'] ?? 0,
-            ]);
-        } else {
-            \Log::error('Error al sincronizar emails desde n8n', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-            
+        // Verificar si está autorizado
+        if (!$gmailService->isAuthorized()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al conectar con el servicio de sincronización. Verifica la configuración del webhook.',
+                'message' => 'Gmail no está autorizado. Por favor, autoriza el acceso primero.',
+                'auth_url' => $gmailService->getAuthUrl(),
+            ], 401);
+        }
+        
+        // Sincronizar emails (solo los de clientes_en_proceso)
+        $result = $gmailService->syncEmails(50);
+        
+        if ($result['success']) {
+            return response()->json([
+                'success' => true,
+                'message' => "Sincronización completada. {$result['synced']} emails guardados, {$result['skipped']} omitidos.",
+                'synced' => $result['synced'],
+                'skipped' => $result['skipped'],
+                'errors' => $result['errors'] ?? 0,
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al sincronizar: ' . ($result['error'] ?? 'Error desconocido'),
             ], 500);
         }
     } catch (\Exception $e) {
@@ -2396,6 +2391,23 @@ Route::middleware(['auth'])->group(function () {
     })->name('chat');
     
     // Callback de Google Calendar OAuth2
+    // Callback para autorización de Gmail
+    Route::get('/gmail/callback', function (\Illuminate\Http\Request $request) {
+        $code = $request->get('code');
+        
+        if (!$code) {
+            return redirect('/walee-emails/recibidos')->with('error', 'No se recibió el código de autorización');
+        }
+        
+        $gmailService = app(\App\Services\GmailService::class);
+        
+        if ($gmailService->handleCallback($code)) {
+            return redirect('/walee-emails/recibidos')->with('success', 'Gmail autorizado correctamente');
+        } else {
+            return redirect('/walee-emails/recibidos')->with('error', 'Error al autorizar Gmail');
+        }
+    })->name('gmail.callback');
+    
     Route::get('/google-calendar/callback', function (\Illuminate\Http\Request $request) {
         $code = $request->get('code');
         

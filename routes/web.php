@@ -2177,22 +2177,22 @@ Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\H
         $cliente = \App\Models\Client::findOrFail($id);
         $aiPrompt = $request->input('ai_prompt', '');
         
-        // Construir el prompt
+        // Construir el prompt (en inglés por defecto)
         if (empty($aiPrompt)) {
-            $prompt = "Genera una publicación profesional para Facebook para {$cliente->name}";
+            $prompt = "Generate a professional Facebook post for {$cliente->name}";
             if ($cliente->website) {
-                $prompt .= " cuyo sitio web es {$cliente->website}";
+                $prompt .= " whose website is {$cliente->website}";
             }
-            $prompt .= ". La publicación debe ser atractiva, profesional y optimizada para redes sociales. Debe tener máximo 500 caracteres, ser persuasiva, incluir emojis apropiados y un llamado a la acción claro.";
+            $prompt .= ". The post must be attractive, professional, and optimized for social media. It must have a maximum of 500 characters, be persuasive, include appropriate emojis, and have a clear call to action. Write in English.";
         } else {
-            $prompt = "Genera una publicación profesional para Facebook. {$aiPrompt}";
+            $prompt = "Generate a professional Facebook post. {$aiPrompt}";
             if ($cliente->name) {
-                $prompt .= " El cliente se llama {$cliente->name}.";
+                $prompt .= " The client is called {$cliente->name}.";
             }
             if ($cliente->website) {
-                $prompt .= " Su sitio web es {$cliente->website}.";
+                $prompt .= " Their website is {$cliente->website}.";
             }
-            $prompt .= " La publicación debe tener máximo 500 caracteres, ser atractiva, incluir emojis apropiados y un llamado a la acción claro.";
+            $prompt .= " The post must have a maximum of 500 characters, be attractive, include appropriate emojis, and have a clear call to action. Write in English.";
         }
         
         $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
@@ -2204,11 +2204,11 @@ Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\H
                 'messages' => [
                     [
                         'role' => 'system',
-                        'content' => 'Eres un experto en marketing digital y redes sociales, especialmente Facebook. Genera publicaciones profesionales, atractivas y optimizadas para Facebook. Las publicaciones deben ser concisas (máximo 500 caracteres), persuasivas, incluir emojis apropiados y tener un llamado a la acción claro. Responde SOLO con JSON que contenga "content" (texto de la publicación completa).',
+                        'content' => 'You are an expert in digital marketing and social media, especially Facebook. Generate professional, attractive, and optimized Facebook posts. Posts must be concise (maximum 500 characters), persuasive, include appropriate emojis, and have a clear call to action. Always respond in English. Respond ONLY with JSON containing "content" (complete post text).',
                     ],
                     [
                         'role' => 'user',
-                        'content' => $prompt . ' Responde en JSON con "content".',
+                        'content' => $prompt . ' Respond in English and JSON format with "content".',
                     ],
                 ],
             ]);

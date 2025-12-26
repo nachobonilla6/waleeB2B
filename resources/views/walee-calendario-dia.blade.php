@@ -367,6 +367,19 @@
                     <textarea name="descripcion" id="descripcion" rows="3" placeholder="Descripción de la cita..." class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
                 </div>
                 
+                <!-- Notas (ancho completo) -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notas (opcional)</label>
+                    <textarea 
+                        name="notas" 
+                        id="notas"
+                        rows="3"
+                        placeholder="Notas adicionales sobre la cita..."
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"
+                    ></textarea>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Notas internas sobre la cita</p>
+                </div>
+                
                 <!-- Invitados (ancho completo) -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Invitar personas (emails separados por comas)</label>
@@ -732,6 +745,7 @@
                 'fecha_fin' => $cita->fecha_fin,
                 'ubicacion' => $cita->ubicacion,
                 'descripcion' => $cita->descripcion,
+                'notas' => $cita->notas,
                 'color' => $cita->color ?? '#10b981',
                 'estado' => $cita->estado,
                 'recurrencia' => $cita->recurrencia ?? 'none',
@@ -938,6 +952,7 @@
             document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
             document.getElementById('ubicacion').value = cita.ubicacion || '';
             document.getElementById('descripcion').value = cita.descripcion || '';
+            document.getElementById('notas').value = cita.notas || '';
             document.getElementById('invitados_emails').value = cita.invitados_emails || '';
             document.getElementById('color').value = cita.color || '#10b981';
             document.getElementById('color_text').value = cita.color || '#10b981';

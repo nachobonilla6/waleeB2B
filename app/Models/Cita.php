@@ -10,6 +10,7 @@ class Cita extends Model
     protected $fillable = [
         'titulo',
         'descripcion',
+        'notas',
         'fecha_inicio',
         'fecha_fin',
         'cliente_id',

@@ -1285,8 +1285,46 @@
                         type="datetime-local" 
                         name="recurrencia_fin" 
                         id="recurrencia_fin"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
                     >
+                </div>
+                
+                <!-- Descripción (ancho completo) -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción (opcional)</label>
+                    <textarea 
+                        name="descripcion" 
+                        id="descripcion"
+                        rows="3"
+                        placeholder="Descripción de la cita..."
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"
+                    ></textarea>
+                </div>
+                
+                <!-- Notas (ancho completo) -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notas (opcional)</label>
+                    <textarea 
+                        name="notas" 
+                        id="notas"
+                        rows="3"
+                        placeholder="Notas adicionales sobre la cita..."
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"
+                    ></textarea>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Notas internas sobre la cita</p>
+                </div>
+                
+                <!-- Invitados (ancho completo) -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Invitar personas (emails separados por comas)</label>
+                    <input 
+                        type="text" 
+                        name="invitados_emails" 
+                        id="invitados_emails"
+                        placeholder="email1@ejemplo.com, email2@ejemplo.com"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
+                    >
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Los invitados recibirán una invitación automática de Google Calendar</p>
                 </div>
                 
                 <!-- Cuarta fila: Color y Estado -->
@@ -1855,6 +1893,7 @@
             document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
             document.getElementById('ubicacion').value = cita.ubicacion || '';
             document.getElementById('descripcion').value = cita.descripcion || '';
+            document.getElementById('notas').value = cita.notas || '';
             document.getElementById('invitados_emails').value = cita.invitados_emails || '';
             document.getElementById('estado').value = cita.estado || 'programada';
             document.getElementById('recurrencia').value = cita.recurrencia || 'none';
@@ -2000,6 +2039,7 @@
                 fecha_fin: formData.get('fecha_fin') || null,
                 ubicacion: formData.get('ubicacion') || null,
                 descripcion: formData.get('descripcion') || null,
+                notas: formData.get('notas') || null,
                 estado: formData.get('estado'),
                 recurrencia: recurrencia,
                 recurrencia_fin: formData.get('recurrencia_fin') || null,

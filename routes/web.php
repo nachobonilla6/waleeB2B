@@ -295,6 +295,7 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         $cita->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
         $cita->ubicacion = $request->input('ubicacion');
         $cita->descripcion = $request->input('descripcion');
+        $cita->notas = $request->input('notas');
         $cita->estado = $request->input('estado', 'programada');
         $cita->recurrencia = $request->input('recurrencia', 'none');
         $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
@@ -354,6 +355,7 @@ Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
         $cita->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
         $cita->ubicacion = $request->input('ubicacion');
         $cita->descripcion = $request->input('descripcion');
+        $cita->notas = $request->input('notas');
         $cita->estado = $request->input('estado', 'programada');
         $cita->recurrencia = $request->input('recurrencia', 'none');
         $cita->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;

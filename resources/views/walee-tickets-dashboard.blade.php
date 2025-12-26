@@ -240,7 +240,16 @@
                 </div>
                 <div class="space-y-3">
                     @forelse($ticketsRecientes as $ticket)
-                        <a href="{{ route('walee.tickets.tab', ['tab' => $ticket->estado]) }}" class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                        @php
+                            // Mapear estado a pestaña (singular a plural)
+                            $tab = match($ticket->estado) {
+                                'enviado' => 'enviados',
+                                'recibido' => 'recibidos',
+                                'resuelto' => 'resueltos',
+                                default => 'todos'
+                            };
+                        @endphp
+                        <a href="{{ route('walee.tickets.tab', ['tab' => $tab]) }}" class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between gap-2 mb-1">
                                     <h4 class="text-xs md:text-sm font-semibold text-slate-900 dark:text-white line-clamp-1">{{ $ticket->asunto }}</h4>

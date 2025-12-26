@@ -68,58 +68,58 @@
             <!-- Publicaciones Tab -->
             <div id="content-publicaciones" class="tab-content animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Create Publicación -->
-                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6 mb-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-2xl md:rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-4 md:p-6 mb-4 md:mb-6">
+                    <div class="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
                         </div>
-                        <h2 class="text-lg font-bold text-slate-800 dark:text-white">Crear Publicación para Facebook</h2>
+                        <h2 class="text-base md:text-lg font-bold text-slate-800 dark:text-white">Crear Publicación para Facebook</h2>
                     </div>
                     
-                    <form id="publicacion-form" class="space-y-4" enctype="multipart/form-data">
+                    <form id="publicacion-form" class="space-y-3 md:space-y-4" enctype="multipart/form-data">
                         <!-- AI Prompt -->
                         <div>
-                            <label for="ai_prompt" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">¿Qué tipo de publicación necesitas?</label>
+                            <label for="ai_prompt" class="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">¿Qué tipo de publicación necesitas?</label>
                             <textarea 
                                 id="ai_prompt" 
                                 name="ai_prompt" 
                                 rows="2"
-                                placeholder="Ej: Publicación promocionando nuestros servicios de diseño web y marketing digital..."
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm"
+                                placeholder="Ej: Publicación promocionando nuestros servicios..."
+                                class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg md:rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-xs md:text-sm"
                             ></textarea>
-                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Describe el tipo de publicación que quieres generar. Si lo dejas vacío, se generará una publicación genérica.</p>
+                            <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 mt-1">Describe el tipo de publicación. Si lo dejas vacío, se generará una genérica.</p>
                         </div>
                         
                         <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Texto de la publicación</label>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-1.5 md:mb-2">
+                                <label class="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300">Texto de la publicación</label>
                                 <button 
                                     type="button"
                                     id="generateAIBtn"
                                     onclick="generatePublicacionWithAI()"
-                                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 border border-walee-500/30 transition-all text-xs font-medium"
+                                    class="inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 md:py-1.5 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 border border-walee-500/30 transition-all text-[10px] md:text-xs font-medium self-start sm:self-auto"
                                 >
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                                     </svg>
-                                    <span>Generar con AI</span>
+                                    <span class="whitespace-nowrap">Generar con AI</span>
                                 </button>
                             </div>
                             <textarea 
                                 name="content" 
                                 id="publicacion_content"
-                                rows="5"
+                                rows="4"
                                 required
-                                placeholder="Escribe el texto que aparecerá en la publicación de Facebook..."
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                                placeholder="Escribe el texto que aparecerá en la publicación..."
+                                class="w-full px-3 md:px-4 py-2.5 md:py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg md:rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm md:text-base"
                             ></textarea>
-                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Máximo recomendado: 500 caracteres</p>
+                            <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 mt-1">Máximo recomendado: 500 caracteres</p>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imágenes / Fotos</label>
+                            <label class="block text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 md:mb-2">Imágenes / Fotos</label>
                             <div class="relative">
                                 <input 
                                     type="file" 
@@ -132,32 +132,32 @@
                                 >
                                 <label 
                                     for="fotos" 
-                                    class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl text-slate-600 dark:text-slate-400 hover:border-walee-500/50 hover:text-walee-500 dark:hover:text-walee-400 cursor-pointer transition-all"
+                                    class="flex items-center justify-center gap-2 w-full px-3 md:px-4 py-2.5 md:py-3 bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 rounded-lg md:rounded-xl text-slate-600 dark:text-slate-400 hover:border-walee-500/50 hover:text-walee-500 dark:hover:text-walee-400 cursor-pointer transition-all"
                                 >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    <span id="fileNames" class="text-sm">Subir imágenes (máx. 10)</span>
+                                    <span id="fileNames" class="text-xs md:text-sm truncate">Subir imágenes (máx. 10)</span>
                                 </label>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-500 mt-1">Puedes subir múltiples imágenes. Formatos: JPG, PNG, GIF</p>
+                            <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 mt-1">Puedes subir múltiples imágenes. Formatos: JPG, PNG, GIF</p>
                         </div>
                         
-                        <div class="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl">
-                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-start gap-2 p-2.5 md:p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg md:rounded-xl">
+                            <svg class="w-4 h-4 md:w-5 md:h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <p class="text-xs text-blue-700 dark:text-blue-300">Esta publicación se enviará automáticamente a Facebook a través del webhook configurado.</p>
+                            <p class="text-[10px] md:text-xs text-blue-700 dark:text-blue-300 leading-relaxed">Esta publicación se enviará automáticamente a Facebook a través del webhook configurado.</p>
                         </div>
                         
                         <button 
                             type="submit"
-                            class="w-full px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-medium transition-all flex items-center justify-center gap-2"
+                            class="w-full px-4 md:px-6 py-2.5 md:py-3 rounded-lg md:rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm md:text-base"
                         >
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
-                            Publicar en Facebook
+                            <span class="whitespace-nowrap">Publicar en Facebook</span>
                         </button>
                     </form>
                 </div>

@@ -39,7 +39,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        $publicaciones = $cliente->posts()->orderBy('created_at', 'desc')->get();
+        $publicaciones = $cliente->posts()->orderBy('created_at', 'desc')->paginate(5);
     @endphp
 
     <div class="min-h-screen relative">
@@ -254,6 +254,27 @@
                                 </div>
                             @endforeach
                         </div>
+                        
+                        <!-- Paginación -->
+                        @if($publicaciones->hasPages())
+                            <div class="mt-6 flex items-center justify-center gap-2 flex-wrap">
+                                @if($publicaciones->onFirstPage())
+                                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed text-sm">Anterior</span>
+                                @else
+                                    <a href="{{ $publicaciones->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-sm">Anterior</a>
+                                @endif
+                                
+                                <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700 text-sm">
+                                    Página {{ $publicaciones->currentPage() }} de {{ $publicaciones->lastPage() }}
+                                </span>
+                                
+                                @if($publicaciones->hasMorePages())
+                                    <a href="{{ $publicaciones->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-sm">Siguiente</a>
+                                @else
+                                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed text-sm">Siguiente</span>
+                                @endif
+                            </div>
+                        @endif
                     @else
                         <div class="text-center py-8">
                             <svg class="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -613,11 +634,14 @@
             }
         }
 
-        // Share to WhatsApp
+        // Share to WhatsApp - Abre en nueva ventana
         function shareToWhatsApp(id, title, content) {
-            // Crear URL de vista previa para incluir en el mensaje
-            const previewUrl = window.location.origin + '/walee-cliente/{{ $cliente->id }}/publicaciones/' + id + '/share';
-            const text = title + '\n\n' + content + '\n\n' + previewUrl;
+            // Limpiar contenido removiendo el botón de WhatsApp si existe
+            let cleanContent = content.replace(/\n.*[Ww]hats[Aa]pp.*\n?/g, '').trim();
+            
+            // Crear mensaje con título y contenido
+            const text = title + '\n\n' + cleanContent;
+            
             // Detectar si es móvil o desktop
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             let url;
@@ -630,7 +654,8 @@
                 url = 'https://web.whatsapp.com/send?text=' + encodeURIComponent(text);
             }
             
-            window.open(url, '_blank');
+            // Abrir en nueva ventana
+            window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
         }
 
         // Share to LinkedIn

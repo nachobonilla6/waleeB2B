@@ -2267,11 +2267,16 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         // Usar el contenido como título si no hay título específico
         $title = $request->input('title') ?: substr($request->input('content'), 0, 100);
         
+        // Contenido original (sin WhatsApp)
+        $contentOriginal = $request->input('content');
+        
         // Obtener número de WhatsApp del cliente (telefono_1 o telefono_2)
         $whatsappNumber = $cliente->telefono_1 ?? $cliente->telefono_2 ?? null;
         
-        // Preparar contenido con botón de WhatsApp si hay número
-        $content = $request->input('content');
+        // Preparar contenido con botón de WhatsApp para guardar en BD
+        $contentWithWhatsApp = $contentOriginal;
+        $whatsappUrl = null;
+        
         if ($whatsappNumber) {
             // Limpiar número (eliminar espacios, guiones, paréntesis, etc.)
             $cleanNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
@@ -2281,15 +2286,17 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
                 $cleanNumber = '506' . $cleanNumber;
             }
             
-            // Agregar botón de WhatsApp al final del contenido
-            $whatsappButton = "\n\n📱 Contáctanos por WhatsApp: https://wa.me/{$cleanNumber}";
-            $content = $content . $whatsappButton;
+            $whatsappUrl = "https://wa.me/{$cleanNumber}";
+            
+            // Agregar botón de WhatsApp al final del contenido para guardar
+            $whatsappButton = "\n\n📱 Contáctanos por WhatsApp: {$whatsappUrl}";
+            $contentWithWhatsApp = $contentOriginal . $whatsappButton;
         }
         
         $publicacion = \App\Models\Post::create([
             'cliente_id' => $cliente->id,
             'title' => $title,
-            'content' => $content,
+            'content' => $contentWithWhatsApp, // Guardar con WhatsApp en BD
             'image_url' => $imageUrl,
         ]);
         
@@ -2310,12 +2317,13 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
                 }
                 
                 // Enviar como JSON en lugar de multipart para facilitar el uso de URLs
-                // Usar el contenido con el botón de WhatsApp incluido
+                // Enviar contenido original a Facebook, WhatsApp en campo separado
                 $webhookData = [
                     'webhook_url' => $webhookUrl,
                     'page_id' => $pageId,
                     'token' => $token,
-                    'texto_publicacion' => $content, // Contenido con botón de WhatsApp
+                    'texto_publicacion' => $contentOriginal, // Contenido original sin WhatsApp para Facebook
+                    'whatsapp_url' => $whatsappUrl, // URL de WhatsApp en campo separado (opcional)
                     'cliente_id' => $cliente->id,
                     'cliente_nombre' => $cliente->name,
                     'publicacion_id' => $publicacion->id,

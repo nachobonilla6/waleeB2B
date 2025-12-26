@@ -147,7 +147,7 @@
             <!-- Tickets List - Todos -->
             <div id="ticketsList-todos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? '' : 'hidden' }}">
                 @forelse($tickets as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -357,7 +357,7 @@
             <!-- Tickets List - Enviados -->
             <div id="ticketsList-enviados" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'enviados') ? '' : 'hidden' }}">
                 @forelse($ticketsEnviados as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -548,7 +548,7 @@
             <!-- Tickets List - Recibidos -->
             <div id="ticketsList-recibidos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'recibidos') ? '' : 'hidden' }}">
                 @forelse($ticketsRecibidos as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->
@@ -741,7 +741,7 @@
             <!-- Tickets List - Resueltos -->
             <div id="ticketsList-resueltos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'resueltos') ? '' : 'hidden' }}">
                 @forelse($ticketsResueltos as $index => $ticket)
-                    <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
+                    <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
                             <div class="flex items-start gap-4">
                                 <!-- Status Icon -->

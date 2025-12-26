@@ -954,6 +954,103 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const ticketsData = @json($tickets);
         
+        // Search functionality
+        function filterTickets(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            const allContainers = document.querySelectorAll('.tickets-container');
+            
+            allContainers.forEach(container => {
+                const tickets = container.querySelectorAll('.ticket-card');
+                let visibleCount = 0;
+                
+                tickets.forEach(ticket => {
+                    const asunto = ticket.querySelector('h3')?.textContent?.toLowerCase() || '';
+                    const mensaje = ticket.querySelector('p')?.textContent?.toLowerCase() || '';
+                    const ticketId = ticket.getAttribute('data-id') || '';
+                    const nameElements = ticket.querySelectorAll('span');
+                    let name = '';
+                    nameElements.forEach(el => {
+                        const text = el.textContent?.toLowerCase() || '';
+                        if (text && !text.includes('#') && !text.includes('@') && text.length > 2) {
+                            name += text + ' ';
+                        }
+                    });
+                    
+                    // Buscar en todos los campos
+                    const matches = asunto.includes(term) || 
+                                   mensaje.includes(term) || 
+                                   ticketId.includes(term) ||
+                                   name.includes(term);
+                    
+                    if (matches || term === '') {
+                        ticket.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        ticket.classList.add('hidden');
+                    }
+                });
+                
+                // Mostrar mensaje si no hay resultados
+                let noResultsMsg = container.querySelector('.no-results-message');
+                if (visibleCount === 0 && term !== '') {
+                    if (!noResultsMsg) {
+                        noResultsMsg = document.createElement('div');
+                        noResultsMsg.className = 'no-results-message text-center py-12 text-slate-500 dark:text-slate-400';
+                        noResultsMsg.innerHTML = `
+                            <svg class="w-16 h-16 mx-auto mb-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <p class="text-lg font-medium">No se encontraron tickets</p>
+                            <p class="text-sm mt-2">Intenta con otros términos de búsqueda</p>
+                        `;
+                        container.appendChild(noResultsMsg);
+                    }
+                    noResultsMsg.classList.remove('hidden');
+                } else {
+                    if (noResultsMsg) {
+                        noResultsMsg.classList.add('hidden');
+                    }
+                }
+            });
+        }
+        
+        function clearSearch() {
+            const searchInput = document.getElementById('ticketSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchInput) {
+                searchInput.value = '';
+                filterTickets('');
+                clearBtn.classList.add('hidden');
+            }
+        }
+        
+        // Event listeners para búsqueda
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('ticketSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const term = e.target.value;
+                    filterTickets(term);
+                    
+                    // Mostrar/ocultar botón de limpiar
+                    if (term.trim() !== '') {
+                        clearBtn.classList.remove('hidden');
+                    } else {
+                        clearBtn.classList.add('hidden');
+                    }
+                });
+                
+                // Permitir limpiar con Escape
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        clearSearch();
+                    }
+                });
+            }
+        });
+        
         function switchTab(tab) {
             // Ocultar todos los contenedores
             document.querySelectorAll('.tickets-container').forEach(container => {

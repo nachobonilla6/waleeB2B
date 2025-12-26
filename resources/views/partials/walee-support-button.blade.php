@@ -35,7 +35,7 @@
 
 <!-- Support Modal -->
 <div id="supportModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden transform transition-all">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md md:max-w-2xl lg:max-w-3xl overflow-hidden transform transition-all max-h-[90vh] md:max-h-[85vh] flex flex-col">
         <!-- Header -->
         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
@@ -57,16 +57,76 @@
         </div>
         
         <!-- Form -->
-        <form id="supportForm" class="p-5 space-y-4">
-            <!-- Subject -->
-            <div>
-                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Asunto</label>
-                <input 
-                    type="text" 
-                    name="subject" 
-                    placeholder="¿En qué podemos ayudarte?"
-                    class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
-                >
+        <form id="supportForm" class="p-5 space-y-4 overflow-y-auto flex-1">
+            <!-- Subject and Estado del Ticket - Two columns on medium+ -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Subject -->
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Asunto</label>
+                    <input 
+                        type="text" 
+                        name="subject" 
+                        placeholder="¿En qué podemos ayudarte?"
+                        class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
+                    >
+                </div>
+                
+                <!-- Estado del Ticket -->
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Estado del ticket</label>
+                    <div class="space-y-2">
+                        <!-- Urgente Radio -->
+                        <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                            <input 
+                                type="radio" 
+                                name="ticket_estado" 
+                                value="urgente"
+                                id="supportUrgente"
+                                class="w-5 h-5 text-red-500 border-slate-300 dark:border-slate-600 focus:ring-red-500 focus:ring-2"
+                            >
+                            <div class="flex items-center gap-2 flex-1">
+                                <svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                </svg>
+                                <span class="text-sm font-medium text-black dark:text-white">Urgente</span>
+                            </div>
+                        </label>
+                        
+                        <!-- Prioritario Radio -->
+                        <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                            <input 
+                                type="radio" 
+                                name="ticket_estado" 
+                                value="prioritario"
+                                id="supportPrioritario"
+                                class="w-5 h-5 text-yellow-500 border-slate-300 dark:border-slate-600 focus:ring-yellow-500 focus:ring-2"
+                            >
+                            <div class="flex items-center gap-2 flex-1">
+                                <svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                </svg>
+                                <span class="text-sm font-medium text-black dark:text-white">Prioritario</span>
+                            </div>
+                        </label>
+                        
+                        <!-- A Discutir Radio -->
+                        <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                            <input 
+                                type="radio" 
+                                name="ticket_estado" 
+                                value="a_discutir"
+                                id="supportADiscutir"
+                                class="w-5 h-5 text-blue-500 border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:ring-2"
+                            >
+                            <div class="flex items-center gap-2 flex-1">
+                                <svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                <span class="text-sm font-medium text-black dark:text-white">A Discutir</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
             
             <!-- Message -->
@@ -394,62 +454,6 @@
                 </div>
                 <!-- Selected Files List -->
                 <div id="supportFilesList" class="mt-3 space-y-2 hidden"></div>
-            </div>
-            
-            <!-- Estado del Ticket (Solo uno a la vez) -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Estado del ticket</label>
-                
-                <!-- Urgente Radio -->
-                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                    <input 
-                        type="radio" 
-                        name="ticket_estado" 
-                        value="urgente"
-                        id="supportUrgente"
-                        class="w-5 h-5 text-red-500 border-slate-300 dark:border-slate-600 focus:ring-red-500 focus:ring-2"
-                    >
-                    <div class="flex items-center gap-2 flex-1">
-                        <svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-black dark:text-white">Urgente</span>
-                    </div>
-                </label>
-                
-                <!-- Prioritario Radio -->
-                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                    <input 
-                        type="radio" 
-                        name="ticket_estado" 
-                        value="prioritario"
-                        id="supportPrioritario"
-                        class="w-5 h-5 text-yellow-500 border-slate-300 dark:border-slate-600 focus:ring-yellow-500 focus:ring-2"
-                    >
-                    <div class="flex items-center gap-2 flex-1">
-                        <svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-black dark:text-white">Prioritario</span>
-                    </div>
-                </label>
-                
-                <!-- A Discutir Radio -->
-                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                    <input 
-                        type="radio" 
-                        name="ticket_estado" 
-                        value="a_discutir"
-                        id="supportADiscutir"
-                        class="w-5 h-5 text-blue-500 border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:ring-2"
-                    >
-                    <div class="flex items-center gap-2 flex-1">
-                        <svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-black dark:text-white">A Discutir</span>
-                    </div>
-                </label>
             </div>
             
             <!-- Submit -->

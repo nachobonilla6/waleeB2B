@@ -2011,9 +2011,29 @@ Route::get('/notas/{id}', function ($id) {
         $nota = \App\Models\Note::with(['cliente', 'user'])->findOrFail($id);
         
         // Formatear la fecha para que se muestre correctamente en el input date
-        $notaData = $nota->toArray();
-        if ($nota->fecha) {
-            $notaData['fecha'] = $nota->fecha->format('Y-m-d');
+        $notaData = [
+            'id' => $nota->id,
+            'content' => $nota->content,
+            'type' => $nota->type,
+            'cliente_id' => $nota->cliente_id,
+            'pinned' => $nota->pinned,
+            'fecha' => $nota->fecha ? $nota->fecha->format('Y-m-d') : null,
+            'created_at' => $nota->created_at,
+            'updated_at' => $nota->updated_at,
+        ];
+        
+        if ($nota->cliente) {
+            $notaData['cliente'] = [
+                'id' => $nota->cliente->id,
+                'nombre_empresa' => $nota->cliente->nombre_empresa,
+            ];
+        }
+        
+        if ($nota->user) {
+            $notaData['user'] = [
+                'id' => $nota->user->id,
+                'name' => $nota->user->name,
+            ];
         }
         
         return response()->json([

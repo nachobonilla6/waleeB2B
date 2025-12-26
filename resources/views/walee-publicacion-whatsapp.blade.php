@@ -54,8 +54,8 @@
         }
     @endphp
     
-    <!-- Open Graph / Facebook / WhatsApp - Orden importante para WhatsApp -->
-    <meta property="og:type" content="website">
+    <!-- Open Graph / Facebook / WhatsApp / LinkedIn - Orden importante -->
+    <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ e($publicacion->title) }}">
     <meta property="og:description" content="{{ e(Str::limit($metaDescription, 300)) }}">
@@ -63,7 +63,7 @@
     <meta property="og:locale" content="es_ES">
     
     @if($imageUrl)
-    <!-- Open Graph Image - WhatsApp requiere estos meta tags en este orden -->
+    <!-- Open Graph Image - Compatible con WhatsApp, LinkedIn, Facebook -->
     <meta property="og:image" content="{{ $imageUrl }}">
     <meta property="og:image:url" content="{{ $imageUrl }}">
     <meta property="og:image:secure_url" content="{{ $imageUrl }}">
@@ -71,20 +71,28 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ e($publicacion->title) }}">
-    <!-- Meta adicional para compatibilidad con WhatsApp -->
+    <!-- Meta adicional para compatibilidad -->
     <meta name="og:image" content="{{ $imageUrl }}">
-    <meta name="twitter:image" content="{{ $imageUrl }}">
+    <meta name="image" content="{{ $imageUrl }}">
     <link rel="image_src" href="{{ $imageUrl }}">
     @endif
     
     <meta name="description" content="{{ e(Str::limit($metaDescription, 300)) }}">
     
-    <!-- Twitter -->
+    <!-- Twitter Card -->
     @if($imageUrl)
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ e($publicacion->title) }}">
     <meta name="twitter:description" content="{{ e(Str::limit($metaDescription, 200)) }}">
     <meta name="twitter:image" content="{{ $imageUrl }}">
+    @endif
+    
+    <!-- LinkedIn específico - LinkedIn usa Open Graph pero también estos tags adicionales -->
+    <meta property="article:author" content="Vela SportFishing & Tours">
+    <meta property="article:published_time" content="{{ $publicacion->created_at->toIso8601String() }}">
+    @if($imageUrl)
+    <!-- LinkedIn también usa og:image, pero asegurar que esté presente -->
+    <meta property="og:image" content="{{ $imageUrl }}">
     @endif
     
     <script src="https://cdn.tailwindcss.com"></script>

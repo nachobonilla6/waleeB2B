@@ -227,18 +227,70 @@
             const modal = document.getElementById('supportModal');
             if (modal) {
                 modal.classList.remove('hidden');
+                // Restaurar datos guardados
+                restoreSupportFormData();
             }
         }
         
         function closeSupportModal() {
             const modal = document.getElementById('supportModal');
             const form = document.getElementById('supportForm');
+            
+            if (modal) {
+                // Guardar datos antes de cerrar
+                saveSupportFormData();
+                modal.classList.add('hidden');
+            }
+            // NO resetear el formulario aquí, solo guardar los datos
+        }
+        
+        function saveSupportFormData() {
+            const form = document.getElementById('supportForm');
+            if (!form) return;
+            
+            const formData = {
+                subject: form.querySelector('[name="subject"]')?.value || '',
+                message: form.querySelector('[name="message"]')?.value || '',
+                ticket_estado: form.querySelector('input[name="ticket_estado"]:checked')?.value || ''
+            };
+            
+            localStorage.setItem('supportFormData', JSON.stringify(formData));
+        }
+        
+        function restoreSupportFormData() {
+            const form = document.getElementById('supportForm');
+            if (!form) return;
+            
+            const savedData = localStorage.getItem('supportFormData');
+            if (savedData) {
+                try {
+                    const formData = JSON.parse(savedData);
+                    
+                    const subjectInput = form.querySelector('[name="subject"]');
+                    const messageInput = form.querySelector('[name="message"]');
+                    
+                    if (subjectInput) subjectInput.value = formData.subject || '';
+                    if (messageInput) messageInput.value = formData.message || '';
+                    
+                    // Restaurar radio button seleccionado
+                    if (formData.ticket_estado) {
+                        const estadoRadio = form.querySelector(`input[name="ticket_estado"][value="${formData.ticket_estado}"]`);
+                        if (estadoRadio) {
+                            estadoRadio.checked = true;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error restaurando datos del formulario:', e);
+                }
+            }
+        }
+        
+        function clearSupportFormData() {
+            localStorage.removeItem('supportFormData');
+            const form = document.getElementById('supportForm');
             const fileLabel = document.getElementById('fileLabel');
             const filesList = document.getElementById('supportFilesList');
             
-            if (modal) {
-                modal.classList.add('hidden');
-            }
             if (form) {
                 form.reset();
             }
@@ -362,6 +414,21 @@
             
             const form = document.getElementById('supportForm');
             if (form) {
+                // Guardar datos mientras se escribe
+                const subjectInput = form.querySelector('[name="subject"]');
+                const messageInput = form.querySelector('[name="message"]');
+                const estadoRadios = form.querySelectorAll('input[name="ticket_estado"]');
+                
+                if (subjectInput) {
+                    subjectInput.addEventListener('input', saveSupportFormData);
+                }
+                if (messageInput) {
+                    messageInput.addEventListener('input', saveSupportFormData);
+                }
+                estadoRadios.forEach(radio => {
+                    radio.addEventListener('change', saveSupportFormData);
+                });
+                
                 form.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
@@ -438,17 +505,8 @@
                             }
                             
                             showSupportNotification('¡Enviado!', message, 'success');
-                            this.reset();
-                            const fileLabel = document.getElementById('fileLabel');
-                            const filesList = document.getElementById('supportFilesList');
-                            if (fileLabel) fileLabel.textContent = 'Subir archivos (imágenes o PDF)';
-                            if (filesList) {
-                                filesList.classList.add('hidden');
-                                filesList.innerHTML = '';
-                            }
-                            // Reset radio buttons
-                            const estadoRadios = document.querySelectorAll('input[name="ticket_estado"]');
-                            estadoRadios.forEach(radio => radio.checked = false);
+                            // Limpiar formulario y datos guardados después de enviar exitosamente
+                            clearSupportFormData();
                             
                             setTimeout(() => closeSupportModal(), 2000);
                         } else {

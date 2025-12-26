@@ -8,7 +8,7 @@
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ $publicacion->title }}">
+    <meta property="og:title" content="{{ e($publicacion->title) }}">
     @php
         // Limpiar contenido removiendo el botón de WhatsApp si existe
         $cleanContent = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $publicacion->content);
@@ -28,26 +28,33 @@
             $metaDescription = $publicacion->title;
         }
     @endphp
-    <meta property="og:description" content="{{ Str::limit($metaDescription, 300) }}">
-    <meta name="description" content="{{ Str::limit($metaDescription, 300) }}">
+    <meta property="og:description" content="{{ e(Str::limit($metaDescription, 300)) }}">
+    <meta name="description" content="{{ e(Str::limit($metaDescription, 300)) }}">
     @if($publicacion->image_url)
     @php
         // Asegurar que la URL de la imagen sea absoluta
         $imageUrl = $publicacion->image_url;
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            $imageUrl = url($imageUrl);
+            // Si es una ruta relativa, convertirla a absoluta
+            if (strpos($imageUrl, 'http') !== 0) {
+                $imageUrl = url($imageUrl);
+            }
         }
+        // Asegurar que sea HTTPS si es posible
+        $imageUrl = str_replace('http://', 'https://', $imageUrl);
     @endphp
     <meta property="og:image" content="{{ $imageUrl }}">
+    <meta property="og:image:secure_url" content="{{ $imageUrl }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="{{ e($publicacion->title) }}">
     @endif
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $publicacion->title }}">
-    <meta name="twitter:description" content="{{ Str::limit($metaDescription ?? $publicacion->title, 200) }}">
+    <meta name="twitter:title" content="{{ e($publicacion->title) }}">
+    <meta name="twitter:description" content="{{ e(Str::limit($metaDescription ?? $publicacion->title, 200)) }}">
     @if($publicacion->image_url)
     @php
         // Asegurar que la URL de la imagen sea absoluta
@@ -55,9 +62,13 @@
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             $imageUrl = url($imageUrl);
         }
+        $imageUrl = str_replace('http://', 'https://', $imageUrl);
     @endphp
     <meta name="twitter:image" content="{{ $imageUrl }}">
     @endif
+    
+    <!-- WhatsApp específico -->
+    <meta property="og:site_name" content="Vela SportFishing & Tours">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

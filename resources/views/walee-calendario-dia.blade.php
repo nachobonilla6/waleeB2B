@@ -148,8 +148,10 @@
                                                     <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium" style="background-color: {{ $color }}20; color: {{ $color }};">
                                                         @if($item['tipo'] === 'cita')
                                                             📅 Cita
-                                                        @else
+                                                        @elseif($item['tipo'] === 'tarea')
                                                             ✅ Tarea
+                                                        @elseif($item['tipo'] === 'nota')
+                                                            📝 Nota
                                                         @endif
                                                     </span>
                                                     @if($item['estado'] === 'completada' || $item['estado'] === 'completado')
@@ -158,7 +160,7 @@
                                                         </span>
                                                     @endif
                                                 </div>
-                                                <a href="{{ $item['tipo'] === 'cita' ? route('walee.cita.detalle', $item['id']) : route('walee.tarea.detalle', $item['id']) }}" class="block">
+                                                <a href="{{ $item['tipo'] === 'cita' ? route('walee.cita.detalle', $item['id']) : ($item['tipo'] === 'tarea' ? route('walee.tarea.detalle', $item['id']) : '#') }}" class="block" {{ $item['tipo'] === 'nota' ? 'onclick="event.preventDefault(); editNota(' . $item['id'] . ');"' : '' }}>
                                                     <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-1 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
                                                         {{ $item['titulo'] }}
                                                     </h3>
@@ -199,6 +201,23 @@
                                                         Lista: <span class="font-medium">{{ $item['lista'] }}</span>
                                                     </p>
                                                 @endif
+                                                @if($item['tipo'] === 'nota')
+                                                    @if(isset($item['tipo_nota']))
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                                                            Tipo: <span class="font-medium uppercase">{{ $item['tipo_nota'] === 'note' ? 'Nota' : ($item['tipo_nota'] === 'call' ? 'Llamada' : ($item['tipo_nota'] === 'meeting' ? 'Reunión' : 'Email')) }}</span>
+                                                        </p>
+                                                    @endif
+                                                    @if(isset($item['cliente']) && $item['cliente'])
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                                                            🏢 Cliente: <span class="font-medium">{{ $item['cliente'] }}</span>
+                                                        </p>
+                                                    @endif
+                                                    @if(isset($item['pinned']) && $item['pinned'])
+                                                        <p class="text-sm text-blue-600 dark:text-blue-400 mb-1">
+                                                            📌 Nota fijada
+                                                        </p>
+                                                    @endif
+                                                @endif
                                                 @if($item['tipo'] === 'cita' && isset($item['ubicacion']) && $item['ubicacion'])
                                                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">
                                                         📍 {{ $item['ubicacion'] }}
@@ -228,7 +247,7 @@
                                                 </div>
                                                 <div class="flex items-center gap-1">
                                                     <button 
-                                                        onclick="{{ $item['tipo'] === 'cita' ? 'editCita(' . $item['id'] . ')' : 'editTarea(' . $item['id'] . ')' }}"
+                                                        onclick="{{ $item['tipo'] === 'cita' ? 'editCita(' . $item['id'] . ')' : ($item['tipo'] === 'tarea' ? 'editTarea(' . $item['id'] . ')' : 'editNota(' . $item['id'] . ')') }}"
                                                         class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all"
                                                         title="Editar"
                                                     >
@@ -237,7 +256,7 @@
                                                         </svg>
                                                     </button>
                                                     <button 
-                                                        onclick="{{ $item['tipo'] === 'cita' ? 'deleteCitaConfirm(' . $item['id'] . ')' : 'deleteTareaConfirm(' . $item['id'] . ')' }}"
+                                                        onclick="{{ $item['tipo'] === 'cita' ? 'deleteCitaConfirm(' . $item['id'] . ')' : ($item['tipo'] === 'tarea' ? 'deleteTareaConfirm(' . $item['id'] . ')' : 'deleteNota(' . $item['id'] . ')') }}"
                                                         class="p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-500/20 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 transition-all"
                                                         title="Eliminar"
                                                     >
@@ -598,6 +617,18 @@
                 <input type="hidden" name="nota_id" id="nota_id">
                 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
+                    <input 
+                        type="date" 
+                        name="fecha" 
+                        id="nota_fecha" 
+                        required
+                        value="{{ $fecha->format('Y-m-d') }}"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                    >
+                </div>
+                
+                <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido de la Nota</label>
                     <textarea 
                         name="content" 
@@ -823,11 +854,44 @@
             document.getElementById('deleteNotaBtn').classList.add('hidden');
             document.getElementById('nota_type').value = 'note';
             document.getElementById('nota_pinned').checked = false;
+            document.getElementById('nota_fecha').value = '{{ $fecha->format('Y-m-d') }}';
             document.getElementById('notaModal').classList.remove('hidden');
         }
         
         function closeNotaModal() {
             document.getElementById('notaModal').classList.add('hidden');
+        }
+        
+        async function editNota(notaId) {
+            try {
+                const response = await fetch(`/notas/${notaId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.nota) {
+                    const nota = data.nota;
+                    document.getElementById('nota_id').value = nota.id;
+                    document.getElementById('nota_content').value = nota.content || '';
+                    document.getElementById('nota_type').value = nota.type || 'note';
+                    document.getElementById('nota_cliente_id').value = nota.cliente_id || '';
+                    document.getElementById('nota_pinned').checked = nota.pinned || false;
+                    document.getElementById('nota_fecha').value = nota.fecha || '{{ $fecha->format('Y-m-d') }}';
+                    document.getElementById('notaModalTitle').textContent = 'Editar Nota';
+                    const deleteBtn = document.getElementById('deleteNotaBtn');
+                    if (deleteBtn) deleteBtn.classList.remove('hidden');
+                    document.getElementById('notaModal').classList.remove('hidden');
+                } else {
+                    alert('Error al cargar la nota');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión');
+            }
         }
         
         function editCita(citaId) {
@@ -1113,7 +1177,8 @@
                 content: document.getElementById('nota_content').value,
                 type: document.getElementById('nota_type').value,
                 cliente_id: document.getElementById('nota_cliente_id').value || null,
-                pinned: document.getElementById('nota_pinned').checked
+                pinned: document.getElementById('nota_pinned').checked,
+                fecha: document.getElementById('nota_fecha').value || new Date().toISOString().split('T')[0]
             };
             
             const notaId = document.getElementById('nota_id').value;

@@ -205,6 +205,13 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
         ->orderBy('fecha_hora', 'asc')
         ->get();
     
+    // Obtener notas del día
+    $notas = \App\Models\Note::with(['cliente', 'user'])
+        ->whereDate('fecha', $fecha->format('Y-m-d'))
+        ->orderBy('pinned', 'desc')
+        ->orderBy('created_at', 'asc')
+        ->get();
+    
     // Combinar y ordenar por hora
     $items = collect();
     
@@ -246,6 +253,23 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
         ]);
     }
     
+    foreach ($notas as $nota) {
+        $items->push([
+            'tipo' => 'nota',
+            'id' => $nota->id,
+            'titulo' => Str::limit($nota->content, 50),
+            'hora' => $nota->fecha ? \Carbon\Carbon::parse($nota->fecha)->setTime(12, 0) : $fecha->setTime(12, 0),
+            'hora_fin' => null,
+            'color' => '#3b82f6', // Azul para notas
+            'estado' => null,
+            'tipo_nota' => $nota->type,
+            'cliente' => $nota->cliente->nombre_empresa ?? null,
+            'pinned' => $nota->pinned,
+            'descripcion' => $nota->content,
+            'data' => $nota
+        ]);
+    }
+    
     $items = $items->sortBy('hora');
     
     $meses = [
@@ -258,7 +282,7 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
     $listas = \App\Models\Lista::orderBy('nombre')->get();
     $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
     
-    return view('walee-calendario-dia', compact('fecha', 'items', 'meses', 'citas', 'tareas', 'clientes', 'listas', 'tiposExistentes'));
+    return view('walee-calendario-dia', compact('fecha', 'items', 'meses', 'citas', 'tareas', 'notas', 'clientes', 'listas', 'tiposExistentes'));
 })->middleware(['auth'])->name('walee.calendario.dia');
 
 // Rutas para Citas

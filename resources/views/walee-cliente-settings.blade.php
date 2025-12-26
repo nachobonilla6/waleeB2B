@@ -189,14 +189,14 @@
                                             <!-- Botones de Compartir -->
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <button 
-                                                    onclick="shareToFacebook({{ $publicacion->id }}, '{{ addslashes($publicacion->title) }}', '{{ addslashes($publicacion->content) }}', '{{ $publicacion->image_url ?? '' }}')"
+                                                    onclick="republicarEnFacebook({{ $publicacion->id }})"
                                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 transition-all text-xs font-medium"
-                                                    title="Compartir en Facebook"
+                                                    title="Republicar en Facebook"
                                                 >
                                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                                     </svg>
-                                                    <span>Facebook</span>
+                                                    <span>Republicar en FB</span>
                                                 </button>
                                                 
                                                 <button 
@@ -525,13 +525,31 @@
             }
         }
 
-        // Share to Facebook
-        function shareToFacebook(id, title, content, imageUrl) {
-            // Usar la URL de vista previa con Open Graph tags
-            const shareUrl = window.location.origin + '/walee-cliente/{{ $cliente->id }}/publicaciones/' + id + '/share';
-            // Facebook share dialog - ahora mostrará la imagen y texto correctamente gracias a Open Graph
-            const fbShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl);
-            window.open(fbShareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+        // Republicar en Facebook
+        async function republicarEnFacebook(id) {
+            if (!confirm('¿Deseas republicar esta publicación en Facebook?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/walee-cliente/{{ $cliente->id }}/publicaciones/${id}/republicar`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Publicación republicada en Facebook correctamente');
+                } else {
+                    alert('Error: ' + (data.message || 'Error al republicar'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
         }
 
         // Share to WhatsApp

@@ -2361,6 +2361,58 @@ Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/share', function 
     }
 })->name('walee.cliente.publicaciones.share');
 
+// Ruta para republicar publicación en Facebook
+Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', function ($id, $publicacion_id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        $publicacion = \App\Models\Post::where('id', $publicacion_id)
+            ->where('cliente_id', $cliente->id)
+            ->firstOrFail();
+        
+        // Extraer texto sin el botón de WhatsApp (si existe)
+        $content = $publicacion->content;
+        // Remover líneas que contengan WhatsApp
+        $content = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $content);
+        $content = trim($content);
+        
+        // Obtener URL de la imagen
+        $imageUrl = $publicacion->image_url;
+        
+        // Enviar al webhook de n8n
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/692835c7-0e6a-4535-8d20-7b385a9a66ca';
+        
+        $webhookData = [
+            'texto' => $content,
+            'image_url' => $imageUrl,
+        ];
+        
+        $client = new \GuzzleHttp\Client();
+        $client->post($webhookUrl, [
+            'json' => $webhookData,
+            'timeout' => 30,
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+        
+        \Log::info('Publicación republicada en Facebook', [
+            'publicacion_id' => $publicacion_id,
+            'cliente_id' => $id,
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Publicación republicada en Facebook correctamente',
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error al republicar publicación: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.publicaciones.republicar');
+
 // Ruta para eliminar publicación del cliente
 Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($id, $publicacion_id) {
     try {

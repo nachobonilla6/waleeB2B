@@ -59,11 +59,11 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        // Obtener todos los tickets ordenados por prioridad: urgente > prioritario > a_discutir > fecha
+        // Obtener todos los tickets ordenados por prioridad: urgente > prioritario > fecha, y a_discutir al final
         $tickets = \App\Models\Ticket::with('user')
+            ->orderBy('a_discutir', 'asc') // A discutir al final (asc = false primero)
             ->orderBy('urgente', 'desc') // Urgentes primero
             ->orderBy('prioritario', 'desc') // Luego prioritarios
-            ->orderBy('a_discutir', 'desc') // Luego a discutir
             ->orderBy('created_at', 'desc') // Finalmente por fecha más reciente
             ->get();
         
@@ -72,28 +72,28 @@
         $recibidos = $tickets->where('estado', 'recibido')->count();
         $resueltos = $tickets->where('estado', 'resuelto')->count();
         
-        // Ordenar cada grupo también por prioridad: urgente > prioritario > a_discutir > fecha
+        // Ordenar cada grupo también por prioridad: urgente > prioritario > fecha, y a_discutir al final
         $ticketsEnviados = $tickets->where('estado', 'enviado')
             ->sortBy([
+                ['a_discutir', 'asc'], // A discutir al final
                 ['urgente', 'desc'],
                 ['prioritario', 'desc'],
-                ['a_discutir', 'desc'],
                 ['created_at', 'desc']
             ])->values();
         
         $ticketsRecibidos = $tickets->where('estado', 'recibido')
             ->sortBy([
+                ['a_discutir', 'asc'], // A discutir al final
                 ['urgente', 'desc'],
                 ['prioritario', 'desc'],
-                ['a_discutir', 'desc'],
                 ['created_at', 'desc']
             ])->values();
         
         $ticketsResueltos = $tickets->where('estado', 'resuelto')
             ->sortBy([
+                ['a_discutir', 'asc'], // A discutir al final
                 ['urgente', 'desc'],
                 ['prioritario', 'desc'],
-                ['a_discutir', 'desc'],
                 ['created_at', 'desc']
             ])->values();
         

@@ -213,7 +213,7 @@
                                                         </p>
                                                     @endif
                                                     @if(isset($item['pinned']) && $item['pinned'])
-                                                        <p class="text-sm text-blue-600 dark:text-blue-400 mb-1">
+                                                        <p class="text-sm text-blue-800 dark:text-blue-300 mb-1">
                                                             📌 Nota fijada
                                                         </p>
                                                     @endif

@@ -2385,6 +2385,7 @@
                 type: formData.get('type'),
                 cliente_id: formData.get('cliente_id') || null,
                 pinned: formData.get('pinned') === 'on',
+                fecha: formData.get('fecha') || new Date().toISOString().split('T')[0],
             };
             
             try {

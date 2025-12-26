@@ -1103,6 +1103,7 @@
                 fecha_fin: document.getElementById('fecha_fin').value || null,
                 ubicacion: document.getElementById('ubicacion').value || null,
                 descripcion: document.getElementById('descripcion').value || null,
+                notas: document.getElementById('notas').value || null,
                 color: document.getElementById('color').value,
                 estado: document.getElementById('estado').value,
                 recurrencia: recurrencia,

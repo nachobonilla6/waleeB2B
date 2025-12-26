@@ -37,13 +37,18 @@
         // Asegurar que la URL de la imagen sea absoluta y accesible
         $imageUrl = $publicacion->image_url;
         
-        // Si no es una URL completa, convertirla
-        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            // Si empieza con /, es una ruta relativa
-            if (strpos($imageUrl, '/') === 0) {
-                $imageUrl = url($imageUrl);
+        // Si ya es una URL completa (empieza con http), usarla tal cual
+        if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            // Ya es una URL válida
+        } else {
+            // Si empieza con /storage/, convertir a URL completa
+            if (strpos($imageUrl, '/storage/') === 0 || strpos($imageUrl, 'storage/') === 0) {
+                // Remover / inicial si existe
+                $imageUrl = ltrim($imageUrl, '/');
+                // Construir URL completa
+                $imageUrl = asset($imageUrl);
             } else {
-                // Si no tiene http, agregar el dominio completo
+                // Cualquier otra ruta relativa
                 $imageUrl = url($imageUrl);
             }
         }
@@ -51,10 +56,10 @@
         // Asegurar que sea HTTPS
         $imageUrl = str_replace('http://', 'https://', $imageUrl);
         
-        // Asegurar que la URL sea completamente accesible
-        $imageUrl = str_replace('//storage/', '/storage/', $imageUrl);
+        // Agregar parámetro de versión para evitar caché (opcional, descomentar si es necesario)
+        // $imageUrl .= '?v=' . time();
     @endphp
-    <!-- Open Graph Image - WhatsApp requiere URL absoluta y HTTPS -->
+    <!-- Open Graph Image - WhatsApp requiere URL absoluta, HTTPS y accesible públicamente -->
     <meta property="og:image" content="{{ $imageUrl }}">
     <meta property="og:image:secure_url" content="{{ $imageUrl }}">
     <meta property="og:image:url" content="{{ $imageUrl }}">
@@ -62,8 +67,9 @@
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:alt" content="{{ e($publicacion->title) }}">
-    <!-- Meta adicional para WhatsApp -->
+    <!-- Meta adicional para compatibilidad -->
     <meta name="og:image" content="{{ $imageUrl }}">
+    <link rel="image_src" href="{{ $imageUrl }}">
     @else
     <!-- Si no hay imagen, usar una imagen por defecto -->
     <meta property="og:image" content="{{ url('/images/default-og-image.jpg') }}">

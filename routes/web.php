@@ -142,10 +142,19 @@ Route::get('/walee-dashboard', function () {
     return view('walee-dashboard');
 })->middleware(['auth'])->name('walee.dashboard');
 
-// Tickets de soporte
+// Tickets de soporte - Rutas separadas por pestaña
 Route::get('/walee-tickets', function () {
-    return view('walee-tickets');
+    return redirect()->route('walee.tickets.tab', ['tab' => 'todos']);
 })->middleware(['auth'])->name('walee.tickets');
+
+Route::get('/walee-tickets/{tab}', function ($tab) {
+    // Validar que la pestaña sea válida
+    $validTabs = ['todos', 'enviados', 'recibidos', 'resueltos'];
+    if (!in_array($tab, $validTabs)) {
+        return redirect()->route('walee.tickets.tab', ['tab' => 'todos']);
+    }
+    return view('walee-tickets', ['activeTab' => $tab]);
+})->middleware(['auth'])->where('tab', 'todos|enviados|recibidos|resueltos')->name('walee.tickets.tab');
 
 // Tareas
 Route::get('/walee-tareas', function () {

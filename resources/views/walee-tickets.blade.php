@@ -121,23 +121,23 @@
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-1.5 flex flex-wrap gap-1.5 shadow-sm dark:shadow-none">
-                    <button onclick="switchTab('todos')" id="tab-todos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'todos']) }}" id="tab-todos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
                         <span class="hidden sm:inline">Todos </span>({{ $totalTickets }})
-                    </button>
-                    <button onclick="switchTab('enviados')" id="tab-enviados" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                    </a>
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" id="tab-enviados" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
                         <span class="hidden sm:inline">Enviados </span>({{ $enviados }})
-                    </button>
-                    <button onclick="switchTab('recibidos')" id="tab-recibidos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all bg-walee-500 text-white">
+                    </a>
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" id="tab-recibidos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
                         <span class="hidden sm:inline">Recibidos </span>({{ $recibidos }})
-                    </button>
-                    <button onclick="switchTab('resueltos')" id="tab-resueltos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                    </a>
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" id="tab-resueltos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
                         <span class="hidden sm:inline">Resueltos </span>({{ $resueltos }})
-                    </button>
+                    </a>
                 </div>
             </div>
             
             <!-- Tickets List - Todos -->
-            <div id="ticketsList-todos" class="tickets-container space-y-4 hidden">
+            <div id="ticketsList-todos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? '' : 'hidden' }}">
                 @forelse($tickets as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
@@ -319,7 +319,7 @@
             </div>
             
             <!-- Tickets List - Enviados -->
-            <div id="ticketsList-enviados" class="tickets-container space-y-4 hidden">
+            <div id="ticketsList-enviados" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'enviados') ? '' : 'hidden' }}">
                 @forelse($ticketsEnviados as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
@@ -482,7 +482,7 @@
             </div>
             
             <!-- Tickets List - Recibidos -->
-            <div id="ticketsList-recibidos" class="tickets-container space-y-4">
+            <div id="ticketsList-recibidos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'recibidos') ? '' : 'hidden' }}">
                 @forelse($ticketsRecibidos as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">
@@ -647,7 +647,7 @@
             </div>
             
             <!-- Tickets List - Resueltos -->
-            <div id="ticketsList-resueltos" class="tickets-container space-y-4 hidden">
+            <div id="ticketsList-resueltos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'resueltos') ? '' : 'hidden' }}">
                 @forelse($ticketsResueltos as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border {{ $ticket->urgente ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-700/50' }} rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <div class="p-4">

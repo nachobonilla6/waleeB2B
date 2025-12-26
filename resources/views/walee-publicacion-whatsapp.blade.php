@@ -164,8 +164,11 @@
                 $cleanContent = preg_replace('/\n.*velasportfishingandtours\.com.*\n?/', '', $cleanContent);
                 $cleanContent = trim($cleanContent);
                 
-                // Crear mensaje solo con el texto (sin link de la página)
-                $message = $cleanContent;
+                // Obtener la URL completa de esta página para que WhatsApp muestre la previsualización con la imagen
+                $pageUrl = url()->current();
+                
+                // Crear mensaje con el texto y el link de la página (el link permite que WhatsApp muestre la previsualización con la imagen)
+                $message = $cleanContent . "\n\n" . $pageUrl;
             @endphp
             
             const text = @json($message);

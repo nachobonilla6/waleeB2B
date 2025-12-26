@@ -2357,7 +2357,20 @@
                     document.getElementById('nota_type').value = nota.type || 'note';
                     document.getElementById('nota_cliente_id').value = nota.cliente_id || '';
                     document.getElementById('nota_pinned').checked = nota.pinned || false;
-                    document.getElementById('nota_fecha').value = nota.fecha || new Date().toISOString().split('T')[0];
+                    // Formatear fecha correctamente
+                    let fechaValue = '';
+                    if (nota.fecha) {
+                        // Si viene como string, usarlo directamente
+                        if (typeof nota.fecha === 'string') {
+                            fechaValue = nota.fecha.split(' ')[0]; // Tomar solo la parte de la fecha si viene con hora
+                        } else {
+                            // Si viene como objeto, formatearlo
+                            fechaValue = new Date(nota.fecha).toISOString().split('T')[0];
+                        }
+                    } else {
+                        fechaValue = new Date().toISOString().split('T')[0];
+                    }
+                    document.getElementById('nota_fecha').value = fechaValue;
                     document.getElementById('notaModalTitle').textContent = 'Editar Nota';
                     const deleteBtn = document.getElementById('deleteNotaBtn');
                     if (deleteBtn) deleteBtn.classList.remove('hidden');

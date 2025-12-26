@@ -457,6 +457,8 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
             'imagen' => $imagenValue,
             'estado' => 'enviado',
             'urgente' => $request->has('urgente') && $request->input('urgente') == '1',
+            'prioritario' => $request->has('prioritario') && $request->input('prioritario') == '1',
+            'a_discutir' => $request->has('a_discutir') && $request->input('a_discutir') == '1',
         ]);
         
         return response()->json([

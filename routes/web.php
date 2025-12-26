@@ -2300,47 +2300,38 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             'image_url' => $imageUrl,
         ]);
         
-        // Enviar webhook con los datos y URLs de fotos
+        // Enviar webhook a n8n con texto e imagen URL pública
         try {
-            $webhookUrl = $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/6368cb37-0292-4232-beab-69e98e910df6';
-            $pageId = $cliente->page_id ?? '';
-            $token = $cliente->token ?? '';
+            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
             
-            // Si no hay webhook configurado, no enviar
-            if (empty($webhookUrl)) {
-                \Log::warning('No hay webhook URL configurado para el cliente ' . $cliente->id);
-            } else {
-                // Generar URLs públicas de las imágenes
-                $imagenesUrls = [];
-                foreach ($fotosPaths as $path) {
-                    $imagenesUrls[] = asset('storage/' . $path);
-                }
-                
-                // Enviar como JSON en lugar de multipart para facilitar el uso de URLs
-                // Enviar contenido original a Facebook, WhatsApp en campo separado
-                $webhookData = [
-                    'webhook_url' => $webhookUrl,
-                    'page_id' => $pageId,
-                    'token' => $token,
-                    'texto_publicacion' => $contentOriginal, // Contenido original sin WhatsApp para Facebook
-                    'whatsapp_url' => $whatsappUrl, // URL de WhatsApp en campo separado (opcional)
-                    'cliente_id' => $cliente->id,
-                    'cliente_nombre' => $cliente->name,
-                    'publicacion_id' => $publicacion->id,
-                    'imagenes_urls' => $imagenesUrls, // Array de URLs públicas
-                ];
-                
-                $client = new \GuzzleHttp\Client();
-                $client->post($webhookUrl, [
-                    'json' => $webhookData,
-                    'timeout' => 30,
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                    ],
-                ]);
+            // Obtener URL pública de la primera imagen (si existe)
+            $imageUrlPublic = null;
+            if (!empty($fotosPaths) && !empty($fotosPaths[0])) {
+                $imageUrlPublic = asset('storage/' . $fotosPaths[0]);
             }
+            
+            // Preparar datos para el webhook
+            $webhookData = [
+                'texto' => $contentOriginal, // Texto de la publicación
+                'image_url' => $imageUrlPublic, // URL pública de la imagen
+            ];
+            
+            // Enviar al webhook de n8n
+            $client = new \GuzzleHttp\Client();
+            $client->post($webhookUrl, [
+                'json' => $webhookData,
+                'timeout' => 30,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+            
+            \Log::info('Webhook enviado a n8n', [
+                'webhook_url' => $webhookUrl,
+                'data' => $webhookData,
+            ]);
         } catch (\Exception $webhookError) {
-            \Log::warning('Error al enviar webhook de publicación: ' . $webhookError->getMessage());
+            \Log::warning('Error al enviar webhook de publicación a n8n: ' . $webhookError->getMessage());
         }
         
         return response()->json([

@@ -2273,8 +2273,11 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         // Obtener número de WhatsApp del cliente (telefono_1 o telefono_2)
         $whatsappNumber = $cliente->telefono_1 ?? $cliente->telefono_2 ?? null;
         
+        // Agregar link a velasportfishingandtours.com siempre
+        $websiteLink = "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+        
         // Preparar contenido con botón de WhatsApp para guardar en BD
-        $contentWithWhatsApp = $contentOriginal;
+        $contentWithWhatsApp = $contentOriginal . $websiteLink;
         $whatsappUrl = null;
         
         if ($whatsappNumber) {
@@ -2290,7 +2293,10 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             
             // Agregar botón de WhatsApp al final del contenido para guardar
             $whatsappButton = "\n\n📱 Contáctanos por WhatsApp: {$whatsappUrl}";
-            $contentWithWhatsApp = $contentOriginal . $whatsappButton;
+            $contentWithWhatsApp = $contentOriginal . $websiteLink . $whatsappButton;
+        } else {
+            // Si no hay WhatsApp, solo agregar el link del sitio web
+            $contentWithWhatsApp = $contentOriginal . $websiteLink;
         }
         
         $publicacion = \App\Models\Post::create([
@@ -2310,9 +2316,12 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
                 $imageUrlPublic = asset('storage/' . $fotosPaths[0]);
             }
             
+            // Agregar link del sitio web al contenido para el webhook
+            $contentWithLink = $contentOriginal . "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+            
             // Preparar datos para el webhook
             $webhookData = [
-                'texto' => $contentOriginal, // Texto de la publicación
+                'texto' => $contentWithLink, // Texto de la publicación con link
                 'image_url' => $imageUrlPublic, // URL pública de la imagen
             ];
             
@@ -2375,6 +2384,11 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
         $content = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $content);
         $content = trim($content);
         
+        // Asegurar que el contenido tenga el link del sitio web
+        if (strpos($content, 'velasportfishingandtours.com') === false) {
+            $content .= "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+        }
+        
         // Obtener URL de la imagen
         $imageUrl = $publicacion->image_url;
         
@@ -2412,6 +2426,20 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
         ], 500);
     }
 })->middleware(['auth'])->name('walee.cliente.publicaciones.republicar');
+
+// Ruta para compartir publicación por WhatsApp (con imagen visible)
+Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/whatsapp', function ($id, $publicacion_id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        $publicacion = \App\Models\Post::where('id', $publicacion_id)
+            ->where('cliente_id', $cliente->id)
+            ->firstOrFail();
+        
+        return view('walee-publicacion-whatsapp', compact('publicacion', 'cliente'));
+    } catch (\Exception $e) {
+        abort(404);
+    }
+})->name('walee.cliente.publicaciones.whatsapp');
 
 // Ruta para eliminar publicación del cliente
 Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($id, $publicacion_id) {

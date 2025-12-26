@@ -634,28 +634,11 @@
             }
         }
 
-        // Share to WhatsApp - Abre en nueva ventana
+        // Share to WhatsApp - Abre página con imagen visible
         function shareToWhatsApp(id, title, content) {
-            // Limpiar contenido removiendo el botón de WhatsApp si existe
-            let cleanContent = content.replace(/\n.*[Ww]hats[Aa]pp.*\n?/g, '').trim();
-            
-            // Crear mensaje con título y contenido
-            const text = title + '\n\n' + cleanContent;
-            
-            // Detectar si es móvil o desktop
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            let url;
-            
-            if (isMobile) {
-                // Para móviles usar whatsapp://
-                url = 'whatsapp://send?text=' + encodeURIComponent(text);
-            } else {
-                // Para desktop usar web.whatsapp.com
-                url = 'https://web.whatsapp.com/send?text=' + encodeURIComponent(text);
-            }
-            
-            // Abrir en nueva ventana
-            window.open(url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            // Abrir página de compartir por WhatsApp con imagen visible
+            const shareUrl = `/walee-cliente/{{ $cliente->id }}/publicaciones/${id}/whatsapp`;
+            window.open(shareUrl, '_blank', 'width=500,height=700,scrollbars=yes,resizable=yes');
         }
 
         // Share to LinkedIn

@@ -273,7 +273,7 @@
                         <strong>Emails no-clientes:</strong> {{ isset($emailsNoClientes) ? $emailsNoClientes : 'ERROR' }}
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Clientes en DB:</strong> {{ isset($clientesEmails) ? count($clientesEmails) : 'ERROR' }}
+                        <strong>Clientes en DB (clientes_en_proceso):</strong> {{ isset($clientesEmails) ? count($clientesEmails) : 'ERROR' }}
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-2 rounded">
                         <strong>Emails en página:</strong> {{ isset($emails) ? $emails->count() : 'ERROR' }}
@@ -284,7 +284,7 @@
                 </div>
                 @if(isset($clientesEmails) && count($clientesEmails) > 0)
                     <div class="mt-3 bg-white dark:bg-slate-800 p-2 rounded text-xs">
-                        <strong>Emails de clientes (primeros 5):</strong> {{ implode(', ', array_slice($clientesEmails, 0, 5)) }}
+                        <strong>Emails de clientes_en_proceso (primeros 5):</strong> {{ implode(', ', array_slice($clientesEmails, 0, 5)) }}
                     </div>
                 @endif
             </div>

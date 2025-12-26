@@ -53,6 +53,23 @@
             @php $pageTitle = 'Configuración'; @endphp
             @include('partials.walee-navbar')
 
+            <!-- Header con botón de Dashboard -->
+            <div class="flex items-center justify-between mb-4 md:mb-6 animate-fade-in-up">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-1">{{ $cliente->name }}</h1>
+                    <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">Configuración y Publicaciones</p>
+                </div>
+                <a 
+                    href="{{ route('walee.facebook.clientes') }}" 
+                    class="inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all text-xs md:text-sm shadow-sm"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span class="hidden sm:inline">Dashboard</span>
+                </a>
+            </div>
+
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="flex gap-2 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-1.5">

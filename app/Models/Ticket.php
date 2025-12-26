@@ -20,12 +20,16 @@ class Ticket extends Model
         'imagen',
         'estado',
         'urgente',
+        'prioritario',
+        'a_discutir',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'urgente' => 'boolean',
+        'prioritario' => 'boolean',
+        'a_discutir' => 'boolean',
     ];
 
     /**

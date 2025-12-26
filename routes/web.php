@@ -493,6 +493,44 @@ Route::post('/walee-tickets/{id}/urgente', function ($id) {
     }
 })->middleware(['auth'])->name('walee.tickets.urgente');
 
+Route::post('/walee-tickets/{id}/prioritario', function ($id) {
+    try {
+        $ticket = \App\Models\Ticket::findOrFail($id);
+        $ticket->prioritario = !$ticket->prioritario;
+        $ticket->save();
+        
+        return response()->json([
+            'success' => true,
+            'prioritario' => $ticket->prioritario,
+            'message' => $ticket->prioritario ? 'Ticket marcado como prioritario' : 'Prioritario removido',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.tickets.prioritario');
+
+Route::post('/walee-tickets/{id}/a-discutir', function ($id) {
+    try {
+        $ticket = \App\Models\Ticket::findOrFail($id);
+        $ticket->a_discutir = !$ticket->a_discutir;
+        $ticket->save();
+        
+        return response()->json([
+            'success' => true,
+            'a_discutir' => $ticket->a_discutir,
+            'message' => $ticket->a_discutir ? 'Ticket marcado como a discutir' : 'A discutir removido',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.tickets.a-discutir');
+
 Route::put('/walee-tickets/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);

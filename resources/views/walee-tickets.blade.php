@@ -70,22 +70,28 @@
         $recibidos = $tickets->where('estado', 'recibido')->count();
         $resueltos = $tickets->where('estado', 'resuelto')->count();
         
-        // Ordenar cada grupo también por urgente primero, luego por fecha
+        // Ordenar cada grupo también por prioridad: urgente > prioritario > a_discutir > fecha
         $ticketsEnviados = $tickets->where('estado', 'enviado')
             ->sortBy([
                 ['urgente', 'desc'],
+                ['prioritario', 'desc'],
+                ['a_discutir', 'desc'],
                 ['created_at', 'desc']
             ])->values();
         
         $ticketsRecibidos = $tickets->where('estado', 'recibido')
             ->sortBy([
                 ['urgente', 'desc'],
+                ['prioritario', 'desc'],
+                ['a_discutir', 'desc'],
                 ['created_at', 'desc']
             ])->values();
         
         $ticketsResueltos = $tickets->where('estado', 'resuelto')
             ->sortBy([
                 ['urgente', 'desc'],
+                ['prioritario', 'desc'],
+                ['a_discutir', 'desc'],
                 ['created_at', 'desc']
             ])->values();
         
@@ -182,17 +188,45 @@
                                                         ⚠️ Urgente
                                                     </span>
                                                 @endif
+                                                @if($ticket->prioritario)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30">
+                                                        ⭐ Prioritario
+                                                    </span>
+                                                @endif
+                                                @if($ticket->a_discutir)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30">
+                                                        💬 A Discutir
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
                                         <div class="flex items-center gap-2 flex-shrink-0">
                                             <button 
                                                 onclick="toggleUrgente({{ $ticket->id }}, this)"
-                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-slate-600' }}"
                                                 title="{{ $ticket->urgente ? 'Quitar urgente' : 'Marcar como urgente' }}"
                                             >
                                                 <svg class="w-5 h-5 {{ $ticket->urgente ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="togglePrioritario({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->prioritario ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->prioritario ? 'Quitar prioritario' : 'Marcar como prioritario' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->prioritario ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="toggleADiscutir({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->a_discutir ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->a_discutir ? 'Quitar a discutir' : 'Marcar como a discutir' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->a_discutir ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                                 </svg>
                                             </button>
                                             <span class="text-xs text-slate-500 dark:text-slate-400">
@@ -345,17 +379,45 @@
                                                         ⚠️ Urgente
                                                     </span>
                                                 @endif
+                                                @if($ticket->prioritario)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30">
+                                                        ⭐ Prioritario
+                                                    </span>
+                                                @endif
+                                                @if($ticket->a_discutir)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30">
+                                                        💬 A Discutir
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
                                         <div class="flex items-center gap-2 flex-shrink-0">
                                             <button 
                                                 onclick="toggleUrgente({{ $ticket->id }}, this)"
-                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-slate-600' }}"
                                                 title="{{ $ticket->urgente ? 'Quitar urgente' : 'Marcar como urgente' }}"
                                             >
                                                 <svg class="w-5 h-5 {{ $ticket->urgente ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="togglePrioritario({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->prioritario ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->prioritario ? 'Quitar prioritario' : 'Marcar como prioritario' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->prioritario ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="toggleADiscutir({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->a_discutir ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->a_discutir ? 'Quitar a discutir' : 'Marcar como a discutir' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->a_discutir ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                                 </svg>
                                             </button>
                                             <span class="text-xs text-slate-500 dark:text-slate-400">
@@ -509,17 +571,45 @@
                                                         ⚠️ Urgente
                                                     </span>
                                                 @endif
+                                                @if($ticket->prioritario)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30">
+                                                        ⭐ Prioritario
+                                                    </span>
+                                                @endif
+                                                @if($ticket->a_discutir)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30">
+                                                        💬 A Discutir
+                                                    </span>
+                                                @endif
                                             </div>
                                             <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $ticket->asunto }}</h3>
                                         </div>
                                         <div class="flex items-center gap-2 flex-shrink-0">
                                             <button 
                                                 onclick="toggleUrgente({{ $ticket->id }}, this)"
-                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->urgente ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-slate-600' }}"
                                                 title="{{ $ticket->urgente ? 'Quitar urgente' : 'Marcar como urgente' }}"
                                             >
                                                 <svg class="w-5 h-5 {{ $ticket->urgente ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="togglePrioritario({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->prioritario ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->prioritario ? 'Quitar prioritario' : 'Marcar como prioritario' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->prioritario ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="toggleADiscutir({{ $ticket->id }}, this)"
+                                                class="p-1.5 rounded-lg transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 {{ $ticket->a_discutir ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-600' }}"
+                                                title="{{ $ticket->a_discutir ? 'Quitar a discutir' : 'Marcar como a discutir' }}"
+                                            >
+                                                <svg class="w-5 h-5 {{ $ticket->a_discutir ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                                 </svg>
                                             </button>
                                             <span class="text-xs text-slate-500 dark:text-slate-400">
@@ -671,6 +761,16 @@
                                                 @if($ticket->urgente)
                                                     <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
                                                         ⚠️ Urgente
+                                                    </span>
+                                                @endif
+                                                @if($ticket->prioritario)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30">
+                                                        ⭐ Prioritario
+                                                    </span>
+                                                @endif
+                                                @if($ticket->a_discutir)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30">
+                                                        💬 A Discutir
                                                     </span>
                                                 @endif
                                             </div>
@@ -875,6 +975,82 @@
                 }
             } catch (error) {
                 showNotification('Error', 'Error de conexión', 'error');
+            }
+        }
+        
+        async function togglePrioritario(ticketId, buttonElement) {
+            try {
+                const response = await fetch(`/walee-tickets/${ticketId}/prioritario`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const isPrioritario = data.prioritario;
+                    buttonElement.classList.toggle('text-yellow-500', isPrioritario);
+                    buttonElement.classList.toggle('dark:text-yellow-400', isPrioritario);
+                    buttonElement.classList.toggle('text-slate-400', !isPrioritario);
+                    buttonElement.classList.toggle('dark:text-slate-600', !isPrioritario);
+                    
+                    const svg = buttonElement.querySelector('svg');
+                    if (svg) {
+                        svg.classList.toggle('fill-current', isPrioritario);
+                        svg.classList.toggle('fill-none', !isPrioritario);
+                    }
+                    
+                    buttonElement.title = isPrioritario ? 'Quitar prioritario' : 'Marcar como prioritario';
+                    
+                    // Recargar la página para actualizar los badges
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'Error al actualizar prioritario', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión', 'error');
+            }
+        }
+        
+        async function toggleADiscutir(ticketId, buttonElement) {
+            try {
+                const response = await fetch(`/walee-tickets/${ticketId}/a-discutir`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const isADiscutir = data.a_discutir;
+                    buttonElement.classList.toggle('text-blue-500', isADiscutir);
+                    buttonElement.classList.toggle('dark:text-blue-400', isADiscutir);
+                    buttonElement.classList.toggle('text-slate-400', !isADiscutir);
+                    buttonElement.classList.toggle('dark:text-slate-600', !isADiscutir);
+                    
+                    const svg = buttonElement.querySelector('svg');
+                    if (svg) {
+                        svg.classList.toggle('fill-current', isADiscutir);
+                        svg.classList.toggle('fill-none', !isADiscutir);
+                    }
+                    
+                    buttonElement.title = isADiscutir ? 'Quitar a discutir' : 'Marcar como a discutir';
+                    
+                    // Recargar la página para actualizar los badges
+                    location.reload();
+                } else {
+                    showNotification(data.message || 'Error al actualizar a discutir', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión', 'error');
             }
         }
         

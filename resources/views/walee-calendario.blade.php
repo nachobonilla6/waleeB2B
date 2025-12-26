@@ -656,16 +656,16 @@
                                 @forelse($notasSidebar as $nota)
                                     <div 
                                         onclick="editNota({{ $nota->id }})"
-                                        class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all group {{ $nota->pinned ? 'border-blue-300 dark:border-blue-700' : '' }}"
+                                        class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all group {{ $nota->pinned ? 'border-blue-500 dark:border-blue-600' : '' }}"
                                     >
                                         <div class="flex items-start justify-between gap-2 mb-1">
                                             <div class="flex items-center gap-2 flex-1 min-w-0">
                                                 @if($nota->pinned)
-                                                    <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-4 h-4 text-blue-700 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                                                     </svg>
                                                 @endif
-                                                <span class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase">
+                                                <span class="text-xs font-medium text-blue-800 dark:text-blue-300 uppercase">
                                                     {{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}
                                                 </span>
                                             </div>
@@ -1100,7 +1100,7 @@
                                         @php $nota = $itemOrdenado['item']; @endphp
                                         <button 
                                             onclick="event.preventDefault(); editNota({{ $nota->id }});"
-                                            class="w-full text-left px-2 py-1.5 sm:px-2 sm:py-1 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 mb-1 bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-l-3 border-blue-500 {{ $nota->pinned ? 'ring-1 ring-blue-300 dark:ring-blue-700' : '' }}"
+                                            class="w-full text-left px-2 py-1.5 sm:px-2 sm:py-1 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 mb-1 bg-blue-100 dark:bg-blue-600/30 text-blue-800 dark:text-blue-200 border-l-3 border-blue-700 dark:border-blue-500 {{ $nota->pinned ? 'ring-1 ring-blue-400 dark:ring-blue-600' : '' }}"
                                             title="{{ Str::limit($nota->content, 100) }}"
                                         >
                                             <div class="flex items-center gap-1.5">

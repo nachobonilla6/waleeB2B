@@ -20,7 +20,14 @@
     @endphp
     <meta property="og:description" content="{{ Str::limit($metaContent, 200) }}">
     @if($publicacion->image_url)
-    <meta property="og:image" content="{{ $publicacion->image_url }}">
+    @php
+        // Asegurar que la URL de la imagen sea absoluta
+        $imageUrl = $publicacion->image_url;
+        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            $imageUrl = url($imageUrl);
+        }
+    @endphp
+    <meta property="og:image" content="{{ $imageUrl }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
@@ -31,7 +38,14 @@
     <meta name="twitter:title" content="{{ $publicacion->title }}">
     <meta name="twitter:description" content="{{ Str::limit($metaContent, 200) }}">
     @if($publicacion->image_url)
-    <meta name="twitter:image" content="{{ $publicacion->image_url }}">
+    @php
+        // Asegurar que la URL de la imagen sea absoluta
+        $imageUrl = $publicacion->image_url;
+        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+            $imageUrl = url($imageUrl);
+        }
+    @endphp
+    <meta name="twitter:image" content="{{ $imageUrl }}">
     @endif
     
     <script src="https://cdn.tailwindcss.com"></script>

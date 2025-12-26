@@ -133,9 +133,9 @@
             </div>
             
             <!-- Templates Grid -->
-            <div id="templatesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div id="templatesContainer" class="grid grid-cols-1 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
                 @forelse($templates as $template)
-                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 hover:shadow-lg dark:hover:shadow-none transition-all group" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
+                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 hover:shadow-lg dark:hover:shadow-none transition-all group w-full" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-1">{{ $template->nombre }}</h3>

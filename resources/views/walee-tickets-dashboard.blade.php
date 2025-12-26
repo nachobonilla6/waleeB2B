@@ -99,7 +99,7 @@
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
                 <!-- Enviados -->
                 <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.2s;">
                     <div class="flex items-center justify-between mb-2">
@@ -138,13 +138,17 @@
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsResueltos) }}</p>
                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Resueltos</p>
                 </div>
-            </div>
-            
-            <!-- Secondary Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-1 gap-3 md:gap-4 mb-6 md:mb-8">
+                
                 <!-- Urgentes -->
                 <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-red-200 dark:border-red-500/20 p-3 md:p-4" style="animation-delay: 0.5s;">
-                    <p class="text-base md:text-xl font-bold text-red-600 dark:text-red-400">{{ number_format($ticketsUrgentes) }}</p>
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 md:w-5 md:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-lg md:text-2xl font-bold text-red-600 dark:text-red-400">{{ number_format($ticketsUrgentes) }}</p>
                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Urgentes</p>
                 </div>
             </div>

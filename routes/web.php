@@ -1966,6 +1966,7 @@ Route::post('/notas', function (\Illuminate\Http\Request $request) {
         $nota->type = $request->input('type', 'note');
         $nota->cliente_id = $request->input('cliente_id') ?: null;
         $nota->pinned = $request->input('pinned', false);
+        $nota->fecha = $request->input('fecha') ?: now()->format('Y-m-d');
         $nota->user_id = auth()->id();
         $nota->save();
         
@@ -2004,6 +2005,7 @@ Route::put('/notas/{id}', function (\Illuminate\Http\Request $request, $id) {
         $nota->type = $request->input('type', 'note');
         $nota->cliente_id = $request->input('cliente_id') ?: null;
         $nota->pinned = $request->input('pinned', false);
+        $nota->fecha = $request->input('fecha') ?: now()->format('Y-m-d');
         $nota->save();
         
         return response()->json([

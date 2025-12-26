@@ -429,9 +429,22 @@
         $listas = \App\Models\Lista::orderBy('nombre')->get();
         $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
         
-        // Obtener todas las notas ordenadas por pinned y fecha
-        $notas = \App\Models\Note::with(['cliente', 'user'])
+        // Obtener todas las notas del período
+        $notasBase = \App\Models\Note::with(['cliente', 'user'])
+            ->where(function($query) use ($fechaInicio, $fechaFin) {
+                $query->whereBetween('fecha', [$fechaInicio, $fechaFin])
+                      ->orWhereNull('fecha');
+            })
+            ->get();
+        
+        $notas = $notasBase->groupBy(function($nota) {
+            return $nota->fecha ? $nota->fecha->format('Y-m-d') : now()->format('Y-m-d');
+        });
+        
+        // Obtener todas las notas ordenadas por pinned y fecha para el sidebar
+        $notasSidebar = \App\Models\Note::with(['cliente', 'user'])
             ->orderBy('pinned', 'desc')
+            ->orderBy('fecha', 'desc')
             ->orderBy('created_at', 'desc')
             ->limit(20)
             ->get();
@@ -856,6 +869,7 @@
                                         $fechaKey = $diaSemana->format('Y-m-d');
                                         $citasDelDia = $citas->get($fechaKey, collect());
                                         $tareasDelDia = $tareas->get($fechaKey, collect());
+                                        $notasDelDia = $notas->get($fechaKey, collect());
                                         
                                         // Combinar y ordenar por hora
                                         $itemsDelDia = collect();
@@ -871,6 +885,13 @@
                                                 'tipo' => 'tarea',
                                                 'item' => $tarea,
                                                 'hora' => $tarea->fecha_hora
+                                            ]);
+                                        }
+                                        foreach ($notasDelDia as $nota) {
+                                            $itemsDelDia->push([
+                                                'tipo' => 'nota',
+                                                'item' => $nota,
+                                                'hora' => $nota->fecha ? \Carbon\Carbon::parse($nota->fecha)->setTime(12, 0) : now()->setTime(12, 0)
                                             ]);
                                         }
                                         $itemsDelDia = $itemsDelDia->sortBy('hora');
@@ -971,6 +992,7 @@
                             $fechaKey = $diaActual->format('Y-m-d');
                             $citasDelDia = $citas->get($fechaKey, collect());
                             $tareasDelDia = $tareas->get($fechaKey, collect());
+                            $notasDelDia = $notas->get($fechaKey, collect());
                             
                             // Combinar y ordenar por hora
                             $itemsDelDia = collect();
@@ -988,8 +1010,15 @@
                                     'hora' => $tarea->fecha_hora
                                 ]);
                             }
+                            foreach ($notasDelDia as $nota) {
+                                $itemsDelDia->push([
+                                    'tipo' => 'nota',
+                                    'item' => $nota,
+                                    'hora' => $nota->fecha ? \Carbon\Carbon::parse($nota->fecha)->setTime(12, 0) : now()->setTime(12, 0)
+                                ]);
+                            }
                             $itemsDelDia = $itemsDelDia->sortBy('hora')->take(7);
-                            $totalItems = $citasDelDia->count() + $tareasDelDia->count();
+                            $totalItems = $citasDelDia->count() + $tareasDelDia->count() + $notasDelDia->count();
                             $cantidadItems = $itemsDelDia->count();
                             $espaciadoClase = $cantidadItems <= 7 ? 'space-y-1.5 sm:space-y-2' : 'space-y-0.5 sm:space-y-1';
                         @endphp
@@ -1027,7 +1056,7 @@
                                                 <span class="flex-1 truncate">{{ $cita->titulo }}</span>
                                             </div>
                                         </button>
-                                    @else
+                                    @elseif($itemOrdenado['tipo'] === 'tarea')
                                         @php $tarea = $itemOrdenado['item']; @endphp
                                         @php
                                             $colorTarea = $tarea->color ?? '#8b5cf6';
@@ -1048,6 +1077,23 @@
                                             <div class="flex items-center gap-1.5">
                                                 <span class="text-[10px] sm:text-xs font-semibold opacity-75">{{ $tarea->fecha_hora->format('H:i') }}</span>
                                                 <span class="flex-1 truncate">{{ $tarea->texto }}</span>
+                                            </div>
+                                        </button>
+                                    @elseif($itemOrdenado['tipo'] === 'nota')
+                                        @php $nota = $itemOrdenado['item']; @endphp
+                                        <button 
+                                            onclick="event.preventDefault(); editNota({{ $nota->id }});"
+                                            class="w-full text-left px-2 py-1.5 sm:px-2 sm:py-1 rounded text-xs sm:text-xs font-medium transition-all hover:opacity-80 mb-1 bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-l-3 border-blue-500 {{ $nota->pinned ? 'ring-1 ring-blue-300 dark:ring-blue-700' : '' }}"
+                                            title="{{ Str::limit($nota->content, 100) }}"
+                                        >
+                                            <div class="flex items-center gap-1.5">
+                                                @if($nota->pinned)
+                                                    <svg class="w-3 h-3 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                                    </svg>
+                                                @endif
+                                                <span class="text-[10px] sm:text-xs font-semibold opacity-75 uppercase">{{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}</span>
+                                                <span class="flex-1 truncate">{{ Str::limit($nota->content, 20) }}</span>
                                             </div>
                                         </button>
                                     @endif
@@ -1307,6 +1353,18 @@
             </div>
             <form id="nota-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
                 <input type="hidden" name="nota_id" id="nota_id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
+                    <input 
+                        type="date" 
+                        name="fecha" 
+                        id="nota_fecha" 
+                        required
+                        value="{{ now()->format('Y-m-d') }}"
+                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                    >
+                </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido de la Nota</label>

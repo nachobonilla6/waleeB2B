@@ -173,17 +173,17 @@ Route::get('/walee-tickets-dashboard', function () {
     // Tickets a discutir
     $ticketsADiscutir = \App\Models\Ticket::where('a_discutir', true)->count();
     
-    // Distribución de tickets por día (últimos 30 días)
+    // Distribución de tickets por día (últimos 15 días)
     $ticketsPorDiaRaw = \App\Models\Ticket::selectRaw('DATE(created_at) as dia, COUNT(*) as total')
-        ->where('created_at', '>=', now()->subDays(30))
+        ->where('created_at', '>=', now()->subDays(15))
         ->groupBy('dia')
         ->orderBy('dia', 'asc')
         ->get()
         ->keyBy('dia');
     
-    // Rellenar todos los días de los últimos 30 días
+    // Rellenar todos los días de los últimos 15 días
     $ticketsPorDia = [];
-    for ($i = 29; $i >= 0; $i--) {
+    for ($i = 14; $i >= 0; $i--) {
         $fecha = now()->subDays($i)->format('Y-m-d');
         $ticket = $ticketsPorDiaRaw->get($fecha);
         $ticketsPorDia[] = [

@@ -28,21 +28,29 @@
         if ($publicacion->image_url) {
             $imageUrl = $publicacion->image_url;
             
-            // Si ya es una URL completa, validarla
-            if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                // Si empieza con /storage/ o storage/, convertir a URL completa
+            // Si ya es una URL completa (empieza con http:// o https://), validarla
+            if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                // Ya es una URL válida, solo asegurar HTTPS
+                $imageUrl = str_replace('http://', 'https://', $imageUrl);
+            } else {
+                // Es una ruta relativa, convertir a URL completa
+                // Si empieza con /storage/, usar asset() directamente
                 if (strpos($imageUrl, '/storage/') === 0) {
                     $imageUrl = asset($imageUrl);
                 } elseif (strpos($imageUrl, 'storage/') === 0) {
+                    // Si no tiene / inicial, agregarlo
                     $imageUrl = asset('/' . $imageUrl);
-                } else {
-                    // Cualquier otra ruta relativa
+                } elseif (strpos($imageUrl, '/') === 0) {
+                    // Cualquier otra ruta absoluta relativa
                     $imageUrl = url($imageUrl);
+                } else {
+                    // Ruta relativa sin / inicial
+                    $imageUrl = asset('/' . $imageUrl);
                 }
+                
+                // Asegurar HTTPS
+                $imageUrl = str_replace('http://', 'https://', $imageUrl);
             }
-            
-            // Asegurar HTTPS
-            $imageUrl = str_replace('http://', 'https://', $imageUrl);
         }
     @endphp
     

@@ -993,22 +993,13 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    const isPrioritario = data.prioritario;
-                    buttonElement.classList.toggle('text-yellow-500', isPrioritario);
-                    buttonElement.classList.toggle('dark:text-yellow-400', isPrioritario);
-                    buttonElement.classList.toggle('text-slate-400', !isPrioritario);
-                    buttonElement.classList.toggle('dark:text-slate-600', !isPrioritario);
-                    
-                    const svg = buttonElement.querySelector('svg');
-                    if (svg) {
-                        svg.classList.toggle('fill-current', isPrioritario);
-                        svg.classList.toggle('fill-none', !isPrioritario);
-                    }
-                    
-                    buttonElement.title = isPrioritario ? 'Quitar prioritario' : 'Marcar como prioritario';
-                    
-                    // Recargar la página para actualizar los badges
-                    location.reload();
+                    showNotification(
+                        data.prioritario ? 'Marcado como prioritario' : 'Prioritario removido', 
+                        data.message, 
+                        'success'
+                    );
+                    // Recargar para actualizar todos los botones y badges
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showNotification(data.message || 'Error al actualizar prioritario', 'error');
                 }
@@ -1031,22 +1022,13 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    const isADiscutir = data.a_discutir;
-                    buttonElement.classList.toggle('text-blue-500', isADiscutir);
-                    buttonElement.classList.toggle('dark:text-blue-400', isADiscutir);
-                    buttonElement.classList.toggle('text-slate-400', !isADiscutir);
-                    buttonElement.classList.toggle('dark:text-slate-600', !isADiscutir);
-                    
-                    const svg = buttonElement.querySelector('svg');
-                    if (svg) {
-                        svg.classList.toggle('fill-current', isADiscutir);
-                        svg.classList.toggle('fill-none', !isADiscutir);
-                    }
-                    
-                    buttonElement.title = isADiscutir ? 'Quitar a discutir' : 'Marcar como a discutir';
-                    
-                    // Recargar la página para actualizar los badges
-                    location.reload();
+                    showNotification(
+                        data.a_discutir ? 'Marcado como a discutir' : 'A discutir removido', 
+                        data.message, 
+                        'success'
+                    );
+                    // Recargar para actualizar todos los botones y badges
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showNotification(data.message || 'Error al actualizar a discutir', 'error');
                 }

@@ -705,6 +705,60 @@
         document.getElementById('verTemplateModal')?.addEventListener('click', function(e) {
             if (e.target === this) closeVerTemplateModal();
         });
+        
+        // Template search functionality
+        function filterTemplates() {
+            const searchInput = document.getElementById('templateSearchInput');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const templateCards = document.querySelectorAll('.template-card');
+            const templatesContainer = document.getElementById('templatesContainer');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            let visibleCount = 0;
+            
+            templateCards.forEach(card => {
+                const nombre = card.getAttribute('data-nombre') || '';
+                const asunto = card.getAttribute('data-asunto') || '';
+                const contenido = card.getAttribute('data-contenido') || '';
+                
+                const matches = nombre.includes(searchTerm) || 
+                               asunto.includes(searchTerm) || 
+                               contenido.includes(searchTerm);
+                
+                if (matches || searchTerm === '') {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Mostrar/ocultar mensaje de no resultados
+            if (searchTerm !== '' && visibleCount === 0) {
+                templatesContainer.style.display = 'none';
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                templatesContainer.style.display = 'grid';
+                noResultsMessage.classList.add('hidden');
+            }
+            
+            // Mostrar/ocultar botón de limpiar búsqueda
+            if (searchTerm !== '') {
+                clearBtn.style.display = 'block';
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.style.display = 'none';
+                clearBtn.classList.add('hidden');
+            }
+        }
+        
+        function clearTemplateSearch() {
+            const searchInput = document.getElementById('templateSearchInput');
+            searchInput.value = '';
+            filterTemplates();
+            searchInput.focus();
+        }
     </script>
     
     @include('partials.walee-support-button')

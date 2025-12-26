@@ -3,7 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compartir por WhatsApp - {{ $publicacion->title }}</title>
+    <title>{{ $publicacion->title }}</title>
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ $publicacion->title }}">
+    @php
+        // Limpiar contenido removiendo el botón de WhatsApp si existe
+        $cleanContent = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $publicacion->content);
+        $cleanContent = trim($cleanContent);
+        
+        // Remover el link del sitio web del contenido para el meta description
+        $metaContent = preg_replace('/\n.*velasportfishingandtours\.com.*\n?/', '', $cleanContent);
+        $metaContent = trim($metaContent);
+    @endphp
+    <meta property="og:description" content="{{ Str::limit($metaContent, 200) }}">
+    @if($publicacion->image_url)
+    <meta property="og:image" content="{{ $publicacion->image_url }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    @endif
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $publicacion->title }}">
+    <meta name="twitter:description" content="{{ Str::limit($metaContent, 200) }}">
+    @if($publicacion->image_url)
+    <meta name="twitter:image" content="{{ $publicacion->image_url }}">
+    @endif
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
@@ -54,12 +84,15 @@
                 $cleanContent = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $publicacion->content);
                 $cleanContent = trim($cleanContent);
                 
-                // Asegurar que tenga el link del sitio web
-                if (strpos($cleanContent, 'velasportfishingandtours.com') === false) {
-                    $cleanContent .= "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
-                }
+                // Remover el link del sitio web del contenido (ya estará en el link de la página)
+                $cleanContent = preg_replace('/\n.*velasportfishingandtours\.com.*\n?/', '', $cleanContent);
+                $cleanContent = trim($cleanContent);
                 
-                $message = $publicacion->title . "\n\n" . $cleanContent;
+                // Obtener la URL completa de esta página
+                $pageUrl = url()->current();
+                
+                // Crear mensaje solo con el texto y el link de la página (sin título)
+                $message = $cleanContent . "\n\n" . $pageUrl;
             @endphp
             
             const text = @json($message);

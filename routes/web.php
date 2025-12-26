@@ -2427,7 +2427,7 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
     }
 })->middleware(['auth'])->name('walee.cliente.publicaciones.republicar');
 
-// Ruta para compartir publicación por WhatsApp (con imagen visible)
+// Ruta para compartir publicación por WhatsApp (con imagen visible) - Sin autenticación para que WhatsApp pueda leer los Open Graph tags
 Route::get('/walee-cliente/{id}/publicaciones/{publicacion_id}/whatsapp', function ($id, $publicacion_id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);

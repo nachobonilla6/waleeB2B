@@ -2267,10 +2267,29 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         // Usar el contenido como título si no hay título específico
         $title = $request->input('title') ?: substr($request->input('content'), 0, 100);
         
+        // Obtener número de WhatsApp del cliente (telefono_1 o telefono_2)
+        $whatsappNumber = $cliente->telefono_1 ?? $cliente->telefono_2 ?? null;
+        
+        // Preparar contenido con botón de WhatsApp si hay número
+        $content = $request->input('content');
+        if ($whatsappNumber) {
+            // Limpiar número (eliminar espacios, guiones, paréntesis, etc.)
+            $cleanNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
+            
+            // Si no empieza con código de país, asumir Costa Rica (506)
+            if (strlen($cleanNumber) <= 8) {
+                $cleanNumber = '506' . $cleanNumber;
+            }
+            
+            // Agregar botón de WhatsApp al final del contenido
+            $whatsappButton = "\n\n📱 Contáctanos por WhatsApp: https://wa.me/{$cleanNumber}";
+            $content = $content . $whatsappButton;
+        }
+        
         $publicacion = \App\Models\Post::create([
             'cliente_id' => $cliente->id,
             'title' => $title,
-            'content' => $request->input('content'),
+            'content' => $content,
             'image_url' => $imageUrl,
         ]);
         
@@ -2291,11 +2310,12 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
                 }
                 
                 // Enviar como JSON en lugar de multipart para facilitar el uso de URLs
+                // Usar el contenido con el botón de WhatsApp incluido
                 $webhookData = [
                     'webhook_url' => $webhookUrl,
                     'page_id' => $pageId,
                     'token' => $token,
-                    'texto_publicacion' => $request->input('content'),
+                    'texto_publicacion' => $content, // Contenido con botón de WhatsApp
                     'cliente_id' => $cliente->id,
                     'cliente_nombre' => $cliente->name,
                     'publicacion_id' => $publicacion->id,

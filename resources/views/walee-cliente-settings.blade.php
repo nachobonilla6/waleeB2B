@@ -164,12 +164,30 @@
 
                 <!-- Lista de Publicaciones -->
                 <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
-                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Publicaciones Existentes</h2>
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-white">Publicaciones Existentes</h2>
+                        
+                        <!-- Searchbar -->
+                        <div class="relative flex-1 max-w-md">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                            <input 
+                                type="text" 
+                                id="searchPublicaciones"
+                                placeholder="Buscar publicaciones..."
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
+                                onkeyup="filterPublicaciones()"
+                            >
+                        </div>
+                    </div>
                     
                     @if($publicaciones->count() > 0)
-                        <div class="space-y-4">
+                        <div id="publicaciones-list" class="space-y-4">
                             @foreach($publicaciones as $publicacion)
-                                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4">
+                                <div class="publicacion-item rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4" data-title="{{ strtolower($publicacion->title) }}" data-content="{{ strtolower($publicacion->content) }}">
                                     <div class="flex items-start gap-4">
                                         @if($publicacion->image_url)
                                             <img src="{{ $publicacion->image_url }}" alt="{{ $publicacion->title }}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
@@ -522,6 +540,49 @@
                 }
             } catch (error) {
                 alert('Error de conexión: ' + error.message);
+            }
+        }
+
+        // Filtrar publicaciones
+        function filterPublicaciones() {
+            const searchInput = document.getElementById('searchPublicaciones');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const publicaciones = document.querySelectorAll('.publicacion-item');
+            let visibleCount = 0;
+            
+            publicaciones.forEach(function(publicacion) {
+                const title = publicacion.getAttribute('data-title') || '';
+                const content = publicacion.getAttribute('data-content') || '';
+                
+                if (searchTerm === '' || title.includes(searchTerm) || content.includes(searchTerm)) {
+                    publicacion.style.display = '';
+                    visibleCount++;
+                } else {
+                    publicacion.style.display = 'none';
+                }
+            });
+            
+            // Mostrar mensaje si no hay resultados
+            const listContainer = document.getElementById('publicaciones-list');
+            let noResultsMsg = document.getElementById('no-results-message');
+            
+            if (visibleCount === 0 && searchTerm !== '') {
+                if (!noResultsMsg) {
+                    noResultsMsg = document.createElement('div');
+                    noResultsMsg.id = 'no-results-message';
+                    noResultsMsg.className = 'text-center py-8';
+                    noResultsMsg.innerHTML = `
+                        <svg class="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm">No se encontraron publicaciones que coincidan con "${searchTerm}"</p>
+                    `;
+                    listContainer.appendChild(noResultsMsg);
+                }
+            } else {
+                if (noResultsMsg) {
+                    noResultsMsg.remove();
+                }
             }
         }
 

@@ -71,9 +71,298 @@
             
             <!-- Message -->
             <div>
-                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Mensaje</label>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-black dark:text-slate-300">Mensaje</label>
+                    <button 
+                        type="button"
+                        onclick="toggleEmojiPicker()"
+                        class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-all"
+                        title="Insertar emoji"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Emoji Picker -->
+                <div id="emojiPicker" class="hidden mb-2 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                        <button type="button" onclick="insertEmoji('😀')" class="text-2xl hover:scale-125 transition-transform" title="😀">😀</button>
+                        <button type="button" onclick="insertEmoji('😃')" class="text-2xl hover:scale-125 transition-transform" title="😃">😃</button>
+                        <button type="button" onclick="insertEmoji('😄')" class="text-2xl hover:scale-125 transition-transform" title="😄">😄</button>
+                        <button type="button" onclick="insertEmoji('😁')" class="text-2xl hover:scale-125 transition-transform" title="😁">😁</button>
+                        <button type="button" onclick="insertEmoji('😅')" class="text-2xl hover:scale-125 transition-transform" title="😅">😅</button>
+                        <button type="button" onclick="insertEmoji('😂')" class="text-2xl hover:scale-125 transition-transform" title="😂">😂</button>
+                        <button type="button" onclick="insertEmoji('🤣')" class="text-2xl hover:scale-125 transition-transform" title="🤣">🤣</button>
+                        <button type="button" onclick="insertEmoji('😊')" class="text-2xl hover:scale-125 transition-transform" title="😊">😊</button>
+                        <button type="button" onclick="insertEmoji('😇')" class="text-2xl hover:scale-125 transition-transform" title="😇">😇</button>
+                        <button type="button" onclick="insertEmoji('🙂')" class="text-2xl hover:scale-125 transition-transform" title="🙂">🙂</button>
+                        <button type="button" onclick="insertEmoji('🙃')" class="text-2xl hover:scale-125 transition-transform" title="🙃">🙃</button>
+                        <button type="button" onclick="insertEmoji('😉')" class="text-2xl hover:scale-125 transition-transform" title="😉">😉</button>
+                        <button type="button" onclick="insertEmoji('😌')" class="text-2xl hover:scale-125 transition-transform" title="😌">😌</button>
+                        <button type="button" onclick="insertEmoji('😍')" class="text-2xl hover:scale-125 transition-transform" title="😍">😍</button>
+                        <button type="button" onclick="insertEmoji('🥰')" class="text-2xl hover:scale-125 transition-transform" title="🥰">🥰</button>
+                        <button type="button" onclick="insertEmoji('😘')" class="text-2xl hover:scale-125 transition-transform" title="😘">😘</button>
+                        <button type="button" onclick="insertEmoji('😗')" class="text-2xl hover:scale-125 transition-transform" title="😗">😗</button>
+                        <button type="button" onclick="insertEmoji('😙')" class="text-2xl hover:scale-125 transition-transform" title="😙">😙</button>
+                        <button type="button" onclick="insertEmoji('😚')" class="text-2xl hover:scale-125 transition-transform" title="😚">😚</button>
+                        <button type="button" onclick="insertEmoji('😋')" class="text-2xl hover:scale-125 transition-transform" title="😋">😋</button>
+                        <button type="button" onclick="insertEmoji('😛')" class="text-2xl hover:scale-125 transition-transform" title="😛">😛</button>
+                        <button type="button" onclick="insertEmoji('😝')" class="text-2xl hover:scale-125 transition-transform" title="😝">😝</button>
+                        <button type="button" onclick="insertEmoji('😜')" class="text-2xl hover:scale-125 transition-transform" title="😜">😜</button>
+                        <button type="button" onclick="insertEmoji('🤪')" class="text-2xl hover:scale-125 transition-transform" title="🤪">🤪</button>
+                        <button type="button" onclick="insertEmoji('🤨')" class="text-2xl hover:scale-125 transition-transform" title="🤨">🤨</button>
+                        <button type="button" onclick="insertEmoji('🧐')" class="text-2xl hover:scale-125 transition-transform" title="🧐">🧐</button>
+                        <button type="button" onclick="insertEmoji('🤓')" class="text-2xl hover:scale-125 transition-transform" title="🤓">🤓</button>
+                        <button type="button" onclick="insertEmoji('😎')" class="text-2xl hover:scale-125 transition-transform" title="😎">😎</button>
+                        <button type="button" onclick="insertEmoji('🤩')" class="text-2xl hover:scale-125 transition-transform" title="🤩">🤩</button>
+                        <button type="button" onclick="insertEmoji('🥳')" class="text-2xl hover:scale-125 transition-transform" title="🥳">🥳</button>
+                        <button type="button" onclick="insertEmoji('😏')" class="text-2xl hover:scale-125 transition-transform" title="😏">😏</button>
+                        <button type="button" onclick="insertEmoji('😒')" class="text-2xl hover:scale-125 transition-transform" title="😒">😒</button>
+                        <button type="button" onclick="insertEmoji('😞')" class="text-2xl hover:scale-125 transition-transform" title="😞">😞</button>
+                        <button type="button" onclick="insertEmoji('😔')" class="text-2xl hover:scale-125 transition-transform" title="😔">😔</button>
+                        <button type="button" onclick="insertEmoji('😟')" class="text-2xl hover:scale-125 transition-transform" title="😟">😟</button>
+                        <button type="button" onclick="insertEmoji('😕')" class="text-2xl hover:scale-125 transition-transform" title="😕">😕</button>
+                        <button type="button" onclick="insertEmoji('🙁')" class="text-2xl hover:scale-125 transition-transform" title="🙁">🙁</button>
+                        <button type="button" onclick="insertEmoji('😣')" class="text-2xl hover:scale-125 transition-transform" title="😣">😣</button>
+                        <button type="button" onclick="insertEmoji('😖')" class="text-2xl hover:scale-125 transition-transform" title="😖">😖</button>
+                        <button type="button" onclick="insertEmoji('😫')" class="text-2xl hover:scale-125 transition-transform" title="😫">😫</button>
+                        <button type="button" onclick="insertEmoji('😩')" class="text-2xl hover:scale-125 transition-transform" title="😩">😩</button>
+                        <button type="button" onclick="insertEmoji('🥺')" class="text-2xl hover:scale-125 transition-transform" title="🥺">🥺</button>
+                        <button type="button" onclick="insertEmoji('😢')" class="text-2xl hover:scale-125 transition-transform" title="😢">😢</button>
+                        <button type="button" onclick="insertEmoji('😭')" class="text-2xl hover:scale-125 transition-transform" title="😭">😭</button>
+                        <button type="button" onclick="insertEmoji('😤')" class="text-2xl hover:scale-125 transition-transform" title="😤">😤</button>
+                        <button type="button" onclick="insertEmoji('😠')" class="text-2xl hover:scale-125 transition-transform" title="😠">😠</button>
+                        <button type="button" onclick="insertEmoji('😡')" class="text-2xl hover:scale-125 transition-transform" title="😡">😡</button>
+                        <button type="button" onclick="insertEmoji('🤬')" class="text-2xl hover:scale-125 transition-transform" title="🤬">🤬</button>
+                        <button type="button" onclick="insertEmoji('🤯')" class="text-2xl hover:scale-125 transition-transform" title="🤯">🤯</button>
+                        <button type="button" onclick="insertEmoji('😳')" class="text-2xl hover:scale-125 transition-transform" title="😳">😳</button>
+                        <button type="button" onclick="insertEmoji('🥵')" class="text-2xl hover:scale-125 transition-transform" title="🥵">🥵</button>
+                        <button type="button" onclick="insertEmoji('🥶')" class="text-2xl hover:scale-125 transition-transform" title="🥶">🥶</button>
+                        <button type="button" onclick="insertEmoji('😱')" class="text-2xl hover:scale-125 transition-transform" title="😱">😱</button>
+                        <button type="button" onclick="insertEmoji('😨')" class="text-2xl hover:scale-125 transition-transform" title="😨">😨</button>
+                        <button type="button" onclick="insertEmoji('😰')" class="text-2xl hover:scale-125 transition-transform" title="😰">😰</button>
+                        <button type="button" onclick="insertEmoji('😥')" class="text-2xl hover:scale-125 transition-transform" title="😥">😥</button>
+                        <button type="button" onclick="insertEmoji('😓')" class="text-2xl hover:scale-125 transition-transform" title="😓">😓</button>
+                        <button type="button" onclick="insertEmoji('🤗')" class="text-2xl hover:scale-125 transition-transform" title="🤗">🤗</button>
+                        <button type="button" onclick="insertEmoji('🤔')" class="text-2xl hover:scale-125 transition-transform" title="🤔">🤔</button>
+                        <button type="button" onclick="insertEmoji('🤭')" class="text-2xl hover:scale-125 transition-transform" title="🤭">🤭</button>
+                        <button type="button" onclick="insertEmoji('🤫')" class="text-2xl hover:scale-125 transition-transform" title="🤫">🤫</button>
+                        <button type="button" onclick="insertEmoji('🤥')" class="text-2xl hover:scale-125 transition-transform" title="🤥">🤥</button>
+                        <button type="button" onclick="insertEmoji('😶')" class="text-2xl hover:scale-125 transition-transform" title="😶">😶</button>
+                        <button type="button" onclick="insertEmoji('😐')" class="text-2xl hover:scale-125 transition-transform" title="😐">😐</button>
+                        <button type="button" onclick="insertEmoji('😑')" class="text-2xl hover:scale-125 transition-transform" title="😑">😑</button>
+                        <button type="button" onclick="insertEmoji('😬')" class="text-2xl hover:scale-125 transition-transform" title="😬">😬</button>
+                        <button type="button" onclick="insertEmoji('🙄')" class="text-2xl hover:scale-125 transition-transform" title="🙄">🙄</button>
+                        <button type="button" onclick="insertEmoji('😯')" class="text-2xl hover:scale-125 transition-transform" title="😯">😯</button>
+                        <button type="button" onclick="insertEmoji('😦')" class="text-2xl hover:scale-125 transition-transform" title="😦">😦</button>
+                        <button type="button" onclick="insertEmoji('😧')" class="text-2xl hover:scale-125 transition-transform" title="😧">😧</button>
+                        <button type="button" onclick="insertEmoji('😮')" class="text-2xl hover:scale-125 transition-transform" title="😮">😮</button>
+                        <button type="button" onclick="insertEmoji('😲')" class="text-2xl hover:scale-125 transition-transform" title="😲">😲</button>
+                        <button type="button" onclick="insertEmoji('🥱')" class="text-2xl hover:scale-125 transition-transform" title="🥱">🥱</button>
+                        <button type="button" onclick="insertEmoji('😴')" class="text-2xl hover:scale-125 transition-transform" title="😴">😴</button>
+                        <button type="button" onclick="insertEmoji('🤤')" class="text-2xl hover:scale-125 transition-transform" title="🤤">🤤</button>
+                        <button type="button" onclick="insertEmoji('😪')" class="text-2xl hover:scale-125 transition-transform" title="😪">😪</button>
+                        <button type="button" onclick="insertEmoji('😵')" class="text-2xl hover:scale-125 transition-transform" title="😵">😵</button>
+                        <button type="button" onclick="insertEmoji('🤐')" class="text-2xl hover:scale-125 transition-transform" title="🤐">🤐</button>
+                        <button type="button" onclick="insertEmoji('🥴')" class="text-2xl hover:scale-125 transition-transform" title="🥴">🥴</button>
+                        <button type="button" onclick="insertEmoji('🤢')" class="text-2xl hover:scale-125 transition-transform" title="🤢">🤢</button>
+                        <button type="button" onclick="insertEmoji('🤮')" class="text-2xl hover:scale-125 transition-transform" title="🤮">🤮</button>
+                        <button type="button" onclick="insertEmoji('🤧')" class="text-2xl hover:scale-125 transition-transform" title="🤧">🤧</button>
+                        <button type="button" onclick="insertEmoji('😷')" class="text-2xl hover:scale-125 transition-transform" title="😷">😷</button>
+                        <button type="button" onclick="insertEmoji('🤒')" class="text-2xl hover:scale-125 transition-transform" title="🤒">🤒</button>
+                        <button type="button" onclick="insertEmoji('🤕')" class="text-2xl hover:scale-125 transition-transform" title="🤕">🤕</button>
+                        <button type="button" onclick="insertEmoji('🤑')" class="text-2xl hover:scale-125 transition-transform" title="🤑">🤑</button>
+                        <button type="button" onclick="insertEmoji('🤠')" class="text-2xl hover:scale-125 transition-transform" title="🤠">🤠</button>
+                        <button type="button" onclick="insertEmoji('😈')" class="text-2xl hover:scale-125 transition-transform" title="😈">😈</button>
+                        <button type="button" onclick="insertEmoji('👿')" class="text-2xl hover:scale-125 transition-transform" title="👿">👿</button>
+                        <button type="button" onclick="insertEmoji('👹')" class="text-2xl hover:scale-125 transition-transform" title="👹">👹</button>
+                        <button type="button" onclick="insertEmoji('👺')" class="text-2xl hover:scale-125 transition-transform" title="👺">👺</button>
+                        <button type="button" onclick="insertEmoji('🤡')" class="text-2xl hover:scale-125 transition-transform" title="🤡">🤡</button>
+                        <button type="button" onclick="insertEmoji('💩')" class="text-2xl hover:scale-125 transition-transform" title="💩">💩</button>
+                        <button type="button" onclick="insertEmoji('👻')" class="text-2xl hover:scale-125 transition-transform" title="👻">👻</button>
+                        <button type="button" onclick="insertEmoji('💀')" class="text-2xl hover:scale-125 transition-transform" title="💀">💀</button>
+                        <button type="button" onclick="insertEmoji('☠️')" class="text-2xl hover:scale-125 transition-transform" title="☠️">☠️</button>
+                        <button type="button" onclick="insertEmoji('👽')" class="text-2xl hover:scale-125 transition-transform" title="👽">👽</button>
+                        <button type="button" onclick="insertEmoji('👾')" class="text-2xl hover:scale-125 transition-transform" title="👾">👾</button>
+                        <button type="button" onclick="insertEmoji('🤖')" class="text-2xl hover:scale-125 transition-transform" title="🤖">🤖</button>
+                        <button type="button" onclick="insertEmoji('🎃')" class="text-2xl hover:scale-125 transition-transform" title="🎃">🎃</button>
+                        <button type="button" onclick="insertEmoji('😺')" class="text-2xl hover:scale-125 transition-transform" title="😺">😺</button>
+                        <button type="button" onclick="insertEmoji('😸')" class="text-2xl hover:scale-125 transition-transform" title="😸">😸</button>
+                        <button type="button" onclick="insertEmoji('😹')" class="text-2xl hover:scale-125 transition-transform" title="😹">😹</button>
+                        <button type="button" onclick="insertEmoji('😻')" class="text-2xl hover:scale-125 transition-transform" title="😻">😻</button>
+                        <button type="button" onclick="insertEmoji('😼')" class="text-2xl hover:scale-125 transition-transform" title="😼">😼</button>
+                        <button type="button" onclick="insertEmoji('😽')" class="text-2xl hover:scale-125 transition-transform" title="😽">😽</button>
+                        <button type="button" onclick="insertEmoji('🙀')" class="text-2xl hover:scale-125 transition-transform" title="🙀">🙀</button>
+                        <button type="button" onclick="insertEmoji('😿')" class="text-2xl hover:scale-125 transition-transform" title="😿">😿</button>
+                        <button type="button" onclick="insertEmoji('😾')" class="text-2xl hover:scale-125 transition-transform" title="😾">😾</button>
+                        <button type="button" onclick="insertEmoji('👋')" class="text-2xl hover:scale-125 transition-transform" title="👋">👋</button>
+                        <button type="button" onclick="insertEmoji('🤚')" class="text-2xl hover:scale-125 transition-transform" title="🤚">🤚</button>
+                        <button type="button" onclick="insertEmoji('🖐')" class="text-2xl hover:scale-125 transition-transform" title="🖐">🖐</button>
+                        <button type="button" onclick="insertEmoji('✋')" class="text-2xl hover:scale-125 transition-transform" title="✋">✋</button>
+                        <button type="button" onclick="insertEmoji('🖖')" class="text-2xl hover:scale-125 transition-transform" title="🖖">🖖</button>
+                        <button type="button" onclick="insertEmoji('👌')" class="text-2xl hover:scale-125 transition-transform" title="👌">👌</button>
+                        <button type="button" onclick="insertEmoji('🤌')" class="text-2xl hover:scale-125 transition-transform" title="🤌">🤌</button>
+                        <button type="button" onclick="insertEmoji('🤏')" class="text-2xl hover:scale-125 transition-transform" title="🤏">🤏</button>
+                        <button type="button" onclick="insertEmoji('✌️')" class="text-2xl hover:scale-125 transition-transform" title="✌️">✌️</button>
+                        <button type="button" onclick="insertEmoji('🤞')" class="text-2xl hover:scale-125 transition-transform" title="🤞">🤞</button>
+                        <button type="button" onclick="insertEmoji('🤟')" class="text-2xl hover:scale-125 transition-transform" title="🤟">🤟</button>
+                        <button type="button" onclick="insertEmoji('🤘')" class="text-2xl hover:scale-125 transition-transform" title="🤘">🤘</button>
+                        <button type="button" onclick="insertEmoji('🤙')" class="text-2xl hover:scale-125 transition-transform" title="🤙">🤙</button>
+                        <button type="button" onclick="insertEmoji('👈')" class="text-2xl hover:scale-125 transition-transform" title="👈">👈</button>
+                        <button type="button" onclick="insertEmoji('👉')" class="text-2xl hover:scale-125 transition-transform" title="👉">👉</button>
+                        <button type="button" onclick="insertEmoji('👆')" class="text-2xl hover:scale-125 transition-transform" title="👆">👆</button>
+                        <button type="button" onclick="insertEmoji('🖕')" class="text-2xl hover:scale-125 transition-transform" title="🖕">🖕</button>
+                        <button type="button" onclick="insertEmoji('👇')" class="text-2xl hover:scale-125 transition-transform" title="👇">👇</button>
+                        <button type="button" onclick="insertEmoji('☝️')" class="text-2xl hover:scale-125 transition-transform" title="☝️">☝️</button>
+                        <button type="button" onclick="insertEmoji('👍')" class="text-2xl hover:scale-125 transition-transform" title="👍">👍</button>
+                        <button type="button" onclick="insertEmoji('👎')" class="text-2xl hover:scale-125 transition-transform" title="👎">👎</button>
+                        <button type="button" onclick="insertEmoji('✊')" class="text-2xl hover:scale-125 transition-transform" title="✊">✊</button>
+                        <button type="button" onclick="insertEmoji('👊')" class="text-2xl hover:scale-125 transition-transform" title="👊">👊</button>
+                        <button type="button" onclick="insertEmoji('🤛')" class="text-2xl hover:scale-125 transition-transform" title="🤛">🤛</button>
+                        <button type="button" onclick="insertEmoji('🤜')" class="text-2xl hover:scale-125 transition-transform" title="🤜">🤜</button>
+                        <button type="button" onclick="insertEmoji('👏')" class="text-2xl hover:scale-125 transition-transform" title="👏">👏</button>
+                        <button type="button" onclick="insertEmoji('🙌')" class="text-2xl hover:scale-125 transition-transform" title="🙌">🙌</button>
+                        <button type="button" onclick="insertEmoji('👐')" class="text-2xl hover:scale-125 transition-transform" title="👐">👐</button>
+                        <button type="button" onclick="insertEmoji('🤲')" class="text-2xl hover:scale-125 transition-transform" title="🤲">🤲</button>
+                        <button type="button" onclick="insertEmoji('🤝')" class="text-2xl hover:scale-125 transition-transform" title="🤝">🤝</button>
+                        <button type="button" onclick="insertEmoji('🙏')" class="text-2xl hover:scale-125 transition-transform" title="🙏">🙏</button>
+                        <button type="button" onclick="insertEmoji('✍️')" class="text-2xl hover:scale-125 transition-transform" title="✍️">✍️</button>
+                        <button type="button" onclick="insertEmoji('💪')" class="text-2xl hover:scale-125 transition-transform" title="💪">💪</button>
+                        <button type="button" onclick="insertEmoji('🦾')" class="text-2xl hover:scale-125 transition-transform" title="🦾">🦾</button>
+                        <button type="button" onclick="insertEmoji('🦿')" class="text-2xl hover:scale-125 transition-transform" title="🦿">🦿</button>
+                        <button type="button" onclick="insertEmoji('🦵')" class="text-2xl hover:scale-125 transition-transform" title="🦵">🦵</button>
+                        <button type="button" onclick="insertEmoji('🦶')" class="text-2xl hover:scale-125 transition-transform" title="🦶">🦶</button>
+                        <button type="button" onclick="insertEmoji('👂')" class="text-2xl hover:scale-125 transition-transform" title="👂">👂</button>
+                        <button type="button" onclick="insertEmoji('🦻')" class="text-2xl hover:scale-125 transition-transform" title="🦻">🦻</button>
+                        <button type="button" onclick="insertEmoji('👃')" class="text-2xl hover:scale-125 transition-transform" title="👃">👃</button>
+                        <button type="button" onclick="insertEmoji('🧠')" class="text-2xl hover:scale-125 transition-transform" title="🧠">🧠</button>
+                        <button type="button" onclick="insertEmoji('🦷')" class="text-2xl hover:scale-125 transition-transform" title="🦷">🦷</button>
+                        <button type="button" onclick="insertEmoji('🦴')" class="text-2xl hover:scale-125 transition-transform" title="🦴">🦴</button>
+                        <button type="button" onclick="insertEmoji('👀')" class="text-2xl hover:scale-125 transition-transform" title="👀">👀</button>
+                        <button type="button" onclick="insertEmoji('👁️')" class="text-2xl hover:scale-125 transition-transform" title="👁️">👁️</button>
+                        <button type="button" onclick="insertEmoji('👅')" class="text-2xl hover:scale-125 transition-transform" title="👅">👅</button>
+                        <button type="button" onclick="insertEmoji('👄')" class="text-2xl hover:scale-125 transition-transform" title="👄">👄</button>
+                        <button type="button" onclick="insertEmoji('💋')" class="text-2xl hover:scale-125 transition-transform" title="💋">💋</button>
+                        <button type="button" onclick="insertEmoji('💘')" class="text-2xl hover:scale-125 transition-transform" title="💘">💘</button>
+                        <button type="button" onclick="insertEmoji('💝')" class="text-2xl hover:scale-125 transition-transform" title="💝">💝</button>
+                        <button type="button" onclick="insertEmoji('💖')" class="text-2xl hover:scale-125 transition-transform" title="💖">💖</button>
+                        <button type="button" onclick="insertEmoji('💗')" class="text-2xl hover:scale-125 transition-transform" title="💗">💗</button>
+                        <button type="button" onclick="insertEmoji('💓')" class="text-2xl hover:scale-125 transition-transform" title="💓">💓</button>
+                        <button type="button" onclick="insertEmoji('💞')" class="text-2xl hover:scale-125 transition-transform" title="💞">💞</button>
+                        <button type="button" onclick="insertEmoji('💕')" class="text-2xl hover:scale-125 transition-transform" title="💕">💕</button>
+                        <button type="button" onclick="insertEmoji('💟')" class="text-2xl hover:scale-125 transition-transform" title="💟">💟</button>
+                        <button type="button" onclick="insertEmoji('❣️')" class="text-2xl hover:scale-125 transition-transform" title="❣️">❣️</button>
+                        <button type="button" onclick="insertEmoji('💔')" class="text-2xl hover:scale-125 transition-transform" title="💔">💔</button>
+                        <button type="button" onclick="insertEmoji('❤️')" class="text-2xl hover:scale-125 transition-transform" title="❤️">❤️</button>
+                        <button type="button" onclick="insertEmoji('🧡')" class="text-2xl hover:scale-125 transition-transform" title="🧡">🧡</button>
+                        <button type="button" onclick="insertEmoji('💛')" class="text-2xl hover:scale-125 transition-transform" title="💛">💛</button>
+                        <button type="button" onclick="insertEmoji('💚')" class="text-2xl hover:scale-125 transition-transform" title="💚">💚</button>
+                        <button type="button" onclick="insertEmoji('💙')" class="text-2xl hover:scale-125 transition-transform" title="💙">💙</button>
+                        <button type="button" onclick="insertEmoji('💜')" class="text-2xl hover:scale-125 transition-transform" title="💜">💜</button>
+                        <button type="button" onclick="insertEmoji('🖤')" class="text-2xl hover:scale-125 transition-transform" title="🖤">🖤</button>
+                        <button type="button" onclick="insertEmoji('🤍')" class="text-2xl hover:scale-125 transition-transform" title="🤍">🤍</button>
+                        <button type="button" onclick="insertEmoji('🤎')" class="text-2xl hover:scale-125 transition-transform" title="🤎">🤎</button>
+                        <button type="button" onclick="insertEmoji('💯')" class="text-2xl hover:scale-125 transition-transform" title="💯">💯</button>
+                        <button type="button" onclick="insertEmoji('💢')" class="text-2xl hover:scale-125 transition-transform" title="💢">💢</button>
+                        <button type="button" onclick="insertEmoji('💥')" class="text-2xl hover:scale-125 transition-transform" title="💥">💥</button>
+                        <button type="button" onclick="insertEmoji('💫')" class="text-2xl hover:scale-125 transition-transform" title="💫">💫</button>
+                        <button type="button" onclick="insertEmoji('💦')" class="text-2xl hover:scale-125 transition-transform" title="💦">💦</button>
+                        <button type="button" onclick="insertEmoji('💨')" class="text-2xl hover:scale-125 transition-transform" title="💨">💨</button>
+                        <button type="button" onclick="insertEmoji('🕳️')" class="text-2xl hover:scale-125 transition-transform" title="🕳️">🕳️</button>
+                        <button type="button" onclick="insertEmoji('💣')" class="text-2xl hover:scale-125 transition-transform" title="💣">💣</button>
+                        <button type="button" onclick="insertEmoji('💬')" class="text-2xl hover:scale-125 transition-transform" title="💬">💬</button>
+                        <button type="button" onclick="insertEmoji('👁️‍🗨️')" class="text-2xl hover:scale-125 transition-transform" title="👁️‍🗨️">👁️‍🗨️</button>
+                        <button type="button" onclick="insertEmoji('🗨️')" class="text-2xl hover:scale-125 transition-transform" title="🗨️">🗨️</button>
+                        <button type="button" onclick="insertEmoji('🗯️')" class="text-2xl hover:scale-125 transition-transform" title="🗯️">🗯️</button>
+                        <button type="button" onclick="insertEmoji('💭')" class="text-2xl hover:scale-125 transition-transform" title="💭">💭</button>
+                        <button type="button" onclick="insertEmoji('💤')" class="text-2xl hover:scale-125 transition-transform" title="💤">💤</button>
+                        <button type="button" onclick="insertEmoji('👋')" class="text-2xl hover:scale-125 transition-transform" title="👋">👋</button>
+                        <button type="button" onclick="insertEmoji('🤚')" class="text-2xl hover:scale-125 transition-transform" title="🤚">🤚</button>
+                        <button type="button" onclick="insertEmoji('🖐')" class="text-2xl hover:scale-125 transition-transform" title="🖐">🖐</button>
+                        <button type="button" onclick="insertEmoji('✋')" class="text-2xl hover:scale-125 transition-transform" title="✋">✋</button>
+                        <button type="button" onclick="insertEmoji('🖖')" class="text-2xl hover:scale-125 transition-transform" title="🖖">🖖</button>
+                        <button type="button" onclick="insertEmoji('👌')" class="text-2xl hover:scale-125 transition-transform" title="👌">👌</button>
+                        <button type="button" onclick="insertEmoji('🤌')" class="text-2xl hover:scale-125 transition-transform" title="🤌">🤌</button>
+                        <button type="button" onclick="insertEmoji('🤏')" class="text-2xl hover:scale-125 transition-transform" title="🤏">🤏</button>
+                        <button type="button" onclick="insertEmoji('✌️')" class="text-2xl hover:scale-125 transition-transform" title="✌️">✌️</button>
+                        <button type="button" onclick="insertEmoji('🤞')" class="text-2xl hover:scale-125 transition-transform" title="🤞">🤞</button>
+                        <button type="button" onclick="insertEmoji('🤟')" class="text-2xl hover:scale-125 transition-transform" title="🤟">🤟</button>
+                        <button type="button" onclick="insertEmoji('🤘')" class="text-2xl hover:scale-125 transition-transform" title="🤘">🤘</button>
+                        <button type="button" onclick="insertEmoji('🤙')" class="text-2xl hover:scale-125 transition-transform" title="🤙">🤙</button>
+                        <button type="button" onclick="insertEmoji('👈')" class="text-2xl hover:scale-125 transition-transform" title="👈">👈</button>
+                        <button type="button" onclick="insertEmoji('👉')" class="text-2xl hover:scale-125 transition-transform" title="👉">👉</button>
+                        <button type="button" onclick="insertEmoji('👆')" class="text-2xl hover:scale-125 transition-transform" title="👆">👆</button>
+                        <button type="button" onclick="insertEmoji('🖕')" class="text-2xl hover:scale-125 transition-transform" title="🖕">🖕</button>
+                        <button type="button" onclick="insertEmoji('👇')" class="text-2xl hover:scale-125 transition-transform" title="👇">👇</button>
+                        <button type="button" onclick="insertEmoji('☝️')" class="text-2xl hover:scale-125 transition-transform" title="☝️">☝️</button>
+                        <button type="button" onclick="insertEmoji('👍')" class="text-2xl hover:scale-125 transition-transform" title="👍">👍</button>
+                        <button type="button" onclick="insertEmoji('👎')" class="text-2xl hover:scale-125 transition-transform" title="👎">👎</button>
+                        <button type="button" onclick="insertEmoji('✊')" class="text-2xl hover:scale-125 transition-transform" title="✊">✊</button>
+                        <button type="button" onclick="insertEmoji('👊')" class="text-2xl hover:scale-125 transition-transform" title="👊">👊</button>
+                        <button type="button" onclick="insertEmoji('🤛')" class="text-2xl hover:scale-125 transition-transform" title="🤛">🤛</button>
+                        <button type="button" onclick="insertEmoji('🤜')" class="text-2xl hover:scale-125 transition-transform" title="🤜">🤜</button>
+                        <button type="button" onclick="insertEmoji('👏')" class="text-2xl hover:scale-125 transition-transform" title="👏">👏</button>
+                        <button type="button" onclick="insertEmoji('🙌')" class="text-2xl hover:scale-125 transition-transform" title="🙌">🙌</button>
+                        <button type="button" onclick="insertEmoji('👐')" class="text-2xl hover:scale-125 transition-transform" title="👐">👐</button>
+                        <button type="button" onclick="insertEmoji('🤲')" class="text-2xl hover:scale-125 transition-transform" title="🤲">🤲</button>
+                        <button type="button" onclick="insertEmoji('🤝')" class="text-2xl hover:scale-125 transition-transform" title="🤝">🤝</button>
+                        <button type="button" onclick="insertEmoji('🙏')" class="text-2xl hover:scale-125 transition-transform" title="🙏">🙏</button>
+                        <button type="button" onclick="insertEmoji('✍️')" class="text-2xl hover:scale-125 transition-transform" title="✍️">✍️</button>
+                        <button type="button" onclick="insertEmoji('💪')" class="text-2xl hover:scale-125 transition-transform" title="💪">💪</button>
+                        <button type="button" onclick="insertEmoji('🦾')" class="text-2xl hover:scale-125 transition-transform" title="🦾">🦾</button>
+                        <button type="button" onclick="insertEmoji('🦿')" class="text-2xl hover:scale-125 transition-transform" title="🦿">🦿</button>
+                        <button type="button" onclick="insertEmoji('🦵')" class="text-2xl hover:scale-125 transition-transform" title="🦵">🦵</button>
+                        <button type="button" onclick="insertEmoji('🦶')" class="text-2xl hover:scale-125 transition-transform" title="🦶">🦶</button>
+                        <button type="button" onclick="insertEmoji('👂')" class="text-2xl hover:scale-125 transition-transform" title="👂">👂</button>
+                        <button type="button" onclick="insertEmoji('🦻')" class="text-2xl hover:scale-125 transition-transform" title="🦻">🦻</button>
+                        <button type="button" onclick="insertEmoji('👃')" class="text-2xl hover:scale-125 transition-transform" title="👃">👃</button>
+                        <button type="button" onclick="insertEmoji('🧠')" class="text-2xl hover:scale-125 transition-transform" title="🧠">🧠</button>
+                        <button type="button" onclick="insertEmoji('🦷')" class="text-2xl hover:scale-125 transition-transform" title="🦷">🦷</button>
+                        <button type="button" onclick="insertEmoji('🦴')" class="text-2xl hover:scale-125 transition-transform" title="🦴">🦴</button>
+                        <button type="button" onclick="insertEmoji('👀')" class="text-2xl hover:scale-125 transition-transform" title="👀">👀</button>
+                        <button type="button" onclick="insertEmoji('👁️')" class="text-2xl hover:scale-125 transition-transform" title="👁️">👁️</button>
+                        <button type="button" onclick="insertEmoji('👅')" class="text-2xl hover:scale-125 transition-transform" title="👅">👅</button>
+                        <button type="button" onclick="insertEmoji('👄')" class="text-2xl hover:scale-125 transition-transform" title="👄">👄</button>
+                        <button type="button" onclick="insertEmoji('💋')" class="text-2xl hover:scale-125 transition-transform" title="💋">💋</button>
+                        <button type="button" onclick="insertEmoji('💘')" class="text-2xl hover:scale-125 transition-transform" title="💘">💘</button>
+                        <button type="button" onclick="insertEmoji('💝')" class="text-2xl hover:scale-125 transition-transform" title="💝">💝</button>
+                        <button type="button" onclick="insertEmoji('💖')" class="text-2xl hover:scale-125 transition-transform" title="💖">💖</button>
+                        <button type="button" onclick="insertEmoji('💗')" class="text-2xl hover:scale-125 transition-transform" title="💗">💗</button>
+                        <button type="button" onclick="insertEmoji('💓')" class="text-2xl hover:scale-125 transition-transform" title="💓">💓</button>
+                        <button type="button" onclick="insertEmoji('💞')" class="text-2xl hover:scale-125 transition-transform" title="💞">💞</button>
+                        <button type="button" onclick="insertEmoji('💕')" class="text-2xl hover:scale-125 transition-transform" title="💕">💕</button>
+                        <button type="button" onclick="insertEmoji('💟')" class="text-2xl hover:scale-125 transition-transform" title="💟">💟</button>
+                        <button type="button" onclick="insertEmoji('❣️')" class="text-2xl hover:scale-125 transition-transform" title="❣️">❣️</button>
+                        <button type="button" onclick="insertEmoji('💔')" class="text-2xl hover:scale-125 transition-transform" title="💔">💔</button>
+                        <button type="button" onclick="insertEmoji('❤️')" class="text-2xl hover:scale-125 transition-transform" title="❤️">❤️</button>
+                        <button type="button" onclick="insertEmoji('🧡')" class="text-2xl hover:scale-125 transition-transform" title="🧡">🧡</button>
+                        <button type="button" onclick="insertEmoji('💛')" class="text-2xl hover:scale-125 transition-transform" title="💛">💛</button>
+                        <button type="button" onclick="insertEmoji('💚')" class="text-2xl hover:scale-125 transition-transform" title="💚">💚</button>
+                        <button type="button" onclick="insertEmoji('💙')" class="text-2xl hover:scale-125 transition-transform" title="💙">💙</button>
+                        <button type="button" onclick="insertEmoji('💜')" class="text-2xl hover:scale-125 transition-transform" title="💜">💜</button>
+                        <button type="button" onclick="insertEmoji('🖤')" class="text-2xl hover:scale-125 transition-transform" title="🖤">🖤</button>
+                        <button type="button" onclick="insertEmoji('🤍')" class="text-2xl hover:scale-125 transition-transform" title="🤍">🤍</button>
+                        <button type="button" onclick="insertEmoji('🤎')" class="text-2xl hover:scale-125 transition-transform" title="🤎">🤎</button>
+                        <button type="button" onclick="insertEmoji('💯')" class="text-2xl hover:scale-125 transition-transform" title="💯">💯</button>
+                        <button type="button" onclick="insertEmoji('💢')" class="text-2xl hover:scale-125 transition-transform" title="💢">💢</button>
+                        <button type="button" onclick="insertEmoji('💥')" class="text-2xl hover:scale-125 transition-transform" title="💥">💥</button>
+                        <button type="button" onclick="insertEmoji('💫')" class="text-2xl hover:scale-125 transition-transform" title="💫">💫</button>
+                        <button type="button" onclick="insertEmoji('💦')" class="text-2xl hover:scale-125 transition-transform" title="💦">💦</button>
+                        <button type="button" onclick="insertEmoji('💨')" class="text-2xl hover:scale-125 transition-transform" title="💨">💨</button>
+                        <button type="button" onclick="insertEmoji('🕳️')" class="text-2xl hover:scale-125 transition-transform" title="🕳️">🕳️</button>
+                        <button type="button" onclick="insertEmoji('💣')" class="text-2xl hover:scale-125 transition-transform" title="💣">💣</button>
+                        <button type="button" onclick="insertEmoji('💬')" class="text-2xl hover:scale-125 transition-transform" title="💬">💬</button>
+                        <button type="button" onclick="insertEmoji('👁️‍🗨️')" class="text-2xl hover:scale-125 transition-transform" title="👁️‍🗨️">👁️‍🗨️</button>
+                        <button type="button" onclick="insertEmoji('🗨️')" class="text-2xl hover:scale-125 transition-transform" title="🗨️">🗨️</button>
+                        <button type="button" onclick="insertEmoji('🗯️')" class="text-2xl hover:scale-125 transition-transform" title="🗯️">🗯️</button>
+                        <button type="button" onclick="insertEmoji('💭')" class="text-2xl hover:scale-125 transition-transform" title="💭">💭</button>
+                        <button type="button" onclick="insertEmoji('💤')" class="text-2xl hover:scale-125 transition-transform" title="💤">💤</button>
+                    </div>
+                </div>
                 <textarea 
                     name="message" 
+                    id="supportMessage"
                     rows="4" 
                     placeholder="Describe tu problema o pregunta..."
                     class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm"
@@ -185,6 +474,34 @@
 </div>
 
 <script>
+    // Funciones de emoji - siempre disponibles globalmente
+    function toggleEmojiPicker() {
+        const emojiPicker = document.getElementById('emojiPicker');
+        if (emojiPicker) {
+            emojiPicker.classList.toggle('hidden');
+        }
+    }
+    
+    function insertEmoji(emoji) {
+        const messageTextarea = document.getElementById('supportMessage');
+        if (messageTextarea) {
+            const cursorPos = messageTextarea.selectionStart;
+            const textBefore = messageTextarea.value.substring(0, cursorPos);
+            const textAfter = messageTextarea.value.substring(messageTextarea.selectionEnd);
+            messageTextarea.value = textBefore + emoji + textAfter;
+            messageTextarea.focus();
+            messageTextarea.setSelectionRange(cursorPos + emoji.length, cursorPos + emoji.length);
+            // Guardar datos después de insertar emoji
+            if (typeof saveSupportFormData === 'function') {
+                saveSupportFormData();
+            }
+        }
+    }
+    
+    // Hacer funciones accesibles globalmente
+    window.toggleEmojiPicker = toggleEmojiPicker;
+    window.insertEmoji = insertEmoji;
+    
     // Support modal functions - only initialize if not already defined
     if (typeof showSupportMessage === 'undefined') {
         function showSupportMessage() {

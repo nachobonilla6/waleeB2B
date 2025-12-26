@@ -195,7 +195,7 @@
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
                 <p class="text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · wesolutions.work
+                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>

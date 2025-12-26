@@ -555,7 +555,7 @@
             <!-- Footer -->
             <footer class="text-center py-6 border-t border-slate-200 dark:border-slate-800/50">
                 <p class="text-sm text-slate-600 dark:text-slate-500">
-                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · wesolutions.work
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
         </div>

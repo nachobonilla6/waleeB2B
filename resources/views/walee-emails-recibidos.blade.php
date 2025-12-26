@@ -157,13 +157,66 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        $emails = \App\Models\EmailRecibido::orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')
-            ->paginate(20);
-        
-        // Contadores
-        $totalEmails = \App\Models\EmailRecibido::count();
-        $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
-        $destacados = \App\Models\EmailRecibido::where('is_starred', true)->count();
+        try {
+            // Total de emails
+            $totalEmails = \App\Models\EmailRecibido::count();
+            
+            // Obtener correos de clientes (normalizados a minúsculas y sin espacios)
+            $clientesEmails = \App\Models\Cliente::whereNotNull('correo')
+                ->where('correo', '!=', '')
+                ->pluck('correo')
+                ->map(function($email) {
+                    return strtolower(trim($email));
+                })
+                ->filter()
+                ->unique()
+                ->values()
+                ->toArray();
+            
+            // Filtrar emails que solo pertenecen a clientes
+            // Solo mostrar emails cuyo from_email (normalizado) está en la lista de correos de clientes
+            if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+                $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
+                    $first = true;
+                    foreach ($clientesEmails as $clienteEmail) {
+                        if ($first) {
+                            $query->whereRaw('LOWER(TRIM(from_email)) = ?', [$clienteEmail]);
+                            $first = false;
+                        } else {
+                            $query->orWhereRaw('LOWER(TRIM(from_email)) = ?', [$clienteEmail]);
+                        }
+                    }
+                });
+                
+                // Contar emails de clientes
+                $emailsClientesCount = (clone $emailsQuery)->count();
+                
+                // Contar emails no-clientes (total - emails de clientes)
+                $emailsNoClientes = max(0, $totalEmails - $emailsClientesCount);
+                
+                // Contadores solo de clientes
+                $noLeidos = (clone $emailsQuery)->where('is_read', false)->count();
+                
+                // Paginar emails de clientes
+                $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(20);
+            } else {
+                // Si no hay clientes, no mostrar emails
+                $emailsQuery = \App\Models\EmailRecibido::whereRaw('1 = 0'); // Query que no devuelve resultados
+                $emailsNoClientes = $totalEmails;
+                $noLeidos = 0;
+                $emailsClientesCount = 0;
+                $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(20);
+            }
+        } catch (\Exception $e) {
+            // En caso de error, no mostrar emails (solo de clientes)
+            $emailsQuery = \App\Models\EmailRecibido::whereRaw('1 = 0'); // Query que no devuelve resultados
+            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(20);
+            $totalEmails = \App\Models\EmailRecibido::count();
+            $emailsNoClientes = $totalEmails;
+            $noLeidos = 0;
+            $emailsClientesCount = 0;
+            $clientesEmails = [];
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -205,6 +258,68 @@
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
+            
+            <!-- Debug Info (temporal) - SIEMPRE VISIBLE -->
+            <div class="mb-6 p-4 bg-yellow-200 dark:bg-yellow-900/40 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl">
+                <h4 class="font-bold text-yellow-900 dark:text-yellow-100 mb-3 text-lg">🔍 Debug Info (temporal):</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
+                        <strong>Total emails:</strong> {{ isset($totalEmails) ? $totalEmails : 'ERROR' }}
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
+                        <strong>Emails de clientes:</strong> {{ isset($emailsClientesCount) ? $emailsClientesCount : 'ERROR' }}
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
+                        <strong>Emails no-clientes:</strong> {{ isset($emailsNoClientes) ? $emailsNoClientes : 'ERROR' }}
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
+                        <strong>Clientes en DB:</strong> {{ isset($clientesEmails) ? count($clientesEmails) : 'ERROR' }}
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
+                        <strong>Emails en página:</strong> {{ isset($emails) ? $emails->count() : 'ERROR' }}
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
+                        <strong>Mostrar card:</strong> {{ (isset($emailsNoClientes) && $emailsNoClientes > 0) ? 'SÍ' : 'NO' }}
+                    </div>
+                </div>
+                @if(isset($clientesEmails) && count($clientesEmails) > 0)
+                    <div class="mt-3 bg-white dark:bg-slate-800 p-2 rounded text-xs">
+                        <strong>Emails de clientes (primeros 5):</strong> {{ implode(', ', array_slice($clientesEmails, 0, 5)) }}
+                    </div>
+                @endif
+            </div>
+            
+            <!-- Emails No-Clientes Card -->
+            @if(isset($emailsNoClientes) && $emailsNoClientes > 0)
+                <div class="mb-6 animate-fade-in-up">
+                    <div class="bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-2xl p-4 sm:p-6">
+                        <div class="flex items-center justify-between gap-4 flex-wrap">
+                            <div class="flex items-center gap-4 flex-1 min-w-0">
+                                <div class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+                                        {{ $emailsNoClientes }} {{ $emailsNoClientes === 1 ? 'email' : 'emails' }} de otros remitentes
+                                    </h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Emails que no pertenecen a clientes registrados</p>
+                                </div>
+                            </div>
+                            <button 
+                                onclick="window.open('https://mail.google.com', '_blank')" 
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all flex items-center gap-2 flex-shrink-0"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                                <span class="hidden sm:inline">Ir a Gmail</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
             
             <!-- Email List -->
             <div class="space-y-3 animate-fade-in-up">

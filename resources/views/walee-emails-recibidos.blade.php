@@ -177,15 +177,19 @@
             // Solo mostrar emails cuyo from_email (sender/remitente) está en la lista de correos de clientes_en_proceso
             if (!empty($clientesEmails) && count($clientesEmails) > 0) {
                 // Filtrar por from_email (sender) que coincida con emails de clientes_en_proceso
+                // from_email puede venir en formato "Nombre <email@example.com>" o solo "email@example.com"
+                // Usamos una función que extrae el email correctamente de ambos formatos
                 $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
-                    $first = true;
                     foreach ($clientesEmails as $clienteEmail) {
-                        if ($first) {
-                            $query->whereRaw('LOWER(TRIM(from_email)) = ?', [$clienteEmail]);
-                            $first = false;
-                        } else {
-                            $query->orWhereRaw('LOWER(TRIM(from_email)) = ?', [$clienteEmail]);
-                        }
+                        // Función que extrae el email: si tiene < > extrae lo de adentro, sino usa el valor completo
+                        $query->orWhereRaw('
+                            CASE 
+                                WHEN from_email LIKE "%<%" THEN 
+                                    LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
+                                ELSE 
+                                    LOWER(TRIM(from_email)) = ?
+                            END
+                        ', [$clienteEmail, $clienteEmail]);
                     }
                 });
                 

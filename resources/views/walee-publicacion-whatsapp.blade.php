@@ -6,9 +6,11 @@
     <title>{{ $publicacion->title }}</title>
     
     <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="article">
+    <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="{{ e($publicacion->title) }}">
+    <meta property="og:site_name" content="Vela SportFishing & Tours">
+    <meta property="og:locale" content="es_ES">
     @php
         // Limpiar contenido removiendo el botón de WhatsApp si existe
         $cleanContent = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $publicacion->content);
@@ -32,30 +34,39 @@
     <meta name="description" content="{{ e(Str::limit($metaDescription, 300)) }}">
     @if($publicacion->image_url)
     @php
-        // Asegurar que la URL de la imagen sea absoluta
+        // Asegurar que la URL de la imagen sea absoluta y accesible
         $imageUrl = $publicacion->image_url;
+        
+        // Si no es una URL completa, convertirla
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            // Si es una ruta relativa, convertirla a absoluta
-            if (strpos($imageUrl, 'http') !== 0) {
+            // Si empieza con /, es una ruta relativa
+            if (strpos($imageUrl, '/') === 0) {
+                $imageUrl = url($imageUrl);
+            } else {
+                // Si no tiene http, agregar el dominio completo
                 $imageUrl = url($imageUrl);
             }
         }
-        // Asegurar que sea HTTPS si es posible
+        
+        // Asegurar que sea HTTPS
         $imageUrl = str_replace('http://', 'https://', $imageUrl);
         
-        // Si la imagen está en storage, asegurar que sea accesible públicamente
-        if (strpos($imageUrl, '/storage/') !== false) {
-            $imageUrl = str_replace('/storage/', '/storage/', $imageUrl);
-        }
+        // Asegurar que la URL sea completamente accesible
+        $imageUrl = str_replace('//storage/', '/storage/', $imageUrl);
     @endphp
+    <!-- Open Graph Image - WhatsApp requiere URL absoluta y HTTPS -->
     <meta property="og:image" content="{{ $imageUrl }}">
     <meta property="og:image:secure_url" content="{{ $imageUrl }}">
+    <meta property="og:image:url" content="{{ $imageUrl }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:alt" content="{{ e($publicacion->title) }}">
-    <!-- WhatsApp requiere estas propiedades adicionales -->
-    <meta property="og:image:url" content="{{ $imageUrl }}">
+    <!-- Meta adicional para WhatsApp -->
+    <meta name="og:image" content="{{ $imageUrl }}">
+    @else
+    <!-- Si no hay imagen, usar una imagen por defecto -->
+    <meta property="og:image" content="{{ url('/images/default-og-image.jpg') }}">
     @endif
     
     <!-- Twitter -->

@@ -479,12 +479,23 @@ Route::post('/walee-tickets', function (\Illuminate\Http\Request $request) {
 Route::post('/walee-tickets/{id}/urgente', function ($id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);
-        $ticket->urgente = !$ticket->urgente;
+        $nuevoEstado = !$ticket->urgente;
+        
+        // Si se activa urgente, desactivar los otros
+        if ($nuevoEstado) {
+            $ticket->urgente = true;
+            $ticket->prioritario = false;
+            $ticket->a_discutir = false;
+        } else {
+            $ticket->urgente = false;
+        }
         $ticket->save();
         
         return response()->json([
             'success' => true,
             'urgente' => $ticket->urgente,
+            'prioritario' => $ticket->prioritario,
+            'a_discutir' => $ticket->a_discutir,
             'message' => $ticket->urgente ? 'Ticket marcado como urgente' : 'Urgente removido',
         ]);
     } catch (\Exception $e) {
@@ -498,12 +509,23 @@ Route::post('/walee-tickets/{id}/urgente', function ($id) {
 Route::post('/walee-tickets/{id}/prioritario', function ($id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);
-        $ticket->prioritario = !$ticket->prioritario;
+        $nuevoEstado = !$ticket->prioritario;
+        
+        // Si se activa prioritario, desactivar los otros
+        if ($nuevoEstado) {
+            $ticket->urgente = false;
+            $ticket->prioritario = true;
+            $ticket->a_discutir = false;
+        } else {
+            $ticket->prioritario = false;
+        }
         $ticket->save();
         
         return response()->json([
             'success' => true,
+            'urgente' => $ticket->urgente,
             'prioritario' => $ticket->prioritario,
+            'a_discutir' => $ticket->a_discutir,
             'message' => $ticket->prioritario ? 'Ticket marcado como prioritario' : 'Prioritario removido',
         ]);
     } catch (\Exception $e) {
@@ -517,11 +539,22 @@ Route::post('/walee-tickets/{id}/prioritario', function ($id) {
 Route::post('/walee-tickets/{id}/a-discutir', function ($id) {
     try {
         $ticket = \App\Models\Ticket::findOrFail($id);
-        $ticket->a_discutir = !$ticket->a_discutir;
+        $nuevoEstado = !$ticket->a_discutir;
+        
+        // Si se activa a_discutir, desactivar los otros
+        if ($nuevoEstado) {
+            $ticket->urgente = false;
+            $ticket->prioritario = false;
+            $ticket->a_discutir = true;
+        } else {
+            $ticket->a_discutir = false;
+        }
         $ticket->save();
         
         return response()->json([
             'success' => true,
+            'urgente' => $ticket->urgente,
+            'prioritario' => $ticket->prioritario,
             'a_discutir' => $ticket->a_discutir,
             'message' => $ticket->a_discutir ? 'Ticket marcado como a discutir' : 'A discutir removido',
         ]);

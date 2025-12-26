@@ -161,10 +161,10 @@
             // Total de emails
             $totalEmails = \App\Models\EmailRecibido::count();
             
-            // Obtener correos de clientes (normalizados a minúsculas y sin espacios)
-            $clientesEmails = \App\Models\Cliente::whereNotNull('correo')
-                ->where('correo', '!=', '')
-                ->pluck('correo')
+            // Obtener correos de clientes_en_proceso (normalizados a minúsculas y sin espacios)
+            $clientesEmails = \App\Models\Client::whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
                 ->map(function($email) {
                     return strtolower(trim($email));
                 })
@@ -173,8 +173,8 @@
                 ->values()
                 ->toArray();
             
-            // Filtrar emails que solo pertenecen a clientes
-            // Solo mostrar emails cuyo from_email (normalizado) está en la lista de correos de clientes
+            // Filtrar emails que solo pertenecen a clientes_en_proceso
+            // Solo mostrar emails cuyo from_email (normalizado) está en la lista de correos de clientes_en_proceso
             if (!empty($clientesEmails) && count($clientesEmails) > 0) {
                 $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
                     $first = true;

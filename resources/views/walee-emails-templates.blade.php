@@ -175,7 +175,7 @@
     
     <!-- Modal Nuevo/Editar Template -->
     <div id="templateModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-3xl max-h-[90vh] overflow-hidden shadow-xl">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-6xl max-h-[70vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="templateModalTitle">Nuevo Template</h3>
                 <button onclick="closeTemplateModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
@@ -184,7 +184,7 @@
                     </svg>
                 </button>
             </div>
-            <form id="template-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+            <form id="template-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[55vh]">
                 <input type="hidden" name="template_id" id="template_id">
                 
                 <div>
@@ -381,10 +381,64 @@
             document.getElementById('template_id').value = '';
             document.getElementById('deleteTemplateBtn').classList.add('hidden');
             document.getElementById('templateModal').classList.remove('hidden');
+            // Restaurar datos guardados
+            restoreTemplateFormData();
         }
         
         function closeTemplateModal() {
+            // Guardar datos antes de cerrar
+            saveTemplateFormData();
             document.getElementById('templateModal').classList.add('hidden');
+        }
+        
+        function saveTemplateFormData() {
+            const form = document.getElementById('template-form');
+            if (!form) return;
+            
+            const formData = {
+                nombre: form.querySelector('[name="nombre"]')?.value || '',
+                asunto: form.querySelector('[name="asunto"]')?.value || '',
+                contenido: form.querySelector('[name="contenido"]')?.value || '',
+                ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || ''
+            };
+            
+            localStorage.setItem('templateFormData', JSON.stringify(formData));
+        }
+        
+        function restoreTemplateFormData() {
+            const form = document.getElementById('template-form');
+            if (!form) return;
+            
+            // Solo restaurar si no hay un template_id (es un nuevo template, no edición)
+            const templateId = form.querySelector('[name="template_id"]')?.value;
+            if (templateId) return; // No restaurar si estamos editando
+            
+            const savedData = localStorage.getItem('templateFormData');
+            if (savedData) {
+                try {
+                    const formData = JSON.parse(savedData);
+                    
+                    const nombreInput = form.querySelector('[name="nombre"]');
+                    const asuntoInput = form.querySelector('[name="asunto"]');
+                    const contenidoInput = form.querySelector('[name="contenido"]');
+                    const aiPromptInput = form.querySelector('[name="ai_prompt"]');
+                    
+                    if (nombreInput) nombreInput.value = formData.nombre || '';
+                    if (asuntoInput) asuntoInput.value = formData.asunto || '';
+                    if (contenidoInput) contenidoInput.value = formData.contenido || '';
+                    if (aiPromptInput) aiPromptInput.value = formData.ai_prompt || '';
+                } catch (e) {
+                    console.error('Error restaurando datos del formulario:', e);
+                }
+            }
+        }
+        
+        function clearTemplateFormData() {
+            localStorage.removeItem('templateFormData');
+            const form = document.getElementById('template-form');
+            if (form) {
+                form.reset();
+            }
         }
         
         function editTemplate(templateId) {
@@ -398,6 +452,7 @@
             document.getElementById('template_contenido').value = template.contenido;
             document.getElementById('deleteTemplateBtn').classList.remove('hidden');
             document.getElementById('templateModal').classList.remove('hidden');
+            // No restaurar datos guardados cuando se edita un template existente
         }
         
         function deleteTemplate(templateId) {
@@ -507,41 +562,65 @@
         }
         
         // Template form handler
-        document.getElementById('template-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        const templateForm = document.getElementById('template-form');
+        if (templateForm) {
+            // Guardar datos mientras se escribe
+            const nombreInput = templateForm.querySelector('[name="nombre"]');
+            const asuntoInput = templateForm.querySelector('[name="asunto"]');
+            const contenidoInput = templateForm.querySelector('[name="contenido"]');
+            const aiPromptInput = templateForm.querySelector('[name="ai_prompt"]');
             
-            const formData = {
-                nombre: document.getElementById('template_nombre').value,
-                asunto: document.getElementById('template_asunto').value,
-                contenido: document.getElementById('template_contenido').value,
-                ai_prompt: document.getElementById('ai_prompt').value || null,
-            };
-            
-            const templateId = document.getElementById('template_id').value;
-            const url = templateId ? `/email-templates/${templateId}` : '/email-templates';
-            const method = templateId ? 'PUT' : 'POST';
-            
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error al guardar el template: ' + (data.message || 'Error desconocido'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al guardar el template');
+            if (nombreInput) {
+                nombreInput.addEventListener('input', saveTemplateFormData);
             }
-        });
+            if (asuntoInput) {
+                asuntoInput.addEventListener('input', saveTemplateFormData);
+            }
+            if (contenidoInput) {
+                contenidoInput.addEventListener('input', saveTemplateFormData);
+            }
+            if (aiPromptInput) {
+                aiPromptInput.addEventListener('input', saveTemplateFormData);
+            }
+            
+            templateForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    nombre: document.getElementById('template_nombre').value,
+                    asunto: document.getElementById('template_asunto').value,
+                    contenido: document.getElementById('template_contenido').value,
+                    ai_prompt: document.getElementById('ai_prompt').value || null,
+                };
+                
+                const templateId = document.getElementById('template_id').value;
+                const url = templateId ? `/email-templates/${templateId}` : '/email-templates';
+                const method = templateId ? 'PUT' : 'POST';
+                
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        // Limpiar datos guardados después de enviar exitosamente
+                        clearTemplateFormData();
+                        location.reload();
+                    } else {
+                        alert('Error al guardar el template: ' + (data.message || 'Error desconocido'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al guardar el template');
+                }
+            });
+        }
         
         // Enviar template form handler
         document.getElementById('enviar-template-form').addEventListener('submit', async function(e) {

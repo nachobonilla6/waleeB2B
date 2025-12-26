@@ -86,7 +86,7 @@
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <div class="flex items-center justify-between mb-8 animate-fade-in-up">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4 animate-fade-in-up">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">
                         Templates de Emails
@@ -97,7 +97,7 @@
                 </div>
                 <button 
                     onclick="showNuevoTemplateModal()"
-                    class="px-4 py-2 rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all flex items-center gap-2 shadow-lg"
+                    class="px-4 py-2 rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -106,10 +106,36 @@
                 </button>
             </div>
             
+            <!-- Search Bar -->
+            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.05s;">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="templateSearchInput"
+                        placeholder="Buscar templates por nombre, asunto o contenido..."
+                        class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        oninput="filterTemplates()"
+                    >
+                    <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <button 
+                        id="clearSearchBtn"
+                        onclick="clearTemplateSearch()"
+                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hidden"
+                        style="display: none;"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
             <!-- Templates Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div id="templatesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
                 @forelse($templates as $template)
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 hover:shadow-lg dark:hover:shadow-none transition-all group">
+                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 hover:shadow-lg dark:hover:shadow-none transition-all group" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-1">{{ $template->nombre }}</h3>
@@ -170,12 +196,24 @@
                     </div>
                 @endforelse
             </div>
+            
+            <!-- No Results Message -->
+            <div id="noResultsMessage" class="hidden text-center py-12">
+                <svg class="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No se encontraron templates</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    Intenta con otros términos de búsqueda
+                </p>
+            </div>
+            </div>
         </div>
     </div>
     
     <!-- Modal Nuevo/Editar Template -->
     <div id="templateModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-6xl max-h-[70vh] overflow-hidden shadow-xl">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-6xl max-h-[85vh] sm:max-h-[70vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="templateModalTitle">Nuevo Template</h3>
                 <button onclick="closeTemplateModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
@@ -184,7 +222,7 @@
                     </svg>
                 </button>
             </div>
-            <form id="template-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[55vh]">
+            <form id="template-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[70vh] sm:max-h-[55vh]">
                 <input type="hidden" name="template_id" id="template_id">
                 
                 <div>

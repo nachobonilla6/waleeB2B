@@ -195,7 +195,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
                 <!-- Gráfico de Tickets -->
                 <div class="lg:col-span-2 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 1.1s;">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Tickets - Últimos 30 Días</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Tickets - Últimos 15 Días</h3>
                     <div class="h-48 md:h-64">
                         <canvas id="ticketsChart"></canvas>
                     </div>
@@ -278,7 +278,7 @@
     </div>
     
     <script>
-        // Gráfico de Tickets - Últimos 30 Días (Estilo Montaña)
+        // Gráfico de Tickets - Últimos 15 Días (Estilo Montaña)
         const ctx = document.getElementById('ticketsChart');
         if (ctx) {
             const datos = @json(collect($ticketsPorDia)->pluck('total'));

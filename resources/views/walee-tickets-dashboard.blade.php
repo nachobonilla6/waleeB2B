@@ -99,20 +99,7 @@
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-                <!-- Total Tickets -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.1s;">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                            <svg class="w-4 h-4 md:w-5 md:h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($totalTickets) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Total Tickets</p>
-                </div>
-                
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
                 <!-- Enviados -->
                 <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.2s;">
                     <div class="flex items-center justify-between mb-2">
@@ -154,41 +141,11 @@
             </div>
             
             <!-- Secondary Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 md:gap-4 mb-6 md:mb-8">
-                <!-- Este Mes -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.5s;">
-                    <p class="text-base md:text-xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsEsteMes) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Este Mes</p>
-                </div>
-                
-                <!-- Esta Semana -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.6s;">
-                    <p class="text-base md:text-xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsEstaSemana) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Esta Semana</p>
-                </div>
-                
-                <!-- Hoy -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.7s;">
-                    <p class="text-base md:text-xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsHoy) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Hoy</p>
-                </div>
-                
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-3 md:gap-4 mb-6 md:mb-8">
                 <!-- Urgentes -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-red-200 dark:border-red-500/20 p-3 md:p-4" style="animation-delay: 0.8s;">
+                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-red-200 dark:border-red-500/20 p-3 md:p-4" style="animation-delay: 0.5s;">
                     <p class="text-base md:text-xl font-bold text-red-600 dark:text-red-400">{{ number_format($ticketsUrgentes) }}</p>
                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Urgentes</p>
-                </div>
-                
-                <!-- Prioritarios -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-orange-200 dark:border-orange-500/20 p-3 md:p-4" style="animation-delay: 0.9s;">
-                    <p class="text-base md:text-xl font-bold text-orange-600 dark:text-orange-400">{{ number_format($ticketsPrioritarios) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Prioritarios</p>
-                </div>
-                
-                <!-- A Discutir -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-purple-200 dark:border-purple-500/20 p-3 md:p-4" style="animation-delay: 1s;">
-                    <p class="text-base md:text-xl font-bold text-purple-600 dark:text-purple-400">{{ number_format($ticketsADiscutir) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">A Discutir</p>
                 </div>
             </div>
             

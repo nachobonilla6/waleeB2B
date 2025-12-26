@@ -59,10 +59,12 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        // Obtener todos los tickets ordenados por urgente primero, luego por fecha
+        // Obtener todos los tickets ordenados por prioridad: urgente > prioritario > a_discutir > fecha
         $tickets = \App\Models\Ticket::with('user')
             ->orderBy('urgente', 'desc') // Urgentes primero
-            ->orderBy('created_at', 'desc') // Luego por fecha más reciente
+            ->orderBy('prioritario', 'desc') // Luego prioritarios
+            ->orderBy('a_discutir', 'desc') // Luego a discutir
+            ->orderBy('created_at', 'desc') // Finalmente por fecha más reciente
             ->get();
         
         $totalTickets = $tickets->count();

@@ -174,8 +174,9 @@
                 ->toArray();
             
             // Filtrar emails que solo pertenecen a clientes_en_proceso
-            // Solo mostrar emails cuyo from_email (normalizado) está en la lista de correos de clientes_en_proceso
+            // Solo mostrar emails cuyo from_email (sender/remitente) está en la lista de correos de clientes_en_proceso
             if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+                // Filtrar por from_email (sender) que coincida con emails de clientes_en_proceso
                 $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
                     $first = true;
                     foreach ($clientesEmails as $clienteEmail) {

@@ -1875,23 +1875,19 @@ Route::get('/walee-facebook/clientes', function () {
         ->limit(5)
         ->get();
     
-    // Distribución de publicaciones por día (últimos 30 días)
+    // Distribución de publicaciones por día (últimos 30 días) - Solo días con publicaciones reales
     $publicacionesPorDia = \App\Models\Post::selectRaw('DATE(created_at) as dia, COUNT(*) as total')
         ->where('created_at', '>=', now()->subDays(30))
         ->groupBy('dia')
-        ->orderBy('dia')
-        ->get();
-    
-    // Rellenar días sin publicaciones con 0
-    $publicacionesPorDiaCompleto = [];
-    for ($i = 29; $i >= 0; $i--) {
-        $fecha = now()->subDays($i)->format('Y-m-d');
-        $publicacion = $publicacionesPorDia->firstWhere('dia', $fecha);
-        $publicacionesPorDiaCompleto[] = [
-            'dia' => $fecha,
-            'total' => $publicacion ? $publicacion->total : 0
-        ];
-    }
+        ->orderBy('dia', 'asc')
+        ->get()
+        ->map(function($item) {
+            return [
+                'dia' => $item->dia,
+                'total' => (int)$item->total
+            ];
+        })
+        ->toArray();
     
     return view('walee-facebook-clientes', compact(
         'totalPublicaciones',
@@ -1902,7 +1898,7 @@ Route::get('/walee-facebook/clientes', function () {
         'totalClientes',
         'publicacionesRecientes',
         'clientesTop',
-        'publicacionesPorDiaCompleto'
+        'publicacionesPorDia'
     ));
 })->middleware(['auth'])->name('walee.facebook.clientes');
 

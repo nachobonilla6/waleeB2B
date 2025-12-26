@@ -234,14 +234,17 @@
     </div>
     
     <script>
-        // Gráfico de Publicaciones - Últimos 30 Días (Estilo Montaña)
+        // Gráfico de Publicaciones - Últimos 30 Días (Estilo Montaña) - Basado en publicaciones reales
         const ctx = document.getElementById('publicacionesChart');
         if (ctx) {
-            const datos = @json(collect($publicacionesPorDiaCompleto)->pluck('total'));
-            const fechas = @json(collect($publicacionesPorDiaCompleto)->map(function($item) {
-                $fecha = \Carbon\Carbon::createFromFormat('Y-m-d', $item['dia']);
-                return $fecha->format('d/m');
-            }));
+            const publicacionesReales = @json($publicacionesPorDia);
+            
+            // Extraer fechas y datos de las publicaciones reales
+            const fechas = publicacionesReales.map(item => {
+                const fecha = new Date(item.dia);
+                return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+            });
+            const datos = publicacionesReales.map(item => item.total);
             
             new Chart(ctx, {
                 type: 'line',
@@ -255,12 +258,12 @@
                         borderWidth: 2,
                         tension: 0.5,
                         fill: true,
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
                         pointBackgroundColor: 'rgb(59, 130, 246)',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointHoverBackgroundColor: 'rgb(59, 130, 246)',
+                        pointHoverBackgroundColor: 'rgb(37, 99, 235)',
                         pointHoverBorderColor: '#fff'
                     }]
                 },
@@ -280,7 +283,15 @@
                             bodyFont: {
                                 size: 12
                             },
-                            displayColors: false
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return 'Fecha: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    return 'Publicaciones: ' + context.parsed.y;
+                                }
+                            }
                         }
                     },
                     scales: {

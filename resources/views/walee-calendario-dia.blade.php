@@ -604,7 +604,7 @@
     
     <!-- Modal Nueva/Editar Nota -->
     <div id="notaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md md:max-w-2xl max-h-[85vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="notaModalTitle">Nueva Nota</h3>
                 <button onclick="closeNotaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
@@ -613,74 +613,82 @@
                     </svg>
                 </button>
             </div>
-            <form id="nota-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
+            <form id="nota-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[65vh]">
                 <input type="hidden" name="nota_id" id="nota_id">
                 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
-                    <input 
-                        type="date" 
-                        name="fecha" 
-                        id="nota_fecha" 
-                        required
-                        value="{{ $fecha->format('Y-m-d') }}"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
-                    >
+                <!-- Primera fila: Fecha y Tipo -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
+                        <input 
+                            type="date" 
+                            name="fecha" 
+                            id="nota_fecha" 
+                            required
+                            value="{{ $fecha->format('Y-m-d') }}"
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                        <select 
+                            name="type" 
+                            id="nota_type" 
+                            required
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                        >
+                            <option value="note">Nota</option>
+                            <option value="call">Llamada</option>
+                            <option value="meeting">Reunión</option>
+                            <option value="email">Email</option>
+                        </select>
+                    </div>
                 </div>
                 
+                <!-- Contenido (ancho completo) -->
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido de la Nota</label>
                     <textarea 
                         name="content" 
                         id="nota_content" 
                         required 
-                        rows="5"
+                        rows="4"
                         placeholder="Escribe el contenido de la nota..."
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                        class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
                     ></textarea>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Máximo 5000 caracteres</p>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
-                    <select 
-                        name="type" 
-                        id="nota_type" 
-                        required
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
-                    >
-                        <option value="note">Nota</option>
-                        <option value="call">Llamada</option>
-                        <option value="meeting">Reunión</option>
-                        <option value="email">Email</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente (opcional)</label>
-                    <select 
-                        name="cliente_id" 
-                        id="nota_cliente_id"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
-                    >
-                        <option value="">Sin cliente</option>
-                        @foreach($clientes as $cliente)
-                            <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input 
-                            type="checkbox" 
-                            name="pinned" 
-                            id="nota_pinned"
-                            class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-blue-500 focus:ring-blue-500"
+                <!-- Segunda fila: Cliente y Pinned -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente (opcional)</label>
+                        <select 
+                            name="cliente_id" 
+                            id="nota_cliente_id"
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
                         >
-                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Marcar como fijada (pinned)</span>
-                    </label>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-7">Las notas fijadas aparecen primero en la lista</p>
+                            <option value="">Sin cliente</option>
+                            @foreach($clientes as $cliente)
+                                <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
+                        <label class="flex items-center gap-2 cursor-pointer h-full min-h-[42px] px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl">
+                            <input 
+                                type="checkbox" 
+                                name="pinned" 
+                                id="nota_pinned"
+                                class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-blue-500 focus:ring-blue-500"
+                            >
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Marcar como fijada</span>
+                        </label>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Las notas fijadas aparecen primero</p>
+                    </div>
                 </div>
                 
                 <div class="flex gap-2 pt-2">

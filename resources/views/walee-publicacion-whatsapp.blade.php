@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $publicacion->title }}</title>
     
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="{{ e($publicacion->title) }}">
-    <meta property="og:site_name" content="Vela SportFishing & Tours">
-    <meta property="og:locale" content="es_ES">
     @php
         // Limpiar contenido removiendo el botón de WhatsApp si existe
         $cleanContent = preg_replace('/\n.*[Ww]hats[Aa]pp.*\n?/', '', $publicacion->content);
@@ -22,44 +16,46 @@
         
         // Limpiar HTML y caracteres especiales para meta description
         $metaDescription = strip_tags($metaContent);
-        $metaDescription = preg_replace('/\s+/', ' ', $metaDescription); // Reemplazar múltiples espacios
+        $metaDescription = preg_replace('/\s+/', ' ', $metaDescription);
         $metaDescription = trim($metaDescription);
         
-        // Si está vacío, usar el título
         if (empty($metaDescription)) {
             $metaDescription = $publicacion->title;
         }
-    @endphp
-    <meta property="og:description" content="{{ e(Str::limit($metaDescription, 300)) }}">
-    <meta name="description" content="{{ e(Str::limit($metaDescription, 300)) }}">
-    @if($publicacion->image_url)
-    @php
-        // Asegurar que la URL de la imagen sea absoluta y accesible
-        $imageUrl = $publicacion->image_url;
         
-        // Si ya es una URL completa (empieza con http), usarla tal cual
-        if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            // Ya es una URL válida
-        } else {
-            // Si empieza con /storage/, convertir a URL completa
-            if (strpos($imageUrl, '/storage/') === 0 || strpos($imageUrl, 'storage/') === 0) {
-                // Remover / inicial si existe
-                $imageUrl = ltrim($imageUrl, '/');
-                // Construir URL completa
-                $imageUrl = asset($imageUrl);
-            } else {
-                // Cualquier otra ruta relativa
-                $imageUrl = url($imageUrl);
+        // Procesar URL de imagen
+        $imageUrl = null;
+        if ($publicacion->image_url) {
+            $imageUrl = $publicacion->image_url;
+            
+            // Si ya es una URL completa, validarla
+            if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                // Si empieza con /storage/ o storage/, convertir a URL completa
+                if (strpos($imageUrl, '/storage/') === 0) {
+                    $imageUrl = asset($imageUrl);
+                } elseif (strpos($imageUrl, 'storage/') === 0) {
+                    $imageUrl = asset('/' . $imageUrl);
+                } else {
+                    // Cualquier otra ruta relativa
+                    $imageUrl = url($imageUrl);
+                }
             }
+            
+            // Asegurar HTTPS
+            $imageUrl = str_replace('http://', 'https://', $imageUrl);
         }
-        
-        // Asegurar que sea HTTPS
-        $imageUrl = str_replace('http://', 'https://', $imageUrl);
-        
-        // Agregar parámetro de versión para evitar caché (opcional, descomentar si es necesario)
-        // $imageUrl .= '?v=' . time();
     @endphp
-    <!-- Open Graph Image - WhatsApp requiere URL absoluta, HTTPS y accesible públicamente -->
+    
+    <!-- Open Graph / Facebook / WhatsApp - Orden importante para WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ e($publicacion->title) }}">
+    <meta property="og:description" content="{{ e(Str::limit($metaDescription, 300)) }}">
+    <meta property="og:site_name" content="Vela SportFishing & Tours">
+    <meta property="og:locale" content="es_ES">
+    
+    @if($imageUrl)
+    <!-- Open Graph Image - Debe estar después de og:title y og:description -->
     <meta property="og:image" content="{{ $imageUrl }}">
     <meta property="og:image:secure_url" content="{{ $imageUrl }}">
     <meta property="og:image:url" content="{{ $imageUrl }}">
@@ -70,29 +66,17 @@
     <!-- Meta adicional para compatibilidad -->
     <meta name="og:image" content="{{ $imageUrl }}">
     <link rel="image_src" href="{{ $imageUrl }}">
-    @else
-    <!-- Si no hay imagen, usar una imagen por defecto -->
-    <meta property="og:image" content="{{ url('/images/default-og-image.jpg') }}">
     @endif
+    
+    <meta name="description" content="{{ e(Str::limit($metaDescription, 300)) }}">
     
     <!-- Twitter -->
+    @if($imageUrl)
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ e($publicacion->title) }}">
-    <meta name="twitter:description" content="{{ e(Str::limit($metaDescription ?? $publicacion->title, 200)) }}">
-    @if($publicacion->image_url)
-    @php
-        // Asegurar que la URL de la imagen sea absoluta
-        $imageUrl = $publicacion->image_url;
-        if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            $imageUrl = url($imageUrl);
-        }
-        $imageUrl = str_replace('http://', 'https://', $imageUrl);
-    @endphp
+    <meta name="twitter:description" content="{{ e(Str::limit($metaDescription, 200)) }}">
     <meta name="twitter:image" content="{{ $imageUrl }}">
     @endif
-    
-    <!-- WhatsApp específico -->
-    <meta property="og:site_name" content="Vela SportFishing & Tours">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

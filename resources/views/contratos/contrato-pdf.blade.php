@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" dir="ltr">
+<html lang="{{ $idioma }}" dir="{{ $idioma == 'zh' ? 'ltr' : ($idioma == 'ar' ? 'rtl' : 'ltr') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -167,28 +167,28 @@
 </head>
 <body>
     <div class="header">
-        <div class="subtitle">🌍 Bilingual Version EN / ESP</div>
-        <h1>SOFTWARE CREATION & DIGITAL SERVICES CONTRACT</h1>
+        <div class="subtitle">{{ $t['header_subtitle'] }}</div>
+        <h1>{{ $t['contract_title'] }}</h1>
     </div>
     
     <div class="parties">
         <div class="party-section">
-            <div class="party-label">Between the undersigned:</div>
+            <div class="party-label">{{ $t['between'] }}</div>
         </div>
         
         <div class="party-section">
-            <div class="party-label">Service Provider:</div>
-            <div class="party-name">Web Solutions CR – WHENSOL</div>
-            <div class="party-details">Company location: Jacó, Puntarenas, Costa Rica</div>
-            <div class="party-details">(hereinafter referred to as "the Service Provider")</div>
+            <div class="party-label">{{ $t['service_provider'] }}</div>
+            <div class="party-name">{{ $t['service_provider_name'] }}</div>
+            <div class="party-details">{{ $t['service_provider_location'] }}</div>
+            <div class="party-details">{{ $t['service_provider_referred'] }}</div>
         </div>
         
         <div class="party-section">
-            <div class="party-label">Client:</div>
+            <div class="party-label">{{ $t['client'] }}</div>
             <div class="party-name">{{ $cliente->nombre_empresa }}@if(isset($cliente->contacto_nombre)) – {{ $cliente->contacto_nombre }}@endif</div>
-            <div class="party-details">(hereinafter referred to as "the Client")</div>
+            <div class="party-details">{{ $t['client_referred'] }}</div>
             @if($cliente->direccion || $cliente->ciudad)
-            <div class="party-details">Client's business location:</div>
+            <div class="party-details">{{ $t['client_business_location'] }}</div>
             <div class="party-details">
                 @if($cliente->direccion){{ $cliente->direccion }}, @endif
                 @if($cliente->ciudad){{ $cliente->ciudad }}, @endif
@@ -200,138 +200,138 @@
     </div>
     
     <div class="section">
-        <p><strong>It has been agreed as follows:</strong></p>
+        <p><strong>{{ $t['agreed'] }}</strong></p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">1.</span> Purpose of the Contract</div>
-        <p>The purpose of this contract is the provision of digital services intended for a {{ strtolower($servicioNombre) }} business, including specifically:</p>
+        <div class="section-title"><span class="section-number">1.</span> {{ $t['section_1'] }}</div>
+        <p>{{ $t['section_1_text'] }} {{ strtolower($servicioNombre) }}, including specifically:</p>
         
         <div class="subsection">
-            <div class="subsection-title">1.1 Website & Digital Presence</div>
-            <p>The following services:</p>
+            <div class="subsection-title">{{ $t['section_1_1'] }}</div>
+            <p>{{ $t['section_1_1_services'] }}</p>
             <ul>
-                <li>Creation of a professional website;</li>
-                <li>Upgrade of two (2) social media accounts: Facebook and Instagram;</li>
-                <li>Setup and optimization of Google presence.</li>
+                <li>{{ $t['section_1_1_list_1'] }}</li>
+                <li>{{ $t['section_1_1_list_2'] }}</li>
+                <li>{{ $t['section_1_1_list_3'] }}</li>
             </ul>
-            <p>It is specified that on {{ now()->format('F d, Y') }}, the Client subscribed to this initial package.</p>
-            <p>The initial price was calculated based on the service requirements.</p>
-            <p class="price-highlight">Final applied price: <span class="amount">{{ number_format($precio, 2, ',', '.') }} CRC ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
-            <p class="note">This price is based on the specific services contracted by the Client.</p>
+            <p>{{ $t['section_1_1_specified'] }} {{ now()->format('F d, Y') }}, {{ $t['section_1_1_subscribed'] }}</p>
+            <p>{{ $t['section_1_1_price'] }}</p>
+            <p class="price-highlight">{{ $t['section_1_1_final_price'] }} <span class="amount">{{ number_format($precio, 2, ',', '.') }} CRC ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
+            <p class="note">{{ $t['section_1_1_note'] }}</p>
         </div>
         
         <div class="subsection">
-            <div class="subsection-title">1.2 Management Software</div>
-            <p>This contract also includes the creation, development, customization, and deployment of a management software intended for the internal organization of the Client's business.</p>
+            <div class="subsection-title">{{ $t['section_1_2'] }}</div>
+            <p>{{ $t['section_1_2_text'] }}</p>
         </div>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">2.</span> Software Description</div>
-        <p>The Software is a dedicated business management software, including in particular:</p>
+        <div class="section-title"><span class="section-number">2.</span> {{ $t['section_2'] }}</div>
+        <p>{{ $t['section_2_text'] }}</p>
         <ul>
-            <li>Management of activities and operations;</li>
-            <li>Internal organization;</li>
-            <li>Monitoring and improvement tools;</li>
-            <li>Scalability according to the Client's future needs.</li>
+            <li>{{ $t['section_2_list_1'] }}</li>
+            <li>{{ $t['section_2_list_2'] }}</li>
+            <li>{{ $t['section_2_list_3'] }}</li>
+            <li>{{ $t['section_2_list_4'] }}</li>
         </ul>
-        <p>Features may be specified and adjusted by mutual agreement between the parties.</p>
+        <p>{{ $t['section_2_features'] }}</p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">3.</span> Price and Payment Terms – Software Creation</div>
+        <div class="section-title"><span class="section-number">3.</span> {{ $t['section_3'] }}</div>
         
         <div class="subsection">
-            <div class="subsection-title">3.1 Creation Price</div>
-            <p>The total price for the creation of the Software and digital services is set at:</p>
+            <div class="subsection-title">{{ $t['section_3_1'] }}</div>
+            <p>{{ $t['section_3_1_text'] }}</p>
             <p class="price-highlight"><span class="amount">{{ number_format($precio, 2, ',', '.') }} CRC ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
         </div>
         
         <div class="subsection">
-            <div class="subsection-title">3.2 Payment Terms</div>
-            <p>Payment terms will be agreed upon between the parties. Any adjustment or postponement of payment must be agreed upon in writing by both parties.</p>
+            <div class="subsection-title">{{ $t['section_3_2'] }}</div>
+            <p>{{ $t['section_3_2_text'] }}</p>
         </div>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">4.</span> Support, Maintenance, and Improvements</div>
-        <p>Starting from the contract date, the Client may subscribe to the following package:</p>
-        <p class="price-highlight">Support, Maintenance, Improvements & Website Package</p>
-        <p>This package includes:</p>
+        <div class="section-title"><span class="section-number">4.</span> {{ $t['section_4'] }}</div>
+        <p>{{ $t['section_4_text'] }}</p>
+        <p class="price-highlight">{{ $t['section_4_package'] }}</p>
+        <p>{{ $t['section_4_includes'] }}</p>
         <ul>
-            <li>Technical support;</li>
-            <li>Software maintenance;</li>
-            <li>Continuous improvements;</li>
-            <li>Website-related support.</li>
+            <li>{{ $t['section_4_list_1'] }}</li>
+            <li>{{ $t['section_4_list_2'] }}</li>
+            <li>{{ $t['section_4_list_3'] }}</li>
+            <li>{{ $t['section_4_list_4'] }}</li>
         </ul>
-        <p>Specific terms and pricing for this package will be agreed upon separately.</p>
+        <p>{{ $t['section_4_terms'] }}</p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">5.</span> Social Media Marketing</div>
-        <p>The Client may benefit from Social Media Marketing services (Facebook & Instagram).</p>
-        <p>Specific rates and duration will be agreed upon separately between the parties.</p>
+        <div class="section-title"><span class="section-number">5.</span> {{ $t['section_5'] }}</div>
+        <p>{{ $t['section_5_text'] }}</p>
+        <p>{{ $t['section_5_rates'] }}</p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">6.</span> Monthly Amount Summary</div>
-        <p>Any recurring monthly amounts will be specified in separate agreements and will be communicated to the Client in writing.</p>
+        <div class="section-title"><span class="section-number">6.</span> {{ $t['section_6'] }}</div>
+        <p>{{ $t['section_6_text'] }}</p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">7.</span> Intellectual Property</div>
-        <p>The developed Software remains the exclusive intellectual property of the Service Provider until full payment of all amounts due.</p>
-        <p>After full payment, the Client is granted a non-exclusive right of use, strictly limited to its professional activity.</p>
-        <p>Any resale, transfer, duplication, modification, or provision of the Software without written authorization from the Service Provider is strictly prohibited.</p>
+        <div class="section-title"><span class="section-number">7.</span> {{ $t['section_7'] }}</div>
+        <p>{{ $t['section_7_text_1'] }}</p>
+        <p>{{ $t['section_7_text_2'] }}</p>
+        <p>{{ $t['section_7_text_3'] }}</p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">8.</span> Late Payment and Non-Payment</div>
-        <p>In case of late payment, the Service Provider reserves the right to suspend access to the Software and related services, without compensation.</p>
-        <p>In case of non-payment, the contract may be terminated automatically, without prejudice to the amounts still due.</p>
+        <div class="section-title"><span class="section-number">8.</span> {{ $t['section_8'] }}</div>
+        <p>{{ $t['section_8_text_1'] }}</p>
+        <p>{{ $t['section_8_text_2'] }}</p>
         
         <div class="subsection">
-            <div class="subsection-title">8.1 Limitation of Liability</div>
-            <p>The Service Provider is subject to an obligation of means, not of results.</p>
-            <p>Its liability cannot be engaged in case of:</p>
+            <div class="subsection-title">{{ $t['section_8_1'] }}</div>
+            <p>{{ $t['section_8_1_text_1'] }}</p>
+            <p>{{ $t['section_8_1_text_2'] }}</p>
             <ul>
-                <li>Malfunctions related to hosting or third-party services (Google, social networks, external platforms, etc.);</li>
-                <li>Data loss due to misuse or external failure;</li>
-                <li>Indirect damages (loss of revenue, loss of customers, loss of profit).</li>
+                <li>{{ $t['section_8_1_list_1'] }}</li>
+                <li>{{ $t['section_8_1_list_2'] }}</li>
+                <li>{{ $t['section_8_1_list_3'] }}</li>
             </ul>
-            <p>In any case, the financial liability of the Service Provider is strictly limited to the total amount actually paid by the Client under this contract.</p>
+            <p>{{ $t['section_8_1_text_3'] }}</p>
         </div>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">9.</span> Evolutions and Additional Requests</div>
-        <p>Any request for modification, additional option, or specific development will be subject to a written agreement and additional invoicing, depending on working time and technical complexity.</p>
+        <div class="section-title"><span class="section-number">9.</span> {{ $t['section_9'] }}</div>
+        <p>{{ $t['section_9_text'] }}</p>
     </div>
     
     <div class="section">
-        <div class="section-title"><span class="section-number">10.</span> Duration – Termination – Applicable Law</div>
-        <p>This contract takes effect on the date of signature.</p>
-        <p>Any termination must be notified in writing.</p>
-        <p>The contract is governed by the applicable law agreed upon between the parties.</p>
-        <p>This contract is provided in a bilingual version (ES / EN), each version having the same legal value.</p>
-        <p><strong>Done in two copies.</strong></p>
+        <div class="section-title"><span class="section-number">10.</span> {{ $t['section_10'] }}</div>
+        <p>{{ $t['section_10_text_1'] }}</p>
+        <p>{{ $t['section_10_text_2'] }}</p>
+        <p>{{ $t['section_10_text_3'] }}</p>
+        <p>{{ $t['section_10_text_4'] }}</p>
+        <p><strong>{{ $t['section_10_done'] }}</strong></p>
     </div>
     
     <div class="signature-section">
         <div class="signature-box">
-            <div class="date-line">At ________________________, on {{ now()->format('d / m / Y') }}</div>
-            <div class="signature-line">Signature of the Service Provider</div>
+            <div class="date-line">{{ $t['signature_at'] }} ________________________, {{ $t['signature_on'] }} {{ now()->format('d / m / Y') }}</div>
+            <div class="signature-line">{{ $t['signature_provider'] }}</div>
         </div>
         <div class="signature-box">
             <div class="date-line"></div>
-            <div class="signature-line">Signature of the Client</div>
+            <div class="signature-line">{{ $t['signature_client'] }}</div>
         </div>
     </div>
     
     <div class="footer">
-        <p>Web Solutions CR – WHENSOL | Jacó, Puntarenas, Costa Rica</p>
-        <p>Contract generated on {{ now()->format('F d, Y') }}</p>
+        <p>{{ $t['footer_company'] }}</p>
+        <p>{{ $t['footer_generated'] }} {{ now()->format('F d, Y') }}</p>
     </div>
 </body>
 </html>

@@ -1824,6 +1824,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'cliente_id' => 'required|exists:clientes,id',
             'servicio' => 'required|string',
             'precio' => 'required|numeric|min:0',
+            'idioma' => 'required|in:es,en,fr,zh',
         ]);
 
         $cliente = \App\Models\Cliente::findOrFail($validated['cliente_id']);
@@ -1880,6 +1881,10 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             mkdir(storage_path('app/temp'), 0755, true);
         }
         
+        // Obtener traducciones según el idioma seleccionado
+        $idioma = $validated['idioma'];
+        $translations = \App\Helpers\ContractTranslations::getTranslations($idioma);
+        
         // Generar HTML del contrato
         $htmlContent = view('contratos.contrato-pdf', [
             'cliente' => $cliente,
@@ -1887,6 +1892,8 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'servicioNombre' => $servicioInfo['nombre'],
             'servicioDescripcion' => $servicioInfo['descripcion'],
             'precio' => $validated['precio'],
+            'idioma' => $idioma,
+            't' => $translations,
         ])->render();
         
         // Generar PDF usando mPDF - cargar clase explícitamente si es necesario
@@ -1926,16 +1933,16 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         $mpdf->WriteHTML($htmlContent);
         $mpdf->Output($pdfPath, 'F');
 
-        // Preparar cuerpo del email
-        $emailBody = "Estimado/a " . $cliente->nombre_empresa . ",\n\n";
-        $emailBody .= "Adjunto encontrará el contrato de prestación de servicios para " . $servicioInfo['nombre'] . ".\n\n";
-        $emailBody .= "Detalles del contrato:\n";
-        $emailBody .= "- Servicio: " . $servicioInfo['nombre'] . "\n";
-        $emailBody .= "- Precio: ₡" . number_format($validated['precio'], 2, ',', '.') . "\n";
-        $emailBody .= "- Fecha: " . now()->format('d/m/Y') . "\n\n";
-        $emailBody .= "Por favor, revise el contrato adjunto y no dude en contactarnos si tiene alguna pregunta.\n\n";
-        $emailBody .= "Saludos cordiales,\n";
-        $emailBody .= "Web Solutions - WALEÉ\n";
+        // Preparar cuerpo del email según el idioma
+        $emailBody = $translations['email_greeting'] . " " . $cliente->nombre_empresa . ",\n\n";
+        $emailBody .= $translations['email_body_1'] . " " . $servicioInfo['nombre'] . ".\n\n";
+        $emailBody .= $translations['email_body_2'] . "\n";
+        $emailBody .= "- " . $translations['email_service'] . " " . $servicioInfo['nombre'] . "\n";
+        $emailBody .= "- " . $translations['email_price'] . " " . number_format($validated['precio'], 2, ',', '.') . " CRC (" . number_format($validated['precio'] / 520, 2, '.', ',') . " USD)\n";
+        $emailBody .= "- " . $translations['email_date'] . " " . now()->format('d/m/Y') . "\n\n";
+        $emailBody .= $translations['email_body_3'] . "\n\n";
+        $emailBody .= $translations['email_closing'] . "\n";
+        $emailBody .= $translations['email_company'] . "\n";
         $emailBody .= "websolutionscrnow@gmail.com";
 
         // Enviar email con PDF adjunto
@@ -1943,10 +1950,10 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             throw new \Exception('No se pudo generar el archivo PDF');
         }
 
-        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($cliente, $pdfPath, $pdfFileName, $servicioInfo) {
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($cliente, $pdfPath, $pdfFileName, $servicioInfo, $translations) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
                     ->to($cliente->correo)
-                    ->subject('Contrato de Servicios - ' . $servicioInfo['nombre'])
+                    ->subject($translations['email_subject'] . ' ' . $servicioInfo['nombre'])
                     ->attach($pdfPath, [
                         'as' => $pdfFileName,
                         'mime' => 'application/pdf',

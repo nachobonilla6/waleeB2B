@@ -29,11 +29,20 @@
     >
         <!-- Header del chat -->
         <div class="bg-walee-500 dark:bg-walee-600 text-white p-4 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                </svg>
-                <h3 class="font-semibold">Walee Chat</h3>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center overflow-hidden border-2 border-white/30">
+                    <img src="https://i.postimg.cc/8z8vJQ7K/walee-avatar.png" 
+                         alt="Walee" 
+                         class="w-full h-full object-cover"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="w-full h-full bg-walee-400 flex items-center justify-center text-2xl font-bold" style="display: none;">
+                        W
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold">Walee Chat</h3>
+                    <p class="text-xs text-white/80">Asistente virtual</p>
+                </div>
             </div>
             <button
                 @click="open = false"

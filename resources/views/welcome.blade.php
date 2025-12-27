@@ -755,116 +755,135 @@
                 <div class="bg-gradient-to-br from-amber-900/80 to-amber-800/50 backdrop-blur-sm rounded-xl border border-amber-500/20 overflow-hidden flex flex-col hover:border-amber-400/30 transition-all duration-300">
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-white text-center mb-2">
-                            <span class="bg-gradient-to-r from-amber-300 to-orange-300 text-transparent bg-clip-text">Web Premium</span>
+                            <span class="bg-gradient-to-r from-amber-300 to-orange-300 text-transparent bg-clip-text">🌟 Web Premium – Solución completa para negocios establecidos</span>
                         </h3>
-                        <p class="text-amber-100/80 text-center mb-4">Solución completa para negocios establecidos</p>
-                        <div class="text-center mb-6">
-                            <div class="text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent">A partir de $300</div>
-                            <div class="text-lg text-amber-100/80">ó desde ₡150,000</div>
-                            <div class="text-sm text-amber-200/70 mt-1">Precio varía según alcance</div>
-                            <div class="text-sm text-amber-200/70">o $38/mes (₡19,000)</div>
+                        <div class="text-center mb-4">
+                            <div class="text-3xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
+                            <div class="text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent">$380</div>
+                            <div class="text-xl text-amber-100/80">ó ₡190,000</div>
+                            <div class="text-sm text-amber-200/70 mt-1">Precio inicial (varía según alcance)</div>
+                            <div class="text-sm text-amber-200/70 mt-2">Abono mensual obligatorio después de los 3 meses de mantenimiento:</div>
+                            <div class="text-lg font-semibold text-amber-200/90 mt-1">$38 / ₡19,000</div>
                         </div>
-
-                        <ul class="space-y-3 text-left mb-8 text-white">
+                        <div class="mb-4 text-sm text-amber-200/80 bg-amber-900/30 p-3 rounded-lg border border-amber-500/30">
+                            <div class="font-semibold mb-1">Duración del contrato:</div>
+                            <div>1 año</div>
+                            <div class="mt-2 font-semibold">Renovación automática:</div>
+                            <div>El contrato se renueva automáticamente por 1 año, salvo cancelación <strong>2 meses antes de la fecha aniversario</strong>.</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-lg font-bold text-amber-300 mb-2">✅ Incluye</div>
+                        </div>
+                        <ul class="space-y-3 text-left mb-4 text-sm text-gray-300">
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Mantenimiento incluido por 3 meses</span>
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Sitio web de 6 páginas</span>
-                            </li>
-                            <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Página de productos con catálogo</span>
+                                <span><strong>Sitio web de 6 páginas</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Carrito de compras integrado</span>
+                                <span><strong>Página de productos con catálogo</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Email corporativo (2 buzones)</span>
+                                <span><strong>Carrito de compras incluido</strong> (sin pasarela de pago)</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Integración con redes sociales y WhatsApp</span>
+                                <span>Integración de pago en línea disponible bajo solicitud por <strong>$100 adicionales</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Chatbot avanzado con IA para toma de pedidos</span>
+                                <span><strong>Email corporativo:</strong> 2 buzones</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Diseño 100% responsivo</span>
+                                <span><strong>Integración con redes sociales y WhatsApp</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Panel de control administrativo</span>
+                                <span><strong>Chatbot avanzado con IA</strong> para toma de pedidos</span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Panel de edición y creación de productos</span>
+                                <span><strong>Diseño 100% responsivo</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Reproductor de música y video integrado</span>
+                                <span><strong>Panel de control administrativo</strong></span>
                             </li>
                             <li class="flex items-start">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span>Asistencia prioritaria 24/7</span>
+                                <span><strong>Panel de edición y creación de productos</strong></span>
                             </li>
-
-                            <li class="flex items-center">
-    <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-    </svg>
-    Gestión de dominio por 1 año
-</li>
-
-                       
-                            <li class="flex items-start mt-2">
-                                <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-white">Página suplementaria: <span class="text-amber-300">$20</span> <span class="text-amber-200">(₡10,000 c/u)</span></span>
+                                <span><strong>Reproductor de música y video integrado</strong></span>
                             </li>
-                            <li class="text-sm text-amber-100/60 mt-2 pl-2">
-                                * El precio no incluye el costo del dominio
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>Asistencia prioritaria 24/7</strong></span>
                             </li>
-                            <li class="mt-4 pt-4 border-t border-amber-500/20">
-                                <div class="flex items-start">
-                            
-                                    <div>
-                                   
-                                    </div>
-                                </div>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>Gestión de dominio por 1 año</strong> (el costo del dominio corre por cuenta del cliente)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>Mantenimiento incluido durante 3 meses</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>Páginas adicionales:</strong> $20 / ₡10,000 cada una</span>
                             </li>
                         </ul>
+                        <div class="mt-4 text-sm text-amber-200/80 bg-amber-900/30 p-3 rounded-lg border border-amber-500/30 mb-3">
+                            <div class="font-semibold text-amber-300 mb-1">⚡ Opciones y aclaraciones</div>
+                            <ul class="space-y-1 text-xs">
+                                <li>• <strong>Ediciones y creaciones adicionales:</strong> contenido ya preparado por el cliente: <strong>incluido</strong></li>
+                                <li>• <strong>Creaciones completas adicionales</strong> (texto + contenido): ₡3,000 a ₡4,000 por creación</li>
+                                <li>• <strong>Mantenimiento y soporte</strong> después de los 3 meses incluidos: <strong>abono mensual de $38 / ₡19,000</strong></li>
+                            </ul>
+                        </div>
+                        <div class="text-sm text-amber-200/80 bg-amber-900/30 p-3 rounded-lg border border-amber-500/30">
+                            <div class="font-semibold text-amber-300 mb-1">💡 Beneficios para el cliente</div>
+                            <ul class="space-y-1 text-xs">
+                                <li>• Ideal para <strong>negocios establecidos que quieren un sitio web completo y profesional</strong></li>
+                                <li>• Sitio web con <strong>herramientas avanzadas de gestión, multimedia y pedidos en línea</strong></li>
+                                <li>• Posibilidad de <strong>agregar páginas y funcionalidades adicionales</strong> según necesidad</li>
+                                <li>• Mantiene un <strong>contacto directo con clientes</strong> vía WhatsApp</li>
+                                <li>• Abono y soporte asegurados <strong>durante toda la duración del contrato</strong>, con renovación automática</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="mt-auto p-6 pt-0">
                         <a href="https://docs.google.com/forms/d/e/1FAIpQLSf72gJGIq00oZG_kxOKhlpXsMp45JsnYVQ67KHFfK14fXY44g/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="relative overflow-hidden group block w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white text-center font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-500/30">

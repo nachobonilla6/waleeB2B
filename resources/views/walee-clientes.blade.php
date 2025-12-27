@@ -146,6 +146,27 @@
                     </div>
                 </a>
                 
+                <!-- Crear Contrato -->
+                <a href="{{ route('walee.herramientas.enviar-contrato') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-8 hover:border-violet-400/50 hover:from-violet-500/15 hover:to-violet-600/10 transition-all duration-500">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-2xl bg-violet-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-300 transition-colors">Crear Contrato</h2>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Generar y enviar contrato de servicios digitales a clientes</p>
+                        </div>
+                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-violet-500/10 items-center justify-center group-hover:bg-violet-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-violet-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+                
                 <!-- Clientes en Proceso -->
                 <a href="{{ route('walee.clientes.proceso') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-8 hover:border-amber-400/50 hover:from-amber-500/15 hover:to-amber-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>

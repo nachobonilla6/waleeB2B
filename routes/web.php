@@ -1872,33 +1872,22 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF - intentar con facade primero, si falla usar instanciación directa
-        try {
-            $pdf = Pdf::loadView('contratos.contrato-pdf', [
-                'cliente' => $cliente,
-                'servicio' => $validated['servicio'],
-                'servicioNombre' => $servicioInfo['nombre'],
-                'servicioDescripcion' => $servicioInfo['descripcion'],
-                'precio' => $validated['precio'],
-            ]);
-        } catch (\Exception $e) {
-            // Si el facade no funciona, crear instancia manualmente
-            $dompdf = new \Dompdf\Dompdf();
-            $dompdf->setBasePath(public_path());
-            $pdf = new \Barryvdh\DomPDF\PDF(
-                $dompdf,
-                app('config'),
-                app('files'),
-                app('view')
-            );
-            $pdf->loadView('contratos.contrato-pdf', [
-                'cliente' => $cliente,
-                'servicio' => $validated['servicio'],
-                'servicioNombre' => $servicioInfo['nombre'],
-                'servicioDescripcion' => $servicioInfo['descripcion'],
-                'precio' => $validated['precio'],
-            ]);
-        }
+        // Generar PDF - crear instancia directamente para evitar problemas con ServiceProvider
+        $dompdf = new \Dompdf\Dompdf();
+        $dompdf->setBasePath(public_path());
+        $pdf = new \Barryvdh\DomPDF\PDF(
+            $dompdf,
+            app('config'),
+            app('files'),
+            app('view')
+        );
+        $pdf->loadView('contratos.contrato-pdf', [
+            'cliente' => $cliente,
+            'servicio' => $validated['servicio'],
+            'servicioNombre' => $servicioInfo['nombre'],
+            'servicioDescripcion' => $servicioInfo['descripcion'],
+            'precio' => $validated['precio'],
+        ]);
 
         $pdfFileName = 'Contrato_' . $cliente->nombre_empresa . '_' . now()->format('Ymd') . '.pdf';
         $pdfPath = storage_path('app/temp/' . $pdfFileName);

@@ -188,12 +188,12 @@
         
         <div class="party-section">
             <div class="party-label">{{ $t['client'] }}</div>
-            <div class="party-name">{{ $cliente->nombre_empresa }}@if(isset($cliente->contacto_nombre)) – {{ $cliente->contacto_nombre }}@endif</div>
+            <div class="party-name">{{ $cliente->name ?? $cliente->nombre_empresa ?? 'Cliente' }}</div>
             <div class="party-details">{{ $t['client_referred'] }}</div>
-            @if($cliente->direccion || $cliente->ciudad)
+            @if(($cliente->address ?? $cliente->direccion) || ($cliente->ciudad ?? false))
             <div class="party-details">{{ $t['client_business_location'] }}</div>
             <div class="party-details">
-                @if($cliente->direccion){{ $cliente->direccion }}, @endif
+                @if($cliente->address ?? $cliente->direccion){{ $cliente->address ?? $cliente->direccion }}, @endif
                 @if($cliente->ciudad){{ $cliente->ciudad }}, @endif
                 @if($cliente->estado){{ $cliente->estado }}, @endif
                 Costa Rica

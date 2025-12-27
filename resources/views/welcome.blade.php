@@ -118,21 +118,44 @@
                 Servicios profesionales en <span class="font-semibold">Español</span>, <span class="font-semibold">English</span> y <span class="font-semibold">Français</span>
             </p>
             
-            <!-- Software para tu Negocio - Franja completa -->
-            <div class="mb-12 w-full">
-                <a href="/sistema-para-tu-negocio" class="block bg-gradient-to-br from-cyan-600 via-cyan-700 to-teal-800 p-10 rounded-3xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer border border-cyan-400/30 w-full">
-                    <div class="text-center">
-                        <div class="text-7xl mb-4">⚙️</div>
-                        <h3 class="text-4xl font-bold mb-3 text-white bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">Software para tu Negocio</h3>
-                        <p class="text-cyan-100 text-xl max-w-2xl mx-auto">Sistemas de gestión personalizados para optimizar las operaciones de tu empresa.</p>
-                        <div class="mt-4 inline-flex items-center gap-2 text-cyan-200 text-sm font-semibold">
+            <!-- Software para tu Negocio - Hero Section -->
+            <div class="mb-16 w-full relative overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 text-white py-16 px-6 rounded-3xl shadow-2xl relative overflow-hidden">
+                    <!-- Background Pattern -->
+                    <div class="absolute inset-0 opacity-10">
+                        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+                    </div>
+                    
+                    <div class="relative z-10 text-center max-w-4xl mx-auto">
+                        <div class="text-8xl mb-6 animate-bounce">🚀</div>
+                        <h3 class="text-5xl md:text-6xl font-bold mb-6 text-white">
+                            Software para tu Negocio
+                        </h3>
+                        <p class="text-xl md:text-2xl opacity-90 mb-8 max-w-3xl mx-auto">
+                            Plataforma integral para la gestión de clientes, proyectos web, contabilidad y automatización de procesos. También podemos crear soluciones personalizadas según tus necesidades específicas.
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4 mb-8">
+                            <div class="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/30">
+                                <div class="text-2xl font-bold">100%</div>
+                                <div class="text-sm opacity-90">Automatizado</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/30">
+                                <div class="text-2xl font-bold">24/7</div>
+                                <div class="text-sm opacity-90">Disponible</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/30">
+                                <div class="text-2xl font-bold">∞</div>
+                                <div class="text-sm opacity-90">Escalable</div>
+                            </div>
+                        </div>
+                        <a href="/sistema-para-tu-negocio" class="inline-flex items-center gap-3 bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                             <span>Descubre más</span>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                             </svg>
-                        </div>
+                        </a>
                     </div>
-                </a>
+                </div>
             </div>
             
             <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">

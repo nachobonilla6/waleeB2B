@@ -2914,21 +2914,17 @@ Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($i
     }
 })->middleware(['auth'])->name('walee.cliente.publicaciones.delete');
 
-// Ruta para chat flotante (respuesta simple sin streaming)
+// Ruta para chat flotante (usando webhook de n8n)
 Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
     $request->validate([
         'message' => 'required|string',
     ]);
 
     try {
-        $apiKey = config('services.openai.api_key');
-        if (empty($apiKey)) {
-            return response()->json(['error' => 'OpenAI API key not configured'], 500);
-        }
-
         $user = $request->user();
+        $userMessage = $request->string('message');
 
-        // Construir historial breve
+        // Construir historial breve para enviar al webhook
         $history = \App\Models\ChatMessage::where('user_id', $user?->id)
             ->orderBy('created_at', 'desc')
             ->limit(10)
@@ -2943,41 +2939,39 @@ Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
             ->values()
             ->toArray();
 
-        $messages = array_merge(
-            [[
-                'role' => 'system',
-                'content' => 'Eres WALEE, asistente de websolutions.work. Responde breve, claro y en español. Cuando haya enlaces, preséntalos con texto descriptivo. Puedes ayudar a revisar disponibilidad en calendario y redactar correos si el usuario lo solicita.',
-            ]],
-            $history,
-            [[
-                'role' => 'user',
-                'content' => $request->string('message'),
-            ]]
-        );
-
-        $response = \Illuminate\Support\Facades\Http::timeout(30)
+        // Llamar al webhook de n8n
+        $response = \Illuminate\Support\Facades\Http::timeout(60)
             ->withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
                 'Content-Type' => 'application/json',
             ])
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-3.5-turbo',
-                'messages' => $messages,
-                'temperature' => 0.6,
-                'max_tokens' => 500,
+            ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/4d4138cb-cfbc-4226-b4fa-83f068eb5db2', [
+                'message' => $userMessage,
+                'user_id' => $user?->id,
+                'history' => $history,
             ]);
 
         if (!$response->successful()) {
+            \Illuminate\Support\Facades\Log::error('N8N Webhook error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
             return response()->json(['error' => 'Error al generar respuesta'], 500);
         }
 
-        $json = $response->json();
-        $assistantMessage = $json['choices'][0]['message']['content'] ?? 'Lo siento, no pude generar una respuesta.';
+        $responseData = $response->json();
+        
+        // El webhook puede devolver la respuesta en diferentes formatos
+        // Intentamos obtener la respuesta de diferentes campos posibles
+        $assistantMessage = $responseData['response'] 
+            ?? $responseData['message'] 
+            ?? $responseData['text'] 
+            ?? $responseData['content']
+            ?? (is_string($responseData) ? $responseData : 'Lo siento, no pude generar una respuesta.');
 
         // Guardar mensajes en la base de datos
         \App\Models\ChatMessage::create([
             'user_id' => $user?->id,
-            'message' => $request->string('message'),
+            'message' => $userMessage,
             'type' => 'user',
         ]);
 

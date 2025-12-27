@@ -6,6 +6,7 @@ use App\Models\Factura;
 use Filament\Pages\Page;
 use Filament\Actions;
 use App\Filament\Pages\Contabilidad\FacturasPage;
+use App\Filament\Pages\Contabilidad\GastosPage;
 use App\Filament\Pages\Contabilidad\CotizacionesPage;
 use App\Filament\Pages\Contabilidad\ReportesPage;
 
@@ -26,6 +27,7 @@ class Contabilidad extends Page
         
         match($tab) {
             'facturas' => $this->redirect(FacturasPage::getUrl()),
+            'gastos' => $this->redirect(GastosPage::getUrl()),
             'cotizaciones' => $this->redirect(CotizacionesPage::getUrl()),
             'reportes' => $this->redirect(ReportesPage::getUrl()),
             default => $this->redirect(FacturasPage::getUrl()),

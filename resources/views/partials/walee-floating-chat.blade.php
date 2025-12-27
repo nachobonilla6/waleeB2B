@@ -1,12 +1,5 @@
 <!-- Chat Flotante Walee -->
-<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ open: false, historyLoaded: false }" x-init="
-    $watch('open', value => {
-        if (value && !historyLoaded) {
-            setTimeout(() => loadChatHistory(), 100);
-            historyLoaded = true;
-        }
-    })
-">
+<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ open: false }">
     <!-- Botón flotante -->
     <button
         @click="open = !open"
@@ -107,9 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!chatForm || !chatInput || !chatMessages) return;
 
     let historyLoaded = false;
+    let messagesLoaded = false;
 
     // Función para agregar mensaje al chat
-    function addMessage(text, sender = 'user', timestamp = null) {
+    function addMessage(text, sender = 'user', timestamp = null, skipScroll = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
         
@@ -143,12 +137,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        if (!skipScroll) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     }
 
     // Cargar historial del chat
     async function loadChatHistory() {
         if (historyLoaded) return;
+        historyLoaded = true;
         
         try {
             const response = await fetch('/walee-chat/history', {
@@ -161,20 +158,44 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.messages && data.messages.length > 0) {
-                    historyLoaded = true;
+                    // Limpiar mensajes existentes (excepto el de bienvenida si no hay mensajes)
+                    const existingMessages = chatMessages.querySelectorAll('.flex.justify-end, .flex.justify-start');
+                    existingMessages.forEach(msg => msg.remove());
+                    
+                    // Cargar todos los mensajes del historial
                     data.messages.forEach(msg => {
                         const sender = msg.type === 'user' ? 'user' : 'bot';
-                        addMessage(msg.message, sender, msg.created_at);
+                        addMessage(msg.message, sender, msg.created_at, true);
                     });
+                    
+                    // Scroll al final después de cargar todos los mensajes
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 100);
+                    
+                    messagesLoaded = true;
                 }
             }
         } catch (error) {
             console.error('Error cargando historial:', error);
+            historyLoaded = false; // Permitir reintentar si falla
         }
     }
 
-    // Hacer la función loadChatHistory accesible globalmente para Alpine.js
-    window.loadChatHistory = loadChatHistory;
+    // Cargar historial inmediatamente al cargar la página
+    loadChatHistory();
+
+    // También cargar cuando se abre el chat (por si acaso no se cargó antes)
+    const chatButton = document.querySelector('#walee-floating-chat button');
+    if (chatButton) {
+        chatButton.addEventListener('click', function() {
+            setTimeout(() => {
+                if (!messagesLoaded) {
+                    loadChatHistory();
+                }
+            }, 200);
+        });
+    }
 
     // Enviar mensaje
     chatForm.addEventListener('submit', async function(e) {

@@ -1,5 +1,5 @@
 <!-- Chat Flotante Walee -->
-<div id="walee-floating-chat" class="fixed bottom-6 right-6 z-50" x-data="{ open: false }">
+<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ open: false }">
     <!-- Botón flotante -->
     <button
         @click="open = !open"
@@ -23,7 +23,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-        class="fixed bottom-24 right-6 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col border border-gray-200 dark:border-gray-700 overflow-hidden"
+        class="fixed bottom-24 right-24 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col border border-gray-200 dark:border-gray-700 overflow-hidden"
         x-cloak
         style="display: none;"
     >

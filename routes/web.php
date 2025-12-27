@@ -2632,6 +2632,73 @@ Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\H
     }
 })->middleware(['auth'])->name('walee.cliente.publicaciones.generar');
 
+// Ruta para generar mensaje de WhatsApp con AI
+Route::post('/walee/whatsapp/generar-mensaje', function (\Illuminate\Http\Request $request) {
+    try {
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Falta OPENAI_API_KEY. Configura la API key en el servidor.',
+            ], 500);
+        }
+        
+        $prompt = $request->input('prompt', '');
+        
+        if (empty($prompt)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El prompt no puede estar vacío.',
+            ], 400);
+        }
+        
+        // Construir el prompt para WhatsApp
+        $systemPrompt = 'Eres un asistente experto en comunicación profesional por WhatsApp. Genera mensajes concisos, profesionales y amigables. Los mensajes deben ser apropiados para WhatsApp, usar un tono profesional pero cercano, y ser directos. Responde en español.';
+        
+        $userPrompt = "Genera un mensaje de WhatsApp profesional basado en el siguiente prompt: {$prompt}. El mensaje debe ser conciso, profesional y apropiado para WhatsApp.";
+        
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            ->acceptJson()
+            ->timeout(60)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => $systemPrompt,
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $userPrompt,
+                    ],
+                ],
+                'temperature' => 0.7,
+                'max_tokens' => 300,
+            ]);
+        
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $message = trim($responseData['choices'][0]['message']['content'] ?? '');
+            
+            if (empty($message)) {
+                throw new \RuntimeException('La respuesta de AI está vacía.');
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        } else {
+            throw new \Exception('Error en la respuesta de OpenAI: ' . $response->status());
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.whatsapp.generar-mensaje');
+
 Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);

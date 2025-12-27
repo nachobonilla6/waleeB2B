@@ -594,85 +594,117 @@
                     </div>
                     <div class="p-6 pt-16">
                         <h3 class="text-xl font-bold text-white text-center mb-2">
-                            <span class="bg-gradient-to-r from-purple-300 to-fuchsia-300 text-transparent bg-clip-text">Web Sol</span>
+                            <span class="bg-gradient-to-r from-purple-300 to-fuchsia-300 text-transparent bg-clip-text">🌟 Web Sol – Solución completa para negocios en crecimiento</span>
                         </h3>
-                        <p class="text-purple-100 text-center mb-4">Solución completa para negocios en crecimiento</p>
-                        <div class="text-center mb-6">
-                            <div class="text-5xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent">$150</div>
-                            <div class="text-xl text-purple-100/80">ó ₡75,000</div>
-                            <div class="text-sm text-purple-200/70 mt-1">Anual</div>
-                            <div class="text-sm text-purple-200/70">o $20/mes (₡10,000)</div>
+                        <div class="text-center mb-4">
+                            <div class="text-3xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
+                            <div class="text-4xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent">$180</div>
+                            <div class="text-xl text-purple-100/80">ó ₡90,000</div>
+                            <div class="text-sm text-purple-200/70 mt-1">Setup inicial</div>
+                            <div class="text-sm text-purple-200/70 mt-2">Abono mensual obligatorio después de los 3 meses de mantenimiento:</div>
+                            <div class="text-lg font-semibold text-purple-200/90 mt-1">$20 / ₡10,000</div>
                         </div>
-
-                        <ul class="space-y-4 text-left mb-8 text-white">
-                      
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="mb-4 text-sm text-purple-200/80 bg-purple-900/30 p-3 rounded-lg border border-purple-500/30">
+                            <div class="font-semibold mb-1">Duración del contrato:</div>
+                            <div>1 año</div>
+                            <div class="mt-2 font-semibold">Renovación automática:</div>
+                            <div>El contrato se renueva automáticamente por 1 año, salvo cancelación <strong>2 meses antes de la fecha aniversario</strong>.</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-lg font-bold text-purple-300 mb-2">✅ Incluye</div>
+                        </div>
+                        <ul class="space-y-3 text-left mb-4 text-sm text-gray-300">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Mantenimiento incluido por 3 meses
+                                <span><strong>Sitio web de 5 páginas</strong></span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Sitio web de 5 páginas
+                                <span><strong>Página de productos con catálogo</strong></span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Página de productos con catálogo
+                                <span><strong>Carrito de compras incluido</strong> (sin pasarela de pago)</span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Carrito de compras integrado
+                                <span>Integración de pago en línea disponible bajo solicitud por <strong>$100 adicionales</strong></span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Email corporativo (2 buzones)
+                                <span><strong>Email corporativo:</strong> 2 buzones</span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Integración con redes sociales y WhatsApp
+                                <span><strong>Integración con redes sociales y WhatsApp</strong></span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Chatbot avanzado para preguntas frecuentes y gestión de ítems
+                                <span><strong>Chatbot avanzado</strong> para preguntas frecuentes y gestión de ítems</span>
                             </li>
-                            <li class="flex items-center">
-                                <svg class="h-6 w-6 text-blue-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Diseño 100% responsivo
+                                <span><strong>Diseño 100% responsivo</strong></span>
                             </li>
-
-                            <li class="flex items-center">
-    <svg class="h-6 w-6 text-amber-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
-    </svg>
-    Gestión de dominio por 1 año
-</li>
-
-                        
-                            <li class="flex items-start mt-2">
-                                <svg class="h-6 w-6 text-purple-400 mr-2 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                 </svg>
-                                <span class="text-white">Página suplementaria: <span class="text-purple-300">$15</span> <span class="text-purple-200">(₡7,500 c/u)</span></span>
+                                <span><strong>Gestión de dominio por 1 año</strong> (el costo del dominio corre por cuenta del cliente)</span>
                             </li>
-                            <li class="text-sm text-green-100/60 mt-2">
-                                * El precio no incluye el costo del dominio
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>Mantenimiento incluido durante 3 meses</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>1 edición mensual incluida</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span><strong>Páginas adicionales:</strong> $15 / ₡7,500 cada una</span>
                             </li>
                         </ul>
+                        <div class="mt-4 text-sm text-purple-200/80 bg-purple-900/30 p-3 rounded-lg border border-purple-500/30 mb-3">
+                            <div class="font-semibold text-purple-300 mb-1">⚡ Opciones y aclaraciones</div>
+                            <ul class="space-y-1 text-xs">
+                                <li>• <strong>Ediciones mensuales:</strong> contenido ya preparado por el cliente: <strong>incluido</strong></li>
+                                <li>• <strong>Creaciones completas adicionales</strong> (texto + contenido): ₡3,000 a ₡4,000 por creación</li>
+                                <li>• <strong>Mantenimiento y soporte</strong> después de los 3 meses incluidos: <strong>obligatorio mediante el abono mensual de $20 / ₡10,000</strong></li>
+                            </ul>
+                        </div>
+                        <div class="text-sm text-purple-200/80 bg-purple-900/30 p-3 rounded-lg border border-purple-500/30">
+                            <div class="font-semibold text-purple-300 mb-1">💡 Beneficios para el cliente</div>
+                            <ul class="space-y-1 text-xs">
+                                <li>• Ideal para <strong>negocios en crecimiento que quieren un sitio web profesional y completo</strong></li>
+                                <li>• Sitio web <strong>listo para vender y gestionar productos</strong></li>
+                                <li>• Posibilidad de <strong>agregar páginas o funcionalidades adicionales</strong> según necesidad</li>
+                                <li>• Mantiene un <strong>contacto directo con clientes</strong> vía WhatsApp</li>
+                                <li>• Abono y soporte asegurados <strong>durante toda la duración del contrato</strong>, con renovación automática</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="mt-auto p-6 pt-0">
                         <a href="https://docs.google.com/forms/d/e/1FAIpQLSf72gJGIq00oZG_kxOKhlpXsMp45JsnYVQ67KHFfK14fXY44g/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="relative overflow-hidden group block w-full bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-center font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30">

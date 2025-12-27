@@ -47,7 +47,33 @@ Para usar otro calendario de otra cuenta de Google, necesitas cambiar las siguie
 
 ## Solución al Error 403: access_denied
 
-Si recibes el error "Error 403: access_denied" que dice "websolutions.work no completó el proceso de verificación de Google", necesitas agregar el email como usuario de prueba:
+Si recibes el error "Error 403: access_denied", puede ser por dos razones:
+
+### Opción 1: Redirect URI no autorizado
+
+**Problema**: El redirect URI `https://websolutions.work/google-calendar/callback` no está configurado en Google Cloud Console.
+
+**Solución**:
+1. Ve a [Google Cloud Console](https://console.cloud.google.com/)
+2. Selecciona tu proyecto
+3. Ve a **APIs & Services** > **Credentials**
+4. Haz clic en tu **OAuth 2.0 Client ID** (el que tiene el Client ID que aparece en el error)
+5. En la sección **Authorized redirect URIs**, verifica que esté agregado:
+   ```
+   https://websolutions.work/google-calendar/callback
+   ```
+6. Si no está, haz clic en **+ ADD URI** y agrégalo
+7. **IMPORTANTE**: También agrega la versión HTTP si usas localhost:
+   ```
+   http://localhost/google-calendar/callback
+   ```
+8. Guarda los cambios
+9. Espera 1-2 minutos para que los cambios se propaguen
+10. Intenta autorizar nuevamente
+
+### Opción 2: Email no está en usuarios de prueba
+
+**Problema**: "websolutions.work no completó el proceso de verificación de Google" - La app está en modo de prueba y el email no está en la lista.
 
 ### Pasos para agregar usuarios de prueba:
 

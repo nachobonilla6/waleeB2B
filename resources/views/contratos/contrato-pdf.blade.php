@@ -80,10 +80,12 @@
             font-weight: bold;
             font-size: 11pt;
             margin-bottom: 8px;
+            text-decoration: underline;
         }
         
         .section-number {
             font-weight: bold;
+            text-decoration: underline;
         }
         
         .subsection {
@@ -94,6 +96,7 @@
         .subsection-title {
             font-weight: bold;
             margin-bottom: 5px;
+            text-decoration: underline;
         }
         
         .price-highlight {

@@ -1967,7 +1967,22 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             throw new \Exception('No se pudo generar el archivo PDF');
         }
 
-        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($clienteEmail, $pdfPath, $pdfFileName, $listaServicios, $translations) {
+        // Procesar archivos adjuntos adicionales
+        $archivosAdjuntos = [];
+        if ($request->hasFile('archivos')) {
+            foreach ($request->file('archivos') as $archivo) {
+                if ($archivo->isValid()) {
+                    $archivoPath = $archivo->store('contratos/adjuntos', 'public');
+                    $archivosAdjuntos[] = [
+                        'path' => storage_path('app/public/' . $archivoPath),
+                        'name' => $archivo->getClientOriginalName(),
+                        'mime' => $archivo->getMimeType(),
+                    ];
+                }
+            }
+        }
+
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($clienteEmail, $pdfPath, $pdfFileName, $listaServicios, $translations, $archivosAdjuntos) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
                     ->to($clienteEmail)
                     ->subject($translations['email_subject'] . ' ' . $listaServicios)
@@ -1975,6 +1990,16 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
                         'as' => $pdfFileName,
                         'mime' => 'application/pdf',
                     ]);
+            
+            // Adjuntar archivos adicionales
+            foreach ($archivosAdjuntos as $archivo) {
+                if (file_exists($archivo['path'])) {
+                    $message->attach($archivo['path'], [
+                        'as' => $archivo['name'],
+                        'mime' => $archivo['mime'],
+                    ]);
+                }
+            }
         });
 
         // Guardar PDF en storage permanente y guardar contrato en BD

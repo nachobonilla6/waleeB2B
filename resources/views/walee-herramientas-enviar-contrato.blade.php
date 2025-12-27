@@ -95,7 +95,7 @@
             @endif
             
             <!-- Form -->
-            <form method="POST" action="{{ route('walee.herramientas.enviar-contrato.post') }}" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <form method="POST" action="{{ route('walee.herramientas.enviar-contrato.post') }}" enctype="multipart/form-data" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 @csrf
                 
                 <!-- Header -->
@@ -235,6 +235,34 @@
                     </div>
                 </div>
                 
+                <!-- Archivos Adjuntos Section -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                        </svg>
+                        Archivos Adjuntos (Opcional)
+                    </h2>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Archivos</label>
+                        <input type="file" id="archivos" name="archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition-all @error('archivos') border-red-500 @enderror">
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
+                        @error('archivos')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                        @error('archivos.*')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
+                        
+                        <!-- Lista de archivos seleccionados -->
+                        <div id="archivos-lista" class="mt-3 space-y-2 hidden">
+                            <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Archivos seleccionados:</p>
+                            <div id="archivos-nombres" class="space-y-1"></div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Actions -->
                 <div class="flex gap-4">
                     <a href="{{ route('walee.dashboard') }}" class="flex-1 px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-all text-center">
@@ -274,6 +302,34 @@
             
             // Actualizar cuando cambie la selección
             clienteSelect.addEventListener('change', updateEmailDisplay);
+            
+            // Mostrar lista de archivos seleccionados
+            const archivosInput = document.getElementById('archivos');
+            const archivosLista = document.getElementById('archivos-lista');
+            const archivosNombres = document.getElementById('archivos-nombres');
+            
+            archivosInput.addEventListener('change', function() {
+                const files = Array.from(this.files);
+                
+                if (files.length > 0) {
+                    archivosNombres.innerHTML = '';
+                    files.forEach((file, index) => {
+                        const fileItem = document.createElement('div');
+                        fileItem.className = 'flex items-center gap-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 text-xs';
+                        fileItem.innerHTML = `
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="flex-1 text-slate-700 dark:text-slate-300">${file.name}</span>
+                            <span class="text-slate-500 dark:text-slate-400">${(file.size / 1024).toFixed(2)} KB</span>
+                        `;
+                        archivosNombres.appendChild(fileItem);
+                    });
+                    archivosLista.classList.remove('hidden');
+                } else {
+                    archivosLista.classList.add('hidden');
+                }
+            });
         });
         
         // Dark/Light Mode Toggle

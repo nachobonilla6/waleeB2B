@@ -182,6 +182,9 @@ class AdminPanelProvider extends PanelProvider
             )
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Finanzas')
+                    ->icon('heroicon-o-currency-dollar'),
+                NavigationGroup::make()
                     ->label('Administración')
                     ->icon('heroicon-o-banknotes'),
                 NavigationGroup::make()

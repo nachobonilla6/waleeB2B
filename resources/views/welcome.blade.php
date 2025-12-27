@@ -119,8 +119,8 @@
             </p>
             
             <!-- Software para tu Negocio - Franja completa -->
-            <div class="mb-12 max-w-4xl mx-auto">
-                <a href="/sistema-para-tu-negocio" class="block bg-gradient-to-br from-cyan-600 via-cyan-700 to-teal-800 p-10 rounded-3xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer border border-cyan-400/30">
+            <div class="mb-12 w-full">
+                <a href="/sistema-para-tu-negocio" class="block bg-gradient-to-br from-cyan-600 via-cyan-700 to-teal-800 p-10 rounded-3xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer border border-cyan-400/30 w-full">
                     <div class="text-center">
                         <div class="text-7xl mb-4">⚙️</div>
                         <h3 class="text-4xl font-bold mb-3 text-white bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">Software para tu Negocio</h3>

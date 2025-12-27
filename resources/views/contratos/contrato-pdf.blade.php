@@ -208,15 +208,27 @@
     
     <div class="section">
         <div class="section-title"><span class="section-number">1.</span> {{ $t['section_1'] }}</div>
-        <p>{{ $t['section_1_text'] }} {{ strtolower($servicioNombre) }}, including specifically:</p>
+        <p>{{ $t['section_1_text'] }} 
+            @if(count($servicios) > 0)
+                @foreach($servicios as $index => $servicio)
+                    {{ strtolower($servicio['nombre']) }}@if($index < count($servicios) - 1), @endif
+                @endforeach
+            @endif
+        , including specifically:</p>
         
         <div class="subsection">
             <div class="subsection-title">1.1 {{ $t['section_1_1'] }}</div>
             <p>{{ $t['section_1_1_services'] }}</p>
             <ul>
-                <li>{{ $t['section_1_1_list_1'] }}</li>
-                <li>{{ $t['section_1_1_list_2'] }}</li>
-                <li>{{ $t['section_1_1_list_3'] }}</li>
+                @if(count($servicios) > 0)
+                    @foreach($servicios as $servicio)
+                        <li><strong>{{ $servicio['nombre'] }}:</strong> {{ $servicio['descripcion'] }}</li>
+                    @endforeach
+                @else
+                    <li>{{ $t['section_1_1_list_1'] }}</li>
+                    <li>{{ $t['section_1_1_list_2'] }}</li>
+                    <li>{{ $t['section_1_1_list_3'] }}</li>
+                @endif
             </ul>
             <p>{{ $t['section_1_1_specified'] }} {{ now()->format('F d, Y') }}, {{ $t['section_1_1_subscribed'] }}</p>
             <p>{{ $t['section_1_1_price'] }}</p>

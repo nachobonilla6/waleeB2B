@@ -137,22 +137,45 @@
                             <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
-                            Servicio
+                            Servicios
                         </h2>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de Servicio <span class="text-red-500">*</span></label>
-                            <select id="servicio" name="servicio" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all @error('servicio') border-red-500 @enderror">
-                                <option value="">Seleccionar servicio...</option>
-                                <option value="diseno_web" {{ old('servicio') == 'diseno_web' ? 'selected' : '' }}>🌐 Diseño Web</option>
-                                <option value="redes_sociales" {{ old('servicio') == 'redes_sociales' ? 'selected' : '' }}>📱 Gestión Redes Sociales</option>
-                                <option value="seo" {{ old('servicio') == 'seo' ? 'selected' : '' }}>🔍 SEO / Posicionamiento</option>
-                                <option value="publicidad" {{ old('servicio') == 'publicidad' ? 'selected' : '' }}>📢 Publicidad Digital</option>
-                                <option value="mantenimiento" {{ old('servicio') == 'mantenimiento' ? 'selected' : '' }}>🔧 Mantenimiento Web</option>
-                                <option value="hosting" {{ old('servicio') == 'hosting' ? 'selected' : '' }}>☁️ Hosting & Dominio</option>
-                                <option value="combo" {{ old('servicio') == 'combo' ? 'selected' : '' }}>📦 Paquete Completo</option>
-                            </select>
-                            @error('servicio')
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Seleccionar Servicios <span class="text-red-500">*</span></label>
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="diseno_web" {{ in_array('diseno_web', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">🌐 Diseño Web</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="redes_sociales" {{ in_array('redes_sociales', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">📱 Gestión Redes Sociales</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="seo" {{ in_array('seo', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">🔍 SEO / Posicionamiento</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="publicidad" {{ in_array('publicidad', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">📢 Publicidad Digital</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="mantenimiento" {{ in_array('mantenimiento', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">🔧 Mantenimiento Web</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="hosting" {{ in_array('hosting', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">☁️ Hosting & Dominio</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                    <input type="checkbox" name="servicios[]" value="combo" {{ in_array('combo', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="text-slate-900 dark:text-white">📦 Paquete Completo</span>
+                                </label>
+                            </div>
+                            @error('servicios')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                            @error('servicios.*')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>

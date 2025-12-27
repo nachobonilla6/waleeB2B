@@ -1820,12 +1820,13 @@ Route::get('/walee-herramientas/enviar-contrato', function () {
 
 Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Request $request) {
     try {
-        $validated = $request->validate([
-            'cliente_id' => 'required|exists:clientes,id',
-            'servicio' => 'required|string',
-            'precio' => 'required|numeric|min:0',
-            'idioma' => 'required|in:es,en,fr,zh',
-        ]);
+                $validated = $request->validate([
+                    'cliente_id' => 'required|exists:clientes,id',
+                    'servicios' => 'required|array|min:1',
+                    'servicios.*' => 'required|string|in:diseno_web,redes_sociales,seo,publicidad,mantenimiento,hosting,combo',
+                    'precio' => 'required|numeric|min:0',
+                    'idioma' => 'required|in:es,en,fr,zh',
+                ]);
 
         $cliente = \App\Models\Cliente::findOrFail($validated['cliente_id']);
         
@@ -1867,10 +1868,18 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             ],
         ];
 
-        $servicioInfo = $servicios[$validated['servicio']] ?? [
-            'nombre' => ucfirst(str_replace('_', ' ', $validated['servicio'])),
-            'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
-        ];
+        // Obtener información de todos los servicios seleccionados
+        $serviciosSeleccionados = [];
+        foreach ($validated['servicios'] as $servicioKey) {
+            $serviciosSeleccionados[] = $servicios[$servicioKey] ?? [
+                'nombre' => ucfirst(str_replace('_', ' ', $servicioKey)),
+                'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
+            ];
+        }
+        
+        // Crear lista de nombres de servicios para el email
+        $nombresServicios = array_map(function($s) { return $s['nombre']; }, $serviciosSeleccionados);
+        $listaServicios = implode(', ', $nombresServicios);
 
         // Generar PDF del contrato usando mPDF
         $pdfFileName = 'Contrato_' . str_replace(' ', '_', $cliente->nombre_empresa) . '_' . now()->format('Ymd') . '.pdf';
@@ -1888,9 +1897,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         // Generar HTML del contrato
         $htmlContent = view('contratos.contrato-pdf', [
             'cliente' => $cliente,
-            'servicio' => $validated['servicio'],
-            'servicioNombre' => $servicioInfo['nombre'],
-            'servicioDescripcion' => $servicioInfo['descripcion'],
+            'servicios' => $serviciosSeleccionados,
             'precio' => $validated['precio'],
             'idioma' => $idioma,
             't' => $translations,
@@ -1935,9 +1942,9 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
 
         // Preparar cuerpo del email según el idioma
         $emailBody = $translations['email_greeting'] . " " . $cliente->nombre_empresa . ",\n\n";
-        $emailBody .= $translations['email_body_1'] . " " . $servicioInfo['nombre'] . ".\n\n";
+        $emailBody .= $translations['email_body_1'] . " " . $listaServicios . ".\n\n";
         $emailBody .= $translations['email_body_2'] . "\n";
-        $emailBody .= "- " . $translations['email_service'] . " " . $servicioInfo['nombre'] . "\n";
+        $emailBody .= "- " . $translations['email_service'] . " " . $listaServicios . "\n";
         $emailBody .= "- " . $translations['email_price'] . " " . number_format($validated['precio'], 2, ',', '.') . " CRC (" . number_format($validated['precio'] / 520, 2, '.', ',') . " USD)\n";
         $emailBody .= "- " . $translations['email_date'] . " " . now()->format('d/m/Y') . "\n\n";
         $emailBody .= $translations['email_body_3'] . "\n\n";
@@ -1950,10 +1957,10 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             throw new \Exception('No se pudo generar el archivo PDF');
         }
 
-        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($cliente, $pdfPath, $pdfFileName, $servicioInfo, $translations) {
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($cliente, $pdfPath, $pdfFileName, $listaServicios, $translations) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
                     ->to($cliente->correo)
-                    ->subject($translations['email_subject'] . ' ' . $servicioInfo['nombre'])
+                    ->subject($translations['email_subject'] . ' ' . $listaServicios)
                     ->attach($pdfPath, [
                         'as' => $pdfFileName,
                         'mime' => 'application/pdf',

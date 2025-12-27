@@ -131,6 +131,29 @@ Route::get('/walee', function () {
     return view('walee-chat');
 })->middleware(['auth'])->name('walee');
 
+// Obtener historial del chat
+Route::get('/walee-chat/history', function () {
+    try {
+        $user = auth()->user();
+        $messages = \App\Models\ChatMessage::where('user_id', $user?->id)
+            ->orderBy('created_at', 'asc')
+            ->limit(50)
+            ->get()
+            ->map(function ($message) {
+                return [
+                    'message' => $message->message,
+                    'type' => $message->type,
+                    'created_at' => $message->created_at->toISOString(),
+                ];
+            });
+
+        return response()->json(['messages' => $messages]);
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Error obteniendo historial del chat', ['error' => $e->getMessage()]);
+        return response()->json(['messages' => []], 500);
+    }
+})->middleware(['auth'])->name('walee.chat.history');
+
 // Limpiar chat
 Route::post('/walee-chat/clear', function () {
     \App\Models\ChatMessage::where('user_id', auth()->id())->delete();

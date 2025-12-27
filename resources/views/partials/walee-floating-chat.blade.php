@@ -1,5 +1,12 @@
 <!-- Chat Flotante Walee -->
-<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ open: false }">
+<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ open: false, historyLoaded: false }" x-init="
+    $watch('open', value => {
+        if (value && !historyLoaded) {
+            setTimeout(() => loadChatHistory(), 100);
+            historyLoaded = true;
+        }
+    })
+">
     <!-- Botón flotante -->
     <button
         @click="open = !open"
@@ -56,7 +63,8 @@
 
         <!-- Área de mensajes -->
         <div id="walee-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
-            <div class="text-center text-gray-500 dark:text-gray-400 mt-8">
+            <!-- Mensaje de bienvenida (se oculta cuando hay mensajes) -->
+            <div id="walee-welcome-message" class="text-center text-gray-500 dark:text-gray-400 mt-8">
                 <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                 </svg>
@@ -94,11 +102,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('walee-chat-form');
     const chatInput = document.getElementById('walee-chat-input');
     const chatMessages = document.getElementById('walee-chat-messages');
+    const welcomeMessage = document.getElementById('walee-welcome-message');
 
     if (!chatForm || !chatInput || !chatMessages) return;
 
+    let historyLoaded = false;
+
     // Función para agregar mensaje al chat
-    function addMessage(text, sender = 'user') {
+    function addMessage(text, sender = 'user', timestamp = null) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
         
@@ -110,26 +121,60 @@ document.addEventListener('DOMContentLoaded', function() {
         }`;
         
         const messageText = document.createElement('p');
-        messageText.className = 'text-sm';
+        messageText.className = 'text-sm whitespace-pre-wrap';
         messageText.textContent = text;
         
         const messageTime = document.createElement('p');
         messageTime.className = 'text-xs mt-1 opacity-70';
-        messageTime.textContent = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        if (timestamp) {
+            const date = new Date(timestamp);
+            messageTime.textContent = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        } else {
+            messageTime.textContent = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        }
         
         messageContent.appendChild(messageText);
         messageContent.appendChild(messageTime);
         messageDiv.appendChild(messageContent);
         
-        // Remover mensaje de bienvenida si existe
-        const welcomeMsg = chatMessages.querySelector('.text-center');
-        if (welcomeMsg) {
-            welcomeMsg.remove();
+        // Ocultar mensaje de bienvenida si existe
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'none';
         }
         
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
+    // Cargar historial del chat
+    async function loadChatHistory() {
+        if (historyLoaded) return;
+        
+        try {
+            const response = await fetch('/walee-chat/history', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.messages && data.messages.length > 0) {
+                    historyLoaded = true;
+                    data.messages.forEach(msg => {
+                        const sender = msg.type === 'user' ? 'user' : 'bot';
+                        addMessage(msg.message, sender, msg.created_at);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error cargando historial:', error);
+        }
+    }
+
+    // Hacer la función loadChatHistory accesible globalmente para Alpine.js
+    window.loadChatHistory = loadChatHistory;
 
     // Enviar mensaje
     chatForm.addEventListener('submit', async function(e) {

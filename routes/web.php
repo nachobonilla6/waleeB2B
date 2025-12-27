@@ -2958,15 +2958,58 @@ Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
             return response()->json(['error' => 'Error al generar respuesta'], 500);
         }
 
-        $responseData = $response->json();
+        // Manejar diferentes formatos de respuesta de n8n
+        $responseBody = $response->body();
+        $assistantMessage = null;
         
-        // El webhook puede devolver la respuesta en diferentes formatos
-        // Intentamos obtener la respuesta de diferentes campos posibles
-        $assistantMessage = $responseData['response'] 
-            ?? $responseData['message'] 
-            ?? $responseData['text'] 
-            ?? $responseData['content']
-            ?? (is_string($responseData) ? $responseData : 'Lo siento, no pude generar una respuesta.');
+        // Intentar parsear como JSON
+        $responseData = null;
+        try {
+            $responseData = json_decode($responseBody, true);
+        } catch (\Exception $e) {
+            // Si no es JSON, usar el texto directamente
+            $assistantMessage = trim($responseBody);
+        }
+        
+        // Si es JSON, buscar la respuesta en diferentes campos posibles
+        if ($responseData !== null) {
+            // n8n puede devolver la respuesta en diferentes formatos:
+            // 1. Array con estructura n8n: [{"json": {"output": "respuesta"}}]
+            // 2. Objeto directo: {"output": "respuesta"}
+            // 3. Array simple: [{"output": "respuesta"}]
+            
+            if (is_array($responseData) && isset($responseData[0])) {
+                // Si es array, tomar el primer elemento
+                $firstItem = $responseData[0];
+                
+                // Si tiene estructura n8n con 'json'
+                if (isset($firstItem['json'])) {
+                    $firstItem = $firstItem['json'];
+                }
+                
+                $assistantMessage = $firstItem['output'] 
+                    ?? $firstItem['response'] 
+                    ?? $firstItem['message'] 
+                    ?? $firstItem['text'] 
+                    ?? $firstItem['content']
+                    ?? (is_string($firstItem) ? $firstItem : null);
+            } else {
+                // Si es objeto directo
+                $assistantMessage = $responseData['output'] 
+                    ?? $responseData['response'] 
+                    ?? $responseData['message'] 
+                    ?? $responseData['text'] 
+                    ?? $responseData['content']
+                    ?? null;
+            }
+        }
+        
+        // Si no se encontró respuesta, usar mensaje por defecto
+        if (empty($assistantMessage) || $assistantMessage === 'undefined') {
+            $assistantMessage = 'Lo siento, no pude generar una respuesta en este momento.';
+        }
+        
+        $assistantMessage = trim($assistantMessage);
 
         // Guardar mensajes en la base de datos
         \App\Models\ChatMessage::create([

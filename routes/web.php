@@ -131,21 +131,28 @@ Route::get('/walee', function () {
     return view('walee-chat');
 })->middleware(['auth'])->name('walee');
 
-// Obtener historial del chat
+// Obtener historial del chat (últimos 20 mensajes)
 Route::get('/walee-chat/history', function () {
     try {
         $user = auth()->user();
-        $messages = \App\Models\ChatMessage::where('user_id', $user?->id)
-            ->orderBy('created_at', 'asc')
-            ->limit(50)
+        if (!$user) {
+            return response()->json(['messages' => []], 401);
+        }
+
+        // Obtener los últimos 20 mensajes ordenados por fecha de creación (más antiguos primero)
+        $messages = \App\Models\ChatMessage::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
             ->get()
+            ->reverse() // Invertir para mostrar del más antiguo al más reciente
             ->map(function ($message) {
                 return [
                     'message' => $message->message,
                     'type' => $message->type,
                     'created_at' => $message->created_at->toISOString(),
                 ];
-            });
+            })
+            ->values();
 
         return response()->json(['messages' => $messages]);
     } catch (\Exception $e) {
@@ -2947,12 +2954,12 @@ Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
         $user = $request->user();
         $userMessage = $request->string('message');
 
-        // Construir historial breve para enviar al webhook
+        // Construir historial breve para enviar al webhook (últimos 10 mensajes)
         $history = \App\Models\ChatMessage::where('user_id', $user?->id)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
-            ->reverse()
+            ->reverse() // Del más antiguo al más reciente
             ->map(function ($message) {
                 return [
                     'role' => $message->type === 'user' ? 'user' : 'assistant',
@@ -3034,18 +3041,33 @@ Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
         
         $assistantMessage = trim($assistantMessage);
 
-        // Guardar mensajes en la base de datos
-        \App\Models\ChatMessage::create([
-            'user_id' => $user?->id,
-            'message' => $userMessage,
-            'type' => 'user',
-        ]);
+        // Guardar mensaje del usuario en la base de datos
+        try {
+            \App\Models\ChatMessage::create([
+                'user_id' => $user?->id,
+                'message' => $userMessage,
+                'type' => 'user',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error guardando mensaje del usuario', [
+                'error' => $e->getMessage(),
+                'user_id' => $user?->id,
+            ]);
+        }
 
-        \App\Models\ChatMessage::create([
-            'user_id' => $user?->id,
-            'message' => $assistantMessage,
-            'type' => 'assistant',
-        ]);
+        // Guardar respuesta del asistente en la base de datos
+        try {
+            \App\Models\ChatMessage::create([
+                'user_id' => $user?->id,
+                'message' => $assistantMessage,
+                'type' => 'assistant',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error guardando mensaje del asistente', [
+                'error' => $e->getMessage(),
+                'user_id' => $user?->id,
+            ]);
+        }
 
         return response()->json(['response' => $assistantMessage]);
     } catch (\Exception $e) {

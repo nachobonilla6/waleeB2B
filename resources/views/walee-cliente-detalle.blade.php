@@ -297,7 +297,7 @@
                                             </div>
                                         </div>
                                         @if($contrato->pdf_path)
-                                            <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" rel="noopener noreferrer" class="ml-4 px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium cursor-pointer flex-shrink-0">
+                                            <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" rel="noopener noreferrer" class="ml-4 px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium cursor-pointer flex-shrink-0 relative z-10" style="pointer-events: auto; display: inline-block;">
                                                 Ver PDF
                                             </a>
                                         @endif
@@ -335,9 +335,9 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4 relative z-10" style="pointer-events: auto;">
                                             @if($cotizacion->enlace || ($cotizacion->pdf_path ?? false))
-                                                <a href="{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium cursor-pointer">
+                                                <a href="{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium cursor-pointer relative z-10" style="pointer-events: auto; display: inline-block;">
                                                     Ver PDF
                                                 </a>
                                             @endif
@@ -382,9 +382,9 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4 relative z-10" style="pointer-events: auto;">
                                             @if($factura->enlace || ($factura->pdf_path ?? false))
-                                                <a href="{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium cursor-pointer">
+                                                <a href="{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium cursor-pointer relative z-10" style="pointer-events: auto; display: inline-block;">
                                                     Ver PDF
                                                 </a>
                                             @endif

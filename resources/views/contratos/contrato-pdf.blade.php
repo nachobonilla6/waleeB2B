@@ -323,12 +323,12 @@
     
     <div class="signature-section">
         <div class="signature-box" style="text-align: left;">
-            <div class="date-line" style="text-align: left; padding-left: 0;">{{ $t['signature_at'] }} ________________________, {{ $t['signature_on'] }} {{ now()->format('d / m / Y') }}</div>
-            <div class="signature-line" style="text-align: left; padding-left: 0;">{{ $t['signature_provider'] }}</div>
+            <div class="date-line" style="text-align: left; padding-left: 0;">{{ $t['signature_at'] }} ________________________</div>
+            <div class="signature-line" style="text-align: left; padding-left: 0; margin-top: 50px;">{{ $t['signature_provider'] }}</div>
         </div>
         <div class="signature-box" style="text-align: right;">
-            <div class="date-line" style="text-align: right; padding-right: 0;">{{ $t['signature_at'] }} ________________________, {{ $t['signature_on'] }} {{ now()->format('d / m / Y') }}</div>
-            <div class="signature-line" style="text-align: right; padding-right: 0;">{{ $t['signature_client'] }}</div>
+            <div class="date-line" style="text-align: right; padding-right: 0;">{{ $t['signature_on'] }} ____ / ____ / ______</div>
+            <div class="signature-line" style="text-align: right; padding-right: 0; margin-top: 50px;">{{ $t['signature_client'] }}</div>
         </div>
     </div>
     

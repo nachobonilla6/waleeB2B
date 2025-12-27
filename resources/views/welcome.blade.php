@@ -927,64 +927,84 @@
                             </div>
                             <div class="p-6 pt-16">
                                 <h3 class="text-xl font-bold text-white text-center mb-2">
-                                    <span class="bg-gradient-to-r from-orange-300 to-amber-300 text-transparent bg-clip-text">Pop Pub</span>
+                                    <span class="bg-gradient-to-r from-orange-300 to-amber-300 text-transparent bg-clip-text">💫 Pack Pop Pub – Solución completa para presencia digital</span>
                                 </h3>
-                                <div class="text-center mb-6">
-                                    <div class="text-5xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent">$150</div>
-                                    <div class="text-xl text-orange-100/80">ó ₡75,000</div>
-                                    <div class="text-sm text-orange-200/70 mt-1">Mensual</div>
-                                    <div class="text-sm text-orange-200/70">ó $37.50 (₡18,750) una vez por semana</div>
+                                <div class="text-center mb-4">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
+                                    <div class="text-4xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent">$150</div>
+                                    <div class="text-xl text-orange-100/80">ó ₡75,000 mensual</div>
+                                    <div class="text-sm text-orange-200/70 mt-1">(37$/sem)</div>
                                 </div>
-                                <ul class="space-y-3 text-gray-300 text-base">
+                                <div class="mb-4 text-sm text-orange-200/80 bg-orange-900/30 p-3 rounded-lg border border-orange-500/30">
+                                    <div class="font-semibold mb-1">Duración del contrato:</div>
+                                    <div>Mensual, <strong>renovación automática cada mes</strong>, salvo cancelación <strong>1 mes antes de la fecha de renovación</strong>.</div>
+                                    <div class="mt-2 font-semibold">Cambio de pack:</div>
+                                    <div>El cliente puede <strong>pasar inmediatamente a un pack superior</strong> en cualquier momento, sin esperar al próximo mes.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="text-lg font-bold text-orange-300 mb-2">✅ Incluye</div>
+                                </div>
+                                <ul class="space-y-3 text-gray-300 text-sm">
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Gestión de perfiles en 2 redes sociales de tu preferencia</span>
+                                        <span>Gestión de <strong>2 perfiles en redes sociales de tu preferencia</strong>
+                                            <div class="text-xs text-orange-200/70 mt-1 ml-7">Redes adicionales disponibles bajo solicitud y costo extra</div>
+                                        </span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Briefing de marca (identidad, tono, colores)</span>
+                                        <span><strong>Briefing de marca</strong> (identidad, tono, colores)</span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>8 a 10 publicaciones al mes</span>
+                                        <span><strong>Publicaciones:</strong> 8 a 10 al mes por red social</span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>8 a 10 historias breves</span>
+                                        <span><strong>Stories:</strong> 8 a 10 al mes por red social</span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Redacción publicitaria</span>
+                                        <span><strong>Redacción publicitaria</strong> (copywriting)</span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Planificación de contenido</span>
+                                        <span><strong>Planificación de contenido</strong></span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Reporte cada fin de mes</span>
+                                        <span><strong>Reporte mensual</strong></span>
                                     </li>
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Reporte cada fin de semana*</span>
+                                        <span><strong>Reporte semanal</strong></span>
                                     </li>
                                 </ul>
+                                <div class="mt-4 text-sm text-orange-200/80 bg-orange-900/30 p-3 rounded-lg border border-orange-500/30">
+                                    <div class="font-semibold text-orange-300 mb-1">⚡ Observaciones</div>
+                                    <ul class="space-y-1 text-xs">
+                                        <li>• Ideal para empresas que quieren <strong>reforzar su presencia digital de manera profesional</strong></li>
+                                        <li>• Contrato mensual con <strong>renovación automática</strong> para garantizar continuidad del servicio</li>
+                                        <li>• Posibilidad de <strong>subir a un pack superior en cualquier momento</strong></li>
+                                        <li>• Servicios adicionales (redes extras, publicaciones extra) se cotizan por separado</li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="mt-auto p-6 pt-0">
                                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdsWk9lIfWzssTZ_x8YPbGMU3-2Zhm6TVrAplkdVccBQ4SyoA/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="relative overflow-hidden group block w-full bg-gradient-to-r from-pink-600 via-orange-500 to-pink-600 text-white text-center font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-pink-500/30">

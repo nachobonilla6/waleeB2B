@@ -1889,18 +1889,39 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'precio' => $validated['precio'],
         ])->render();
         
-        // Generar PDF usando mPDF
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'orientation' => 'P',
-            'margin_left' => 15,
-            'margin_right' => 15,
-            'margin_top' => 16,
-            'margin_bottom' => 16,
-            'margin_header' => 9,
-            'margin_footer' => 9,
-        ]);
+        // Generar PDF usando mPDF - cargar clase explícitamente si es necesario
+        if (!class_exists('Mpdf\Mpdf')) {
+            require_once base_path('vendor/autoload.php');
+        }
+        
+        // Intentar diferentes formas de instanciar mPDF
+        try {
+            $mpdf = new \Mpdf\Mpdf([
+                'mode' => 'utf-8',
+                'format' => 'A4',
+                'orientation' => 'P',
+                'margin_left' => 15,
+                'margin_right' => 15,
+                'margin_top' => 16,
+                'margin_bottom' => 16,
+                'margin_header' => 9,
+                'margin_footer' => 9,
+            ]);
+        } catch (\Exception $e) {
+            // Si falla, intentar con el namespace completo como string
+            $mpdfClass = '\\Mpdf\\Mpdf';
+            $mpdf = new $mpdfClass([
+                'mode' => 'utf-8',
+                'format' => 'A4',
+                'orientation' => 'P',
+                'margin_left' => 15,
+                'margin_right' => 15,
+                'margin_top' => 16,
+                'margin_bottom' => 16,
+                'margin_header' => 9,
+                'margin_footer' => 9,
+            ]);
+        }
         
         $mpdf->WriteHTML($htmlContent);
         $mpdf->Output($pdfPath, 'F');

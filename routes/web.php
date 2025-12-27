@@ -1871,7 +1871,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF del contrato - usar servicio registrado directamente
+        // Generar PDF del contrato usando mPDF
         $pdfFileName = 'Contrato_' . str_replace(' ', '_', $cliente->nombre_empresa) . '_' . now()->format('Ymd') . '.pdf';
         $pdfPath = storage_path('app/temp/' . $pdfFileName);
         
@@ -1880,24 +1880,30 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             mkdir(storage_path('app/temp'), 0755, true);
         }
         
-        // Asegurar que el ServiceProvider esté registrado
-        if (!app()->bound('dompdf.wrapper')) {
-            $provider = new \Barryvdh\DomPDF\ServiceProvider(app());
-            $provider->register();
-        }
-        
-        // Generar PDF usando el servicio registrado
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('contratos.contrato-pdf', [
+        // Generar HTML del contrato
+        $htmlContent = view('contratos.contrato-pdf', [
             'cliente' => $cliente,
             'servicio' => $validated['servicio'],
             'servicioNombre' => $servicioInfo['nombre'],
             'servicioDescripcion' => $servicioInfo['descripcion'],
             'precio' => $validated['precio'],
+        ])->render();
+        
+        // Generar PDF usando mPDF
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 16,
+            'margin_bottom' => 16,
+            'margin_header' => 9,
+            'margin_footer' => 9,
         ]);
         
-        // Guardar PDF
-        file_put_contents($pdfPath, $pdf->output());
+        $mpdf->WriteHTML($htmlContent);
+        $mpdf->Output($pdfPath, 'F');
 
         // Preparar cuerpo del email
         $emailBody = "Estimado/a " . $cliente->nombre_empresa . ",\n\n";

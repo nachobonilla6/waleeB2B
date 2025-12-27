@@ -94,6 +94,7 @@
                 <span class="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">AI & Bots</span>
                 <span class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Mensajería</span>
                 <span class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Tiendas en Línea</span>
+                <span class="bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Software</span>
             </div>
             <a href="#servicios" class="inline-block bg-white text-purple-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-purple-100 transition transform hover:scale-105">
                 Explorar Servicios

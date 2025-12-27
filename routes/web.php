@@ -2914,6 +2914,86 @@ Route::delete('/walee-cliente/{id}/publicaciones/{publicacion_id}', function ($i
     }
 })->middleware(['auth'])->name('walee.cliente.publicaciones.delete');
 
+// Ruta para chat flotante (respuesta simple sin streaming)
+Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
+    $request->validate([
+        'message' => 'required|string',
+    ]);
+
+    try {
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            return response()->json(['error' => 'OpenAI API key not configured'], 500);
+        }
+
+        $user = $request->user();
+
+        // Construir historial breve
+        $history = \App\Models\ChatMessage::where('user_id', $user?->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->reverse()
+            ->map(function ($message) {
+                return [
+                    'role' => $message->type === 'user' ? 'user' : 'assistant',
+                    'content' => $message->message,
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        $messages = array_merge(
+            [[
+                'role' => 'system',
+                'content' => 'Eres WALEE, asistente de websolutions.work. Responde breve, claro y en español. Cuando haya enlaces, preséntalos con texto descriptivo. Puedes ayudar a revisar disponibilidad en calendario y redactar correos si el usuario lo solicita.',
+            ]],
+            $history,
+            [[
+                'role' => 'user',
+                'content' => $request->string('message'),
+            ]]
+        );
+
+        $response = \Illuminate\Support\Facades\Http::timeout(30)
+            ->withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json',
+            ])
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-3.5-turbo',
+                'messages' => $messages,
+                'temperature' => 0.6,
+                'max_tokens' => 500,
+            ]);
+
+        if (!$response->successful()) {
+            return response()->json(['error' => 'Error al generar respuesta'], 500);
+        }
+
+        $json = $response->json();
+        $assistantMessage = $json['choices'][0]['message']['content'] ?? 'Lo siento, no pude generar una respuesta.';
+
+        // Guardar mensajes en la base de datos
+        \App\Models\ChatMessage::create([
+            'user_id' => $user?->id,
+            'message' => $request->string('message'),
+            'type' => 'user',
+        ]);
+
+        \App\Models\ChatMessage::create([
+            'user_id' => $user?->id,
+            'message' => $assistantMessage,
+            'type' => 'assistant',
+        ]);
+
+        return response()->json(['response' => $assistantMessage]);
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Chat error', ['error' => $e->getMessage()]);
+        return response()->json(['error' => 'Error al procesar el mensaje'], 500);
+    }
+})->middleware(['auth'])->name('walee.chat');
+
 // Streaming de chat con OpenAI
 Route::post('/chat/stream', [ChatStreamController::class, 'stream'])
     ->middleware(['auth'])

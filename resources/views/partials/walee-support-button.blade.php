@@ -878,3 +878,5 @@
     }
 </script>
 
+@include('partials.walee-floating-chat')
+

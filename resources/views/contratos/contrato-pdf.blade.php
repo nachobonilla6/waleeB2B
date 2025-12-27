@@ -119,12 +119,15 @@
         .signature-section {
             margin-top: 40px;
             page-break-inside: avoid;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
         }
         
         .signature-box {
-            display: inline-block;
-            width: 48%;
-            vertical-align: top;
+            flex: 1;
+            max-width: 48%;
             margin-top: 60px;
         }
         
@@ -319,13 +322,13 @@
     </div>
     
     <div class="signature-section">
-        <div class="signature-box">
-            <div class="date-line">{{ $t['signature_at'] }} ________________________, {{ $t['signature_on'] }} {{ now()->format('d / m / Y') }}</div>
-            <div class="signature-line">{{ $t['signature_provider'] }}</div>
+        <div class="signature-box" style="text-align: left;">
+            <div class="date-line" style="text-align: left; padding-left: 0;">{{ $t['signature_at'] }} ________________________, {{ $t['signature_on'] }} {{ now()->format('d / m / Y') }}</div>
+            <div class="signature-line" style="text-align: left; padding-left: 0;">{{ $t['signature_provider'] }}</div>
         </div>
-        <div class="signature-box">
-            <div class="date-line"></div>
-            <div class="signature-line">{{ $t['signature_client'] }}</div>
+        <div class="signature-box" style="text-align: right;">
+            <div class="date-line" style="text-align: right; padding-right: 0;">{{ $t['signature_at'] }} ________________________, {{ $t['signature_on'] }} {{ now()->format('d / m / Y') }}</div>
+            <div class="signature-line" style="text-align: right; padding-right: 0;">{{ $t['signature_client'] }}</div>
         </div>
     </div>
     

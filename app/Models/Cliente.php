@@ -75,6 +75,11 @@ class Cliente extends Model
         return $this->hasMany(Cotizacion::class);
     }
 
+    public function contratos(): HasMany
+    {
+        return $this->hasMany(Contrato::class)->orderBy('created_at', 'desc');
+    }
+
     public function notes(): HasMany
     {
         return $this->hasMany(Note::class)->orderBy('created_at', 'desc');

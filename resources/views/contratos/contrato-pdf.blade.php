@@ -214,7 +214,7 @@
             </ul>
             <p>It is specified that on {{ now()->format('F d, Y') }}, the Client subscribed to this initial package.</p>
             <p>The initial price was calculated based on the service requirements.</p>
-            <p class="price-highlight">Final applied price: <span class="amount">₡{{ number_format($precio, 2, ',', '.') }} ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
+            <p class="price-highlight">Final applied price: <span class="amount">{{ number_format($precio, 2, ',', '.') }} CRC ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
             <p class="note">This price is based on the specific services contracted by the Client.</p>
         </div>
         
@@ -242,7 +242,7 @@
         <div class="subsection">
             <div class="subsection-title">3.1 Creation Price</div>
             <p>The total price for the creation of the Software and digital services is set at:</p>
-            <p class="price-highlight"><span class="amount">₡{{ number_format($precio, 2, ',', '.') }} ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
+            <p class="price-highlight"><span class="amount">{{ number_format($precio, 2, ',', '.') }} CRC ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
         </div>
         
         <div class="subsection">

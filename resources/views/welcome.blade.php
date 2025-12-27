@@ -119,13 +119,17 @@
             </p>
             
             <!-- Software para tu Negocio - Franja completa -->
-            <div class="mb-12">
-                <a href="/sistema-para-tu-negocio" class="block bg-gradient-to-br from-cyan-600 to-teal-800 p-8 rounded-2xl shadow-2xl hover:shadow-cyan-500/50 transition transform hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center justify-center gap-6">
-                        <div class="text-6xl">💼</div>
-                        <div class="flex-1">
-                            <h3 class="text-3xl font-bold mb-2 text-white">Software para tu Negocio</h3>
-                            <p class="text-cyan-100 text-lg">Sistemas de gestión personalizados para optimizar las operaciones de tu empresa.</p>
+            <div class="mb-12 max-w-4xl mx-auto">
+                <a href="/sistema-para-tu-negocio" class="block bg-gradient-to-br from-cyan-600 via-cyan-700 to-teal-800 p-10 rounded-3xl shadow-2xl hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer border border-cyan-400/30">
+                    <div class="text-center">
+                        <div class="text-7xl mb-4">⚙️</div>
+                        <h3 class="text-4xl font-bold mb-3 text-white bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">Software para tu Negocio</h3>
+                        <p class="text-cyan-100 text-xl max-w-2xl mx-auto">Sistemas de gestión personalizados para optimizar las operaciones de tu empresa.</p>
+                        <div class="mt-4 inline-flex items-center gap-2 text-cyan-200 text-sm font-semibold">
+                            <span>Descubre más</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
                         </div>
                     </div>
                 </a>

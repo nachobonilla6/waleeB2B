@@ -8,9 +8,6 @@ use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChatStreamController;
 use App\Models\Sitio;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Dompdf\Dompdf;
-use Barryvdh\DomPDF\PDF as PDFWrapper;
 
 // Ruta para servir archivos de audio del chat (sin necesidad de symlink)
 Route::get('/storage/chat-audio/{filename}', function ($filename) {
@@ -1874,10 +1871,21 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF - crear instancia directamente para evitar problemas con ServiceProvider
-        $dompdf = new Dompdf();
-        $dompdf->setBasePath(public_path());
-        $pdf = new PDFWrapper(
+        // Generar PDF - usar strings de clase para evitar problemas de autoload
+        $dompdfClass = '\\Dompdf\\Dompdf';
+        $pdfWrapperClass = '\\Barryvdh\\DomPDF\\PDF';
+        
+        // Crear instancia de Dompdf
+        $options = config('dompdf.options', []);
+        $dompdf = new $dompdfClass($options);
+        $publicPath = realpath(public_path());
+        if ($publicPath === false) {
+            $publicPath = base_path('public');
+        }
+        $dompdf->setBasePath($publicPath);
+        
+        // Crear wrapper de PDF
+        $pdf = new $pdfWrapperClass(
             $dompdf,
             app('config'),
             app('files'),

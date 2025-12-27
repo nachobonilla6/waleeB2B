@@ -281,8 +281,8 @@
                             <div class="space-y-3">
                                 @foreach($contratos as $contrato)
                                     <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-walee-400/50 transition-all">
-                                        <div class="flex items-center gap-4 flex-1">
-                                            <div class="w-10 h-10 rounded-lg bg-walee-400/20 flex items-center justify-center">
+                                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                                            <div class="w-10 h-10 rounded-lg bg-walee-400/20 flex items-center justify-center flex-shrink-0">
                                                 <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
@@ -297,7 +297,7 @@
                                             </div>
                                         </div>
                                         @if($contrato->pdf_path)
-                                            <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" class="px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium">
+                                            <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" rel="noopener noreferrer" class="ml-4 px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium cursor-pointer flex-shrink-0">
                                                 Ver PDF
                                             </a>
                                         @endif
@@ -320,8 +320,8 @@
                             <div class="space-y-3">
                                 @foreach($cotizaciones as $cotizacion)
                                     <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400/50 transition-all">
-                                        <div class="flex items-center gap-4 flex-1">
-                                            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                                            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
                                                 <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
@@ -335,9 +335,9 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2">
-                                            @if($cotizacion->enlace || $cotizacion->pdf_path ?? false)
-                                                <a href="{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}" target="_blank" class="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium">
+                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                                            @if($cotizacion->enlace || ($cotizacion->pdf_path ?? false))
+                                                <a href="{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium cursor-pointer">
                                                     Ver PDF
                                                 </a>
                                             @endif
@@ -364,8 +364,8 @@
                             <div class="space-y-3">
                                 @foreach($facturas as $factura)
                                     <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-red-400/50 transition-all">
-                                        <div class="flex items-center gap-4 flex-1">
-                                            <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                                            <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
                                                 <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
@@ -382,9 +382,9 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2">
-                                            @if($factura->enlace || $factura->pdf_path ?? false)
-                                                <a href="{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}" target="_blank" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium">
+                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                                            @if($factura->enlace || ($factura->pdf_path ?? false))
+                                                <a href="{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium cursor-pointer">
                                                     Ver PDF
                                                 </a>
                                             @endif

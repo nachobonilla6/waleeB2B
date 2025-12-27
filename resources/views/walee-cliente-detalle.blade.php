@@ -252,6 +252,147 @@
                 </div>
             </div>
             
+            <!-- Documentos Section -->
+            <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Documentos
+                    </h2>
+                    
+                    <!-- Tabs -->
+                    <div class="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700">
+                        <button onclick="showTab('contratos')" id="tab-contratos" class="tab-button active px-4 py-2 text-sm font-medium text-walee-400 border-b-2 border-walee-400">
+                            Contratos ({{ $contratos->count() }})
+                        </button>
+                        <button onclick="showTab('cotizaciones')" id="tab-cotizaciones" class="tab-button px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400">
+                            Cotizaciones ({{ $cotizaciones->count() }})
+                        </button>
+                        <button onclick="showTab('facturas')" id="tab-facturas" class="tab-button px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400">
+                            Facturas ({{ $facturas->count() }})
+                        </button>
+                    </div>
+                    
+                    <!-- Contratos Tab -->
+                    <div id="content-contratos" class="tab-content">
+                        @if($contratos->count() > 0)
+                            <div class="space-y-3">
+                                @foreach($contratos as $contrato)
+                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-walee-400/50 transition-all">
+                                        <div class="flex items-center gap-4 flex-1">
+                                            <div class="w-10 h-10 rounded-lg bg-walee-400/20 flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">
+                                                    Contrato - {{ implode(', ', array_map(function($s) { return ucfirst(str_replace('_', ' ', $s)); }, $contrato->servicios ?? [])) }}
+                                                </p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                    {{ number_format($contrato->precio, 2, ',', '.') }} CRC · {{ strtoupper($contrato->idioma) }} · {{ $contrato->enviada_at->format('d/m/Y H:i') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        @if($contrato->pdf_path)
+                                            <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" class="px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium">
+                                                Ver PDF
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p class="text-slate-500 dark:text-slate-400">No hay contratos enviados</p>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Cotizaciones Tab -->
+                    <div id="content-cotizaciones" class="tab-content hidden">
+                        @if($cotizaciones->count() > 0)
+                            <div class="space-y-3">
+                                @foreach($cotizaciones as $cotizacion)
+                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400/50 transition-all">
+                                        <div class="flex items-center gap-4 flex-1">
+                                            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">
+                                                    {{ $cotizacion->numero_cotizacion ?? 'Cotización #' . $cotizacion->id }}
+                                                </p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                    {{ number_format($cotizacion->monto, 2, ',', '.') }} CRC · {{ $cotizacion->tipo_servicio ?? 'N/A' }} · {{ $cotizacion->fecha ? $cotizacion->fecha->format('d/m/Y') : $cotizacion->created_at->format('d/m/Y') }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $cotizacion->estado == 'enviada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30' }}">
+                                            {{ ucfirst($cotizacion->estado ?? 'pendiente') }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p class="text-slate-500 dark:text-slate-400">No hay cotizaciones</p>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Facturas Tab -->
+                    <div id="content-facturas" class="tab-content hidden">
+                        @if($facturas->count() > 0)
+                            <div class="space-y-3">
+                                @foreach($facturas as $factura)
+                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-red-400/50 transition-all">
+                                        <div class="flex items-center gap-4 flex-1">
+                                            <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">
+                                                    {{ $factura->numero_factura ?? 'Factura #' . $factura->id }}
+                                                </p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                    {{ number_format($factura->total, 2, ',', '.') }} CRC · {{ $factura->fecha_emision ? $factura->fecha_emision->format('d/m/Y') : $factura->created_at->format('d/m/Y') }}
+                                                    @if($factura->fecha_vencimiento)
+                                                        · Vence: {{ $factura->fecha_vencimiento->format('d/m/Y') }}
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $factura->estado == 'pagada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($factura->estado == 'pendiente' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30') }}">
+                                            {{ ucfirst($factura->estado ?? 'pendiente') }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p class="text-slate-500 dark:text-slate-400">No hay facturas</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            
             <!-- Footer -->
             <footer class="text-center py-8 mt-6">
                 <p class="text-sm text-slate-600 dark:text-slate-500">
@@ -261,6 +402,29 @@
         </div>
     </div>
     @include('partials.walee-support-button')
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'text-walee-400', 'border-walee-400');
+                button.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+            });
+            
+            // Show selected tab content
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            
+            // Add active class to selected tab
+            const activeTab = document.getElementById('tab-' + tabName);
+            activeTab.classList.add('active', 'text-walee-400', 'border-walee-400');
+            activeTab.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+        }
+    </script>
 </body>
 </html>
 

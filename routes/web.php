@@ -1967,6 +1967,26 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
                     ]);
         });
 
+        // Guardar PDF en storage permanente y guardar contrato en BD
+        $permanentPath = 'contratos/' . $pdfFileName;
+        $permanentFullPath = storage_path('app/public/' . $permanentPath);
+        if (!file_exists(storage_path('app/public/contratos'))) {
+            mkdir(storage_path('app/public/contratos'), 0755, true);
+        }
+        copy($pdfPath, $permanentFullPath);
+
+        // Guardar contrato en la base de datos
+        \App\Models\Contrato::create([
+            'cliente_id' => $cliente->id,
+            'correo' => $cliente->correo,
+            'servicios' => $validated['servicios'],
+            'precio' => $validated['precio'],
+            'idioma' => $validated['idioma'],
+            'pdf_path' => $permanentPath,
+            'enviada_at' => now(),
+            'estado' => 'enviado',
+        ]);
+
         // Eliminar archivo temporal después de enviar
         if (file_exists($pdfPath)) {
             unlink($pdfPath);
@@ -2046,7 +2066,25 @@ Route::get('/walee-cotizaciones', function () {
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);
-    return view('walee-cliente-detalle', compact('cliente'));
+    
+    // Buscar cliente en tabla clientes por email o nombre para obtener contratos, cotizaciones y facturas
+    $clientePrincipal = \App\Models\Cliente::where('correo', $cliente->email)
+        ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
+        ->first();
+    
+    $contratos = $clientePrincipal ? \App\Models\Contrato::where('cliente_id', $clientePrincipal->id)
+        ->orderBy('created_at', 'desc')
+        ->get() : collect();
+    
+    $cotizaciones = $clientePrincipal ? \App\Models\Cotizacion::where('cliente_id', $clientePrincipal->id)
+        ->orderBy('created_at', 'desc')
+        ->get() : collect();
+    
+    $facturas = $clientePrincipal ? \App\Models\Factura::where('cliente_id', $clientePrincipal->id)
+        ->orderBy('created_at', 'desc')
+        ->get() : collect();
+    
+    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal'));
 })->middleware(['auth'])->name('walee.cliente.detalle');
 
 // Ruta para editar un cliente

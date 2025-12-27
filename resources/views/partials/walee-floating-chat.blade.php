@@ -1,5 +1,35 @@
 <!-- Chat Flotante Walee -->
-<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ open: false }">
+<div id="walee-floating-chat" class="fixed bottom-6 right-24 z-50" x-data="{ 
+    open: localStorage.getItem('walee-chat-open') === 'true' || false,
+    init() {
+        // Restaurar estado del chat desde localStorage
+        this.$watch('open', value => {
+            localStorage.setItem('walee-chat-open', value);
+            if (value) {
+                // Cargar historial cuando se abre el chat
+                setTimeout(() => {
+                    if (typeof loadChatHistory === 'function') {
+                        loadChatHistory();
+                    }
+                    if (typeof scrollToBottom === 'function') {
+                        scrollToBottom();
+                    }
+                }, 100);
+            }
+        });
+        // Si el chat debe estar abierto, cargar historial inmediatamente
+        if (this.open) {
+            setTimeout(() => {
+                if (typeof loadChatHistory === 'function') {
+                    loadChatHistory();
+                }
+                if (typeof scrollToBottom === 'function') {
+                    scrollToBottom();
+                }
+            }, 300);
+        }
+    }
+}">
     <!-- Botón flotante -->
     <button
         @click="open = !open"
@@ -99,8 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!chatForm || !chatInput || !chatMessages) return;
 
-    let historyLoaded = false;
-    let messagesLoaded = false;
+    // Variables globales para mantener el estado entre páginas
+    window.waleeChatHistoryLoaded = window.waleeChatHistoryLoaded || false;
+    window.waleeChatMessagesLoaded = window.waleeChatMessagesLoaded || false;
 
     // Función para hacer scroll al final
     function scrollToBottom() {
@@ -108,6 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 50);
     }
+    
+    // Hacer la función global para que Alpine.js pueda llamarla
+    window.scrollToBottom = scrollToBottom;
 
     // Función para agregar mensaje al chat
     function addMessage(text, sender = 'user', timestamp = null, skipScroll = false) {
@@ -151,8 +185,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Cargar historial del chat
     async function loadChatHistory() {
-        if (historyLoaded) return;
-        historyLoaded = true;
+        // Siempre limpiar mensajes existentes antes de cargar (para evitar duplicados al navegar)
+        const existingMessages = chatMessages.querySelectorAll('.flex.justify-end, .flex.justify-start');
+        existingMessages.forEach(msg => msg.remove());
+        
+        // Mostrar mensaje de bienvenida temporalmente
+        if (welcomeMessage) {
+            welcomeMessage.style.display = 'block';
+        }
         
         try {
             const response = await fetch('/walee-chat/history', {
@@ -165,9 +205,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.messages && data.messages.length > 0) {
-                    // Limpiar mensajes existentes (excepto el de bienvenida si no hay mensajes)
-                    const existingMessages = chatMessages.querySelectorAll('.flex.justify-end, .flex.justify-start');
-                    existingMessages.forEach(msg => msg.remove());
+                    // Ocultar mensaje de bienvenida
+                    if (welcomeMessage) {
+                        welcomeMessage.style.display = 'none';
+                    }
                     
                     // Cargar todos los mensajes del historial
                     data.messages.forEach(msg => {
@@ -178,31 +219,41 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Scroll al final después de cargar todos los mensajes para mostrar los últimos
                     scrollToBottom();
                     
-                    messagesLoaded = true;
+                    window.waleeChatMessagesLoaded = true;
+                } else {
+                    // Si no hay mensajes, mantener el mensaje de bienvenida visible
+                    if (welcomeMessage) {
+                        welcomeMessage.style.display = 'block';
+                    }
+                    window.waleeChatMessagesLoaded = false;
                 }
+                window.waleeChatHistoryLoaded = true;
             }
         } catch (error) {
             console.error('Error cargando historial:', error);
-            historyLoaded = false; // Permitir reintentar si falla
+            // Mantener mensaje de bienvenida si hay error
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'block';
+            }
         }
     }
+    
+    // Hacer la función global para que Alpine.js pueda llamarla
+    window.loadChatHistory = loadChatHistory;
 
     // Cargar historial inmediatamente al cargar la página
-    loadChatHistory();
-
-    // También cargar cuando se abre el chat (por si acaso no se cargó antes)
-    const chatButton = document.querySelector('#walee-floating-chat button');
-    if (chatButton) {
-        chatButton.addEventListener('click', function() {
-            setTimeout(() => {
-                if (!messagesLoaded) {
-                    loadChatHistory();
-                } else {
-                    // Asegurar que se muestren los últimos mensajes al abrir
-                    scrollToBottom();
-                }
-            }, 200);
-        });
+    // Verificar si el chat está abierto (desde localStorage)
+    const chatIsOpen = localStorage.getItem('walee-chat-open') === 'true';
+    if (chatIsOpen) {
+        // Si el chat está abierto, cargar historial inmediatamente
+        setTimeout(() => {
+            loadChatHistory();
+        }, 300);
+    } else {
+        // Si está cerrado, cargar en background para tenerlo listo cuando se abra
+        setTimeout(() => {
+            loadChatHistory();
+        }, 500);
     }
 
     // Observar cuando se abre la ventana del chat para hacer scroll al final
@@ -271,8 +322,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Agregar respuesta
             if (data.response) {
                 addMessage(data.response, 'bot');
+                // Marcar que hay mensajes cargados
+                window.waleeChatMessagesLoaded = true;
             } else {
                 addMessage('Lo siento, no pude procesar tu mensaje. Por favor, intenta de nuevo.', 'bot');
+                window.waleeChatMessagesLoaded = true;
             }
         } catch (error) {
             console.error('Error:', error);

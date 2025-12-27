@@ -730,7 +730,6 @@
     </script>
     
     @include('partials.walee-support-button')
-    @include('partials.walee-floating-chat')
     
     <script>
         // Dark/Light Mode Toggle

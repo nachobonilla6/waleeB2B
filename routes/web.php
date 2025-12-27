@@ -1871,7 +1871,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF del contrato - usar loadView directamente
+        // Generar PDF del contrato - usar servicio registrado directamente
         $pdfFileName = 'Contrato_' . str_replace(' ', '_', $cliente->nombre_empresa) . '_' . now()->format('Ymd') . '.pdf';
         $pdfPath = storage_path('app/temp/' . $pdfFileName);
         
@@ -1880,37 +1880,24 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             mkdir(storage_path('app/temp'), 0755, true);
         }
         
-        // Generar PDF usando el facade con loadView
-        try {
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('contratos.contrato-pdf', [
-                'cliente' => $cliente,
-                'servicio' => $validated['servicio'],
-                'servicioNombre' => $servicioInfo['nombre'],
-                'servicioDescripcion' => $servicioInfo['descripcion'],
-                'precio' => $validated['precio'],
-            ]);
-            
-            // Guardar PDF
-            file_put_contents($pdfPath, $pdf->output());
-        } catch (\Exception $e) {
-            // Si el facade no funciona, intentar con el servicio directamente
-            if (!app()->bound('dompdf.wrapper')) {
-                $provider = new \Barryvdh\DomPDF\ServiceProvider(app());
-                $provider->register();
-            }
-            
-            $pdf = app('dompdf.wrapper');
-            $pdf->loadView('contratos.contrato-pdf', [
-                'cliente' => $cliente,
-                'servicio' => $validated['servicio'],
-                'servicioNombre' => $servicioInfo['nombre'],
-                'servicioDescripcion' => $servicioInfo['descripcion'],
-                'precio' => $validated['precio'],
-            ]);
-            
-            // Guardar PDF
-            file_put_contents($pdfPath, $pdf->output());
+        // Asegurar que el ServiceProvider esté registrado
+        if (!app()->bound('dompdf.wrapper')) {
+            $provider = new \Barryvdh\DomPDF\ServiceProvider(app());
+            $provider->register();
         }
+        
+        // Generar PDF usando el servicio registrado
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('contratos.contrato-pdf', [
+            'cliente' => $cliente,
+            'servicio' => $validated['servicio'],
+            'servicioNombre' => $servicioInfo['nombre'],
+            'servicioDescripcion' => $servicioInfo['descripcion'],
+            'precio' => $validated['precio'],
+        ]);
+        
+        // Guardar PDF
+        file_put_contents($pdfPath, $pdf->output());
 
         // Preparar cuerpo del email
         $emailBody = "Estimado/a " . $cliente->nombre_empresa . ",\n\n";

@@ -208,7 +208,7 @@
         <p>{{ $t['section_1_text'] }} {{ strtolower($servicioNombre) }}, including specifically:</p>
         
         <div class="subsection">
-            <div class="subsection-title">{{ $t['section_1_1'] }}</div>
+            <div class="subsection-title">1.1 {{ $t['section_1_1'] }}</div>
             <p>{{ $t['section_1_1_services'] }}</p>
             <ul>
                 <li>{{ $t['section_1_1_list_1'] }}</li>
@@ -222,7 +222,7 @@
         </div>
         
         <div class="subsection">
-            <div class="subsection-title">{{ $t['section_1_2'] }}</div>
+            <div class="subsection-title">1.2 {{ $t['section_1_2'] }}</div>
             <p>{{ $t['section_1_2_text'] }}</p>
         </div>
     </div>
@@ -243,13 +243,13 @@
         <div class="section-title"><span class="section-number">3.</span> {{ $t['section_3'] }}</div>
         
         <div class="subsection">
-            <div class="subsection-title">{{ $t['section_3_1'] }}</div>
+            <div class="subsection-title">3.1 {{ $t['section_3_1'] }}</div>
             <p>{{ $t['section_3_1_text'] }}</p>
             <p class="price-highlight"><span class="amount">{{ number_format($precio, 2, ',', '.') }} CRC ({{ number_format($precio / 520, 2, '.', ',') }} USD)</span></p>
         </div>
         
         <div class="subsection">
-            <div class="subsection-title">{{ $t['section_3_2'] }}</div>
+            <div class="subsection-title">3.2 {{ $t['section_3_2'] }}</div>
             <p>{{ $t['section_3_2_text'] }}</p>
         </div>
     </div>
@@ -292,7 +292,7 @@
         <p>{{ $t['section_8_text_2'] }}</p>
         
         <div class="subsection">
-            <div class="subsection-title">{{ $t['section_8_1'] }}</div>
+            <div class="subsection-title">8.1 {{ $t['section_8_1'] }}</div>
             <p>{{ $t['section_8_1_text_1'] }}</p>
             <p>{{ $t['section_8_1_text_2'] }}</p>
             <ul>

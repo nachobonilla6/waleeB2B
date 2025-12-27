@@ -45,6 +45,29 @@ Para usar otro calendario de otra cuenta de Google, necesitas cambiar las siguie
    - Copia el ID del calendario que quieres usar
    - Actualiza `GOOGLE_CALENDAR_ID` en el .env con ese ID
 
+## Solución al Error 403: access_denied
+
+Si recibes el error "Error 403: access_denied" que dice "websolutions.work no completó el proceso de verificación de Google", necesitas agregar el email como usuario de prueba:
+
+### Pasos para agregar usuarios de prueba:
+
+1. Ve a [Google Cloud Console](https://console.cloud.google.com/)
+2. Selecciona tu proyecto
+3. Ve a **APIs & Services** > **OAuth consent screen**
+4. En la sección **Test users**, haz clic en **+ ADD USERS**
+5. Agrega el email: `websolutionscrnow@gmail.com`
+6. Guarda los cambios
+7. Intenta autorizar nuevamente desde `/admin/google-calendar-auth`
+
+### Alternativa: Cambiar a modo de producción (requiere verificación)
+
+Si quieres que cualquier usuario pueda acceder:
+1. En **OAuth consent screen**, cambia el **Publishing status** a **In production**
+2. **IMPORTANTE**: Esto requiere que Google verifique tu aplicación
+3. Puede tomar varios días y requiere información adicional
+
+**Recomendación**: Para desarrollo/pruebas, usa la opción de agregar usuarios de prueba.
+
 ## Nota importante:
 
 - El token de acceso se guarda en `storage/app/google-calendar-token.json`

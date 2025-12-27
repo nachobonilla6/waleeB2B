@@ -104,97 +104,100 @@
                     <p class="text-slate-600 dark:text-slate-400">Complete el formulario para enviar un contrato al cliente</p>
                 </div>
                 
-                <!-- Cliente Section -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        Cliente
-                    </h2>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Cliente <span class="text-red-500">*</span></label>
-                        <select id="cliente_id" name="cliente_id" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @error('cliente_id') border-red-500 @enderror">
-                            <option value="">Seleccionar cliente...</option>
-                            @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
-                                    {{ $cliente->nombre_empresa }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cliente_id')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                <!-- Grid de campos: 1 columna en móvil, 2 columnas en md y lg -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Cliente Section -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            Cliente
+                        </h2>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Cliente <span class="text-red-500">*</span></label>
+                            <select id="cliente_id" name="cliente_id" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @error('cliente_id') border-red-500 @enderror">
+                                <option value="">Seleccionar cliente...</option>
+                                @foreach($clientes as $cliente)
+                                    <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
+                                        {{ $cliente->nombre_empresa }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('cliente_id')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Servicio Section -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                        Servicio
-                    </h2>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de Servicio <span class="text-red-500">*</span></label>
-                        <select id="servicio" name="servicio" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all @error('servicio') border-red-500 @enderror">
-                            <option value="">Seleccionar servicio...</option>
-                            <option value="diseno_web" {{ old('servicio') == 'diseno_web' ? 'selected' : '' }}>🌐 Diseño Web</option>
-                            <option value="redes_sociales" {{ old('servicio') == 'redes_sociales' ? 'selected' : '' }}>📱 Gestión Redes Sociales</option>
-                            <option value="seo" {{ old('servicio') == 'seo' ? 'selected' : '' }}>🔍 SEO / Posicionamiento</option>
-                            <option value="publicidad" {{ old('servicio') == 'publicidad' ? 'selected' : '' }}>📢 Publicidad Digital</option>
-                            <option value="mantenimiento" {{ old('servicio') == 'mantenimiento' ? 'selected' : '' }}>🔧 Mantenimiento Web</option>
-                            <option value="hosting" {{ old('servicio') == 'hosting' ? 'selected' : '' }}>☁️ Hosting & Dominio</option>
-                            <option value="combo" {{ old('servicio') == 'combo' ? 'selected' : '' }}>📦 Paquete Completo</option>
-                        </select>
-                        @error('servicio')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                    <!-- Servicio Section -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            Servicio
+                        </h2>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de Servicio <span class="text-red-500">*</span></label>
+                            <select id="servicio" name="servicio" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all @error('servicio') border-red-500 @enderror">
+                                <option value="">Seleccionar servicio...</option>
+                                <option value="diseno_web" {{ old('servicio') == 'diseno_web' ? 'selected' : '' }}>🌐 Diseño Web</option>
+                                <option value="redes_sociales" {{ old('servicio') == 'redes_sociales' ? 'selected' : '' }}>📱 Gestión Redes Sociales</option>
+                                <option value="seo" {{ old('servicio') == 'seo' ? 'selected' : '' }}>🔍 SEO / Posicionamiento</option>
+                                <option value="publicidad" {{ old('servicio') == 'publicidad' ? 'selected' : '' }}>📢 Publicidad Digital</option>
+                                <option value="mantenimiento" {{ old('servicio') == 'mantenimiento' ? 'selected' : '' }}>🔧 Mantenimiento Web</option>
+                                <option value="hosting" {{ old('servicio') == 'hosting' ? 'selected' : '' }}>☁️ Hosting & Dominio</option>
+                                <option value="combo" {{ old('servicio') == 'combo' ? 'selected' : '' }}>📦 Paquete Completo</option>
+                            </select>
+                            @error('servicio')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Precio Section -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Precio
-                    </h2>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (CRC) <span class="text-red-500">*</span></label>
-                        <input type="number" id="precio" name="precio" step="0.01" min="0" value="{{ old('precio') }}" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all @error('precio') border-red-500 @enderror">
-                        @error('precio')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                    <!-- Precio Section -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Precio
+                        </h2>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (CRC) <span class="text-red-500">*</span></label>
+                            <input type="number" id="precio" name="precio" step="0.01" min="0" value="{{ old('precio') }}" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all @error('precio') border-red-500 @enderror">
+                            @error('precio')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Idioma Section -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                        </svg>
-                        Idioma del Contrato
-                    </h2>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Idioma <span class="text-red-500">*</span></label>
-                        <select id="idioma" name="idioma" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all @error('idioma') border-red-500 @enderror">
-                            <option value="">Seleccionar idioma...</option>
-                            <option value="es" {{ old('idioma') == 'es' ? 'selected' : '' }}>🇪🇸 Español</option>
-                            <option value="en" {{ old('idioma') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
-                            <option value="fr" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
-                            <option value="zh" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 中文 (Mandarin)</option>
-                        </select>
-                        @error('idioma')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                    <!-- Idioma Section -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                            Idioma del Contrato
+                        </h2>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Idioma <span class="text-red-500">*</span></label>
+                            <select id="idioma" name="idioma" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all @error('idioma') border-red-500 @enderror">
+                                <option value="">Seleccionar idioma...</option>
+                                <option value="es" {{ old('idioma') == 'es' ? 'selected' : '' }}>🇪🇸 Español</option>
+                                <option value="en" {{ old('idioma') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
+                                <option value="fr" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
+                                <option value="zh" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 中文 (Mandarin)</option>
+                            </select>
+                            @error('idioma')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
                 

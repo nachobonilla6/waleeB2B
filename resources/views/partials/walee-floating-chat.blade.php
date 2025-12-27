@@ -31,7 +31,7 @@
         <div class="bg-walee-500 dark:bg-walee-600 text-white p-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center overflow-hidden border-2 border-white/30">
-                    <img src="https://i.postimg.cc/8z8vJQ7K/walee-avatar.png" 
+                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" 
                          alt="Walee" 
                          class="w-full h-full object-cover"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">

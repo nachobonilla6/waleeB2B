@@ -1826,11 +1826,100 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'precio' => 'required|numeric|min:0',
         ]);
 
-        // Aquí puedes agregar la lógica para enviar el contrato
-        // Por ejemplo, crear un registro, enviar un email, etc.
+        $cliente = \App\Models\Cliente::findOrFail($validated['cliente_id']);
+        
+        if (!$cliente->correo) {
+            return redirect()->back()
+                ->with('error', 'El cliente no tiene un correo electrónico registrado')
+                ->withInput();
+        }
+
+        // Mapeo de servicios a nombres y descripciones
+        $servicios = [
+            'diseno_web' => [
+                'nombre' => 'Diseño Web',
+                'descripcion' => 'Diseño y desarrollo de sitio web profesional, incluyendo diseño responsivo, optimización SEO básica y entrega de código fuente.'
+            ],
+            'redes_sociales' => [
+                'nombre' => 'Gestión de Redes Sociales',
+                'descripcion' => 'Gestión completa de redes sociales, incluyendo creación de contenido, programación de publicaciones, interacción con seguidores y análisis de métricas.'
+            ],
+            'seo' => [
+                'nombre' => 'SEO / Posicionamiento',
+                'descripcion' => 'Servicios de optimización para motores de búsqueda, incluyendo investigación de palabras clave, optimización on-page, link building y análisis de resultados.'
+            ],
+            'publicidad' => [
+                'nombre' => 'Publicidad Digital',
+                'descripcion' => 'Campañas publicitarias en plataformas digitales, incluyendo Google Ads, Facebook Ads, Instagram Ads y gestión de presupuesto publicitario.'
+            ],
+            'mantenimiento' => [
+                'nombre' => 'Mantenimiento Web',
+                'descripcion' => 'Servicio de mantenimiento continuo del sitio web, incluyendo actualizaciones de seguridad, respaldos, monitoreo y soporte técnico.'
+            ],
+            'hosting' => [
+                'nombre' => 'Hosting & Dominio',
+                'descripcion' => 'Servicios de hosting web y registro de dominio, incluyendo alojamiento, certificados SSL, correo electrónico y soporte técnico.'
+            ],
+            'combo' => [
+                'nombre' => 'Paquete Completo',
+                'descripcion' => 'Paquete integral que incluye diseño web, hosting, dominio, gestión de redes sociales, SEO básico y mantenimiento mensual.'
+            ],
+        ];
+
+        $servicioInfo = $servicios[$validated['servicio']] ?? [
+            'nombre' => ucfirst(str_replace('_', ' ', $validated['servicio'])),
+            'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
+        ];
+
+        // Generar PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('contratos.contrato-pdf', [
+            'cliente' => $cliente,
+            'servicio' => $validated['servicio'],
+            'servicioNombre' => $servicioInfo['nombre'],
+            'servicioDescripcion' => $servicioInfo['descripcion'],
+            'precio' => $validated['precio'],
+        ]);
+
+        $pdfFileName = 'Contrato_' . $cliente->nombre_empresa . '_' . now()->format('Ymd') . '.pdf';
+        $pdfPath = storage_path('app/temp/' . $pdfFileName);
+        
+        // Asegurar que el directorio existe
+        if (!file_exists(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+        
+        // Guardar PDF temporalmente
+        $pdf->save($pdfPath);
+
+        // Enviar email con PDF adjunto
+        $emailBody = "Estimado/a " . $cliente->nombre_empresa . ",\n\n";
+        $emailBody .= "Adjunto encontrará el contrato de prestación de servicios para " . $servicioInfo['nombre'] . ".\n\n";
+        $emailBody .= "Detalles del contrato:\n";
+        $emailBody .= "- Servicio: " . $servicioInfo['nombre'] . "\n";
+        $emailBody .= "- Precio: ₡" . number_format($validated['precio'], 2, ',', '.') . "\n";
+        $emailBody .= "- Fecha: " . now()->format('d/m/Y') . "\n\n";
+        $emailBody .= "Por favor, revise el contrato adjunto y no dude en contactarnos si tiene alguna pregunta.\n\n";
+        $emailBody .= "Saludos cordiales,\n";
+        $emailBody .= "Web Solutions - WALEÉ\n";
+        $emailBody .= "websolutionscrnow@gmail.com";
+
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($cliente, $pdfPath, $pdfFileName, $servicioInfo) {
+            $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
+                    ->to($cliente->correo)
+                    ->subject('Contrato de Servicios - ' . $servicioInfo['nombre'])
+                    ->attach($pdfPath, [
+                        'as' => $pdfFileName,
+                        'mime' => 'application/pdf',
+                    ]);
+        });
+
+        // Eliminar archivo temporal después de enviar
+        if (file_exists($pdfPath)) {
+            unlink($pdfPath);
+        }
         
         return redirect()->route('walee.herramientas.enviar-contrato')
-            ->with('success', 'Contrato enviado correctamente');
+            ->with('success', 'Contrato enviado correctamente por email a ' . $cliente->correo);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return redirect()->back()
             ->withErrors($e->errors())

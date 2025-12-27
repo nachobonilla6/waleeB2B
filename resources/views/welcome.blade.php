@@ -114,11 +114,24 @@
             <h2 class="text-5xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Nuestros Servicios
             </h2>
-            <p class="text-center text-white text-lg mb-16">
+            <p class="text-center text-white text-lg mb-8">
                 Servicios profesionales en <span class="font-semibold">Español</span>, <span class="font-semibold">English</span> y <span class="font-semibold">Français</span>
             </p>
             
-            <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+            <!-- Software para tu Negocio - Franja completa -->
+            <div class="mb-12">
+                <a href="/sistema-para-tu-negocio" class="block bg-gradient-to-br from-cyan-600 to-teal-800 p-8 rounded-2xl shadow-2xl hover:shadow-cyan-500/50 transition transform hover:scale-[1.02] cursor-pointer">
+                    <div class="flex items-center justify-center gap-6">
+                        <div class="text-6xl">💼</div>
+                        <div class="flex-1">
+                            <h3 class="text-3xl font-bold mb-2 text-white">Software para tu Negocio</h3>
+                            <p class="text-cyan-100 text-lg">Sistemas de gestión personalizados para optimizar las operaciones de tu empresa.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
     <div class="bg-gradient-to-br from-amber-500 to-pink-600 p-6 rounded-2xl shadow-2xl hover:shadow-amber-500/50 transition transform hover:scale-105">
         <div class="text-5xl mb-3">📱</div>
         <h3 class="text-xl font-bold mb-3">Marketing Digital</h3>
@@ -154,12 +167,6 @@
     <h3 class="text-xl font-bold mb-3">Tienda en Línea</h3>
     <p class="text-green-100 text-sm">Creación de tiendas en Shopify y otras plataformas para vender en internet fácilmente.</p>
 </div>
-
-    <a href="/sistema-para-tu-negocio" class="bg-gradient-to-br from-cyan-600 to-teal-800 p-6 rounded-2xl shadow-2xl hover:shadow-cyan-500/50 transition transform hover:scale-105 cursor-pointer block">
-        <div class="text-5xl mb-3">💼</div>
-        <h3 class="text-xl font-bold mb-3">Software para tu Negocio</h3>
-        <p class="text-cyan-100 text-sm">Sistemas de gestión personalizados para optimizar las operaciones de tu empresa.</p>
-    </a>
 </div>
             </div>
         </div>

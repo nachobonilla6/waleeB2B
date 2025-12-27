@@ -62,6 +62,21 @@
             opacity: 0;
             animation: fadeInUp 0.6s ease-out forwards;
         }
+        
+        /* Forzar color amarillo en Dashboard Facebook */
+        .dashboard-facebook-title {
+            color: #eab308 !important;
+            -webkit-text-fill-color: #eab308 !important;
+            text-fill-color: #eab308 !important;
+        }
+        
+        h1 .dashboard-facebook-title {
+            color: #eab308 !important;
+        }
+        
+        .dark h1 .dashboard-facebook-title {
+            color: #eab308 !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">

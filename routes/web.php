@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ChatStreamController;
 use App\Models\Sitio;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 // Ruta para servir archivos de audio del chat (sin necesidad de symlink)
 Route::get('/storage/chat-audio/{filename}', function ($filename) {
@@ -1871,15 +1872,33 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF usando el helper app()
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('contratos.contrato-pdf', [
-            'cliente' => $cliente,
-            'servicio' => $validated['servicio'],
-            'servicioNombre' => $servicioInfo['nombre'],
-            'servicioDescripcion' => $servicioInfo['descripcion'],
-            'precio' => $validated['precio'],
-        ]);
+        // Generar PDF - intentar con facade primero, si falla usar instanciación directa
+        try {
+            $pdf = Pdf::loadView('contratos.contrato-pdf', [
+                'cliente' => $cliente,
+                'servicio' => $validated['servicio'],
+                'servicioNombre' => $servicioInfo['nombre'],
+                'servicioDescripcion' => $servicioInfo['descripcion'],
+                'precio' => $validated['precio'],
+            ]);
+        } catch (\Exception $e) {
+            // Si el facade no funciona, crear instancia manualmente
+            $dompdf = new \Dompdf\Dompdf();
+            $dompdf->setBasePath(public_path());
+            $pdf = new \Barryvdh\DomPDF\PDF(
+                $dompdf,
+                app('config'),
+                app('files'),
+                app('view')
+            );
+            $pdf->loadView('contratos.contrato-pdf', [
+                'cliente' => $cliente,
+                'servicio' => $validated['servicio'],
+                'servicioNombre' => $servicioInfo['nombre'],
+                'servicioDescripcion' => $servicioInfo['descripcion'],
+                'precio' => $validated['precio'],
+            ]);
+        }
 
         $pdfFileName = 'Contrato_' . $cliente->nombre_empresa . '_' . now()->format('Ymd') . '.pdf';
         $pdfPath = storage_path('app/temp/' . $pdfFileName);

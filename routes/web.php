@@ -2070,14 +2070,15 @@ Route::get('/walee-cotizaciones', function () {
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);
     
-    // Buscar cliente en tabla clientes por email o nombre para obtener contratos, cotizaciones y facturas
+    // Buscar contratos por email del cliente en proceso
+    $contratos = \App\Models\Contrato::where('correo', $cliente->email)
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    // Buscar cliente en tabla clientes por email o nombre para obtener cotizaciones y facturas
     $clientePrincipal = \App\Models\Cliente::where('correo', $cliente->email)
         ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
         ->first();
-    
-    $contratos = $clientePrincipal ? \App\Models\Contrato::where('cliente_id', $clientePrincipal->id)
-        ->orderBy('created_at', 'desc')
-        ->get() : collect();
     
     $cotizaciones = $clientePrincipal ? \App\Models\Cotizacion::where('cliente_id', $clientePrincipal->id)
         ->orderBy('created_at', 'desc')

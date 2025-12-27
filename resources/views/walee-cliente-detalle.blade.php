@@ -297,9 +297,14 @@
                                             </div>
                                         </div>
                                         @if($contrato->pdf_path)
-                                            <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" class="px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium">
-                                                Ver PDF
-                                            </a>
+                                            <div class="flex gap-2">
+                                                <button onclick="previewPDF('/storage/{{ $contrato->pdf_path }}')" class="px-4 py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-medium">
+                                                    Previsualizar
+                                                </button>
+                                                <a href="/storage/{{ $contrato->pdf_path }}" target="_blank" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 transition-all text-sm font-medium">
+                                                    Descargar
+                                                </a>
+                                            </div>
                                         @endif
                                     </div>
                                 @endforeach
@@ -335,9 +340,16 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $cotizacion->estado == 'enviada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30' }}">
-                                            {{ ucfirst($cotizacion->estado ?? 'pendiente') }}
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            @if($cotizacion->enlace || $cotizacion->pdf_path ?? false)
+                                                <button onclick="previewPDF('{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}')" class="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium">
+                                                    Previsualizar
+                                                </button>
+                                            @endif
+                                            <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $cotizacion->estado == 'enviada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30' }}">
+                                                {{ ucfirst($cotizacion->estado ?? 'pendiente') }}
+                                            </span>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -375,9 +387,16 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $factura->estado == 'pagada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($factura->estado == 'pendiente' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30') }}">
-                                            {{ ucfirst($factura->estado ?? 'pendiente') }}
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            @if($factura->enlace || $factura->pdf_path ?? false)
+                                                <button onclick="previewPDF('{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}')" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium">
+                                                    Previsualizar
+                                                </button>
+                                            @endif
+                                            <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $factura->estado == 'pagada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($factura->estado == 'pendiente' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30') }}">
+                                                {{ ucfirst($factura->estado ?? 'pendiente') }}
+                                            </span>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -403,6 +422,31 @@
     </div>
     @include('partials.walee-support-button')
     
+    <!-- Modal para previsualizar PDF -->
+    <div id="pdfModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="relative w-full h-full max-w-6xl mx-auto p-4 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white">Previsualización de Documento</h3>
+                <button onclick="closePDFModal()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 bg-white rounded-lg overflow-hidden">
+                <iframe id="pdfViewer" src="" class="w-full h-full border-0" frameborder="0"></iframe>
+            </div>
+            <div class="mt-4 flex justify-end gap-2">
+                <a id="pdfDownloadLink" href="" target="_blank" class="px-4 py-2 rounded-lg bg-walee-400 hover:bg-walee-500 text-white transition-all text-sm font-medium">
+                    Descargar
+                </a>
+                <button onclick="closePDFModal()" class="px-4 py-2 rounded-lg bg-slate-600 hover:bg-slate-700 text-white transition-all text-sm font-medium">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         function showTab(tabName) {
             // Hide all tab contents
@@ -424,6 +468,47 @@
             activeTab.classList.add('active', 'text-walee-400', 'border-walee-400');
             activeTab.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
         }
+        
+        function previewPDF(url) {
+            const modal = document.getElementById('pdfModal');
+            const iframe = document.getElementById('pdfViewer');
+            const downloadLink = document.getElementById('pdfDownloadLink');
+            
+            // Asegurar que la URL sea absoluta
+            if (!url.startsWith('http') && !url.startsWith('/')) {
+                url = '/' + url;
+            }
+            
+            iframe.src = url;
+            downloadLink.href = url;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePDFModal() {
+            const modal = document.getElementById('pdfModal');
+            const iframe = document.getElementById('pdfViewer');
+            
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            iframe.src = '';
+            document.body.style.overflow = '';
+        }
+        
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePDFModal();
+            }
+        });
+        
+        // Cerrar modal al hacer click fuera del contenido
+        document.getElementById('pdfModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePDFModal();
+            }
+        });
     </script>
 </body>
 </html>

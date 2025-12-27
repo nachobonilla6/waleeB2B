@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('cliente_id')->nullable()->constrained('clientes')->onDelete('set null');
             $table->string('correo'); // Email del cliente (puede ser de clientes o clientes_en_proceso)
             $table->json('servicios'); // Array de servicios seleccionados
-            $table->decimal('precio', 10, 2);
+            $table->decimal('precio', 15, 2);
             $table->string('idioma', 2)->default('es'); // es, en, fr, zh
             $table->string('pdf_path')->nullable();
             $table->timestamp('enviada_at')->nullable();

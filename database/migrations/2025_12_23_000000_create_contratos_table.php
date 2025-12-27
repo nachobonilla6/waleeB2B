@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('contratos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->onDelete('cascade');
-            $table->string('correo');
+            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->onDelete('set null');
+            $table->string('correo'); // Email del cliente (puede ser de clientes o clientes_en_proceso)
             $table->json('servicios'); // Array de servicios seleccionados
             $table->decimal('precio', 10, 2);
             $table->string('idioma', 2)->default('es'); // es, en, fr, zh

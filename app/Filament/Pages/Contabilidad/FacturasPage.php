@@ -30,7 +30,6 @@ class FacturasPage extends Page implements HasTable
     protected static ?string $title = 'Facturas';
     protected static ?string $navigationGroup = 'Finanzas';
     protected static ?int $navigationSort = 1;
-    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament.pages.contabilidad.facturas-page';
     

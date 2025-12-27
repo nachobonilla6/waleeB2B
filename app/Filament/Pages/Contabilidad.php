@@ -14,7 +14,7 @@ class Contabilidad extends Page
     protected static ?string $navigationIcon = 'heroicon-o-calculator';
     protected static ?string $navigationLabel = 'Contabilidad';
     protected static ?string $title = 'Contabilidad';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Contabilidad';
     protected static ?int $navigationSort = 1;
 
     protected static string $view = 'filament.pages.contabilidad';
@@ -40,6 +40,11 @@ class Contabilidad extends Page
                 ->icon('heroicon-o-banknotes')
                 ->color('gray')
                 ->url(FacturasPage::getUrl()),
+            Actions\Action::make('gastos')
+                ->label('Gastos')
+                ->icon('heroicon-o-currency-dollar')
+                ->color('gray')
+                ->url(GastosPage::getUrl()),
             Actions\Action::make('cotizaciones')
                 ->label('Cotizaciones')
                 ->icon('heroicon-o-document-text')

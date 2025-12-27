@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Pages\Finanzas;
+namespace App\Filament\Pages\Contabilidad;
 
 use App\Filament\Resources\GastoResource;
 use App\Models\Gasto;
@@ -19,12 +19,12 @@ class GastosPage extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
     protected static ?string $navigationLabel = 'Gastos';
     protected static ?string $title = 'Gastos';
-    protected static ?string $navigationGroup = 'Finanzas';
+    protected static ?string $navigationGroup = 'Contabilidad';
     protected static ?int $navigationSort = 2;
 
-    protected static string $view = 'filament.pages.finanzas.gastos-page';
+    protected static string $view = 'filament.pages.contabilidad.gastos-page';
     
-    protected static ?string $slug = 'finanzas/gastos';
+    protected static ?string $slug = 'contabilidad/gastos';
 
     public function getMaxContentWidth(): MaxWidth | string | null
     {

@@ -1815,7 +1815,14 @@ Route::get('/walee-facturas/{id}', function ($id) {
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {
     $clientes = \App\Models\Client::orderBy('name', 'asc')->get();
-    return view('walee-herramientas-enviar-contrato', compact('clientes'));
+    $clientesData = $clientes->map(function($cliente) {
+        return [
+            'id' => $cliente->id,
+            'name' => $cliente->name,
+            'email' => $cliente->email,
+        ];
+    });
+    return view('walee-herramientas-enviar-contrato', compact('clientes', 'clientesData'));
 })->middleware(['auth'])->name('walee.herramientas.enviar-contrato');
 
 Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Request $request) {

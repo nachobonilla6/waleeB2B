@@ -120,7 +120,7 @@
                             <select id="cliente_id" name="cliente_id" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @error('cliente_id') border-red-500 @enderror">
                                 <option value="">Seleccionar cliente...</option>
                                 @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
+                                    <option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
                                         {{ $cliente->name }}
                                     </option>
                                 @endforeach
@@ -128,6 +128,17 @@
                             @error('cliente_id')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
+                            
+                            <!-- Email del cliente seleccionado -->
+                            <div id="cliente-email-display" class="mt-3 p-3 rounded-lg bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 hidden">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Email:</span>
+                                    <span id="cliente-email-text" class="text-sm font-medium text-violet-700 dark:text-violet-300"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -240,6 +251,31 @@
     @include('partials.walee-support-button')
     
     <script>
+        // Mostrar email del cliente seleccionado
+        document.addEventListener('DOMContentLoaded', function() {
+            const clienteSelect = document.getElementById('cliente_id');
+            const emailDisplay = document.getElementById('cliente-email-display');
+            const emailText = document.getElementById('cliente-email-text');
+            
+            function updateEmailDisplay() {
+                const selectedOption = clienteSelect.options[clienteSelect.selectedIndex];
+                const email = selectedOption.getAttribute('data-email');
+                
+                if (email && clienteSelect.value) {
+                    emailText.textContent = email;
+                    emailDisplay.classList.remove('hidden');
+                } else {
+                    emailDisplay.classList.add('hidden');
+                }
+            }
+            
+            // Mostrar email si hay un valor seleccionado (por ejemplo, después de un error de validación)
+            updateEmailDisplay();
+            
+            // Actualizar cuando cambie la selección
+            clienteSelect.addEventListener('change', updateEmailDisplay);
+        });
+        
         // Dark/Light Mode Toggle
         function initDarkMode() {
             const html = document.documentElement;

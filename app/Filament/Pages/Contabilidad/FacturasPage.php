@@ -28,7 +28,7 @@ class FacturasPage extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Facturas';
     protected static ?string $title = 'Facturas';
-    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationGroup = 'Finanzas';
     protected static ?int $navigationSort = 1;
     protected static bool $shouldRegisterNavigation = false;
 

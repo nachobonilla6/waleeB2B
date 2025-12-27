@@ -408,8 +408,8 @@
             <p class="text-xl text-white/90 text-center mb-16 max-w-3xl mx-auto">Elige el paquete que mejor se adapte a las necesidades de tu negocio</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto items-start">
-                <!-- Pack Boost -->
-                <div class="bg-gradient-to-br from-emerald-900/80 to-emerald-800/50 backdrop-blur-sm rounded-xl border border-emerald-500/20 overflow-hidden flex flex-col hover:border-emerald-400/30 transition-all duration-300">
+                {{-- Pack Boost --}}
+                {{-- <div class="bg-gradient-to-br from-emerald-900/80 to-emerald-800/50 backdrop-blur-sm rounded-xl border border-emerald-500/20 overflow-hidden flex flex-col hover:border-emerald-400/30 transition-all duration-300">
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-white text-center mb-2">
                             <span class="bg-gradient-to-r from-emerald-300 to-teal-300 text-transparent bg-clip-text">Pack Boost</span>
@@ -481,7 +481,7 @@
                             <span class="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-lg blur opacity-0 group-hover:opacity-30 transition-all duration-300"></span>
                         </a>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Web Start -->
                 <div class="bg-gradient-to-br from-blue-900/80 to-blue-800/50 backdrop-blur-sm rounded-xl border border-blue-500/20 overflow-hidden flex flex-col hover:border-blue-400/30 transition-all duration-300">

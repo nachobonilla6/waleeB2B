@@ -1871,15 +1871,31 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF - usar el servicio registrado
-        // Asegurar que el ServiceProvider esté cargado
-        if (!app()->bound('dompdf.wrapper')) {
-            $provider = new \Barryvdh\DomPDF\ServiceProvider(app());
-            $provider->register();
+        // Generar PDF - cargar clases explícitamente y crear instancia
+        // Cargar las clases necesarias manualmente
+        if (!class_exists('Dompdf\Dompdf')) {
+            require_once base_path('vendor/dompdf/dompdf/src/Dompdf.php');
+        }
+        if (!class_exists('Barryvdh\DomPDF\PDF')) {
+            require_once base_path('vendor/barryvdh/laravel-dompdf/src/PDF.php');
         }
         
-        // Usar el wrapper registrado
-        $pdf = app('dompdf.wrapper');
+        // Crear instancia de Dompdf directamente
+        $options = config('dompdf.options', []);
+        $dompdf = new \Dompdf\Dompdf($options);
+        $publicPath = realpath(public_path());
+        if ($publicPath === false) {
+            $publicPath = base_path('public');
+        }
+        $dompdf->setBasePath($publicPath);
+        
+        // Crear wrapper de PDF
+        $pdf = new \Barryvdh\DomPDF\PDF(
+            $dompdf,
+            app('config'),
+            app('files'),
+            app('view')
+        );
         $pdf->loadView('contratos.contrato-pdf', [
             'cliente' => $cliente,
             'servicio' => $validated['servicio'],

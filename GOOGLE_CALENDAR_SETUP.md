@@ -68,6 +68,45 @@ Si quieres que cualquier usuario pueda acceder:
 
 **Recomendación**: Para desarrollo/pruebas, usa la opción de agregar usuarios de prueba.
 
+## Resolver warnings de verificación del proyecto
+
+Si ves warnings en la página de "Verificación del proyecto", necesitas resolverlos:
+
+### 1. Verificación de la cuenta de facturación (Warning)
+
+**Problema**: "Tu app no tiene una cuenta de Facturación de Cloud asociada"
+
+**Solución**:
+1. Ve a **Billing** en Google Cloud Console
+2. Crea o vincula una cuenta de facturación
+3. **Nota**: Google ofrece créditos gratuitos, pero necesitas una tarjeta de crédito asociada
+4. Una vez vinculada, el warning debería desaparecer
+
+### 2. Contactos del proyecto (Warning)
+
+**Problema**: "Tu app no tiene la cantidad correcta de propietarios o editores de proyectos"
+
+**Solución**:
+1. Ve a **IAM & Admin** > **IAM** en Google Cloud Console
+2. Asegúrate de tener al menos:
+   - 1 propietario (Owner) del proyecto
+   - 1 editor (Editor) del proyecto (puede ser la misma persona)
+3. Si solo tienes 1 persona, agrégala con ambos roles:
+   - Rol: **Owner** (Propietario)
+   - Rol: **Editor** (Editor)
+4. Guarda los cambios
+
+### 3. Información de contacto (✅ Completado)
+
+Si ya tienes el check verde, esta parte está resuelta. Si no:
+1. Ve a **APIs & Services** > **OAuth consent screen**
+2. Completa todos los campos requeridos:
+   - Email de soporte
+   - Dominio de la aplicación
+   - Política de privacidad
+   - Términos de servicio
+3. Guarda los cambios
+
 ## Nota importante:
 
 - El token de acceso se guarda en `storage/app/google-calendar-token.json`

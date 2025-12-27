@@ -906,30 +906,58 @@
                         <div class="bg-gradient-to-br from-green-900/80 to-green-800/50 backdrop-blur-sm rounded-xl border border-green-500/20 overflow-hidden flex flex-col h-full hover:border-green-400/30 transition-all duration-300">
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-white text-center mb-2">
-                                    <span class="bg-gradient-to-r from-green-300 to-emerald-300 text-transparent bg-clip-text">Start Pub</span>
+                                    <span class="bg-gradient-to-r from-green-300 to-emerald-300 text-transparent bg-clip-text">😎 Pack Start Pub – Solución básica para presencia digital</span>
                                 </h3>
-                                <div class="text-center mb-6">
-                                    <div class="text-5xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">$50</div>
-                                    <div class="text-xl text-green-100/80">ó ₡25,000</div>
-                                    <div class="text-sm text-green-200/70 mt-1">Mensual</div>
-                                    <div class="text-sm text-green-200/70">ó $12.50 (₡6,250) una vez por semana</div>
+                                <div class="text-center mb-4">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
+                                    <div class="text-4xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">$50</div>
+                                    <div class="text-xl text-green-100/80">ó ₡25,000 mensual</div>
+                                    <div class="text-sm text-green-200/70 mt-1">O $12,50 / ₡6,250 por semana (opción flexible)</div>
                                 </div>
-                                <ul class="space-y-3 text-gray-300 text-base">
+                                <div class="mb-4 text-sm text-green-200/80 bg-green-900/30 p-3 rounded-lg border border-green-500/30">
+                                    <div class="font-semibold mb-1">Duración del contrato:</div>
+                                    <div>Mensual, <strong>renovación automática cada mes</strong>, salvo cancelación <strong>1 mes antes de la fecha de renovación</strong>.</div>
+                                    <div class="mt-2 font-semibold">Cambio de pack:</div>
+                                    <div>El cliente puede <strong>pasar inmediatamente a un pack superior</strong> en cualquier momento, sin esperar al próximo mes.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="text-lg font-bold text-green-300 mb-2">✅ Incluye</div>
+                                </div>
+                                <ul class="space-y-3 text-gray-300 text-sm">
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Creación o mejora de 2 redes sociales</span>
+                                        <span>Creación o mejora de <strong>2 redes sociales</strong>
+                                            <div class="text-xs text-green-200/70 mt-1 ml-7">Redes adicionales disponibles bajo solicitud y costo extra</div>
+                                        </span>
                                     </li>
-                                    
-
                                     <li class="flex items-start">
                                         <svg class="h-5 w-5 text-green-400 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span>Informe mensual básico</span>
+                                        <span><strong>Informe mensual básico</strong>, que incluye:
+                                            <div class="text-xs text-green-200/70 mt-1 ml-7">
+                                                • <strong>Nombre de publicaciones realizadas</strong>:
+                                                <div class="ml-4 mt-1">
+                                                    • <strong>4 a 8 publicaciones por red social por mes</strong>
+                                                    <div class="ml-4">Total aproximado: <strong>8 a 16 publicaciones al mes</strong> para las 2 redes sociales</div>
+                                                </div>
+                                                • Interacciones (me gusta, comentarios, compartidos)
+                                                • Seguidores ganados o perdidos
+                                            </div>
+                                        </span>
                                     </li>
                                 </ul>
+                                <div class="mt-4 text-sm text-green-200/80 bg-green-900/30 p-3 rounded-lg border border-green-500/30">
+                                    <div class="font-semibold text-green-300 mb-1">⚡ Observaciones</div>
+                                    <ul class="space-y-1 text-xs">
+                                        <li>• Ideal para emprendedores o pequeñas empresas que quieren <strong>comenzar a fortalecer su presencia digital</strong></li>
+                                        <li>• Contrato mensual con <strong>renovación automática</strong> para garantizar continuidad del servicio</li>
+                                        <li>• Posibilidad de <strong>subir a un pack superior en cualquier momento</strong></li>
+                                        <li>• Servicios adicionales (redes extras, publicaciones extra) se cotizan por separado</li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="mt-auto p-6 pt-0">
                                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdsWk9lIfWzssTZ_x8YPbGMU3-2Zhm6TVrAplkdVccBQ4SyoA/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="relative overflow-hidden group block w-full bg-gradient-to-r from-pink-600 via-orange-500 to-pink-600 text-white text-center font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-pink-500/30">

@@ -2944,7 +2944,7 @@ Route::post('/walee-chat', function (\Illuminate\Http\Request $request) {
             ->withHeaders([
                 'Content-Type' => 'application/json',
             ])
-            ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/4d4138cb-cfbc-4226-b4fa-83f068eb5db2', [
+            ->post('https://n8n.srv1137974.hstgr.cloud/webhook/4d4138cb-cfbc-4226-b4fa-83f068eb5db2', [
                 'message' => $userMessage,
                 'user_id' => $user?->id,
                 'history' => $history,

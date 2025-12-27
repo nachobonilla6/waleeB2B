@@ -102,6 +102,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let historyLoaded = false;
     let messagesLoaded = false;
 
+    // Función para hacer scroll al final
+    function scrollToBottom() {
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 50);
+    }
+
     // Función para agregar mensaje al chat
     function addMessage(text, sender = 'user', timestamp = null, skipScroll = false) {
         const messageDiv = document.createElement('div');
@@ -138,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         chatMessages.appendChild(messageDiv);
         if (!skipScroll) {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollToBottom();
         }
     }
 
@@ -168,10 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         addMessage(msg.message, sender, msg.created_at, true);
                     });
                     
-                    // Scroll al final después de cargar todos los mensajes
-                    setTimeout(() => {
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 100);
+                    // Scroll al final después de cargar todos los mensajes para mostrar los últimos
+                    scrollToBottom();
                     
                     messagesLoaded = true;
                 }
@@ -192,8 +197,31 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 if (!messagesLoaded) {
                     loadChatHistory();
+                } else {
+                    // Asegurar que se muestren los últimos mensajes al abrir
+                    scrollToBottom();
                 }
             }, 200);
+        });
+    }
+
+    // Observar cuando se abre la ventana del chat para hacer scroll al final
+    const chatWindow = document.querySelector('#walee-floating-chat [x-show]');
+    if (chatWindow) {
+        // Usar MutationObserver para detectar cuando se muestra
+        const observer = new MutationObserver(function() {
+            if (chatWindow.style.display !== 'none' && chatWindow.offsetParent !== null) {
+                setTimeout(() => {
+                    scrollToBottom();
+                }, 100);
+            }
+        });
+        
+        observer.observe(chatWindow, { 
+            attributes: true, 
+            attributeFilter: ['style', 'class'],
+            childList: false,
+            subtree: false
         });
     }
 
@@ -222,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         chatMessages.appendChild(typingIndicator);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        scrollToBottom();
 
         try {
             // Enviar mensaje al servidor (usando la ruta de chat existente)

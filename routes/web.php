@@ -1871,37 +1871,45 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar HTML del contrato
-        $htmlContent = view('contratos.contrato-pdf', [
-            'cliente' => $cliente,
-            'servicio' => $validated['servicio'],
-            'servicioNombre' => $servicioInfo['nombre'],
-            'servicioDescripcion' => $servicioInfo['descripcion'],
-            'precio' => $validated['precio'],
-        ])->render();
-
-        // Intentar generar PDF usando Dompdf si está disponible
-        $pdfPath = null;
-        $pdfFileName = null;
+        // Generar PDF del contrato - usar loadView directamente
+        $pdfFileName = 'Contrato_' . str_replace(' ', '_', $cliente->nombre_empresa) . '_' . now()->format('Ymd') . '.pdf';
+        $pdfPath = storage_path('app/temp/' . $pdfFileName);
         
+        // Asegurar que el directorio existe
+        if (!file_exists(storage_path('app/temp'))) {
+            mkdir(storage_path('app/temp'), 0755, true);
+        }
+        
+        // Generar PDF usando el facade con loadView
         try {
-            // Verificar si Dompdf está disponible usando el facade
-            if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
-                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($htmlContent);
-                $pdfFileName = 'Contrato_' . str_replace(' ', '_', $cliente->nombre_empresa) . '_' . now()->format('Ymd') . '.pdf';
-                $pdfPath = storage_path('app/temp/' . $pdfFileName);
-                
-                // Asegurar que el directorio existe
-                if (!file_exists(storage_path('app/temp'))) {
-                    mkdir(storage_path('app/temp'), 0755, true);
-                }
-                
-                // Guardar PDF
-                file_put_contents($pdfPath, $pdf->output());
-            }
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('contratos.contrato-pdf', [
+                'cliente' => $cliente,
+                'servicio' => $validated['servicio'],
+                'servicioNombre' => $servicioInfo['nombre'],
+                'servicioDescripcion' => $servicioInfo['descripcion'],
+                'precio' => $validated['precio'],
+            ]);
+            
+            // Guardar PDF
+            file_put_contents($pdfPath, $pdf->output());
         } catch (\Exception $e) {
-            // Si falla la generación de PDF, continuar sin adjunto
-            $pdfPath = null;
+            // Si el facade no funciona, intentar con el servicio directamente
+            if (!app()->bound('dompdf.wrapper')) {
+                $provider = new \Barryvdh\DomPDF\ServiceProvider(app());
+                $provider->register();
+            }
+            
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadView('contratos.contrato-pdf', [
+                'cliente' => $cliente,
+                'servicio' => $validated['servicio'],
+                'servicioNombre' => $servicioInfo['nombre'],
+                'servicioDescripcion' => $servicioInfo['descripcion'],
+                'precio' => $validated['precio'],
+            ]);
+            
+            // Guardar PDF
+            file_put_contents($pdfPath, $pdf->output());
         }
 
         // Preparar cuerpo del email
@@ -1916,27 +1924,23 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         $emailBody .= "Web Solutions - WALEÉ\n";
         $emailBody .= "websolutionscrnow@gmail.com";
 
-        // Enviar email con PDF adjunto si se generó, o con HTML en el cuerpo
-        \Illuminate\Support\Facades\Mail::send([], [], function ($message) use ($cliente, $pdfPath, $pdfFileName, $servicioInfo, $htmlContent, $emailBody) {
+        // Enviar email con PDF adjunto
+        if (!file_exists($pdfPath)) {
+            throw new \Exception('No se pudo generar el archivo PDF');
+        }
+
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($cliente, $pdfPath, $pdfFileName, $servicioInfo) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
                     ->to($cliente->correo)
-                    ->subject('Contrato de Servicios - ' . $servicioInfo['nombre']);
-            
-            if ($pdfPath && file_exists($pdfPath)) {
-                // Adjuntar PDF si se generó
-                $message->attach($pdfPath, [
-                    'as' => $pdfFileName,
-                    'mime' => 'application/pdf',
-                ]);
-                $message->setBody($emailBody, 'text/plain');
-            } else {
-                // Enviar HTML en el cuerpo si no hay PDF
-                $message->html($htmlContent);
-            }
+                    ->subject('Contrato de Servicios - ' . $servicioInfo['nombre'])
+                    ->attach($pdfPath, [
+                        'as' => $pdfFileName,
+                        'mime' => 'application/pdf',
+                    ]);
         });
 
         // Eliminar archivo temporal después de enviar
-        if ($pdfPath && file_exists($pdfPath)) {
+        if (file_exists($pdfPath)) {
             unlink($pdfPath);
         }
         

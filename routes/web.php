@@ -1871,8 +1871,9 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
         ];
 
-        // Generar PDF
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('contratos.contrato-pdf', [
+        // Generar PDF usando el helper app()
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('contratos.contrato-pdf', [
             'cliente' => $cliente,
             'servicio' => $validated['servicio'],
             'servicioNombre' => $servicioInfo['nombre'],
@@ -1888,8 +1889,8 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             mkdir(storage_path('app/temp'), 0755, true);
         }
         
-        // Guardar PDF temporalmente
-        $pdf->save($pdfPath);
+        // Guardar PDF temporalmente usando output()
+        file_put_contents($pdfPath, $pdf->output());
 
         // Enviar email con PDF adjunto
         $emailBody = "Estimado/a " . $cliente->nombre_empresa . ",\n\n";

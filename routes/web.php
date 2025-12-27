@@ -1812,6 +1812,36 @@ Route::get('/walee-facturas/{id}', function ($id) {
     return view('walee-factura-ver', compact('factura'));
 })->middleware(['auth'])->name('walee.factura.ver');
 
+// Herramientas - Enviar Contrato
+Route::get('/walee-herramientas/enviar-contrato', function () {
+    $clientes = \App\Models\Cliente::orderBy('nombre_empresa', 'asc')->get();
+    return view('walee-herramientas-enviar-contrato', compact('clientes'));
+})->middleware(['auth'])->name('walee.herramientas.enviar-contrato');
+
+Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Request $request) {
+    try {
+        $validated = $request->validate([
+            'cliente_id' => 'required|exists:clientes,id',
+            'servicio' => 'required|string',
+            'precio' => 'required|numeric|min:0',
+        ]);
+
+        // Aquí puedes agregar la lógica para enviar el contrato
+        // Por ejemplo, crear un registro, enviar un email, etc.
+        
+        return redirect()->route('walee.herramientas.enviar-contrato')
+            ->with('success', 'Contrato enviado correctamente');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return redirect()->back()
+            ->withErrors($e->errors())
+            ->withInput();
+    } catch (\Exception $e) {
+        return redirect()->back()
+            ->with('error', 'Error al enviar el contrato: ' . $e->getMessage())
+            ->withInput();
+    }
+})->middleware(['auth'])->name('walee.herramientas.enviar-contrato.post');
+
 // Enviar factura por email
 Route::post('/walee-facturas/{id}/enviar', function ($id) {
     try {

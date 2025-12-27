@@ -407,7 +407,7 @@
             <h2 class="text-5xl font-bold text-center mb-4 bg-gradient-to-r from-green-400 via-orange-400 to-red-400 bg-clip-text text-transparent">Nuestros Paquetes de Desarrollo Web</h2>
             <p class="text-xl text-white/90 text-center mb-16 max-w-3xl mx-auto">Elige el paquete que mejor se adapte a las necesidades de tu negocio</p>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto items-start">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
                 {{-- Pack Boost --}}
                 {{-- <div class="bg-gradient-to-br from-emerald-900/80 to-emerald-800/50 backdrop-blur-sm rounded-xl border border-emerald-500/20 overflow-hidden flex flex-col hover:border-emerald-400/30 transition-all duration-300">
                     <div class="p-6">

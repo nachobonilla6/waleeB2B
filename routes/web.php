@@ -26,6 +26,23 @@ Route::get('/storage/chat-audio/{filename}', function ($filename) {
         ->header('Cache-Control', 'public, max-age=3600');
 })->where('filename', '.*')->name('chat.audio');
 
+// Ruta para servir archivos de publicaciones (fallback si el symlink no existe)
+Route::get('/storage/publicaciones/{filename}', function ($filename) {
+    $path = storage_path('app/public/publicaciones/' . $filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    $file = file_get_contents($path);
+    $type = mime_content_type($path);
+    
+    return response($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Content-Length', filesize($path))
+        ->header('Cache-Control', 'public, max-age=31536000'); // Cache por 1 año
+})->where('filename', '.*')->name('storage.publicaciones');
+
 // Rutas de autenticación con Google
 Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');

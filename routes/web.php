@@ -2908,18 +2908,26 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
             $content .= "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
         }
         
-        // Obtener URL de la imagen - Asegurar URL absoluta usando Storage::url()
+        // Obtener URL de la imagen - Generar URL absoluta usando route()
         $imageUrl = $publicacion->image_url;
         if ($imageUrl) {
             // Si es una URL completa, solo asegurar HTTPS
             if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
                 $imageUrl = str_replace('http://', 'https://', $imageUrl);
             } else {
-                // Extraer el path relativo (sin /storage/)
-                $relativePath = str_replace('/storage/', '', $imageUrl);
-                $relativePath = str_replace('storage/', '', $relativePath);
-                // Usar Storage::url() para generar la URL correcta
-                $imageUrl = \Illuminate\Support\Facades\Storage::url($relativePath);
+                // Extraer el nombre del archivo de la URL
+                $filename = basename($imageUrl);
+                // Si no hay nombre de archivo, intentar extraer del path
+                if (empty($filename) || $filename === $imageUrl) {
+                    // Intentar extraer de diferentes formatos
+                    if (preg_match('/publicaciones\/([^\/]+)$/', $imageUrl, $matches)) {
+                        $filename = $matches[1];
+                    } else {
+                        $filename = basename(str_replace(['/storage/', 'storage/'], '', $imageUrl));
+                    }
+                }
+                // Generar URL usando route() para asegurar que funcione
+                $imageUrl = route('storage.publicaciones', ['filename' => $filename]);
                 // Asegurar HTTPS
                 $imageUrl = str_replace('http://', 'https://', $imageUrl);
             }

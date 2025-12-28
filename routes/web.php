@@ -2742,8 +2742,14 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             }
         }
         
-        // Guardar primera foto como image_url para compatibilidad
-        $imageUrl = !empty($fotosPaths) ? asset('storage/' . $fotosPaths[0]) : null;
+        // Guardar primera foto como image_url para compatibilidad - Usar URL absoluta HTTPS
+        $imageUrl = null;
+        if (!empty($fotosPaths)) {
+            $imagePath = 'storage/' . $fotosPaths[0];
+            $imageUrl = url($imagePath);
+            // Asegurar HTTPS
+            $imageUrl = str_replace('http://', 'https://', $imageUrl);
+        }
         
         // Usar el contenido como título si no hay título específico
         $title = $request->input('title') ?: substr($request->input('content'), 0, 100);

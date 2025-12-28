@@ -18,8 +18,11 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Allow direct access to storage files
+    # Allow direct access to storage files ONLY if the file exists physically
+    # If file doesn't exist, let Laravel handle it via route
     RewriteCond %{REQUEST_URI} ^/storage/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ - [L]
     
     # Send Requests To Front Controller...

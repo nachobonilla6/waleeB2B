@@ -27,24 +27,53 @@ Route::get('/storage/chat-audio/{filename}', function ($filename) {
 })->where('filename', '.*')->name('chat.audio');
 
 // Ruta para servir archivos de publicaciones (pública, sin autenticación)
+// Esta ruta debe estar ANTES de cualquier middleware que pueda bloquearla
 Route::get('/storage/publicaciones/{filename}', function ($filename) {
-    // Limpiar el nombre del archivo para seguridad
-    $filename = basename($filename);
-    $path = storage_path('app/public/publicaciones/' . $filename);
-    
-    if (!file_exists($path) || !is_file($path)) {
-        \Log::warning('Archivo de publicación no encontrado', ['path' => $path, 'filename' => $filename]);
-        abort(404, 'Archivo no encontrado');
+    try {
+        // Limpiar el nombre del archivo para seguridad (prevenir directory traversal)
+        $filename = basename($filename);
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename); // Solo permitir caracteres seguros
+        
+        $path = storage_path('app/public/publicaciones/' . $filename);
+        
+        \Log::info('Intentando servir archivo de publicación', [
+            'filename' => $filename,
+            'path' => $path,
+            'exists' => file_exists($path)
+        ]);
+        
+        if (!file_exists($path) || !is_file($path)) {
+            \Log::warning('Archivo de publicación no encontrado', [
+                'path' => $path,
+                'filename' => $filename,
+                'directory_exists' => is_dir(dirname($path)),
+                'directory_contents' => is_dir(dirname($path)) ? implode(', ', array_slice(scandir(dirname($path)), 0, 10)) : 'N/A'
+            ]);
+            abort(404, 'Archivo no encontrado: ' . $filename);
+        }
+        
+        $file = file_get_contents($path);
+        $type = mime_content_type($path) ?: 'image/jpeg';
+        
+        \Log::info('Archivo servido correctamente', [
+            'filename' => $filename,
+            'size' => filesize($path),
+            'type' => $type
+        ]);
+        
+        return response($file, 200)
+            ->header('Content-Type', $type)
+            ->header('Content-Length', filesize($path))
+            ->header('Cache-Control', 'public, max-age=31536000')
+            ->header('Access-Control-Allow-Origin', '*'); // Permitir acceso desde cualquier origen
+    } catch (\Exception $e) {
+        \Log::error('Error al servir archivo de publicación', [
+            'filename' => $filename ?? 'unknown',
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        abort(500, 'Error al servir archivo');
     }
-    
-    $file = file_get_contents($path);
-    $type = mime_content_type($path) ?: 'image/jpeg';
-    
-    return response($file, 200)
-        ->header('Content-Type', $type)
-        ->header('Content-Length', filesize($path))
-        ->header('Cache-Control', 'public, max-age=31536000')
-        ->header('Access-Control-Allow-Origin', '*'); // Permitir acceso desde cualquier origen
 })->where('filename', '.*')->name('storage.publicaciones');
 
 // Rutas de autenticación con Google

@@ -2791,10 +2791,14 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         try {
             $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
             
-            // Obtener URL pública de la primera imagen (si existe)
+            // Obtener URL pública de la primera imagen (si existe) - Asegurar URL absoluta
             $imageUrlPublic = null;
             if (!empty($fotosPaths) && !empty($fotosPaths[0])) {
-                $imageUrlPublic = asset('storage/' . $fotosPaths[0]);
+                $imagePath = 'storage/' . $fotosPaths[0];
+                // Generar URL absoluta completa
+                $imageUrlPublic = url($imagePath);
+                // Asegurar HTTPS
+                $imageUrlPublic = str_replace('http://', 'https://', $imageUrlPublic);
             }
             
             // Agregar link del sitio web al contenido para el webhook
@@ -2870,8 +2874,25 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
             $content .= "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
         }
         
-        // Obtener URL de la imagen
+        // Obtener URL de la imagen - Asegurar URL absoluta
         $imageUrl = $publicacion->image_url;
+        if ($imageUrl) {
+            // Si es una ruta relativa, convertir a URL absoluta
+            if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                // Si empieza con /storage/, usar url() directamente
+                if (strpos($imageUrl, '/storage/') === 0) {
+                    $imageUrl = url($imageUrl);
+                } elseif (strpos($imageUrl, 'storage/') === 0) {
+                    $imageUrl = url('/' . $imageUrl);
+                } elseif (strpos($imageUrl, '/') === 0) {
+                    $imageUrl = url($imageUrl);
+                } else {
+                    $imageUrl = url('/' . $imageUrl);
+                }
+                // Asegurar HTTPS
+                $imageUrl = str_replace('http://', 'https://', $imageUrl);
+            }
+        }
         
         // Enviar al webhook de n8n
         $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';

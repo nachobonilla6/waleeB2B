@@ -424,12 +424,21 @@
                             >
                         </div>
                         
-                        <button 
-                            type="submit"
-                            class="w-full px-6 py-3 rounded-xl bg-walee-500 hover:bg-walee-400 text-white font-medium transition-all"
-                        >
-                            Guardar
-                        </button>
+                        <div class="flex gap-3">
+                            <button 
+                                type="submit"
+                                class="flex-1 px-6 py-3 rounded-xl bg-walee-500 hover:bg-walee-400 text-white font-medium transition-all"
+                            >
+                                Guardar
+                            </button>
+                            <button 
+                                type="button"
+                                onclick="testWebhook()"
+                                class="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-medium transition-all"
+                            >
+                                Probar Webhook
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -747,6 +756,50 @@
             // LinkedIn share dialog - ahora mostrará la imagen y texto correctamente gracias a Open Graph
             const linkedInShareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
             window.open(linkedInShareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+        }
+
+        // Test Webhook
+        async function testWebhook() {
+            const testWebhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
+            
+            // Datos de prueba del cliente
+            const testData = {
+                cliente_id: {{ $cliente->id }},
+                cliente_nombre: '{{ addslashes($cliente->name) }}',
+                cliente_email: '{{ $cliente->email }}',
+                cliente_telefono: '{{ $cliente->telefono_1 ?? '' }}',
+                tipo: 'test',
+                mensaje: 'Prueba de webhook desde configuración del cliente',
+                timestamp: new Date().toISOString(),
+                url_origen: window.location.href
+            };
+            
+            try {
+                const response = await fetch(testWebhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const responseText = await response.text();
+                let responseData;
+                
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
+                    responseData = { raw: responseText };
+                }
+                
+                if (response.ok) {
+                    alert('✅ Webhook de prueba enviado correctamente\n\nRespuesta: ' + JSON.stringify(responseData, null, 2));
+                } else {
+                    alert('⚠️ Webhook respondió con error\n\nStatus: ' + response.status + '\nRespuesta: ' + JSON.stringify(responseData, null, 2));
+                }
+            } catch (error) {
+                alert('❌ Error al enviar webhook de prueba: ' + error.message);
+            }
         }
     </script>
     @include('partials.walee-support-button')

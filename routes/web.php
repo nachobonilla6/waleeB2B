@@ -2742,11 +2742,11 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             }
         }
         
-        // Guardar primera foto como image_url para compatibilidad - Usar URL absoluta HTTPS
+        // Guardar primera foto como image_url para compatibilidad - Usar Storage::url() para URL correcta
         $imageUrl = null;
         if (!empty($fotosPaths)) {
-            $imagePath = 'storage/' . $fotosPaths[0];
-            $imageUrl = url($imagePath);
+            // Usar Storage::url() que genera la URL correcta según la configuración
+            $imageUrl = \Illuminate\Support\Facades\Storage::url($fotosPaths[0]);
             // Asegurar HTTPS
             $imageUrl = str_replace('http://', 'https://', $imageUrl);
         }
@@ -2797,12 +2797,11 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         try {
             $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
             
-            // Obtener URL pública de la primera imagen (si existe) - Asegurar URL absoluta
+            // Obtener URL pública de la primera imagen (si existe) - Usar Storage::url()
             $imageUrlPublic = null;
             if (!empty($fotosPaths) && !empty($fotosPaths[0])) {
-                $imagePath = 'storage/' . $fotosPaths[0];
-                // Generar URL absoluta completa
-                $imageUrlPublic = url($imagePath);
+                // Usar Storage::url() que genera la URL correcta según la configuración
+                $imageUrlPublic = \Illuminate\Support\Facades\Storage::url($fotosPaths[0]);
                 // Asegurar HTTPS
                 $imageUrlPublic = str_replace('http://', 'https://', $imageUrlPublic);
             }

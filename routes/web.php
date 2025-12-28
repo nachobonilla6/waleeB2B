@@ -2789,7 +2789,7 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         
         // Enviar webhook a n8n con texto e imagen URL pública
         try {
-            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/692835c7-0e6a-4535-8d20-7b385a9a66ca';
+            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
             
             // Obtener URL pública de la primera imagen (si existe)
             $imageUrlPublic = null;

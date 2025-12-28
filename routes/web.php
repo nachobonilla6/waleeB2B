@@ -2818,13 +2818,21 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         try {
             $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
             
-            // Obtener URL pública de la primera imagen (si existe) - Usar Storage::url()
+            // Obtener URL pública de la primera imagen (si existe) - Generar URL absoluta correcta
             $imageUrlPublic = null;
             if (!empty($fotosPaths) && !empty($fotosPaths[0])) {
-                // Usar Storage::url() que genera la URL correcta según la configuración
-                $imageUrlPublic = \Illuminate\Support\Facades\Storage::url($fotosPaths[0]);
+                // Extraer solo el nombre del archivo
+                $filename = basename($fotosPaths[0]);
+                // Generar URL absoluta usando route() para asegurar que funcione
+                $imageUrlPublic = route('storage.publicaciones', ['filename' => $filename]);
                 // Asegurar HTTPS
                 $imageUrlPublic = str_replace('http://', 'https://', $imageUrlPublic);
+                
+                \Log::info('URL de imagen generada para webhook', [
+                    'filename' => $filename,
+                    'url' => $imageUrlPublic,
+                    'path' => $fotosPaths[0]
+                ]);
             }
             
             // Agregar link del sitio web al contenido para el webhook

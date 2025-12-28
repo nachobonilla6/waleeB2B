@@ -2763,11 +2763,13 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             }
         }
         
-        // Guardar primera foto como image_url para compatibilidad - Usar Storage::url() para URL correcta
+        // Guardar primera foto como image_url para compatibilidad - Usar route() para URL correcta
         $imageUrl = null;
         if (!empty($fotosPaths)) {
-            // Usar Storage::url() que genera la URL correcta según la configuración
-            $imageUrl = \Illuminate\Support\Facades\Storage::url($fotosPaths[0]);
+            // Extraer solo el nombre del archivo
+            $filename = basename($fotosPaths[0]);
+            // Generar URL absoluta usando route() para asegurar que funcione
+            $imageUrl = route('storage.publicaciones', ['filename' => $filename]);
             // Asegurar HTTPS
             $imageUrl = str_replace('http://', 'https://', $imageUrl);
         }

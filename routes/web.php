@@ -2987,7 +2987,7 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
         }
         
         // Enviar al webhook de n8n
-        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca';
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/692835c7-0e6a-4535-8d20-7b385a9a66ca';
         
         $webhookData = [
             'texto' => $content,

@@ -76,6 +76,28 @@ Route::get('/storage/publicaciones/{filename}', function ($filename) {
     }
 })->where('filename', '.*')->name('storage.publicaciones');
 
+// Ruta de prueba para verificar que los archivos existen
+Route::get('/test-storage', function () {
+    $publicacionesPath = storage_path('app/public/publicaciones');
+    $files = [];
+    
+    if (is_dir($publicacionesPath)) {
+        $files = array_slice(scandir($publicacionesPath), 2); // Remove . and ..
+        $files = array_filter($files, function($file) use ($publicacionesPath) {
+            return is_file($publicacionesPath . '/' . $file);
+        });
+    }
+    
+    return response()->json([
+        'storage_path' => $publicacionesPath,
+        'directory_exists' => is_dir($publicacionesPath),
+        'files_count' => count($files),
+        'files' => array_values($files),
+        'symlink_exists' => is_link(public_path('storage')),
+        'symlink_target' => is_link(public_path('storage')) ? readlink(public_path('storage')) : null,
+    ]);
+})->name('test.storage');
+
 // Rutas de autenticación con Google
 Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->name('auth.google.callback');

@@ -211,7 +211,8 @@
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">🤖</div>
-                        <h3 class="text-xl font-bold mb-3 text-white">Alpha</h3>
+                        <h3 class="text-xl font-bold mb-1 text-white">Alpha</h3>
+                        <p class="text-white/70 text-sm mb-3 italic">El que contacta clientes</p>
                         <p class="text-white/80 text-sm">Bot que busca clientes y contacta de manera automatizada, identificando oportunidades de negocio y estableciendo comunicación inicial con prospectos.</p>
                     </div>
                 </div>
@@ -220,7 +221,8 @@
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">💬</div>
-                        <h3 class="text-xl font-bold mb-3 text-white">Elza</h3>
+                        <h3 class="text-xl font-bold mb-1 text-white">Elza</h3>
+                        <p class="text-white/70 text-sm mb-3 italic">Marketing y publicidad</p>
                         <p class="text-white/80 text-sm">Bot de marketing y publicidad con rol de empresa, gestiona estrategias de promoción, campañas publicitarias y comunicación corporativa de manera profesional.</p>
                     </div>
                 </div>
@@ -229,7 +231,8 @@
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">⚡</div>
-                        <h3 class="text-xl font-bold mb-3 text-white">Memphis</h3>
+                        <h3 class="text-xl font-bold mb-1 text-white">Memphis</h3>
+                        <p class="text-white/70 text-sm mb-3 italic">Vendedor comercial</p>
                         <p class="text-white/80 text-sm">Vendedor comercial especializado en cerrar ventas, gestionar negociaciones y convertir leads en clientes satisfechos.</p>
                     </div>
                 </div>

@@ -1432,7 +1432,7 @@
                     
                     <!-- Facebook -->
                     <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1hwf81TGukBQPipbMl5cExG1fWbuKEfeucA&s" alt="Facebook" class="w-full h-full object-contain transition duration-300">
+                        <img src="https://img.freepik.com/psd-premium/logotipo-facebook-circulo-azul_705838-12823.jpg?semt=ais_hybrid&w=740&q=80" alt="Facebook" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Instagram -->
@@ -1503,7 +1503,7 @@
                     
                     <!-- Facebook -->
                     <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1hwf81TGukBQPipbMl5cExG1fWbuKEfeucA&s" alt="Facebook" class="w-full h-full object-contain transition duration-300">
+                        <img src="https://img.freepik.com/psd-premium/logotipo-facebook-circulo-azul_705838-12823.jpg?semt=ais_hybrid&w=740&q=80" alt="Facebook" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Instagram -->

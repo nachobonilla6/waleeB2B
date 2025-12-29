@@ -222,7 +222,7 @@
                     <div class="text-center">
                         <div class="text-5xl mb-3">💬</div>
                         <h3 class="text-xl font-bold mb-1 text-white">Elza</h3>
-                        <p class="text-white/70 text-sm mb-3 italic">Marketing y publicidad</p>
+                        <p class="text-white/70 text-sm mb-3 italic">Responsable del Marketing y publicidad</p>
                         <p class="text-white/80 text-sm">Marketing y publicidad con rol de empresa, gestiona estrategias de promoción, campañas publicitarias y comunicación corporativa de manera profesional.</p>
                     </div>
                 </div>
@@ -232,7 +232,7 @@
                     <div class="text-center">
                         <div class="text-5xl mb-3">⚡</div>
                         <h3 class="text-xl font-bold mb-1 text-white">Memphis</h3>
-                        <p class="text-white/70 text-sm mb-3 italic">Vendedor comercial</p>
+                        <p class="text-white/70 text-sm mb-3 italic">Responsable de ventas</p>
                         <p class="text-white/80 text-sm">Vendedor comercial especializado en cerrar ventas, gestionar negociaciones y convertir leads en clientes satisfechos.</p>
                     </div>
                 </div>

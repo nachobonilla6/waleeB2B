@@ -2264,6 +2264,11 @@ Route::get('/walee-cliente/{id}/settings', function ($id) {
     return view('walee-cliente-settings', compact('cliente'));
 })->middleware(['auth'])->name('walee.cliente.settings');
 
+// Ruta para Walee WhatsApp
+Route::get('/walee-whatsapp', function () {
+    return view('walee-whatsapp');
+})->middleware(['auth'])->name('walee.whatsapp');
+
 Route::get('/walee-facebook/clientes', function (\Illuminate\Http\Request $request) {
         // Estadísticas de publicaciones
         $totalPublicaciones = \App\Models\Post::count();

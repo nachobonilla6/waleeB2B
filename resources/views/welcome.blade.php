@@ -1416,8 +1416,8 @@
                     </div>
                     
                     <!-- Google -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://play-lh.googleusercontent.com/NN8G4Xc03GSv2_Tu-icuoeOwSo1xoZ4ouzUl24fVlwm5OeIAo7gV0zS1dVRWgCay-BU" alt="Google" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Figma -->
@@ -1492,8 +1492,8 @@
                     </div>
                     
                     <!-- Google -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://play-lh.googleusercontent.com/NN8G4Xc03GSv2_Tu-icuoeOwSo1xoZ4ouzUl24fVlwm5OeIAo7gV0zS1dVRWgCay-BU" alt="Google" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Figma -->

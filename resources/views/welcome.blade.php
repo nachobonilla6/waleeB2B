@@ -1013,8 +1013,7 @@
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
-                                    <div class="text-4xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">$50</div>
-                                    <div class="text-xl text-green-100/80">ó ₡25,000 mensual</div>
+                                    <div class="text-4xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">$50 <span class="text-xl">(₡25,000 mensual)</span></div>
                                     <div class="text-sm text-green-200/70 mt-1">O $12,50 / ₡6,250 por semana (opción flexible)</div>
                                 </div>
                                 <div class="mb-4 text-sm text-green-200/80 bg-green-900/30 p-3 rounded-lg border border-green-500/30">
@@ -1087,8 +1086,7 @@
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
-                                    <div class="text-4xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent">$150</div>
-                                    <div class="text-xl text-orange-100/80">ó ₡75,000 mensual</div>
+                                    <div class="text-4xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent">$150 <span class="text-xl">(₡75,000 mensual)</span></div>
                                     <div class="text-sm text-orange-200/70 mt-1">(37$/sem)</div>
                                 </div>
                                 <div class="mb-4 text-sm text-orange-200/80 bg-orange-900/30 p-3 rounded-lg border border-orange-500/30">
@@ -1184,8 +1182,7 @@
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
-                                    <div class="text-4xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent">$250</div>
-                                    <div class="text-xl text-red-100/80">ó ₡125,000 mensual</div>
+                                    <div class="text-4xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent">$250 <span class="text-xl">(₡125,000 mensual)</span></div>
                                     <div class="text-sm text-red-200/70 mt-1">A partir de (precio final varía según alcance y necesidades)</div>
                                 </div>
                                 <div class="mb-4 text-sm text-red-200/80 bg-red-900/30 p-3 rounded-lg border border-red-500/30">

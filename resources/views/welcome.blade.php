@@ -1437,12 +1437,12 @@
                     
                     <!-- Instagram -->
                     <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-cover rounded-full transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz4TqvVsgzZYxIF_V4MtjYN9rdqgyG-yDUQw&s" alt="Instagram" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Canva -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://public.canva.site/logo/media/dfb96cc174513093cd6ed61489ccb750.svg" alt="Canva" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- TikTok -->
@@ -1508,12 +1508,12 @@
                     
                     <!-- Instagram -->
                     <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-cover rounded-full transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz4TqvVsgzZYxIF_V4MtjYN9rdqgyG-yDUQw&s" alt="Instagram" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Canva -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://public.canva.site/logo/media/dfb96cc174513093cd6ed61489ccb750.svg" alt="Canva" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- TikTok -->

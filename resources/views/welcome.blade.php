@@ -89,16 +89,10 @@
                 Servicios profesionales en <span class="font-bold">Español</span>, <span class="font-bold">English</span> y <span class="font-bold">Français</span>
             </p>
             <div class="flex flex-wrap justify-center gap-4 mb-8">
-                <span class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center">
-                    <span>Desarrollo</span>
-                    <span class="text-sm">AI</span>
-                </span>
+                <span class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Desarrollo AI</span>
                 <span class="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">AI & Bots</span>
                 <span class="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">WhatsApp AI</span>
-                <span class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center">
-                    <span>Tiendas en Línea</span>
-                    <span class="text-sm">AI</span>
-                </span>
+                <span class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Tiendas en Línea AI</span>
                 <span class="px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" style="background-color: #2496B8;">Software AI</span>
             </div>
             <div class="flex justify-center mb-12">

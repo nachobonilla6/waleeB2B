@@ -47,12 +47,12 @@
         .ribbon {
             position: absolute;
             top: 20px;
-            right: -30px;
+            right: -40px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 8px 40px;
+            padding: 12px 60px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 20px;
             transform: rotate(45deg);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             z-index: 20;
@@ -60,23 +60,23 @@
         .ribbon::before {
             content: '';
             position: absolute;
-            left: -10px;
+            left: -15px;
             top: 0;
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 0 10px 20px 0;
+            border-width: 0 15px 30px 0;
             border-color: transparent #059669 transparent transparent;
         }
         .ribbon::after {
             content: '';
             position: absolute;
-            right: -10px;
+            right: -15px;
             top: 0;
             width: 0;
             height: 0;
             border-style: solid;
-            border-width: 0 0 20px 10px;
+            border-width: 0 0 30px 15px;
             border-color: transparent transparent #059669 transparent;
         }
         

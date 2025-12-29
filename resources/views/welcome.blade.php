@@ -47,7 +47,7 @@
         .ribbon {
             position: absolute;
             top: 20px;
-            right: -40px;
+            right: -30px;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 12px 60px;

@@ -1015,7 +1015,7 @@
                                     <div class="text-3xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
                                     <div class="text-4xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent">$50 <span class="text-xl">(₡25,000 mensual)</span></div>
                                     <div class="text-sm text-green-200/70 mt-1">(12.50$/sem)</div>
-                                    <div class="text-sm text-green-200/70">(₡6,250/sem)</div>
+                                    <div class="text-sm text-green-200/70">(₡6,250)</div>
                                 </div>
                                 <div class="mb-4 text-sm text-green-200/80 bg-green-900/30 p-3 rounded-lg border border-green-500/30">
                                     <div class="font-semibold mb-1">Duración del contrato:</div>
@@ -1088,7 +1088,7 @@
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
                                     <div class="text-4xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent">$150 <span class="text-xl">(₡75,000 mensual)</span></div>
-                                    <div class="text-sm text-orange-200/70 mt-1">(37$)</div>
+                                    <div class="text-sm text-orange-200/70 mt-1">(37$/sem)</div>
                                     <div class="text-sm text-orange-200/70">(₡18,500)</div>
                                 </div>
                                 <div class="mb-4 text-sm text-orange-200/80 bg-orange-900/30 p-3 rounded-lg border border-orange-500/30">

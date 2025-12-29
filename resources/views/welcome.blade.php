@@ -206,9 +206,9 @@
                 <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">Bots y Automatizaciones</h2>
                 <p class="text-lg text-white/90">Soluciones inteligentes para servicio al cliente</p>
             </div>
-            <div class="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-16 max-w-7xl mx-auto">
                 <!-- Bot 1 -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">🤖</div>
                         <h3 class="text-xl font-bold mb-3 text-white">Bot 1</h3>
@@ -217,7 +217,7 @@
                 </div>
                 
                 <!-- Bot 2 -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">💬</div>
                         <h3 class="text-xl font-bold mb-3 text-white">Bot 2</h3>
@@ -226,7 +226,7 @@
                 </div>
                 
                 <!-- Bot 3 -->
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">⚡</div>
                         <h3 class="text-xl font-bold mb-3 text-white">Bot 3</h3>

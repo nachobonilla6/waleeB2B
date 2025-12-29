@@ -49,7 +49,8 @@
         .whatsapp-container {
             display: flex;
             flex: 1;
-            max-width: 1600px;
+            max-width: 95%;
+            width: 100%;
             margin: 0 auto;
             background: #fff;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);

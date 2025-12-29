@@ -199,46 +199,39 @@
         </div>
     </section>
 
-    <!-- CTA Section - Bots y Automatizaciones -->
-    <section class="py-16 relative overflow-hidden" style="background: linear-gradient(135deg, #C54267 0%, #8B2E4A 50%, #C54267 100%);">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-10 left-10 text-6xl">🤖</div>
-            <div class="absolute top-32 right-20 text-5xl">💬</div>
-            <div class="absolute bottom-20 left-1/4 text-4xl">⚡</div>
-            <div class="absolute bottom-32 right-1/3 text-5xl">✨</div>
-        </div>
+    <!-- Section - Bots y Automatizaciones -->
+    <section class="py-8 relative overflow-hidden" style="background: linear-gradient(135deg, #C54267 0%, #8B2E4A 50%, #C54267 100%);">
         <div class="container mx-auto px-6 relative z-10">
-            <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-8">
-                    <div class="inline-block mb-4">
-                        <span class="text-6xl">🤖</span>
-                    </div>
-                    <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">¿Listo para automatizar tu servicio al cliente?</h2>
-                    <p class="text-xl md:text-2xl text-white/90 mb-6">Bots y automatizaciones inteligentes que mejoran la experiencia de tus clientes 24/7</p>
-                </div>
-                <div class="grid md:grid-cols-3 gap-4 mb-8 text-center">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="text-3xl mb-2">⏰</div>
-                        <p class="text-white font-semibold">Disponible 24/7</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="text-3xl mb-2">🚀</div>
-                        <p class="text-white font-semibold">Respuesta Instantánea</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                        <div class="text-3xl mb-2">💡</div>
-                        <p class="text-white font-semibold">IA Inteligente</p>
+            <div class="text-center mb-6">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">Bots y Automatizaciones</h2>
+                <p class="text-lg text-white/90">Soluciones inteligentes para servicio al cliente</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <!-- Bot 1 -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="text-5xl mb-3">🤖</div>
+                        <h3 class="text-xl font-bold mb-3 text-white">Bot 1</h3>
+                        <p class="text-white/80 text-sm">Bot inteligente diseñado para atención al cliente automatizada, responde consultas frecuentes y gestiona solicitudes básicas de manera eficiente.</p>
                     </div>
                 </div>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="mailto:info@websolutions.work" class="bg-white text-[#C54267] px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition transform hover:scale-105 shadow-lg flex items-center gap-2">
-                        <span>📧</span>
-                        <span>Solicitar Cotización</span>
-                    </a>
-                    <a href="tel:+50689681451" class="bg-transparent border-2 border-white px-8 py-4 rounded-xl text-lg font-semibold text-white hover:bg-white hover:text-[#C54267] transition transform hover:scale-105 flex items-center gap-2 shadow-lg">
-                        <span>📞</span>
-                        <span>Contáctanos</span>
-                    </a>
+                
+                <!-- Bot 2 -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="text-5xl mb-3">💬</div>
+                        <h3 class="text-xl font-bold mb-3 text-white">Bot 2</h3>
+                        <p class="text-white/80 text-sm">Bot especializado en comunicación por WhatsApp, gestiona conversaciones, agenda citas y proporciona información en tiempo real a tus clientes.</p>
+                    </div>
+                </div>
+                
+                <!-- Bot 3 -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="text-5xl mb-3">⚡</div>
+                        <h3 class="text-xl font-bold mb-3 text-white">Bot 3</h3>
+                        <p class="text-white/80 text-sm">Bot avanzado con IA para procesamiento de pedidos, seguimiento de envíos y resolución de problemas complejos de manera autónoma.</p>
+                    </div>
                 </div>
             </div>
         </div>

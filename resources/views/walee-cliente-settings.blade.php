@@ -394,7 +394,7 @@
                                 type="url" 
                                 name="webhook_url" 
                                 id="webhook_url"
-                                value="{{ $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/b49d53b6-445b-4176-a99b-421733000066' }}"
+                                value="{{ $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook-test/692835c7-0e6a-4535-8d20-7b385a9a66ca' }}"
                                 placeholder="https://ejemplo.com/webhook"
                                 class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
                             >

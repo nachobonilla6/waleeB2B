@@ -1006,7 +1006,10 @@
                         <div class="bg-gradient-to-br from-green-900/80 to-green-800/50 backdrop-blur-sm rounded-xl border border-green-500/20 overflow-hidden flex flex-col h-full hover:border-green-400/30 transition-all duration-300">
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-white text-center mb-2">
-                                    <span class="bg-gradient-to-r from-green-300 to-emerald-300 text-transparent bg-clip-text">😎 Pack Start Pub – Solución básica para presencia digital</span>
+                                    <div class="bg-gradient-to-r from-green-300 to-emerald-300 text-transparent bg-clip-text">
+                                        <div>😎 Pack Start Pub</div>
+                                        <div class="text-lg">Solución básica para presencia digital</div>
+                                    </div>
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-green-300 to-emerald-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
@@ -1077,7 +1080,10 @@
                             </div>
                             <div class="p-6 pt-16">
                                 <h3 class="text-xl font-bold text-white text-center mb-2">
-                                    <span class="bg-gradient-to-r from-orange-300 to-amber-300 text-transparent bg-clip-text">💫 Pack Pop Pub – Solución completa para presencia digital</span>
+                                    <div class="bg-gradient-to-r from-orange-300 to-amber-300 text-transparent bg-clip-text">
+                                        <div>💫 Pack Pop Pub</div>
+                                        <div class="text-lg">Solución completa para presencia digital</div>
+                                    </div>
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
@@ -1171,7 +1177,10 @@
                         <div class="bg-gradient-to-br from-red-900/80 to-red-800/50 backdrop-blur-sm rounded-xl border border-red-500/20 overflow-hidden flex flex-col h-full hover:border-red-400/30 transition-all duration-300">
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-white text-center mb-2">
-                                    <span class="bg-gradient-to-r from-red-300 to-pink-300 text-transparent bg-clip-text">🤍 Pack Full Pub – Solución premium para presencia digital</span>
+                                    <div class="bg-gradient-to-r from-red-300 to-pink-300 text-transparent bg-clip-text">
+                                        <div>🤍 Pack Full Pub</div>
+                                        <div class="text-lg">Solución premium para presencia digital</div>
+                                    </div>
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent mb-1">💰 Precio</div>

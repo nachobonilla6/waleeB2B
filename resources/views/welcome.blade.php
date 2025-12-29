@@ -526,10 +526,11 @@
                         </h3>
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
-                            <div class="text-4xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">$100 <span class="text-xl">(₡50,000)</span></div>
-                            <div class="text-sm text-blue-200/70 mt-1">Setup inicial</div>
-                            <div class="text-sm text-blue-200/70 mt-2">Abono mensual de mantenimiento despues de los 3 meses de oferta .</div>
-                            <div class="text-lg font-semibold text-blue-200/90 mt-1">$14 / ₡7,000</div>
+                            <div class="text-4xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">$149 <span class="text-xl">(₡75,000)</span></div>
+                            <div class="text-sm text-blue-200/70 mt-1">Setup inicial:</div>
+                            <div class="text-lg font-semibold text-blue-200/90 mt-1">👉 $149 / ₡75.000</div>
+                            <div class="text-sm text-blue-200/70 mt-2">Mantenimiento mensual (desde mes 4):</div>
+                            <div class="text-lg font-semibold text-blue-200/90 mt-1">👉 $19 / ₡10.000</div>
                         </div>
                         <div class="mb-4 text-sm text-blue-200/80 bg-blue-900/30 p-3 rounded-lg border border-blue-500/30">
                             <div class="font-semibold mb-1">Duración del contrato:</div>

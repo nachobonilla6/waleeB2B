@@ -92,7 +92,7 @@
                 <span class="bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Diseño Web</span>
                 <span class="bg-gradient-to-r from-green-500 to-teal-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Desarrollo</span>
                 <span class="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">AI & Bots</span>
-                <span class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Mensajería</span>
+                <span class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">WhatsApp</span>
                 <span class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">Tiendas en Línea</span>
                 <span class="px-6 py-3 rounded-full text-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" style="background-color: #2496B8;">Software</span>
             </div>
@@ -185,8 +185,8 @@
     
     <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 rounded-2xl shadow-2xl hover:shadow-indigo-500/50 transition transform hover:scale-105">
         <div class="text-5xl mb-3">💬</div>
-        <h3 class="text-xl font-bold mb-3">Mensajería AI</h3>
-        <p class="text-indigo-100 text-sm">Comunicación efectiva con tus clientes.</p>
+        <h3 class="text-xl font-bold mb-3">WhatsApp AI</h3>
+        <p class="text-indigo-100 text-sm">Comunicación efectiva con tus clientes por WhatsApp.</p>
     </div>
 
     <div class="bg-gradient-to-br from-green-600 to-emerald-800 p-6 rounded-2xl shadow-2xl hover:shadow-green-500/50 transition transform hover:scale-105">

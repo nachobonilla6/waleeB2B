@@ -2835,7 +2835,7 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
         $whatsappNumber = $cliente->telefono_1 ?? $cliente->telefono_2 ?? null;
         
         // Agregar link a velasportfishingandtours.com siempre
-        $websiteLink = "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+        $websiteLink = "\n\nBook now: https://www.velasportfishingandtours.com/";
         
         // Preparar contenido con botón de WhatsApp para guardar en BD
         $contentWithWhatsApp = $contentOriginal . $websiteLink;
@@ -2889,7 +2889,7 @@ Route::post('/walee-cliente/{id}/publicaciones', function (\Illuminate\Http\Requ
             }
             
             // Agregar link del sitio web al contenido para el webhook
-            $contentWithLink = $contentOriginal . "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+            $contentWithLink = $contentOriginal . "\n\nBook now: https://www.velasportfishingandtours.com/";
             
             // Preparar datos para el webhook
             $webhookData = [
@@ -2958,7 +2958,7 @@ Route::post('/walee-cliente/{id}/publicaciones/{publicacion_id}/republicar', fun
         
         // Asegurar que el contenido tenga el link del sitio web
         if (strpos($content, 'velasportfishingandtours.com') === false) {
-            $content .= "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+            $content .= "\n\nBook now: https://www.velasportfishingandtours.com/";
         }
         
         // Obtener URL de la imagen - Generar URL absoluta usando route()

@@ -119,7 +119,7 @@
                     
                     // Asegurar que tenga el link del sitio web
                     if (strpos($cleanContent, 'velasportfishingandtours.com') === false) {
-                        $cleanContent .= "\n\n🌐 Más información: https://www.velasportfishingandtours.com/";
+                        $cleanContent .= "\n\nBook now: https://www.velasportfishingandtours.com/";
                     }
                     
                     echo nl2br(e($cleanContent));

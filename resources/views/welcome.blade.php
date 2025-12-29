@@ -44,6 +44,42 @@
             animation-play-state: paused;
         }
         
+        .ribbon {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 8px 40px;
+            font-weight: bold;
+            font-size: 14px;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            z-index: 20;
+        }
+        .ribbon::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 10px 20px 0;
+            border-color: transparent #059669 transparent transparent;
+        }
+        .ribbon::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 20px 10px;
+            border-color: transparent transparent #059669 transparent;
+        }
+        
         .glass {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -135,7 +171,10 @@
             
             <!-- Software para tu Negocio - Hero Section -->
             <div class="mb-16 w-full relative overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 text-white py-16 px-6 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 text-white py-16 px-6 rounded-3xl shadow-2xl relative overflow-visible">
+                    <!-- Ribbon con soporte -->
+                    <div class="ribbon">CON SOPORTE</div>
+                    
                     <!-- Background Pattern -->
                     <div class="absolute inset-0 opacity-10">
                         <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>

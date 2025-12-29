@@ -206,7 +206,7 @@
                 <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">Bots y Automatizaciones</h2>
                 <p class="text-lg text-white/90">Soluciones inteligentes para servicio al cliente</p>
             </div>
-            <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
                 <!-- Bot 1 -->
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">

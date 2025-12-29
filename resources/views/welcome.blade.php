@@ -1184,7 +1184,10 @@
                                 </h3>
                                 <div class="text-center mb-4">
                                     <div class="text-3xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
+                                    <div class="text-sm text-red-200/70 mb-1">A partir de</div>
                                     <div class="text-4xl font-bold bg-gradient-to-r from-red-300 to-pink-300 bg-clip-text text-transparent">$250 <span class="text-xl">(₡125,000 mensual)</span></div>
+                                    <div class="text-sm text-red-200/70 mt-1">(62.50$/sem)</div>
+                                    <div class="text-sm text-red-200/70">(₡31,250)</div>
                                 </div>
                                 <div class="mb-4 text-sm text-red-200/80 bg-red-900/30 p-3 rounded-lg border border-red-500/30">
                                     <div class="font-semibold mb-1">Duración del contrato:</div>

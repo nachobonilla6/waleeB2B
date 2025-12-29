@@ -527,7 +527,7 @@
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
                             <div class="text-4xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent">$149 <span class="text-xl">(₡75,000)</span></div>
-                            <div class="text-sm text-blue-200/70 mt-2">Mantenimiento mensual (desde mes 4):</div>
+                            <div class="text-sm text-blue-200/70 mt-2">Abono mensual (después del tercer mes):</div>
                             <div class="text-lg font-semibold text-blue-200/90 mt-1">👉 $19 / ₡10.000</div>
                         </div>
                         <div class="mb-4 text-sm text-blue-200/80 bg-blue-900/30 p-3 rounded-lg border border-blue-500/30">
@@ -643,7 +643,7 @@
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
                             <div class="text-4xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent">$249 <span class="text-xl">(₡125,000)</span></div>
-                            <div class="text-sm text-purple-200/70 mt-2">Abono mensual (desde mes 4):</div>
+                            <div class="text-sm text-purple-200/70 mt-2">Abono mensual (después del tercer mes):</div>
                             <div class="text-lg font-semibold text-purple-200/90 mt-1">👉 $25 / ₡13.000</div>
                         </div>
                         <div class="mb-4 text-sm text-purple-200/80 bg-purple-900/30 p-3 rounded-lg border border-purple-500/30">

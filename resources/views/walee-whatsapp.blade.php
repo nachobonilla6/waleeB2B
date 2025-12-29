@@ -34,17 +34,28 @@
             padding: 0;
             height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
         }
         
         .whatsapp-container {
             display: flex;
-            height: calc(100vh - 80px);
+            flex: 1;
             max-width: 1600px;
             margin: 0 auto;
             background: #fff;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border-radius: 12px;
             overflow: hidden;
+            min-height: 0;
         }
         
         .dark .whatsapp-container {
@@ -480,11 +491,12 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 flex flex-col h-full min-h-0">
             @php $pageTitle = 'WhatsApp'; @endphp
             @include('partials.walee-navbar')
             
-            <div class="whatsapp-container">
+            <div class="main-content">
+                <div class="whatsapp-container">
                 <!-- Sidebar de conversaciones -->
                 <div class="conversations-sidebar">
                     <div class="sidebar-header">
@@ -613,6 +625,7 @@
                         </button>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>

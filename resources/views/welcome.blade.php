@@ -522,7 +522,10 @@
                 <div class="bg-gradient-to-br from-blue-900/80 to-blue-800/50 backdrop-blur-sm rounded-xl border border-blue-500/20 overflow-hidden flex flex-col hover:border-blue-400/30 transition-all duration-300">
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-white text-center mb-2">
-                            <span class="bg-gradient-to-r from-blue-300 to-cyan-300 text-transparent bg-clip-text">🌟 Web Start – Perfecto para dar tus primeros pasos en línea</span>
+                            <div class="bg-gradient-to-r from-blue-300 to-cyan-300 text-transparent bg-clip-text">
+                                <div>🌟 Web Start</div>
+                                <div class="text-lg">Perfecto para dar tus primeros pasos en línea</div>
+                            </div>
                         </h3>
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
@@ -638,7 +641,10 @@
                     </div>
                     <div class="p-6 pt-16">
                         <h3 class="text-xl font-bold text-white text-center mb-2">
-                            <span class="bg-gradient-to-r from-purple-300 to-fuchsia-300 text-transparent bg-clip-text">🌟 Web Sol – Solución completa para negocios en crecimiento</span>
+                            <div class="bg-gradient-to-r from-purple-300 to-fuchsia-300 text-transparent bg-clip-text">
+                                <div>🌟 Web Sol</div>
+                                <div class="text-lg">Solución completa para negocios en crecimiento</div>
+                            </div>
                         </h3>
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-purple-300 to-fuchsia-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
@@ -763,7 +769,10 @@
                 <div class="bg-gradient-to-br from-amber-900/80 to-amber-800/50 backdrop-blur-sm rounded-xl border border-amber-500/20 overflow-hidden flex flex-col hover:border-amber-400/30 transition-all duration-300">
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-white text-center mb-2">
-                            <span class="bg-gradient-to-r from-amber-300 to-orange-300 text-transparent bg-clip-text">🌟 Web Premium – Solución completa para negocios establecidos</span>
+                            <div class="bg-gradient-to-r from-amber-300 to-orange-300 text-transparent bg-clip-text">
+                                <div>🌟 Web Premium</div>
+                                <div class="text-lg">Solución completa para negocios establecidos</div>
+                            </div>
                         </h3>
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent mb-1">💰 Precio</div>

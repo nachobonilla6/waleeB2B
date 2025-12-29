@@ -388,7 +388,7 @@
     <section class="py-20 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-5xl font-bold mb-6">¿Listo para transformar tu negocio?</h2>
-            <p class="text-2xl mb-8 text-white/90">Contáctanos y llevemos tu proyecto al siguiente nivel</p>
+            <p class="text-2xl mb-8 text-black">Contáctanos y llevemos tu proyecto al siguiente nivel</p>
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="mailto:info@websolutions.work" class="bg-white text-purple-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition transform hover:scale-105">
                     Solicitar Cotización

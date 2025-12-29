@@ -1346,20 +1346,20 @@
             <!-- Stats -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-5xl mx-auto">
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-white mb-2">+100</div>
-                    <div class="text-white/80">Clientes Satisfechos</div>
+                    <div class="text-4xl font-bold text-black mb-2">+100</div>
+                    <div class="text-black">Clientes Satisfechos</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-white mb-2">24/7</div>
-                    <div class="text-white/80">Soporte Técnico</div>
+                    <div class="text-4xl font-bold text-black mb-2">24/7</div>
+                    <div class="text-black">Soporte Técnico</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-white mb-2">99.9%</div>
-                    <div class="text-white/80">Tiempo Activo</div>
+                    <div class="text-4xl font-bold text-black mb-2">99.9%</div>
+                    <div class="text-black">Tiempo Activo</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-white mb-2">+50</div>
-                    <div class="text-white/80">Campañas de Marketing</div>
+                    <div class="text-4xl font-bold text-black mb-2">+50</div>
+                    <div class="text-black">Campañas de Marketing</div>
                 </div>
             </div>
         </div>

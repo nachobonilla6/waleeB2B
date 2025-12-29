@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Filament\Notifications\Notification;
 use App\Models\User;
+use App\Http\Controllers\WhatsappWebhookController;
+use App\Http\Controllers\WhatsappController;
 
 // Webhook para notificaciones de Facebook
 Route::post('/notificacion-facebook', function (\Illuminate\Http\Request $request) {
@@ -439,4 +441,17 @@ Route::post('/emails/recibidos', function (\Illuminate\Http\Request $request) {
         ], 500);
     }
 })->name('api.emails.recibidos');
+
+// Webhook para recibir mensajes de WhatsApp desde n8n
+Route::post('/whatsapp/webhook/{id}', [WhatsappWebhookController::class, 'handleWebhook'])
+    ->where('id', '[a-f0-9\-]+')
+    ->name('api.whatsapp.webhook');
+
+// Rutas API para WhatsApp
+Route::middleware(['auth'])->group(function () {
+    Route::get('/whatsapp/conversations', [WhatsappController::class, 'getConversations'])->name('api.whatsapp.conversations');
+    Route::get('/whatsapp/conversations/search', [WhatsappController::class, 'searchConversations'])->name('api.whatsapp.conversations.search');
+    Route::get('/whatsapp/conversations/{id}/messages', [WhatsappController::class, 'getMessages'])->name('api.whatsapp.messages');
+    Route::post('/whatsapp/conversations/{id}/send', [WhatsappController::class, 'sendMessage'])->name('api.whatsapp.send');
+});
 

@@ -447,6 +447,10 @@ Route::post('/whatsapp/webhook/{id}', [WhatsappWebhookController::class, 'handle
     ->where('id', '[a-f0-9\-]+')
     ->name('api.whatsapp.webhook');
 
+// Endpoint de prueba para verificar que el webhook funciona
+Route::post('/whatsapp/webhook-test', [WhatsappWebhookController::class, 'handleWebhook'])
+    ->name('api.whatsapp.webhook.test');
+
 // Rutas API para WhatsApp
 Route::middleware(['auth'])->group(function () {
     Route::get('/whatsapp/conversations', [WhatsappController::class, 'getConversations'])->name('api.whatsapp.conversations');

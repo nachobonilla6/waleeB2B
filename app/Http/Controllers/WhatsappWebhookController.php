@@ -14,48 +14,95 @@ class WhatsappWebhookController extends Controller
      */
     public function handleWebhook(Request $request)
     {
+        // Log completo de lo que llega
+        $rawBody = $request->getContent();
+        $allData = $request->all();
+        
         Log::info('WhatsApp webhook recibido', [
+            'method' => $request->method(),
+            'url' => $request->fullUrl(),
             'headers' => $request->headers->all(),
-            'body' => $request->all(),
+            'raw_body' => $rawBody,
+            'parsed_body' => $allData,
             'ip' => $request->ip(),
         ]);
 
         try {
-            $data = $request->all();
+            $data = $allData;
+            
+            // Si el body viene como JSON string, parsearlo
+            if (empty($data) && !empty($rawBody)) {
+                $decoded = json_decode($rawBody, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $data = $decoded;
+                    Log::info('Body parseado desde JSON string', ['data' => $data]);
+                }
+            }
             
             // Soportar múltiples formatos de entrada de n8n
             $messages = [];
             
+            Log::info('Procesando datos recibidos', ['data_keys' => array_keys($data), 'is_array' => is_array($data)]);
+            
             // Si viene como array directo
             if (isset($data[0]) && is_array($data[0])) {
                 $messages = $data;
+                Log::info('Formato detectado: array directo', ['count' => count($messages)]);
             }
             // Si viene dentro de un campo 'data' o 'messages'
             elseif (isset($data['data']) && is_array($data['data'])) {
                 $messages = $data['data'];
+                Log::info('Formato detectado: campo data', ['count' => count($messages)]);
             }
             elseif (isset($data['messages']) && is_array($data['messages'])) {
                 $messages = $data['messages'];
+                Log::info('Formato detectado: campo messages', ['count' => count($messages)]);
             }
             // Si viene como un solo mensaje
-            elseif (isset($data['phone_number']) || isset($data['from']) || isset($data['to'])) {
+            elseif (isset($data['phone_number']) || isset($data['from']) || isset($data['to']) || isset($data['number'])) {
                 $messages = [$data];
+                Log::info('Formato detectado: mensaje único', ['data' => $data]);
             }
             // Si viene con estructura n8n con 'json'
             elseif (isset($data[0]['json'])) {
                 $messages = array_map(function($item) {
                     return $item['json'] ?? $item;
                 }, $data);
+                Log::info('Formato detectado: estructura n8n json', ['count' => count($messages)]);
+            }
+            // Si viene vacío o en formato desconocido, intentar usar todo el body como mensaje
+            else {
+                Log::warning('Formato no reconocido, intentando usar todo el body como mensaje', ['data' => $data]);
+                if (!empty($data)) {
+                    $messages = [$data];
+                }
+            }
+
+            if (empty($messages)) {
+                Log::warning('No se encontraron mensajes para procesar', ['data' => $data]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se encontraron mensajes en el webhook',
+                    'received_data' => $data,
+                ], 400);
             }
 
             $processed = 0;
-            foreach ($messages as $messageData) {
+            $errors = [];
+            
+            foreach ($messages as $index => $messageData) {
                 try {
+                    Log::info("Procesando mensaje {$index}", ['message_data' => $messageData]);
                     $this->processMessage($messageData);
                     $processed++;
+                    Log::info("Mensaje {$index} procesado exitosamente");
                 } catch (\Exception $e) {
+                    $errorMsg = $e->getMessage();
+                    $errors[] = "Mensaje {$index}: {$errorMsg}";
                     Log::error('Error procesando mensaje individual', [
-                        'message' => $e->getMessage(),
+                        'index' => $index,
+                        'message' => $errorMsg,
+                        'trace' => $e->getTraceAsString(),
                         'data' => $messageData,
                     ]);
                 }
@@ -63,13 +110,17 @@ class WhatsappWebhookController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Se procesaron {$processed} mensaje(s)",
+                'message' => "Se procesaron {$processed} de " . count($messages) . " mensaje(s)",
                 'processed' => $processed,
+                'total' => count($messages),
+                'errors' => $errors,
             ], 200);
 
         } catch (\Exception $e) {
             Log::error('Error en webhook de WhatsApp', [
                 'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
@@ -77,6 +128,8 @@ class WhatsappWebhookController extends Controller
                 'success' => false,
                 'message' => 'Error procesando webhook',
                 'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ], 500);
         }
     }
@@ -114,19 +167,31 @@ class WhatsappWebhookController extends Controller
         }
 
         // Obtener o crear conversación
-        $conversation = WhatsappConversation::firstOrCreate(
-            ['phone_number' => $phoneNumber],
-            [
-                'contact_name' => $messageData['contact_name'] 
-                    ?? $messageData['name'] 
-                    ?? $messageData['contactName']
-                    ?? null,
-                'contact_image' => $messageData['contact_image'] 
-                    ?? $messageData['image'] 
-                    ?? $messageData['contactImage']
-                    ?? null,
-            ]
-        );
+        try {
+            $conversation = WhatsappConversation::firstOrCreate(
+                ['phone_number' => $phoneNumber],
+                [
+                    'contact_name' => $messageData['contact_name'] 
+                        ?? $messageData['name'] 
+                        ?? $messageData['contactName']
+                        ?? null,
+                    'contact_image' => $messageData['contact_image'] 
+                        ?? $messageData['image'] 
+                        ?? $messageData['contactImage']
+                        ?? null,
+                ]
+            );
+            Log::info('Conversación obtenida/creada', [
+                'conversation_id' => $conversation->id,
+                'phone_number' => $phoneNumber,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error creando/obteniendo conversación', [
+                'error' => $e->getMessage(),
+                'phone_number' => $phoneNumber,
+            ]);
+            throw $e;
+        }
 
         // Actualizar información del contacto si viene
         if (isset($messageData['contact_name']) || isset($messageData['name'])) {
@@ -202,19 +267,37 @@ class WhatsappWebhookController extends Controller
             ?? 'sent';
 
         // Crear el mensaje
-        $message = WhatsappMessage::create([
-            'conversation_id' => $conversation->id,
-            'direction' => $direction,
-            'content' => $content,
-            'message_id' => $messageId,
-            'message_type' => $messageType,
-            'media_url' => $mediaUrl,
-            'media_type' => $mediaType,
-            'media_name' => $mediaName,
-            'status' => $status,
-            'whatsapp_timestamp' => $whatsappTimestamp,
-            'metadata' => $messageData['metadata'] ?? null,
-        ]);
+        try {
+            $message = WhatsappMessage::create([
+                'conversation_id' => $conversation->id,
+                'direction' => $direction,
+                'content' => $content,
+                'message_id' => $messageId,
+                'message_type' => $messageType,
+                'media_url' => $mediaUrl,
+                'media_type' => $mediaType,
+                'media_name' => $mediaName,
+                'status' => $status,
+                'whatsapp_timestamp' => $whatsappTimestamp,
+                'metadata' => $messageData['metadata'] ?? null,
+            ]);
+            Log::info('Mensaje creado exitosamente', [
+                'message_id' => $message->id,
+                'conversation_id' => $conversation->id,
+                'direction' => $direction,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error creando mensaje', [
+                'error' => $e->getMessage(),
+                'conversation_id' => $conversation->id,
+                'data' => [
+                    'direction' => $direction,
+                    'content' => substr($content, 0, 100),
+                    'message_id' => $messageId,
+                ],
+            ]);
+            throw $e;
+        }
 
         // Actualizar última conversación
         $conversation->updateLastMessage(

@@ -1386,144 +1386,144 @@
                 <div class="flex partners-scroll gap-6 md:gap-8" style="width: fit-content;">
                     <!-- Primera copia de partners -->
                     <!-- WordPress -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://www.kindpng.com/picc/m/137-1372425_wordpress-blue-logo-png-transparent-png.png" alt="WordPress" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://www.kindpng.com/picc/m/137-1372425_wordpress-blue-logo-png-transparent-png.png" alt="WordPress" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Hostinger -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Laravel -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-amber-500 rounded-full shadow-md shadow-amber-500/30 transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl hover:shadow-amber-500/50 flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWfitrjP8RaSyij0rDzOFvzl92--bwK-uGsw&s" alt="Laravel" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-amber-500 rounded-full shadow-md shadow-amber-500/30 transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl hover:shadow-amber-500/50 overflow-hidden">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWfitrjP8RaSyij0rDzOFvzl92--bwK-uGsw&s" alt="Laravel" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Filament -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://shop.filamentphp.com/cdn/shop/products/kiss-cut-stickers-5.5x5.5-default-6388cb9b4f472.jpg?v=1669909410&width=1445" alt="Filament" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://shop.filamentphp.com/cdn/shop/products/kiss-cut-stickers-5.5x5.5-default-6388cb9b4f472.jpg?v=1669909410&width=1445" alt="Filament" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Shopify -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://pluspng.com/img-png/shopify-logo-png-shopify-logo-1-300.png" alt="Shopify" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://pluspng.com/img-png/shopify-logo-png-shopify-logo-1-300.png" alt="Shopify" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- VS Code -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Google -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Figma -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Feever -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
                         <span class="text-gray-800 font-bold text-xs">Feever</span>
                     </div>
                     
                     <!-- Facebook -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://img.freepik.com/psd-premium/logotipo-facebook-circulo-azul_705838-12823.jpg?semt=ais_hybrid&w=740&q=80" alt="Facebook" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://img.freepik.com/psd-premium/logotipo-facebook-circulo-azul_705838-12823.jpg?semt=ais_hybrid&w=740&q=80" alt="Facebook" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Instagram -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                    <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-cover rounded-full transition duration-300 brightness-0 invert">
                     </div>
                     
                     <!-- Canva -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- TikTok -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-black rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSNvH_h7wCYhNtv8ZTLMVQSOoR6NpyCHNkow&s" alt="TikTok" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-black rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSNvH_h7wCYhNtv8ZTLMVQSOoR6NpyCHNkow&s" alt="TikTok" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- CRMaps -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Segunda copia para scroll infinito -->
                     <!-- WordPress -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://www.kindpng.com/picc/m/137-1372425_wordpress-blue-logo-png-transparent-png.png" alt="WordPress" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://www.kindpng.com/picc/m/137-1372425_wordpress-blue-logo-png-transparent-png.png" alt="WordPress" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Hostinger -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Laravel -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-amber-500 rounded-full shadow-md shadow-amber-500/30 transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl hover:shadow-amber-500/50 flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWfitrjP8RaSyij0rDzOFvzl92--bwK-uGsw&s" alt="Laravel" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-amber-500 rounded-full shadow-md shadow-amber-500/30 transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl hover:shadow-amber-500/50 overflow-hidden">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWfitrjP8RaSyij0rDzOFvzl92--bwK-uGsw&s" alt="Laravel" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Filament -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://shop.filamentphp.com/cdn/shop/products/kiss-cut-stickers-5.5x5.5-default-6388cb9b4f472.jpg?v=1669909410&width=1445" alt="Filament" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://shop.filamentphp.com/cdn/shop/products/kiss-cut-stickers-5.5x5.5-default-6388cb9b4f472.jpg?v=1669909410&width=1445" alt="Filament" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Shopify -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://pluspng.com/img-png/shopify-logo-png-shopify-logo-1-300.png" alt="Shopify" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://pluspng.com/img-png/shopify-logo-png-shopify-logo-1-300.png" alt="Shopify" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- VS Code -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Google -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Figma -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Feever -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
                         <span class="text-gray-800 font-bold text-xs">Feever</span>
                     </div>
                     
                     <!-- Facebook -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://img.freepik.com/psd-premium/logotipo-facebook-circulo-azul_705838-12823.jpg?semt=ais_hybrid&w=740&q=80" alt="Facebook" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://img.freepik.com/psd-premium/logotipo-facebook-circulo-azul_705838-12823.jpg?semt=ais_hybrid&w=740&q=80" alt="Facebook" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Instagram -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                    <div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-cover rounded-full transition duration-300 brightness-0 invert">
                     </div>
                     
                     <!-- Canva -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- TikTok -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-black rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSNvH_h7wCYhNtv8ZTLMVQSOoR6NpyCHNkow&s" alt="TikTok" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-black rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSNvH_h7wCYhNtv8ZTLMVQSOoR6NpyCHNkow&s" alt="TikTok" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- CRMaps -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-contain transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                 </div>
             </div>

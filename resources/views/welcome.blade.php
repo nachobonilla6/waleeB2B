@@ -769,11 +769,11 @@
                         </h3>
                         <div class="text-center mb-4">
                             <div class="text-3xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent mb-1">💰 Precio</div>
-                            <div class="text-sm text-amber-200/70 mb-1">A partir de</div>
-                            <div class="text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent">$380 <span class="text-xl">(₡190,000)</span></div>
-                            <div class="text-sm text-amber-200/70 mt-1">Precio inicial (varía según alcance)</div>
-                            <div class="text-sm text-amber-200/70 mt-2">Abono mensual de mantenimiento despues de los 3 meses de oferta .</div>
-                            <div class="text-lg font-semibold text-amber-200/90 mt-1">$38 / ₡19,000</div>
+                            <div class="text-4xl font-bold bg-gradient-to-r from-amber-300 to-orange-300 bg-clip-text text-transparent">$449 <span class="text-xl">(₡225,000)</span></div>
+                            <div class="text-sm text-amber-200/70 mt-1">Setup inicial:</div>
+                            <div class="text-lg font-semibold text-amber-200/90 mt-1">Desde $449 / ₡225.000</div>
+                            <div class="text-sm text-amber-200/70 mt-2">Abono mensual:</div>
+                            <div class="text-lg font-semibold text-amber-200/90 mt-1">👉 $49 / ₡25.000</div>
                         </div>
                         <div class="mb-4 text-sm text-amber-200/80 bg-amber-900/30 p-3 rounded-lg border border-amber-500/30">
                             <div class="font-semibold mb-1">Duración del contrato:</div>

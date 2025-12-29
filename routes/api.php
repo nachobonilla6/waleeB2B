@@ -443,6 +443,7 @@ Route::post('/emails/recibidos', function (\Illuminate\Http\Request $request) {
 })->name('api.emails.recibidos');
 
 // Webhook para recibir mensajes de WhatsApp desde n8n
+// URL: https://websolutions.work/api/whatsapp/webhook/1c5f2da5-0d1a-4d87-a9da-bb1544748868
 Route::post('/whatsapp/webhook/{id}', [WhatsappWebhookController::class, 'handleWebhook'])
     ->where('id', '[a-f0-9\-]+')
     ->name('api.whatsapp.webhook');
@@ -450,6 +451,25 @@ Route::post('/whatsapp/webhook/{id}', [WhatsappWebhookController::class, 'handle
 // Endpoint de prueba para verificar que el webhook funciona
 Route::post('/whatsapp/webhook-test', [WhatsappWebhookController::class, 'handleWebhook'])
     ->name('api.whatsapp.webhook.test');
+
+// Endpoint simple de prueba (sin procesar, solo log)
+Route::post('/whatsapp/test', function (\Illuminate\Http\Request $request) {
+    \Log::info('TEST WhatsApp webhook recibido', [
+        'method' => $request->method(),
+        'url' => $request->fullUrl(),
+        'headers' => $request->headers->all(),
+        'raw_body' => $request->getContent(),
+        'parsed_body' => $request->all(),
+        'ip' => $request->ip(),
+    ]);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Webhook de prueba recibido correctamente',
+        'received_data' => $request->all(),
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+})->name('api.whatsapp.test');
 
 // Rutas API para WhatsApp
 Route::middleware(['auth'])->group(function () {

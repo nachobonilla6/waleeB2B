@@ -148,7 +148,11 @@ class WhatsappWebhookController extends Controller
             ?? null;
 
         if (!$phoneNumber) {
-            throw new \Exception('Número de teléfono no encontrado en el mensaje');
+            Log::warning('Número de teléfono no encontrado', [
+                'message_data_keys' => array_keys($messageData),
+                'message_data' => $messageData,
+            ]);
+            throw new \Exception('Número de teléfono no encontrado en el mensaje. Campos disponibles: ' . implode(', ', array_keys($messageData)));
         }
 
         // Normalizar número de teléfono (remover espacios, guiones, etc.)

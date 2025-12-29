@@ -57,6 +57,14 @@
             border-radius: 12px;
             overflow: hidden;
             min-height: 0;
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .whatsapp-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
         }
         
         .dark .whatsapp-container {
@@ -72,6 +80,23 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .conversations-sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+                z-index: 10;
+                transform: translateX(0);
+            }
+            
+            .conversations-sidebar.hidden-mobile {
+                transform: translateX(-100%);
+            }
         }
         
         .dark .conversations-sidebar {
@@ -86,6 +111,12 @@
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar-header {
+                padding: 15px;
+            }
         }
         
         .dark .sidebar-header {
@@ -140,6 +171,12 @@
             display: flex;
             gap: 15px;
             align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .conversation-item {
+                padding: 12px 15px;
+            }
         }
         
         .dark .conversation-item {
@@ -222,6 +259,17 @@
             background: #efeae2;
             background-image: 
                 repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-area {
+                width: 100%;
+            }
+            
+            .chat-area.hidden-mobile {
+                display: none;
+            }
         }
         
         .dark .chat-area {
@@ -237,6 +285,44 @@
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-header {
+                padding: 12px 15px;
+            }
+        }
+        
+        .back-button {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            color: #54656f;
+            transition: background 0.2s;
+        }
+        
+        @media (max-width: 768px) {
+            .back-button {
+                display: flex;
+            }
+        }
+        
+        .back-button:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .dark .back-button {
+            color: #8696a0;
+        }
+        
+        .dark .back-button:hover {
+            background: rgba(255,255,255,0.1);
         }
         
         .dark .chat-header {
@@ -367,6 +453,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-input-area {
+                padding: 8px 15px;
+            }
         }
         
         .dark .chat-input-area {
@@ -558,8 +650,13 @@
                 </div>
                 
                 <!-- Área de chat principal -->
-                <div class="chat-area">
+                <div class="chat-area" id="chat-area">
                     <div class="chat-header">
+                        <button class="back-button" onclick="showConversations()" aria-label="Volver a conversaciones">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
                         <div class="chat-header-avatar">JD</div>
                         <div class="chat-header-info">
                             <div class="chat-header-name">John Doe</div>
@@ -677,8 +774,49 @@
             item.addEventListener('click', function() {
                 document.querySelectorAll('.conversation-item').forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
+                
+                // En móviles, mostrar el chat y ocultar la lista
+                if (window.innerWidth <= 768) {
+                    showChat();
+                }
             });
         });
+        
+        // Funciones para navegación móvil
+        function showChat() {
+            const sidebar = document.querySelector('.conversations-sidebar');
+            const chatArea = document.getElementById('chat-area');
+            
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('hidden-mobile');
+                chatArea.classList.remove('hidden-mobile');
+            }
+        }
+        
+        function showConversations() {
+            const sidebar = document.querySelector('.conversations-sidebar');
+            const chatArea = document.getElementById('chat-area');
+            
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('hidden-mobile');
+                chatArea.classList.add('hidden-mobile');
+            }
+        }
+        
+        // Manejar resize de ventana
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                const sidebar = document.querySelector('.conversations-sidebar');
+                const chatArea = document.getElementById('chat-area');
+                sidebar.classList.remove('hidden-mobile');
+                chatArea.classList.remove('hidden-mobile');
+            }
+        });
+        
+        // Inicializar: en móviles mostrar solo conversaciones al cargar
+        if (window.innerWidth <= 768) {
+            document.getElementById('chat-area').classList.add('hidden-mobile');
+        }
     </script>
 </body>
 </html>

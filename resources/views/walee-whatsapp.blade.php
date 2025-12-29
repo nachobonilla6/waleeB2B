@@ -483,15 +483,15 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
-    <div class="min-h-screen relative">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 h-screen overflow-hidden flex flex-col">
+    <div class="flex-1 flex flex-col overflow-hidden relative">
         <!-- Background -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 flex flex-col h-full min-h-0">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 flex flex-col flex-1 min-h-0">
             @php $pageTitle = 'WhatsApp'; @endphp
             @include('partials.walee-navbar')
             

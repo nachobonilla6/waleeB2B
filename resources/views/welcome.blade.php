@@ -1385,7 +1385,7 @@
                     
                     <!-- Hostinger -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIivHIZm03BCjoHvRL33qCoexOKV4QRHMRg&s" alt="Hostinger" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Laravel -->
@@ -1400,7 +1400,7 @@
                     
                     <!-- Shopify -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://pluspng.com/img-png/shopify-logo-png-shopify-logo-1-300.png" alt="Shopify" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOjfiU7xpuCHpFF7gb4G0-t-Jsf5RdH2YRXQ&s" alt="Shopify" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- VS Code -->
@@ -1461,7 +1461,7 @@
                     
                     <!-- Hostinger -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Hostinger_Logotype.png" alt="Hostinger" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIivHIZm03BCjoHvRL33qCoexOKV4QRHMRg&s" alt="Hostinger" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Laravel -->
@@ -1476,7 +1476,7 @@
                     
                     <!-- Shopify -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://pluspng.com/img-png/shopify-logo-png-shopify-logo-1-300.png" alt="Shopify" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOjfiU7xpuCHpFF7gb4G0-t-Jsf5RdH2YRXQ&s" alt="Shopify" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- VS Code -->

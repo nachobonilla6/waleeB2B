@@ -1,27 +1,55 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Walee WhatsApp - Chat Mejorado</title>
+    @include('partials.walee-dark-mode-init')
+    @include('partials.walee-violet-light-mode')
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        walee: {
+                            400: '#D59F3B',
+                            500: '#C78F2E',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        * { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background: #e5ddd5;
             height: 100vh;
             overflow: hidden;
         }
         
         .whatsapp-container {
             display: flex;
-            height: 100vh;
+            height: calc(100vh - 80px);
             max-width: 1600px;
             margin: 0 auto;
             background: #fff;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .dark .whatsapp-container {
+            background: #111b21;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
         
         /* Sidebar de conversaciones */
@@ -34,6 +62,11 @@
             overflow: hidden;
         }
         
+        .dark .conversations-sidebar {
+            background: #111b21;
+            border-right-color: #2a3942;
+        }
+        
         .sidebar-header {
             background: #f0f2f5;
             padding: 20px;
@@ -41,6 +74,11 @@
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+        
+        .dark .sidebar-header {
+            background: #202c33;
+            border-bottom-color: #2a3942;
         }
         
         .user-avatar {
@@ -64,12 +102,22 @@
             border: none;
             outline: none;
             font-size: 14px;
+            color: #111b21;
+        }
+        
+        .dark .search-box {
+            background: #2a3942;
+            color: #e9edef;
         }
         
         .conversations-list {
             flex: 1;
             overflow-y: auto;
             background: #fff;
+        }
+        
+        .dark .conversations-list {
+            background: #111b21;
         }
         
         .conversation-item {
@@ -82,12 +130,24 @@
             align-items: center;
         }
         
+        .dark .conversation-item {
+            border-bottom-color: #2a3942;
+        }
+        
         .conversation-item:hover {
             background: #f5f6f6;
         }
         
+        .dark .conversation-item:hover {
+            background: #202c33;
+        }
+        
         .conversation-item.active {
             background: #f0f2f5;
+        }
+        
+        .dark .conversation-item.active {
+            background: #202c33;
         }
         
         .conversation-avatar {
@@ -116,6 +176,10 @@
             margin-bottom: 5px;
         }
         
+        .dark .conversation-name {
+            color: #e9edef;
+        }
+        
         .conversation-preview {
             font-size: 14px;
             color: #667781;
@@ -124,10 +188,18 @@
             text-overflow: ellipsis;
         }
         
+        .dark .conversation-preview {
+            color: #8696a0;
+        }
+        
         .conversation-time {
             font-size: 12px;
             color: #667781;
             white-space: nowrap;
+        }
+        
+        .dark .conversation-time {
+            color: #8696a0;
         }
         
         /* Área de chat principal */
@@ -140,6 +212,12 @@
                 repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
         }
         
+        .dark .chat-area {
+            background: #0b141a;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px);
+        }
+        
         .chat-header {
             background: #f0f2f5;
             padding: 15px 20px;
@@ -147,6 +225,11 @@
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+        
+        .dark .chat-header {
+            background: #202c33;
+            border-bottom-color: #2a3942;
         }
         
         .chat-header-avatar {
@@ -172,9 +255,17 @@
             color: #111b21;
         }
         
+        .dark .chat-header-name {
+            color: #e9edef;
+        }
+        
         .chat-header-status {
             font-size: 13px;
             color: #667781;
+        }
+        
+        .dark .chat-header-status {
+            color: #8696a0;
         }
         
         .chat-messages {
@@ -227,10 +318,19 @@
             border-bottom-right-radius: 2px;
         }
         
+        .dark .message.sent .message-bubble {
+            background: #005c4b;
+        }
+        
         .message.received .message-bubble {
             background: #fff;
             border-bottom-left-radius: 2px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .dark .message.received .message-bubble {
+            background: #202c33;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
         
         .message-time {
@@ -238,6 +338,10 @@
             color: #667781;
             margin-top: 5px;
             align-self: flex-end;
+        }
+        
+        .dark .message-time {
+            color: #8696a0;
         }
         
         .message.sent .message-time {
@@ -253,6 +357,11 @@
             gap: 10px;
         }
         
+        .dark .chat-input-area {
+            background: #202c33;
+            border-top-color: #2a3942;
+        }
+        
         .input-wrapper {
             flex: 1;
             background: #fff;
@@ -263,6 +372,10 @@
             gap: 10px;
         }
         
+        .dark .input-wrapper {
+            background: #2a3942;
+        }
+        
         .chat-input {
             flex: 1;
             border: none;
@@ -271,6 +384,20 @@
             resize: none;
             max-height: 100px;
             overflow-y: auto;
+            background: transparent;
+            color: #111b21;
+        }
+        
+        .dark .chat-input {
+            color: #e9edef;
+        }
+        
+        .chat-input::placeholder {
+            color: #667781;
+        }
+        
+        .dark .chat-input::placeholder {
+            color: #8696a0;
         }
         
         .input-icon {
@@ -279,6 +406,10 @@
             cursor: pointer;
             color: #54656f;
             transition: color 0.2s;
+        }
+        
+        .dark .input-icon {
+            color: #8696a0;
         }
         
         .input-icon:hover {
@@ -325,163 +456,163 @@
             border-radius: 3px;
         }
         
+        .dark .conversations-list::-webkit-scrollbar-thumb,
+        .dark .chat-messages::-webkit-scrollbar-thumb {
+            background: #54656f;
+        }
+        
         .conversations-list::-webkit-scrollbar-thumb:hover,
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: #a0a0a0;
         }
         
-        /* Estado vacío */
-        .empty-state {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #667781;
-            text-align: center;
-            padding: 40px;
-        }
-        
-        .empty-state-icon {
-            font-size: 120px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-        
-        .empty-state-text {
-            font-size: 18px;
-            font-weight: 300;
+        .dark .conversations-list::-webkit-scrollbar-thumb:hover,
+        .dark .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #667781;
         }
     </style>
 </head>
-<body>
-    <div class="whatsapp-container">
-        <!-- Sidebar de conversaciones -->
-        <div class="conversations-sidebar">
-            <div class="sidebar-header">
-                <div class="user-avatar">W</div>
-                <input type="text" class="search-box" placeholder="Buscar o empezar un chat nuevo">
-            </div>
-            
-            <div class="conversations-list">
-                <!-- Conversación 1 -->
-                <div class="conversation-item active">
-                    <div class="conversation-avatar">JD</div>
-                    <div class="conversation-info">
-                        <div class="conversation-name">John Doe</div>
-                        <div class="conversation-preview">Hola, ¿cómo estás?</div>
-                    </div>
-                    <div class="conversation-time">10:30</div>
-                </div>
-                
-                <!-- Conversación 2 -->
-                <div class="conversation-item">
-                    <div class="conversation-avatar">JS</div>
-                    <div class="conversation-info">
-                        <div class="conversation-name">Jane Smith</div>
-                        <div class="conversation-preview">Gracias por tu ayuda</div>
-                    </div>
-                    <div class="conversation-time">09:15</div>
-                </div>
-                
-                <!-- Conversación 3 -->
-                <div class="conversation-item">
-                    <div class="conversation-avatar">MB</div>
-                    <div class="conversation-info">
-                        <div class="conversation-name">Mike Brown</div>
-                        <div class="conversation-preview">Perfecto, nos vemos mañana</div>
-                    </div>
-                    <div class="conversation-time">Ayer</div>
-                </div>
-                
-                <!-- Más conversaciones de ejemplo -->
-                <div class="conversation-item">
-                    <div class="conversation-avatar">AL</div>
-                    <div class="conversation-info">
-                        <div class="conversation-name">Alice Lee</div>
-                        <div class="conversation-preview">¿Podrías ayudarme con esto?</div>
-                    </div>
-                    <div class="conversation-time">Ayer</div>
-                </div>
-                
-                <div class="conversation-item">
-                    <div class="conversation-avatar">RW</div>
-                    <div class="conversation-info">
-                        <div class="conversation-name">Robert Wilson</div>
-                        <div class="conversation-preview">Excelente trabajo</div>
-                    </div>
-                    <div class="conversation-time">Lun</div>
-                </div>
-            </div>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
+    <div class="min-h-screen relative">
+        <!-- Background -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <!-- Área de chat principal -->
-        <div class="chat-area">
-            <div class="chat-header">
-                <div class="chat-header-avatar">JD</div>
-                <div class="chat-header-info">
-                    <div class="chat-header-name">John Doe</div>
-                    <div class="chat-header-status">en línea</div>
-                </div>
-            </div>
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6">
+            @php $pageTitle = 'WhatsApp'; @endphp
+            @include('partials.walee-navbar')
             
-            <div class="chat-messages">
-                <!-- Mensaje recibido -->
-                <div class="message received">
-                    <div class="message-bubble">
-                        Hola, ¿cómo estás?
+            <div class="whatsapp-container">
+                <!-- Sidebar de conversaciones -->
+                <div class="conversations-sidebar">
+                    <div class="sidebar-header">
+                        <div class="user-avatar">W</div>
+                        <input type="text" class="search-box" placeholder="Buscar o empezar un chat nuevo">
                     </div>
-                    <div class="message-time">10:25</div>
+                    
+                    <div class="conversations-list">
+                        <!-- Conversación 1 -->
+                        <div class="conversation-item active">
+                            <div class="conversation-avatar">JD</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">John Doe</div>
+                                <div class="conversation-preview">Hola, ¿cómo estás?</div>
+                            </div>
+                            <div class="conversation-time">10:30</div>
+                        </div>
+                        
+                        <!-- Conversación 2 -->
+                        <div class="conversation-item">
+                            <div class="conversation-avatar">JS</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Jane Smith</div>
+                                <div class="conversation-preview">Gracias por tu ayuda</div>
+                            </div>
+                            <div class="conversation-time">09:15</div>
+                        </div>
+                        
+                        <!-- Conversación 3 -->
+                        <div class="conversation-item">
+                            <div class="conversation-avatar">MB</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Mike Brown</div>
+                                <div class="conversation-preview">Perfecto, nos vemos mañana</div>
+                            </div>
+                            <div class="conversation-time">Ayer</div>
+                        </div>
+                        
+                        <!-- Más conversaciones de ejemplo -->
+                        <div class="conversation-item">
+                            <div class="conversation-avatar">AL</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Alice Lee</div>
+                                <div class="conversation-preview">¿Podrías ayudarme con esto?</div>
+                            </div>
+                            <div class="conversation-time">Ayer</div>
+                        </div>
+                        
+                        <div class="conversation-item">
+                            <div class="conversation-avatar">RW</div>
+                            <div class="conversation-info">
+                                <div class="conversation-name">Robert Wilson</div>
+                                <div class="conversation-preview">Excelente trabajo</div>
+                            </div>
+                            <div class="conversation-time">Lun</div>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Mensaje enviado -->
-                <div class="message sent">
-                    <div class="message-bubble">
-                        ¡Hola! Muy bien, gracias. ¿Y tú?
+                <!-- Área de chat principal -->
+                <div class="chat-area">
+                    <div class="chat-header">
+                        <div class="chat-header-avatar">JD</div>
+                        <div class="chat-header-info">
+                            <div class="chat-header-name">John Doe</div>
+                            <div class="chat-header-status">en línea</div>
+                        </div>
                     </div>
-                    <div class="message-time">10:26</div>
-                </div>
-                
-                <!-- Mensaje recibido -->
-                <div class="message received">
-                    <div class="message-bubble">
-                        Todo bien por aquí. ¿Podrías ayudarme con una consulta?
+                    
+                    <div class="chat-messages">
+                        <!-- Mensaje recibido -->
+                        <div class="message received">
+                            <div class="message-bubble">
+                                Hola, ¿cómo estás?
+                            </div>
+                            <div class="message-time">10:25</div>
+                        </div>
+                        
+                        <!-- Mensaje enviado -->
+                        <div class="message sent">
+                            <div class="message-bubble">
+                                ¡Hola! Muy bien, gracias. ¿Y tú?
+                            </div>
+                            <div class="message-time">10:26</div>
+                        </div>
+                        
+                        <!-- Mensaje recibido -->
+                        <div class="message received">
+                            <div class="message-bubble">
+                                Todo bien por aquí. ¿Podrías ayudarme con una consulta?
+                            </div>
+                            <div class="message-time">10:27</div>
+                        </div>
+                        
+                        <!-- Mensaje enviado -->
+                        <div class="message sent">
+                            <div class="message-bubble">
+                                Por supuesto, estaré encantado de ayudarte. ¿De qué se trata?
+                            </div>
+                            <div class="message-time">10:28</div>
+                        </div>
+                        
+                        <!-- Mensaje recibido -->
+                        <div class="message received">
+                            <div class="message-bubble">
+                                Necesito información sobre tus servicios. ¿Podrías darme más detalles?
+                            </div>
+                            <div class="message-time">10:30</div>
+                        </div>
                     </div>
-                    <div class="message-time">10:27</div>
-                </div>
-                
-                <!-- Mensaje enviado -->
-                <div class="message sent">
-                    <div class="message-bubble">
-                        Por supuesto, estaré encantado de ayudarte. ¿De qué se trata?
+                    
+                    <div class="chat-input-area">
+                        <div class="input-wrapper">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            <textarea class="chat-input" placeholder="Escribe un mensaje" rows="1"></textarea>
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <button class="send-button">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="message-time">10:28</div>
                 </div>
-                
-                <!-- Mensaje recibido -->
-                <div class="message received">
-                    <div class="message-bubble">
-                        Necesito información sobre tus servicios. ¿Podrías darme más detalles?
-                    </div>
-                    <div class="message-time">10:30</div>
-                </div>
-            </div>
-            
-            <div class="chat-input-area">
-                <div class="input-wrapper">
-                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                    </svg>
-                    <textarea class="chat-input" placeholder="Escribe un mensaje" rows="1"></textarea>
-                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <button class="send-button">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                    </svg>
-                </button>
             </div>
         </div>
     </div>
@@ -537,4 +668,3 @@
     </script>
 </body>
 </html>
-

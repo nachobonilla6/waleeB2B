@@ -1426,8 +1426,8 @@
                     </div>
                     
                     <!-- Fiverr -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWCJeNrfTUT1_nNjgcGHho49_PTLWb60xD0w&s" alt="Fiverr" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWCJeNrfTUT1_nNjgcGHho49_PTLWb60xD0w&s" alt="Fiverr" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Facebook -->
@@ -1497,8 +1497,8 @@
                     </div>
                     
                     <!-- Fiverr -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWCJeNrfTUT1_nNjgcGHho49_PTLWb60xD0w&s" alt="Fiverr" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWCJeNrfTUT1_nNjgcGHho49_PTLWb60xD0w&s" alt="Fiverr" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Facebook -->

@@ -1455,6 +1455,11 @@
                         <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
+                    <!-- Vela -->
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://i.postimg.cc/mrnr4MDw/Screen-Shot-Tool-20251228214046.png" alt="Vela" class="w-full h-full object-cover rounded-full transition duration-300">
+                    </div>
+                    
                     <!-- Segunda copia para scroll infinito -->
                     <!-- WordPress -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
@@ -1524,6 +1529,11 @@
                     <!-- CRMaps -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
                         <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-cover rounded-full transition duration-300">
+                    </div>
+                    
+                    <!-- Vela -->
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
+                        <img src="https://i.postimg.cc/mrnr4MDw/Screen-Shot-Tool-20251228214046.png" alt="Vela" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                 </div>
             </div>

@@ -1425,9 +1425,9 @@
                         <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
-                    <!-- Feever -->
+                    <!-- Fiverr -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <span class="text-gray-800 font-bold text-xs">Feever</span>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWCJeNrfTUT1_nNjgcGHho49_PTLWb60xD0w&s" alt="Fiverr" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Facebook -->
@@ -1496,9 +1496,9 @@
                         <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
-                    <!-- Feever -->
+                    <!-- Fiverr -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <span class="text-gray-800 font-bold text-xs">Feever</span>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWCJeNrfTUT1_nNjgcGHho49_PTLWb60xD0w&s" alt="Fiverr" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Facebook -->

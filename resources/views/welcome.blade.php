@@ -207,30 +207,30 @@
                 <p class="text-lg text-white/90">Soluciones inteligentes para servicio al cliente</p>
             </div>
             <div class="grid md:grid-cols-3 gap-16 max-w-7xl mx-auto">
-                <!-- Bot 1 -->
+                <!-- Alpha -->
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">🤖</div>
-                        <h3 class="text-xl font-bold mb-3 text-white">Bot 1</h3>
-                        <p class="text-white/80 text-sm">Bot inteligente diseñado para atención al cliente automatizada, responde consultas frecuentes y gestiona solicitudes básicas de manera eficiente.</p>
+                        <h3 class="text-xl font-bold mb-3 text-white">Alpha</h3>
+                        <p class="text-white/80 text-sm">Bot que busca clientes y contacta de manera automatizada, identificando oportunidades de negocio y estableciendo comunicación inicial con prospectos.</p>
                     </div>
                 </div>
                 
-                <!-- Bot 2 -->
+                <!-- Elza -->
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">💬</div>
-                        <h3 class="text-xl font-bold mb-3 text-white">Bot 2</h3>
-                        <p class="text-white/80 text-sm">Bot especializado en comunicación por WhatsApp, gestiona conversaciones, agenda citas y proporciona información en tiempo real a tus clientes.</p>
+                        <h3 class="text-xl font-bold mb-3 text-white">Elza</h3>
+                        <p class="text-white/80 text-sm">Bot de marketing y publicidad con rol de empresa, gestiona estrategias de promoción, campañas publicitarias y comunicación corporativa de manera profesional.</p>
                     </div>
                 </div>
                 
-                <!-- Bot 3 -->
+                <!-- Memphis -->
                 <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 hover:bg-white/15 transition-all transform hover:scale-105">
                     <div class="text-center">
                         <div class="text-5xl mb-3">⚡</div>
-                        <h3 class="text-xl font-bold mb-3 text-white">Bot 3</h3>
-                        <p class="text-white/80 text-sm">Bot avanzado con IA para procesamiento de pedidos, seguimiento de envíos y resolución de problemas complejos de manera autónoma.</p>
+                        <h3 class="text-xl font-bold mb-3 text-white">Memphis</h3>
+                        <p class="text-white/80 text-sm">Vendedor comercial especializado en cerrar ventas, gestionar negociaciones y convertir leads en clientes satisfechos.</p>
                     </div>
                 </div>
             </div>

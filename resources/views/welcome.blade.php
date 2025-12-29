@@ -1397,7 +1397,7 @@
                     
                     <!-- Laravel -->
                     <div class="flex-shrink-0 w-14 h-14 bg-amber-500 rounded-full shadow-md shadow-amber-500/30 transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl hover:shadow-amber-500/50 flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPNom4M_g0NKR31DzLdISnPUw0k-IxxsDjFkv-BoDE6u2hOjzBBZb827sxbB0YNKFwQP8&usqp=CAU" alt="Laravel" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWfitrjP8RaSyij0rDzOFvzl92--bwK-uGsw&s" alt="Laravel" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Filament -->
@@ -1432,7 +1432,7 @@
                     
                     <!-- Facebook -->
                     <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1hwf81TGukBQPipbMl5cExG1fWbuKEfeucA&s" alt="Facebook" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Instagram -->
@@ -1468,7 +1468,7 @@
                     
                     <!-- Laravel -->
                     <div class="flex-shrink-0 w-14 h-14 bg-amber-500 rounded-full shadow-md shadow-amber-500/30 transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl hover:shadow-amber-500/50 flex items-center justify-center p-2">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPNom4M_g0NKR31DzLdISnPUw0k-IxxsDjFkv-BoDE6u2hOjzBBZb827sxbB0YNKFwQP8&usqp=CAU" alt="Laravel" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWfitrjP8RaSyij0rDzOFvzl92--bwK-uGsw&s" alt="Laravel" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Filament -->
@@ -1503,7 +1503,7 @@
                     
                     <!-- Facebook -->
                     <div class="flex-shrink-0 w-14 h-14 bg-blue-600 rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1hwf81TGukBQPipbMl5cExG1fWbuKEfeucA&s" alt="Facebook" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Instagram -->

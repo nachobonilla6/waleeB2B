@@ -1404,8 +1404,8 @@
                     </div>
                     
                     <!-- VS Code -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Google -->
@@ -1480,8 +1480,8 @@
                     </div>
                     
                     <!-- VS Code -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Google -->

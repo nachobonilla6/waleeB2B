@@ -1380,7 +1380,7 @@
                     <!-- Primera copia de partners -->
                     <!-- WordPress -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://www.kindpng.com/picc/m/137-1372425_wordpress-blue-logo-png-transparent-png.png" alt="WordPress" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiQqvP9mSAN_KNxZlbvD9VT-yl4Vf_PuT6Cw&s" alt="WordPress" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Hostinger -->
@@ -1444,8 +1444,8 @@
                     </div>
                     
                     <!-- CRMaps -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Vela -->
@@ -1456,7 +1456,7 @@
                     <!-- Segunda copia para scroll infinito -->
                     <!-- WordPress -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://www.kindpng.com/picc/m/137-1372425_wordpress-blue-logo-png-transparent-png.png" alt="WordPress" class="w-full h-full object-cover rounded-full transition duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiQqvP9mSAN_KNxZlbvD9VT-yl4Vf_PuT6Cw&s" alt="WordPress" class="w-full h-full object-cover rounded-full transition duration-300">
                     </div>
                     
                     <!-- Hostinger -->
@@ -1520,8 +1520,8 @@
                     </div>
                     
                     <!-- CRMaps -->
-                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl overflow-hidden">
-                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-cover rounded-full transition duration-300">
+                    <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
+                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Vela -->

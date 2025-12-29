@@ -1422,7 +1422,7 @@
                     
                     <!-- Figma -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://cdn.worldvectorlogo.com/logos/figma-1.svg" alt="Figma" class="w-full h-full object-contain transition duration-300">
+                        <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Feever -->
@@ -1447,7 +1447,7 @@
                     
                     <!-- TikTok -->
                     <div class="flex-shrink-0 w-14 h-14 bg-black rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://cdn.worldvectorlogo.com/logos/tik-tok-1.svg" alt="TikTok" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSNvH_h7wCYhNtv8ZTLMVQSOoR6NpyCHNkow&s" alt="TikTok" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- CRMaps -->
@@ -1493,7 +1493,7 @@
                     
                     <!-- Figma -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://cdn.worldvectorlogo.com/logos/figma-1.svg" alt="Figma" class="w-full h-full object-contain transition duration-300">
+                        <img src="https://brandlogos.net/wp-content/uploads/2022/05/figma-logo_brandlogos.net_6n1pb-512x512.png" alt="Figma" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Feever -->
@@ -1518,7 +1518,7 @@
                     
                     <!-- TikTok -->
                     <div class="flex-shrink-0 w-14 h-14 bg-black rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <img src="https://cdn.worldvectorlogo.com/logos/tik-tok-1.svg" alt="TikTok" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSNvH_h7wCYhNtv8ZTLMVQSOoR6NpyCHNkow&s" alt="TikTok" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- CRMaps -->

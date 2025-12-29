@@ -213,7 +213,7 @@
                         <div class="text-5xl mb-3">🤖</div>
                         <h3 class="text-xl font-bold mb-1 text-white">Alpha</h3>
                         <p class="text-white/70 text-sm mb-3 italic">El que contacta clientes</p>
-                        <p class="text-white/80 text-sm">Bot que busca clientes y contacta de manera automatizada, identificando oportunidades de negocio y estableciendo comunicación inicial con prospectos.</p>
+                        <p class="text-white/80 text-sm">Busca clientes y contacta de manera automatizada, identificando oportunidades de negocio y estableciendo comunicación inicial con prospectos.</p>
                     </div>
                 </div>
                 
@@ -223,7 +223,7 @@
                         <div class="text-5xl mb-3">💬</div>
                         <h3 class="text-xl font-bold mb-1 text-white">Elza</h3>
                         <p class="text-white/70 text-sm mb-3 italic">Marketing y publicidad</p>
-                        <p class="text-white/80 text-sm">Bot de marketing y publicidad con rol de empresa, gestiona estrategias de promoción, campañas publicitarias y comunicación corporativa de manera profesional.</p>
+                        <p class="text-white/80 text-sm">Marketing y publicidad con rol de empresa, gestiona estrategias de promoción, campañas publicitarias y comunicación corporativa de manera profesional.</p>
                     </div>
                 </div>
                 

@@ -1452,7 +1452,7 @@
                     
                     <!-- CRMaps -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <span class="text-gray-800 font-bold text-xs">CRMaps</span>
+                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-contain transition duration-300">
                     </div>
                     
                     <!-- Segunda copia para scroll infinito -->
@@ -1523,7 +1523,7 @@
                     
                     <!-- CRMaps -->
                     <div class="flex-shrink-0 w-14 h-14 bg-white rounded-full shadow-md transform transition duration-300 hover:scale-150 hover:z-10 hover:shadow-xl flex items-center justify-center p-2">
-                        <span class="text-gray-800 font-bold text-xs">CRMaps</span>
+                        <img src="https://www.crmaps.com/images/imagen%20pegada%20418x291.png?crc=4130016220" alt="CRMaps" class="w-full h-full object-contain transition duration-300">
                     </div>
                 </div>
             </div>

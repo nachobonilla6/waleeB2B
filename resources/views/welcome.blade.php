@@ -1399,6 +1399,46 @@
                 <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
                     <img src="https://w7.pngwing.com/pngs/284/106/png-transparent-visual-studio-code-logo.png" alt="VS Code" class="w-full h-full object-contain transition duration-300">
                 </div>
+                
+                <!-- Google -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="w-full h-full object-contain transition duration-300">
+                </div>
+                
+                <!-- Figma -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <img src="https://cdn.worldvectorlogo.com/logos/figma-1.svg" alt="Figma" class="w-full h-full object-contain transition duration-300">
+                </div>
+                
+                <!-- Feever -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <span class="text-gray-800 font-bold text-sm sm:text-base">Feever</span>
+                </div>
+                
+                <!-- Facebook -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-blue-600 rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                </div>
+                
+                <!-- Instagram -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                </div>
+                
+                <!-- Canva -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <img src="https://cdn.worldvectorlogo.com/logos/canva-1.svg" alt="Canva" class="w-full h-full object-contain transition duration-300">
+                </div>
+                
+                <!-- TikTok -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-black rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <img src="https://cdn.worldvectorlogo.com/logos/tik-tok-1.svg" alt="TikTok" class="w-full h-full object-contain transition duration-300 brightness-0 invert">
+                </div>
+                
+                <!-- CRMaps -->
+                <div class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 bg-white rounded-xl shadow-lg transform transition duration-300 hover:scale-105 flex items-center justify-center p-2 sm:p-3">
+                    <span class="text-gray-800 font-bold text-xs sm:text-sm">CRMaps</span>
+                </div>
             </div>
         </div>
     </section>

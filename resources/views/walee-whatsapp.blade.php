@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee WhatsApp - Chat Mejorado</title>
+    <title>WhatsApp - Walee</title>
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,7 +49,6 @@
         .whatsapp-container {
             display: flex;
             flex: 1;
-            max-width: 95%;
             width: 100%;
             margin: 0 auto;
             background: #fff;
@@ -62,7 +61,6 @@
         
         @media (max-width: 768px) {
             .whatsapp-container {
-                max-width: 100%;
                 border-radius: 0;
             }
         }
@@ -584,7 +582,7 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 flex flex-col flex-1 min-h-0">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col flex-1 min-h-0">
             @php $pageTitle = 'WhatsApp'; @endphp
             @include('partials.walee-navbar')
             

@@ -49,6 +49,7 @@ return [
         'url' => env('N8N_URL', 'https://n8n.srv1137974.hstgr.cloud'),
         'api_key' => env('N8N_API_KEY', ''),
         'start_webhook' => env('N8N_START_WEBHOOK', ''), // Webhook para iniciar workflows
+        'cotizacion_webhook_url' => env('N8N_COTIZACION_WEBHOOK_URL', ''), // Webhook para cotización de sitios y automatizaciones
     ],
 
     'openai' => [

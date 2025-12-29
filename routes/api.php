@@ -315,6 +315,13 @@ Route::post('/n8n-webhook', function (\Illuminate\Http\Request $request) {
 Route::post('/n8n/progress', [\App\Http\Controllers\N8nProgressController::class, 'update'])
     ->name('api.n8n-progress');
 
+// Rutas para cotización de sitios web y automatizaciones
+Route::post('/cotizacion/iniciar', [\App\Http\Controllers\CotizacionWorkflowController::class, 'iniciar'])
+    ->name('api.cotizacion.iniciar');
+
+Route::get('/cotizacion/estado/{jobId}', [\App\Http\Controllers\CotizacionWorkflowController::class, 'estado'])
+    ->name('api.cotizacion.estado');
+
 // Webhook para errores de n8n (Error Trigger) - DESHABILITADO: Modelo N8nError eliminado
 // Route::post('/n8n-error', ...) - Comentado porque N8nError ya no existe
 

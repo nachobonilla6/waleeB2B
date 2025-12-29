@@ -1,0 +1,280 @@
+{
+  "name": "Cotización Sitios Web y Automatizaciones",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cotizacion-servicios",
+        "responseMode": "responseNode",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "cotizacion-servicios"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reportar inicio del proceso\nconst jobId = $input.first().json.job_id;\nconst progressUrl = $input.first().json.progress_url;\n\n// Enviar progreso inicial\nif (jobId && progressUrl) {\n  $http.post(progressUrl, {\n    job_id: jobId,\n    status: 'running',\n    step: 'Iniciando proceso de cotización',\n    progress: 10\n  });\n}\n\nreturn $input.all();"
+      },
+      "id": "report-start",
+      "name": "Reportar Inicio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "TU_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sitios",
+          "mode": "name"
+        },
+        "options": {
+          "useFirstRowAsHeaders": true,
+          "range": "A2:F100"
+        }
+      },
+      "id": "read-sheets",
+      "name": "Leer Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [650, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filtrar sitios disponibles según el tipo de servicio\nconst tipoServicio = $('Webhook').first().json.tipo_servicio;\nconst categoria = tipoServicio === 'sitio_web' ? 'Sitio Web' : 'Automatización';\n\nconst items = $input.all()\n  .filter(item => {\n    const row = item.json;\n    const disponible = row.Disponible === 'Sí' || row.Disponible === 'Yes' || row.Disponible === true;\n    const categoriaMatch = row.Categoría === categoria || \n                          row.Categoría === 'Sitio Web' || \n                          row.Categoría === 'E-commerce' ||\n                          (tipoServicio === 'automatizacion' && row.Categoría === 'Automatización');\n    return disponible && categoriaMatch;\n  })\n  .map(item => ({\n    json: {\n      id: item.json.ID || item.json.id,\n      nombre: item.json.Nombre || item.json.nombre,\n      descripcion: item.json.Descripción || item.json.descripcion,\n      precio: item.json.Precio || item.json.precio,\n      categoria: item.json.Categoría || item.json.categoria\n    }\n  }));\n\nreturn items.length > 0 ? items : [{ json: { error: 'No se encontraron servicios disponibles' } }];"
+      },
+      "id": "filter-services",
+      "name": "Filtrar Servicios",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combinar datos del cliente con opciones de servicios\nconst datosCliente = $('Webhook').first().json;\nconst opcionesServicios = $input.all().map(item => item.json);\n\n// Reportar progreso\nif (datosCliente.job_id && datosCliente.progress_url) {\n  $http.post(datosCliente.progress_url, {\n    job_id: datosCliente.job_id,\n    status: 'running',\n    step: `Se encontraron ${opcionesServicios.length} opciones de servicios`,\n    progress: 50\n  });\n}\n\nreturn [{\n  json: {\n    cliente: {\n      nombre: datosCliente.nombre,\n      email: datosCliente.email,\n      telefono: datosCliente.telefono || '',\n      tipo_servicio: datosCliente.tipo_servicio,\n      mensaje: datosCliente.mensaje || ''\n    },\n    opciones_servicios: opcionesServicios,\n    job_id: datosCliente.job_id,\n    progress_url: datosCliente.progress_url\n  }\n}];"
+      },
+      "id": "combine-data",
+      "name": "Combinar Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "summary": "=Consulta: {{ $json.cliente.nombre }} - {{ $json.cliente.tipo_servicio }}",
+        "description": "=Cliente: {{ $json.cliente.nombre }}\nEmail: {{ $json.cliente.email }}\nTeléfono: {{ $json.cliente.telefono }}\nTipo de servicio: {{ $json.cliente.tipo_servicio }}\n\nMensaje: {{ $json.cliente.mensaje }}\n\nOpciones disponibles:\n{{ JSON.stringify($json.opciones_servicios, null, 2) }}",
+        "start": "={{ $now.plus({days: 1}).set({hour: 9, minute: 0}).toISO() }}",
+        "end": "={{ $now.plus({days: 1}).set({hour: 10, minute: 0}).toISO() }}",
+        "location": "Reunión virtual",
+        "attendees": "={{ $json.cliente.email }}",
+        "options": {
+          "sendUpdates": "all"
+        }
+      },
+      "id": "create-calendar-event",
+      "name": "Crear Evento Calendar",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "2",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail",
+        "toEmail": "={{ $('Combinar Datos').first().json.cliente.email }}",
+        "subject": "Confirmación de cita - WebSolutions",
+        "emailType": "html",
+        "message": "=<h2>¡Hola {{ $('Combinar Datos').first().json.cliente.nombre }}!</h2>\n<p>Hemos recibido tu solicitud de cotización para <strong>{{ $('Combinar Datos').first().json.cliente.tipo_servicio }}</strong>.</p>\n\n<h3>Opciones disponibles:</h3>\n<ul>\n{{ $('Combinar Datos').first().json.opciones_servicios.map(opcion => `<li><strong>${opcion.nombre}</strong><br>${opcion.descripcion}<br><em>Precio: ${opcion.precio}</em></li>`).join('') }}\n</ul>\n\n<p>Hemos agendado una cita para hablar sobre tu proyecto. Recibirás una invitación de Google Calendar.</p>\n\n<p>Si necesitas cambiar la fecha o hora, por favor contáctanos.</p>\n\n<p>Saludos,<br>Equipo WebSolutions</p>"
+      },
+      "id": "send-email",
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [1450, 300],
+      "credentials": {
+        "gmailOAuth2Api": {
+          "id": "3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Combinar Datos').first().json.progress_url }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "job_id",
+              "value": "={{ $('Combinar Datos').first().json.job_id }}"
+            },
+            {
+              "name": "status",
+              "value": "completed"
+            },
+            {
+              "name": "step",
+              "value": "Proceso completado"
+            },
+            {
+              "name": "progress",
+              "value": "100"
+            },
+            {
+              "name": "result",
+              "value": "={{ JSON.stringify({\n  cliente: $('Combinar Datos').first().json.cliente,\n  evento_calendario_id: $('Crear Evento Calendar').first().json.id,\n  opciones_enviadas: $('Combinar Datos').first().json.opciones_servicios.length\n}) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "report-complete",
+      "name": "Reportar Completado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  success: true,\n  cliente: $('Combinar Datos').first().json.cliente,\n  opciones_servicios: $('Combinar Datos').first().json.opciones_servicios,\n  evento_calendario: {\n    id: $('Crear Evento Calendar').first().json.id,\n    link: $('Crear Evento Calendar').first().json.htmlLink\n  }\n} }}"
+      },
+      "id": "webhook-response",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Reportar Inicio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar Inicio": {
+      "main": [
+        [
+          {
+            "node": "Leer Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Servicios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Servicios": {
+      "main": [
+        [
+          {
+            "node": "Combinar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar Datos": {
+      "main": [
+        [
+          {
+            "node": "Crear Evento Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Evento Calendar": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Email": {
+      "main": [
+        [
+          {
+            "node": "Reportar Completado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar Completado": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-15T10:00:00.000Z",
+  "versionId": "1"
+}
+
+

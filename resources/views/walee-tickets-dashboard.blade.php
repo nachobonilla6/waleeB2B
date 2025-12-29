@@ -101,7 +101,7 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
                 <!-- Enviados -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.2s;">
+                <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4 hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-md transition-all cursor-pointer block" style="animation-delay: 0.2s;">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
                             <svg class="w-4 h-4 md:w-5 md:h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,10 +111,10 @@
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsEnviados) }}</p>
                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Enviados</p>
-                </div>
+                </a>
                 
                 <!-- Recibidos -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.3s;">
+                <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all cursor-pointer block" style="animation-delay: 0.3s;">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
                             <svg class="w-4 h-4 md:w-5 md:h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,10 +124,10 @@
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsRecibidos) }}</p>
                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Recibidos</p>
-                </div>
+                </a>
                 
                 <!-- Resueltos -->
-                <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4" style="animation-delay: 0.4s;">
+                <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-3 md:p-4 hover:border-green-500 dark:hover:border-green-500 hover:shadow-md transition-all cursor-pointer block" style="animation-delay: 0.4s;">
                     <div class="flex items-center justify-between mb-2">
                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
                             <svg class="w-4 h-4 md:w-5 md:h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,7 +137,7 @@
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($ticketsResueltos) }}</p>
                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Resueltos</p>
-                </div>
+                </a>
                 
                 <!-- Urgentes -->
                 <div class="stat-card rounded-xl bg-white dark:bg-slate-800/50 border border-red-200 dark:border-red-500/20 p-3 md:p-4" style="animation-delay: 0.5s;">
@@ -166,27 +166,27 @@
                 <div class="rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 1.2s;">
                     <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Por Estado</h3>
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10">
+                        <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" class="flex items-center justify-between p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-colors cursor-pointer">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-amber-500"></div>
                                 <span class="text-xs md:text-sm text-slate-700 dark:text-slate-300">Enviados</span>
                             </div>
                             <span class="text-xs md:text-sm font-bold text-slate-900 dark:text-white">{{ $ticketsEnviados }}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-2 rounded-lg bg-blue-50 dark:bg-blue-500/10">
+                        </a>
+                        <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" class="flex items-center justify-between p-2 rounded-lg bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors cursor-pointer">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-blue-500"></div>
                                 <span class="text-xs md:text-sm text-slate-700 dark:text-slate-300">Recibidos</span>
                             </div>
                             <span class="text-xs md:text-sm font-bold text-slate-900 dark:text-white">{{ $ticketsRecibidos }}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-2 rounded-lg bg-green-50 dark:bg-green-500/10">
+                        </a>
+                        <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" class="flex items-center justify-between p-2 rounded-lg bg-green-50 dark:bg-green-500/10 hover:bg-green-100 dark:hover:bg-green-500/20 transition-colors cursor-pointer">
                             <div class="flex items-center gap-2">
                                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
                                 <span class="text-xs md:text-sm text-slate-700 dark:text-slate-300">Resueltos</span>
                             </div>
                             <span class="text-xs md:text-sm font-bold text-slate-900 dark:text-white">{{ $ticketsResueltos }}</span>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>

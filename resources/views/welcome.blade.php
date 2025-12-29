@@ -357,6 +357,22 @@
         </div>
     </section>
 
+    <!-- CTA Section - Bots y Automatizaciones -->
+    <section class="py-20" style="background: linear-gradient(135deg, #C54267 0%, #8B2E4A 50%, #C54267 100%); background-size: 200% 200%; animation: gradient 15s ease infinite;">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-5xl font-bold mb-6 text-white">¿Listo para automatizar tu servicio al cliente?</h2>
+            <p class="text-2xl mb-8 text-white/90">Bots y automatizaciones inteligentes que mejoran la experiencia de tus clientes 24/7</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="mailto:info@websolutions.work" class="bg-white text-[#C54267] px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition transform hover:scale-105">
+                    Solicitar Cotización
+                </a>
+                <a href="tel:+50689681451" class="bg-transparent border-2 border-white px-8 py-4 rounded-full text-lg font-semibold text-white hover:bg-white hover:text-[#C54267] transition transform hover:scale-105 flex items-center gap-2">
+                    <span>Contáctanos</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Theme Toggle -->
     <div class="fixed bottom-6 right-6 z-50">
         <button onclick="toggleTheme()" class="p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">

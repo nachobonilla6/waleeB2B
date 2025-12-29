@@ -212,7 +212,7 @@
                     <div class="text-center">
                         <div class="text-5xl mb-3">🤖</div>
                         <h3 class="text-xl font-bold mb-1 text-white">Alpha</h3>
-                        <p class="text-white/70 text-sm mb-3 italic">Contacta clientes</p>
+                        <p class="text-white/70 text-sm mb-3 italic">Comercial</p>
                         <p class="text-white/80 text-sm">Busca clientes y contacta de manera automatizada, identificando oportunidades de negocio y estableciendo comunicación inicial con prospectos.</p>
                     </div>
                 </div>

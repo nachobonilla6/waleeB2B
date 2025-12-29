@@ -258,7 +258,7 @@
         <div class="container mx-auto px-6 relative z-10">
             <div class="text-center mb-6">
                 <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">Consigue tu asistente personal</h2>
-                <p class="text-lg text-white/90">Soluciones inteligentes para servicio al cliente</p>
+                <p class="text-lg text-white/90">Asistente inteligente para servicio al cliente</p>
             </div>
             <div class="grid md:grid-cols-3 gap-16 max-w-7xl mx-auto">
                 <!-- Alpha -->

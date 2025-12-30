@@ -506,7 +506,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-emerald-900 dark:text-emerald-300">Google Calendar conectado</p>
+                            <p class="text-sm font-medium text-emerald-900 dark:text-emerald-300">Google Calendar connected</p>
                             <p class="text-xs text-emerald-700 dark:text-emerald-400">Las citas se sincronizan automáticamente</p>
                         </div>
                     </div>

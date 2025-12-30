@@ -59,7 +59,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        $vista = request()->get('vista', 'mensual');
+        $vista = request()->get('vista', 'semanal');
         $mes = request()->get('mes', now()->month);
         $ano = request()->get('ano', now()->year);
         
@@ -231,11 +231,11 @@
                         <div class="mb-4">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Vista</label>
                             <div class="flex gap-2">
-                                <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?mes={{ $mes }}&ano={{ $ano }}" class="flex-1 px-3 py-2 rounded-lg {{ !request()->has('vista') || request()->get('vista') !== 'semanal' ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
-                                    Mes
-                                </a>
-                                <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ request()->get('semana', now()->format('Y-W')) }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'semanal' ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
+                                <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ request()->get('semana', now()->format('Y-W')) }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'semanal' || !request()->has('vista') ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
                                     Semana
+                                </a>
+                                <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=mensual&mes={{ $mes }}&ano={{ $ano }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'mensual' ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
+                                    Mes
                                 </a>
                             </div>
                         </div>
@@ -320,82 +320,152 @@
                 
                 <!-- Contenido Principal: Calendario -->
                 <div class="flex-1 min-w-0">
-                    <!-- Calendar Header -->
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 mb-4 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $meses[$mes] }} {{ $ano }}</h2>
+                    @if($vista === 'semanal')
+                        <!-- Vista Semanal -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <!-- Header de la Semana -->
+                            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+                                    {{ $inicioSemana->format('d') }} - {{ $finSemana->format('d') }} {{ $meses[$finSemana->month] }} {{ $finSemana->year }}
+                                </h2>
+                            </div>
+                            
+                            <!-- Días de la Semana -->
+                            <div class="grid grid-cols-7 divide-x divide-slate-200 dark:divide-slate-700">
+                                @php
+                                    $diaSemana = $inicioSemana->copy();
+                                    $hoy = now();
+                                @endphp
+                                @for($i = 0; $i < 7; $i++)
+                                    @php
+                                        $esHoy = $diaSemana->isSameDay($hoy);
+                                        $fechaKey = $diaSemana->format('Y-m-d');
+                                        $eventosDelDia = $eventos->get($fechaKey, collect());
+                                        
+                                        // Ordenar eventos por hora
+                                        $eventosOrdenados = $eventosDelDia->sortBy('fecha_inicio');
+                                    @endphp
+                                    <div class="min-h-[400px] flex flex-col">
+                                        <!-- Header del día -->
+                                        <div class="p-3 border-b border-slate-200 dark:border-slate-700 {{ $esHoy ? 'bg-violet-50 dark:bg-violet-500/10' : '' }}">
+                                            <div class="text-center">
+                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{{ $diaSemana->format('D') }}</p>
+                                                <p class="text-lg font-bold {{ $esHoy ? 'text-violet-600 dark:text-violet-400' : 'text-slate-900 dark:text-white' }} mt-1">
+                                                    {{ $diaSemana->day }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Eventos del día -->
+                                        <div class="flex-1 p-2 space-y-1.5 overflow-y-auto">
+                                            @foreach($eventosOrdenados as $evento)
+                                                @php
+                                                    $colorEvento = $evento->color ?? '#8b5cf6';
+                                                    $colorHex = ltrim($colorEvento, '#');
+                                                    $r = hexdec(substr($colorHex, 0, 2));
+                                                    $g = hexdec(substr($colorHex, 2, 2));
+                                                    $b = hexdec(substr($colorHex, 4, 2));
+                                                    $colorBg = $evento->estado === 'publicado' 
+                                                        ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                        : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorEvento}; border-left: 3px solid {$colorEvento};";
+                                                @endphp
+                                                <button 
+                                                    onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
+                                                    class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $evento->estado === 'publicado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                                    style="{{ $evento->estado !== 'publicado' ? $colorBg : '' }}"
+                                                    title="{{ $evento->titulo }}"
+                                                >
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="text-[10px] font-semibold opacity-75">{{ $evento->fecha_inicio->format('H:i') }}</span>
+                                                        <span class="flex-1 truncate">{{ $evento->titulo }}</span>
+                                                    </div>
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @php $diaSemana->addDay(); @endphp
+                                @endfor
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Calendar Grid -->
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl shadow-sm dark:shadow-none overflow-hidden animate-fade-in-up" style="animation-delay: 0.3s;">
-                        <!-- Days of Week Header -->
-                        <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
-                            @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
-                                <div class="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 last:border-r-0">
-                                    {{ $dia }}
-                                </div>
-                            @endforeach
+                    @else
+                        <!-- Vista Mensual -->
+                        <!-- Calendar Header -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 mb-4 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $meses[$mes] }} {{ $ano }}</h2>
+                            </div>
                         </div>
                         
-                        <!-- Calendar Days -->
-                        <div class="grid grid-cols-7">
-                            @php
-                                $diaActual = $primerDia->copy();
-                                $hoy = now();
-                            @endphp
-                            @while($diaActual <= $ultimoDia)
+                        <!-- Calendar Grid -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl shadow-sm dark:shadow-none overflow-hidden animate-fade-in-up" style="animation-delay: 0.3s;">
+                            <!-- Days of Week Header -->
+                            <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
+                                @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
+                                    <div class="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 last:border-r-0">
+                                        {{ $dia }}
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            <!-- Calendar Days -->
+                            <div class="grid grid-cols-7">
                                 @php
-                                    $esHoy = $diaActual->isSameDay($hoy);
-                                    $esMesActual = $diaActual->month == $mes;
-                                    $fechaKey = $diaActual->format('Y-m-d');
-                                    $eventosDelDia = $eventos->get($fechaKey, collect());
-                                    $totalEventos = $eventosDelDia->count();
+                                    $diaActual = $primerDia->copy();
+                                    $hoy = now();
                                 @endphp
-                                <div class="block min-h-[120px] sm:min-h-[150px] md:min-h-[180px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-violet-50 dark:bg-violet-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="text-sm font-semibold {{ $esHoy ? 'text-violet-600 dark:text-violet-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
-                                            {{ $diaActual->day }}
-                                        </span>
-                                        @if($esHoy)
-                                            <span class="w-2 h-2 rounded-full bg-violet-500"></span>
-                                        @endif
+                                @while($diaActual <= $ultimoDia)
+                                    @php
+                                        $esHoy = $diaActual->isSameDay($hoy);
+                                        $esMesActual = $diaActual->month == $mes;
+                                        $fechaKey = $diaActual->format('Y-m-d');
+                                        $eventosDelDia = $eventos->get($fechaKey, collect());
+                                        $totalEventos = $eventosDelDia->count();
+                                    @endphp
+                                    <div class="block min-h-[120px] sm:min-h-[150px] md:min-h-[180px] border-r border-b border-slate-200 dark:border-slate-700 p-2 sm:p-3 {{ !$esMesActual ? 'bg-slate-50 dark:bg-slate-900/30' : '' }} {{ $esHoy ? 'bg-violet-50 dark:bg-violet-500/10' : '' }} hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                        <div class="flex items-center justify-between mb-1.5">
+                                            <span class="text-sm font-semibold {{ $esHoy ? 'text-violet-600 dark:text-violet-400' : ($esMesActual ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600') }}">
+                                                {{ $diaActual->day }}
+                                            </span>
+                                            @if($esHoy)
+                                                <span class="w-2 h-2 rounded-full bg-violet-500"></span>
+                                            @endif
+                                        </div>
+                                        <div class="space-y-1">
+                                            @foreach($eventosDelDia->take(5) as $evento)
+                                                @php
+                                                    $colorEvento = $evento->color ?? '#8b5cf6';
+                                                    $colorHex = ltrim($colorEvento, '#');
+                                                    $r = hexdec(substr($colorHex, 0, 2));
+                                                    $g = hexdec(substr($colorHex, 2, 2));
+                                                    $b = hexdec(substr($colorHex, 4, 2));
+                                                    $colorBg = $evento->estado === 'publicado' 
+                                                        ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                        : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorEvento}; border-left: 3px solid {$colorEvento};";
+                                                @endphp
+                                                <button 
+                                                    onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
+                                                    class="w-full text-left px-2 py-1 rounded text-xs font-medium transition-all hover:opacity-80 {{ $evento->estado === 'publicado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
+                                                    style="{{ $evento->estado !== 'publicado' ? $colorBg : '' }}"
+                                                    title="{{ $evento->titulo }}"
+                                                >
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="text-[10px] font-semibold opacity-75">{{ $evento->fecha_inicio->format('H:i') }}</span>
+                                                        <span class="flex-1 truncate">{{ $evento->titulo }}</span>
+                                                    </div>
+                                                </button>
+                                            @endforeach
+                                            @if($totalEventos > 5)
+                                                <button class="w-full text-left px-2 py-1 rounded text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                                    +{{ $totalEventos - 5 }} más
+                                                </button>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="space-y-1">
-                                        @foreach($eventosDelDia->take(5) as $evento)
-                                            @php
-                                                $colorEvento = $evento->color ?? '#8b5cf6';
-                                                $colorHex = ltrim($colorEvento, '#');
-                                                $r = hexdec(substr($colorHex, 0, 2));
-                                                $g = hexdec(substr($colorHex, 2, 2));
-                                                $b = hexdec(substr($colorHex, 4, 2));
-                                                $colorBg = $evento->estado === 'publicado' 
-                                                    ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                    : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorEvento}; border-left: 3px solid {$colorEvento};";
-                                            @endphp
-                                            <button 
-                                                onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
-                                                class="w-full text-left px-2 py-1 rounded text-xs font-medium transition-all hover:opacity-80 {{ $evento->estado === 'publicado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
-                                                style="{{ $evento->estado !== 'publicado' ? $colorBg : '' }}"
-                                                title="{{ $evento->titulo }}"
-                                            >
-                                                <div class="flex items-center gap-1.5">
-                                                    <span class="text-[10px] font-semibold opacity-75">{{ $evento->fecha_inicio->format('H:i') }}</span>
-                                                    <span class="flex-1 truncate">{{ $evento->titulo }}</span>
-                                                </div>
-                                            </button>
-                                        @endforeach
-                                        @if($totalEventos > 5)
-                                            <button class="w-full text-left px-2 py-1 rounded text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-                                                +{{ $totalEventos - 5 }} más
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
-                                @php $diaActual->addDay(); @endphp
-                            @endwhile
+                                    @php $diaActual->addDay(); @endphp
+                                @endwhile
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>

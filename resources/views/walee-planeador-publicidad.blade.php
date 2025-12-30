@@ -493,8 +493,8 @@
     
     <!-- Modal Programar Publicación -->
     <div id="programarPublicacionModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-2xl max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-4xl lg:max-w-5xl max-h-[85vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Programar Publicación</h3>
                 <button onclick="closeProgramarPublicacionModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
                     <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -502,59 +502,61 @@
                     </svg>
                 </button>
             </div>
-            <form id="programar-publicacion-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+            <form id="programar-publicacion-form" class="p-4 md:p-5 space-y-3 overflow-y-auto max-h-[calc(85vh-80px)]">
                 <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
                 
-                <!-- Imagen -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen de la Publicación</label>
-                    <div class="relative">
-                        <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
-                        <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-colors bg-slate-50 dark:bg-slate-800/50">
-                            <div id="imagePreview" class="hidden w-full h-full rounded-xl overflow-hidden">
-                                <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
-                            </div>
-                            <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-6">
-                                <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <p class="text-sm text-slate-600 dark:text-slate-400">Haz clic para subir una imagen</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">PNG, JPG, GIF hasta 10MB</p>
-                            </div>
-                        </label>
-                        <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-2 px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-all">
-                            Eliminar imagen
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Texto con AI -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la Publicación</label>
-                    <div class="flex gap-2 mb-2">
-                        <textarea name="texto" id="texto_publicacion" rows="4" placeholder="Escribe el texto de la publicación o genera uno con AI..." class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                        <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-4 py-2.5 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center gap-2 whitespace-nowrap">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                            </svg>
-                            <span class="hidden sm:inline">Generar con AI</span>
-                        </button>
-                    </div>
-                    <div id="aiLoading" class="hidden text-sm text-violet-600 dark:text-violet-400 flex items-center gap-2">
-                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Generando texto con AI...
-                    </div>
-                </div>
-                
-                <!-- Tipo y Plataforma -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Layout horizontal: Imagen y Texto lado a lado -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- Imagen -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de Publicación</label>
-                        <select name="tipo_publicacion" id="tipo_publicacion" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                            <option value="">Seleccionar tipo</option>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Imagen</label>
+                        <div class="relative">
+                            <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
+                            <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-colors bg-slate-50 dark:bg-slate-800/50">
+                                <div id="imagePreview" class="hidden w-full h-full rounded-lg overflow-hidden">
+                                    <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                                </div>
+                                <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-4">
+                                    <svg class="w-8 h-8 text-slate-400 dark:text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">Subir imagen</p>
+                                </div>
+                            </label>
+                            <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-1.5 px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-all">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Texto con AI -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Texto</label>
+                        <div class="flex gap-2">
+                            <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap h-fit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                                <span class="hidden sm:inline text-xs">AI</span>
+                            </button>
+                        </div>
+                        <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">
+                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Generando...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tipo, Plataforma, Fecha y Título en una fila -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Tipo</label>
+                        <select name="tipo_publicacion" id="tipo_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <option value="">Tipo</option>
                             @foreach($tiposPublicidad as $tipo)
                                 <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
                             @endforeach
@@ -562,34 +564,31 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Plataforma</label>
-                        <select name="plataforma_publicacion" id="plataforma_publicacion" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                            <option value="">Seleccionar plataforma</option>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Plataforma</label>
+                        <select name="plataforma_publicacion" id="plataforma_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <option value="">Plataforma</option>
                             @foreach($plataformas as $plataforma)
                                 <option value="{{ $plataforma }}">{{ ucfirst($plataforma) }}</option>
                             @endforeach
                         </select>
                     </div>
-                </div>
-                
-                <!-- Fecha y Hora -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora de Publicación</label>
-                        <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha y Hora</label>
+                        <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Título (opcional)</label>
-                        <input type="text" name="titulo_publicacion" id="titulo_publicacion" placeholder="Título de la publicación" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Título (opc)</label>
+                        <input type="text" name="titulo_publicacion" id="titulo_publicacion" placeholder="Título" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
                     </div>
                 </div>
                 
-                <div class="flex gap-2 pt-2">
-                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all">
+                <div class="flex gap-2 pt-1">
+                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all">
                         Programar Publicación
                     </button>
-                    <button type="button" onclick="closeProgramarPublicacionModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium transition-all">
+                    <button type="button" onclick="closeProgramarPublicacionModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-sm font-medium transition-all">
                         Cancelar
                     </button>
                 </div>

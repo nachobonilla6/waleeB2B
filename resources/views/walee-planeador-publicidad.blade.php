@@ -300,13 +300,19 @@
                             </select>
                         </div>
                         
-                        <!-- Botón Nueva Publicación -->
+                        <!-- Botones de Acción -->
                         <div class="space-y-2">
-                            <button onclick="showNuevoEventoModal()" class="w-full px-4 py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2">
+                            <button onclick="showProgramarPublicacionModal()" class="w-full px-4 py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2 shadow-lg">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                <span class="text-sm">Nueva Publicación</span>
+                                <span class="text-sm font-semibold">Programar Publicación</span>
+                            </button>
+                            <button onclick="showNuevoEventoModal()" class="w-full px-4 py-2.5 rounded-lg bg-slate-500 hover:bg-slate-600 text-white font-medium transition-all flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-sm">Nuevo Evento</span>
                             </button>
                         </div>
                     </div>
@@ -485,6 +491,112 @@
         </div>
     </div>
     
+    <!-- Modal Programar Publicación -->
+    <div id="programarPublicacionModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-2xl max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Programar Publicación</h3>
+                <button onclick="closeProgramarPublicacionModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="programar-publicacion-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+                <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
+                
+                <!-- Imagen -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen de la Publicación</label>
+                    <div class="relative">
+                        <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
+                        <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-colors bg-slate-50 dark:bg-slate-800/50">
+                            <div id="imagePreview" class="hidden w-full h-full rounded-xl overflow-hidden">
+                                <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                            </div>
+                            <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-6">
+                                <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Haz clic para subir una imagen</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">PNG, JPG, GIF hasta 10MB</p>
+                            </div>
+                        </label>
+                        <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-2 px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-all">
+                            Eliminar imagen
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Texto con AI -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la Publicación</label>
+                    <div class="flex gap-2 mb-2">
+                        <textarea name="texto" id="texto_publicacion" rows="4" placeholder="Escribe el texto de la publicación o genera uno con AI..." class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                        <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-4 py-2.5 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center gap-2 whitespace-nowrap">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            <span class="hidden sm:inline">Generar con AI</span>
+                        </button>
+                    </div>
+                    <div id="aiLoading" class="hidden text-sm text-violet-600 dark:text-violet-400 flex items-center gap-2">
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Generando texto con AI...
+                    </div>
+                </div>
+                
+                <!-- Tipo y Plataforma -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de Publicación</label>
+                        <select name="tipo_publicacion" id="tipo_publicacion" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <option value="">Seleccionar tipo</option>
+                            @foreach($tiposPublicidad as $tipo)
+                                <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Plataforma</label>
+                        <select name="plataforma_publicacion" id="plataforma_publicacion" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <option value="">Seleccionar plataforma</option>
+                            @foreach($plataformas as $plataforma)
+                                <option value="{{ $plataforma }}">{{ ucfirst($plataforma) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Fecha y Hora -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora de Publicación</label>
+                        <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Título (opcional)</label>
+                        <input type="text" name="titulo_publicacion" id="titulo_publicacion" placeholder="Título de la publicación" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all">
+                        Programar Publicación
+                    </button>
+                    <button type="button" onclick="closeProgramarPublicacionModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
@@ -492,6 +604,81 @@
             const mes = document.getElementById('selectMes').value;
             const ano = document.getElementById('selectAno').value;
             window.location.href = `?mes=${mes}&ano=${ano}`;
+        }
+        
+        function showProgramarPublicacionModal() {
+            document.getElementById('programar-publicacion-form').reset();
+            document.getElementById('imagePreview').classList.add('hidden');
+            document.getElementById('imagePlaceholder').classList.remove('hidden');
+            document.getElementById('removeImageBtn').classList.add('hidden');
+            document.getElementById('imagen_publicacion').value = '';
+            document.getElementById('programarPublicacionModal').classList.remove('hidden');
+        }
+        
+        function closeProgramarPublicacionModal() {
+            document.getElementById('programarPublicacionModal').classList.add('hidden');
+        }
+        
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                    document.getElementById('imagePlaceholder').classList.add('hidden');
+                    document.getElementById('removeImageBtn').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function removeImage() {
+            document.getElementById('imagen_publicacion').value = '';
+            document.getElementById('imagePreview').classList.add('hidden');
+            document.getElementById('imagePlaceholder').classList.remove('hidden');
+            document.getElementById('removeImageBtn').classList.add('hidden');
+        }
+        
+        async function generarTextoAI() {
+            const textoInput = document.getElementById('texto_publicacion');
+            const btnGenerar = document.getElementById('btnGenerarTexto');
+            const aiLoading = document.getElementById('aiLoading');
+            const tipoPublicacion = document.getElementById('tipo_publicacion').value;
+            const plataforma = document.getElementById('plataforma_publicacion').value;
+            
+            btnGenerar.disabled = true;
+            aiLoading.classList.remove('hidden');
+            
+            try {
+                const prompt = `Genera un texto creativo y atractivo para una publicación en ${plataforma ? plataforma : 'redes sociales'} del tipo ${tipoPublicacion ? tipoPublicacion : 'post'}. El texto debe ser ${tipoPublicacion === 'historia' ? 'corto y directo (máximo 100 palabras)' : tipoPublicacion === 'reel' ? 'dinámico y llamativo (máximo 150 palabras)' : 'engagante y profesional (máximo 200 palabras)'}. Incluye emojis relevantes y un llamado a la acción.`;
+                
+                const response = await fetch('/publicidad-eventos/generar-texto-ai', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        cliente_id: '{{ $cliente->id }}',
+                        cliente_nombre: '{{ $cliente->nombre_empresa }}'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    textoInput.value = result.texto;
+                } else {
+                    alert('Error: ' + (result.message || 'Error al generar texto'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            } finally {
+                btnGenerar.disabled = false;
+                aiLoading.classList.add('hidden');
+            }
         }
         
         function showNuevoEventoModal() {
@@ -568,10 +755,53 @@
             if (e.target === this) closeEventoModal();
         });
         
+        // Form submit programar publicación
+        document.getElementById('programar-publicacion-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const imagen = formData.get('imagen');
+            
+            // Validar que haya imagen o texto
+            if (!imagen || imagen.size === 0) {
+                if (!formData.get('texto') || formData.get('texto').trim() === '') {
+                    alert('Por favor, agrega una imagen o un texto para la publicación');
+                    return;
+                }
+            }
+            
+            try {
+                const response = await fetch('/publicidad-eventos/programar', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeProgramarPublicacionModal();
+                    location.reload();
+                } else {
+                    alert('Error: ' + (result.message || 'Error al programar publicación'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        });
+        
+        // Close modal on backdrop click
+        document.getElementById('programarPublicacionModal').addEventListener('click', function(e) {
+            if (e.target === this) closeProgramarPublicacionModal();
+        });
+        
         // Close modal on Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeEventoModal();
+                closeProgramarPublicacionModal();
             }
         });
     </script>

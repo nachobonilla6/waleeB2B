@@ -400,6 +400,106 @@ Route::delete('/publicidad-eventos/{id}', function ($id) {
     }
 })->middleware(['auth']);
 
+// Generar texto con AI para publicaciones
+Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\Request $request) {
+    try {
+        $apiKey = config('services.openai.api_key');
+        
+        if (!$apiKey) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Falta OPENAI_API_KEY. Configura la API key en el servidor.',
+            ], 500);
+        }
+        
+        $prompt = $request->input('prompt');
+        $clienteId = $request->input('cliente_id');
+        $clienteNombre = $request->input('cliente_nombre', 'el cliente');
+        
+        $cliente = \App\Models\Cliente::find($clienteId);
+        if ($cliente) {
+            $clienteNombre = $cliente->nombre_empresa;
+        }
+        
+        $systemPrompt = 'Eres un experto en marketing digital y creación de contenido para redes sociales. Genera textos creativos, atractivos y profesionales para publicaciones en redes sociales. El texto debe ser engaging, usar emojis de forma estratégica y tener un llamado a la acción claro. Responde SOLO con el texto de la publicación, sin explicaciones adicionales.';
+        
+        $userPrompt = $prompt . ($clienteNombre !== 'el cliente' ? " El cliente es {$clienteNombre}." : '');
+        
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+            ->timeout(60)
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => $systemPrompt,
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $userPrompt,
+                    ],
+                ],
+            ]);
+        
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $texto = $responseData['choices'][0]['message']['content'] ?? '';
+            
+            if (empty($texto)) {
+                throw new \RuntimeException('La respuesta de AI está vacía.');
+            }
+            
+            return response()->json([
+                'success' => true,
+                'texto' => trim($texto),
+            ]);
+        } else {
+            throw new \Exception('Error en la respuesta de OpenAI: ' . $response->status());
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth']);
+
+// Programar publicación con imagen
+Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request $request) {
+    try {
+        $evento = new \App\Models\PublicidadEvento();
+        $evento->titulo = $request->input('titulo_publicacion') ?: 'Publicación programada';
+        $evento->texto = $request->input('texto');
+        $evento->cliente_id = $request->input('cliente_id');
+        $evento->tipo_publicidad = $request->input('tipo_publicacion');
+        $evento->plataforma = $request->input('plataforma_publicacion');
+        $evento->estado = 'programado';
+        $evento->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_publicacion'));
+        $evento->color = '#8b5cf6';
+        
+        // Subir imagen si existe
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreArchivo = 'publicidad_' . $evento->cliente_id . '_' . time() . '.' . $imagen->getClientOriginalExtension();
+            $ruta = $imagen->storeAs('publicidad', $nombreArchivo, 'public');
+            $evento->imagen_url = str_replace('public/', '', $ruta);
+        }
+        
+        $evento->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Publicación programada exitosamente',
+            'evento_id' => $evento->id
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
 Route::get('/citas/{id}/detalle', function ($id) {
     $cita = \App\Models\Cita::with('cliente')->findOrFail($id);
     $meses = [

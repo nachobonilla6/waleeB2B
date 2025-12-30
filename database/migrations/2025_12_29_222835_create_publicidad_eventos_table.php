@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->text('descripcion')->nullable();
+            $table->text('texto')->nullable(); // Texto de la publicación (contenido principal)
             $table->text('notas')->nullable();
             $table->dateTime('fecha_inicio');
             $table->dateTime('fecha_fin')->nullable();

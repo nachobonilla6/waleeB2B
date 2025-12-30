@@ -12,6 +12,7 @@ class PublicidadEvento extends Model
     protected $fillable = [
         'titulo',
         'descripcion',
+        'texto', // Texto de la publicación (contenido principal)
         'notas',
         'fecha_inicio',
         'fecha_fin',

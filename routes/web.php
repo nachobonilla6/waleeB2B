@@ -342,6 +342,17 @@ Route::get('/walee-calendario', function () {
 // Planeador de Publicidad - Requiere cliente_id
 Route::get('/walee-planeador-publicidad/{cliente_id}', function ($cliente_id) {
     $cliente = \App\Models\Cliente::findOrFail($cliente_id);
+    
+    // Si no viene vista, redirigir a vista semanal
+    if (!request()->has('vista')) {
+        $semanaActual = now()->format('Y-W');
+        return redirect()->route('walee.planeador.publicidad', [
+            'cliente_id' => $cliente_id,
+            'vista' => 'semanal',
+            'semana' => $semanaActual
+        ]);
+    }
+    
     return view('walee-planeador-publicidad', compact('cliente'));
 })->middleware(['auth'])->name('walee.planeador.publicidad');
 

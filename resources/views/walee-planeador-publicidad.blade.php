@@ -284,21 +284,29 @@
                             </div>
                         </div>
                         
-                        <!-- Selectores de Fecha -->
-                        <div class="mb-4 space-y-2">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">Fecha</label>
-                            <select id="selectMes" onchange="navegarAFecha()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                                @foreach($meses as $numMes => $nombreMes)
-                                    <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
-                                @endforeach
-                            </select>
-                            
-                            <select id="selectAno" onchange="navegarAFecha()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                                @foreach($anos as $numAno)
-                                    <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        @if($vista === 'semanal')
+                            <!-- Selector de Semana -->
+                            <div class="mb-4">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Semana</label>
+                                <input type="week" id="selectSemana" value="{{ $inicioSemana->format('Y-\WW') }}" onchange="navegarASemana()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            </div>
+                        @else
+                            <!-- Selectores de Fecha (solo para vista mensual) -->
+                            <div class="mb-4 space-y-2">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">Fecha</label>
+                                <select id="selectMes" onchange="navegarAFecha()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                                    @foreach($meses as $numMes => $nombreMes)
+                                        <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
+                                    @endforeach
+                                </select>
+                                
+                                <select id="selectAno" onchange="navegarAFecha()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                                    @foreach($anos as $numAno)
+                                        <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         
                         <!-- Botones de Acción -->
                         <div class="space-y-2">
@@ -669,10 +677,33 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
+        function navegarASemana() {
+            const semanaInput = document.getElementById('selectSemana').value;
+            if (semanaInput) {
+                const [ano, semana] = semanaInput.split('-W');
+                window.location.href = `?vista=semanal&semana=${ano}-${semana}`;
+            }
+        }
+        
         function navegarAFecha() {
+            // Para vista mensual, redirigir a semanal de ese mes
             const mes = document.getElementById('selectMes').value;
             const ano = document.getElementById('selectAno').value;
-            window.location.href = `?mes=${mes}&ano=${ano}`;
+            const fecha = new Date(ano, mes - 1, 15); // Usar día 15 para estar en medio del mes
+            const inicioSemana = new Date(fecha);
+            inicioSemana.setDate(fecha.getDate() - fecha.getDay()); // Ir al domingo de esa semana
+            
+            const anoSemana = inicioSemana.getFullYear();
+            const semana = getWeekNumber(inicioSemana);
+            window.location.href = `?vista=semanal&semana=${anoSemana}-${semana}`;
+        }
+        
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
         }
         
         function showProgramarPublicacionModal() {

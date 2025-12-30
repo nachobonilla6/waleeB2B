@@ -432,9 +432,9 @@ Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\R
             $clienteNombre = $cliente->nombre_empresa;
         }
         
-        $systemPrompt = 'Eres un experto en marketing digital y creación de contenido para redes sociales. Genera textos creativos, atractivos y profesionales para publicaciones en redes sociales. El texto debe ser engaging, usar emojis de forma estratégica y tener un llamado a la acción claro. Responde SOLO con el texto de la publicación, sin explicaciones adicionales.';
+        $systemPrompt = 'You are an expert in digital marketing and social media content creation. Generate creative, attractive, and professional texts for social media posts. The text must be engaging, use emojis strategically, and have a clear call to action. Respond ONLY with the post text, no additional explanations. The text must be exactly 50 words in English.';
         
-        $userPrompt = $prompt . ($clienteNombre !== 'el cliente' ? " El cliente es {$clienteNombre}." : '');
+        $userPrompt = $prompt . ($clienteNombre !== 'el cliente' ? " The client is {$clienteNombre}." : '') . " Generate exactly 50 words in English.";
         
         $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
             ->timeout(60)
@@ -479,10 +479,10 @@ Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\R
 Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request $request) {
     try {
         $evento = new \App\Models\PublicidadEvento();
-        $evento->titulo = $request->input('titulo_publicacion') ?: 'Publicación programada';
+        $evento->titulo = 'Publicación programada';
         $evento->texto = $request->input('texto');
         $evento->cliente_id = $request->input('cliente_id');
-        $evento->tipo_publicidad = $request->input('tipo_publicacion');
+        $evento->tipo_publicidad = null; // Ya no se usa
         $evento->plataforma = $request->input('plataforma_publicacion');
         $evento->estado = 'programado';
         $evento->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_publicacion'));

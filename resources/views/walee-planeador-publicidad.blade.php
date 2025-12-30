@@ -629,36 +629,27 @@
                     </div>
                 </div>
                 
-                <!-- Tipo, Plataforma, Fecha y Título en una fila -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Tipo</label>
-                        <select name="tipo_publicacion" id="tipo_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                            <option value="">Tipo</option>
-                            @foreach($tiposPublicidad as $tipo)
-                                <option value="{{ $tipo }}">{{ ucfirst($tipo) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
+                <!-- Prompt personalizado -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Prompt Personalizado (opcional)</label>
+                    <textarea name="prompt_personalizado" id="prompt_personalizado" rows="2" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                </div>
+                
+                <!-- Plataforma y Fecha -->
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Plataforma</label>
                         <select name="plataforma_publicacion" id="plataforma_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                            <option value="">Plataforma</option>
-                            @foreach($plataformas as $plataforma)
-                                <option value="{{ $plataforma }}">{{ ucfirst($plataforma) }}</option>
-                            @endforeach
+                            <option value="">Seleccionar</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="linkedin">LinkedIn</option>
                         </select>
                     </div>
                     
                     <div>
                         <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha y Hora</label>
                         <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Título (opc)</label>
-                        <input type="text" name="titulo_publicacion" id="titulo_publicacion" placeholder="Título" class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
                     </div>
                 </div>
                 
@@ -744,14 +735,18 @@
             const textoInput = document.getElementById('texto_publicacion');
             const btnGenerar = document.getElementById('btnGenerarTexto');
             const aiLoading = document.getElementById('aiLoading');
-            const tipoPublicacion = document.getElementById('tipo_publicacion').value;
             const plataforma = document.getElementById('plataforma_publicacion').value;
+            const promptPersonalizado = document.getElementById('prompt_personalizado').value;
             
             btnGenerar.disabled = true;
             aiLoading.classList.remove('hidden');
             
             try {
-                const prompt = `Genera un texto creativo y atractivo para una publicación en ${plataforma ? plataforma : 'redes sociales'} del tipo ${tipoPublicacion ? tipoPublicacion : 'post'}. El texto debe ser ${tipoPublicacion === 'historia' ? 'corto y directo (máximo 100 palabras)' : tipoPublicacion === 'reel' ? 'dinámico y llamativo (máximo 150 palabras)' : 'engagante y profesional (máximo 200 palabras)'}. Incluye emojis relevantes y un llamado a la acción.`;
+                // Si hay prompt personalizado, usarlo; si no, usar uno genérico
+                let prompt = promptPersonalizado.trim();
+                if (!prompt) {
+                    prompt = `Create an engaging social media post for ${plataforma || 'social media'}. Make it creative, professional, and include a clear call to action.`;
+                }
                 
                 const response = await fetch('/publicidad-eventos/generar-texto-ai', {
                     method: 'POST',

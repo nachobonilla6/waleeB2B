@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\IngresosDashboardWidget;
-use App\Filament\Widgets\IngresosUltimos30DiasChart;
+use App\Filament\Widgets\PublicacionesFacebookChart;
 use App\Filament\Widgets\PropuestasEnviadasStatsWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Actions\Action;
@@ -22,7 +22,7 @@ class Dashboard extends BaseDashboard
         return [
             IngresosDashboardWidget::class,
             PropuestasEnviadasStatsWidget::class,
-            IngresosUltimos30DiasChart::class,
+            PublicacionesFacebookChart::class,
         ];
     }
 

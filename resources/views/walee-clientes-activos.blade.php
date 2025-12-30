@@ -191,6 +191,21 @@
                                 
                                 <!-- Action Buttons -->
                                 <div class="flex items-center gap-2">
+                                    @php
+                                        // Buscar cliente en tabla clientes por email o nombre
+                                        $clientePrincipal = \App\Models\Cliente::where('correo', $cliente->email)
+                                            ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
+                                            ->first();
+                                    @endphp
+                                    @if($clientePrincipal)
+                                        <!-- Planeador de Publicidad Button -->
+                                        <a href="{{ route('walee.planeador.publicidad', $clientePrincipal->id) }}" class="flex-shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-400 hover:text-violet-300 border border-violet-500/30 hover:border-violet-400/50 transition-all duration-300 group/publicidad">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            <span class="text-sm font-medium hidden lg:inline">Publicidad</span>
+                                        </a>
+                                    @endif
                                     <!-- Email with AI Button -->
                                     <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex-shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 hover:text-walee-300 border border-walee-500/30 hover:border-walee-400/50 transition-all duration-300 group/email">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -102,6 +102,16 @@
                     
                     <!-- Action Buttons -->
                     <div class="space-y-3">
+                        @if($clientePrincipal)
+                            <!-- Planeador de Publicidad Button -->
+                            <a href="{{ route('walee.planeador.publicidad', $clientePrincipal->id) }}" class="flex items-center justify-center gap-3 w-full px-6 py-4 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-400 border border-violet-500/30 hover:border-violet-400/50 transition-all">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-lg font-medium">Planeador de Publicidad</span>
+                            </a>
+                        @endif
+                        
                         <!-- Email with AI Button -->
                         <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-center gap-3 w-full px-6 py-4 rounded-2xl bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

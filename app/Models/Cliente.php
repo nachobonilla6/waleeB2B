@@ -89,4 +89,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Sitio::class);
     }
+
+    public function publicidadEventos(): HasMany
+    {
+        return $this->hasMany(\App\Models\PublicidadEvento::class);
+    }
 }

@@ -339,6 +339,67 @@ Route::get('/walee-calendario', function () {
     return view('walee-calendario');
 })->middleware(['auth'])->name('walee.calendario');
 
+// Planeador de Publicidad - Requiere cliente_id
+Route::get('/walee-planeador-publicidad/{cliente_id}', function ($cliente_id) {
+    $cliente = \App\Models\Cliente::findOrFail($cliente_id);
+    return view('walee-planeador-publicidad', compact('cliente'));
+})->middleware(['auth'])->name('walee.planeador.publicidad');
+
+// Rutas para eventos de publicidad
+Route::post('/publicidad-eventos', function (\Illuminate\Http\Request $request) {
+    try {
+        $evento = new \App\Models\PublicidadEvento();
+        $evento->titulo = $request->input('titulo');
+        $evento->descripcion = $request->input('descripcion');
+        $evento->cliente_id = $request->input('cliente_id');
+        $evento->tipo_publicidad = $request->input('tipo_publicidad');
+        $evento->plataforma = $request->input('plataforma');
+        $evento->estado = $request->input('estado', 'programado');
+        $evento->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
+        $evento->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
+        $evento->color = $request->input('color', '#8b5cf6');
+        $evento->recurrencia = $request->input('recurrencia', 'none');
+        $evento->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $evento->save();
+        
+        return response()->json(['success' => true, 'message' => 'Evento de publicidad creado exitosamente']);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+    }
+})->middleware(['auth']);
+
+Route::put('/publicidad-eventos/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $evento = \App\Models\PublicidadEvento::findOrFail($id);
+        $evento->titulo = $request->input('titulo');
+        $evento->descripcion = $request->input('descripcion');
+        $evento->tipo_publicidad = $request->input('tipo_publicidad');
+        $evento->plataforma = $request->input('plataforma');
+        $evento->estado = $request->input('estado', 'programado');
+        $evento->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
+        $evento->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
+        $evento->color = $request->input('color', '#8b5cf6');
+        $evento->recurrencia = $request->input('recurrencia', 'none');
+        $evento->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        $evento->save();
+        
+        return response()->json(['success' => true, 'message' => 'Evento de publicidad actualizado exitosamente']);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+    }
+})->middleware(['auth']);
+
+Route::delete('/publicidad-eventos/{id}', function ($id) {
+    try {
+        $evento = \App\Models\PublicidadEvento::findOrFail($id);
+        $evento->delete();
+        
+        return response()->json(['success' => true, 'message' => 'Evento de publicidad eliminado exitosamente']);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+    }
+})->middleware(['auth']);
+
 Route::get('/citas/{id}/detalle', function ($id) {
     $cita = \App\Models\Cita::with('cliente')->findOrFail($id);
     $meses = [

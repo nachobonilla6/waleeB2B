@@ -2,14 +2,13 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Factura;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Number;
 
-class IngresosUltimos30DiasChart extends ChartWidget
+class PublicacionesFacebookChart extends ChartWidget
 {
-    protected static ?string $heading = 'Ingresos de los Últimos 30 Días';
+    protected static ?string $heading = 'Publicaciones subidas a FB';
     
     protected static ?int $sort = 2;
     
@@ -28,28 +27,26 @@ class IngresosUltimos30DiasChart extends ChartWidget
         $startDate = $today->copy()->subDays(29); // Últimos 30 días incluyendo hoy
         
         $labels = [];
-        $ingresos = [];
+        $data = [];
         
         // Generar datos para cada día de los últimos 30 días
         for ($i = 0; $i < 30; $i++) {
             $date = $startDate->copy()->addDays($i);
             $labels[] = $date->format('d/m');
             
-            // Obtener ingresos del día (facturas pagadas)
-            $ingresoDia = (float) Factura::where('estado', 'pagada')
-                ->whereDate('fecha_emision', $date)
-                ->sum('total');
+            // Obtener posts creados ese día
+            $postCount = \App\Models\Post::whereDate('created_at', $date)->count();
             
-            $ingresos[] = $ingresoDia;
+            $data[] = $postCount;
         }
         
         return [
             'datasets' => [
                 [
-                    'label' => 'Ingresos (CRC)',
-                    'data' => $ingresos,
-                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
-                    'borderColor' => 'rgb(59, 130, 246)',
+                    'label' => 'Publicaciones',
+                    'data' => $data,
+                    'backgroundColor' => 'rgba(24, 119, 242, 0.1)', // FB Blue
+                    'borderColor' => 'rgb(24, 119, 242)', // FB Blue
                     'fill' => true,
                     'tension' => 0.4,
                 ],
@@ -65,18 +62,13 @@ class IngresosUltimos30DiasChart extends ChartWidget
                 'y' => [
                     'beginAtZero' => true,
                     'ticks' => [
-                        'callback' => 'function(value) { return "₡" + value.toLocaleString("es-CR"); }',
+                        'stepSize' => 1,
                     ],
                 ],
             ],
             'plugins' => [
                 'legend' => [
                     'display' => true,
-                ],
-                'tooltip' => [
-                    'callbacks' => [
-                        'label' => 'function(context) { return "Ingresos: ₡" + context.parsed.y.toLocaleString("es-CR"); }',
-                    ],
                 ],
             ],
         ];

@@ -812,10 +812,16 @@
             const promptInput = document.getElementById('prompt_personalizado');
             const aiLoading = document.getElementById('aiLoading');
             const btnGenerarTexto = document.getElementById('btnGenerarTexto');
-            const clienteIdInput = document.querySelector('#programar-publicacion-form input[name="cliente_id"]');
+            
+            // Usar siempre el ID del cliente principal (Client), no el del planeador (Cliente)
+            const clienteId = {{ $cliente->id }};
             
             const prompt = promptInput ? promptInput.value.trim() : '';
-            const clienteId = clienteIdInput ? clienteIdInput.value : '{{ $cliente->id }}';
+            
+            if (!textoTextarea) {
+                alert('Error: No se encontró el campo de texto');
+                return;
+            }
             
             if (btnGenerarTexto) btnGenerarTexto.disabled = true;
             if (aiLoading) aiLoading.classList.remove('hidden');
@@ -832,6 +838,10 @@
                     }),
                 });
                 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 
                 if (data.success && textoTextarea) {
@@ -840,6 +850,7 @@
                     alert('Error: ' + (data.message || 'Error al generar texto'));
                 }
             } catch (error) {
+                console.error('Error generando texto con AI:', error);
                 alert('Error de conexión: ' + error.message);
             } finally {
                 if (btnGenerarTexto) btnGenerarTexto.disabled = false;

@@ -1495,22 +1495,22 @@
     
     <!-- Modal Nueva/Editar Tarea -->
     <div id="tareaModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md md:max-w-2xl max-h-[85vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="tareaModalTitle">Nueva Tarea</h3>
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-3xl lg:max-w-4xl max-h-[70vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-base font-semibold text-slate-900 dark:text-white" id="tareaModalTitle">Nueva Tarea</h3>
                 <button onclick="closeTareaModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
                     <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <form id="tarea-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[65vh]">
+            <form id="tarea-form" class="p-3 md:p-4 space-y-3 overflow-y-auto max-h-[60vh]">
                 <input type="hidden" name="tarea_id" id="tarea_id">
                 
                 <!-- Primera fila: Texto y Lista -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Texto de la Tarea</label>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Texto de la Tarea</label>
                         <input 
                             type="text" 
                             name="texto" 
@@ -1522,7 +1522,7 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Lista</label>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Lista</label>
                         <select 
                             name="lista_id" 
                             id="tarea_lista_id"
@@ -1537,15 +1537,15 @@
                 </div>
                 
                 <!-- Segunda fila: Fecha y Hora y Recurrencia -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora</label>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha y Hora</label>
                         <input 
                             type="datetime-local" 
                             name="fecha_hora" 
                             id="tarea_fecha_hora"
                             required
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all text-sm"
                         >
                     </div>
                     
@@ -1554,7 +1554,7 @@
                         <select 
                             name="recurrencia" 
                             id="tarea_recurrencia"
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all text-sm"
                             onchange="toggleTareaRecurrenciaOptions()"
                         >
                             <option value="none">Sin recurrencia</option>
@@ -1624,8 +1624,8 @@
                 </div>
                 
                 <!-- Notificaciones -->
-                <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <div class="flex items-center gap-3 mb-4">
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-3">
+                    <div class="flex items-center gap-2 mb-3">
                         <input 
                             type="checkbox" 
                             name="notificacion_habilitada" 
@@ -1633,19 +1633,19 @@
                             onchange="toggleNotificacionOptions()"
                             class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-violet-500 focus:ring-violet-500"
                         >
-                        <label for="tarea_notificacion_habilitada" class="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <label for="tarea_notificacion_habilitada" class="text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
                             Activar notificación
                         </label>
                     </div>
                     
-                    <div id="notificacion_options_container" class="hidden space-y-4">
+                    <div id="notificacion_options_container" class="hidden space-y-3">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de notificación</label>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Tipo de notificación</label>
                             <select 
                                 name="notificacion_tipo" 
                                 id="tarea_notificacion_tipo"
                                 onchange="toggleNotificacionTipo()"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all text-sm"
                             >
                                 <option value="relativa">Tiempo relativo (antes de la tarea)</option>
                                 <option value="especifica">Fecha y hora específica</option>
@@ -1654,11 +1654,11 @@
                         
                         <!-- Opciones para notificación relativa -->
                         <div id="notificacion_relativa_container">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notificar</label>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Notificar</label>
                             <select 
                                 name="notificacion_minutos_antes" 
                                 id="tarea_notificacion_minutos_antes"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all text-sm"
                             >
                                 <option value="15">15 minutos antes</option>
                                 <option value="30">30 minutos antes</option>
@@ -1673,19 +1673,19 @@
                         
                         <!-- Opciones para notificación específica -->
                         <div id="notificacion_especifica_container" class="hidden">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y hora de notificación</label>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha y hora de notificación</label>
                             <input 
                                 type="datetime-local" 
                                 name="notificacion_fecha_hora" 
                                 id="tarea_notificacion_fecha_hora"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all text-sm"
                             >
                         </div>
                     </div>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Color</label>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Color</label>
                     <div class="flex items-center gap-3">
                         <input 
                             type="color" 
@@ -1708,7 +1708,7 @@
                 <div class="flex gap-2 pt-2">
                     <button 
                         type="submit"
-                        class="flex-1 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all"
+                        class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all"
                     >
                         Guardar
                     </button>
@@ -1716,7 +1716,7 @@
                         type="button"
                         id="deleteTareaBtn"
                         onclick="deleteTarea()"
-                        class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden"
+                        class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-all hidden"
                     >
                         Eliminar
                     </button>

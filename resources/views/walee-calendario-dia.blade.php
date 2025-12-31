@@ -316,10 +316,10 @@
                     
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente</label>
-                        <select name="cliente_id" id="cliente_id" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        <select name="client_id" id="client_id" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             <option value="">Sin cliente</option>
                             @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
+                                <option value="{{ $cliente->id }}">{{ $cliente->name }} @if($cliente->email)({{ $cliente->email }})@endif</option>
                             @endforeach
                         </select>
                     </div>
@@ -801,7 +801,8 @@
             return [
                 'id' => $cita->id,
                 'titulo' => $cita->titulo,
-                'cliente_id' => $cita->cliente_id,
+                'client_id' => $cita->client_id,
+                'cliente_id' => $cita->cliente_id, // Mantener por compatibilidad
                 'fecha_inicio' => $cita->fecha_inicio,
                 'fecha_fin' => $cita->fecha_fin,
                 'ubicacion' => $cita->ubicacion,
@@ -1051,7 +1052,7 @@
             document.getElementById('modalTitle').textContent = 'Editar Cita';
             document.getElementById('cita_id').value = cita.id;
             document.getElementById('titulo').value = cita.titulo;
-            document.getElementById('cliente_id').value = cita.cliente_id || '';
+            document.getElementById('client_id').value = cita.client_id || '';
             document.getElementById('fecha_inicio').value = new Date(cita.fecha_inicio).toISOString().slice(0, 16);
             document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
             document.getElementById('ubicacion').value = cita.ubicacion || '';
@@ -1202,7 +1203,7 @@
             
             const formData = {
                 titulo: document.getElementById('titulo').value,
-                cliente_id: document.getElementById('cliente_id').value || null,
+                client_id: document.getElementById('client_id').value || null,
                 fecha_inicio: document.getElementById('fecha_inicio').value,
                 fecha_fin: document.getElementById('fecha_fin').value || null,
                 ubicacion: document.getElementById('ubicacion').value || null,

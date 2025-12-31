@@ -690,13 +690,13 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
 })->middleware(['auth']);
 
 Route::get('/citas/{id}/detalle', function ($id) {
-    $cita = \App\Models\Cita::with('cliente')->findOrFail($id);
+    $cita = \App\Models\Cita::with(['cliente', 'client'])->findOrFail($id);
     $meses = [
         1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
         5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
         9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
     ];
-    $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
+    $clientes = \App\Models\Client::orderBy('name')->get();
     return view('walee-cita-detalle', compact('cita', 'meses', 'clientes'));
 })->middleware(['auth'])->name('walee.cita.detalle');
 
@@ -716,7 +716,7 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
     $fecha = \Carbon\Carbon::create($ano, $mes, $dia);
     
     // Obtener citas del día
-    $citas = \App\Models\Cita::with('cliente')
+    $citas = \App\Models\Cita::with(['cliente', 'client'])
         ->whereDate('fecha_inicio', $fecha->format('Y-m-d'))
         ->orderBy('fecha_inicio', 'asc')
         ->get();
@@ -740,7 +740,9 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
     
     foreach ($citas as $cita) {
         $clienteNombre = null;
-        if ($cita->cliente_id && $cita->cliente) {
+        if ($cita->client_id && $cita->client) {
+            $clienteNombre = $cita->client->name;
+        } elseif ($cita->cliente_id && $cita->cliente) {
             $clienteNombre = $cita->cliente->nombre_empresa;
         }
         
@@ -813,7 +815,7 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
     try {
         $cita = new \App\Models\Cita();
         $cita->titulo = $request->input('titulo');
-        $cita->cliente_id = $request->input('cliente_id');
+        $cita->client_id = $request->input('client_id'); // Usar client_id de clientes_en_proceso
         $cita->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
         $cita->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
         $cita->ubicacion = $request->input('ubicacion');
@@ -873,7 +875,7 @@ Route::put('/citas/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cita = \App\Models\Cita::findOrFail($id);
         $cita->titulo = $request->input('titulo');
-        $cita->cliente_id = $request->input('cliente_id');
+        $cita->client_id = $request->input('client_id'); // Usar client_id de clientes_en_proceso
         $cita->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
         $cita->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
         $cita->ubicacion = $request->input('ubicacion');

@@ -76,20 +76,20 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         ->maxLength(255)
                         ->placeholder('Ej: Reunión con cliente')
                         ->columnSpan(3),
-                    Select::make('cliente_id')
+                    Select::make('client_id')
                         ->label('Cliente')
                         ->options(function () {
-                            return Cliente::orderBy('nombre_empresa')
+                            return \App\Models\Client::orderBy('name')
                                 ->get()
                                 ->mapWithKeys(fn ($cliente) => [
-                                    $cliente->id => $cliente->nombre_empresa . ' (' . $cliente->correo . ')'
+                                    $cliente->id => $cliente->name . ($cliente->email ? ' (' . $cliente->email . ')' : '')
                                 ])
                                 ->toArray();
                         })
                         ->searchable()
                         ->getSearchResultsUsing(fn (string $search): array => 
-                            Cliente::where('nombre_empresa', 'like', "%{$search}%")
-                                ->orWhere('correo', 'like', "%{$search}%")
+                            \App\Models\Client::where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%")
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn ($cliente) => [

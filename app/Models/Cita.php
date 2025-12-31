@@ -14,6 +14,7 @@ class Cita extends Model
         'fecha_inicio',
         'fecha_fin',
         'cliente_id',
+        'client_id', // ID de clientes_en_proceso
         'cliente', // Mantener por compatibilidad
         'ubicacion',
         'estado',
@@ -35,5 +36,10 @@ class Cita extends Model
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
     }
 }

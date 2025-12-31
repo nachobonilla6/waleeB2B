@@ -559,17 +559,21 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             // Generar URL completa de la imagen si existe
             $imageUrl = null;
             if ($evento->imagen_url) {
-                // Convertir rutas antiguas de storage a la nueva ruta pública
                 $rutaImagen = $evento->imagen_url;
                 
-                if (str_contains($rutaImagen, 'storage/publicidad/') || str_contains($rutaImagen, 'publicidad/')) {
-                    // Extraer solo el nombre del archivo
-                    $nombreArchivo = basename($rutaImagen);
-                    $imageUrl = asset('publicidad/' . $nombreArchivo);
-                } elseif (str_starts_with($rutaImagen, 'publicidad/')) {
+                // Si la ruta ya contiene 'publicidad/', usar directamente sin 'storage/'
+                if (str_contains($rutaImagen, 'publicidad/')) {
+                    // Si tiene 'storage/' delante, removerlo
+                    $rutaImagen = str_replace('storage/', '', $rutaImagen);
+                    $rutaImagen = str_replace('public/', '', $rutaImagen);
+                    // Asegurar que empiece con 'publicidad/'
+                    if (!str_starts_with($rutaImagen, 'publicidad/')) {
+                        $nombreArchivo = basename($rutaImagen);
+                        $rutaImagen = 'publicidad/' . $nombreArchivo;
+                    }
                     $imageUrl = asset($rutaImagen);
                 } else {
-                    // Fallback: intentar con storage (para compatibilidad)
+                    // Para otras rutas, intentar con storage (compatibilidad)
                     $imageUrl = asset('storage/' . $rutaImagen);
                 }
                 
@@ -638,20 +642,21 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
         // Construir URL completa de la imagen si existe
         $imagenUrl = null;
         if ($evento->imagen_url) {
-            // Convertir rutas antiguas de storage a la nueva ruta pública
             $rutaImagen = $evento->imagen_url;
             
-            // Si la ruta contiene 'storage/publicidad/' o 'publicidad/', convertirla
-            if (str_contains($rutaImagen, 'storage/publicidad/') || str_contains($rutaImagen, 'publicidad/')) {
-                // Extraer solo el nombre del archivo
-                $nombreArchivo = basename($rutaImagen);
-                // Usar la nueva ruta pública
-                $imagenUrl = asset('publicidad/' . $nombreArchivo);
-            } elseif (str_starts_with($rutaImagen, 'publicidad/')) {
-                // Ya está en el formato correcto
+            // Si la ruta ya contiene 'publicidad/', usar directamente sin 'storage/'
+            if (str_contains($rutaImagen, 'publicidad/')) {
+                // Si tiene 'storage/' delante, removerlo
+                $rutaImagen = str_replace('storage/', '', $rutaImagen);
+                $rutaImagen = str_replace('public/', '', $rutaImagen);
+                // Asegurar que empiece con 'publicidad/'
+                if (!str_starts_with($rutaImagen, 'publicidad/')) {
+                    $nombreArchivo = basename($rutaImagen);
+                    $rutaImagen = 'publicidad/' . $nombreArchivo;
+                }
                 $imagenUrl = asset($rutaImagen);
             } else {
-                // Fallback: intentar con storage (para compatibilidad)
+                // Para otras rutas, intentar con storage (compatibilidad)
                 $imagenUrl = asset('storage/' . $rutaImagen);
             }
         }

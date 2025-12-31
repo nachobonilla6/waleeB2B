@@ -390,7 +390,7 @@
                         ->first();
                     
                     if (!$clientePlaneador) {
-                        // Si no existe, crear uno temporal o usar el primero disponible
+                        // Si no existe, intentar usar el primero disponible, pero solo si existe
                         $clientePlaneador = \App\Models\Cliente::first();
                     }
                 @endphp

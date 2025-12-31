@@ -2787,14 +2787,22 @@ Route::get('/walee-cliente/{id}/settings', function ($id) {
 
 // Ruta para pestaña de publicaciones
 Route::get('/walee-cliente/{id}/settings/publicaciones', function ($id) {
-    $cliente = \App\Models\Client::findOrFail($id);
-    return view('walee-cliente-settings', compact('cliente'));
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        return view('walee-cliente-settings', compact('cliente'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        abort(404, 'Cliente no encontrado');
+    }
 })->middleware(['auth'])->name('walee.cliente.settings.publicaciones');
 
 // Ruta para pestaña de planeador
 Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
-    $cliente = \App\Models\Client::findOrFail($id);
-    return view('walee-cliente-settings', compact('cliente'));
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        return view('walee-cliente-settings', compact('cliente'));
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        abort(404, 'Cliente no encontrado');
+    }
 })->middleware(['auth'])->name('walee.cliente.settings.planeador');
 
 // Ruta para Walee WhatsApp

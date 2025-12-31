@@ -2508,29 +2508,54 @@ Route::post('/walee-facturas/{id}/enviar', function ($id) {
             ], 400);
         }
         
-        // Construir el cuerpo del email
-        $emailBody = "Estimado cliente,\n\n";
-        $emailBody .= "Adjunto encontrará los detalles de su factura:\n\n";
-        $emailBody .= "Factura #" . $factura->numero_factura . "\n";
-        $emailBody .= "Fecha: " . ($factura->fecha_emision?->format('d/m/Y') ?? 'N/A') . "\n";
-        $emailBody .= "Concepto: " . $factura->concepto . "\n";
-        $emailBody .= "Total: ₡" . number_format($factura->total, 0, ',', '.') . "\n\n";
+        // Preparar datos para el PDF
+        $data = [
+            'numero_factura' => $factura->numero_factura,
+            'fecha_emision' => $factura->fecha_emision->format('Y-m-d'),
+            'fecha_vencimiento' => $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : null,
+            'cliente_id' => $factura->cliente_id,
+            'correo' => $factura->correo,
+            'subtotal' => $factura->subtotal,
+            'descuento_antes_impuestos' => $factura->descuento_antes_impuestos ?? 0,
+            'descuento_despues_impuestos' => $factura->descuento_despues_impuestos ?? 0,
+            'total' => $factura->total,
+            'monto_pagado' => $factura->monto_pagado,
+            'estado' => $factura->estado,
+            'numero_orden' => $factura->numero_orden,
+            'notas' => $factura->notas,
+            'items_json' => json_encode($factura->items->map(function($item) {
+                return [
+                    'descripcion' => $item->descripcion,
+                    'cantidad' => $item->cantidad,
+                    'precio_unitario' => $item->precio_unitario,
+                    'subtotal' => $item->subtotal,
+                    'notas' => $item->notas ?? null,
+                ];
+            })->toArray()),
+            'pagos' => json_encode($factura->pagos->map(function($pago) {
+                return [
+                    'descripcion' => $pago->descripcion,
+                    'fecha' => $pago->fecha->format('Y-m-d'),
+                    'importe' => $pago->importe,
+                ];
+            })->toArray()),
+        ];
         
-        if ($factura->notas) {
-            $emailBody .= "Notas: " . $factura->notas . "\n\n";
-        }
+        // Generar PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
+        $pdf->setPaper('A4', 'portrait');
         
-        $emailBody .= "Gracias por su preferencia.\n\n";
-        $emailBody .= "Web Solutions\n";
-        $emailBody .= "websolutionscrnow@gmail.com\n";
-        $emailBody .= "+506 8806 1829 (WhatsApp)\n";
-        $emailBody .= "websolutions.work";
-        
-        // Enviar email
-        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($factura) {
+        // Enviar email con PDF adjunto
+        \Mail::send('emails.factura-envio', [
+            'factura' => $factura,
+            'cliente' => $factura->cliente,
+        ], function ($message) use ($factura, $pdf) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
                     ->to($factura->correo)
-                    ->subject('Factura #' . $factura->numero_factura . ' - Web Solutions');
+                    ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
+                    ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
         });
         
         // Marcar como enviada
@@ -2540,7 +2565,7 @@ Route::post('/walee-facturas/{id}/enviar', function ($id) {
         
         return response()->json([
             'success' => true,
-            'message' => 'Factura enviada correctamente',
+            'message' => 'Factura enviada correctamente con PDF adjunto',
         ]);
     } catch (\Exception $e) {
         return response()->json([

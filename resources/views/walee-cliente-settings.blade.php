@@ -76,8 +76,8 @@
                     <button onclick="showTab('publicaciones')" id="tab-publicaciones" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button active">
                         Publicaciones
                     </button>
-                    <button onclick="showTab('webhook')" id="tab-webhook" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button">
-                        Webhook
+                    <button onclick="showTab('planeador')" id="tab-planeador" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button">
+                        Planeador
                     </button>
                 </div>
             </div>
@@ -381,56 +381,18 @@
                 </div>
             </div>
 
-            <!-- Webhook Tab -->
-            <div id="content-webhook" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
+            <!-- Planeador Tab -->
+            <div id="content-planeador" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
                 <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
-                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Configuración de Webhook</h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">Ingresa la URL del webhook para recibir notificaciones de este cliente.</p>
-                    
-                    <form id="webhook-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">URL del Webhook</label>
-                            <input 
-                                type="url" 
-                                name="webhook_url" 
-                                id="webhook_url"
-                                value="{{ $cliente->webhook_url ?? 'https://n8n.srv1137974.hstgr.cloud/webhook/f11f10f6-025d-4ecf-83af-a6dfa5acc147' }}"
-                                placeholder="https://ejemplo.com/webhook"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Page ID</label>
-                            <input 
-                                type="text" 
-                                name="page_id" 
-                                id="page_id"
-                                value="{{ $cliente->page_id ?? '' }}"
-                                placeholder="Ingresa el Page ID de Facebook"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Token</label>
-                            <input 
-                                type="text" 
-                                name="token" 
-                                id="token"
-                                value="{{ $cliente->token ?? '' }}"
-                                placeholder="Ingresa el Token de acceso"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                            >
-                        </div>
-                        
-                        <button 
-                            type="submit"
-                            class="w-full px-6 py-3 rounded-xl bg-walee-500 hover:bg-walee-400 text-white font-medium transition-all"
-                        >
-                            Guardar
-                        </button>
-                    </form>
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Planeador de Publicidad</h2>
+                    <div class="w-full" style="height: calc(100vh - 300px); min-height: 600px;">
+                        <iframe 
+                            src="{{ url('/walee-planeador-publicidad/' . $cliente->id . '?vista=semanal&semana=' . now()->format('Y-W')) }}" 
+                            class="w-full h-full border-0 rounded-xl"
+                            style="min-height: 600px;"
+                            title="Planeador de Publicidad"
+                        ></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -459,40 +421,6 @@
             activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
         }
 
-        // Webhook form
-        document.getElementById('webhook-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const webhookUrl = formData.get('webhook_url');
-            const pageId = formData.get('page_id');
-            const token = formData.get('token');
-            
-            try {
-                const response = await fetch(`/walee-cliente/{{ $cliente->id }}/webhook`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({ 
-                        webhook_url: webhookUrl,
-                        page_id: pageId,
-                        token: token
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('Configuración guardada correctamente');
-                } else {
-                    alert('Error: ' + (data.message || 'Error al guardar'));
-                }
-            } catch (error) {
-                alert('Error de conexión: ' + error.message);
-            }
-        });
 
         // Update file names display
         function updateFileNames(input) {

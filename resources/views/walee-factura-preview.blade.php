@@ -216,13 +216,35 @@
 <body>
     @php
         $cliente = \App\Models\Cliente::find($data['cliente_id'] ?? null);
-        $items = isset($data['items_json']) ? json_decode($data['items_json'], true) : (isset($data['items']) ? $data['items'] : []);
-        $pagos = isset($data['pagos']) ? (is_string($data['pagos']) ? json_decode($data['pagos'], true) : $data['pagos']) : [];
+        
+        // Procesar items - asegurar que siempre sea un array
+        $items = [];
+        if (isset($data['items_json']) && !empty($data['items_json'])) {
+            $decoded = json_decode($data['items_json'], true);
+            $items = is_array($decoded) ? $decoded : [];
+        } elseif (isset($data['items']) && is_array($data['items'])) {
+            $items = $data['items'];
+        }
+        
+        // Procesar pagos - asegurar que siempre sea un array
+        $pagos = [];
+        if (isset($data['pagos'])) {
+            if (is_string($data['pagos']) && !empty($data['pagos'])) {
+                $decoded = json_decode($data['pagos'], true);
+                $pagos = is_array($decoded) ? $decoded : [];
+            } elseif (is_array($data['pagos'])) {
+                $pagos = $data['pagos'];
+            }
+        }
         
         // Calcular subtotal desde items
         $subtotal = 0;
-        foreach ($items as $item) {
-            $subtotal += floatval($item['subtotal'] ?? ($item['precio_unitario'] ?? 0) * ($item['cantidad'] ?? 1));
+        if (is_array($items)) {
+            foreach ($items as $item) {
+                if (is_array($item)) {
+                    $subtotal += floatval($item['subtotal'] ?? ($item['precio_unitario'] ?? 0) * ($item['cantidad'] ?? 1));
+                }
+            }
         }
         
         $descuentoAntes = floatval($data['descuento_antes_impuestos'] ?? 0);
@@ -234,10 +256,14 @@
         $estado = $data['estado'] ?? 'pendiente';
         $montoPagado = floatval($data['monto_pagado'] ?? 0);
         // Sumar pagos recibidos al monto pagado
-        foreach ($pagos as $pago) {
-            $montoPagado += floatval($pago['importe'] ?? 0);
+        if (is_array($pagos)) {
+            foreach ($pagos as $pago) {
+                if (is_array($pago)) {
+                    $montoPagado += floatval($pago['importe'] ?? 0);
+                }
+            }
         }
-        if ($montoPagado >= $total) {
+        if ($montoPagado >= $total && $total > 0) {
             $estado = 'pagada';
         }
     @endphp
@@ -327,30 +353,38 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($items as $item)
-                @php
-                    $precioUnitario = floatval($item['precio_unitario'] ?? 0);
-                    $cantidad = intval($item['cantidad'] ?? 1);
-                    $subtotalItem = floatval($item['subtotal'] ?? ($precioUnitario * $cantidad));
-                    // El IVA se calcula sobre el subtotal del item
-                    $ivaItem = $subtotalItem * 0.13;
-                    $totalItem = $subtotalItem + $ivaItem;
-                @endphp
+            @if(is_array($items) && count($items) > 0)
+                @foreach($items as $item)
+                    @if(is_array($item))
+                        @php
+                            $precioUnitario = floatval($item['precio_unitario'] ?? 0);
+                            $cantidad = intval($item['cantidad'] ?? 1);
+                            $subtotalItem = floatval($item['subtotal'] ?? ($precioUnitario * $cantidad));
+                            // El IVA se calcula sobre el subtotal del item
+                            $ivaItem = $subtotalItem * 0.13;
+                            $totalItem = $subtotalItem + $ivaItem;
+                        @endphp
+                        <tr>
+                            <td>
+                                <div class="item-descripcion">{{ $item['descripcion'] ?? '' }}</div>
+                                @if(!empty($item['notas']))
+                                    <div class="item-detalle">{{ $item['notas'] }}</div>
+                                @endif
+                            </td>
+                            <td class="text-center">{{ $cantidad }}</td>
+                            <td class="text-right">₡{{ number_format($precioUnitario, 2, ',', ' ') }}</td>
+                            <td class="text-right">₡{{ number_format($ivaItem, 2, ',', ' ') }}</td>
+                            <td class="text-right">
+                                <strong>₡{{ number_format($totalItem, 2, ',', ' ') }}</strong>
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            @else
                 <tr>
-                    <td>
-                        <div class="item-descripcion">{{ $item['descripcion'] ?? '' }}</div>
-                        @if(!empty($item['notas']))
-                            <div class="item-detalle">{{ $item['notas'] }}</div>
-                        @endif
-                    </td>
-                    <td class="text-center">{{ $cantidad }}</td>
-                    <td class="text-right">₡{{ number_format($precioUnitario, 2, ',', ' ') }}</td>
-                    <td class="text-right">₡{{ number_format($ivaItem, 2, ',', ' ') }}</td>
-                    <td class="text-right">
-                        <strong>₡{{ number_format($totalItem, 2, ',', ' ') }}</strong>
-                    </td>
+                    <td colspan="5" class="text-center" style="padding: 20px; color: #999;">No hay items en esta factura</td>
                 </tr>
-            @endforeach
+            @endif
         </tbody>
     </table>
     
@@ -384,7 +418,7 @@
     </div>
     
     <!-- Pagos Recibidos -->
-    @if(count($pagos) > 0)
+    @if(is_array($pagos) && count($pagos) > 0)
     <div class="pagos-section">
         <div class="pagos-title">Pagos recibidos</div>
         <table>
@@ -397,11 +431,13 @@
             </thead>
             <tbody>
                 @foreach($pagos as $pago)
-                    <tr>
-                        <td>{{ $pago['descripcion'] ?? '' }}</td>
-                        <td class="text-center">{{ isset($pago['fecha']) ? \Carbon\Carbon::parse($pago['fecha'])->format('d/m/Y') : '' }}</td>
-                        <td class="text-right"><strong>₡{{ number_format(floatval($pago['importe'] ?? 0), 2, ',', ' ') }}</strong></td>
-                    </tr>
+                    @if(is_array($pago))
+                        <tr>
+                            <td>{{ $pago['descripcion'] ?? '' }}</td>
+                            <td class="text-center">{{ isset($pago['fecha']) ? \Carbon\Carbon::parse($pago['fecha'])->format('d/m/Y') : '' }}</td>
+                            <td class="text-right"><strong>₡{{ number_format(floatval($pago['importe'] ?? 0), 2, ',', ' ') }}</strong></td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

@@ -1245,30 +1245,33 @@
                     </div>
                 </div>
                 
-                <!-- Prompt personalizado (arriba del texto) -->
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Prompt Personalizado (opcional)</label>
-                    <textarea name="prompt_personalizado" id="prompt_personalizado" rows="2" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                </div>
-                
-                <!-- Texto con AI -->
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Texto</label>
-                    <div class="flex gap-2">
-                        <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                        <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-4 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap h-fit shadow-sm">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                            </svg>
-                            <span class="hidden sm:inline">AI</span>
-                        </button>
+                <!-- Prompt y Texto en la misma fila -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Prompt personalizado -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Prompt Personalizado (opcional)</label>
+                        <textarea name="prompt_personalizado" id="prompt_personalizado" rows="4" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
                     </div>
-                    <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-2">
-                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Generando...
+                    
+                    <!-- Texto con AI -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Texto</label>
+                        <div class="flex gap-2">
+                            <textarea name="texto" id="texto_publicacion" rows="4" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-4 py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap h-fit shadow-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                                <span class="hidden sm:inline">AI</span>
+                            </button>
+                        </div>
+                        <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-2">
+                            <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Generando...
+                        </div>
                     </div>
                 </div>
                 

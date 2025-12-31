@@ -419,6 +419,21 @@
                             $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                         }
                         
+                        // Si no hay eventos en la semana actual, buscar la semana más cercana con eventos
+                        $eventosCercanos = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)
+                            ->whereNotNull('fecha_inicio')
+                            ->orderBy('fecha_inicio', 'asc')
+                            ->first();
+                        
+                        if ($eventosCercanos && $eventosCercanos->fecha_inicio) {
+                            $fechaEventoCercano = \Carbon\Carbon::parse($eventosCercanos->fecha_inicio);
+                            // Si el evento más cercano está fuera de la semana actual, ajustar la semana
+                            if ($fechaEventoCercano->lt($inicioSemana) || $fechaEventoCercano->gt($finSemana)) {
+                                $inicioSemana = $fechaEventoCercano->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                $finSemana = $fechaEventoCercano->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                            }
+                        }
+                        
                         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);
                         $primerDia = $fechaActual->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
                         $ultimoDia = $fechaActual->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SATURDAY);

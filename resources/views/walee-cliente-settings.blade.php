@@ -476,7 +476,12 @@
                                 // Eventos sin recurrencia - siempre mostrarlos si están en el rango
                                 if ($evento->fecha_inicio) {
                                     $fechaEvento = \Carbon\Carbon::parse($evento->fecha_inicio);
-                                    if ($fechaEvento->gte($inicioSemana->copy()->startOfDay()) && $fechaEvento->lte($finSemana->copy()->endOfDay())) {
+                                    // Comparar solo la fecha (sin hora) para incluir eventos del día
+                                    $fechaEventoSolo = $fechaEvento->copy()->startOfDay();
+                                    $inicioSemanaSolo = $inicioSemana->copy()->startOfDay();
+                                    $finSemanaSolo = $finSemana->copy()->endOfDay();
+                                    
+                                    if ($fechaEventoSolo->gte($inicioSemanaSolo) && $fechaEventoSolo->lte($finSemanaSolo)) {
                                         $eventos->push($evento);
                                     }
                                 }

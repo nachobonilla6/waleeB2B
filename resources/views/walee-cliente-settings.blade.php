@@ -710,6 +710,16 @@
                 if (clienteIdInput) {
                     clienteIdInput.value = '{{ $clientePlaneador->id }}';
                 }
+            @else
+                // Si no hay cliente planeador, usar el primero disponible o mostrar error
+                @php
+                    $clientePlaneador = \App\Models\Cliente::first();
+                @endphp
+                @if($clientePlaneador)
+                    if (clienteIdInput) {
+                        clienteIdInput.value = '{{ $clientePlaneador->id }}';
+                    }
+                @endif
             @endif
             document.getElementById('programarPublicacionModal').classList.remove('hidden');
         }

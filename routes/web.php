@@ -503,31 +503,74 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         // Obtener cliente para webhook
         $cliente = \App\Models\Cliente::find($evento->cliente_id);
         if ($cliente) {
-            // Buscar Client asociado por email
-            $client = \App\Models\Client::where('email', $cliente->correo)->first();
+            // Buscar Client asociado por email o nombre
+            $client = \App\Models\Client::where('email', $cliente->correo)
+                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
+                ->first();
             
             // Enviar webhook si existe
-            if ($client && $client->webhook_url) {
+            if ($client && !empty($client->webhook_url)) {
                 try {
-                    $imageUrl = $evento->imagen_url ? asset('storage/' . $evento->imagen_url) : null;
+                    // Generar URL completa de la imagen si existe
+                    $imageUrl = null;
+                    if ($evento->imagen_url) {
+                        $imageUrl = asset('storage/' . $evento->imagen_url);
+                        // Asegurar URL absoluta
+                        if (!str_starts_with($imageUrl, 'http')) {
+                            $imageUrl = url($imageUrl);
+                        }
+                    }
                     
+                    // Preparar datos completos para el webhook
                     $webhookData = [
                         'evento_id' => $evento->id,
-                        'titulo' => $evento->titulo,
-                        'texto' => $evento->texto,
-                        'plataforma' => $evento->plataforma,
-                        'fecha_publicacion' => $evento->fecha_inicio->format('Y-m-d H:i:s'),
-                        'estado' => $evento->estado,
+                        'titulo' => $evento->titulo ?? 'Publicación programada',
+                        'texto' => $evento->texto ?? '',
+                        'descripcion' => $evento->descripcion ?? '',
+                        'plataforma' => $evento->plataforma ?? '',
+                        'red_social' => $evento->plataforma ?? '', // Alias para compatibilidad
+                        'fecha_publicacion' => $evento->fecha_inicio ? $evento->fecha_inicio->format('Y-m-d H:i:s') : null,
+                        'fecha' => $evento->fecha_inicio ? $evento->fecha_inicio->format('Y-m-d') : null,
+                        'hora' => $evento->fecha_inicio ? $evento->fecha_inicio->format('H:i:s') : null,
+                        'estado' => $evento->estado ?? 'programado',
                         'imagen_url' => $imageUrl,
+                        'foto' => $imageUrl, // Alias para compatibilidad
                         'cliente_id' => $evento->cliente_id,
                         'cliente_nombre' => $cliente->nombre_empresa ?? 'Cliente',
+                        'cliente_email' => $cliente->correo ?? '',
+                        'tipo_publicidad' => $evento->tipo_publicidad ?? null,
+                        'color' => $evento->color ?? '#8b5cf6',
                     ];
                     
-                    \Illuminate\Support\Facades\Http::timeout(10)->post($client->webhook_url, $webhookData);
+                    \Log::info('Enviando webhook de publicación programada', [
+                        'webhook_url' => $client->webhook_url,
+                        'data' => $webhookData
+                    ]);
+                    
+                    $response = \Illuminate\Support\Facades\Http::timeout(10)->post($client->webhook_url, $webhookData);
+                    
+                    \Log::info('Respuesta del webhook', [
+                        'status' => $response->status(),
+                        'body' => $response->body()
+                    ]);
                 } catch (\Exception $webhookError) {
-                    \Log::error('Error enviando webhook de publicación programada: ' . $webhookError->getMessage());
+                    \Log::error('Error enviando webhook de publicación programada: ' . $webhookError->getMessage(), [
+                        'trace' => $webhookError->getTraceAsString()
+                    ]);
                 }
+            } else {
+                \Log::warning('No se encontró webhook_url para el cliente', [
+                    'cliente_id' => $evento->cliente_id,
+                    'cliente_correo' => $cliente->correo ?? 'N/A',
+                    'client_found' => $client ? 'yes' : 'no',
+                    'webhook_url' => $client ? ($client->webhook_url ?? 'empty') : 'client_not_found'
+                ]);
             }
+        } else {
+            \Log::warning('No se encontró Cliente para el evento', [
+                'evento_id' => $evento->id,
+                'cliente_id' => $evento->cliente_id
+            ]);
         }
         
         return response()->json([

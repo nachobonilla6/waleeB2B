@@ -2920,7 +2920,20 @@ Route::get('/walee-cliente/{id}', function ($id) {
         ->orderBy('created_at', 'desc')
         ->get() : collect();
     
-    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal'));
+    // Obtener citas del cliente (pasadas y pendientes)
+    $citas = $clientePrincipal ? \App\Models\Cita::where('cliente_id', $clientePrincipal->id)
+        ->orderBy('fecha_inicio', 'desc')
+        ->get() : collect();
+    
+    $citasPasadas = $citas->filter(function($cita) {
+        return $cita->fecha_inicio && $cita->fecha_inicio->lt(now());
+    })->values();
+    
+    $citasPendientes = $citas->filter(function($cita) {
+        return $cita->fecha_inicio && $cita->fecha_inicio->gte(now());
+    })->sortBy('fecha_inicio')->values();
+    
+    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal', 'citasPasadas', 'citasPendientes'));
 })->middleware(['auth'])->name('walee.cliente.detalle');
 
 // Ruta para editar un cliente

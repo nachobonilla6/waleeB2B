@@ -262,6 +262,132 @@
                 </div>
             </div>
             
+            <!-- Citas Section -->
+            <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.25s;">
+                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Citas
+                    </h2>
+                    
+                    <!-- Tabs -->
+                    <div class="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700">
+                        <button onclick="showCitasTab('pendientes')" id="tab-citas-pendientes" class="tab-button-citas active px-4 py-2 text-sm font-medium text-walee-400 border-b-2 border-walee-400">
+                            Pendientes ({{ $citasPendientes->count() }})
+                        </button>
+                        <button onclick="showCitasTab('pasadas')" id="tab-citas-pasadas" class="tab-button-citas px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400">
+                            Pasadas ({{ $citasPasadas->count() }})
+                        </button>
+                    </div>
+                    
+                    <!-- Citas Pendientes Tab -->
+                    <div id="content-citas-pendientes" class="tab-content-citas">
+                        @if($citasPendientes->count() > 0)
+                            <div class="space-y-3">
+                                @foreach($citasPendientes as $cita)
+                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-walee-400/50 transition-all">
+                                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                                            <div class="w-10 h-10 rounded-lg bg-walee-400/20 flex items-center justify-center flex-shrink-0" style="background-color: {{ $cita->color ?? '#8b5cf6' }}20;">
+                                                <svg class="w-5 h-5" style="color: {{ $cita->color ?? '#8b5cf6' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-slate-900 dark:text-white">
+                                                    {{ $cita->titulo }}
+                                                </p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                    @if($cita->fecha_inicio)
+                                                        {{ $cita->fecha_inicio->format('d/m/Y H:i') }}
+                                                        @if($cita->fecha_fin)
+                                                            - {{ $cita->fecha_fin->format('H:i') }}
+                                                        @endif
+                                                    @endif
+                                                    @if($cita->ubicacion)
+                                                        · {{ $cita->ubicacion }}
+                                                    @endif
+                                                </p>
+                                                @if($cita->descripcion)
+                                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 line-clamp-1">
+                                                        {{ $cita->descripcion }}
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                                            <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $cita->estado == 'completada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($cita->estado == 'cancelada' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-walee-500/20 text-walee-400 border border-walee-500/30') }}">
+                                                {{ ucfirst($cita->estado ?? 'programada') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-slate-500 dark:text-slate-400">No hay citas pendientes</p>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Citas Pasadas Tab -->
+                    <div id="content-citas-pasadas" class="tab-content-citas hidden">
+                        @if($citasPasadas->count() > 0)
+                            <div class="space-y-3">
+                                @foreach($citasPasadas as $cita)
+                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-slate-400/50 transition-all opacity-75">
+                                        <div class="flex items-center gap-4 flex-1 min-w-0">
+                                            <div class="w-10 h-10 rounded-lg bg-slate-400/20 flex items-center justify-center flex-shrink-0" style="background-color: {{ $cita->color ?? '#8b5cf6' }}20;">
+                                                <svg class="w-5 h-5 text-slate-400" style="color: {{ $cita->color ?? '#8b5cf6' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                    {{ $cita->titulo }}
+                                                </p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                    @if($cita->fecha_inicio)
+                                                        {{ $cita->fecha_inicio->format('d/m/Y H:i') }}
+                                                        @if($cita->fecha_fin)
+                                                            - {{ $cita->fecha_fin->format('H:i') }}
+                                                        @endif
+                                                    @endif
+                                                    @if($cita->ubicacion)
+                                                        · {{ $cita->ubicacion }}
+                                                    @endif
+                                                </p>
+                                                @if($cita->descripcion)
+                                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 line-clamp-1">
+                                                        {{ $cita->descripcion }}
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4">
+                                            <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $cita->estado == 'completada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($cita->estado == 'cancelada' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30') }}">
+                                                {{ ucfirst($cita->estado ?? 'programada') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-slate-500 dark:text-slate-400">No hay citas pasadas</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            
             <!-- Documentos Section -->
             <div class="mt-6 animate-fade-in-up" style="animation-delay: 0.3s;">
                 <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
@@ -428,6 +554,29 @@
     @include('partials.walee-support-button')
     
     <script>
+        function showCitasTab(tabName) {
+            // Hide all citas tab contents
+            document.querySelectorAll('.tab-content-citas').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all citas tabs
+            document.querySelectorAll('.tab-button-citas').forEach(button => {
+                button.classList.remove('active', 'text-walee-400', 'border-walee-400');
+                button.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+            });
+            
+            // Show selected tab content
+            document.getElementById('content-citas-' + tabName).classList.remove('hidden');
+            
+            // Add active class to selected tab
+            const selectedTab = document.getElementById('tab-citas-' + tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active', 'text-walee-400', 'border-walee-400');
+                selectedTab.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+            }
+        }
+        
         function showTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {

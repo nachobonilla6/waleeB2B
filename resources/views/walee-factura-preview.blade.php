@@ -244,16 +244,16 @@
     
     <div class="header">
         <div class="header-left">
-            <div class="logo">WS</div>
+            <div class="logo" style="width: 50px; height: 50px; font-size: 12pt;">WS</div>
             <div>
-                <div style="font-weight: bold; font-size: 14pt; color: #8b5cf6;">Web Solutions CR</div>
-                <div style="font-size: 10pt; color: #666;">WebSolutions.Work</div>
+                <div style="font-weight: bold; font-size: 12pt; color: #8b5cf6;">Web Solutions CR</div>
+                <div style="font-size: 9pt; color: #666;">WebSolutions.Work</div>
             </div>
         </div>
         <div class="header-right">
-            <div class="factura-title">Factura</div>
-            <div class="factura-number">{{ $data['numero_factura'] ?? 'N/A' }}</div>
-            <div class="estado estado-{{ $estado }}">
+            <div class="factura-title" style="font-size: 20pt; margin-bottom: 3px;">Factura</div>
+            <div class="factura-number" style="font-size: 14pt;">{{ $data['numero_factura'] ?? 'N/A' }}</div>
+            <div class="estado estado-{{ $estado }}" style="margin-top: 5px;">
                 {{ ucfirst($estado) }}
             </div>
         </div>

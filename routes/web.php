@@ -2241,14 +2241,22 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
         
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
         $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+        ]);
+        
+        // Generar contenido del PDF
+        $pdfContent = $pdf->output();
         
         \Mail::send('emails.factura-envio', [
             'factura' => $factura,
             'cliente' => $factura->cliente,
-        ], function ($message) use ($factura, $pdf) {
-            $message->to($factura->correo)
+        ], function ($message) use ($factura, $pdfContent) {
+            $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
+                    ->to($factura->correo)
                     ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
-                    ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf', [
+                    ->attachData($pdfContent, 'factura-' . $factura->numero_factura . '.pdf', [
                         'mime' => 'application/pdf',
                     ]);
         });

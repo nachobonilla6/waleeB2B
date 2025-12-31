@@ -2239,26 +2239,40 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
             })->toArray()),
         ];
         
+        // Generar PDF
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOptions([
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
+            'defaultFont' => 'Arial',
         ]);
         
         // Generar contenido del PDF
         $pdfContent = $pdf->output();
         
+        if (empty($pdfContent)) {
+            throw new \Exception('Error al generar el PDF: el contenido está vacío');
+        }
+        
+        // Enviar email con PDF adjunto
         \Mail::send('emails.factura-envio', [
             'factura' => $factura,
             'cliente' => $factura->cliente,
         ], function ($message) use ($factura, $pdfContent) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
                     ->to($factura->correo)
-                    ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
-                    ->attachData($pdfContent, 'factura-' . $factura->numero_factura . '.pdf', [
-                        'mime' => 'application/pdf',
-                    ]);
+                    ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions');
+            
+            // Adjuntar PDF usando attachData
+            try {
+                $message->attachData($pdfContent, 'factura-' . $factura->numero_factura . '.pdf', [
+                    'mime' => 'application/pdf',
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error adjuntando PDF: ' . $e->getMessage());
+                throw $e;
+            }
         });
         
         $factura->update(['enviada_at' => now()]);

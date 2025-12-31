@@ -2929,9 +2929,26 @@ Route::get('/walee-cliente/{id}', function ($id) {
         ->get() : collect();
     
     // Obtener citas del cliente (pasadas y pendientes)
-    $citas = $clientePrincipal ? \App\Models\Cita::where('cliente_id', $clientePrincipal->id)
+    // Buscar por client_id (clientes_en_proceso) y también por cliente_id (clientes) si existe clientePrincipal
+    $citas = collect();
+    
+    // Buscar citas por client_id (clientes_en_proceso) - el cliente actual
+    $citasPorClientId = \App\Models\Cita::where('client_id', $cliente->id)
         ->orderBy('fecha_inicio', 'desc')
-        ->get() : collect();
+        ->get();
+    $citas = $citas->merge($citasPorClientId);
+    
+    // También buscar por cliente_id si existe clientePrincipal (tabla clientes)
+    if ($clientePrincipal) {
+        $citasPorClienteId = \App\Models\Cita::where('cliente_id', $clientePrincipal->id)
+            ->whereNull('client_id') // Solo las que no tienen client_id para evitar duplicados
+            ->orderBy('fecha_inicio', 'desc')
+            ->get();
+        $citas = $citas->merge($citasPorClienteId);
+    }
+    
+    // Eliminar duplicados y ordenar
+    $citas = $citas->unique('id')->sortByDesc('fecha_inicio')->values();
     
     $citasPasadas = $citas->filter(function($cita) {
         return $cita->fecha_inicio && $cita->fecha_inicio->lt(now());

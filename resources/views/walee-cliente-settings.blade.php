@@ -383,17 +383,295 @@
 
             <!-- Planeador Tab -->
             <div id="content-planeador" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-6">
-                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4">Planeador de Publicidad</h2>
-                    <div class="w-full" style="height: calc(100vh - 300px); min-height: 600px;">
-                        <iframe 
-                            src="{{ url('/walee-planeador-publicidad/' . $cliente->id . '?vista=semanal&semana=' . now()->format('Y-W')) }}" 
-                            class="w-full h-full border-0 rounded-xl"
-                            style="min-height: 600px;"
-                            title="Planeador de Publicidad"
-                        ></iframe>
+                @php
+                    // Convertir el cliente de Client a Cliente si es necesario
+                    $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
+                        ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
+                        ->first();
+                    
+                    if (!$clientePlaneador) {
+                        // Si no existe, crear uno temporal o usar el primero disponible
+                        $clientePlaneador = \App\Models\Cliente::first();
+                    }
+                @endphp
+                
+                @if($clientePlaneador)
+                    @php
+                        $vista = request()->get('vista', 'semanal');
+                        $mes = request()->get('mes', now()->month);
+                        $ano = request()->get('ano', now()->year);
+                        
+                        // Si es vista semanal, calcular la semana
+                        if ($vista === 'semanal') {
+                            $semanaParam = request()->get('semana', now()->format('Y-W'));
+                            if ($semanaParam && strpos($semanaParam, '-') !== false) {
+                                list($anoSemana, $numSemana) = explode('-', $semanaParam);
+                                try {
+                                    $fechaSemana = \Carbon\Carbon::now()->setISODate((int)$anoSemana, (int)$numSemana);
+                                    $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                    $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                                } catch (\Exception $e) {
+                                    $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                    $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                                }
+                            } else {
+                                $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                            }
+                        }
+                        
+                        $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);
+                        $primerDia = $fechaActual->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        $ultimoDia = $fechaActual->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                        
+                        // Determinar rango de fechas según la vista
+                        if ($vista === 'semanal') {
+                            $fechaInicio = $inicioSemana->copy()->startOfDay();
+                            $fechaFin = $finSemana->copy()->endOfDay();
+                        } else {
+                            $fechaInicio = $fechaActual->copy()->startOfMonth()->startOfDay();
+                            $fechaFin = $fechaActual->copy()->endOfMonth()->endOfDay();
+                        }
+                        
+                        // Obtener eventos de publicidad del cliente
+                        $eventosBase = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)
+                            ->where(function($query) use ($fechaInicio, $fechaFin) {
+                                $query->whereBetween('fecha_inicio', [$fechaInicio, $fechaFin])
+                                ->orWhere(function($q) use ($fechaInicio, $fechaFin) {
+                                    $q->where('recurrencia', '!=', 'none')
+                                      ->where('fecha_inicio', '<=', $fechaFin)
+                                      ->where(function($subQ) use ($fechaInicio) {
+                                          $subQ->whereNull('recurrencia_fin')
+                                                ->orWhere('recurrencia_fin', '>=', $fechaInicio);
+                                      });
+                                });
+                            })
+                            ->get();
+                        
+                        // Generar eventos recurrentes
+                        $eventos = collect();
+                        foreach ($eventosBase as $evento) {
+                            if ($evento->recurrencia === 'none') {
+                                if ($vista === 'semanal') {
+                                    if ($evento->fecha_inicio->gte($inicioSemana) && $evento->fecha_inicio->lte($finSemana)) {
+                                        $eventos->push($evento);
+                                    }
+                                } else {
+                                    if ($evento->fecha_inicio->month == $mes && $evento->fecha_inicio->year == $ano) {
+                                        $eventos->push($evento);
+                                    }
+                                }
+                            } else {
+                                $fechaInicioRec = $evento->fecha_inicio->copy();
+                                $fechaFinRec = $evento->recurrencia_fin ? \Carbon\Carbon::parse($evento->recurrencia_fin) : ($vista === 'semanal' ? $finSemana : $fechaActual->copy()->endOfMonth());
+                                $periodoInicio = $vista === 'semanal' ? $inicioSemana : $fechaActual->copy()->startOfMonth();
+                                $periodoFin = $vista === 'semanal' ? $finSemana : $fechaActual->copy()->endOfMonth();
+                                
+                                if ($fechaInicioRec->lt($periodoInicio)) {
+                                    if ($evento->recurrencia === 'semanal') {
+                                        $semanas = ceil($periodoInicio->diffInWeeks($fechaInicioRec));
+                                        $fechaInicioRec = $fechaInicioRec->copy()->addWeeks($semanas);
+                                    } elseif ($evento->recurrencia === 'mensual') {
+                                        $meses = ceil($periodoInicio->diffInMonths($fechaInicioRec));
+                                        $fechaInicioRec = $fechaInicioRec->copy()->addMonths($meses);
+                                    }
+                                }
+                                
+                                $fechaActualEvento = $fechaInicioRec->copy();
+                                while ($fechaActualEvento->lte($periodoFin) && $fechaActualEvento->lte($fechaFinRec)) {
+                                    if ($fechaActualEvento->gte($evento->fecha_inicio->copy()->startOfDay())) {
+                                        $condicionFecha = $vista === 'semanal' ? true : ($fechaActualEvento->month == $mes && $fechaActualEvento->year == $ano);
+                                        if ($condicionFecha) {
+                                            $eventoRecurrente = clone $evento;
+                                            $eventoRecurrente->fecha_inicio = $fechaActualEvento->copy();
+                                            if ($evento->fecha_fin) {
+                                                $duracion = $evento->fecha_inicio->diffInMinutes($evento->fecha_fin);
+                                                $eventoRecurrente->fecha_fin = $fechaActualEvento->copy()->addMinutes($duracion);
+                                            }
+                                            $eventos->push($eventoRecurrente);
+                                        }
+                                    }
+                                    
+                                    if ($evento->recurrencia === 'semanal') {
+                                        $fechaActualEvento->addWeek();
+                                    } elseif ($evento->recurrencia === 'mensual') {
+                                        $fechaActualEvento->addMonth();
+                                    } elseif ($evento->recurrencia === 'anual') {
+                                        $fechaActualEvento->addYear();
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        $eventos = $eventos->groupBy(function($evento) {
+                            return $evento->fecha_inicio->format('Y-m-d');
+                        });
+                        
+                        $meses = [
+                            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
+                            5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
+                            9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+                        ];
+                        
+                        $tiposPublicidad = ['post', 'historia', 'reel', 'anuncio', 'video', 'carousel'];
+                        $plataformas = ['facebook', 'instagram', 'tiktok', 'twitter', 'linkedin', 'youtube'];
+                    @endphp
+                    
+                    <div class="space-y-4">
+                        <!-- Controles del Planeador -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+                            <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                                <div class="flex gap-2">
+                                    <a href="javascript:void(0)" onclick="updatePlaneadorVista('semanal', '{{ now()->format('Y-W') }}')" class="px-4 py-2 rounded-lg {{ $vista === 'semanal' || !request()->has('vista') ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm">
+                                        Semana
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="updatePlaneadorVista('mensual', '{{ $mes }}', '{{ $ano }}')" class="px-4 py-2 rounded-lg {{ $vista === 'mensual' ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm">
+                                        Mes
+                                    </a>
+                                </div>
+                                
+                                @if($vista === 'semanal')
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="navegarSemana(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                            </svg>
+                                        </button>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                            {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
+                                        </span>
+                                        <button onclick="navegarSemana(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @else
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="navegarMes(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                            </svg>
+                                        </button>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                            {{ $meses[$mes] }} {{ $ano }}
+                                        </span>
+                                        <button onclick="navegarMes(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Calendario del Planeador -->
+                        @if($vista === 'semanal')
+                            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+                                <div class="grid grid-cols-7 gap-2">
+                                    @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
+                                        <div class="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-2">{{ $dia }}</div>
+                                    @endforeach
+                                    
+                                    @for($i = 0; $i < 7; $i++)
+                                        @php
+                                            $fecha = $inicioSemana->copy()->addDays($i);
+                                            $fechaStr = $fecha->format('Y-m-d');
+                                            $eventosDia = $eventos->get($fechaStr, collect());
+                                        @endphp
+                                        <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-2 min-h-[100px]">
+                                            <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                {{ $fecha->format('d') }}
+                                            </div>
+                                            <div class="space-y-1">
+                                                @foreach($eventosDia as $evento)
+                                                    <div class="text-xs p-1.5 rounded bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/30">
+                                                        <div class="font-medium truncate">{{ $evento->titulo }}</div>
+                                                        <div class="text-[10px] opacity-75">{{ $evento->tipo_publicidad ?? 'N/A' }}</div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endfor
+                                </div>
+                            </div>
+                        @else
+                            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+                                <div class="grid grid-cols-7 gap-2">
+                                    @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
+                                        <div class="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-2">{{ $dia }}</div>
+                                    @endforeach
+                                    
+                                    @for($dia = $primerDia->copy(); $dia->lte($ultimoDia); $dia->addDay())
+                                        @php
+                                            $fechaStr = $dia->format('Y-m-d');
+                                            $eventosDia = $eventos->get($fechaStr, collect());
+                                            $esDelMes = $dia->month == $mes;
+                                        @endphp
+                                        <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-2 min-h-[80px] {{ !$esDelMes ? 'opacity-40' : '' }}">
+                                            <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                                {{ $dia->format('d') }}
+                                            </div>
+                                            <div class="space-y-1">
+                                                @foreach($eventosDia as $evento)
+                                                    <div class="text-[10px] p-1 rounded bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/30 truncate">
+                                                        {{ $evento->titulo }}
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endfor
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                </div>
+                    
+                    <script>
+                        function updatePlaneadorVista(vista, semana, mes, ano) {
+                            let url = '{{ route("walee.cliente.settings", $cliente->id) }}';
+                            if (vista === 'semanal') {
+                                url += '?vista=semanal&semana=' + semana;
+                            } else {
+                                url += '?vista=mensual&mes=' + mes + '&ano=' + ano;
+                            }
+                            window.location.href = url;
+                        }
+                        
+                        function navegarSemana(direccion) {
+                            // Implementar navegación de semana
+                            const semanaActual = '{{ request()->get("semana", now()->format("Y-W")) }}';
+                            const [ano, numSemana] = semanaActual.split('-');
+                            const nuevaSemana = parseInt(numSemana) + direccion;
+                            const nuevoAno = parseInt(ano);
+                            const nuevaSemanaStr = nuevoAno + '-' + (nuevaSemana < 10 ? '0' + nuevaSemana : nuevaSemana);
+                            updatePlaneadorVista('semanal', nuevaSemanaStr);
+                        }
+                        
+                        function navegarMes(direccion) {
+                            const mesActual = {{ $mes }};
+                            const anoActual = {{ $ano }};
+                            let nuevoMes = mesActual + direccion;
+                            let nuevoAno = anoActual;
+                            
+                            if (nuevoMes < 1) {
+                                nuevoMes = 12;
+                                nuevoAno--;
+                            } else if (nuevoMes > 12) {
+                                nuevoMes = 1;
+                                nuevoAno++;
+                            }
+                            
+                            updatePlaneadorVista('mensual', nuevoMes, nuevoAno);
+                        }
+                    </script>
+                @else
+                    <div class="text-center py-8">
+                        <p class="text-slate-600 dark:text-slate-400">No se encontró un cliente asociado para el planeador.</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

@@ -210,7 +210,7 @@
                                 default => 'todos'
                             };
                         @endphp
-                        <a href="{{ route('walee.tickets.tab', ['tab' => $tab]) }}" class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                        <a href="{{ route('walee.tickets.tab', ['tab' => $tab]) }}" class="flex items-start gap-3 p-3 rounded-lg border {{ $ticket->estado == 'resuelto' ? 'border-slate-200 dark:border-slate-700' : ($ticket->urgente ? 'border-red-300 dark:border-red-500/30' : ($ticket->prioritario ? 'border-orange-300 dark:border-orange-500/30' : ($ticket->a_discutir ? 'border-blue-300 dark:border-blue-500/30' : 'border-slate-200 dark:border-slate-700'))) }} hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between gap-2 mb-1">
                                     <h4 class="text-xs md:text-sm font-semibold text-slate-900 dark:text-white line-clamp-1">{{ $ticket->asunto }}</h4>
@@ -225,11 +225,16 @@
                                         @endif">
                                         {{ ucfirst($ticket->estado) }}
                                     </span>
-                                    @if($ticket->urgente)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] md:text-xs font-medium bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-400">Urgente</span>
-                                    @endif
-                                    @if($ticket->prioritario)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] md:text-xs font-medium bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400">Prioritario</span>
+                                    @if($ticket->estado != 'resuelto')
+                                        @if($ticket->urgente)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] md:text-xs font-medium bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-400">Urgente</span>
+                                        @endif
+                                        @if($ticket->prioritario)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] md:text-xs font-medium bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400">Prioritario</span>
+                                        @endif
+                                        @if($ticket->a_discutir)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] md:text-xs font-medium bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-400">A Discutir</span>
+                                        @endif
                                     @endif
                                 </div>
                             </div>

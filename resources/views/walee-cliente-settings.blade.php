@@ -734,14 +734,10 @@
                                     const imagenContainer = document.getElementById('detalleEventoImagen');
                                     if (evento.imagen_url) {
                                         // La URL ya viene completa desde el servidor (usando asset())
-                                        // Si no empieza con http, puede ser una ruta relativa que necesita /storage/
+                                        // Si no empieza con http, puede ser una ruta relativa
                                         let imageUrl = evento.imagen_url;
-                                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/storage/')) {
-                                            if (imageUrl.startsWith('storage/')) {
-                                                imageUrl = '/' + imageUrl;
-                                            } else {
-                                                imageUrl = '/storage/' + imageUrl;
-                                            }
+                                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                                            imageUrl = '/' + imageUrl;
                                         }
                                         imagenContainer.innerHTML = `<img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" onerror="this.parentElement.classList.add('hidden')">`;
                                         imagenContainer.classList.remove('hidden');

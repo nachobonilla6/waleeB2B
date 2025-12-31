@@ -522,15 +522,21 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         if ($request->hasFile('imagen')) {
             $imagen = $request->file('imagen');
             $nombreArchivo = 'publicidad_' . $evento->cliente_id . '_' . time() . '.' . $imagen->getClientOriginalExtension();
-            $ruta = $imagen->storeAs('publicidad', $nombreArchivo, 'public');
-            // Guardar solo la ruta relativa sin 'public/' para que funcione con asset('storage/...')
-            $evento->imagen_url = str_replace('public/', '', $ruta);
             
-            // Asegurar que el archivo tenga permisos correctos
-            $fullPath = storage_path('app/public/' . $evento->imagen_url);
-            if (file_exists($fullPath)) {
-                chmod($fullPath, 0644);
+            // Guardar directamente en public/publicidad (ruta pública)
+            $publicDir = public_path('publicidad');
+            if (!file_exists($publicDir)) {
+                mkdir($publicDir, 0755, true);
             }
+            
+            $rutaCompleta = $publicDir . '/' . $nombreArchivo;
+            $imagen->move($publicDir, $nombreArchivo);
+            
+            // Guardar solo el nombre del archivo (la ruta será /publicidad/nombre.jpg)
+            $evento->imagen_url = 'publicidad/' . $nombreArchivo;
+            
+            // Asegurar permisos
+            chmod($rutaCompleta, 0644);
         }
         
         $evento->save();
@@ -619,8 +625,13 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
         // Construir URL completa de la imagen si existe
         $imagenUrl = null;
         if ($evento->imagen_url) {
-            // Usar asset() para generar la URL correcta
-            $imagenUrl = asset('storage/' . $evento->imagen_url);
+            // Si ya tiene el prefijo publicidad/, usar directamente, sino agregarlo
+            if (str_starts_with($evento->imagen_url, 'publicidad/')) {
+                $imagenUrl = asset($evento->imagen_url);
+            } else {
+                // Para compatibilidad con rutas antiguas de storage
+                $imagenUrl = asset('storage/' . $evento->imagen_url);
+            }
         }
         
         return response()->json([

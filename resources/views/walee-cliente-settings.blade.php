@@ -804,6 +804,11 @@
             if (modal) {
                 modal.classList.remove('hidden');
                 console.log('Modal abierto');
+                
+                // Seleccionar Facebook por defecto
+                setTimeout(() => {
+                    seleccionarPlataforma('facebook');
+                }, 100);
             } else {
                 console.error('No se encontró el modal');
             }
@@ -1272,9 +1277,9 @@
                     <!-- Plataforma con iconos -->
                     <div>
                         <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Plataforma</label>
-                        <input type="hidden" name="plataforma_publicacion" id="plataforma_publicacion" required>
+                        <input type="hidden" name="plataforma_publicacion" id="plataforma_publicacion" required value="facebook">
                         <div class="flex gap-2">
-                            <button type="button" onclick="seleccionarPlataforma('facebook')" class="plataforma-btn flex-1 px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all flex items-center justify-center gap-2" data-plataforma="facebook">
+                            <button type="button" onclick="seleccionarPlataforma('facebook')" class="plataforma-btn flex-1 px-4 py-3 rounded-xl border-2 border-violet-500 bg-violet-50 dark:bg-violet-500/20 ring-2 ring-violet-500/20 transition-all flex items-center justify-center gap-2" data-plataforma="facebook">
                                 <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
@@ -1296,7 +1301,10 @@
                     <div>
                         <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y Hora</label>
                         <div class="relative">
-                            <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all shadow-sm">
+                            @php
+                                $fechaDefault = now()->addDay()->setTime(9, 0, 0)->format('Y-m-d\TH:i');
+                            @endphp
+                            <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required value="{{ $fechaDefault }}" class="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all shadow-sm">
                             <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                 <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>

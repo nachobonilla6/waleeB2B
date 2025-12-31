@@ -433,18 +433,25 @@
                         }
                         
                         // Obtener eventos de publicidad del cliente
-                        // Usar >= y <= para incluir eventos en los límites
+                        // Primero obtener todos los eventos del cliente para debug
+                        $todosEventos = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)->get();
+                        
+                        // Obtener eventos de publicidad del cliente dentro del rango
                         $eventosBase = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)
                             ->where(function($query) use ($fechaInicio, $fechaFin) {
                                 $query->where(function($q) use ($fechaInicio, $fechaFin) {
                                     // Eventos que están dentro del rango (sin recurrencia)
-                                    $q->where('recurrencia', 'none')
+                                    $q->where(function($subQ) {
+                                        $subQ->where('recurrencia', 'none')
+                                             ->orWhereNull('recurrencia');
+                                    })
                                       ->where('fecha_inicio', '>=', $fechaInicio->copy()->startOfDay())
                                       ->where('fecha_inicio', '<=', $fechaFin->copy()->endOfDay());
                                 })
                                 ->orWhere(function($q) use ($fechaInicio, $fechaFin) {
                                     // Eventos recurrentes
-                                    $q->where('recurrencia', '!=', 'none')
+                                    $q->whereNotNull('recurrencia')
+                                      ->where('recurrencia', '!=', 'none')
                                       ->where('fecha_inicio', '<=', $fechaFin->copy()->endOfDay())
                                       ->where(function($subQ) use ($fechaInicio) {
                                           $subQ->whereNull('recurrencia_fin')
@@ -510,9 +517,18 @@
                             }
                         }
                         
+                        // Debug: Log de eventos encontrados
+                        \Log::info('Planeador - Total eventos encontrados: ' . $eventos->count());
+                        foreach ($eventos as $evento) {
+                            \Log::info('Evento: ' . $evento->id . ' - Fecha: ' . $evento->fecha_inicio . ' - Título: ' . ($evento->titulo ?? 'Sin título'));
+                        }
+                        
                         $eventos = $eventos->groupBy(function($evento) {
                             return $evento->fecha_inicio->format('Y-m-d');
                         });
+                        
+                        // Debug: Log de eventos agrupados por día
+                        \Log::info('Planeador - Eventos agrupados: ' . json_encode($eventos->keys()->toArray()));
                         
                         $meses = [
                             1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',

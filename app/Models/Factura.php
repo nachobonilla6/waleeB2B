@@ -25,6 +25,7 @@ class Factura extends Model
         'estado',
         'fecha_vencimiento',
         'notas',
+        'archivos_adjuntos',
         'enviada_at',
         'enlace',
         'descuento_antes_impuestos',

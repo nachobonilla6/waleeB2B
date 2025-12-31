@@ -1963,25 +1963,78 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
     try {
         \DB::beginTransaction();
         
+        // Procesar archivos adjuntos
+        $archivosAdjuntos = [];
+        if ($request->hasFile('archivos')) {
+            foreach ($request->file('archivos') as $archivo) {
+                if ($archivo->isValid()) {
+                    $archivoPath = $archivo->store('facturas/adjuntos', 'public');
+                    $archivosAdjuntos[] = $archivoPath;
+                }
+            }
+        }
+        
+        // Guardar como JSON si hay múltiples archivos, o como string si hay uno solo, o null si no hay
+        $archivosAdjuntosValue = null;
+        if (count($archivosAdjuntos) === 1) {
+            $archivosAdjuntosValue = $archivosAdjuntos[0];
+        } elseif (count($archivosAdjuntos) > 1) {
+            $archivosAdjuntosValue = json_encode($archivosAdjuntos);
+        }
+        
+        // Obtener items para generar concepto si no se proporciona
+        $items = $request->input('items', []);
+        
+        // Obtener concepto del request y limpiarlo
+        $concepto = $request->input('concepto');
+        $concepto = is_string($concepto) ? trim($concepto) : '';
+        
+        // Generar concepto automáticamente si no se proporciona
+        if (empty($concepto) && !empty($items)) {
+            $conceptosItems = [];
+            foreach ($items as $item) {
+                if (!empty($item['descripcion'])) {
+                    $descripcion = trim($item['descripcion']);
+                    if (!empty($descripcion)) {
+                        $conceptosItems[] = $descripcion;
+                    }
+                }
+            }
+            if (!empty($conceptosItems)) {
+                $concepto = implode(', ', array_slice($conceptosItems, 0, 3));
+            }
+        }
+        
+        // Asegurar que siempre haya un concepto válido (nunca null ni vacío)
+        if (empty($concepto) || !is_string($concepto)) {
+            $concepto = 'Servicios varios';
+        }
+        
+        // Validación final: forzar string y asegurar que no esté vacío
+        $concepto = (string) trim($concepto);
+        if ($concepto === '') {
+            $concepto = 'Servicios varios';
+        }
+        
         $factura = \App\Models\Factura::create([
             'cliente_id' => $request->input('cliente_id') ?: null,
             'correo' => $request->input('correo'),
             'numero_factura' => $request->input('numero_factura'),
             'serie' => $request->input('serie'),
             'fecha_emision' => $request->input('fecha_emision'),
-            'concepto' => $request->input('concepto'),
-            'concepto_pago' => $request->input('concepto_pago'),
+            'concepto' => (string) $concepto, // Forzar conversión a string
+            'concepto_pago' => $request->input('concepto_pago') ?: null,
             'subtotal' => $request->input('subtotal') ?: 0,
             'total' => $request->input('total') ?: 0,
             'monto_pagado' => $request->input('monto_pagado') ?: 0,
-            'metodo_pago' => $request->input('metodo_pago'),
+            'metodo_pago' => $request->input('metodo_pago') ?: null,
             'estado' => $request->input('estado', 'pendiente'),
             'fecha_vencimiento' => $request->input('fecha_vencimiento'),
-            'notas' => $request->input('notas'),
+            'notas' => $request->input('notas') ?: null,
+            'archivos_adjuntos' => $archivosAdjuntosValue,
         ]);
         
         // Guardar items de la factura
-        $items = $request->input('items', []);
         foreach ($items as $index => $item) {
             if (!empty($item['descripcion']) && !empty($item['precio_unitario'])) {
                 \App\Models\FacturaItem::create([
@@ -2255,11 +2308,22 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
             throw new \Exception('Error al generar el PDF: el contenido está vacío');
         }
         
-        // Enviar email con PDF adjunto
+        // Obtener archivos adjuntos guardados
+        $archivosAdjuntos = [];
+        if ($factura->archivos_adjuntos) {
+            $decoded = json_decode($factura->archivos_adjuntos, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $archivosAdjuntos = $decoded;
+            } else {
+                $archivosAdjuntos = [$factura->archivos_adjuntos];
+            }
+        }
+        
+        // Enviar email con PDF adjunto y archivos adicionales
         \Mail::send('emails.factura-envio', [
             'factura' => $factura,
             'cliente' => $factura->cliente,
-        ], function ($message) use ($factura, $pdfContent) {
+        ], function ($message) use ($factura, $pdfContent, $archivosAdjuntos) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
                     ->to($factura->correo)
                     ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions');
@@ -2272,6 +2336,21 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
             } catch (\Exception $e) {
                 \Log::error('Error adjuntando PDF: ' . $e->getMessage());
                 throw $e;
+            }
+            
+            // Adjuntar archivos adicionales guardados
+            foreach ($archivosAdjuntos as $archivoPath) {
+                $fullPath = storage_path('app/public/' . $archivoPath);
+                if (file_exists($fullPath)) {
+                    try {
+                        $message->attach($fullPath, [
+                            'as' => basename($archivoPath),
+                            'mime' => mime_content_type($fullPath),
+                        ]);
+                    } catch (\Exception $e) {
+                        \Log::error('Error adjuntando archivo adicional: ' . $e->getMessage());
+                    }
+                }
             }
         });
         
@@ -2572,17 +2651,54 @@ Route::post('/walee-facturas/{id}/enviar', function ($id) {
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
         $pdf->setPaper('A4', 'portrait');
         
-        // Enviar email con PDF adjunto
+        // Obtener archivos adjuntos guardados
+        $archivosAdjuntos = [];
+        if ($factura->archivos_adjuntos) {
+            $decoded = json_decode($factura->archivos_adjuntos, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $archivosAdjuntos = $decoded;
+            } else {
+                $archivosAdjuntos = [$factura->archivos_adjuntos];
+            }
+        }
+        
+        // Obtener archivos adjuntos guardados
+        $archivosAdjuntos = [];
+        if ($factura->archivos_adjuntos) {
+            $decoded = json_decode($factura->archivos_adjuntos, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $archivosAdjuntos = $decoded;
+            } else {
+                $archivosAdjuntos = [$factura->archivos_adjuntos];
+            }
+        }
+        
+        // Enviar email con PDF adjunto y archivos adicionales
         \Mail::send('emails.factura-envio', [
             'factura' => $factura,
             'cliente' => $factura->cliente,
-        ], function ($message) use ($factura, $pdf) {
+        ], function ($message) use ($factura, $pdf, $archivosAdjuntos) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
                     ->to($factura->correo)
                     ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
                     ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf', [
                         'mime' => 'application/pdf',
                     ]);
+            
+            // Adjuntar archivos adicionales guardados
+            foreach ($archivosAdjuntos as $archivoPath) {
+                $fullPath = storage_path('app/public/' . $archivoPath);
+                if (file_exists($fullPath)) {
+                    try {
+                        $message->attach($fullPath, [
+                            'as' => basename($archivoPath),
+                            'mime' => mime_content_type($fullPath),
+                        ]);
+                    } catch (\Exception $e) {
+                        \Log::error('Error adjuntando archivo adicional: ' . $e->getMessage());
+                    }
+                }
+            }
         });
         
         // Marcar como enviada

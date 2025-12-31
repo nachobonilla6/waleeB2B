@@ -233,19 +233,27 @@ class GoogleCalendar extends Page implements HasForms, HasActions
         $citas = collect();
         
         // Obtener citas de la base de datos local
-        $citasLocales = Cita::with('cliente')
+        $citasLocales = Cita::with(['cliente', 'client'])
             ->where('estado', '!=', 'cancelada')
             ->orderBy('fecha_inicio', 'asc')
             ->get()
             ->map(function ($cita) {
+                $clienteNombre = null;
+                if ($cita->client) {
+                    $clienteNombre = $cita->client->name;
+                } elseif ($cita->cliente) {
+                    $clienteNombre = $cita->cliente->nombre_empresa;
+                }
+                
                 return [
                     'id' => $cita->id,
                     'titulo' => $cita->titulo,
                     'descripcion' => $cita->descripcion,
                     'fecha_inicio' => $cita->fecha_inicio,
                     'fecha_fin' => $cita->fecha_fin,
+                    'client_id' => $cita->client_id,
                     'cliente_id' => $cita->cliente_id,
-                    'cliente' => $cita->cliente,
+                    'cliente' => $clienteNombre,
                     'ubicacion' => $cita->ubicacion,
                     'estado' => $cita->estado,
                     'google_event_id' => $cita->google_event_id,
@@ -376,7 +384,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                         'descripcion' => $cita->descripcion,
                         'fecha_inicio' => $cita->fecha_inicio,
                         'fecha_fin' => $cita->fecha_fin,
-                        'cliente_id' => $cita->cliente_id,
+                        'client_id' => $cita->client_id,
                         'ubicacion' => $cita->ubicacion,
                         'estado' => $cita->estado,
                     ];

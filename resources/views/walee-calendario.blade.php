@@ -425,7 +425,7 @@
             return $tarea->fecha_hora->format('Y-m-d');
         });
         
-        $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
+        $clientes = \App\Models\Client::orderBy('name')->get();
         $listas = \App\Models\Lista::orderBy('nombre')->get();
         $tiposExistentes = \App\Models\Tarea::select('tipo')->distinct()->whereNotNull('tipo')->pluck('tipo');
         
@@ -1949,7 +1949,10 @@
             document.getElementById('modalTitle').textContent = 'Editar Cita';
             document.getElementById('cita_id').value = cita.id;
             document.getElementById('titulo').value = cita.titulo;
-            document.getElementById('cliente_id').value = cita.cliente_id || '';
+            const clientIdField = document.getElementById('client_id');
+            if (clientIdField) {
+                clientIdField.value = cita.client_id || '';
+            }
             document.getElementById('fecha_inicio').value = new Date(cita.fecha_inicio).toISOString().slice(0, 16);
             document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
             document.getElementById('ubicacion').value = cita.ubicacion || '';

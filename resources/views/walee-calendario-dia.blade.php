@@ -165,30 +165,29 @@
                                                         {{ $item['titulo'] }}
                                                     </h3>
                                                 </a>
-                                                @if($item['tipo'] === 'cita' && isset($item['cliente_id']) && $item['cliente_id'])
-                                                    @if(isset($item['cliente']) && $item['cliente'])
+                                                @if($item['tipo'] === 'cita' && (isset($item['client_id']) && $item['client_id'] || isset($item['cliente_id']) && $item['cliente_id']))
+                                                    @php
+                                                        $clienteMostrar = null;
+                                                        if (isset($item['client_id']) && $item['client_id']) {
+                                                            $clienteMostrar = \App\Models\Client::find($item['client_id']);
+                                                        } elseif (isset($item['cliente_id']) && $item['cliente_id']) {
+                                                            $clienteMostrar = \App\Models\Cliente::find($item['cliente_id']);
+                                                        }
+                                                    @endphp
+                                                    @if($clienteMostrar)
+                                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                            </svg>
+                                                            <span class="font-medium text-slate-700 dark:text-slate-300">{{ $clienteMostrar->name ?? $clienteMostrar->nombre_empresa ?? 'Cliente' }}</span>
+                                                        </p>
+                                                    @elseif(isset($item['cliente']) && $item['cliente'])
                                                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                                             </svg>
                                                             <span class="font-medium text-slate-700 dark:text-slate-300">{{ $item['cliente'] }}</span>
                                                         </p>
-                                                    @else
-                                                        @php
-                                                            $cliente = \App\Models\Cliente::find($item['cliente_id']);
-                                                        @endphp
-                                                        @if($cliente && $cliente->nombre_empresa)
-                                                            <p class="text-sm text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                                                </svg>
-                                                                <span class="font-medium text-slate-700 dark:text-slate-300">{{ $cliente->nombre_empresa }}</span>
-                                                            </p>
-                                                        @else
-                                                            <p class="text-sm text-slate-500 dark:text-slate-500 mb-1 italic">
-                                                                Cliente ID: {{ $item['cliente_id'] }} (no encontrado)
-                                                            </p>
-                                                        @endif
                                                     @endif
                                                 @endif
                                                 @if($item['tipo'] === 'tarea' && isset($item['tipo_tarea']) && $item['tipo_tarea'])

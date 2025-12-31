@@ -848,10 +848,16 @@ Route::post('/citas', function (\Illuminate\Http\Request $request) {
         }
         
         // Enviar email al cliente si tiene correo y se creó el evento en Google Calendar
-        if ($cita->cliente_id && $cita->cliente && $cita->cliente->correo && $googleEventUrl) {
+        $emailCliente = null;
+        if ($cita->client_id && $cita->client && $cita->client->email) {
+            $emailCliente = $cita->client->email;
+        } elseif ($cita->cliente_id && $cita->cliente && $cita->cliente->correo) {
+            $emailCliente = $cita->cliente->correo;
+        }
+        
+        if ($emailCliente && $googleEventUrl) {
             try {
-                $cita->load('cliente');
-                \Illuminate\Support\Facades\Mail::to($cita->cliente->correo)
+                \Illuminate\Support\Facades\Mail::to($emailCliente)
                     ->send(new \App\Mail\CitaCreadaMail($cita, $googleEventUrl));
             } catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::warning('Error enviando email de cita al cliente: ' . $e->getMessage());

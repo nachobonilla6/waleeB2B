@@ -2098,7 +2098,7 @@
             
             const data = {
                 titulo: formData.get('titulo'),
-                cliente_id: formData.get('cliente_id') || null,
+                client_id: formData.get('client_id') || null,
                 fecha_inicio: formData.get('fecha_inicio'),
                 fecha_fin: formData.get('fecha_fin') || null,
                 ubicacion: formData.get('ubicacion') || null,

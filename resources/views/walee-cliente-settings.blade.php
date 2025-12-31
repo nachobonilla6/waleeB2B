@@ -651,47 +651,116 @@
                         }
                         
                         // Form submit para programar publicación
-                        const programarForm = document.getElementById('programar-publicacion-form');
-                        if (programarForm) {
-                            programarForm.addEventListener('submit', async (e) => {
-                                e.preventDefault();
+                        function inicializarFormProgramar() {
+                            const programarForm = document.getElementById('programar-publicacion-form');
+                            if (programarForm) {
+                                // Remover listener anterior si existe
+                                const newForm = programarForm.cloneNode(true);
+                                programarForm.parentNode.replaceChild(newForm, programarForm);
                                 
-                                const formData = new FormData(e.target);
-                                const submitBtn = e.target.querySelector('button[type="submit"]');
-                                const originalText = submitBtn ? submitBtn.innerHTML : 'Programar Publicación';
-                                
-                                if (submitBtn) {
-                                    submitBtn.disabled = true;
-                                    submitBtn.innerHTML = 'Programando...';
-                                }
-                                
-                                try {
-                                    const response = await fetch('/publicidad-eventos/programar', {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                                        },
-                                        body: formData
-                                    });
+                                newForm.addEventListener('submit', async (e) => {
+                                    e.preventDefault();
                                     
-                                    const data = await response.json();
+                                    // Validaciones
+                                    const clienteId = newForm.querySelector('input[name="cliente_id"]')?.value;
+                                    const plataforma = newForm.querySelector('input[name="plataforma_publicacion"]')?.value;
+                                    const fechaPublicacion = newForm.querySelector('input[name="fecha_publicacion"]')?.value;
+                                    const texto = newForm.querySelector('textarea[name="texto"]')?.value;
                                     
-                                    if (data.success) {
-                                        alert('✅ Publicación programada exitosamente');
-                                        closeProgramarPublicacionModal();
-                                        location.reload();
-                                    } else {
-                                        alert('Error: ' + (data.message || 'Error al programar publicación'));
+                                    if (!clienteId || clienteId.trim() === '') {
+                                        alert('Error: No se encontró el cliente. Por favor, recarga la página.');
+                                        return;
                                     }
-                                } catch (error) {
-                                    alert('Error de conexión: ' + error.message);
-                                } finally {
+                                    
+                                    if (!plataforma || plataforma.trim() === '') {
+                                        alert('Por favor selecciona una plataforma (Facebook, Instagram o LinkedIn)');
+                                        return;
+                                    }
+                                    
+                                    if (!fechaPublicacion || fechaPublicacion.trim() === '') {
+                                        alert('Por favor selecciona una fecha y hora para la publicación');
+                                        return;
+                                    }
+                                    
+                                    if (!texto || texto.trim() === '') {
+                                        if (!confirm('No has escrito texto para la publicación. ¿Deseas continuar sin texto?')) {
+                                            return;
+                                        }
+                                    }
+                                    
+                                    const formData = new FormData(newForm);
+                                    const submitBtn = newForm.querySelector('button[type="submit"]');
+                                    const originalText = submitBtn ? submitBtn.innerHTML : 'Programar Publicación';
+                                    
                                     if (submitBtn) {
-                                        submitBtn.disabled = false;
-                                        submitBtn.innerHTML = originalText;
+                                        submitBtn.disabled = true;
+                                        submitBtn.innerHTML = 'Programando...';
                                     }
-                                }
-                            });
+                                    
+                                    try {
+                                        console.log('Enviando formulario...', {
+                                            cliente_id: clienteId,
+                                            plataforma: plataforma,
+                                            fecha_publicacion: fechaPublicacion,
+                                            tiene_texto: !!texto,
+                                            tiene_imagen: formData.has('imagen')
+                                        });
+                                        
+                                        const response = await fetch('/publicidad-eventos/programar', {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                            },
+                                            body: formData
+                                        });
+                                        
+                                        console.log('Respuesta recibida:', response.status);
+                                        
+                                        if (!response.ok) {
+                                            const errorText = await response.text();
+                                            console.error('Error del servidor:', errorText);
+                                            throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
+                                        }
+                                        
+                                        const data = await response.json();
+                                        console.log('Datos recibidos:', data);
+                                        
+                                        if (data.success) {
+                                            alert('✅ Publicación programada exitosamente');
+                                            closeProgramarPublicacionModal();
+                                            setTimeout(() => {
+                                                location.reload();
+                                            }, 500);
+                                        } else {
+                                            alert('Error: ' + (data.message || 'Error al programar publicación'));
+                                        }
+                                    } catch (error) {
+                                        console.error('Error completo:', error);
+                                        alert('Error de conexión: ' + error.message);
+                                    } finally {
+                                        if (submitBtn) {
+                                            submitBtn.disabled = false;
+                                            submitBtn.innerHTML = originalText;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        
+                        // Inicializar cuando el DOM esté listo
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', inicializarFormProgramar);
+                        } else {
+                            inicializarFormProgramar();
+                        }
+                        
+                        // También inicializar cuando se abre el modal
+                        const originalAbrirModal = window.abrirModalProgramarPublicacion;
+                        if (originalAbrirModal) {
+                            window.abrirModalProgramarPublicacion = function() {
+                                originalAbrirModal();
+                                setTimeout(inicializarFormProgramar, 100);
+                            };
                         }
                     </script>
                 @else
@@ -710,24 +779,34 @@
                 $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
                     ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
                     ->first();
+                
+                if (!$clientePlaneador) {
+                    $clientePlaneador = \App\Models\Cliente::first();
+                }
             @endphp
+            
+            const modal = document.getElementById('programarPublicacionModal');
             const clienteIdInput = document.querySelector('#programar-publicacion-form input[name="cliente_id"]');
+            
             @if(isset($clientePlaneador) && $clientePlaneador)
                 if (clienteIdInput) {
                     clienteIdInput.value = '{{ $clientePlaneador->id }}';
+                    console.log('Cliente ID establecido:', '{{ $clientePlaneador->id }}');
+                } else {
+                    console.error('No se encontró el input cliente_id');
                 }
             @else
-                // Si no hay cliente planeador, usar el primero disponible o mostrar error
-                @php
-                    $clientePlaneador = \App\Models\Cliente::first();
-                @endphp
-                @if($clientePlaneador)
-                    if (clienteIdInput) {
-                        clienteIdInput.value = '{{ $clientePlaneador->id }}';
-                    }
-                @endif
+                console.error('No se encontró cliente planeador');
+                alert('Error: No se encontró un cliente asociado. Por favor, verifica la configuración.');
+                return;
             @endif
-            document.getElementById('programarPublicacionModal').classList.remove('hidden');
+            
+            if (modal) {
+                modal.classList.remove('hidden');
+                console.log('Modal abierto');
+            } else {
+                console.error('No se encontró el modal');
+            }
         }
         
         function closeProgramarPublicacionModal() {

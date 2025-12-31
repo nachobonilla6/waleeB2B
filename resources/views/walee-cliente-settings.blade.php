@@ -1145,11 +1145,11 @@
                     <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen</label>
                     <div class="relative">
                         <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
-                        <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-all bg-slate-50 dark:bg-slate-800/50">
-                            <div id="imagePreview" class="hidden w-full h-full rounded-xl overflow-hidden">
-                                <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                        <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full min-h-64 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-all bg-slate-50 dark:bg-slate-800/50 relative">
+                            <div id="imagePreview" class="hidden w-full rounded-xl overflow-hidden flex items-center justify-center p-2">
+                                <img id="previewImg" src="" alt="Preview" class="max-w-full max-h-96 w-auto h-auto object-contain rounded-lg">
                             </div>
-                            <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-4">
+                            <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-4 h-64">
                                 <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>

@@ -435,12 +435,17 @@
                         // Obtener eventos de publicidad del cliente
                         // Primero obtener todos los eventos del cliente para debug
                         $todosEventos = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)->get();
+                        \Log::info('Planeador - Total eventos del cliente ' . $clientePlaneador->id . ': ' . $todosEventos->count());
+                        foreach ($todosEventos as $ev) {
+                            \Log::info('Evento ID: ' . $ev->id . ', Fecha: ' . $ev->fecha_inicio . ', Recurrencia: ' . ($ev->recurrencia ?? 'null'));
+                        }
                         
                         // Obtener eventos de publicidad del cliente dentro del rango
+                        // Simplificar: obtener todos los eventos y filtrar después
                         $eventosBase = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)
                             ->where(function($query) use ($fechaInicio, $fechaFin) {
                                 $query->where(function($q) use ($fechaInicio, $fechaFin) {
-                                    // Eventos que están dentro del rango (sin recurrencia)
+                                    // Eventos que están dentro del rango (sin recurrencia o recurrencia null)
                                     $q->where(function($subQ) {
                                         $subQ->where('recurrencia', 'none')
                                              ->orWhereNull('recurrencia');
@@ -461,6 +466,8 @@
                             })
                             ->orderBy('fecha_inicio', 'asc')
                             ->get();
+                        
+                        \Log::info('Planeador - Eventos en rango: ' . $eventosBase->count() . ' (Rango: ' . $fechaInicio->format('Y-m-d H:i') . ' a ' . $fechaFin->format('Y-m-d H:i') . ')');
                         
                         // Generar eventos recurrentes
                         $eventos = collect();

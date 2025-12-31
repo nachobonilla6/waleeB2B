@@ -616,6 +616,13 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
     try {
         $evento = \App\Models\PublicidadEvento::findOrFail($id);
         
+        // Construir URL completa de la imagen si existe
+        $imagenUrl = null;
+        if ($evento->imagen_url) {
+            // Usar asset() para generar la URL correcta
+            $imagenUrl = asset('storage/' . $evento->imagen_url);
+        }
+        
         return response()->json([
             'success' => true,
             'evento' => [
@@ -626,7 +633,7 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                 'fecha_inicio' => $evento->fecha_inicio ? $evento->fecha_inicio->toIso8601String() : null,
                 'fecha_fin' => $evento->fecha_fin ? $evento->fecha_fin->toIso8601String() : null,
                 'estado' => $evento->estado,
-                'imagen_url' => $evento->imagen_url,
+                'imagen_url' => $imagenUrl ?: $evento->imagen_url, // Usar URL completa si existe, sino la ruta relativa
                 'descripcion' => $evento->descripcion,
             ]
         ]);

@@ -733,15 +733,17 @@
                                     // Imagen
                                     const imagenContainer = document.getElementById('detalleEventoImagen');
                                     if (evento.imagen_url) {
-                                        // Construir URL correcta usando asset() o asegurando que la ruta sea correcta
+                                        // La URL ya viene completa desde el servidor (usando asset())
+                                        // Si no empieza con http, puede ser una ruta relativa que necesita /storage/
                                         let imageUrl = evento.imagen_url;
-                                        // Si no empieza con http o /, agregar /storage/
-                                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-                                            imageUrl = '/storage/' + imageUrl;
-                                        } else if (imageUrl.startsWith('storage/')) {
-                                            imageUrl = '/' + imageUrl;
+                                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/storage/')) {
+                                            if (imageUrl.startsWith('storage/')) {
+                                                imageUrl = '/' + imageUrl;
+                                            } else {
+                                                imageUrl = '/storage/' + imageUrl;
+                                            }
                                         }
-                                        imagenContainer.innerHTML = `<img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700">`;
+                                        imagenContainer.innerHTML = `<img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" onerror="this.parentElement.classList.add('hidden')">`;
                                         imagenContainer.classList.remove('hidden');
                                     } else {
                                         imagenContainer.innerHTML = '';

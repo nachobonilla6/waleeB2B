@@ -548,6 +548,26 @@
                     @endphp
                     
                     <div class="space-y-4">
+                        <!-- Debug Info (temporal) -->
+                        @if(config('app.debug'))
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 text-xs">
+                            <p class="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Debug Info:</p>
+                            <p>Cliente ID: {{ $clientePlaneador->id }}</p>
+                            <p>Total eventos del cliente: {{ $todosEventos->count() }}</p>
+                            <p>Eventos en rango: {{ $eventosBase->count() }}</p>
+                            <p>Rango: {{ $fechaInicio->format('Y-m-d H:i') }} a {{ $fechaFin->format('Y-m-d H:i') }}</p>
+                            <p>Semana: {{ $inicioSemana->format('Y-m-d') }} a {{ $finSemana->format('Y-m-d') }}</p>
+                            @if($todosEventos->count() > 0)
+                                <p class="mt-2 font-semibold">Eventos encontrados:</p>
+                                <ul class="list-disc list-inside ml-2">
+                                    @foreach($todosEventos as $ev)
+                                        <li>ID: {{ $ev->id }}, Fecha: {{ $ev->fecha_inicio ? $ev->fecha_inicio->format('Y-m-d H:i') : 'N/A' }}, Recurrencia: {{ $ev->recurrencia ?? 'null' }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
+                        @endif
+                        
                         <!-- Controles del Planeador -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
                             <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">

@@ -18,6 +18,10 @@ class Tarea extends Model
         'recurrencia_fin',
         'color',
         'recurrencia_dias',
+        'notificacion_habilitada',
+        'notificacion_tipo',
+        'notificacion_minutos_antes',
+        'notificacion_fecha_hora',
     ];
 
     protected $casts = [
@@ -25,6 +29,8 @@ class Tarea extends Model
         'recurrencia_fin' => 'datetime',
         'favorito' => 'boolean',
         'recurrencia_dias' => 'array',
+        'notificacion_habilitada' => 'boolean',
+        'notificacion_fecha_hora' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

@@ -2548,6 +2548,13 @@ Route::post('/walee-tareas', function (\Illuminate\Http\Request $request) {
         $tarea->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
         $tarea->recurrencia_dias = $request->input('recurrencia_dias');
         $tarea->color = $request->input('color', '#8b5cf6');
+        
+        // Campos de notificación
+        $tarea->notificacion_habilitada = $request->input('notificacion_habilitada', false);
+        $tarea->notificacion_tipo = $request->input('notificacion_tipo') ?: null;
+        $tarea->notificacion_minutos_antes = $request->input('notificacion_minutos_antes') ?: null;
+        $tarea->notificacion_fecha_hora = $request->input('notificacion_fecha_hora') ? \Carbon\Carbon::parse($request->input('notificacion_fecha_hora')) : null;
+        
         $tarea->save();
         
         return response()->json([
@@ -2575,6 +2582,13 @@ Route::put('/walee-tareas/{id}', function (\Illuminate\Http\Request $request, $i
         $tarea->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
         $tarea->recurrencia_dias = $request->input('recurrencia_dias');
         $tarea->color = $request->input('color', '#8b5cf6');
+        
+        // Campos de notificación
+        $tarea->notificacion_habilitada = $request->input('notificacion_habilitada', false);
+        $tarea->notificacion_tipo = $request->input('notificacion_tipo') ?: null;
+        $tarea->notificacion_minutos_antes = $request->input('notificacion_minutos_antes') ?: null;
+        $tarea->notificacion_fecha_hora = $request->input('notificacion_fecha_hora') ? \Carbon\Carbon::parse($request->input('notificacion_fecha_hora')) : null;
+        
         $tarea->save();
         
         return response()->json([

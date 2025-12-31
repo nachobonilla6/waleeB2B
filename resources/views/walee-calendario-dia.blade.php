@@ -596,6 +596,67 @@
                     >
                 </div>
                 
+                <!-- Notificaciones -->
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <div class="flex items-center gap-3 mb-4">
+                        <input 
+                            type="checkbox" 
+                            name="notificacion_habilitada" 
+                            id="tarea_notificacion_habilitada"
+                            onchange="toggleNotificacionOptions()"
+                            class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-violet-500 focus:ring-violet-500"
+                        >
+                        <label for="tarea_notificacion_habilitada" class="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                            Activar notificación
+                        </label>
+                    </div>
+                    
+                    <div id="notificacion_options_container" class="hidden space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo de notificación</label>
+                            <select 
+                                name="notificacion_tipo" 
+                                id="tarea_notificacion_tipo"
+                                onchange="toggleNotificacionTipo()"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            >
+                                <option value="relativa">Tiempo relativo (antes de la tarea)</option>
+                                <option value="especifica">Fecha y hora específica</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Opciones para notificación relativa -->
+                        <div id="notificacion_relativa_container">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notificar</label>
+                            <select 
+                                name="notificacion_minutos_antes" 
+                                id="tarea_notificacion_minutos_antes"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            >
+                                <option value="15">15 minutos antes</option>
+                                <option value="30">30 minutos antes</option>
+                                <option value="60" selected>1 hora antes</option>
+                                <option value="120">2 horas antes</option>
+                                <option value="180">3 horas antes</option>
+                                <option value="360">6 horas antes</option>
+                                <option value="720">12 horas antes</option>
+                                <option value="1440">1 día antes</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Opciones para notificación específica -->
+                        <div id="notificacion_especifica_container" class="hidden">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha y hora de notificación</label>
+                            <input 
+                                type="datetime-local" 
+                                name="notificacion_fecha_hora" 
+                                id="tarea_notificacion_fecha_hora"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Tercera fila: Tipo y Color -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -833,6 +894,42 @@
             document.getElementById('citaModal').classList.add('hidden');
         }
         
+        // Funciones para manejar notificaciones
+        function toggleNotificacionOptions() {
+            const habilitada = document.getElementById('tarea_notificacion_habilitada').checked;
+            const container = document.getElementById('notificacion_options_container');
+            
+            if (habilitada) {
+                container.classList.remove('hidden');
+                toggleNotificacionTipo();
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+        
+        function toggleNotificacionTipo() {
+            const tipo = document.getElementById('tarea_notificacion_tipo').value;
+            const relativaContainer = document.getElementById('notificacion_relativa_container');
+            const especificaContainer = document.getElementById('notificacion_especifica_container');
+            
+            if (tipo === 'relativa') {
+                relativaContainer.classList.remove('hidden');
+                especificaContainer.classList.add('hidden');
+            } else {
+                relativaContainer.classList.add('hidden');
+                especificaContainer.classList.remove('hidden');
+                
+                // Si es específica y hay fecha_hora, calcular 1 hora antes por defecto
+                const fechaHora = document.getElementById('tarea_fecha_hora').value;
+                if (fechaHora) {
+                    const fecha = new Date(fechaHora);
+                    fecha.setHours(fecha.getHours() - 1);
+                    const fechaNotificacion = new Date(fecha.getTime() - (fecha.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    document.getElementById('tarea_notificacion_fecha_hora').value = fechaNotificacion;
+                }
+            }
+        }
+        
         function showNuevaTareaModal() {
             document.getElementById('tareaModalTitle').textContent = 'Nueva Tarea';
             document.getElementById('tarea-form').reset();
@@ -844,6 +941,13 @@
             document.getElementById('tarea_recurrencia_dias_container').classList.add('hidden');
             document.getElementById('tarea_color').value = '#8b5cf6';
             document.getElementById('tarea_color_text').value = '#8b5cf6';
+            
+            // Resetear notificaciones
+            document.getElementById('tarea_notificacion_habilitada').checked = false;
+            document.getElementById('notificacion_options_container').classList.add('hidden');
+            document.getElementById('tarea_notificacion_tipo').value = 'relativa';
+            document.getElementById('tarea_notificacion_minutos_antes').value = '60';
+            
             document.getElementById('tareaModal').classList.remove('hidden');
         }
         
@@ -1163,6 +1267,20 @@
                 }
             }
             
+            // Obtener datos de notificación
+            const notificacionHabilitada = document.getElementById('tarea_notificacion_habilitada').checked;
+            const notificacionTipo = notificacionHabilitada ? document.getElementById('tarea_notificacion_tipo').value : null;
+            let notificacionMinutosAntes = null;
+            let notificacionFechaHora = null;
+            
+            if (notificacionHabilitada) {
+                if (notificacionTipo === 'relativa') {
+                    notificacionMinutosAntes = parseInt(document.getElementById('tarea_notificacion_minutos_antes').value) || 60;
+                } else if (notificacionTipo === 'especifica') {
+                    notificacionFechaHora = document.getElementById('tarea_notificacion_fecha_hora').value;
+                }
+            }
+            
             const formData = {
                 texto: document.getElementById('tarea_texto').value,
                 lista_id: document.getElementById('tarea_lista_id').value || null,
@@ -1171,7 +1289,11 @@
                 recurrencia: recurrencia,
                 recurrencia_fin: document.getElementById('tarea_recurrencia_fin').value || null,
                 recurrencia_dias: recurrenciaDias,
-                color: document.getElementById('tarea_color').value
+                color: document.getElementById('tarea_color').value,
+                notificacion_habilitada: notificacionHabilitada,
+                notificacion_tipo: notificacionTipo,
+                notificacion_minutos_antes: notificacionMinutosAntes,
+                notificacion_fecha_hora: notificacionFechaHora,
             };
             
             const tareaId = document.getElementById('tarea_id').value;

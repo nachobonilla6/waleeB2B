@@ -625,12 +625,21 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
         // Construir URL completa de la imagen si existe
         $imagenUrl = null;
         if ($evento->imagen_url) {
-            // Si ya tiene el prefijo publicidad/, usar directamente, sino agregarlo
-            if (str_starts_with($evento->imagen_url, 'publicidad/')) {
-                $imagenUrl = asset($evento->imagen_url);
+            // Convertir rutas antiguas de storage a la nueva ruta pública
+            $rutaImagen = $evento->imagen_url;
+            
+            // Si la ruta contiene 'storage/publicidad/' o 'publicidad/', convertirla
+            if (str_contains($rutaImagen, 'storage/publicidad/') || str_contains($rutaImagen, 'publicidad/')) {
+                // Extraer solo el nombre del archivo
+                $nombreArchivo = basename($rutaImagen);
+                // Usar la nueva ruta pública
+                $imagenUrl = asset('publicidad/' . $nombreArchivo);
+            } elseif (str_starts_with($rutaImagen, 'publicidad/')) {
+                // Ya está en el formato correcto
+                $imagenUrl = asset($rutaImagen);
             } else {
-                // Para compatibilidad con rutas antiguas de storage
-                $imagenUrl = asset('storage/' . $evento->imagen_url);
+                // Fallback: intentar con storage (para compatibilidad)
+                $imagenUrl = asset('storage/' . $rutaImagen);
             }
         }
         

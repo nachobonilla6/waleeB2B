@@ -480,14 +480,42 @@ Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\R
 // Programar publicación con imagen
 Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request $request) {
     try {
+        // Validar datos requeridos
+        $clienteId = $request->input('cliente_id');
+        $fechaPublicacion = $request->input('fecha_publicacion');
+        $plataforma = $request->input('plataforma_publicacion');
+        
+        if (!$clienteId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El cliente_id es requerido'
+            ], 400);
+        }
+        
+        if (!$fechaPublicacion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La fecha de publicación es requerida'
+            ], 400);
+        }
+        
+        if (!$plataforma) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La plataforma es requerida'
+            ], 400);
+        }
+        
         $evento = new \App\Models\PublicidadEvento();
-        $evento->titulo = 'Publicación programada';
-        $evento->texto = $request->input('texto');
-        $evento->cliente_id = $request->input('cliente_id');
+        $evento->titulo = $request->input('titulo', 'Publicación programada');
+        $evento->texto = $request->input('texto', '');
+        $evento->descripcion = $request->input('descripcion', '');
+        $evento->cliente_id = $clienteId;
         $evento->tipo_publicidad = null; // Ya no se usa
-        $evento->plataforma = $request->input('plataforma_publicacion');
+        $evento->plataforma = $plataforma;
         $evento->estado = 'programado';
-        $evento->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_publicacion'));
+        $evento->recurrencia = 'none'; // Sin recurrencia por defecto
+        $evento->fecha_inicio = \Carbon\Carbon::parse($fechaPublicacion);
         $evento->color = '#8b5cf6';
         
         // Subir imagen si existe
@@ -499,6 +527,14 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         }
         
         $evento->save();
+        
+        \Log::info('Publicación programada guardada', [
+            'evento_id' => $evento->id,
+            'cliente_id' => $evento->cliente_id,
+            'fecha_inicio' => $evento->fecha_inicio->format('Y-m-d H:i:s'),
+            'plataforma' => $evento->plataforma,
+            'texto' => substr($evento->texto, 0, 50) . '...'
+        ]);
         
         // Obtener cliente para datos del webhook
         $cliente = \App\Models\Cliente::find($evento->cliente_id);

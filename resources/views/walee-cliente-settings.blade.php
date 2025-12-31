@@ -433,30 +433,36 @@
                         }
                         
                         // Obtener eventos de publicidad del cliente
+                        // Usar >= y <= para incluir eventos en los límites
                         $eventosBase = \App\Models\PublicidadEvento::where('cliente_id', $clientePlaneador->id)
                             ->where(function($query) use ($fechaInicio, $fechaFin) {
-                                $query->whereBetween('fecha_inicio', [$fechaInicio, $fechaFin])
+                                $query->where(function($q) use ($fechaInicio, $fechaFin) {
+                                    // Eventos que están dentro del rango (sin recurrencia)
+                                    $q->where('recurrencia', 'none')
+                                      ->where('fecha_inicio', '>=', $fechaInicio->copy()->startOfDay())
+                                      ->where('fecha_inicio', '<=', $fechaFin->copy()->endOfDay());
+                                })
                                 ->orWhere(function($q) use ($fechaInicio, $fechaFin) {
+                                    // Eventos recurrentes
                                     $q->where('recurrencia', '!=', 'none')
-                                      ->where('fecha_inicio', '<=', $fechaFin)
+                                      ->where('fecha_inicio', '<=', $fechaFin->copy()->endOfDay())
                                       ->where(function($subQ) use ($fechaInicio) {
                                           $subQ->whereNull('recurrencia_fin')
-                                                ->orWhere('recurrencia_fin', '>=', $fechaInicio);
+                                                ->orWhere('recurrencia_fin', '>=', $fechaInicio->copy()->startOfDay());
                                       });
                                 });
                             })
+                            ->orderBy('fecha_inicio', 'asc')
                             ->get();
                         
                         // Generar eventos recurrentes
                         $eventos = collect();
                         foreach ($eventosBase as $evento) {
-                            if ($evento->recurrencia === 'none') {
-                                if ($vista === 'semanal') {
-                                    if ($evento->fecha_inicio->gte($inicioSemana) && $evento->fecha_inicio->lte($finSemana)) {
-                                        $eventos->push($evento);
-                                    }
-                                } else {
-                                    if ($evento->fecha_inicio->month == $mes && $evento->fecha_inicio->year == $ano) {
+                            if ($evento->recurrencia === 'none' || !$evento->recurrencia) {
+                                // Eventos sin recurrencia - siempre mostrarlos si están en el rango
+                                if ($evento->fecha_inicio) {
+                                    $fechaEvento = \Carbon\Carbon::parse($evento->fecha_inicio);
+                                    if ($fechaEvento->gte($inicioSemana->copy()->startOfDay()) && $fechaEvento->lte($finSemana->copy()->endOfDay())) {
                                         $eventos->push($evento);
                                     }
                                 }

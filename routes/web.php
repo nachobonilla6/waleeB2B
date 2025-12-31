@@ -559,7 +559,20 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             // Generar URL completa de la imagen si existe
             $imageUrl = null;
             if ($evento->imagen_url) {
-                $imageUrl = asset('storage/' . $evento->imagen_url);
+                // Convertir rutas antiguas de storage a la nueva ruta pública
+                $rutaImagen = $evento->imagen_url;
+                
+                if (str_contains($rutaImagen, 'storage/publicidad/') || str_contains($rutaImagen, 'publicidad/')) {
+                    // Extraer solo el nombre del archivo
+                    $nombreArchivo = basename($rutaImagen);
+                    $imageUrl = asset('publicidad/' . $nombreArchivo);
+                } elseif (str_starts_with($rutaImagen, 'publicidad/')) {
+                    $imageUrl = asset($rutaImagen);
+                } else {
+                    // Fallback: intentar con storage (para compatibilidad)
+                    $imageUrl = asset('storage/' . $rutaImagen);
+                }
+                
                 // Asegurar URL absoluta
                 if (!str_starts_with($imageUrl, 'http')) {
                     $imageUrl = url($imageUrl);

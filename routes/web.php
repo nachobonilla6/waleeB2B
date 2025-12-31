@@ -504,7 +504,7 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         $cliente = \App\Models\Cliente::find($evento->cliente_id);
         
         // Webhook fijo para publicaciones programadas
-        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/82801f9f-61f6-42cd-9816-97bc14554ffb';
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
         
         try {
             // Generar URL completa de la imagen si existe

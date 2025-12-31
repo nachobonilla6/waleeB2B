@@ -1995,6 +1995,28 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             }
         }
         
+        // Guardar pagos recibidos
+        $pagos = $request->input('pagos', []);
+        foreach ($pagos as $pago) {
+            if (!empty($pago['descripcion']) && !empty($pago['importe'])) {
+                \App\Models\FacturaPago::create([
+                    'factura_id' => $factura->id,
+                    'descripcion' => $pago['descripcion'],
+                    'fecha' => $pago['fecha'] ?? now(),
+                    'importe' => $pago['importe'],
+                    'metodo_pago' => $pago['metodo_pago'] ?? null,
+                    'notas' => $pago['notas'] ?? null,
+                ]);
+            }
+        }
+        
+        // Actualizar campos de descuentos
+        $factura->update([
+            'descuento_antes_impuestos' => $request->input('descuento_antes_impuestos', 0),
+            'descuento_despues_impuestos' => $request->input('descuento_despues_impuestos', 0),
+            'numero_orden' => $request->input('numero_orden'),
+        ]);
+        
         \DB::commit();
         
         return response()->json([
@@ -2163,12 +2185,13 @@ Route::post('/walee-facturas/generar-pdf', function (\Illuminate\Http\Request $r
     }
     
     $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', compact('data'));
+    $pdf->setPaper('A4', 'portrait');
     return $pdf->download('factura-' . ($data['numero_factura'] ?? 'temp') . '.pdf');
 })->middleware(['auth'])->name('walee.facturas.generar-pdf');
 
 // Enviar factura por email
 Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http\Request $request) {
-    $factura = \App\Models\Factura::with(['cliente', 'items'])->findOrFail($id);
+    $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->findOrFail($id);
     
     if (!$factura->correo) {
         return response()->json([
@@ -2181,23 +2204,37 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
         $data = [
             'numero_factura' => $factura->numero_factura,
             'fecha_emision' => $factura->fecha_emision->format('Y-m-d'),
+            'fecha_vencimiento' => $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : null,
             'cliente_id' => $factura->cliente_id,
             'correo' => $factura->correo,
             'subtotal' => $factura->subtotal,
-            'iva' => ($factura->total - $factura->subtotal),
+            'descuento_antes_impuestos' => $factura->descuento_antes_impuestos ?? 0,
+            'descuento_despues_impuestos' => $factura->descuento_despues_impuestos ?? 0,
             'total' => $factura->total,
+            'monto_pagado' => $factura->monto_pagado,
+            'estado' => $factura->estado,
+            'numero_orden' => $factura->numero_orden,
             'notas' => $factura->notas,
-            'items' => $factura->items->map(function($item) {
+            'items_json' => json_encode($factura->items->map(function($item) {
                 return [
                     'descripcion' => $item->descripcion,
                     'cantidad' => $item->cantidad,
                     'precio_unitario' => $item->precio_unitario,
                     'subtotal' => $item->subtotal,
+                    'notas' => $item->notas ?? null,
                 ];
-            })->toArray(),
+            })->toArray()),
+            'pagos' => json_encode($factura->pagos->map(function($pago) {
+                return [
+                    'descripcion' => $pago->descripcion,
+                    'fecha' => $pago->fecha->format('Y-m-d'),
+                    'importe' => $pago->importe,
+                ];
+            })->toArray()),
         ];
         
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
+        $pdf->setPaper('A4', 'portrait');
         
         \Mail::send('emails.factura-envio', [
             'factura' => $factura,
@@ -2205,16 +2242,19 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
         ], function ($message) use ($factura, $pdf) {
             $message->to($factura->correo)
                     ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
-                    ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf');
+                    ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
         });
         
         $factura->update(['enviada_at' => now()]);
         
         return response()->json([
             'success' => true,
-            'message' => 'Factura enviada por email correctamente',
+            'message' => 'Factura enviada por email correctamente con PDF adjunto',
         ]);
     } catch (\Exception $e) {
+        \Log::error('Error enviando factura por email: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Error al enviar email: ' . $e->getMessage(),

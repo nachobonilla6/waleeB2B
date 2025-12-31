@@ -27,6 +27,9 @@ class Factura extends Model
         'notas',
         'enviada_at',
         'enlace',
+        'descuento_antes_impuestos',
+        'descuento_despues_impuestos',
+        'numero_orden',
     ];
 
     protected $casts = [
@@ -36,6 +39,8 @@ class Factura extends Model
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
         'monto_pagado' => 'decimal:2',
+        'descuento_antes_impuestos' => 'decimal:2',
+        'descuento_despues_impuestos' => 'decimal:2',
     ];
 
     protected static function boot()
@@ -89,6 +94,11 @@ class Factura extends Model
     public function items(): HasMany
     {
         return $this->hasMany(FacturaItem::class)->orderBy('orden');
+    }
+
+    public function pagos(): HasMany
+    {
+        return $this->hasMany(FacturaPago::class)->orderBy('fecha');
     }
 
     /**

@@ -2290,6 +2290,11 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
     }
 })->middleware(['auth'])->name('walee.facturas.enviar-email');
 
+// Herramientas - Página principal
+Route::get('/walee-herramientas', function () {
+    return view('walee-herramientas');
+})->middleware(['auth'])->name('walee.herramientas');
+
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {
     $clientes = \App\Models\Client::orderBy('name', 'asc')->get();

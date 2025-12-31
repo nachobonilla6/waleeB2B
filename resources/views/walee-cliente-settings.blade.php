@@ -73,17 +73,17 @@
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="flex gap-2 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-1.5">
-                    <button onclick="showTab('publicaciones')" id="tab-publicaciones" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button active">
+                    <a href="{{ route('walee.cliente.settings.publicaciones', $cliente->id) }}" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button {{ request()->routeIs('walee.cliente.settings.publicaciones') ? 'active bg-violet-500 text-white' : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Publicaciones
-                    </button>
-                    <button onclick="showTab('planeador')" id="tab-planeador" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button">
+                    </a>
+                    <a href="{{ route('walee.cliente.settings.planeador', $cliente->id) }}" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button {{ request()->routeIs('walee.cliente.settings.planeador') ? 'active bg-violet-500 text-white' : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Planeador
-                    </button>
+                    </a>
                 </div>
             </div>
 
             <!-- Publicaciones Tab -->
-            <div id="content-publicaciones" class="tab-content animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div id="content-publicaciones" class="tab-content {{ request()->routeIs('walee.cliente.settings.publicaciones') || request()->routeIs('walee.cliente.settings') ? '' : 'hidden' }} animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Create Publicación -->
                 <div class="rounded-2xl md:rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-4 md:p-6 mb-4 md:mb-6">
                     <div class="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
@@ -382,7 +382,7 @@
             </div>
 
             <!-- Planeador Tab -->
-            <div id="content-planeador" class="tab-content hidden animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div id="content-planeador" class="tab-content {{ request()->routeIs('walee.cliente.settings.planeador') ? '' : 'hidden' }} animate-fade-in-up" style="animation-delay: 0.2s;">
                 @php
                     // Convertir el cliente de Client a Cliente si es necesario
                     $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
@@ -523,13 +523,19 @@
                         <!-- Controles del Planeador -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
                             <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                                <div class="flex gap-2">
+                                <div class="flex gap-2 items-center">
                                     <a href="javascript:void(0)" onclick="updatePlaneadorVista('semanal', '{{ now()->format('Y-W') }}')" class="px-4 py-2 rounded-lg {{ $vista === 'semanal' || !request()->has('vista') ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm">
                                         Semana
                                     </a>
                                     <a href="javascript:void(0)" onclick="updatePlaneadorVista('mensual', '{{ $mes }}', '{{ $ano }}')" class="px-4 py-2 rounded-lg {{ $vista === 'mensual' ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm">
                                         Mes
                                     </a>
+                                    <button onclick="abrirModalProgramarPublicacion()" class="px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-sm flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        Programar Publicación
+                                    </button>
                                 </div>
                                 
                                 @if($vista === 'semanal')
@@ -631,7 +637,7 @@
                     
                     <script>
                         function updatePlaneadorVista(vista, semana, mes, ano) {
-                            let url = '{{ route("walee.cliente.settings", $cliente->id) }}';
+                            let url = '{{ route("walee.cliente.settings.planeador", $cliente->id) }}';
                             if (vista === 'semanal') {
                                 url += '?vista=semanal&semana=' + semana;
                             } else {
@@ -666,6 +672,50 @@
                             
                             updatePlaneadorVista('mensual', nuevoMes, nuevoAno);
                         }
+                        
+                        // Form submit para programar publicación
+                        const programarForm = document.getElementById('programar-publicacion-form');
+                        if (programarForm) {
+                            programarForm.addEventListener('submit', async (e) => {
+                                e.preventDefault();
+                                
+                                const formData = new FormData(e.target);
+                                const submitBtn = e.target.querySelector('button[type="submit"]');
+                                const originalText = submitBtn ? submitBtn.innerHTML : 'Programar Publicación';
+                                
+                                if (submitBtn) {
+                                    submitBtn.disabled = true;
+                                    submitBtn.innerHTML = 'Programando...';
+                                }
+                                
+                                try {
+                                    const response = await fetch('/publicidad-eventos/programar', {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                        },
+                                        body: formData
+                                    });
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (data.success) {
+                                        alert('✅ Publicación programada exitosamente');
+                                        closeProgramarPublicacionModal();
+                                        location.reload();
+                                    } else {
+                                        alert('Error: ' + (data.message || 'Error al programar publicación'));
+                                    }
+                                } catch (error) {
+                                    alert('Error de conexión: ' + error.message);
+                                } finally {
+                                    if (submitBtn) {
+                                        submitBtn.disabled = false;
+                                        submitBtn.innerHTML = originalText;
+                                    }
+                                }
+                            });
+                        }
                     </script>
                 @else
                     <div class="text-center py-8">
@@ -677,6 +727,107 @@
     </div>
 
     <script>
+        // Funciones globales para programar publicación
+        function abrirModalProgramarPublicacion() {
+            @php
+                $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
+                    ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
+                    ->first();
+            @endphp
+            const clienteIdInput = document.querySelector('#programar-publicacion-form input[name="cliente_id"]');
+            @if(isset($clientePlaneador) && $clientePlaneador)
+                if (clienteIdInput) {
+                    clienteIdInput.value = '{{ $clientePlaneador->id }}';
+                }
+            @endif
+            document.getElementById('programarPublicacionModal').classList.remove('hidden');
+        }
+        
+        function closeProgramarPublicacionModal() {
+            document.getElementById('programarPublicacionModal').classList.add('hidden');
+            const form = document.getElementById('programar-publicacion-form');
+            if (form) {
+                form.reset();
+            }
+            const imagePreview = document.getElementById('imagePreview');
+            const imagePlaceholder = document.getElementById('imagePlaceholder');
+            const removeImageBtn = document.getElementById('removeImageBtn');
+            const imagenInput = document.getElementById('imagen_publicacion');
+            if (imagePreview) imagePreview.classList.add('hidden');
+            if (imagePlaceholder) imagePlaceholder.classList.remove('hidden');
+            if (removeImageBtn) removeImageBtn.classList.add('hidden');
+            if (imagenInput) imagenInput.value = '';
+        }
+        
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.getElementById('previewImg');
+                    const imagePreview = document.getElementById('imagePreview');
+                    const imagePlaceholder = document.getElementById('imagePlaceholder');
+                    const removeImageBtn = document.getElementById('removeImageBtn');
+                    if (previewImg) previewImg.src = e.target.result;
+                    if (imagePreview) imagePreview.classList.remove('hidden');
+                    if (imagePlaceholder) imagePlaceholder.classList.add('hidden');
+                    if (removeImageBtn) removeImageBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function removeImage() {
+            const imagenInput = document.getElementById('imagen_publicacion');
+            const imagePreview = document.getElementById('imagePreview');
+            const imagePlaceholder = document.getElementById('imagePlaceholder');
+            const removeImageBtn = document.getElementById('removeImageBtn');
+            if (imagenInput) imagenInput.value = '';
+            if (imagePreview) imagePreview.classList.add('hidden');
+            if (imagePlaceholder) imagePlaceholder.classList.remove('hidden');
+            if (removeImageBtn) removeImageBtn.classList.add('hidden');
+        }
+        
+        async function generarTextoAI() {
+            const textoTextarea = document.getElementById('texto_publicacion');
+            const promptInput = document.getElementById('prompt_personalizado');
+            const aiLoading = document.getElementById('aiLoading');
+            const btnGenerarTexto = document.getElementById('btnGenerarTexto');
+            const clienteIdInput = document.querySelector('#programar-publicacion-form input[name="cliente_id"]');
+            
+            const prompt = promptInput ? promptInput.value.trim() : '';
+            const clienteId = clienteIdInput ? clienteIdInput.value : '{{ $cliente->id }}';
+            
+            if (btnGenerarTexto) btnGenerarTexto.disabled = true;
+            if (aiLoading) aiLoading.classList.remove('hidden');
+            
+            try {
+                const response = await fetch(`/walee-cliente/${clienteId}/publicaciones/generar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        ai_prompt: prompt
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && textoTextarea) {
+                    textoTextarea.value = data.content;
+                } else {
+                    alert('Error: ' + (data.message || 'Error al generar texto'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            } finally {
+                if (btnGenerarTexto) btnGenerarTexto.disabled = false;
+                if (aiLoading) aiLoading.classList.add('hidden');
+            }
+        }
+        
         // Tab switching
         function showTab(tabName) {
             // Hide all content
@@ -955,6 +1106,103 @@
             window.open(linkedInShareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
         }
     </script>
+    
+    <!-- Modal Programar Publicación -->
+    <div id="programarPublicacionModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-4xl lg:max-w-5xl max-h-[85vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Programar Publicación</h3>
+                <button onclick="closeProgramarPublicacionModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="programar-publicacion-form" class="p-4 md:p-5 space-y-3 overflow-y-auto max-h-[calc(85vh-80px)]">
+                <input type="hidden" name="cliente_id" value="{{ $clientePlaneador ? $clientePlaneador->id : '' }}">
+                
+                <!-- Layout horizontal: Imagen y Texto lado a lado -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- Imagen -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Imagen</label>
+                        <div class="relative">
+                            <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
+                            <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-colors bg-slate-50 dark:bg-slate-800/50">
+                                <div id="imagePreview" class="hidden w-full h-full rounded-lg overflow-hidden">
+                                    <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                                </div>
+                                <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-4">
+                                    <svg class="w-8 h-8 text-slate-400 dark:text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">Subir imagen</p>
+                                </div>
+                            </label>
+                            <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-1.5 px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-all">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Texto con AI -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Texto</label>
+                        <div class="flex gap-2">
+                            <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap h-fit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                                <span class="hidden sm:inline text-xs">AI</span>
+                            </button>
+                        </div>
+                        <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">
+                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Generando...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prompt personalizado -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Prompt Personalizado (opcional)</label>
+                    <textarea name="prompt_personalizado" id="prompt_personalizado" rows="2" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                </div>
+                
+                <!-- Plataforma y Fecha -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Plataforma</label>
+                        <select name="plataforma_publicacion" id="plataforma_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <option value="">Seleccionar</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="linkedin">LinkedIn</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha y Hora</label>
+                        <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 pt-1">
+                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all">
+                        Programar Publicación
+                    </button>
+                    <button type="button" onclick="closeProgramarPublicacionModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-sm font-medium transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     @include('partials.walee-support-button')
 </body>
 </html>

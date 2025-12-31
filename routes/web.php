@@ -2780,11 +2780,22 @@ Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $
     return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
 })->middleware(['auth'])->name('walee.cliente.actualizar');
 
-// Ruta para settings del cliente
+// Ruta para settings del cliente (redirige a publicaciones por defecto)
 Route::get('/walee-cliente/{id}/settings', function ($id) {
+    return redirect()->route('walee.cliente.settings.publicaciones', $id);
+})->middleware(['auth'])->name('walee.cliente.settings');
+
+// Ruta para pestaña de publicaciones
+Route::get('/walee-cliente/{id}/settings/publicaciones', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);
     return view('walee-cliente-settings', compact('cliente'));
-})->middleware(['auth'])->name('walee.cliente.settings');
+})->middleware(['auth'])->name('walee.cliente.settings.publicaciones');
+
+// Ruta para pestaña de planeador
+Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
+    $cliente = \App\Models\Client::findOrFail($id);
+    return view('walee-cliente-settings', compact('cliente'));
+})->middleware(['auth'])->name('walee.cliente.settings.planeador');
 
 // Ruta para Walee WhatsApp
 Route::get('/walee-whatsapp', function () {

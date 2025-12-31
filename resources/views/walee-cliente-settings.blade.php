@@ -105,7 +105,7 @@
                                 rows="2"
                                 placeholder="Ej: Publicación promocionando nuestros servicios..."
                                 class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg md:rounded-xl text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-xs md:text-sm"
-                            >contactar a Melissa at 506) 8321 4037</textarea>
+                            ></textarea>
                             <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-500 mt-1">Describe el tipo de publicación. Si lo dejas vacío, se generará una genérica.</p>
                         </div>
                         

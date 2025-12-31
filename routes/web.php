@@ -2912,6 +2912,12 @@ Route::post('/walee-cliente/{id}/publicaciones/generar', function (\Illuminate\H
                 throw new \RuntimeException('El contenido de la publicación está vacío.');
             }
             
+            // Agregar siempre el contacto de Melissa al final
+            $contactoMelissa = 'contactar a Melissa at 506) 8321 4037';
+            if (stripos($publicacionContent, $contactoMelissa) === false) {
+                $publicacionContent .= ' ' . $contactoMelissa;
+            }
+            
             return response()->json([
                 'success' => true,
                 'content' => $publicacionContent,

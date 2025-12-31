@@ -1166,13 +1166,13 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente</label>
                         <select 
-                            name="cliente_id" 
-                            id="cliente_id"
+                            name="client_id" 
+                            id="client_id"
                             class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
                         >
                             <option value="">Sin cliente</option>
                             @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nombre_empresa }}</option>
+                                <option value="{{ $cliente->id }}">{{ $cliente->name }} @if($cliente->email)({{ $cliente->email }})@endif</option>
                             @endforeach
                         </select>
                     </div>

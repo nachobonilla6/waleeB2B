@@ -2149,8 +2149,78 @@ Route::get('/walee-facturas/paquetes', function () {
 // Previsualizar factura
 Route::post('/walee-facturas/previsualizar', function (\Illuminate\Http\Request $request) {
     $data = $request->all();
+    if (isset($data['items_json'])) {
+        $data['items'] = json_decode($data['items_json'], true);
+    }
     return view('walee-factura-preview', compact('data'));
 })->middleware(['auth'])->name('walee.facturas.preview');
+
+// Generar PDF de factura
+Route::post('/walee-facturas/generar-pdf', function (\Illuminate\Http\Request $request) {
+    $data = $request->all();
+    if (isset($data['items_json'])) {
+        $data['items'] = json_decode($data['items_json'], true);
+    }
+    
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', compact('data'));
+    return $pdf->download('factura-' . ($data['numero_factura'] ?? 'temp') . '.pdf');
+})->middleware(['auth'])->name('walee.facturas.generar-pdf');
+
+// Enviar factura por email
+Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http\Request $request) {
+    $factura = \App\Models\Factura::with(['cliente', 'items'])->findOrFail($id);
+    
+    if (!$factura->correo) {
+        return response()->json([
+            'success' => false,
+            'message' => 'La factura no tiene correo electrónico asociado',
+        ], 400);
+    }
+    
+    try {
+        $data = [
+            'numero_factura' => $factura->numero_factura,
+            'fecha_emision' => $factura->fecha_emision->format('Y-m-d'),
+            'cliente_id' => $factura->cliente_id,
+            'correo' => $factura->correo,
+            'subtotal' => $factura->subtotal,
+            'iva' => ($factura->total - $factura->subtotal),
+            'total' => $factura->total,
+            'notas' => $factura->notas,
+            'items' => $factura->items->map(function($item) {
+                return [
+                    'descripcion' => $item->descripcion,
+                    'cantidad' => $item->cantidad,
+                    'precio_unitario' => $item->precio_unitario,
+                    'subtotal' => $item->subtotal,
+                ];
+            })->toArray(),
+        ];
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
+        
+        \Mail::send('emails.factura-envio', [
+            'factura' => $factura,
+            'cliente' => $factura->cliente,
+        ], function ($message) use ($factura, $pdf) {
+            $message->to($factura->correo)
+                    ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
+                    ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf');
+        });
+        
+        $factura->update(['enviada_at' => now()]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Factura enviada por email correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al enviar email: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.enviar-email');
 
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {

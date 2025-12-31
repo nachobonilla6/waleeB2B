@@ -155,27 +155,97 @@
                     </div>
                 </div>
                 
-                <!-- Concepto y Montos -->
+                <!-- Información del Cliente (Cálculo Automático) -->
+                <div id="clienteInfoCard" class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none hidden">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Resumen del Cliente
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Facturado</p>
+                            <p class="text-lg font-bold text-slate-900 dark:text-white" id="infoTotalFacturado">₡0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Pagado</p>
+                            <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400" id="infoTotalPagado">₡0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Saldo Pendiente</p>
+                            <p class="text-lg font-bold text-red-600 dark:text-red-400" id="infoSaldoPendiente">₡0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Facturas</p>
+                            <p class="text-lg font-bold text-slate-900 dark:text-white" id="infoFacturasCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Paquetes Predefinidos -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                        Paquetes Predefinidos
+                    </h2>
+                    <div class="mb-4">
+                        <select id="paqueteSelect" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
+                            <option value="">Seleccionar paquete...</option>
+                        </select>
+                    </div>
+                    <button type="button" onclick="agregarPaquete()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all text-sm">
+                        Agregar Paquete
+                    </button>
+                </div>
+                
+                <!-- Items de Factura -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        Items de Factura
+                    </h2>
+                    
+                    <div id="itemsContainer" class="space-y-3 mb-4">
+                        <!-- Items se agregarán dinámicamente aquí -->
+                    </div>
+                    
+                    <button type="button" onclick="agregarItem()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Agregar Item
+                    </button>
+                </div>
+                
+                <!-- Resumen y Totales -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        Concepto y Montos
+                        Resumen y Totales
                     </h2>
                     
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <textarea id="concepto" name="concepto" rows="3" required placeholder="Descripción del servicio o producto..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
-                        </div>
-                        
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Subtotal</label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="subtotal" name="subtotal" value="0" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    <input type="number" step="0.01" id="subtotal" name="subtotal" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">IVA (13%)</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
+                                    <input type="number" step="0.01" id="iva" name="iva" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white">
                                 </div>
                             </div>
                             
@@ -183,15 +253,25 @@
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Total <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="total" name="total" required value="0" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    <input type="number" step="0.01" id="total" name="total" required value="0" readonly class="w-full pl-8 pr-4 py-3 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 dark:border-emerald-500 rounded-xl text-emerald-700 dark:text-emerald-400 font-bold">
                                 </div>
                             </div>
-                            
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Monto Pagado</label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0" oninput="calcularSaldo()" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Saldo Pendiente</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
+                                    <input type="number" step="0.01" id="saldo_pendiente" name="saldo_pendiente" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-xl text-red-700 dark:text-red-400 font-semibold">
                                 </div>
                             </div>
                         </div>
@@ -215,6 +295,11 @@
                                 <input type="text" id="concepto_pago" name="concepto_pago" placeholder="Ej: Pago inicial, Pago final..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto General</label>
+                            <textarea id="concepto" name="concepto" rows="2" placeholder="Descripción general de la factura..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
+                        </div>
                     </div>
                 </div>
                 
@@ -230,8 +315,15 @@
                     <textarea id="notas" name="notas" rows="3" placeholder="Notas adicionales para la factura..." class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"></textarea>
                 </div>
                 
-                <!-- Submit Button -->
+                <!-- Submit Buttons -->
                 <div class="flex gap-4">
+                    <button type="button" onclick="mostrarVistaPrevia()" class="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <span>Vista Previa</span>
+                    </button>
                     <button type="submit" id="submitBtn" class="flex-1 px-6 py-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -252,6 +344,53 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let items = [];
+        let paquetes = [];
+        let itemCounter = 0;
+        
+        // Cargar paquetes al iniciar
+        async function cargarPaquetes() {
+            try {
+                const response = await fetch('{{ route("walee.facturas.paquetes") }}');
+                const data = await response.json();
+                if (data.success) {
+                    paquetes = data.paquetes;
+                    const select = document.getElementById('paqueteSelect');
+                    select.innerHTML = '<option value="">Seleccionar paquete...</option>';
+                    paquetes.forEach(paquete => {
+                        const option = document.createElement('option');
+                        option.value = paquete.id;
+                        option.textContent = `${paquete.nombre} - ₡${parseFloat(paquete.precio).toLocaleString()}`;
+                        option.dataset.paquete = JSON.stringify(paquete);
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando paquetes:', error);
+            }
+        }
+        
+        // Cargar información del cliente
+        async function cargarInfoCliente(clienteId) {
+            if (!clienteId) {
+                document.getElementById('clienteInfoCard').classList.add('hidden');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/walee-facturas/cliente/${clienteId}/info`);
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('infoTotalFacturado').textContent = `₡${parseFloat(data.resumen.total_facturado).toLocaleString()}`;
+                    document.getElementById('infoTotalPagado').textContent = `₡${parseFloat(data.resumen.total_pagado).toLocaleString()}`;
+                    document.getElementById('infoSaldoPendiente').textContent = `₡${parseFloat(data.resumen.saldo_pendiente).toLocaleString()}`;
+                    document.getElementById('infoFacturasCount').textContent = data.resumen.facturas_count;
+                    document.getElementById('clienteInfoCard').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error cargando info del cliente:', error);
+            }
+        }
         
         // Auto-fill correo when cliente changes
         document.getElementById('cliente_id').addEventListener('change', function() {
@@ -260,19 +399,188 @@
             if (email) {
                 document.getElementById('correo').value = email;
             }
+            cargarInfoCliente(this.value);
         });
         
-        // Auto-calculate subtotal when total changes (assuming no tax for simplicity)
-        document.getElementById('total').addEventListener('input', function() {
-            document.getElementById('subtotal').value = this.value;
-        });
+        // Agregar paquete
+        function agregarPaquete() {
+            const select = document.getElementById('paqueteSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            if (!selectedOption.value) return;
+            
+            const paquete = JSON.parse(selectedOption.dataset.paquete);
+            agregarItem(paquete.nombre, paquete.precio, 1, paquete.descripcion);
+            select.value = '';
+        }
+        
+        // Agregar item
+        function agregarItem(descripcion = '', precio = 0, cantidad = 1, notas = '') {
+            const itemId = itemCounter++;
+            const item = {
+                id: itemId,
+                descripcion: descripcion,
+                cantidad: cantidad,
+                precio_unitario: precio,
+                subtotal: cantidad * precio
+            };
+            items.push(item);
+            renderizarItems();
+            calcularTotales();
+        }
+        
+        // Eliminar item
+        function eliminarItem(itemId) {
+            items = items.filter(item => item.id !== itemId);
+            renderizarItems();
+            calcularTotales();
+        }
+        
+        // Renderizar items
+        function renderizarItems() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+            
+            items.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl p-4';
+                itemDiv.innerHTML = `
+                    <div class="grid grid-cols-12 gap-3 items-end">
+                        <div class="col-span-12 md:col-span-5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
+                            <input type="text" value="${item.descripcion}" oninput="actualizarItem(${item.id}, 'descripcion', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                        </div>
+                        <div class="col-span-4 md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Cantidad</label>
+                            <input type="number" value="${item.cantidad}" min="1" oninput="actualizarItem(${item.id}, 'cantidad', parseFloat(this.value) || 1)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                        </div>
+                        <div class="col-span-4 md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Precio Unit.</label>
+                            <input type="number" step="0.01" value="${item.precio_unitario}" oninput="actualizarItem(${item.id}, 'precio_unitario', parseFloat(this.value) || 0)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                        </div>
+                        <div class="col-span-4 md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Subtotal</label>
+                            <input type="number" step="0.01" value="${item.subtotal.toFixed(2)}" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm font-semibold">
+                        </div>
+                        <div class="col-span-12 md:col-span-1">
+                            <button type="button" onclick="eliminarItem(${item.id})" class="w-full px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-sm">
+                                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+        
+        // Actualizar item
+        function actualizarItem(itemId, campo, valor) {
+            const item = items.find(i => i.id === itemId);
+            if (item) {
+                item[campo] = valor;
+                if (campo === 'cantidad' || campo === 'precio_unitario') {
+                    item.subtotal = (item.cantidad || 1) * (item.precio_unitario || 0);
+                }
+                renderizarItems();
+                calcularTotales();
+            }
+        }
+        
+        // Calcular totales
+        function calcularTotales() {
+            const subtotal = items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+            const iva = subtotal * 0.13;
+            const total = subtotal + iva;
+            
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            document.getElementById('iva').value = iva.toFixed(2);
+            document.getElementById('total').value = total.toFixed(2);
+            
+            calcularSaldo();
+        }
+        
+        // Calcular saldo pendiente
+        function calcularSaldo() {
+            const total = parseFloat(document.getElementById('total').value) || 0;
+            const montoPagado = parseFloat(document.getElementById('monto_pagado').value) || 0;
+            const saldoPendiente = total - montoPagado;
+            document.getElementById('saldo_pendiente').value = saldoPendiente.toFixed(2);
+        }
+        
+        // Vista previa
+        async function mostrarVistaPrevia() {
+            if (items.length === 0) {
+                showNotification('Error', 'Debe agregar al menos un item', 'error');
+                return;
+            }
+            
+            const formData = new FormData(document.getElementById('facturaForm'));
+            const data = Object.fromEntries(formData.entries());
+            data.items = items;
+            
+            // Abrir modal de vista previa
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-auto">
+                    <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Vista Previa de Factura</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <iframe id="previewFrame" src="/walee-facturas/previsualizar" style="width: 100%; height: 600px; border: none;"></iframe>
+                    </div>
+                    <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex gap-3 justify-end">
+                        <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-lg">Cerrar</button>
+                        <button onclick="enviarFactura()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg">Enviar por Email</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Enviar datos a la ruta de previsualización
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("walee.facturas.preview") }}';
+            form.target = 'previewFrame';
+            form.innerHTML = `<input type="hidden" name="_token" value="${csrfToken}">`;
+            Object.keys(data).forEach(key => {
+                if (key === 'items') {
+                    form.innerHTML += `<input type="hidden" name="items_json" value='${JSON.stringify(data.items)}'>`;
+                } else {
+                    form.innerHTML += `<input type="hidden" name="${key}" value="${data[key]}">`;
+                }
+            });
+            document.body.appendChild(form);
+            form.submit();
+            setTimeout(() => form.remove(), 1000);
+        }
         
         // Form submission
         document.getElementById('facturaForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            if (items.length === 0) {
+                showNotification('Error', 'Debe agregar al menos un item', 'error');
+                return;
+            }
+            
             const submitBtn = document.getElementById('submitBtn');
             const formData = new FormData(this);
+            
+            // Agregar items al formData
+            items.forEach((item, index) => {
+                formData.append(`items[${index}][descripcion]`, item.descripcion);
+                formData.append(`items[${index}][cantidad]`, item.cantidad);
+                formData.append(`items[${index}][precio_unitario]`, item.precio_unitario);
+                formData.append(`items[${index}][subtotal]`, item.subtotal);
+                formData.append(`items[${index}][orden]`, index);
+            });
             
             submitBtn.disabled = true;
             submitBtn.innerHTML = `
@@ -349,6 +657,10 @@
                 setTimeout(() => notification.remove(), 300);
             }, 5000);
         }
+        
+        // Inicializar
+        cargarPaquetes();
+        agregarItem(); // Agregar un item inicial
     </script>
     @include('partials.walee-support-button')
 </body>

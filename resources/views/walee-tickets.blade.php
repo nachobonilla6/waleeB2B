@@ -784,21 +784,6 @@
                                                 <span class="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
                                                     Resuelto
                                                 </span>
-                                                @if($ticket->urgente)
-                                                    <span class="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
-                                                        ⚠️
-                                                    </span>
-                                                @endif
-                                                @if($ticket->prioritario)
-                                                    <span class="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30">
-                                                        ⭐
-                                                    </span>
-                                                @endif
-                                                @if($ticket->a_discutir)
-                                                    <span class="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30">
-                                                        💬
-                                                    </span>
-                                                @endif
                                             </div>
                                             <h3 class="text-sm md:text-base font-semibold text-slate-900 dark:text-white line-clamp-2 md:truncate">{{ $ticket->asunto }}</h3>
                                         </div>

@@ -733,7 +733,15 @@
                                     // Imagen
                                     const imagenContainer = document.getElementById('detalleEventoImagen');
                                     if (evento.imagen_url) {
-                                        imagenContainer.innerHTML = `<img src="/storage/${evento.imagen_url}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700">`;
+                                        // Construir URL correcta usando asset() o asegurando que la ruta sea correcta
+                                        let imageUrl = evento.imagen_url;
+                                        // Si no empieza con http o /, agregar /storage/
+                                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                                            imageUrl = '/storage/' + imageUrl;
+                                        } else if (imageUrl.startsWith('storage/')) {
+                                            imageUrl = '/' + imageUrl;
+                                        }
+                                        imagenContainer.innerHTML = `<img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700">`;
                                         imagenContainer.classList.remove('hidden');
                                     } else {
                                         imagenContainer.innerHTML = '';

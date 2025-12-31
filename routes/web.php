@@ -523,7 +523,14 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             $imagen = $request->file('imagen');
             $nombreArchivo = 'publicidad_' . $evento->cliente_id . '_' . time() . '.' . $imagen->getClientOriginalExtension();
             $ruta = $imagen->storeAs('publicidad', $nombreArchivo, 'public');
+            // Guardar solo la ruta relativa sin 'public/' para que funcione con asset('storage/...')
             $evento->imagen_url = str_replace('public/', '', $ruta);
+            
+            // Asegurar que el archivo tenga permisos correctos
+            $fullPath = storage_path('app/public/' . $evento->imagen_url);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
         }
         
         $evento->save();

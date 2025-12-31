@@ -532,11 +532,17 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             $rutaCompleta = $publicDir . '/' . $nombreArchivo;
             $imagen->move($publicDir, $nombreArchivo);
             
-            // Guardar solo el nombre del archivo (la ruta será /publicidad/nombre.jpg)
+            // Guardar la ruta relativa: publicidad/nombre.jpg (sin storage/)
             $evento->imagen_url = 'publicidad/' . $nombreArchivo;
             
             // Asegurar permisos
             chmod($rutaCompleta, 0644);
+            
+            \Log::info('Imagen de publicidad guardada', [
+                'ruta_completa' => $rutaCompleta,
+                'ruta_relativa' => $evento->imagen_url,
+                'url_publica' => asset($evento->imagen_url)
+            ]);
         }
         
         $evento->save();

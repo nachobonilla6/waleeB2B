@@ -266,8 +266,10 @@ Route::get('/walee-tickets-dashboard', function () {
     // Tickets hoy
     $ticketsHoy = \App\Models\Ticket::whereDate('created_at', today())->count();
     
-    // Tickets urgentes
-    $ticketsUrgentes = \App\Models\Ticket::where('urgente', true)->count();
+    // Tickets urgentes (solo los que no están resueltos)
+    $ticketsUrgentes = \App\Models\Ticket::where('urgente', true)
+        ->where('estado', '!=', 'resuelto')
+        ->count();
     
     // Tickets prioritarios
     $ticketsPrioritarios = \App\Models\Ticket::where('prioritario', true)->count();

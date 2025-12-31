@@ -216,10 +216,15 @@
 <body>
     @php
         $cliente = \App\Models\Cliente::find($data['cliente_id'] ?? null);
-        $items = json_decode($data['items_json'] ?? '[]', true);
-        $pagos = isset($data['pagos']) ? json_decode($data['pagos'], true) : [];
+        $items = isset($data['items_json']) ? json_decode($data['items_json'], true) : (isset($data['items']) ? $data['items'] : []);
+        $pagos = isset($data['pagos']) ? (is_string($data['pagos']) ? json_decode($data['pagos'], true) : $data['pagos']) : [];
         
-        $subtotal = floatval($data['subtotal'] ?? 0);
+        // Calcular subtotal desde items
+        $subtotal = 0;
+        foreach ($items as $item) {
+            $subtotal += floatval($item['subtotal'] ?? ($item['precio_unitario'] ?? 0) * ($item['cantidad'] ?? 1));
+        }
+        
         $descuentoAntes = floatval($data['descuento_antes_impuestos'] ?? 0);
         $subtotalConDescuento = $subtotal - $descuentoAntes;
         $iva = $subtotalConDescuento * 0.13;
@@ -228,6 +233,10 @@
         
         $estado = $data['estado'] ?? 'pendiente';
         $montoPagado = floatval($data['monto_pagado'] ?? 0);
+        // Sumar pagos recibidos al monto pagado
+        foreach ($pagos as $pago) {
+            $montoPagado += floatval($pago['importe'] ?? 0);
+        }
         if ($montoPagado >= $total) {
             $estado = 'pagada';
         }

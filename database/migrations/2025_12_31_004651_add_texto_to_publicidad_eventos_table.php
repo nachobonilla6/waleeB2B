@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('publicidad_eventos', function (Blueprint $table) {
+        if (Schema::hasTable('publicidad_eventos')) {
             if (!Schema::hasColumn('publicidad_eventos', 'texto')) {
-                $table->text('texto')->nullable()->after('descripcion');
+                Schema::table('publicidad_eventos', function (Blueprint $table) {
+                    $table->text('texto')->nullable()->after('descripcion');
+                });
             }
-        });
+        }
     }
 
     /**

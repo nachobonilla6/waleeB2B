@@ -500,10 +500,67 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         
         $evento->save();
         
+        // Obtener cliente para webhook
+        $cliente = \App\Models\Cliente::find($evento->cliente_id);
+        if ($cliente) {
+            // Buscar Client asociado por email
+            $client = \App\Models\Client::where('email', $cliente->correo)->first();
+            
+            // Enviar webhook si existe
+            if ($client && $client->webhook_url) {
+                try {
+                    $imageUrl = $evento->imagen_url ? asset('storage/' . $evento->imagen_url) : null;
+                    
+                    $webhookData = [
+                        'evento_id' => $evento->id,
+                        'titulo' => $evento->titulo,
+                        'texto' => $evento->texto,
+                        'plataforma' => $evento->plataforma,
+                        'fecha_publicacion' => $evento->fecha_inicio->format('Y-m-d H:i:s'),
+                        'estado' => $evento->estado,
+                        'imagen_url' => $imageUrl,
+                        'cliente_id' => $evento->cliente_id,
+                        'cliente_nombre' => $cliente->nombre_empresa ?? 'Cliente',
+                    ];
+                    
+                    \Illuminate\Support\Facades\Http::timeout(10)->post($client->webhook_url, $webhookData);
+                } catch (\Exception $webhookError) {
+                    \Log::error('Error enviando webhook de publicación programada: ' . $webhookError->getMessage());
+                }
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Publicación programada exitosamente',
             'evento_id' => $evento->id
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
+// Obtener detalles de un evento de publicidad
+Route::get('/publicidad-eventos/{id}', function ($id) {
+    try {
+        $evento = \App\Models\PublicidadEvento::findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'evento' => [
+                'id' => $evento->id,
+                'titulo' => $evento->titulo,
+                'texto' => $evento->texto,
+                'plataforma' => $evento->plataforma,
+                'fecha_inicio' => $evento->fecha_inicio ? $evento->fecha_inicio->toIso8601String() : null,
+                'fecha_fin' => $evento->fecha_fin ? $evento->fecha_fin->toIso8601String() : null,
+                'estado' => $evento->estado,
+                'imagen_url' => $evento->imagen_url,
+                'descripcion' => $evento->descripcion,
+            ]
         ]);
     } catch (\Exception $e) {
         return response()->json([

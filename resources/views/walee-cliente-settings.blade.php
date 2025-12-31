@@ -397,27 +397,26 @@
                 
                 @if($clientePlaneador)
                     @php
-                        $vista = request()->get('vista', 'semanal');
+                        // Forzar vista semanal siempre
+                        $vista = 'semanal';
                         $mes = request()->get('mes', now()->month);
                         $ano = request()->get('ano', now()->year);
                         
-                        // Si es vista semanal, calcular la semana
-                        if ($vista === 'semanal') {
-                            $semanaParam = request()->get('semana', now()->format('Y-W'));
-                            if ($semanaParam && strpos($semanaParam, '-') !== false) {
-                                list($anoSemana, $numSemana) = explode('-', $semanaParam);
-                                try {
-                                    $fechaSemana = \Carbon\Carbon::now()->setISODate((int)$anoSemana, (int)$numSemana);
-                                    $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                    $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
-                                } catch (\Exception $e) {
-                                    $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                    $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
-                                }
-                            } else {
+                        // Calcular la semana
+                        $semanaParam = request()->get('semana', now()->format('Y-W'));
+                        if ($semanaParam && strpos($semanaParam, '-') !== false) {
+                            list($anoSemana, $numSemana) = explode('-', $semanaParam);
+                            try {
+                                $fechaSemana = \Carbon\Carbon::now()->setISODate((int)$anoSemana, (int)$numSemana);
+                                $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                            } catch (\Exception $e) {
                                 $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                                 $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                             }
+                        } else {
+                            $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                            $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                         }
                         
                         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);
@@ -524,12 +523,6 @@
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
                             <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                                 <div class="flex gap-2 items-center">
-                                    <a href="javascript:void(0)" onclick="updatePlaneadorVista('semanal', '{{ now()->format('Y-W') }}')" class="px-4 py-2 rounded-lg {{ $vista === 'semanal' || !request()->has('vista') ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm">
-                                        Semana
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="updatePlaneadorVista('mensual', '{{ $mes }}', '{{ $ano }}')" class="px-4 py-2 rounded-lg {{ $vista === 'mensual' ? 'bg-violet-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm">
-                                        Mes
-                                    </a>
                                     <button onclick="abrirModalProgramarPublicacion()" class="px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-sm flex items-center gap-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -538,139 +531,117 @@
                                     </button>
                                 </div>
                                 
-                                @if($vista === 'semanal')
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="navegarSemana(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                            </svg>
-                                        </button>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
-                                        </span>
-                                        <button onclick="navegarSemana(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="navegarMes(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                            </svg>
-                                        </button>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            {{ $meses[$mes] }} {{ $ano }}
-                                        </span>
-                                        <button onclick="navegarMes(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                @endif
+                                <div class="flex items-center gap-2">
+                                    <button onclick="navegarSemana(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                    </button>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
+                                    </span>
+                                    <button onclick="navegarSemana(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Calendario del Planeador -->
-                        @if($vista === 'semanal')
-                            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-                                <div class="grid grid-cols-7 gap-2">
-                                    @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
-                                        <div class="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-2">{{ $dia }}</div>
-                                    @endforeach
-                                    
-                                    @for($i = 0; $i < 7; $i++)
-                                        @php
-                                            $fecha = $inicioSemana->copy()->addDays($i);
-                                            $fechaStr = $fecha->format('Y-m-d');
-                                            $eventosDia = $eventos->get($fechaStr, collect());
-                                        @endphp
-                                        <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-2 min-h-[100px]">
-                                            <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                                {{ $fecha->format('d') }}
-                                            </div>
-                                            <div class="space-y-1">
-                                                @foreach($eventosDia as $evento)
-                                                    <div class="text-xs p-1.5 rounded bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/30">
-                                                        <div class="font-medium truncate">{{ $evento->titulo }}</div>
-                                                        <div class="text-[10px] opacity-75">{{ $evento->tipo_publicidad ?? 'N/A' }}</div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                        <!-- Calendario del Planeador (Solo Vista Semanal) -->
+                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+                            <div class="grid grid-cols-7 gap-2">
+                                @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
+                                    <div class="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-2">{{ $dia }}</div>
+                                @endforeach
+                                
+                                @for($i = 0; $i < 7; $i++)
+                                    @php
+                                        $fecha = $inicioSemana->copy()->addDays($i);
+                                        $fechaStr = $fecha->format('Y-m-d');
+                                        $eventosDia = $eventos->get($fechaStr, collect());
+                                    @endphp
+                                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 min-h-[200px]">
+                                        <div class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                            {{ $fecha->format('d') }}
                                         </div>
-                                    @endfor
-                                </div>
-                            </div>
-                        @else
-                            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-                                <div class="grid grid-cols-7 gap-2">
-                                    @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)
-                                        <div class="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-2">{{ $dia }}</div>
-                                    @endforeach
-                                    
-                                    @for($dia = $primerDia->copy(); $dia->lte($ultimoDia); $dia->addDay())
-                                        @php
-                                            $fechaStr = $dia->format('Y-m-d');
-                                            $eventosDia = $eventos->get($fechaStr, collect());
-                                            $esDelMes = $dia->month == $mes;
-                                        @endphp
-                                        <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-2 min-h-[80px] {{ !$esDelMes ? 'opacity-40' : '' }}">
-                                            <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                                {{ $dia->format('d') }}
-                                            </div>
-                                            <div class="space-y-1">
-                                                @foreach($eventosDia as $evento)
-                                                    <div class="text-[10px] p-1 rounded bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/30 truncate">
-                                                        {{ $evento->titulo }}
+                                        <div class="space-y-2">
+                                            @foreach($eventosDia as $evento)
+                                                <button onclick="abrirDetalleEvento({{ $evento->id }})" class="w-full text-left text-xs p-2 rounded-lg bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/30 hover:bg-violet-200 dark:hover:bg-violet-500/30 transition-all cursor-pointer">
+                                                    <div class="font-medium truncate">{{ $evento->titulo ?? 'Publicación programada' }}</div>
+                                                    <div class="text-[10px] opacity-75 mt-1">
+                                                        @if($evento->fecha_inicio)
+                                                            {{ $evento->fecha_inicio->format('H:i') }}
+                                                        @endif
+                                                        @if($evento->plataforma)
+                                                            • {{ ucfirst($evento->plataforma) }}
+                                                        @endif
                                                     </div>
-                                                @endforeach
-                                            </div>
+                                                </button>
+                                            @endforeach
                                         </div>
-                                    @endfor
-                                </div>
+                                    </div>
+                                @endfor
                             </div>
-                        @endif
+                        </div>
                     </div>
                     
                     <script>
-                        function updatePlaneadorVista(vista, semana, mes, ano) {
-                            let url = '{{ route("walee.cliente.settings.planeador", $cliente->id) }}';
-                            if (vista === 'semanal') {
-                                url += '?vista=semanal&semana=' + semana;
-                            } else {
-                                url += '?vista=mensual&mes=' + mes + '&ano=' + ano;
-                            }
-                            window.location.href = url;
-                        }
-                        
                         function navegarSemana(direccion) {
-                            // Implementar navegación de semana
                             const semanaActual = '{{ request()->get("semana", now()->format("Y-W")) }}';
                             const [ano, numSemana] = semanaActual.split('-');
                             const nuevaSemana = parseInt(numSemana) + direccion;
                             const nuevoAno = parseInt(ano);
                             const nuevaSemanaStr = nuevoAno + '-' + (nuevaSemana < 10 ? '0' + nuevaSemana : nuevaSemana);
-                            updatePlaneadorVista('semanal', nuevaSemanaStr);
+                            let url = '{{ route("walee.cliente.settings.planeador", $cliente->id) }}';
+                            url += '?vista=semanal&semana=' + nuevaSemanaStr;
+                            window.location.href = url;
                         }
                         
-                        function navegarMes(direccion) {
-                            const mesActual = {{ $mes }};
-                            const anoActual = {{ $ano }};
-                            let nuevoMes = mesActual + direccion;
-                            let nuevoAno = anoActual;
-                            
-                            if (nuevoMes < 1) {
-                                nuevoMes = 12;
-                                nuevoAno--;
-                            } else if (nuevoMes > 12) {
-                                nuevoMes = 1;
-                                nuevoAno++;
+                        async function abrirDetalleEvento(eventoId) {
+                            try {
+                                const response = await fetch(`/publicidad-eventos/${eventoId}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                    }
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    const evento = data.evento;
+                                    document.getElementById('detalleEventoTitulo').textContent = evento.titulo || 'Publicación programada';
+                                    document.getElementById('detalleEventoTexto').textContent = evento.texto || 'Sin texto';
+                                    document.getElementById('detalleEventoPlataforma').textContent = evento.plataforma ? ucfirst(evento.plataforma) : 'No especificada';
+                                    document.getElementById('detalleEventoFecha').textContent = evento.fecha_inicio ? new Date(evento.fecha_inicio).toLocaleString('es-ES') : 'No especificada';
+                                    document.getElementById('detalleEventoEstado').textContent = evento.estado ? ucfirst(evento.estado) : 'Programado';
+                                    
+                                    const imagenContainer = document.getElementById('detalleEventoImagen');
+                                    if (evento.imagen_url) {
+                                        imagenContainer.innerHTML = `<img src="/storage/${evento.imagen_url}" alt="Imagen" class="w-full h-auto rounded-lg">`;
+                                        imagenContainer.classList.remove('hidden');
+                                    } else {
+                                        imagenContainer.classList.add('hidden');
+                                    }
+                                    
+                                    document.getElementById('detalleEventoModal').classList.remove('hidden');
+                                } else {
+                                    alert('Error al cargar los detalles del evento');
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Error de conexión: ' + error.message);
                             }
-                            
-                            updatePlaneadorVista('mensual', nuevoMes, nuevoAno);
+                        }
+                        
+                        function cerrarDetalleEvento() {
+                            document.getElementById('detalleEventoModal').classList.add('hidden');
+                        }
+                        
+                        function ucfirst(str) {
+                            return str.charAt(0).toUpperCase() + str.slice(1);
                         }
                         
                         // Form submit para programar publicación
@@ -1249,6 +1220,47 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Modal Detalle Evento -->
+    <div id="detalleEventoModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Detalles de la Publicación</h3>
+                <button onclick="cerrarDetalleEvento()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[calc(85vh-80px)] space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Título</label>
+                    <p id="detalleEventoTitulo" class="text-sm text-slate-900 dark:text-white"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Texto</label>
+                    <p id="detalleEventoTexto" class="text-sm text-slate-900 dark:text-white whitespace-pre-wrap"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Plataforma</label>
+                        <p id="detalleEventoPlataforma" class="text-sm text-slate-900 dark:text-white"></p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Estado</label>
+                        <p id="detalleEventoEstado" class="text-sm text-slate-900 dark:text-white"></p>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Fecha y Hora</label>
+                    <p id="detalleEventoFecha" class="text-sm text-slate-900 dark:text-white"></p>
+                </div>
+                <div id="detalleEventoImagen" class="hidden">
+                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Imagen</label>
+                </div>
+            </div>
         </div>
     </div>
     

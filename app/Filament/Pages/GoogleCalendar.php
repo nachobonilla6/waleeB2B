@@ -93,7 +93,7 @@ class GoogleCalendar extends Page implements HasForms, HasActions
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn ($cliente) => [
-                                    $cliente->id => $cliente->nombre_empresa . ' (' . $cliente->correo . ')'
+                                    $cliente->id => $cliente->name . ($cliente->email ? ' (' . $cliente->email . ')' : '')
                                 ])
                                 ->toArray()
                         )

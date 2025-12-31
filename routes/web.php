@@ -2174,6 +2174,9 @@ Route::post('/walee-facturas/previsualizar', function (\Illuminate\Http\Request 
     if (isset($data['items_json'])) {
         $data['items'] = json_decode($data['items_json'], true);
     }
+    if (isset($data['pagos'])) {
+        $data['pagos'] = json_decode($data['pagos'], true);
+    }
     return view('walee-factura-preview', compact('data'));
 })->middleware(['auth'])->name('walee.facturas.preview');
 
@@ -2182,6 +2185,9 @@ Route::post('/walee-facturas/generar-pdf', function (\Illuminate\Http\Request $r
     $data = $request->all();
     if (isset($data['items_json'])) {
         $data['items'] = json_decode($data['items_json'], true);
+    }
+    if (isset($data['pagos'])) {
+        $data['pagos'] = json_decode($data['pagos'], true);
     }
     
     $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', compact('data'));

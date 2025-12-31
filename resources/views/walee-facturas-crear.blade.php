@@ -232,6 +232,13 @@
                     </h2>
                     
                     <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Orden</label>
+                                <input type="text" id="numero_orden" name="numero_orden" placeholder="Ej: 1_191125 cliente" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                            </div>
+                        </div>
+                        
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Subtotal</label>
@@ -242,10 +249,28 @@
                             </div>
                             
                             <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Antes Impuestos</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
+                                    <input type="number" step="0.01" id="descuento_antes_impuestos" name="descuento_antes_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
+                                </div>
+                            </div>
+                            
+                            <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">IVA (13%)</label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
                                     <input type="number" step="0.01" id="iva" name="iva" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Después Impuestos</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
+                                    <input type="number" step="0.01" id="descuento_despues_impuestos" name="descuento_despues_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
@@ -303,6 +328,27 @@
                     </div>
                 </div>
                 
+                <!-- Pagos Recibidos -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Pagos Recibidos
+                    </h2>
+                    
+                    <div id="pagosContainer" class="space-y-3 mb-4">
+                        <!-- Pagos se agregarán dinámicamente aquí -->
+                    </div>
+                    
+                    <button type="button" onclick="agregarPago()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Agregar Pago
+                    </button>
+                </div>
+                
                 <!-- Notas -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
@@ -346,7 +392,9 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         let items = [];
         let paquetes = [];
+        let pagos = [];
         let itemCounter = 0;
+        let pagoCounter = 0;
         
         // Cargar paquetes al iniciar
         async function cargarPaquetes() {
@@ -487,11 +535,91 @@
             }
         }
         
+        // Agregar pago
+        function agregarPago() {
+            const pagoId = pagoCounter++;
+            const pago = {
+                id: pagoId,
+                descripcion: '',
+                fecha: new Date().toISOString().split('T')[0],
+                importe: 0,
+                metodo_pago: ''
+            };
+            pagos.push(pago);
+            renderizarPagos();
+        }
+        
+        // Eliminar pago
+        function eliminarPago(pagoId) {
+            pagos = pagos.filter(p => p.id !== pagoId);
+            renderizarPagos();
+            calcularSaldo();
+        }
+        
+        // Renderizar pagos
+        function renderizarPagos() {
+            const container = document.getElementById('pagosContainer');
+            container.innerHTML = '';
+            
+            pagos.forEach((pago) => {
+                const pagoDiv = document.createElement('div');
+                pagoDiv.className = 'bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl p-4';
+                pagoDiv.innerHTML = `
+                    <div class="grid grid-cols-12 gap-3 items-end">
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
+                            <input type="text" value="${pago.descripcion}" oninput="actualizarPago(${pago.id}, 'descripcion', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                        </div>
+                        <div class="col-span-6 md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Fecha</label>
+                            <input type="date" value="${pago.fecha}" oninput="actualizarPago(${pago.id}, 'fecha', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                        </div>
+                        <div class="col-span-6 md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Importe</label>
+                            <input type="number" step="0.01" value="${pago.importe}" oninput="actualizarPago(${pago.id}, 'importe', parseFloat(this.value) || 0)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                        </div>
+                        <div class="col-span-10 md:col-span-3">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Método</label>
+                            <select onchange="actualizarPago(${pago.id}, 'metodo_pago', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                                <option value="">Seleccionar...</option>
+                                <option value="sinpe" ${pago.metodo_pago === 'sinpe' ? 'selected' : ''}>SINPE</option>
+                                <option value="transferencia" ${pago.metodo_pago === 'transferencia' ? 'selected' : ''}>Transferencia</option>
+                                <option value="efectivo" ${pago.metodo_pago === 'efectivo' ? 'selected' : ''}>Efectivo</option>
+                                <option value="tarjeta" ${pago.metodo_pago === 'tarjeta' ? 'selected' : ''}>Tarjeta</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <button type="button" onclick="eliminarPago(${pago.id})" class="w-full px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-sm">
+                                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(pagoDiv);
+            });
+        }
+        
+        // Actualizar pago
+        function actualizarPago(pagoId, campo, valor) {
+            const pago = pagos.find(p => p.id === pagoId);
+            if (pago) {
+                pago[campo] = valor;
+                if (campo === 'importe') {
+                    calcularSaldo();
+                }
+            }
+        }
+        
         // Calcular totales
         function calcularTotales() {
             const subtotal = items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
-            const iva = subtotal * 0.13;
-            const total = subtotal + iva;
+            const descuentoAntes = parseFloat(document.getElementById('descuento_antes_impuestos').value) || 0;
+            const subtotalConDescuento = subtotal - descuentoAntes;
+            const iva = subtotalConDescuento * 0.13;
+            const descuentoDespues = parseFloat(document.getElementById('descuento_despues_impuestos').value) || 0;
+            const total = subtotalConDescuento + iva - descuentoDespues;
             
             document.getElementById('subtotal').value = subtotal.toFixed(2);
             document.getElementById('iva').value = iva.toFixed(2);
@@ -503,7 +631,9 @@
         // Calcular saldo pendiente
         function calcularSaldo() {
             const total = parseFloat(document.getElementById('total').value) || 0;
-            const montoPagado = parseFloat(document.getElementById('monto_pagado').value) || 0;
+            const montoPagadoInput = parseFloat(document.getElementById('monto_pagado').value) || 0;
+            const totalPagos = pagos.reduce((sum, pago) => sum + (parseFloat(pago.importe) || 0), 0);
+            const montoPagado = montoPagadoInput + totalPagos;
             const saldoPendiente = total - montoPagado;
             document.getElementById('saldo_pendiente').value = saldoPendiente.toFixed(2);
         }
@@ -517,7 +647,8 @@
             
             const formData = new FormData(document.getElementById('facturaForm'));
             const data = Object.fromEntries(formData.entries());
-            data.items = items;
+            data.items_json = JSON.stringify(items);
+            data.pagos = JSON.stringify(pagos.filter(p => p.descripcion && p.importe > 0));
             
             // Abrir modal de vista previa
             const modal = document.createElement('div');
@@ -533,11 +664,11 @@
                         </button>
                     </div>
                     <div class="p-6">
-                        <iframe id="previewFrame" src="/walee-facturas/previsualizar" style="width: 100%; height: 600px; border: none;"></iframe>
+                        <iframe id="previewFrame" name="previewFrame" style="width: 100%; height: 600px; border: none;"></iframe>
                     </div>
                     <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex gap-3 justify-end">
                         <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-lg">Cerrar</button>
-                        <button onclick="enviarFactura()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-lg">Enviar por Email</button>
+                        <button onclick="generarPDF()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">Descargar PDF</button>
                     </div>
                 </div>
             `;
@@ -550,11 +681,26 @@
             form.target = 'previewFrame';
             form.innerHTML = `<input type="hidden" name="_token" value="${csrfToken}">`;
             Object.keys(data).forEach(key => {
-                if (key === 'items') {
-                    form.innerHTML += `<input type="hidden" name="items_json" value='${JSON.stringify(data.items)}'>`;
-                } else {
-                    form.innerHTML += `<input type="hidden" name="${key}" value="${data[key]}">`;
-                }
+                form.innerHTML += `<input type="hidden" name="${key}" value="${data[key]}">`;
+            });
+            document.body.appendChild(form);
+            form.submit();
+            setTimeout(() => form.remove(), 1000);
+        }
+        
+        // Generar PDF
+        function generarPDF() {
+            const formData = new FormData(document.getElementById('facturaForm'));
+            const data = Object.fromEntries(formData.entries());
+            data.items_json = JSON.stringify(items);
+            data.pagos = JSON.stringify(pagos.filter(p => p.descripcion && p.importe > 0));
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("walee.facturas.generar-pdf") }}';
+            form.innerHTML = `<input type="hidden" name="_token" value="${csrfToken}">`;
+            Object.keys(data).forEach(key => {
+                form.innerHTML += `<input type="hidden" name="${key}" value="${data[key]}">`;
             });
             document.body.appendChild(form);
             form.submit();
@@ -580,6 +726,16 @@
                 formData.append(`items[${index}][precio_unitario]`, item.precio_unitario);
                 formData.append(`items[${index}][subtotal]`, item.subtotal);
                 formData.append(`items[${index}][orden]`, index);
+            });
+            
+            // Agregar pagos al formData
+            pagos.forEach((pago, index) => {
+                if (pago.descripcion && pago.importe > 0) {
+                    formData.append(`pagos[${index}][descripcion]`, pago.descripcion);
+                    formData.append(`pagos[${index}][fecha]`, pago.fecha);
+                    formData.append(`pagos[${index}][importe]`, pago.importe);
+                    formData.append(`pagos[${index}][metodo_pago]`, pago.metodo_pago || '');
+                }
             });
             
             submitBtn.disabled = true;
@@ -661,6 +817,7 @@
         // Inicializar
         cargarPaquetes();
         agregarItem(); // Agregar un item inicial
+        agregarPago(); // Agregar un pago inicial
     </script>
     @include('partials.walee-support-button')
 </body>

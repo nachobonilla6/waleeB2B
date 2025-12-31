@@ -323,6 +323,7 @@
                     $precioUnitario = floatval($item['precio_unitario'] ?? 0);
                     $cantidad = intval($item['cantidad'] ?? 1);
                     $subtotalItem = floatval($item['subtotal'] ?? ($precioUnitario * $cantidad));
+                    // El IVA se calcula sobre el subtotal del item
                     $ivaItem = $subtotalItem * 0.13;
                     $totalItem = $subtotalItem + $ivaItem;
                 @endphp

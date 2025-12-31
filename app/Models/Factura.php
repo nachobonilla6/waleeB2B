@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Factura extends Model
 {
@@ -83,5 +84,48 @@ class Factura extends Model
     public function cliente(): BelongsTo
     {
         return $this->belongsTo(Cliente::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(FacturaItem::class)->orderBy('orden');
+    }
+
+    /**
+     * Calcula el saldo pendiente basado en pagos anteriores del cliente
+     */
+    public function calcularSaldoPendiente(): float
+    {
+        $clienteId = $this->cliente_id;
+        
+        // Obtener todas las facturas del cliente
+        $facturasCliente = self::where('cliente_id', $clienteId)
+            ->where('id', '!=', $this->id)
+            ->get();
+        
+        $totalFacturado = $facturasCliente->sum('total');
+        $totalPagado = $facturasCliente->sum('monto_pagado');
+        $saldoAnterior = $totalFacturado - $totalPagado;
+        
+        // El saldo pendiente es el total de esta factura más el saldo anterior
+        return ($this->total ?? 0) + $saldoAnterior;
+    }
+
+    /**
+     * Verifica si la factura está pagada completamente
+     */
+    public function estaPagada(): bool
+    {
+        return ($this->monto_pagado ?? 0) >= ($this->total ?? 0);
+    }
+
+    /**
+     * Calcula el total de la factura basado en sus items
+     */
+    public function calcularTotalDesdeItems(): float
+    {
+        $subtotal = $this->items->sum('subtotal');
+        $iva = $subtotal * 0.13; // IVA del 13%
+        return $subtotal + $iva;
     }
 }

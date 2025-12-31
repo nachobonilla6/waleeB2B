@@ -1961,6 +1961,8 @@ Route::get('/walee-facturas/crear', function () {
 
 Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $request) {
     try {
+        \DB::beginTransaction();
+        
         $factura = \App\Models\Factura::create([
             'cliente_id' => $request->input('cliente_id') ?: null,
             'correo' => $request->input('correo'),
@@ -1978,12 +1980,30 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             'notas' => $request->input('notas'),
         ]);
         
+        // Guardar items de la factura
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            if (!empty($item['descripcion']) && !empty($item['precio_unitario'])) {
+                \App\Models\FacturaItem::create([
+                    'factura_id' => $factura->id,
+                    'descripcion' => $item['descripcion'],
+                    'cantidad' => $item['cantidad'] ?? 1,
+                    'precio_unitario' => $item['precio_unitario'],
+                    'subtotal' => ($item['cantidad'] ?? 1) * $item['precio_unitario'],
+                    'orden' => $index,
+                ]);
+            }
+        }
+        
+        \DB::commit();
+        
         return response()->json([
             'success' => true,
             'message' => 'Factura creada correctamente',
             'factura_id' => $factura->id,
         ]);
     } catch (\Exception $e) {
+        \DB::rollBack();
         return response()->json([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage(),
@@ -2087,6 +2107,50 @@ Route::get('/walee-facturas/{id}', function ($id) {
     $factura = \App\Models\Factura::with('cliente')->findOrFail($id);
     return view('walee-factura-ver', compact('factura'));
 })->middleware(['auth'])->name('walee.factura.ver');
+
+// Obtener información del cliente para cálculo automático
+Route::get('/walee-facturas/cliente/{id}/info', function ($id) {
+    $cliente = \App\Models\Cliente::findOrFail($id);
+    $facturas = \App\Models\Factura::where('cliente_id', $id)->get();
+    
+    $totalFacturado = $facturas->sum('total');
+    $totalPagado = $facturas->sum('monto_pagado');
+    $saldoPendiente = $totalFacturado - $totalPagado;
+    
+    return response()->json([
+        'success' => true,
+        'cliente' => [
+            'id' => $cliente->id,
+            'nombre' => $cliente->nombre_empresa,
+            'correo' => $cliente->correo,
+        ],
+        'resumen' => [
+            'total_facturado' => $totalFacturado,
+            'total_pagado' => $totalPagado,
+            'saldo_pendiente' => $saldoPendiente,
+            'facturas_count' => $facturas->count(),
+        ],
+    ]);
+})->middleware(['auth'])->name('walee.facturas.cliente.info');
+
+// Obtener paquetes disponibles
+Route::get('/walee-facturas/paquetes', function () {
+    $paquetes = \App\Models\FacturaPaquete::where('activo', true)
+        ->orderBy('categoria')
+        ->orderBy('orden')
+        ->get();
+    
+    return response()->json([
+        'success' => true,
+        'paquetes' => $paquetes,
+    ]);
+})->middleware(['auth'])->name('walee.facturas.paquetes');
+
+// Previsualizar factura
+Route::post('/walee-facturas/previsualizar', function (\Illuminate\Http\Request $request) {
+    $data = $request->all();
+    return view('walee-factura-preview', compact('data'));
+})->middleware(['auth'])->name('walee.facturas.preview');
 
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {

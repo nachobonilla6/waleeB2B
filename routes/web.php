@@ -451,6 +451,40 @@ Route::put('/publicidad-eventos/{id}', function (\Illuminate\Http\Request $reque
     }
 })->middleware(['auth']);
 
+// Ruta para actualizar solo el estado de una publicación
+Route::patch('/publicidad-eventos/{id}/estado', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $evento = \App\Models\PublicidadEvento::findOrFail($id);
+        $nuevoEstado = $request->input('estado');
+        
+        if (!in_array($nuevoEstado, ['programado', 'publicado', 'cancelado'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Estado inválido. Debe ser: programado, publicado o cancelado'
+            ], 400);
+        }
+        
+        $evento->estado = $nuevoEstado;
+        $evento->save();
+        
+        \Log::info('Estado de publicación actualizado', [
+            'evento_id' => $evento->id,
+            'nuevo_estado' => $nuevoEstado
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado exitosamente',
+            'estado' => $evento->estado
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
 Route::delete('/publicidad-eventos/{id}', function ($id) {
     try {
         $evento = \App\Models\PublicidadEvento::findOrFail($id);

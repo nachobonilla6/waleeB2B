@@ -721,14 +721,12 @@
                                         document.getElementById('detalleEventoFecha').textContent = 'No especificada';
                                     }
                                     
-                                    // Estado con badge
-                                    const estadoText = evento.estado ? ucfirst(evento.estado) : 'Programado';
-                                    const estadoElement = document.getElementById('detalleEventoEstado');
-                                    estadoElement.textContent = estadoText;
-                                    estadoElement.className = 'inline-block px-2 py-1 rounded text-xs font-medium ' + 
-                                        (evento.estado === 'publicado' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                         evento.estado === 'cancelado' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                                         'bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200');
+                                    // Estado con selector
+                                    const estadoSelect = document.getElementById('detalleEventoEstadoSelect');
+                                    const estadoActual = evento.estado || 'programado';
+                                    estadoSelect.value = estadoActual;
+                                    // Guardar el estado actual como anterior para poder restaurarlo si se cancela
+                                    estadoSelect.setAttribute('data-estado-anterior', estadoActual);
                                     
                                     // Imagen
                                     const imagenContainer = document.getElementById('detalleEventoImagen');
@@ -804,6 +802,73 @@
                         
                         // Hacer la función disponible globalmente
                         window.eliminarEvento = eliminarEvento;
+                        
+                        async function cambiarEstadoEvento() {
+                            const modal = document.getElementById('detalleEventoModal');
+                            const eventoId = modal.getAttribute('data-evento-id');
+                            const estadoSelect = document.getElementById('detalleEventoEstadoSelect');
+                            const nuevoEstado = estadoSelect.value;
+                            
+                            if (!eventoId) {
+                                alert('Error: No se encontró el ID del evento');
+                                estadoSelect.value = estadoSelect.getAttribute('data-estado-anterior') || 'programado';
+                                return;
+                            }
+                            
+                            // Confirmar cambio de estado
+                            const estados = {
+                                'programado': 'Programado',
+                                'publicado': 'Publicado',
+                                'cancelado': 'Cancelado'
+                            };
+                            
+                            if (!confirm(`¿Cambiar el estado a "${estados[nuevoEstado]}"?`)) {
+                                // Restaurar valor anterior
+                                estadoSelect.value = estadoSelect.getAttribute('data-estado-anterior') || 'programado';
+                                return;
+                            }
+                            
+                            try {
+                                const response = await fetch(`/publicidad-eventos/${eventoId}/estado`, {
+                                    method: 'PATCH',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        estado: nuevoEstado
+                                    })
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    // Guardar el nuevo estado como anterior
+                                    estadoSelect.setAttribute('data-estado-anterior', nuevoEstado);
+                                    
+                                    // Mostrar mensaje de éxito
+                                    alert(`✅ Estado actualizado a "${estados[nuevoEstado]}"`);
+                                    
+                                    // Recargar la página para actualizar el calendario
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 500);
+                                } else {
+                                    alert('Error: ' + (data.message || 'Error al actualizar el estado'));
+                                    // Restaurar valor anterior
+                                    estadoSelect.value = estadoSelect.getAttribute('data-estado-anterior') || 'programado';
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Error de conexión: ' + error.message);
+                                // Restaurar valor anterior
+                                estadoSelect.value = estadoSelect.getAttribute('data-estado-anterior') || 'programado';
+                            }
+                        }
+                        
+                        // Hacer la función disponible globalmente
+                        window.cambiarEstadoEvento = cambiarEstadoEvento;
                         
                         async function editarEvento() {
                             const modal = document.getElementById('detalleEventoModal');
@@ -1675,7 +1740,11 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
-                        <div id="detalleEventoEstado" class="text-sm"></div>
+                        <select id="detalleEventoEstadoSelect" onchange="cambiarEstadoEvento()" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all">
+                            <option value="programado">Programado</option>
+                            <option value="publicado">Publicado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
                     </div>
                 </div>
                 

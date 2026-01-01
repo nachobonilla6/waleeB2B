@@ -85,8 +85,8 @@
         use App\Models\PropuestaPersonalizada;
         
         $clientes = Client::where('estado', 'pending')
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('updated_at', 'desc')
+            ->paginate(5);
         
         // Obtener conteo de propuestas por cliente
         $propuestasPorCliente = PropuestaPersonalizada::selectRaw('cliente_id, COUNT(*) as total')
@@ -268,6 +268,27 @@
                     </div>
                 @endforelse
             </div>
+            
+            <!-- Pagination -->
+            @if($clientes->hasPages())
+                <div class="mt-8 flex justify-center gap-2">
+                    @if($clientes->onFirstPage())
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Anterior</span>
+                    @else
+                        <a href="{{ $clientes->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Anterior</a>
+                    @endif
+                    
+                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700">
+                        Página {{ $clientes->currentPage() }} de {{ $clientes->lastPage() }}
+                    </span>
+                    
+                    @if($clientes->hasMorePages())
+                        <a href="{{ $clientes->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Siguiente</a>
+                    @else
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Siguiente</span>
+                    @endif
+                </div>
+            @endif
             
             <!-- No Results Message -->
             <div id="noResults" class="hidden text-center py-12">

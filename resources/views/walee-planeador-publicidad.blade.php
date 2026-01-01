@@ -409,19 +409,25 @@
                                         <div class="flex-1 p-2 space-y-1.5 overflow-y-auto">
                                             @foreach($eventosOrdenados as $evento)
                                                 @php
-                                                    $colorEvento = $evento->color ?? '#8b5cf6';
-                                                    $colorHex = ltrim($colorEvento, '#');
-                                                    $r = hexdec(substr($colorHex, 0, 2));
-                                                    $g = hexdec(substr($colorHex, 2, 2));
-                                                    $b = hexdec(substr($colorHex, 4, 2));
-                                                    $colorBg = $evento->estado === 'publicado' 
-                                                        ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                        : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorEvento}; border-left: 3px solid {$colorEvento};";
+                                                    $ahora = now();
+                                                    $yaPaso = $evento->fecha_inicio->lt($ahora);
+                                                    
+                                                    // Si ya pasó el tiempo → verde "publicada"
+                                                    // Si aún falta → amarillo "programada"
+                                                    if ($yaPaso) {
+                                                        $estadoVisual = 'publicado';
+                                                        $colorBg = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-l-3 border-emerald-500';
+                                                        $claseBtn = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300';
+                                                    } else {
+                                                        $estadoVisual = 'programado';
+                                                        $colorBg = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-l-3 border-yellow-500';
+                                                        $claseBtn = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300';
+                                                    }
                                                 @endphp
                                                 <button 
                                                     onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
-                                                    class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $evento->estado === 'publicado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
-                                                    style="{{ $evento->estado !== 'publicado' ? $colorBg : '' }}"
+                                                    class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $claseBtn }}"
+                                                    style="border-left: 3px solid {{ $yaPaso ? '#10b981' : '#eab308' }};"
                                                     title="{{ $evento->titulo }}"
                                                 >
                                                     <div class="flex items-center gap-1.5">
@@ -482,19 +488,25 @@
                                         <div class="space-y-1">
                                             @foreach($eventosDelDia->take(5) as $evento)
                                                 @php
-                                                    $colorEvento = $evento->color ?? '#8b5cf6';
-                                                    $colorHex = ltrim($colorEvento, '#');
-                                                    $r = hexdec(substr($colorHex, 0, 2));
-                                                    $g = hexdec(substr($colorHex, 2, 2));
-                                                    $b = hexdec(substr($colorHex, 4, 2));
-                                                    $colorBg = $evento->estado === 'publicado' 
-                                                        ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
-                                                        : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorEvento}; border-left: 3px solid {$colorEvento};";
+                                                    $ahora = now();
+                                                    $yaPaso = $evento->fecha_inicio->lt($ahora);
+                                                    
+                                                    // Si ya pasó el tiempo → verde "publicada"
+                                                    // Si aún falta → amarillo "programada"
+                                                    if ($yaPaso) {
+                                                        $estadoVisual = 'publicado';
+                                                        $colorBg = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-l-3 border-emerald-500';
+                                                        $claseBtn = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300';
+                                                    } else {
+                                                        $estadoVisual = 'programado';
+                                                        $colorBg = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-l-3 border-yellow-500';
+                                                        $claseBtn = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300';
+                                                    }
                                                 @endphp
                                                 <button 
                                                     onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
-                                                    class="w-full text-left px-2 py-1 rounded text-xs font-medium transition-all hover:opacity-80 {{ $evento->estado === 'publicado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
-                                                    style="{{ $evento->estado !== 'publicado' ? $colorBg : '' }}"
+                                                    class="w-full text-left px-2 py-1 rounded text-xs font-medium transition-all hover:opacity-80 {{ $claseBtn }}"
+                                                    style="border-left: 3px solid {{ $yaPaso ? '#10b981' : '#eab308' }};"
                                                     title="{{ $evento->titulo }}"
                                                 >
                                                     <div class="flex items-center gap-1.5">
@@ -985,14 +997,22 @@
                         plataformaIcono = '<svg class="w-5 h-5 text-sky-500 dark:text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
                     }
                     
-                    // Estado con badge
+                    // Estado con badge - verificar si ya pasó la fecha
                     let estadoBadge = '';
-                    if (evento.estado === 'programado') {
-                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-violet-100 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300">Programado</span>';
-                    } else if (evento.estado === 'publicado') {
-                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300">Publicado</span>';
-                    } else if (evento.estado === 'cancelado') {
+                    let fechaInicio = evento.fecha_inicio ? new Date(evento.fecha_inicio) : null;
+                    let yaPaso = fechaInicio && fechaInicio < new Date();
+                    
+                    // Si está cancelado, mostrar cancelado
+                    if (evento.estado === 'cancelado') {
                         estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300">Cancelado</span>';
+                    } 
+                    // Si ya pasó el tiempo → verde "Publicada"
+                    else if (yaPaso) {
+                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300">Publicada</span>';
+                    } 
+                    // Si aún falta → amarillo "Programada"
+                    else {
+                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300">Programada</span>';
                     }
                     
                     // Construir HTML del detalle

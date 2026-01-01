@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Walee - Dashboard de Emails</title>
+    <meta name="description" content="Walee - Dashboard de Emails">
+    <meta name="theme-color" content="#D59F3B">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    @include('partials.walee-dark-mode-init')
+    @include('partials.walee-violet-light-mode')
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        walee: {
+                            50: '#FBF7EE',
+                            100: '#F5ECD6',
+                            200: '#EBD9AD',
+                            300: '#E0C684',
+                            400: '#D59F3B',
+                            500: '#C78F2E',
+                            600: '#A67524',
+                            700: '#7F5A1C',
+                            800: '#594013',
+                            900: '#33250B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .stat-card {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(213, 159, 59, 0.3);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(213, 159, 59, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
+    @php
+        // Obtener correos de clientes con estado pending
+        $clientesEmails = \App\Models\Client::where('estado', 'pending')
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->pluck('email')
+            ->map(function($email) {
+                return strtolower(trim($email));
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+        
+        // Estadísticas de emails recibidos (solo de clientes pending)
+        if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+            $emailsRecibidosQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
+                foreach ($clientesEmails as $clienteEmail) {
+                    $query->orWhereRaw('
+                        CASE 
+                            WHEN from_email LIKE "%<%" THEN 
+                                LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
+                            ELSE 
+                                LOWER(TRIM(from_email)) = ?
+                        END
+                    ', [$clienteEmail, $clienteEmail]);
+                }
+            });
+            
+            $totalRecibidos = $emailsRecibidosQuery->count();
+            $noLeidos = (clone $emailsRecibidosQuery)->where('is_read', false)->count();
+            $recibidosHoy = (clone $emailsRecibidosQuery)->whereDate('received_at', today())->count();
+            $recibidosEsteMes = (clone $emailsRecibidosQuery)
+                ->whereMonth('received_at', now()->month)
+                ->whereYear('received_at', now()->year)
+                ->count();
+        } else {
+            $totalRecibidos = 0;
+            $noLeidos = 0;
+            $recibidosHoy = 0;
+            $recibidosEsteMes = 0;
+        }
+        
+        // Estadísticas de emails enviados
+        $totalEnviados = \App\Models\PropuestaPersonalizada::count();
+        $enviadosHoy = \App\Models\PropuestaPersonalizada::whereDate('created_at', today())->count();
+        $enviadosEsteMes = \App\Models\PropuestaPersonalizada::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        
+        // Emails recientes recibidos (últimos 5)
+        if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+            $emailsRecientesRecibidos = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
+                foreach ($clientesEmails as $clienteEmail) {
+                    $query->orWhereRaw('
+                        CASE 
+                            WHEN from_email LIKE "%<%" THEN 
+                                LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
+                            ELSE 
+                                LOWER(TRIM(from_email)) = ?
+                        END
+                    ', [$clienteEmail, $clienteEmail]);
+                }
+            })
+            ->orderBy('received_at', 'desc')
+            ->limit(5)
+            ->get();
+        } else {
+            $emailsRecientesRecibidos = collect();
+        }
+        
+        // Emails recientes enviados (últimos 5)
+        $emailsRecientesEnviados = \App\Models\PropuestaPersonalizada::orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        // Datos para gráfico de últimos 7 días
+        $ultimos7Dias = [];
+        $recibidosPorDia = [];
+        $enviadosPorDia = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $fecha = now()->subDays($i);
+            $ultimos7Dias[] = $fecha->format('d/m');
+            
+            if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+                $recibidosPorDia[] = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
+                    foreach ($clientesEmails as $clienteEmail) {
+                        $query->orWhereRaw('
+                            CASE 
+                                WHEN from_email LIKE "%<%" THEN 
+                                    LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
+                                ELSE 
+                                    LOWER(TRIM(from_email)) = ?
+                            END
+                        ', [$clienteEmail, $clienteEmail]);
+                    }
+                })
+                ->whereDate('received_at', $fecha->format('Y-m-d'))
+                ->count();
+            } else {
+                $recibidosPorDia[] = 0;
+            }
+            
+            $enviadosPorDia[] = \App\Models\PropuestaPersonalizada::whereDate('created_at', $fecha->format('Y-m-d'))->count();
+        }
+    @endphp
+
+    <div class="min-h-screen relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/20 dark:bg-blue-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-violet-400/10 dark:bg-violet-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-emerald-400/20 dark:bg-emerald-400/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            @php $pageTitle = 'Dashboard de Emails'; @endphp
+            @include('partials.walee-navbar')
+            
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                        Dashboard de Emails
+                    </h1>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Resumen y estadísticas de tu actividad de emails</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('walee.emails') }}" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        <span class="hidden sm:inline">Volver</span>
+                    </a>
+                    @include('partials.walee-dark-mode-toggle')
+                </div>
+            </header>
+            
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Recibidos -->
+                <div class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Emails Recibidos</p>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($totalRecibidos) }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                        <span class="text-emerald-600 dark:text-emerald-400 font-medium">{{ $noLeidos }} no leídos</span>
+                    </div>
+                </div>
+                
+                <!-- Total Enviados -->
+                <div class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Emails Enviados</p>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($totalEnviados) }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                        <span class="text-blue-600 dark:text-blue-400 font-medium">{{ $enviadosEsteMes }} este mes</span>
+                    </div>
+                </div>
+                
+                <!-- Recibidos Hoy -->
+                <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Recibidos Hoy</p>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($recibidosHoy) }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                        <span class="text-violet-600 dark:text-violet-400 font-medium">{{ $recibidosEsteMes }} este mes</span>
+                    </div>
+                </div>
+                
+                <!-- Enviados Hoy -->
+                <div class="stat-card bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-500/10 dark:to-walee-600/5 border border-walee-200 dark:border-walee-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-walee-500/20 dark:bg-walee-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Enviados Hoy</p>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($enviadosHoy) }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                        <span class="text-walee-600 dark:text-walee-400 font-medium">Total: {{ $totalEnviados }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts and Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Chart -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Actividad Últimos 7 Días</h2>
+                    <canvas id="activityChart" height="300"></canvas>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.6s">
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Acciones Rápidas</h2>
+                    <div class="space-y-3">
+                        <a href="{{ route('walee.emails.crear') }}" class="flex items-center gap-3 p-4 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all group">
+                            <div class="w-10 h-10 rounded-lg bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-slate-900 dark:text-white">Crear Email con AI</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Genera un email personalizado</p>
+                            </div>
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        
+                        <a href="{{ route('walee.emails.recibidos') }}" class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all group">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-slate-900 dark:text-white">Ver Recibidos</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ $noLeidos }} no leídos</p>
+                            </div>
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        
+                        <a href="{{ route('walee.emails.enviados') }}" class="flex items-center gap-3 p-4 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all group">
+                            <div class="w-10 h-10 rounded-lg bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-slate-900 dark:text-white">Ver Enviados</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ $totalEnviados }} total</p>
+                            </div>
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        
+                        <a href="{{ route('walee.emails.templates') }}" class="flex items-center gap-3 p-4 rounded-xl bg-walee-50 dark:bg-walee-500/10 border border-walee-200 dark:border-walee-500/20 hover:bg-walee-100 dark:hover:bg-walee-500/20 transition-all group">
+                            <div class="w-10 h-10 rounded-lg bg-walee-500/20 dark:bg-walee-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-slate-900 dark:text-white">Templates</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Gestionar plantillas</p>
+                            </div>
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-walee-600 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Emails -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Recent Received -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Emails Recibidos Recientes</h2>
+                        <a href="{{ route('walee.emails.recibidos') }}" class="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">Ver todos</a>
+                    </div>
+                    <div class="space-y-3">
+                        @forelse($emailsRecientesRecibidos as $email)
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 transition-all">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-slate-900 dark:text-white truncate">{{ $email->subject ?: 'Sin asunto' }}</p>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400 truncate">{{ $email->from_email }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">{{ $email->received_at ? $email->received_at->diffForHumans() : 'N/A' }}</p>
+                                </div>
+                                @if(!$email->is_read)
+                                    <div class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0 mt-2"></div>
+                                @endif
+                            </div>
+                        @empty
+                            <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay emails recibidos recientes</p>
+                        @endforelse
+                    </div>
+                </div>
+                
+                <!-- Recent Sent -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.8s">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Emails Enviados Recientes</h2>
+                        <a href="{{ route('walee.emails.enviados') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Ver todos</a>
+                    </div>
+                    <div class="space-y-3">
+                        @forelse($emailsRecientesEnviados as $email)
+                            <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-slate-900 dark:text-white truncate">{{ $email->subject ?: 'Sin asunto' }}</p>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400 truncate">{{ $email->email }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">{{ $email->created_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay emails enviados recientes</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="text-center py-8">
+                <p class="text-sm text-slate-600 dark:text-slate-500">
+                    <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
+                </p>
+            </footer>
+        </div>
+    </div>
+    
+    <script>
+        // Chart configuration
+        const ctx = document.getElementById('activityChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @json($ultimos7Dias),
+                    datasets: [
+                        {
+                            label: 'Recibidos',
+                            data: @json($recibidosPorDia),
+                            borderColor: 'rgb(16, 185, 129)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Enviados',
+                            data: @json($enviadosPorDia),
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b'
+                            },
+                            grid: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update chart colors on dark mode toggle
+        const darkModeToggle = document.querySelector('[data-dark-mode-toggle]');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                setTimeout(() => {
+                    if (ctx && window.chartInstance) {
+                        window.chartInstance.destroy();
+                        // Recreate chart with updated colors
+                        location.reload();
+                    }
+                }, 100);
+            });
+        }
+    </script>
+    @include('partials.walee-support-button')
+</body>
+</html>
+

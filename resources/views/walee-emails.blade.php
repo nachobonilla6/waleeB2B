@@ -173,6 +173,27 @@
             
             <!-- Options Grid -->
             <div class="grid grid-cols-1 gap-6">
+                <!-- Dashboard -->
+                <a href="{{ route('walee.emails.dashboard') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-900/50 border border-slate-200 dark:border-slate-700 p-8 hover:border-slate-400 dark:hover:border-slate-600 hover:from-slate-100 dark:hover:from-slate-800 hover:to-slate-200/50 dark:hover:to-slate-900 transition-all duration-500 shadow-sm dark:shadow-none">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-slate-500/20 dark:bg-slate-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
+                    <div class="relative flex items-center gap-6">
+                        <div class="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Dashboard</h2>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Estadísticas y resumen de actividad de emails</p>
+                        </div>
+                        <div class="hidden sm:flex w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 items-center justify-center group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors">
+                            <svg class="w-6 h-6 text-slate-600 dark:text-slate-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+                
                 <!-- Crear con AI -->
                 <a href="{{ route('walee.emails.crear') }}" class="option-card group relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 p-8 hover:border-violet-400 dark:hover:border-violet-400/50 hover:from-violet-100 dark:hover:from-violet-500/15 hover:to-violet-200/50 dark:hover:to-violet-600/10 transition-all duration-500 shadow-sm dark:shadow-none">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-violet-500/20 dark:bg-violet-500/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>

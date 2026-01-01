@@ -1717,6 +1717,10 @@ Route::get('/walee-emails', function () {
     return view('walee-emails');
 })->middleware(['auth'])->name('walee.emails');
 
+Route::get('/walee-emails/dashboard', function () {
+    return view('walee-emails-dashboard');
+})->middleware(['auth'])->name('walee.emails.dashboard');
+
 Route::get('/walee-emails/crear', function () {
     return view('walee-emails-crear');
 })->middleware(['auth'])->name('walee.emails.crear');

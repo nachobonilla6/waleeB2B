@@ -97,12 +97,27 @@
                 // Limpiar el número de semana (puede venir con ceros a la izquierda)
                 $numSemana = (int)trim($numSemana);
                 $anoSemana = (int)trim($anoSemana);
+                
+                \Log::info('Parseando semana desde URL', [
+                    'semana_param' => $semanaParam,
+                    'ano' => $anoSemana,
+                    'semana' => $numSemana
+                ]);
+                
                 try {
                     // Usar setISODate que maneja correctamente el cambio de año
                     // setISODate usa el año ISO, que puede ser diferente al año calendario
                     $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
                     $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                     $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                    
+                    \Log::info('Semana parseada correctamente', [
+                        'fecha_semana' => $fechaSemana->format('Y-m-d'),
+                        'inicio_semana' => $inicioSemana->format('Y-m-d'),
+                        'fin_semana' => $finSemana->format('Y-m-d'),
+                        'año_iso' => $fechaSemana->format('o'),
+                        'semana_iso' => $fechaSemana->format('W')
+                    ]);
                 } catch (\Exception $e) {
                     // Si falla (por ejemplo, semana 53 que no existe), usar la semana actual
                     \Log::warning('Error al parsear semana', [

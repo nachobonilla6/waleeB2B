@@ -352,7 +352,10 @@
                                     <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ $semanaActualFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-sm text-center">
                                         Esta Semana
                                     </a>
-                                    <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ $semanaSiguienteFormato }}" 
+                                       class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all"
+                                       title="Semana siguiente: {{ $semanaSiguienteFormato }}"
+                                       onclick="console.log('Navegando a semana: {{ $semanaSiguienteFormato }}'); return true;">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                         </svg>

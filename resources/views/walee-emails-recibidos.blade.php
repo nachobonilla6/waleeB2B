@@ -173,7 +173,7 @@
                 ->values()
                 ->toArray();
             
-            // Mostrar todos los emails recibidos con paginación de 5
+            // Mostrar los últimos 25 emails recibidos (cualquier email, sin filtros)
             $emailsQuery = \App\Models\EmailRecibido::query();
             
             // Contar todos los emails
@@ -183,12 +183,12 @@
             // Contar emails no leídos
             $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
             
-            // Paginar todos los emails con 5 por página
-            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(5);
+            // Obtener los últimos 25 emails sin paginación
+            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->limit(25)->get();
         } catch (\Exception $e) {
-            // En caso de error, mostrar todos los emails
+            // En caso de error, mostrar los últimos 25 emails
             $emailsQuery = \App\Models\EmailRecibido::query();
-            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(5);
+            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->limit(25)->get();
             $totalEmails = \App\Models\EmailRecibido::count();
             $emailsNoClientes = 0;
             $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
@@ -331,26 +331,6 @@
                 @endforelse
             </div>
             
-            <!-- Pagination -->
-            @if($emails->hasPages())
-                <div class="mt-8 flex justify-center gap-2">
-                    @if($emails->onFirstPage())
-                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Anterior</span>
-                    @else
-                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Anterior</a>
-                    @endif
-                    
-                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700">
-                        Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
-                    </span>
-                    
-                    @if($emails->hasMorePages())
-                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Siguiente</a>
-                    @else
-                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Siguiente</span>
-                    @endif
-                </div>
-            @endif
             
             <!-- Footer -->
             <footer class="text-center py-8 mt-8">
@@ -402,7 +382,7 @@
         let currentEmailId = null;
         
         // Email data
-        const emailsData = @json($emails->items());
+        const emailsData = @json($emails);
         
         function showEmailDetail(emailId) {
             currentEmailId = emailId;

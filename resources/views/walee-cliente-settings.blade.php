@@ -76,9 +76,6 @@
                     <a href="{{ route('walee.cliente.settings.publicaciones', $cliente->id) }}" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button {{ request()->routeIs('walee.cliente.settings.publicaciones') ? 'active bg-violet-500 text-white' : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Publicaciones
                     </a>
-                    <a href="{{ route('walee.cliente.settings.planeador', $cliente->id) }}" class="flex-1 px-4 py-2.5 rounded-xl font-medium text-sm transition-all tab-button {{ request()->routeIs('walee.cliente.settings.planeador') ? 'active bg-violet-500 text-white' : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
-                        Planeador
-                    </a>
                 </div>
             </div>
 
@@ -381,30 +378,7 @@
                 </div>
             </div>
 
-            <!-- Planeador Tab -->
-            <div id="content-planeador" class="tab-content {{ request()->routeIs('walee.cliente.settings.planeador') ? '' : 'hidden' }} animate-fade-in-up" style="animation-delay: 0.2s;">
-                @php
-                    // Convertir el cliente de Client a Cliente si es necesario
-                    $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
-                        ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
-                        ->first();
-                    
-                    if (!$clientePlaneador) {
-                        // Si no existe, intentar usar el primero disponible, pero solo si existe
-                        $clientePlaneador = \App\Models\Cliente::first();
-                    }
-                @endphp
-                
-                @if($clientePlaneador)
-                    @php
-                        // Forzar vista semanal siempre
-                        $vista = 'semanal';
-                        $mes = request()->get('mes', now()->month);
-                        $ano = request()->get('ano', now()->year);
-                        
-                        // Calcular la semana
-                        $semanaParam = request()->get('semana', now()->format('Y-W'));
-                        if ($semanaParam && strpos($semanaParam, '-') !== false) {
+            <!-- Planeador Tab - Eliminado, usar walee-planeador-publicidad en su lugar -->
                             list($anoSemana, $numSemana) = explode('-', $semanaParam);
                             try {
                                 // Usar setISODate para calcular correctamente la semana ISO
@@ -1169,17 +1143,6 @@
                                 originalAbrirModal();
                                 setTimeout(inicializarFormProgramar, 100);
                             };
-                        }
-                    </script>
-                @else
-                    <div class="text-center py-8">
-                        <p class="text-slate-600 dark:text-slate-400">No se encontró un cliente asociado para el planeador.</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
     <script>
         // Funciones globales para programar publicación
         function abrirModalProgramarPublicacion() {

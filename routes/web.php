@@ -3123,13 +3123,27 @@ Route::get('/walee-cliente/{id}/settings/publicaciones', function ($id) {
     }
 })->middleware(['auth'])->name('walee.cliente.settings.publicaciones');
 
-// Ruta para pestaña de planeador
+// Ruta para pestaña de planeador - Redirigir al nuevo planeador
 Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
     try {
-        $cliente = \App\Models\Client::findOrFail($id);
-        return view('walee-cliente-settings', compact('cliente'));
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        abort(404, 'Cliente no encontrado');
+        // Buscar el cliente en la tabla Cliente (no Client)
+        $clientePrincipal = \App\Models\Cliente::where('id', $id)->first();
+        if (!$clientePrincipal) {
+            // Si no existe, intentar buscar por email o nombre
+            $client = \App\Models\Client::findOrFail($id);
+            $clientePrincipal = \App\Models\Cliente::where('correo', $client->email)
+                ->orWhere('nombre_empresa', 'like', '%' . $client->name . '%')
+                ->first();
+        }
+        
+        if ($clientePrincipal) {
+            return redirect()->route('walee.planeador.publicidad', $clientePrincipal->id);
+        }
+        
+        // Si no se encuentra, redirigir a publicaciones
+        return redirect()->route('walee.cliente.settings.publicaciones', $id);
+    } catch (\Exception $e) {
+        return redirect()->route('walee.cliente.settings.publicaciones', $id);
     }
 })->middleware(['auth'])->name('walee.cliente.settings.planeador');
 

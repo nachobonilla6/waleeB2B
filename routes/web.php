@@ -3196,20 +3196,10 @@ Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $
     return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
 })->middleware(['auth'])->name('walee.cliente.actualizar');
 
-// Ruta para settings del cliente (redirige a publicaciones por defecto)
+// Ruta para settings del cliente (redirige al detalle del cliente)
 Route::get('/walee-cliente/{id}/settings', function ($id) {
-    return redirect()->route('walee.cliente.settings.publicaciones', $id);
+    return redirect()->route('walee.cliente.detalle', $id);
 })->middleware(['auth'])->name('walee.cliente.settings');
-
-// Ruta para pestaña de publicaciones
-Route::get('/walee-cliente/{id}/settings/publicaciones', function ($id) {
-    try {
-        $cliente = \App\Models\Client::findOrFail($id);
-        return view('walee-cliente-settings', compact('cliente'));
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        abort(404, 'Cliente no encontrado');
-    }
-})->middleware(['auth'])->name('walee.cliente.settings.publicaciones');
 
 // Ruta para pestaña de planeador - Redirigir al nuevo planeador
 Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
@@ -3228,10 +3218,10 @@ Route::get('/walee-cliente/{id}/settings/planeador', function ($id) {
             return redirect()->route('walee.planeador.publicidad', $clientePrincipal->id);
         }
         
-        // Si no se encuentra, redirigir a publicaciones
-        return redirect()->route('walee.cliente.settings.publicaciones', $id);
+        // Si no se encuentra, redirigir al detalle del cliente
+        return redirect()->route('walee.cliente.detalle', $id);
     } catch (\Exception $e) {
-        return redirect()->route('walee.cliente.settings.publicaciones', $id);
+        return redirect()->route('walee.cliente.detalle', $id);
     }
 })->middleware(['auth'])->name('walee.cliente.settings.planeador');
 

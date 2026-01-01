@@ -415,25 +415,31 @@ Route::put('/publicidad-eventos/{id}', function (\Illuminate\Http\Request $reque
             $imagen = $request->file('imagen');
             $nombreArchivo = 'publicidad_' . $evento->cliente_id . '_' . time() . '.' . $imagen->getClientOriginalExtension();
             
-            // Guardar directamente en public/publicidad (ruta pública)
-            $publicDir = public_path('publicidad');
+            // Detectar directorio público (public_html para Hostinger, public para desarrollo)
+            $publicDir = is_dir(base_path('public_html')) 
+                ? base_path('public_html/publicidad') 
+                : public_path('publicidad');
+            
             if (!file_exists($publicDir)) {
                 mkdir($publicDir, 0755, true);
+                // Asegurar permisos del directorio
+                chmod($publicDir, 0755);
             }
             
             $rutaCompleta = $publicDir . '/' . $nombreArchivo;
             $imagen->move($publicDir, $nombreArchivo);
             
+            // Asegurar permisos públicos del archivo (lectura para todos)
+            chmod($rutaCompleta, 0644);
+            
             // Guardar la ruta relativa: publicidad/nombre.jpg (sin storage/)
             $evento->imagen_url = 'publicidad/' . $nombreArchivo;
-            
-            // Asegurar permisos
-            chmod($rutaCompleta, 0644);
             
             \Log::info('Imagen de publicidad actualizada', [
                 'ruta_completa' => $rutaCompleta,
                 'ruta_relativa' => $evento->imagen_url,
-                'url_publica' => asset($evento->imagen_url)
+                'url_publica' => asset($evento->imagen_url),
+                'permisos' => substr(sprintf('%o', fileperms($rutaCompleta)), -4)
             ]);
         }
         
@@ -566,25 +572,31 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             $imagen = $request->file('imagen');
             $nombreArchivo = 'publicidad_' . $evento->cliente_id . '_' . time() . '.' . $imagen->getClientOriginalExtension();
             
-            // Guardar directamente en public/publicidad (ruta pública)
-            $publicDir = public_path('publicidad');
+            // Detectar directorio público (public_html para Hostinger, public para desarrollo)
+            $publicDir = is_dir(base_path('public_html')) 
+                ? base_path('public_html/publicidad') 
+                : public_path('publicidad');
+            
             if (!file_exists($publicDir)) {
                 mkdir($publicDir, 0755, true);
+                // Asegurar permisos del directorio
+                chmod($publicDir, 0755);
             }
             
             $rutaCompleta = $publicDir . '/' . $nombreArchivo;
             $imagen->move($publicDir, $nombreArchivo);
             
+            // Asegurar permisos públicos del archivo (lectura para todos)
+            chmod($rutaCompleta, 0644);
+            
             // Guardar la ruta relativa: publicidad/nombre.jpg (sin storage/)
             $evento->imagen_url = 'publicidad/' . $nombreArchivo;
-            
-            // Asegurar permisos
-            chmod($rutaCompleta, 0644);
             
             \Log::info('Imagen de publicidad guardada', [
                 'ruta_completa' => $rutaCompleta,
                 'ruta_relativa' => $evento->imagen_url,
-                'url_publica' => asset($evento->imagen_url)
+                'url_publica' => asset($evento->imagen_url),
+                'permisos' => substr(sprintf('%o', fileperms($rutaCompleta)), -4)
             ]);
         }
         

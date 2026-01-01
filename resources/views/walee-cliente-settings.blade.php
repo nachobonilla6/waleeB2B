@@ -746,6 +746,9 @@
                                         imagenContainer.classList.add('hidden');
                                     }
                                     
+                                    // Guardar el ID del evento para poder eliminarlo
+                                    document.getElementById('detalleEventoModal').setAttribute('data-evento-id', eventoId);
+                                    
                                     // Mostrar modal
                                     document.getElementById('detalleEventoModal').classList.remove('hidden');
                                 } else {
@@ -757,8 +760,54 @@
                             }
                         }
                         
+                        async function eliminarEvento() {
+                            const modal = document.getElementById('detalleEventoModal');
+                            const eventoId = modal.getAttribute('data-evento-id');
+                            
+                            if (!eventoId) {
+                                alert('Error: No se encontró el ID del evento');
+                                return;
+                            }
+                            
+                            // Confirmar eliminación
+                            if (!confirm('¿Estás seguro de que deseas eliminar esta publicación planeada? Esta acción no se puede deshacer.')) {
+                                return;
+                            }
+                            
+                            try {
+                                const response = await fetch(`/publicidad-eventos/${eventoId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    }
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    alert('✅ Publicación eliminada exitosamente');
+                                    cerrarDetalleEvento();
+                                    // Recargar la página para actualizar el calendario
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 500);
+                                } else {
+                                    alert('Error: ' + (data.message || 'Error al eliminar la publicación'));
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Error de conexión: ' + error.message);
+                            }
+                        }
+                        
+                        // Hacer la función disponible globalmente
+                        window.eliminarEvento = eliminarEvento;
+                        
                         function cerrarDetalleEvento() {
                             document.getElementById('detalleEventoModal').classList.add('hidden');
+                            document.getElementById('detalleEventoModal').removeAttribute('data-evento-id');
                         }
                         
                         function ucfirst(str) {
@@ -1497,6 +1546,18 @@
                         <span id="detalleEventoFecha"></span>
                     </div>
                 </div>
+            </div>
+            <!-- Botones de acción -->
+            <div class="flex items-center justify-end gap-3 p-4 border-t border-slate-200 dark:border-slate-700">
+                <button onclick="cerrarDetalleEvento()" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-medium transition-all text-sm">
+                    Cerrar
+                </button>
+                <button onclick="eliminarEvento()" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Eliminar Publicación
+                </button>
             </div>
         </div>
     </div>

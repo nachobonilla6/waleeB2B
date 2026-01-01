@@ -264,34 +264,37 @@
             @include('partials.walee-navbar')
             
             <!-- Cliente Info -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 p-4 flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-semibold text-violet-900 dark:text-violet-300">{{ $cliente->nombre_empresa }}</h3>
-                            <p class="text-sm text-violet-700 dark:text-violet-400">Planeador de Publicidad</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        @if($vista === 'semanal')
-                            <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-sm transition-all flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            <div class="mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 p-3 md:p-4">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+                        <div class="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 md:w-6 md:h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                 </svg>
-                                Semana Siguiente
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="text-base md:text-lg font-semibold text-violet-900 dark:text-violet-300 truncate">{{ $cliente->nombre_empresa }}</h3>
+                                <p class="text-xs md:text-sm text-violet-700 dark:text-violet-400 truncate">Planeador de Publicidad</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            @if($vista === 'semanal')
+                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Semana Siguiente</span>
+                                    <span class="sm:hidden">Siguiente</span>
+                                </a>
+                            @endif
+                            <a href="{{ route('walee.calendario') }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                <span class="hidden sm:inline">Volver</span>
                             </a>
-                        @endif
-                        <a href="{{ route('walee.calendario') }}" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium text-sm transition-all flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                            </svg>
-                            Volver
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>

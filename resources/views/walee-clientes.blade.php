@@ -103,7 +103,7 @@
         use App\Models\Client;
         
         $clientesActivos = Client::where('estado', 'accepted')->count();
-        $clientesPendientes = Client::where('estado', 'pending')->count();
+        $clientesEnProceso = Client::where('estado', 'propuesta_enviada')->count();
         $clientesTotales = Client::count();
     @endphp
 
@@ -178,10 +178,10 @@
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-3 mb-2">
-                                <h2 class="text-2xl font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">Clientes Pendientes</h2>
-                                <span class="px-3 py-1 text-sm font-bold bg-amber-500/30 text-amber-600 dark:text-amber-300 rounded-full border border-amber-500/40">{{ $clientesPendientes }}</span>
+                                <h2 class="text-2xl font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">Clientes en Proceso</h2>
+                                <span class="px-3 py-1 text-sm font-bold bg-amber-500/30 text-amber-600 dark:text-amber-300 rounded-full border border-amber-500/40">{{ $clientesEnProceso }}</span>
                             </div>
-                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Clientes con estado pendiente de seguimiento</p>
+                            <p class="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Clientes con propuesta enviada en seguimiento</p>
                         </div>
                         <div class="hidden sm:flex w-12 h-12 rounded-xl bg-amber-500/10 items-center justify-center group-hover:bg-amber-500/20 transition-colors">
                             <svg class="w-6 h-6 text-amber-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

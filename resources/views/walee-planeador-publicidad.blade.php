@@ -305,9 +305,17 @@
                                         $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                                         
                                         // Formatear usando ISO week (maneja correctamente el cambio de año)
-                                        $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . str_pad($semanaAnterior->format('W'), 2, '0', STR_PAD_LEFT);
-                                        $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . str_pad($semanaSiguiente->format('W'), 2, '0', STR_PAD_LEFT);
-                                        $semanaActualFormato = $semanaActual->format('Y') . '-' . str_pad($semanaActual->format('W'), 2, '0', STR_PAD_LEFT);
+                                        // Usar el año ISO para asegurar que funcione correctamente al cruzar años
+                                        $semanaAnteriorFormato = $semanaAnterior->format('o') . '-' . str_pad($semanaAnterior->format('W'), 2, '0', STR_PAD_LEFT);
+                                        $semanaSiguienteFormato = $semanaSiguiente->format('o') . '-' . str_pad($semanaSiguiente->format('W'), 2, '0', STR_PAD_LEFT);
+                                        $semanaActualFormato = $semanaActual->format('o') . '-' . str_pad($semanaActual->format('W'), 2, '0', STR_PAD_LEFT);
+                                        
+                                        // Log para debug
+                                        \Log::info('Navegación de semanas', [
+                                            'semana_actual' => $inicioSemana->format('o-W'),
+                                            'semana_anterior' => $semanaAnteriorFormato,
+                                            'semana_siguiente' => $semanaSiguienteFormato,
+                                        ]);
                                     @endphp
                                     <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

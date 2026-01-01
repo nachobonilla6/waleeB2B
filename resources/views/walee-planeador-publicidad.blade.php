@@ -640,7 +640,7 @@
                                                         <span class="text-[10px] font-semibold opacity-75">{{ $evento->fecha_inicio->format('H:i') }}</span>
                                                         <span class="flex-1 truncate">{{ $evento->titulo }}</span>
                                                         @if($yaPaso)
-                                                            <span class="text-[9px] font-medium opacity-70">Publicada</span>
+                                                            <span class="text-[9px] font-medium opacity-70">Publicado</span>
                                                         @else
                                                             <span class="text-[9px] font-medium opacity-70">Programada</span>
                                                         @endif

@@ -158,25 +158,65 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         try {
-            // Total de emails
-            $totalEmails = \App\Models\EmailRecibido::count();
+            // Obtener correos de clientes con estado pending (normalizados a minúsculas y sin espacios)
+            $clientesEmails = \App\Models\Client::where('estado', 'pending')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->map(function($email) {
+                    return strtolower(trim($email));
+                })
+                ->filter()
+                ->unique()
+                ->values()
+                ->toArray();
             
-            // Contar emails no leídos
-            $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
-            
-            // Obtener emails con paginación de 5, ordenados por más antiguos primero (más viejos primero)
-            $emails = \App\Models\EmailRecibido::orderBy('received_at', 'ASC')
-                ->orderBy('created_at', 'ASC')
-                ->orderBy('updated_at', 'ASC')
-                ->paginate(5);
+            // Filtrar emails que solo pertenecen a clientes con estado pending
+            if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+                // Filtrar por from_email (sender) que coincida con emails de clientes pending
+                // from_email puede venir en formato "Nombre <email@example.com>" o solo "email@example.com"
+                $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
+                    foreach ($clientesEmails as $clienteEmail) {
+                        // Función que extrae el email: si tiene < > extrae lo de adentro, sino usa el valor completo
+                        $query->orWhereRaw('
+                            CASE 
+                                WHEN from_email LIKE "%<%" THEN 
+                                    LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
+                                ELSE 
+                                    LOWER(TRIM(from_email)) = ?
+                            END
+                        ', [$clienteEmail, $clienteEmail]);
+                    }
+                });
+                
+                // Contar emails de clientes pending
+                $totalEmails = (clone $emailsQuery)->count();
+                $noLeidos = (clone $emailsQuery)->where('is_read', false)->count();
+                
+                // Paginar emails de clientes pending con 5 por página, ordenados por más antiguos primero
+                $emails = $emailsQuery->orderBy('received_at', 'ASC')
+                    ->orderBy('created_at', 'ASC')
+                    ->orderBy('updated_at', 'ASC')
+                    ->paginate(5);
+            } else {
+                // Si no hay clientes pending, no mostrar emails
+                $emailsQuery = \App\Models\EmailRecibido::whereRaw('1 = 0'); // Query que no devuelve resultados
+                $totalEmails = 0;
+                $noLeidos = 0;
+                $emails = $emailsQuery->orderBy('received_at', 'ASC')
+                    ->orderBy('created_at', 'ASC')
+                    ->orderBy('updated_at', 'ASC')
+                    ->paginate(5);
+            }
         } catch (\Exception $e) {
-            // En caso de error, mostrar emails con paginación
-            $emails = \App\Models\EmailRecibido::orderBy('received_at', 'ASC')
+            // En caso de error, no mostrar emails
+            $emailsQuery = \App\Models\EmailRecibido::whereRaw('1 = 0');
+            $emails = $emailsQuery->orderBy('received_at', 'ASC')
                 ->orderBy('created_at', 'ASC')
                 ->orderBy('updated_at', 'ASC')
                 ->paginate(5);
-            $totalEmails = \App\Models\EmailRecibido::count();
-            $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+            $totalEmails = 0;
+            $noLeidos = 0;
         }
     @endphp
 

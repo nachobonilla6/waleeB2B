@@ -101,9 +101,17 @@
                 if ($anoSemana && $numSemana && $numSemana >= 1 && $numSemana <= 53) {
                     try {
                         // Usar setISODate para obtener la fecha de la semana
+                        // setISODate maneja correctamente las semanas ISO, incluyendo el cambio de año
+                        // setISODate devuelve el lunes de la semana ISO
                         $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
-                        $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                        $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                        // Ajustar al domingo como inicio de semana (restar 1 día del lunes ISO)
+                        // Esto mantiene la semana ISO correcta pero muestra desde el domingo
+                        $inicioSemana = $fechaSemana->copy()->subDay()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        // Si al restar 1 día cambiamos de semana ISO, usar el lunes original
+                        if ($inicioSemana->format('o') != $anoSemana || $inicioSemana->format('W') != $numSemana) {
+                            $inicioSemana = $fechaSemana->copy();
+                        }
+                        $finSemana = $inicioSemana->copy()->addDays(6);
                     } catch (\Exception $e) {
                         // Si falla, usar la semana actual
                         $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
@@ -118,6 +126,26 @@
                 $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                 $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
             }
+            
+            // Calcular semana siguiente para el botón de navegación en el header
+            $anoActualSemana = (int)$inicioSemana->format('o');
+            $numActualSemana = (int)$inicioSemana->format('W');
+            
+            try {
+                $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->addWeek();
+                $anoSemanaSiguiente = (int)$fechaSiguiente->format('o');
+                $numSemanaSiguiente = (int)$fechaSiguiente->format('W');
+            } catch (\Exception $e) {
+                // Si falla, calcular manualmente
+                $numSemanaSiguiente = $numActualSemana + 1;
+                $anoSemanaSiguiente = $anoActualSemana;
+                if ($numSemanaSiguiente > 53) {
+                    $numSemanaSiguiente = 1;
+                    $anoSemanaSiguiente = $anoActualSemana + 1;
+                }
+            }
+            
+            $semanaSiguienteFormato = $anoSemanaSiguiente . '-' . str_pad($numSemanaSiguiente, 2, '0', STR_PAD_LEFT);
         }
         
         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);
@@ -250,17 +278,12 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        @php
-                            $clientAsociado = \App\Models\Client::where('email', $cliente->correo)
-                                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
-                                ->first();
-                        @endphp
-                        @if($clientAsociado)
-                            <a href="{{ route('walee.cliente.settings.publicaciones', $clientAsociado->id) }}" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm transition-all flex items-center gap-2">
+                        @if($vista === 'semanal')
+                            <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-sm transition-all flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
-                                Publicar Ahora
+                                Semana Siguiente
                             </a>
                         @endif
                         <a href="{{ route('walee.calendario') }}" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium text-sm transition-all flex items-center gap-2">
@@ -299,17 +322,50 @@
                             <div class="flex items-center justify-between gap-2">
                                 @if($vista === 'semanal')
                                     @php
-                                        // Método simple: usar la fecha base y sumar/restar semanas (similar a meses)
-                                        // Esto permite navegar a cualquier semana futura sin restricciones
-                                        $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                        $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                        $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                        // Obtener año ISO y semana ISO de la semana actual
+                                        $anoActualSemana = (int)$inicioSemana->format('o');
+                                        $numActualSemana = (int)$inicioSemana->format('W');
                                         
-                                        // Formatear usando año ISO y semana ISO (maneja correctamente el cambio de año)
-                                        // Usar format('o') para año ISO y format('W') para semana ISO
-                                        $semanaAnteriorFormato = $semanaAnterior->format('o') . '-' . str_pad($semanaAnterior->format('W'), 2, '0', STR_PAD_LEFT);
-                                        $semanaSiguienteFormato = $semanaSiguiente->format('o') . '-' . str_pad($semanaSiguiente->format('W'), 2, '0', STR_PAD_LEFT);
-                                        $semanaActualFormato = $semanaActual->format('o') . '-' . str_pad($semanaActual->format('W'), 2, '0', STR_PAD_LEFT);
+                                        // Calcular semana siguiente usando Carbon para manejar correctamente el cambio de año
+                                        // y años con 52 o 53 semanas
+                                        try {
+                                            $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->addWeek();
+                                            $anoSemanaSiguiente = (int)$fechaSiguiente->format('o');
+                                            $numSemanaSiguiente = (int)$fechaSiguiente->format('W');
+                                        } catch (\Exception $e) {
+                                            // Si falla, calcular manualmente
+                                            $numSemanaSiguiente = $numActualSemana + 1;
+                                            $anoSemanaSiguiente = $anoActualSemana;
+                                            if ($numSemanaSiguiente > 53) {
+                                                $numSemanaSiguiente = 1;
+                                                $anoSemanaSiguiente = $anoActualSemana + 1;
+                                            }
+                                        }
+                                        
+                                        // Calcular semana anterior usando Carbon
+                                        try {
+                                            $fechaAnterior = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->subWeek();
+                                            $anoSemanaAnterior = (int)$fechaAnterior->format('o');
+                                            $numSemanaAnterior = (int)$fechaAnterior->format('W');
+                                        } catch (\Exception $e) {
+                                            // Si falla, calcular manualmente
+                                            $numSemanaAnterior = $numActualSemana - 1;
+                                            $anoSemanaAnterior = $anoActualSemana;
+                                            if ($numSemanaAnterior < 1) {
+                                                $numSemanaAnterior = 53;
+                                                $anoSemanaAnterior = $anoActualSemana - 1;
+                                            }
+                                        }
+                                        
+                                        // Formatear semanas
+                                        $semanaAnteriorFormato = $anoSemanaAnterior . '-' . str_pad($numSemanaAnterior, 2, '0', STR_PAD_LEFT);
+                                        $semanaSiguienteFormato = $anoSemanaSiguiente . '-' . str_pad($numSemanaSiguiente, 2, '0', STR_PAD_LEFT);
+                                        
+                                        // Semana actual
+                                        $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                        $anoActual = (int)$semanaActual->format('o');
+                                        $semanaActualNum = str_pad($semanaActual->format('W'), 2, '0', STR_PAD_LEFT);
+                                        $semanaActualFormato = $anoActual . '-' . $semanaActualNum;
                                     @endphp
                                     <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" 
                                        onclick="window.location.href='?vista=semanal&semana={{ $semanaAnteriorFormato }}'; return false;"

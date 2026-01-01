@@ -754,6 +754,47 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
     }
 })->middleware(['auth']);
 
+// Ruta de diagnóstico para verificar archivos de publicidad
+Route::get('/publicidad-debug/{nombreArchivo?}', function ($nombreArchivo = null) {
+    $publicDir = is_dir(base_path('public_html')) 
+        ? base_path('public_html') 
+        : public_path();
+    
+    $directorioPublicidad = $publicDir . '/publicidad';
+    
+    $resultado = [
+        'public_dir' => $publicDir,
+        'directorio_publicidad' => $directorioPublicidad,
+        'existe_directorio' => is_dir($directorioPublicidad),
+        'is_public_html' => is_dir(base_path('public_html')),
+    ];
+    
+    if (is_dir($directorioPublicidad)) {
+        $archivos = glob($directorioPublicidad . '/*');
+        $resultado['archivos_encontrados'] = array_map(function($archivo) {
+            return [
+                'nombre' => basename($archivo),
+                'ruta_completa' => $archivo,
+                'existe' => file_exists($archivo),
+                'permisos' => substr(sprintf('%o', fileperms($archivo)), -4),
+                'tamaño' => filesize($archivo),
+            ];
+        }, $archivos);
+        
+        if ($nombreArchivo) {
+            $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
+            $archivosCoincidentes = glob($directorioPublicidad . '/' . $nombreSinExtension . '.*');
+            $resultado['busqueda'] = [
+                'nombre_buscado' => $nombreArchivo,
+                'nombre_sin_extension' => $nombreSinExtension,
+                'archivos_coincidentes' => array_map('basename', $archivosCoincidentes),
+            ];
+        }
+    }
+    
+    return response()->json($resultado, 200, [], JSON_PRETTY_PRINT);
+})->middleware(['auth']);
+
 // Obtener detalles de un evento de publicidad
 Route::get('/publicidad-eventos/{id}', function ($id) {
     try {
@@ -781,39 +822,38 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                 : public_path();
             
             $rutaFisica = $publicDir . '/' . $rutaImagen;
+            $nombreArchivo = basename($rutaImagen);
+            $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
+            $directorioPublicidad = $publicDir . '/publicidad';
             
             // Si no existe, intentar buscar el archivo por nombre (puede tener extensión diferente)
-            if (!file_exists($rutaFisica)) {
-                $nombreArchivo = basename($rutaImagen);
-                $nombreSinExtension = pathinfo($nombreArchivo, PATHINFO_FILENAME);
-                $directorioPublicidad = $publicDir . '/publicidad';
-                
-                if (is_dir($directorioPublicidad)) {
-                    // Buscar archivo por nombre sin extensión (puede ser .jpg, .webp, .png, etc.)
-                    $archivos = glob($directorioPublicidad . '/' . $nombreSinExtension . '.*');
-                    if (!empty($archivos)) {
-                        $archivoEncontrado = $archivos[0];
-                        $nombreArchivoEncontrado = basename($archivoEncontrado);
-                        $rutaImagen = 'publicidad/' . $nombreArchivoEncontrado;
-                        $rutaFisica = $archivoEncontrado;
-                        \Log::info('Archivo encontrado con extensión diferente', [
-                            'nombre_original' => $nombreArchivo,
-                            'nombre_encontrado' => $nombreArchivoEncontrado,
-                            'ruta_fisica' => $rutaFisica
-                        ]);
-                    } else {
-                        // Listar todos los archivos en el directorio para debug
-                        $todosArchivos = glob($directorioPublicidad . '/*');
-                        \Log::warning('Archivo no encontrado, listando archivos en directorio', [
-                            'busqueda' => $nombreSinExtension,
-                            'archivos_en_directorio' => array_map('basename', $todosArchivos)
-                        ]);
-                    }
+            if (!file_exists($rutaFisica) && is_dir($directorioPublicidad)) {
+                // Buscar archivo por nombre sin extensión (puede ser .jpg, .webp, .png, etc.)
+                $archivos = glob($directorioPublicidad . '/' . $nombreSinExtension . '.*');
+                if (!empty($archivos)) {
+                    $archivoEncontrado = $archivos[0];
+                    $nombreArchivoEncontrado = basename($archivoEncontrado);
+                    $rutaImagen = 'publicidad/' . $nombreArchivoEncontrado;
+                    $rutaFisica = $archivoEncontrado;
+                    \Log::info('Archivo encontrado con extensión diferente', [
+                        'evento_id' => $evento->id,
+                        'nombre_original' => $nombreArchivo,
+                        'nombre_encontrado' => $nombreArchivoEncontrado,
+                        'ruta_fisica' => $rutaFisica
+                    ]);
+                } else {
+                    // Listar todos los archivos en el directorio para debug
+                    $todosArchivos = glob($directorioPublicidad . '/*');
+                    \Log::warning('Archivo no encontrado para evento', [
+                        'evento_id' => $evento->id,
+                        'busqueda' => $nombreSinExtension,
+                        'ruta_esperada' => $rutaFisica,
+                        'archivos_en_directorio' => array_map('basename', $todosArchivos)
+                    ]);
                 }
             }
             
-            // Construir URL absoluta - siempre construirla aunque el archivo no exista localmente
-            // (puede que exista en el servidor pero no sea accesible desde aquí)
+            // Construir URL absoluta
             $imagenUrl = url($rutaImagen);
             
             // Log para debug
@@ -827,13 +867,6 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                 'public_dir' => $publicDir,
                 'is_public_html' => is_dir(base_path('public_html'))
             ]);
-            
-            // Si el archivo no existe, intentar construir URL de todas formas
-            // Puede que el archivo esté en el servidor pero no sea accesible desde aquí
-            if (!file_exists($rutaFisica)) {
-                // Construir URL de todas formas - puede que el archivo exista en el servidor
-                $imagenUrl = url($rutaImagen);
-            }
         }
         
         return response()->json([

@@ -379,7 +379,6 @@
             </div>
 
             <!-- Planeador Tab - Eliminado, usar walee-planeador-publicidad en su lugar -->
-                        } else {
     <script>
         // Funciones globales para programar publicación
         function abrirModalProgramarPublicacion() {

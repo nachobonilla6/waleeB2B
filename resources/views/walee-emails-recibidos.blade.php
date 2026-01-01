@@ -161,39 +161,20 @@
             // Total de emails
             $totalEmails = \App\Models\EmailRecibido::count();
             
-            // Obtener correos de clientes_en_proceso (normalizados a minúsculas y sin espacios)
-            $clientesEmails = \App\Models\Client::whereNotNull('email')
-                ->where('email', '!=', '')
-                ->pluck('email')
-                ->map(function($email) {
-                    return strtolower(trim($email));
-                })
-                ->filter()
-                ->unique()
-                ->values()
-                ->toArray();
-            
-            // Mostrar los últimos 25 emails recibidos (cualquier email, sin filtros)
-            $emailsQuery = \App\Models\EmailRecibido::query();
-            
-            // Contar todos los emails
-            $emailsClientesCount = $totalEmails;
-            $emailsNoClientes = 0;
-            
             // Contar emails no leídos
             $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
             
-            // Obtener los últimos 25 emails sin paginación
-            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->limit(25)->get();
+            // Obtener los últimos 25 emails recibidos (cualquier email, sin filtros)
+            $emails = \App\Models\EmailRecibido::orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')
+                ->limit(25)
+                ->get();
         } catch (\Exception $e) {
             // En caso de error, mostrar los últimos 25 emails
-            $emailsQuery = \App\Models\EmailRecibido::query();
-            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->limit(25)->get();
+            $emails = \App\Models\EmailRecibido::orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')
+                ->limit(25)
+                ->get();
             $totalEmails = \App\Models\EmailRecibido::count();
-            $emailsNoClientes = 0;
             $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
-            $emailsClientesCount = $totalEmails;
-            $clientesEmails = [];
         }
     @endphp
 
@@ -236,38 +217,6 @@
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
-            
-            <!-- Emails No-Clientes Card -->
-            @if(isset($emailsNoClientes) && $emailsNoClientes > 0)
-                <div class="mb-6 animate-fade-in-up">
-                    <div class="bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-2xl p-4 sm:p-6">
-                        <div class="flex items-center justify-between gap-4 flex-wrap">
-                            <div class="flex items-center gap-4 flex-1 min-w-0">
-                                <div class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0">
-                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
-                                        {{ $emailsNoClientes }} {{ $emailsNoClientes === 1 ? 'email' : 'emails' }} de otros remitentes
-                                    </h3>
-                                    <p class="text-sm text-slate-600 dark:text-slate-400">Emails que no pertenecen a clientes registrados</p>
-                                </div>
-                            </div>
-                            <button 
-                                onclick="window.open('https://mail.google.com', '_blank')" 
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all flex items-center gap-2 flex-shrink-0"
-                            >
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                                </svg>
-                                <span class="hidden sm:inline">Ir a Gmail</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            @endif
             
             <!-- Email List -->
             <div class="space-y-3 animate-fade-in-up">

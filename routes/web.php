@@ -809,8 +809,17 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                 'ruta_imagen_final' => $rutaImagen,
                 'ruta_fisica' => $rutaFisica,
                 'existe_archivo' => file_exists($rutaFisica),
-                'url_final' => $imagenUrl
+                'url_final' => $imagenUrl,
+                'public_dir' => $publicDir,
+                'is_public_html' => is_dir(base_path('public_html'))
             ]);
+            
+            // Si el archivo no existe, intentar construir URL de todas formas
+            // Puede que el archivo esté en el servidor pero no sea accesible desde aquí
+            if (!file_exists($rutaFisica)) {
+                // Construir URL de todas formas - puede que el archivo exista en el servidor
+                $imagenUrl = url($rutaImagen);
+            }
         }
         
         return response()->json([

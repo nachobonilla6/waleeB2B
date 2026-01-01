@@ -1022,10 +1022,20 @@
                         
                         console.log('URL final de imagen:', imageUrl);
                         
+                        // Agregar timestamp para evitar caché si hay problemas
+                        const separator = imageUrl.includes('?') ? '&' : '?';
+                        const imageUrlWithCache = imageUrl + separator + '_t=' + Date.now();
+                        
                         imagenHTML = `
                             <div class="mt-4">
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen</label>
-                                <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" onerror="console.error('Error cargando imagen:', this.src); this.style.display='none';">
+                                <div class="relative">
+                                    <img src="${imageUrlWithCache}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" 
+                                         onerror="console.error('Error cargando imagen:', this.src); this.parentElement.innerHTML='<p class=\\'text-sm text-red-600 dark:text-red-400\\'>Error: No se pudo cargar la imagen. URL: ${imageUrl}</p>';">
+                                    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                        <a href="${imageUrl}" target="_blank" class="text-violet-600 dark:text-violet-400 hover:underline">Abrir imagen en nueva pestaña</a>
+                                    </div>
+                                </div>
                             </div>
                         `;
                     }

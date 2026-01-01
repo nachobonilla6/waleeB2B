@@ -300,24 +300,26 @@
                                 @if($vista === 'semanal')
                                     @php
                                         // Método simple: usar la fecha base y sumar/restar semanas (similar a meses)
+                                        // Esto permite navegar a cualquier semana futura sin restricciones
                                         $semanaAnterior = $inicioSemana->copy()->subWeek();
                                         $semanaSiguiente = $inicioSemana->copy()->addWeek();
                                         $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                                         
                                         // Formatear usando año ISO y semana ISO (maneja correctamente el cambio de año)
+                                        // Usar format('o') para año ISO y format('W') para semana ISO
                                         $semanaAnteriorFormato = $semanaAnterior->format('o') . '-' . str_pad($semanaAnterior->format('W'), 2, '0', STR_PAD_LEFT);
                                         $semanaSiguienteFormato = $semanaSiguiente->format('o') . '-' . str_pad($semanaSiguiente->format('W'), 2, '0', STR_PAD_LEFT);
                                         $semanaActualFormato = $semanaActual->format('o') . '-' . str_pad($semanaActual->format('W'), 2, '0', STR_PAD_LEFT);
                                     @endphp
-                                    <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                         </svg>
                                     </a>
-                                    <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ $semanaActualFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-sm text-center">
+                                    <a href="?vista=semanal&semana={{ $semanaActualFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-sm text-center">
                                         Esta Semana
                                     </a>
-                                    <a href="{{ route('walee.planeador.publicidad', $cliente->id) }}?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                         </svg>

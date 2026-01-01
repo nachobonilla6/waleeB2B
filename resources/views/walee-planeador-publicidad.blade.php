@@ -93,38 +93,50 @@
         if ($vista === 'semanal') {
             $semanaParam = request()->get('semana');
             if ($semanaParam && strpos($semanaParam, '-') !== false) {
-                list($anoSemana, $numSemana) = explode('-', $semanaParam);
-                // Limpiar el número de semana (puede venir con ceros a la izquierda)
-                $numSemana = (int)trim($numSemana);
-                $anoSemana = (int)trim($anoSemana);
+                // Separar año y semana
+                $partes = explode('-', $semanaParam);
+                $anoSemana = isset($partes[0]) ? (int)trim($partes[0]) : null;
+                $numSemana = isset($partes[1]) ? (int)trim($partes[1]) : null;
                 
-                \Log::info('Parseando semana desde URL', [
-                    'semana_param' => $semanaParam,
-                    'ano' => $anoSemana,
-                    'semana' => $numSemana
-                ]);
-                
-                try {
-                    // Usar setISODate que maneja correctamente el cambio de año
-                    // setISODate usa el año ISO, que puede ser diferente al año calendario
-                    $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
-                    $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                    $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
-                    
-                    \Log::info('Semana parseada correctamente', [
-                        'fecha_semana' => $fechaSemana->format('Y-m-d'),
-                        'inicio_semana' => $inicioSemana->format('Y-m-d'),
-                        'fin_semana' => $finSemana->format('Y-m-d'),
-                        'año_iso' => $fechaSemana->format('o'),
-                        'semana_iso' => $fechaSemana->format('W')
-                    ]);
-                } catch (\Exception $e) {
-                    // Si falla (por ejemplo, semana 53 que no existe), usar la semana actual
-                    \Log::warning('Error al parsear semana', [
+                // Validar que ambos valores sean válidos
+                if ($anoSemana && $numSemana && $numSemana >= 1 && $numSemana <= 53) {
+                    \Log::info('Parseando semana desde URL', [
                         'semana_param' => $semanaParam,
                         'ano' => $anoSemana,
-                        'semana' => $numSemana,
-                        'error' => $e->getMessage()
+                        'semana' => $numSemana
+                    ]);
+                    
+                    try {
+                        // Usar setISODate que maneja correctamente el cambio de año
+                        // setISODate usa el año ISO, que puede ser diferente al año calendario
+                        $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
+                        $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                        
+                        \Log::info('Semana parseada correctamente', [
+                            'fecha_semana' => $fechaSemana->format('Y-m-d'),
+                            'inicio_semana' => $inicioSemana->format('Y-m-d'),
+                            'fin_semana' => $finSemana->format('Y-m-d'),
+                            'año_iso' => $fechaSemana->format('o'),
+                            'semana_iso' => $fechaSemana->format('W')
+                        ]);
+                    } catch (\Exception $e) {
+                        // Si falla (por ejemplo, semana 53 que no existe), usar la semana actual
+                        \Log::warning('Error al parsear semana', [
+                            'semana_param' => $semanaParam,
+                            'ano' => $anoSemana,
+                            'semana' => $numSemana,
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
+                        ]);
+                        $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                    }
+                } else {
+                    \Log::warning('Parámetros de semana inválidos', [
+                        'semana_param' => $semanaParam,
+                        'ano' => $anoSemana,
+                        'semana' => $numSemana
                     ]);
                     $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                     $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);

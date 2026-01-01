@@ -211,12 +211,27 @@
                             <p class="text-sm text-violet-700 dark:text-violet-400">Planeador de Publicidad</p>
                         </div>
                     </div>
-                    <a href="{{ route('walee.calendario') }}" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium text-sm transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        Volver
-                    </a>
+                    <div class="flex items-center gap-2">
+                        @php
+                            $clientAsociado = \App\Models\Client::where('email', $cliente->correo)
+                                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
+                                ->first();
+                        @endphp
+                        @if($clientAsociado)
+                            <a href="{{ route('walee.cliente.settings.publicaciones', $clientAsociado->id) }}" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-sm transition-all flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                Publicar Ahora
+                            </a>
+                        @endif
+                        <a href="{{ route('walee.calendario') }}" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium text-sm transition-all flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Volver
+                        </a>
+                    </div>
                 </div>
             </div>
             

@@ -59,15 +59,33 @@
                     <h1 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-1">{{ $cliente->name }}</h1>
                     <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">Configuración y Publicaciones</p>
                 </div>
-                <a 
-                    href="{{ route('walee.facebook.clientes') }}" 
-                    class="inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all text-xs md:text-sm shadow-sm"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
-                    <span class="hidden sm:inline">Dashboard</span>
-                </a>
+                <div class="flex items-center gap-2">
+                    @php
+                        $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
+                            ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
+                            ->first();
+                    @endphp
+                    @if($clientePlaneador)
+                        <a 
+                            href="{{ route('walee.planeador.publicidad', $clientePlaneador->id) }}?vista=semanal&semana={{ now()->format('Y-W') }}" 
+                            class="inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-xs md:text-sm shadow-sm"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="hidden sm:inline">Programador de Publicaciones</span>
+                        </a>
+                    @endif
+                    <a 
+                        href="{{ route('walee.facebook.clientes') }}" 
+                        class="inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all text-xs md:text-sm shadow-sm"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Tabs -->

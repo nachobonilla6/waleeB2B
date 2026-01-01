@@ -601,8 +601,39 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         // Obtener cliente para datos del webhook
         $cliente = \App\Models\Cliente::find($evento->cliente_id);
         
-        // Webhook fijo para publicaciones programadas
-        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2bdf530c-b241-423b-b4e6-6d1476627f6e';
+        // Verificar si viene desde el planeador del cliente 626
+        $referer = $request->header('referer');
+        $esDesdePlaneador626 = false;
+        
+        // Verificar si el parámetro desde_planeador_626 está presente
+        if ($request->input('desde_planeador_626') == '1') {
+            $esDesdePlaneador626 = true;
+        }
+        // Verificar si el referer contiene la ruta del planeador del cliente 626
+        elseif ($referer && str_contains($referer, 'walee-cliente/626/settings/planeador')) {
+            $esDesdePlaneador626 = true;
+        } else {
+            // También verificar si el Client 626 tiene un Cliente asociado y coincide
+            $client626 = \App\Models\Client::find(626);
+            if ($client626) {
+                $clienteAsociado626 = \App\Models\Cliente::where('correo', $client626->email)
+                    ->orWhere('nombre_empresa', 'like', '%' . $client626->name . '%')
+                    ->first();
+                
+                if ($clienteAsociado626 && $clienteAsociado626->id == $evento->cliente_id) {
+                    $esDesdePlaneador626 = true;
+                }
+            }
+        }
+        
+        // Webhook según el origen
+        if ($esDesdePlaneador626) {
+            // Webhook específico para publicaciones desde el planeador del cliente 626
+            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
+        } else {
+            // Webhook fijo para publicaciones programadas (por defecto)
+            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2bdf530c-b241-423b-b4e6-6d1476627f6e';
+        }
         
         try {
             // Generar URL completa de la imagen si existe

@@ -1525,6 +1525,9 @@
             <form id="programar-publicacion-form" class="p-4 md:p-5 space-y-4 overflow-y-auto max-h-[calc(85vh-80px)]">
                 <input type="hidden" name="cliente_id" value="{{ $clientePlaneador ? $clientePlaneador->id : '' }}">
                 <input type="hidden" name="evento_id" id="evento_id_editar" value="">
+                @if(request()->routeIs('walee.cliente.settings.planeador') && $cliente->id == 626)
+                <input type="hidden" name="desde_planeador_626" value="1">
+                @endif
                 
                 <!-- Imagen (más alta) -->
                 <div>

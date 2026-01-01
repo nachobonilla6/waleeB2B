@@ -638,14 +638,8 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             }
         }
         
-        // Webhook según el origen
-        if ($esDesdePlaneador626) {
-            // Webhook específico para publicaciones desde el planeador del cliente 626
-            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
-        } else {
-            // Webhook fijo para publicaciones programadas (por defecto)
-            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2bdf530c-b241-423b-b4e6-6d1476627f6e';
-        }
+        // Webhook para publicaciones programadas
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
         
         try {
             // Generar URL completa de la imagen si existe

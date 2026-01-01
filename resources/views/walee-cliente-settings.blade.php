@@ -583,7 +583,7 @@
                                 </div>
                                 
                                 <div class="flex items-center gap-2">
-                                    <button onclick="navegarSemana(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                    <button type="button" onclick="navegarSemana(-1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                         </svg>
@@ -591,7 +591,7 @@
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
                                         {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
                                     </span>
-                                    <button onclick="navegarSemana(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
+                                    <button type="button" onclick="navegarSemana(1)" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                         </svg>
@@ -671,46 +671,74 @@
                                 semanaActual = '{{ now()->format("Y-W") }}';
                             }
                             
+                            console.log('Semana actual:', semanaActual, 'Dirección:', direccion);
+                            
                             // Parsear año y semana ISO
-                            const [ano, numSemana] = semanaActual.split('-');
-                            const anoInt = parseInt(ano);
-                            const semanaInt = parseInt(numSemana);
+                            const partes = semanaActual.split('-');
+                            if (partes.length !== 2) {
+                                console.error('Formato de semana inválido:', semanaActual);
+                                alert('Error: Formato de semana inválido');
+                                return;
+                            }
                             
-                            // Calcular la fecha del lunes de la semana actual usando lógica ISO
-                            // ISO week: semana 1 es la primera semana que contiene el 4 de enero
-                            const fecha4Enero = new Date(anoInt, 0, 4);
-                            const diaSemana4Enero = fecha4Enero.getDay() || 7; // Convertir domingo (0) a 7
-                            const lunesSemana1 = new Date(anoInt, 0, 4 - (diaSemana4Enero - 1));
+                            const anoInt = parseInt(partes[0]);
+                            const semanaInt = parseInt(partes[1]);
                             
-                            // Calcular el lunes de la semana actual
-                            const diasDesdeSemana1 = (semanaInt - 1) * 7;
-                            const lunesSemanaActual = new Date(lunesSemana1);
-                            lunesSemanaActual.setDate(lunesSemana1.getDate() + diasDesdeSemana1);
+                            if (isNaN(anoInt) || isNaN(semanaInt)) {
+                                console.error('Año o semana inválidos:', anoInt, semanaInt);
+                                alert('Error: Año o semana inválidos');
+                                return;
+                            }
                             
-                            // Agregar o restar semanas
-                            lunesSemanaActual.setDate(lunesSemanaActual.getDate() + (direccion * 7));
+                            console.log('Año:', anoInt, 'Semana:', semanaInt);
                             
-                            // Calcular la semana ISO de la nueva fecha
-                            const nuevoAno = lunesSemanaActual.getFullYear();
-                            const fecha4EneroNuevo = new Date(nuevoAno, 0, 4);
-                            const diaSemana4EneroNuevo = fecha4EneroNuevo.getDay() || 7;
-                            const lunesSemana1Nuevo = new Date(nuevoAno, 0, 4 - (diaSemana4EneroNuevo - 1));
+                            // Calcular nueva semana simplemente sumando/restando
+                            let nuevaSemana = semanaInt + direccion;
+                            let nuevoAno = anoInt;
                             
-                            // Calcular diferencia en días
-                            const diffTime = lunesSemanaActual - lunesSemana1Nuevo;
-                            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                            const nuevaSemanaNum = Math.floor(diffDays / 7) + 1;
+                            // Manejar cambios de año de forma simple
+                            if (nuevaSemana < 1) {
+                                // Ir al año anterior - asumir 52 semanas
+                                nuevoAno = anoInt - 1;
+                                nuevaSemana = 52;
+                            } else if (nuevaSemana > 52) {
+                                // Verificar si el año tiene 53 semanas
+                                const semanasEnAno = getSemanasEnAno(nuevoAno);
+                                console.log('Semanas en año', nuevoAno, ':', semanasEnAno);
+                                if (nuevaSemana > semanasEnAno) {
+                                    // Ir al año siguiente
+                                    nuevoAno = anoInt + 1;
+                                    nuevaSemana = 1;
+                                }
+                            }
                             
                             // Formatear nueva semana (con padding de 2 dígitos)
-                            const nuevaSemanaStr = nuevoAno + '-' + (nuevaSemanaNum < 10 ? '0' + nuevaSemanaNum : nuevaSemanaNum);
+                            const nuevaSemanaStr = nuevoAno + '-' + (nuevaSemana < 10 ? '0' + nuevaSemana : nuevaSemana);
+                            
+                            console.log('Nueva semana:', nuevaSemanaStr);
                             
                             // Construir nueva URL
                             const baseUrl = '{{ route("walee.cliente.settings.planeador", $cliente->id) }}';
                             const nuevaUrl = baseUrl + '?semana=' + nuevaSemanaStr;
                             
+                            console.log('Navegando a:', nuevaUrl);
+                            
                             // Navegar a la nueva URL
                             window.location.href = nuevaUrl;
                         }
+                        
+                        // Función auxiliar para obtener el número de semanas ISO en un año
+                        function getSemanasEnAno(year) {
+                            // Un año tiene 53 semanas ISO si el 4 de enero es jueves
+                            const jan4 = new Date(year, 0, 4);
+                            const dayOfWeek = jan4.getDay() || 7; // 1=lunes, 7=domingo
+                            
+                            // Si el 4 de enero es jueves (4), el año tiene 53 semanas
+                            return dayOfWeek === 4 ? 53 : 52;
+                        }
+                        
+                        // Hacer la función disponible globalmente
+                        window.navegarSemana = navegarSemana;
                         
                         async function abrirDetalleEvento(eventoId) {
                             try {

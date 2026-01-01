@@ -774,10 +774,15 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                     $nombreArchivo = basename($rutaImagen);
                     $rutaImagen = 'publicidad/' . $nombreArchivo;
                 }
-                $imagenUrl = asset($rutaImagen);
+                $imagenUrl = url($rutaImagen); // Usar url() en lugar de asset() para URL absoluta
             } else {
                 // Para otras rutas, intentar con storage (compatibilidad)
-                $imagenUrl = asset('storage/' . $rutaImagen);
+                $imagenUrl = url('storage/' . $rutaImagen);
+            }
+            
+            // Asegurar que sea una URL absoluta
+            if (!str_starts_with($imagenUrl, 'http')) {
+                $imagenUrl = url($imagenUrl);
             }
         }
         

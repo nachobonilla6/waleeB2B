@@ -999,13 +999,33 @@
                     let imagenHTML = '';
                     if (evento.imagen_url) {
                         let imageUrl = evento.imagen_url;
-                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
-                            imageUrl = '/' + imageUrl;
+                        console.log('URL original de imagen:', imageUrl);
+                        
+                        // Si la URL ya es completa (http/https), usarla directamente
+                        if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+                            // URL completa, usar tal cual
+                        } else if (imageUrl.startsWith('//')) {
+                            // URL protocolo-relativa, agregar https:
+                            imageUrl = 'https:' + imageUrl;
+                        } else if (imageUrl.startsWith('/')) {
+                            // Ruta absoluta, construir URL completa
+                            imageUrl = window.location.origin + imageUrl;
+                        } else {
+                            // Ruta relativa, construir URL completa
+                            // Si contiene 'publicidad/', usar directamente
+                            if (imageUrl.includes('publicidad/')) {
+                                imageUrl = window.location.origin + '/' + imageUrl;
+                            } else {
+                                imageUrl = window.location.origin + '/' + imageUrl;
+                            }
                         }
+                        
+                        console.log('URL final de imagen:', imageUrl);
+                        
                         imagenHTML = `
                             <div class="mt-4">
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen</label>
-                                <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" onerror="this.style.display='none'">
+                                <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" onerror="console.error('Error cargando imagen:', this.src); this.style.display='none';">
                             </div>
                         `;
                     }

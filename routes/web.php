@@ -764,25 +764,42 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
         if ($evento->imagen_url) {
             $rutaImagen = $evento->imagen_url;
             
-            // Si la ruta ya contiene 'publicidad/', usar directamente sin 'storage/'
-            if (str_contains($rutaImagen, 'publicidad/')) {
-                // Si tiene 'storage/' delante, removerlo
-                $rutaImagen = str_replace('storage/', '', $rutaImagen);
-                $rutaImagen = str_replace('public/', '', $rutaImagen);
-                // Asegurar que empiece con 'publicidad/'
-                if (!str_starts_with($rutaImagen, 'publicidad/')) {
-                    $nombreArchivo = basename($rutaImagen);
-                    $rutaImagen = 'publicidad/' . $nombreArchivo;
-                }
-                $imagenUrl = url($rutaImagen); // Usar url() en lugar de asset() para URL absoluta
-            } else {
-                // Para otras rutas, intentar con storage (compatibilidad)
-                $imagenUrl = url('storage/' . $rutaImagen);
+            // Limpiar la ruta
+            $rutaImagen = str_replace('storage/', '', $rutaImagen);
+            $rutaImagen = str_replace('public/', '', $rutaImagen);
+            $rutaImagen = str_replace('public_html/', '', $rutaImagen);
+            
+            // Asegurar que empiece con 'publicidad/'
+            if (!str_starts_with($rutaImagen, 'publicidad/')) {
+                $nombreArchivo = basename($rutaImagen);
+                $rutaImagen = 'publicidad/' . $nombreArchivo;
             }
             
-            // Asegurar que sea una URL absoluta
-            if (!str_starts_with($imagenUrl, 'http')) {
-                $imagenUrl = url($imagenUrl);
+            // Verificar si el archivo existe físicamente
+            $publicDir = is_dir(base_path('public_html')) 
+                ? base_path('public_html') 
+                : public_path();
+            
+            $rutaFisica = $publicDir . '/' . $rutaImagen;
+            
+            if (file_exists($rutaFisica)) {
+                // Construir URL absoluta
+                $imagenUrl = url($rutaImagen);
+                
+                // Asegurar que sea una URL absoluta completa
+                if (!str_starts_with($imagenUrl, 'http')) {
+                    $imagenUrl = url($imagenUrl);
+                }
+            } else {
+                // Si no existe, intentar con diferentes variantes
+                \Log::warning('Imagen no encontrada en ruta física', [
+                    'ruta_esperada' => $rutaFisica,
+                    'ruta_relativa' => $rutaImagen,
+                    'imagen_url_original' => $evento->imagen_url
+                ]);
+                
+                // Intentar construir URL de todas formas
+                $imagenUrl = url($rutaImagen);
             }
         }
         

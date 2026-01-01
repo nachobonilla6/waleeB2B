@@ -37,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         
+        // Configurar zona horaria de Costa Rica para Carbon
+        \Carbon\Carbon::setTimezone(config('app.timezone'));
+        
         // Registrar Observer para el modelo Client
         Client::observe(ClientObserver::class);
         

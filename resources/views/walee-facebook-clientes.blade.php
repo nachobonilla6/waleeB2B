@@ -181,7 +181,22 @@
                     <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Top Clientes</h3>
                     <div class="space-y-3">
                         @forelse($clientesTop as $index => $cliente)
-                            <a href="{{ route('walee.cliente.settings', $cliente->id) }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                            @php
+                                // Buscar el cliente en la tabla Cliente para obtener el ID del planeador
+                                $clientePlaneador = \App\Models\Cliente::where('correo', $cliente->email)
+                                    ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
+                                    ->first();
+                                
+                                // Si existe cliente en el planeador, construir URL del planeador
+                                if ($clientePlaneador) {
+                                    $semanaActual = now()->format('Y-W');
+                                    $urlPlaneador = route('walee.planeador.publicidad', $clientePlaneador->id) . '?vista=semanal&semana=' . $semanaActual;
+                                } else {
+                                    // Si no existe, usar la ruta de detalle del cliente
+                                    $urlPlaneador = route('walee.cliente.detalle', $cliente->id);
+                                }
+                            @endphp
+                            <a href="{{ $urlPlaneador }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
                                     @if($cliente->foto)
                                         <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">

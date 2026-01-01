@@ -173,53 +173,26 @@
                 ->values()
                 ->toArray();
             
-            // Filtrar emails que solo pertenecen a clientes_en_proceso
-            // Solo mostrar emails cuyo from_email (sender/remitente) está en la lista de correos de clientes_en_proceso
-            if (!empty($clientesEmails) && count($clientesEmails) > 0) {
-                // Filtrar por from_email (sender) que coincida con emails de clientes_en_proceso
-                // from_email puede venir en formato "Nombre <email@example.com>" o solo "email@example.com"
-                // Usamos una función que extrae el email correctamente de ambos formatos
-                $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
-                    foreach ($clientesEmails as $clienteEmail) {
-                        // Función que extrae el email: si tiene < > extrae lo de adentro, sino usa el valor completo
-                        $query->orWhereRaw('
-                            CASE 
-                                WHEN from_email LIKE "%<%" THEN 
-                                    LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
-                                ELSE 
-                                    LOWER(TRIM(from_email)) = ?
-                            END
-                        ', [$clienteEmail, $clienteEmail]);
-                    }
-                });
-                
-                // Contar emails de clientes
-                $emailsClientesCount = (clone $emailsQuery)->count();
-                
-                // Contar emails no-clientes (total - emails de clientes)
-                $emailsNoClientes = max(0, $totalEmails - $emailsClientesCount);
-                
-                // Contadores solo de clientes
-                $noLeidos = (clone $emailsQuery)->where('is_read', false)->count();
-                
-                // Paginar emails de clientes
-                $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(20);
-            } else {
-                // Si no hay clientes, no mostrar emails
-                $emailsQuery = \App\Models\EmailRecibido::whereRaw('1 = 0'); // Query que no devuelve resultados
-                $emailsNoClientes = $totalEmails;
-                $noLeidos = 0;
-                $emailsClientesCount = 0;
-                $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(20);
-            }
+            // Mostrar todos los emails recibidos con paginación de 5
+            $emailsQuery = \App\Models\EmailRecibido::query();
+            
+            // Contar todos los emails
+            $emailsClientesCount = $totalEmails;
+            $emailsNoClientes = 0;
+            
+            // Contar emails no leídos
+            $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+            
+            // Paginar todos los emails con 5 por página
+            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(5);
         } catch (\Exception $e) {
-            // En caso de error, no mostrar emails (solo de clientes)
-            $emailsQuery = \App\Models\EmailRecibido::whereRaw('1 = 0'); // Query que no devuelve resultados
-            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(20);
+            // En caso de error, mostrar todos los emails
+            $emailsQuery = \App\Models\EmailRecibido::query();
+            $emails = $emailsQuery->orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')->paginate(5);
             $totalEmails = \App\Models\EmailRecibido::count();
-            $emailsNoClientes = $totalEmails;
-            $noLeidos = 0;
-            $emailsClientesCount = 0;
+            $emailsNoClientes = 0;
+            $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
+            $emailsClientesCount = $totalEmails;
             $clientesEmails = [];
         }
     @endphp

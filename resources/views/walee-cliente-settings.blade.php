@@ -407,10 +407,12 @@
                         if ($semanaParam && strpos($semanaParam, '-') !== false) {
                             list($anoSemana, $numSemana) = explode('-', $semanaParam);
                             try {
+                                // Usar setISODate para calcular correctamente la semana ISO
                                 $fechaSemana = \Carbon\Carbon::now()->setISODate((int)$anoSemana, (int)$numSemana);
                                 $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                                 $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                             } catch (\Exception $e) {
+                                // Si hay error, usar la semana actual
                                 $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                                 $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                             }
@@ -660,14 +662,54 @@
                     
                     <script>
                         function navegarSemana(direccion) {
-                            const semanaActual = '{{ request()->get("semana", now()->format("Y-W")) }}';
+                            // Obtener la semana actual de la URL o usar la semana actual del servidor
+                            const urlParams = new URLSearchParams(window.location.search);
+                            let semanaActual = urlParams.get('semana');
+                            
+                            if (!semanaActual) {
+                                // Si no hay parámetro, usar la semana actual del servidor
+                                semanaActual = '{{ now()->format("Y-W") }}';
+                            }
+                            
+                            // Parsear año y semana ISO
                             const [ano, numSemana] = semanaActual.split('-');
-                            const nuevaSemana = parseInt(numSemana) + direccion;
-                            const nuevoAno = parseInt(ano);
-                            const nuevaSemanaStr = nuevoAno + '-' + (nuevaSemana < 10 ? '0' + nuevaSemana : nuevaSemana);
-                            let url = '{{ route("walee.cliente.settings.planeador", $cliente->id) }}';
-                            url += '?vista=semanal&semana=' + nuevaSemanaStr;
-                            window.location.href = url;
+                            const anoInt = parseInt(ano);
+                            const semanaInt = parseInt(numSemana);
+                            
+                            // Calcular la fecha del lunes de la semana actual usando lógica ISO
+                            // ISO week: semana 1 es la primera semana que contiene el 4 de enero
+                            const fecha4Enero = new Date(anoInt, 0, 4);
+                            const diaSemana4Enero = fecha4Enero.getDay() || 7; // Convertir domingo (0) a 7
+                            const lunesSemana1 = new Date(anoInt, 0, 4 - (diaSemana4Enero - 1));
+                            
+                            // Calcular el lunes de la semana actual
+                            const diasDesdeSemana1 = (semanaInt - 1) * 7;
+                            const lunesSemanaActual = new Date(lunesSemana1);
+                            lunesSemanaActual.setDate(lunesSemana1.getDate() + diasDesdeSemana1);
+                            
+                            // Agregar o restar semanas
+                            lunesSemanaActual.setDate(lunesSemanaActual.getDate() + (direccion * 7));
+                            
+                            // Calcular la semana ISO de la nueva fecha
+                            const nuevoAno = lunesSemanaActual.getFullYear();
+                            const fecha4EneroNuevo = new Date(nuevoAno, 0, 4);
+                            const diaSemana4EneroNuevo = fecha4EneroNuevo.getDay() || 7;
+                            const lunesSemana1Nuevo = new Date(nuevoAno, 0, 4 - (diaSemana4EneroNuevo - 1));
+                            
+                            // Calcular diferencia en días
+                            const diffTime = lunesSemanaActual - lunesSemana1Nuevo;
+                            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                            const nuevaSemanaNum = Math.floor(diffDays / 7) + 1;
+                            
+                            // Formatear nueva semana (con padding de 2 dígitos)
+                            const nuevaSemanaStr = nuevoAno + '-' + (nuevaSemanaNum < 10 ? '0' + nuevaSemanaNum : nuevaSemanaNum);
+                            
+                            // Construir nueva URL
+                            const baseUrl = '{{ route("walee.cliente.settings.planeador", $cliente->id) }}';
+                            const nuevaUrl = baseUrl + '?semana=' + nuevaSemanaStr;
+                            
+                            // Navegar a la nueva URL
+                            window.location.href = nuevaUrl;
                         }
                         
                         async function abrirDetalleEvento(eventoId) {

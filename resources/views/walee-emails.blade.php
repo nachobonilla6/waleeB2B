@@ -135,7 +135,38 @@
             </header>
             
             @php
-                $totalRecibidos = \App\Models\EmailRecibido::count();
+                // Obtener correos de clientes con estado pending (normalizados a minúsculas y sin espacios)
+                $clientesEmails = \App\Models\Client::where('estado', 'pending')
+                    ->whereNotNull('email')
+                    ->where('email', '!=', '')
+                    ->pluck('email')
+                    ->map(function($email) {
+                        return strtolower(trim($email));
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->toArray();
+                
+                // Contar solo emails de clientes con estado pending
+                if (!empty($clientesEmails) && count($clientesEmails) > 0) {
+                    $emailsQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
+                        foreach ($clientesEmails as $clienteEmail) {
+                            $query->orWhereRaw('
+                                CASE 
+                                    WHEN from_email LIKE "%<%" THEN 
+                                        LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
+                                    ELSE 
+                                        LOWER(TRIM(from_email)) = ?
+                                END
+                            ', [$clienteEmail, $clienteEmail]);
+                        }
+                    });
+                    $totalRecibidos = $emailsQuery->count();
+                } else {
+                    $totalRecibidos = 0;
+                }
+                
                 $totalEnviados = \App\Models\PropuestaPersonalizada::count();
                 $totalTemplates = \App\Models\EmailTemplate::where('user_id', auth()->id())->count();
             @endphp

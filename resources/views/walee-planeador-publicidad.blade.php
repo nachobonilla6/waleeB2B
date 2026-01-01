@@ -729,6 +729,30 @@
         </div>
     </div>
     
+    <!-- Modal Detalle Evento -->
+    <div id="detalleEventoModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-2xl max-h-[85vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Detalle de Publicación</h3>
+                <button onclick="closeDetalleEventoModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[calc(85vh-80px)]">
+                <div id="detalleEventoContent">
+                    <div class="flex items-center justify-center py-8">
+                        <svg class="animate-spin w-6 h-6 text-violet-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
@@ -906,10 +930,155 @@
             document.getElementById('eventoModal').classList.add('hidden');
         }
         
-        function showEventoDetail(eventoId) {
-            // Implementar detalle del evento
-            alert('Detalle del evento ' + eventoId);
+        async function showEventoDetail(eventoId) {
+            try {
+                // Mostrar modal con loading
+                document.getElementById('detalleEventoModal').classList.remove('hidden');
+                document.getElementById('detalleEventoContent').innerHTML = `
+                    <div class="flex items-center justify-center py-8">
+                        <svg class="animate-spin w-6 h-6 text-violet-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                `;
+                
+                // Obtener detalles del evento
+                const response = await fetch(`/publicidad-eventos/${eventoId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.evento) {
+                    const evento = data.evento;
+                    
+                    // Formatear fecha
+                    let fechaFormateada = 'No especificada';
+                    if (evento.fecha_inicio) {
+                        const fecha = new Date(evento.fecha_inicio);
+                        fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                    
+                    // Icono de plataforma
+                    let plataformaIcono = '';
+                    let plataformaNombre = evento.plataforma ? evento.plataforma.charAt(0).toUpperCase() + evento.plataforma.slice(1) : 'No especificada';
+                    
+                    if (evento.plataforma === 'facebook') {
+                        plataformaIcono = '<svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
+                    } else if (evento.plataforma === 'instagram') {
+                        plataformaIcono = '<svg class="w-5 h-5 text-pink-600 dark:text-pink-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>';
+                    } else if (evento.plataforma === 'linkedin') {
+                        plataformaIcono = '<svg class="w-5 h-5 text-blue-700 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>';
+                    } else if (evento.plataforma === 'twitter') {
+                        plataformaIcono = '<svg class="w-5 h-5 text-sky-500 dark:text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+                    }
+                    
+                    // Estado con badge
+                    let estadoBadge = '';
+                    if (evento.estado === 'programado') {
+                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-violet-100 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300">Programado</span>';
+                    } else if (evento.estado === 'publicado') {
+                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300">Publicado</span>';
+                    } else if (evento.estado === 'cancelado') {
+                        estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300">Cancelado</span>';
+                    }
+                    
+                    // Construir HTML del detalle
+                    let imagenHTML = '';
+                    if (evento.imagen_url) {
+                        let imageUrl = evento.imagen_url;
+                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                            imageUrl = '/' + imageUrl;
+                        }
+                        imagenHTML = `
+                            <div class="mt-4">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen</label>
+                                <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" onerror="this.style.display='none'">
+                            </div>
+                        `;
+                    }
+                    
+                    document.getElementById('detalleEventoContent').innerHTML = `
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Título</label>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">${evento.titulo || 'Sin título'}</p>
+                            </div>
+                            
+                            ${evento.texto ? `
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Texto</label>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">${evento.texto}</p>
+                            </div>
+                            ` : ''}
+                            
+                            ${evento.descripcion ? `
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">${evento.descripcion}</p>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Plataforma</label>
+                                    <div class="flex items-center gap-2">
+                                        ${plataformaIcono}
+                                        <span class="text-sm text-slate-800 dark:text-slate-200">${plataformaNombre}</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Estado</label>
+                                    ${estadoBadge}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Fecha y Hora</label>
+                                <p class="text-sm text-slate-800 dark:text-slate-200">${fechaFormateada}</p>
+                            </div>
+                            
+                            ${imagenHTML}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('detalleEventoContent').innerHTML = `
+                        <div class="text-center py-8">
+                            <p class="text-sm text-red-600 dark:text-red-400">Error al cargar los detalles del evento</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('detalleEventoContent').innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-sm text-red-600 dark:text-red-400">Error de conexión: ${error.message}</p>
+                    </div>
+                `;
+            }
         }
+        
+        function closeDetalleEventoModal() {
+            document.getElementById('detalleEventoModal').classList.add('hidden');
+        }
+        
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('detalleEventoModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDetalleEventoModal();
+        });
         
         // Sincronizar color picker
         document.getElementById('color').addEventListener('input', function(e) {

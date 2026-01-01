@@ -775,32 +775,42 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                 $rutaImagen = 'publicidad/' . $nombreArchivo;
             }
             
-            // Verificar si el archivo existe físicamente
+            // Verificar si el archivo existe físicamente en diferentes ubicaciones
             $publicDir = is_dir(base_path('public_html')) 
                 ? base_path('public_html') 
                 : public_path();
             
             $rutaFisica = $publicDir . '/' . $rutaImagen;
             
-            if (file_exists($rutaFisica)) {
-                // Construir URL absoluta
-                $imagenUrl = url($rutaImagen);
+            // Si no existe, intentar buscar el archivo por nombre
+            if (!file_exists($rutaFisica)) {
+                $nombreArchivo = basename($rutaImagen);
+                $directorioPublicidad = $publicDir . '/publicidad';
                 
-                // Asegurar que sea una URL absoluta completa
-                if (!str_starts_with($imagenUrl, 'http')) {
-                    $imagenUrl = url($imagenUrl);
+                if (is_dir($directorioPublicidad)) {
+                    // Buscar archivo por nombre (puede tener extensión diferente)
+                    $archivos = glob($directorioPublicidad . '/' . pathinfo($nombreArchivo, PATHINFO_FILENAME) . '.*');
+                    if (!empty($archivos)) {
+                        $archivoEncontrado = $archivos[0];
+                        $nombreArchivoEncontrado = basename($archivoEncontrado);
+                        $rutaImagen = 'publicidad/' . $nombreArchivoEncontrado;
+                        $rutaFisica = $archivoEncontrado;
+                    }
                 }
-            } else {
-                // Si no existe, intentar con diferentes variantes
-                \Log::warning('Imagen no encontrada en ruta física', [
-                    'ruta_esperada' => $rutaFisica,
-                    'ruta_relativa' => $rutaImagen,
-                    'imagen_url_original' => $evento->imagen_url
-                ]);
-                
-                // Intentar construir URL de todas formas
-                $imagenUrl = url($rutaImagen);
             }
+            
+            // Construir URL absoluta
+            $imagenUrl = url($rutaImagen);
+            
+            // Log para debug
+            \Log::info('URL de imagen construida para evento', [
+                'evento_id' => $evento->id,
+                'imagen_url_original' => $evento->imagen_url,
+                'ruta_imagen_final' => $rutaImagen,
+                'ruta_fisica' => $rutaFisica,
+                'existe_archivo' => file_exists($rutaFisica),
+                'url_final' => $imagenUrl
+            ]);
         }
         
         return response()->json([

@@ -127,10 +127,11 @@
                 $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
             }
             
-            // Calcular semana siguiente para el botón de navegación en el header
+            // Calcular semana anterior y siguiente para los botones de navegación en el header
             $anoActualSemana = (int)$inicioSemana->format('o');
             $numActualSemana = (int)$inicioSemana->format('W');
             
+            // Calcular semana siguiente
             try {
                 $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->addWeek();
                 $anoSemanaSiguiente = (int)$fechaSiguiente->format('o');
@@ -145,6 +146,22 @@
                 }
             }
             
+            // Calcular semana anterior
+            try {
+                $fechaAnterior = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->subWeek();
+                $anoSemanaAnterior = (int)$fechaAnterior->format('o');
+                $numSemanaAnterior = (int)$fechaAnterior->format('W');
+            } catch (\Exception $e) {
+                // Si falla, calcular manualmente
+                $numSemanaAnterior = $numActualSemana - 1;
+                $anoSemanaAnterior = $anoActualSemana;
+                if ($numSemanaAnterior < 1) {
+                    $numSemanaAnterior = 53;
+                    $anoSemanaAnterior = $anoActualSemana - 1;
+                }
+            }
+            
+            $semanaAnteriorFormato = $anoSemanaAnterior . '-' . str_pad($numSemanaAnterior, 2, '0', STR_PAD_LEFT);
             $semanaSiguienteFormato = $anoSemanaSiguiente . '-' . str_pad($numSemanaSiguiente, 2, '0', STR_PAD_LEFT);
         }
         
@@ -280,6 +297,13 @@
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
                             @if($vista === 'semanal')
+                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Semana Anterior</span>
+                                    <span class="sm:hidden">Anterior</span>
+                                </a>
                                 <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
                                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -288,12 +312,6 @@
                                     <span class="sm:hidden">Siguiente</span>
                                 </a>
                             @endif
-                            <a href="{{ route('walee.calendario') }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2">
-                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                                </svg>
-                                <span class="hidden sm:inline">Volver</span>
-                            </a>
                         </div>
                     </div>
                 </div>

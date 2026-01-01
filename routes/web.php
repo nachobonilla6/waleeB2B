@@ -673,7 +673,7 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         }
         
         // Webhook para publicaciones programadas
-        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
         
         try {
             // Generar URL completa de la imagen si existe

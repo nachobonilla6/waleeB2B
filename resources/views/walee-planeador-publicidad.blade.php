@@ -430,13 +430,12 @@
                                                     style="border-left: 3px solid {{ $yaPaso ? '#10b981' : '#eab308' }};"
                                                     title="{{ $evento->titulo }}"
                                                 >
-                                                    <div class="flex items-center gap-1.5">
-                                                        <span class="text-[10px] font-semibold opacity-75">{{ $evento->fecha_inicio->format('H:i') }}</span>
-                                                        <span class="flex-1 truncate">{{ $evento->titulo }}</span>
+                                                    <div class="flex items-center justify-between gap-1.5">
+                                                        <span class="text-[10px] font-semibold">{{ $evento->fecha_inicio->format('H:i') }}</span>
                                                         @if($yaPaso)
-                                                            <span class="text-[9px] font-medium opacity-70">Publicada</span>
+                                                            <span class="text-[9px] font-medium">Publicada</span>
                                                         @else
-                                                            <span class="text-[9px] font-medium opacity-70">Programada</span>
+                                                            <span class="text-[9px] font-medium">Programada</span>
                                                         @endif
                                                     </div>
                                                 </button>

@@ -237,36 +237,6 @@
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
             
-            <!-- Debug Info (temporal) - SIEMPRE VISIBLE -->
-            <div class="mb-6 p-4 bg-yellow-200 dark:bg-yellow-900/40 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl">
-                <h4 class="font-bold text-yellow-900 dark:text-yellow-100 mb-3 text-lg">🔍 Debug Info (temporal):</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Total emails:</strong> {{ isset($totalEmails) ? $totalEmails : 'ERROR' }}
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Emails de clientes:</strong> {{ isset($emailsClientesCount) ? $emailsClientesCount : 'ERROR' }}
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Emails no-clientes:</strong> {{ isset($emailsNoClientes) ? $emailsNoClientes : 'ERROR' }}
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Clientes en DB (clientes_en_proceso):</strong> {{ isset($clientesEmails) ? count($clientesEmails) : 'ERROR' }}
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Emails en página:</strong> {{ isset($emails) ? $emails->count() : 'ERROR' }}
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-2 rounded">
-                        <strong>Mostrar card:</strong> {{ (isset($emailsNoClientes) && $emailsNoClientes > 0) ? 'SÍ' : 'NO' }}
-                    </div>
-                </div>
-                @if(isset($clientesEmails) && count($clientesEmails) > 0)
-                    <div class="mt-3 bg-white dark:bg-slate-800 p-2 rounded text-xs">
-                        <strong>Emails de clientes_en_proceso (primeros 5):</strong> {{ implode(', ', array_slice($clientesEmails, 0, 5)) }}
-                    </div>
-                @endif
-            </div>
-            
             <!-- Emails No-Clientes Card -->
             @if(isset($emailsNoClientes) && $emailsNoClientes > 0)
                 <div class="mb-6 animate-fade-in-up">

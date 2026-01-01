@@ -813,15 +813,13 @@
             document.getElementById('removeImageBtn').classList.add('hidden');
             document.getElementById('imagen_publicacion').value = '';
             
-            // Establecer fecha por defecto: día siguiente a las 9 AM
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(9, 0, 0, 0);
-            const year = tomorrow.getFullYear();
-            const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
-            const day = String(tomorrow.getDate()).padStart(2, '0');
-            const hours = String(tomorrow.getHours()).padStart(2, '0');
-            const minutes = String(tomorrow.getMinutes()).padStart(2, '0');
+            // Establecer fecha por defecto: hora actual
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('fecha_publicacion').value = `${year}-${month}-${day}T${hours}:${minutes}`;
             
             // Pre-seleccionar Facebook

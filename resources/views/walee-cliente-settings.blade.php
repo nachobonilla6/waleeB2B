@@ -805,6 +805,101 @@
                         // Hacer la función disponible globalmente
                         window.eliminarEvento = eliminarEvento;
                         
+                        async function editarEvento() {
+                            const modal = document.getElementById('detalleEventoModal');
+                            const eventoId = modal.getAttribute('data-evento-id');
+                            
+                            if (!eventoId) {
+                                alert('Error: No se encontró el ID del evento');
+                                return;
+                            }
+                            
+                            try {
+                                // Cerrar el modal de detalle
+                                cerrarDetalleEvento();
+                                
+                                // Obtener los datos del evento
+                                const response = await fetch(`/publicidad-eventos/${eventoId}`, {
+                                    method: 'GET',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                    }
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    const evento = data.evento;
+                                    
+                                    // Establecer el ID del evento en el formulario
+                                    document.getElementById('evento_id_editar').value = eventoId;
+                                    
+                                    // Llenar el formulario con los datos del evento
+                                    const form = document.getElementById('programar-publicacion-form');
+                                    
+                                    // Texto
+                                    const textoField = form.querySelector('textarea[name="texto"]');
+                                    if (textoField) {
+                                        textoField.value = evento.texto || evento.descripcion || '';
+                                    }
+                                    
+                                    // Plataforma
+                                    if (evento.plataforma) {
+                                        seleccionarPlataforma(evento.plataforma);
+                                    }
+                                    
+                                    // Fecha y hora
+                                    const fechaField = form.querySelector('input[name="fecha_publicacion"]');
+                                    if (fechaField && evento.fecha_inicio) {
+                                        const fecha = new Date(evento.fecha_inicio);
+                                        const fechaLocal = new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000);
+                                        fechaField.value = fechaLocal.toISOString().slice(0, 16);
+                                    }
+                                    
+                                    // Imagen (si existe)
+                                    if (evento.imagen_url) {
+                                        const imagePreview = document.getElementById('imagePreview');
+                                        const previewImg = document.getElementById('previewImg');
+                                        const imagePlaceholder = document.getElementById('imagePlaceholder');
+                                        const removeImageBtn = document.getElementById('removeImageBtn');
+                                        
+                                        if (imagePreview && previewImg) {
+                                            let imageUrl = evento.imagen_url;
+                                            if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                                                imageUrl = '/' + imageUrl;
+                                            }
+                                            previewImg.src = imageUrl;
+                                            imagePreview.classList.remove('hidden');
+                                            if (imagePlaceholder) imagePlaceholder.classList.add('hidden');
+                                            if (removeImageBtn) removeImageBtn.classList.remove('hidden');
+                                        }
+                                    }
+                                    
+                                    // Actualizar título del modal y botón
+                                    const modalTitle = document.querySelector('#programarPublicacionModal h3');
+                                    const submitBtn = document.getElementById('submitBtnProgramar');
+                                    
+                                    if (modalTitle) {
+                                        modalTitle.textContent = 'Editar Publicación';
+                                    }
+                                    if (submitBtn) {
+                                        submitBtn.textContent = 'Guardar Cambios';
+                                    }
+                                    
+                                    // Abrir el modal
+                                    document.getElementById('programarPublicacionModal').classList.remove('hidden');
+                                } else {
+                                    alert('Error al cargar los datos del evento: ' + (data.message || 'Error desconocido'));
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                alert('Error de conexión: ' + error.message);
+                            }
+                        }
+                        
+                        // Hacer la función disponible globalmente
+                        window.editarEvento = editarEvento;
+                        
                         function cerrarDetalleEvento() {
                             document.getElementById('detalleEventoModal').classList.add('hidden');
                             document.getElementById('detalleEventoModal').removeAttribute('data-evento-id');
@@ -854,15 +949,19 @@
                                     
                                     const formData = new FormData(newForm);
                                     const submitBtn = newForm.querySelector('button[type="submit"]');
-                                    const originalText = submitBtn ? submitBtn.innerHTML : 'Programar Publicación';
+                                    const eventoId = newForm.querySelector('input[name="evento_id"]')?.value;
+                                    const isEditMode = eventoId && eventoId.trim() !== '';
+                                    const originalText = submitBtn ? submitBtn.innerHTML : (isEditMode ? 'Guardando...' : 'Programando...');
                                     
                                     if (submitBtn) {
                                         submitBtn.disabled = true;
-                                        submitBtn.innerHTML = 'Programando...';
+                                        submitBtn.innerHTML = isEditMode ? 'Guardando...' : 'Programando...';
                                     }
                                     
                                     try {
                                         console.log('Enviando formulario...', {
+                                            modo: isEditMode ? 'edición' : 'creación',
+                                            evento_id: eventoId,
                                             cliente_id: clienteId,
                                             plataforma: plataforma,
                                             fecha_publicacion: fechaPublicacion,
@@ -870,8 +969,18 @@
                                             tiene_imagen: formData.has('imagen')
                                         });
                                         
-                                        const response = await fetch('/publicidad-eventos/programar', {
-                                            method: 'POST',
+                                        let url = '/publicidad-eventos/programar';
+                                        let method = 'POST';
+                                        
+                                        if (isEditMode) {
+                                            url = `/publicidad-eventos/${eventoId}`;
+                                            method = 'PUT';
+                                            // Para PUT, necesitamos agregar _method
+                                            formData.append('_method', 'PUT');
+                                        }
+                                        
+                                        const response = await fetch(url, {
+                                            method: method,
                                             headers: {
                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                                             },
@@ -890,13 +999,13 @@
                                         console.log('Datos recibidos:', data);
                                         
                                         if (data.success) {
-                                            alert('✅ Publicación programada exitosamente');
+                                            alert(isEditMode ? '✅ Publicación actualizada exitosamente' : '✅ Publicación programada exitosamente');
                                             closeProgramarPublicacionModal();
                                             setTimeout(() => {
                                                 location.reload();
                                             }, 500);
                                         } else {
-                                            alert('Error: ' + (data.message || 'Error al programar publicación'));
+                                            alert('Error: ' + (data.message || (isEditMode ? 'Error al actualizar publicación' : 'Error al programar publicación')));
                                         }
                                     } catch (error) {
                                         console.error('Error completo:', error);
@@ -966,6 +1075,22 @@
             @endif
             
             if (modal) {
+                // Limpiar el modo de edición
+                const eventoIdInput = document.getElementById('evento_id_editar');
+                if (eventoIdInput) {
+                    eventoIdInput.value = '';
+                }
+                
+                // Restaurar el título y botón del modal
+                const modalTitle = document.querySelector('#programarPublicacionModal h3');
+                const submitBtn = document.getElementById('submitBtnProgramar');
+                if (modalTitle) {
+                    modalTitle.textContent = 'Programar Publicación';
+                }
+                if (submitBtn) {
+                    submitBtn.textContent = 'Programar Publicación';
+                }
+                
                 modal.classList.remove('hidden');
                 console.log('Modal abierto');
                 
@@ -983,6 +1108,20 @@
             const form = document.getElementById('programar-publicacion-form');
             if (form) {
                 form.reset();
+                // Limpiar el ID del evento para salir del modo edición
+                const eventoIdInput = document.getElementById('evento_id_editar');
+                if (eventoIdInput) {
+                    eventoIdInput.value = '';
+                }
+            }
+            // Restaurar el título y botón del modal
+            const modalTitle = document.querySelector('#programarPublicacionModal h3');
+            const submitBtn = document.getElementById('submitBtnProgramar');
+            if (modalTitle) {
+                modalTitle.textContent = 'Programar Publicación';
+            }
+            if (submitBtn) {
+                submitBtn.textContent = 'Programar Publicación';
             }
             const imagePreview = document.getElementById('imagePreview');
             const imagePlaceholder = document.getElementById('imagePlaceholder');
@@ -1385,6 +1524,7 @@
             </div>
             <form id="programar-publicacion-form" class="p-4 md:p-5 space-y-4 overflow-y-auto max-h-[calc(85vh-80px)]">
                 <input type="hidden" name="cliente_id" value="{{ $clientePlaneador ? $clientePlaneador->id : '' }}">
+                <input type="hidden" name="evento_id" id="evento_id_editar" value="">
                 
                 <!-- Imagen (más alta) -->
                 <div>
@@ -1482,7 +1622,7 @@
                 </div>
                 
                 <div class="flex gap-2 pt-1">
-                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all">
+                    <button type="submit" id="submitBtnProgramar" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all">
                         Programar Publicación
                     </button>
                     <button type="button" onclick="closeProgramarPublicacionModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-sm font-medium transition-all">
@@ -1552,11 +1692,17 @@
                 <button onclick="cerrarDetalleEvento()" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-medium transition-all text-sm">
                     Cerrar
                 </button>
+                <button onclick="editarEvento()" class="px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Editar
+                </button>
                 <button onclick="eliminarEvento()" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all text-sm flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
-                    Eliminar Publicación
+                    Eliminar
                 </button>
             </div>
         </div>

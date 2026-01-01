@@ -384,16 +384,59 @@ Route::post('/publicidad-eventos', function (\Illuminate\Http\Request $request) 
 Route::put('/publicidad-eventos/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $evento = \App\Models\PublicidadEvento::findOrFail($id);
-        $evento->titulo = $request->input('titulo');
-        $evento->descripcion = $request->input('descripcion');
-        $evento->tipo_publicidad = $request->input('tipo_publicidad');
-        $evento->plataforma = $request->input('plataforma');
-        $evento->estado = $request->input('estado', 'programado');
-        $evento->fecha_inicio = \Carbon\Carbon::parse($request->input('fecha_inicio'));
-        $evento->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : null;
-        $evento->color = $request->input('color', '#8b5cf6');
-        $evento->recurrencia = $request->input('recurrencia', 'none');
-        $evento->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : null;
+        
+        // Actualizar campos básicos
+        $evento->titulo = $request->input('titulo', $evento->titulo);
+        $evento->texto = $request->input('texto', $evento->texto);
+        $evento->descripcion = $request->input('descripcion', $evento->descripcion);
+        $evento->tipo_publicidad = $request->input('tipo_publicidad', $evento->tipo_publicidad);
+        
+        // Plataforma (puede venir como plataforma_publicacion o plataforma)
+        $plataforma = $request->input('plataforma_publicacion') ?: $request->input('plataforma');
+        if ($plataforma) {
+            $evento->plataforma = $plataforma;
+        }
+        
+        $evento->estado = $request->input('estado', $evento->estado ?: 'programado');
+        
+        // Fecha (puede venir como fecha_publicacion o fecha_inicio)
+        $fechaInput = $request->input('fecha_publicacion') ?: $request->input('fecha_inicio');
+        if ($fechaInput) {
+            $evento->fecha_inicio = \Carbon\Carbon::parse($fechaInput);
+        }
+        
+        $evento->fecha_fin = $request->input('fecha_fin') ? \Carbon\Carbon::parse($request->input('fecha_fin')) : $evento->fecha_fin;
+        $evento->color = $request->input('color', $evento->color ?: '#8b5cf6');
+        $evento->recurrencia = $request->input('recurrencia', $evento->recurrencia ?: 'none');
+        $evento->recurrencia_fin = $request->input('recurrencia_fin') ? \Carbon\Carbon::parse($request->input('recurrencia_fin')) : $evento->recurrencia_fin;
+        
+        // Subir nueva imagen si existe
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $nombreArchivo = 'publicidad_' . $evento->cliente_id . '_' . time() . '.' . $imagen->getClientOriginalExtension();
+            
+            // Guardar directamente en public/publicidad (ruta pública)
+            $publicDir = public_path('publicidad');
+            if (!file_exists($publicDir)) {
+                mkdir($publicDir, 0755, true);
+            }
+            
+            $rutaCompleta = $publicDir . '/' . $nombreArchivo;
+            $imagen->move($publicDir, $nombreArchivo);
+            
+            // Guardar la ruta relativa: publicidad/nombre.jpg (sin storage/)
+            $evento->imagen_url = 'publicidad/' . $nombreArchivo;
+            
+            // Asegurar permisos
+            chmod($rutaCompleta, 0644);
+            
+            \Log::info('Imagen de publicidad actualizada', [
+                'ruta_completa' => $rutaCompleta,
+                'ruta_relativa' => $evento->imagen_url,
+                'url_publica' => asset($evento->imagen_url)
+            ]);
+        }
+        
         $evento->save();
         
         return response()->json(['success' => true, 'message' => 'Evento de publicidad actualizado exitosamente']);
@@ -559,7 +602,7 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         $cliente = \App\Models\Cliente::find($evento->cliente_id);
         
         // Webhook fijo para publicaciones programadas
-        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
+        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/2bdf530c-b241-423b-b4e6-6d1476627f6e';
         
         try {
             // Generar URL completa de la imagen si existe

@@ -547,7 +547,7 @@
                                                             <div class="flex items-center justify-between md:justify-start gap-2">
                                                                 <span class="text-xs md:text-[10px] font-semibold">{{ $evento->fecha_inicio->format('H:i') }}</span>
                                                                 @if($yaPaso)
-                                                                    <span class="text-[10px] md:text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-800/50">Publicada</span>
+                                                                    <span class="text-[10px] md:text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-800/50">Publicado</span>
                                                                 @else
                                                                     <span class="text-[10px] md:text-[9px] font-medium px-2 py-0.5 rounded-full bg-yellow-200 dark:bg-yellow-800/50">Programada</span>
                                                                 @endif

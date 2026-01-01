@@ -209,6 +209,11 @@
                                                 </span>
                                             @endif
                                         </div>
+                                        @if($cliente->email)
+                                            <p class="text-sm text-slate-600 dark:text-slate-400 truncate mt-1">
+                                                {{ $cliente->email }}
+                                            </p>
+                                        @endif
                                         <div class="flex items-center gap-2 mt-1">
                                             <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                                                 Pendiente

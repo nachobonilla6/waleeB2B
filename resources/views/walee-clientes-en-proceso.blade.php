@@ -84,7 +84,7 @@
         use App\Models\Client;
         use App\Models\PropuestaPersonalizada;
         
-        $clientes = Client::where('estado', 'propuesta_enviada')
+        $clientes = Client::where('estado', 'pending')
             ->orderBy('created_at', 'desc')
             ->get();
         

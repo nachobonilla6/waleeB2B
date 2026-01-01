@@ -459,7 +459,7 @@
                             </div>
                             
                             <!-- Días de la Semana -->
-                            <div class="grid grid-cols-7 divide-x divide-slate-200 dark:divide-slate-700">
+                            <div class="grid grid-cols-1 md:grid-cols-7 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-700">
                                 @php
                                     $diaSemana = $inicioSemana->copy();
                                     $hoy = now();
@@ -473,52 +473,68 @@
                                         // Ordenar eventos por hora
                                         $eventosOrdenados = $eventosDelDia->sortBy('fecha_inicio');
                                     @endphp
-                                    <div class="min-h-[400px] flex flex-col">
+                                    <div class="min-h-[300px] md:min-h-[400px] flex flex-col border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 last:border-b-0">
                                         <!-- Header del día -->
-                                        <div class="p-3 border-b border-slate-200 dark:border-slate-700 {{ $esHoy ? 'bg-violet-50 dark:bg-violet-500/10' : '' }}">
-                                            <div class="text-center">
-                                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{{ $diaSemana->format('D') }}</p>
-                                                <p class="text-lg font-bold {{ $esHoy ? 'text-violet-600 dark:text-violet-400' : 'text-slate-900 dark:text-white' }} mt-1">
-                                                    {{ $diaSemana->day }}
-                                                </p>
+                                        <div class="p-3 md:p-3 border-b border-slate-200 dark:border-slate-700 {{ $esHoy ? 'bg-violet-50 dark:bg-violet-500/10' : 'bg-slate-50 dark:bg-slate-800/30' }}">
+                                            <div class="flex md:block items-center justify-between md:text-center">
+                                                <div>
+                                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{{ $diaSemana->format('D') }}</p>
+                                                    <p class="text-lg md:text-lg font-bold {{ $esHoy ? 'text-violet-600 dark:text-violet-400' : 'text-slate-900 dark:text-white' }} mt-1">
+                                                        {{ $diaSemana->day }} {{ $meses[$diaSemana->month] }}
+                                                    </p>
+                                                </div>
+                                                <div class="md:hidden">
+                                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $eventosOrdenados->count() }} eventos</span>
+                                                </div>
                                             </div>
                                         </div>
                                         
                                         <!-- Eventos del día -->
-                                        <div class="flex-1 p-2 space-y-1.5 overflow-y-auto">
-                                            @foreach($eventosOrdenados as $evento)
-                                                @php
-                                                    $ahora = now();
-                                                    $yaPaso = $evento->fecha_inicio->lt($ahora);
-                                                    
-                                                    // Si ya pasó el tiempo → verde "publicada"
-                                                    // Si aún falta → amarillo "programada"
-                                                    if ($yaPaso) {
-                                                        $estadoVisual = 'publicado';
-                                                        $colorBg = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-l-3 border-emerald-500';
-                                                        $claseBtn = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300';
-                                                    } else {
-                                                        $estadoVisual = 'programado';
-                                                        $colorBg = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-l-3 border-yellow-500';
-                                                        $claseBtn = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300';
-                                                    }
-                                                @endphp
-                                                <button 
-                                                    onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
-                                                    class="w-full text-left px-2 py-1.5 rounded text-xs font-medium transition-all hover:opacity-80 {{ $claseBtn }}"
-                                                    style="border-left: 3px solid {{ $yaPaso ? '#10b981' : '#eab308' }};"
-                                                    title="{{ $evento->titulo }}"
-                                                >
-                                                    <div class="flex items-center justify-between gap-1.5">
-                                                        <span class="text-[10px] font-semibold">{{ $evento->fecha_inicio->format('H:i') }}</span>
-                                                        @if($yaPaso)
-                                                            <span class="text-[9px] font-medium">Publicada</span>
-                                                        @else
-                                                            <span class="text-[9px] font-medium">Programada</span>
+                                        <div class="flex-1 p-3 md:p-2 space-y-2 md:space-y-1.5 overflow-y-auto">
+                                            @if($eventosOrdenados->count() > 0)
+                                                @foreach($eventosOrdenados as $evento)
+                                                    @php
+                                                        $ahora = now();
+                                                        $yaPaso = $evento->fecha_inicio->lt($ahora);
+                                                        
+                                                        // Si ya pasó el tiempo → verde "publicada"
+                                                        // Si aún falta → amarillo "programada"
+                                                        if ($yaPaso) {
+                                                            $estadoVisual = 'publicado';
+                                                            $colorBg = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-l-3 border-emerald-500';
+                                                            $claseBtn = 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300';
+                                                        } else {
+                                                            $estadoVisual = 'programado';
+                                                            $colorBg = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-l-3 border-yellow-500';
+                                                            $claseBtn = 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300';
+                                                        }
+                                                    @endphp
+                                                    <button 
+                                                        onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
+                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 {{ $claseBtn }} shadow-sm md:shadow-none"
+                                                        style="border-left: 4px solid {{ $yaPaso ? '#10b981' : '#eab308' }};"
+                                                        title="{{ $evento->titulo }}"
+                                                    >
+                                                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
+                                                            <div class="flex items-center justify-between md:justify-start gap-2">
+                                                                <span class="text-xs md:text-[10px] font-semibold">{{ $evento->fecha_inicio->format('H:i') }}</span>
+                                                                @if($yaPaso)
+                                                                    <span class="text-[10px] md:text-[9px] font-medium px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-800/50">Publicada</span>
+                                                                @else
+                                                                    <span class="text-[10px] md:text-[9px] font-medium px-2 py-0.5 rounded-full bg-yellow-200 dark:bg-yellow-800/50">Programada</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        @if($evento->titulo && strlen($evento->titulo) > 0)
+                                                            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 md:hidden line-clamp-2">{{ $evento->titulo }}</p>
                                                         @endif
-                                                    </div>
-                                                </button>
-                                            @endforeach
+                                                    </button>
+                                                @endforeach
+                                            @else
+                                                <div class="text-center py-4 md:py-2">
+                                                    <p class="text-xs text-slate-400 dark:text-slate-500">Sin eventos</p>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     @php $diaSemana->addDay(); @endphp

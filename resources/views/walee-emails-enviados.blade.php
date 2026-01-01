@@ -85,7 +85,7 @@
     @php
         $emails = \App\Models\PropuestaPersonalizada::with('cliente')
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(5);
         
         // Contadores
         $totalEmails = \App\Models\PropuestaPersonalizada::count();

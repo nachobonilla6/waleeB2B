@@ -164,12 +164,16 @@
             // Contar emails no leídos
             $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();
             
-            // Obtener emails con paginación de 5, ordenados por más recientes primero
-            $emails = \App\Models\EmailRecibido::orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')
+            // Obtener emails con paginación de 5, ordenados por más recientes primero (más nuevos primero)
+            $emails = \App\Models\EmailRecibido::orderBy('received_at', 'DESC')
+                ->orderBy('created_at', 'DESC')
+                ->orderBy('updated_at', 'DESC')
                 ->paginate(5);
         } catch (\Exception $e) {
             // En caso de error, mostrar emails con paginación
-            $emails = \App\Models\EmailRecibido::orderByRaw('COALESCE(received_at, created_at, updated_at) DESC')
+            $emails = \App\Models\EmailRecibido::orderBy('received_at', 'DESC')
+                ->orderBy('created_at', 'DESC')
+                ->orderBy('updated_at', 'DESC')
                 ->paginate(5);
             $totalEmails = \App\Models\EmailRecibido::count();
             $noLeidos = \App\Models\EmailRecibido::where('is_read', false)->count();

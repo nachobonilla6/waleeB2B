@@ -90,6 +90,8 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         use App\Models\Client;
+        use App\Models\Cliente;
+        use App\Models\PublicidadEvento;
         use Carbon\Carbon;
         
         // Estadísticas generales
@@ -114,6 +116,43 @@
             ->orderBy('updated_at', 'desc')
             ->limit(5)
             ->get();
+        
+        // Clientes con publicaciones
+        $clientesConPublicaciones = [];
+        $publicacionesData = PublicidadEvento::select('cliente_id')
+            ->selectRaw('COUNT(*) as total_publicaciones')
+            ->selectRaw('SUM(CASE WHEN estado = "programado" THEN 1 ELSE 0 END) as programadas')
+            ->groupBy('cliente_id')
+            ->get();
+        
+        foreach ($publicacionesData as $pubData) {
+            $clientePlaneador = Cliente::find($pubData->cliente_id);
+            if ($clientePlaneador) {
+                // Buscar el cliente correspondiente en Client por email
+                $client = Client::where('email', $clientePlaneador->correo)->first();
+                if (!$client) {
+                    // Si no se encuentra por email, buscar por nombre
+                    $client = Client::where('name', 'like', '%' . $clientePlaneador->nombre_empresa . '%')->first();
+                }
+                
+                if ($client) {
+                    $clientesConPublicaciones[] = [
+                        'client' => $client,
+                        'cliente_planeador' => $clientePlaneador,
+                        'total_publicaciones' => $pubData->total_publicaciones,
+                        'programadas' => $pubData->programadas,
+                    ];
+                }
+            }
+        }
+        
+        // Ordenar por total de publicaciones descendente
+        usort($clientesConPublicaciones, function($a, $b) {
+            return $b['total_publicaciones'] <=> $a['total_publicaciones'];
+        });
+        
+        // Limitar a los primeros 10
+        $clientesConPublicaciones = array_slice($clientesConPublicaciones, 0, 10);
         
         // Datos para gráfico de últimos 7 días
         $ultimos7Dias = [];

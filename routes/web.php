@@ -373,13 +373,40 @@ Route::get('/walee-calendario', function () {
 
 // Planeador de Publicidad - Requiere cliente_id
 Route::get('/walee-planeador-publicidad/{cliente_id}', function ($cliente_id) {
-    $cliente = \App\Models\Cliente::findOrFail($cliente_id);
+    // Primero intentar buscar en la tabla Cliente
+    $cliente = \App\Models\Cliente::find($cliente_id);
+    
+    // Si no existe, buscar en Client (clientes_en_proceso) y crear/obtener el correspondiente en Cliente
+    if (!$cliente) {
+        $client = \App\Models\Client::find($cliente_id);
+        
+        if ($client) {
+            // Buscar si ya existe un Cliente con el mismo email
+            $cliente = \App\Models\Cliente::where('correo', $client->email)->first();
+            
+            // Si no existe, crear uno nuevo basado en el Client
+            if (!$cliente) {
+                $cliente = \App\Models\Cliente::create([
+                    'nombre_empresa' => $client->name,
+                    'correo' => $client->email ?: '',
+                    'telefono' => $client->telefono_1,
+                    'telefono_alternativo' => $client->telefono_2,
+                    'direccion' => $client->address,
+                    'url_sitio' => $client->website,
+                    'fecha_registro' => $client->created_at ? $client->created_at->toDateString() : now()->toDateString(),
+                ]);
+            }
+        } else {
+            // Si no se encuentra en ninguna tabla, lanzar error
+            abort(404, 'Cliente no encontrado');
+        }
+    }
     
     // Si no viene vista, redirigir a vista semanal
     if (!request()->has('vista')) {
         $semanaActual = now()->format('Y-W');
         return redirect()->route('walee.planeador.publicidad', [
-            'cliente_id' => $cliente_id,
+            'cliente_id' => $cliente->id,
             'vista' => 'semanal',
             'semana' => $semanaActual
         ]);

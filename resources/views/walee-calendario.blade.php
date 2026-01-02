@@ -441,14 +441,6 @@
             return $nota->fecha ? $nota->fecha->format('Y-m-d') : now()->format('Y-m-d');
         });
         
-        // Obtener todas las notas ordenadas por pinned y fecha para el sidebar
-        $notasSidebar = \App\Models\Note::with(['cliente', 'user'])
-            ->orderBy('pinned', 'desc')
-            ->orderBy('fecha', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->limit(20)
-            ->get();
-        
         $meses = [
             1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
             5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
@@ -473,6 +465,52 @@
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = $meses[$mes] . ' ' . $ano; @endphp
             @include('partials.walee-navbar')
+            
+            <!-- Header con Botones de Acción -->
+            <div class="mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-3">
+                            <svg class="w-6 h-6 md:w-8 md:h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Calendario
+                        </h1>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                            {{ $meses[$mes] }} {{ $ano }}
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <button 
+                            onclick="showNuevaCitaModal()"
+                            class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Nueva Cita</span>
+                        </button>
+                        <button 
+                            onclick="showNuevaTareaModal()"
+                            class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                            <span>Nueva Tarea</span>
+                        </button>
+                        <button 
+                            onclick="showNuevaNotaModal()"
+                            class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span>Nueva Nota</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
             
             <!-- Google Calendar Status Indicator -->
             @if(!$googleCalendarConnected)
@@ -513,317 +551,8 @@
                 </div>
             @endif
             
-            <!-- Layout con Sidebar para pantallas medianas/grandes -->
-            <div class="flex flex-col md:flex-row gap-4 md:gap-6">
-                <!-- Sidebar (solo visible en md+) -->
-                <div class="hidden md:flex md:flex-col md:w-64 lg:w-72 flex-shrink-0 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 shadow-sm dark:shadow-none sticky top-6">
-                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Controles</h3>
-                        
-                        <!-- Selector de Vista -->
-                        <div class="mb-4">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Vista</label>
-                            <div class="flex gap-2">
-                                <a href="{{ route('walee.calendario', ['mes' => $mes, 'ano' => $ano]) }}" class="flex-1 px-3 py-2 rounded-lg {{ !request()->has('vista') || request()->get('vista') !== 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
-                                    Mes
-                                </a>
-                                <a href="{{ route('walee.calendario', ['vista' => 'semanal', 'semana' => request()->get('semana', now()->format('Y-W'))]) }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }} font-medium transition-all text-sm text-center">
-                                    Semana
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Navegación -->
-                        <div class="mb-4">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Navegación</label>
-                            <div class="flex items-center justify-between gap-2">
-                                @if($vista === 'semanal')
-                                    @php
-                                        $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                        $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                        $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                        $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . $semanaAnterior->format('W');
-                                        $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . $semanaSiguiente->format('W');
-                                        $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
-                                    @endphp
-                                    <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                        </svg>
-                                    </a>
-                                    <a href="?vista=semanal&semana={{ $semanaActualFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
-                                        Esta Semana
-                                    </a>
-                                    <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </a>
-                                @else
-                                    <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                        </svg>
-                                    </a>
-                                    <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm text-center">
-                                        Hoy
-                                    </a>
-                                    <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="flex-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                        </svg>
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        <!-- Selectores de Fecha -->
-                        <div class="mb-4 space-y-2">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">Fecha</label>
-                            <select 
-                                id="selectDia"
-                                onchange="navegarAFecha()"
-                                class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                            >
-                                <option value="">Día</option>
-                                @foreach($diasDelMes as $dia)
-                                    <option value="{{ $dia }}" {{ request()->get('dia') == $dia ? 'selected' : '' }}>{{ $dia }}</option>
-                                @endforeach
-                            </select>
-                            
-                            <select 
-                                id="selectMes"
-                                onchange="navegarAFecha()"
-                                class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                            >
-                                @foreach($meses as $numMes => $nombreMes)
-                                    <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
-                                @endforeach
-                            </select>
-                            
-                            <select 
-                                id="selectAno"
-                                onchange="navegarAFecha()"
-                                class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                            >
-                                @foreach($anos as $numAno)
-                                    <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <!-- Botones de Acción -->
-                        <div class="space-y-2">
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">Acciones</label>
-                            <button 
-                                onclick="showNuevaCitaModal()"
-                                class="w-full px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                            >
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <span class="text-sm">Nueva Cita</span>
-                            </button>
-                            <button 
-                                onclick="showNuevaTareaModal()"
-                                class="w-full px-4 py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                            >
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                </svg>
-                                <span class="text-sm">Nueva Tarea</span>
-                            </button>
-                            <button 
-                                onclick="showNuevaNotaModal()"
-                                class="w-full px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                            >
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                                <span class="text-sm">Nueva Nota</span>
-                            </button>
-                        </div>
-                        
-                        <!-- Sección de Notas -->
-                        <div class="mt-6">
-                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                                Notas Recientes
-                            </h3>
-                            <div class="space-y-2 max-h-[400px] overflow-y-auto">
-                                @forelse($notasSidebar as $nota)
-                                    <div 
-                                        onclick="editNota({{ $nota->id }})"
-                                        class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all group {{ $nota->pinned ? 'border-blue-500 dark:border-blue-600' : '' }}"
-                                    >
-                                        <div class="flex items-start justify-between gap-2 mb-1">
-                                            <div class="flex items-center gap-2 flex-1 min-w-0">
-                                                @if($nota->pinned)
-                                                    <svg class="w-4 h-4 text-blue-700 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                                                    </svg>
-                                                @endif
-                                                <span class="text-xs font-medium text-blue-800 dark:text-blue-300 uppercase">
-                                                    {{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}
-                                                </span>
-                                            </div>
-                                            <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0">
-                                                {{ $nota->created_at->diffForHumans() }}
-                                            </span>
-                                        </div>
-                                        <p class="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 mb-2">
-                                            {{ Str::limit($nota->content, 80) }}
-                                        </p>
-                                        @if($nota->cliente)
-                                            <div class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                                                </svg>
-                                                <span class="truncate">{{ $nota->cliente->nombre_empresa }}</span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                @empty
-                                    <div class="text-center py-6 text-slate-500 dark:text-slate-400">
-                                        <svg class="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        <p class="text-sm">No hay notas aún</p>
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Contenido Principal: Calendario -->
-                <div class="flex-1 min-w-0">
-                    <!-- Calendar Controls (solo móviles) -->
-                    <div class="mb-4 md:hidden animate-fade-in-up" style="animation-delay: 0.1s;">
-                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3 shadow-sm dark:shadow-none">
-                            <div class="flex flex-col gap-3">
-                                <!-- Selector de Vista (Móvil) -->
-                                <div class="flex gap-2">
-                                    <a href="{{ route('walee.calendario', ['mes' => $mes, 'ano' => $ano]) }}" class="flex-1 px-3 py-2 rounded-lg {{ !request()->has('vista') || request()->get('vista') !== 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm text-center">
-                                        Mes
-                                    </a>
-                                    <a href="{{ route('walee.calendario', ['vista' => 'semanal', 'semana' => request()->get('semana', now()->format('Y-W'))]) }}" class="flex-1 px-3 py-2 rounded-lg {{ request()->get('vista') === 'semanal' ? 'bg-emerald-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300' }} font-medium transition-all text-sm text-center">
-                                        Semana
-                                    </a>
-                                </div>
-                                <!-- Navegación y Selectores de Fecha -->
-                                <div class="flex flex-col items-stretch gap-3">
-                                    <div class="flex items-center justify-center gap-2">
-                                        @if($vista === 'semanal')
-                                            @php
-                                                $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                                $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                                $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                                $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . $semanaAnterior->format('W');
-                                                $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . $semanaSiguiente->format('W');
-                                                $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
-                                            @endphp
-                                            <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                                </svg>
-                                            </a>
-                                            <a href="?vista=semanal&semana={{ $semanaActualFormato }}" class="px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
-                                                Esta Semana
-                                            </a>
-                                            <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                </svg>
-                                            </a>
-                                        @else
-                                            <a href="?mes={{ $fechaActual->copy()->subMonth()->month }}&ano={{ $fechaActual->copy()->subMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                                                </svg>
-                                            </a>
-                                            <a href="?mes={{ now()->month }}&ano={{ now()->year }}" class="px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-sm">
-                                                Hoy
-                                            </a>
-                                            <a href="?mes={{ $fechaActual->copy()->addMonth()->month }}&ano={{ $fechaActual->copy()->addMonth()->year }}" class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
-                                                <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                </svg>
-                                            </a>
-                                        @endif
-                                    </div>
-                                    
-                                    <!-- Selectores de Fecha -->
-                                    <div class="flex items-center gap-2 justify-center">
-                                        <select 
-                                            id="selectDia"
-                                            onchange="navegarAFecha()"
-                                            class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                                        >
-                                            <option value="">Día</option>
-                                            @foreach($diasDelMes as $dia)
-                                                <option value="{{ $dia }}" {{ request()->get('dia') == $dia ? 'selected' : '' }}>{{ $dia }}</option>
-                                            @endforeach
-                                        </select>
-                                        
-                                        <select 
-                                            id="selectMes"
-                                            onchange="navegarAFecha()"
-                                            class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                                        >
-                                            @foreach($meses as $numMes => $nombreMes)
-                                                <option value="{{ $numMes }}" {{ $mes == $numMes ? 'selected' : '' }}>{{ $nombreMes }}</option>
-                                            @endforeach
-                                        </select>
-                                        
-                                        <select 
-                                            id="selectAno"
-                                            onchange="navegarAFecha()"
-                                            class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all"
-                                        >
-                                            @foreach($anos as $numAno)
-                                                <option value="{{ $numAno }}" {{ $ano == $numAno ? 'selected' : '' }}>{{ $numAno }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <!-- Botones de Acción -->
-                                <div class="flex gap-2 w-full">
-                                    <button 
-                                        onclick="showNuevaCitaModal()"
-                                        class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="text-xs">Cita</span>
-                                    </button>
-                                    <button 
-                                        onclick="showNuevaTareaModal()"
-                                        class="flex-1 px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                        </svg>
-                                        <span class="text-xs">Tarea</span>
-                                    </button>
-                                    <button 
-                                        onclick="showNuevaNotaModal()"
-                                        class="flex-1 px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        <span class="text-xs">Nota</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            
+            <!-- Contenido Principal: Calendario -->
+            <div class="w-full">
                     @if($vista === 'semanal')
                         <!-- Vista Semanal -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">

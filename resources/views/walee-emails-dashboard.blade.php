@@ -168,33 +168,13 @@
             ->limit(5)
             ->get();
         
-        // Datos para gráfico de últimos 7 días
-        $ultimos7Dias = [];
-        $recibidosPorDia = [];
+        // Datos para gráfico de emails enviados últimos 15 días
+        $ultimos15Dias = [];
         $enviadosPorDia = [];
         
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = 14; $i >= 0; $i--) {
             $fecha = now()->subDays($i);
-            $ultimos7Dias[] = $fecha->format('d/m');
-            
-            if (!empty($clientesEmails) && count($clientesEmails) > 0) {
-                $recibidosPorDia[] = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
-                    foreach ($clientesEmails as $clienteEmail) {
-                        $query->orWhereRaw('
-                            CASE 
-                                WHEN from_email LIKE "%<%" THEN 
-                                    LOWER(TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(from_email, "<", -1), ">", 1))) = ?
-                                ELSE 
-                                    LOWER(TRIM(from_email)) = ?
-                            END
-                        ', [$clienteEmail, $clienteEmail]);
-                    }
-                })
-                ->whereDate('received_at', $fecha->format('Y-m-d'))
-                ->count();
-            } else {
-                $recibidosPorDia[] = 0;
-            }
+            $ultimos15Dias[] = $fecha->format('d/m');
             
             // Clientes agregados en proceso por día
             $enviadosPorDia[] = \App\Models\Client::where('estado', 'pending')
@@ -326,7 +306,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <!-- Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Actividad Últimos 7 Días</h2>
+                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Emails Enviados Últimos 15 Días</h2>
                     <div class="relative w-full" style="height: 300px;">
                         <canvas id="activityChart"></canvas>
                     </div>
@@ -496,18 +476,10 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: @json($ultimos7Dias),
+                    labels: @json($ultimos15Dias),
                     datasets: [
                         {
-                            label: 'Recibidos',
-                            data: @json($recibidosPorDia),
-                            borderColor: 'rgb(16, 185, 129)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Enviados',
+                            label: 'Emails Enviados',
                             data: @json($enviadosPorDia),
                             borderColor: 'rgb(59, 130, 246)',
                             backgroundColor: 'rgba(59, 130, 246, 0.1)',

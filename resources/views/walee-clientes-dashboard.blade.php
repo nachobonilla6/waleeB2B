@@ -168,7 +168,6 @@
                         </svg>
                         <span class="hidden sm:inline">Volver</span>
                     </a>
-                    @include('partials.walee-dark-mode-toggle')
                 </div>
             </header>
             

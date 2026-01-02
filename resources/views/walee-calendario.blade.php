@@ -1456,22 +1456,6 @@
     </div>
     
     <!-- Modal Ver Cita -->
-    <div id="citaDetailModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Detalle de Cita</h3>
-                <button onclick="closeCitaDetailModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div id="citaDetailContent" class="p-4 overflow-y-auto max-h-[70vh]">
-                <!-- Content will be inserted here -->
-            </div>
-        </div>
-    </div>
-    
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const citasData = @json($citas->flatten());
@@ -2153,11 +2137,11 @@
             
             if (citasDelDia.length === 0 && tareasDelDia.length === 0) return;
             
-            let content = '<div class="space-y-2">';
+            let content = '<div class="space-y-2 text-left">';
             
             citasDelDia.forEach(cita => {
                 content += `
-                    <button onclick="showCitaDetail(${cita.id})" class="w-full text-left p-3 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all border border-emerald-200 dark:border-emerald-500/20">
+                    <button onclick="Swal.close(); showCitaDetail(${cita.id});" class="w-full text-left p-3 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all border border-emerald-200 dark:border-emerald-500/20">
                         <p class="font-medium text-slate-900 dark:text-white">${cita.titulo}</p>
                         <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${new Date(cita.fecha_inicio).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} - Cita</p>
                     </button>
@@ -2166,7 +2150,7 @@
             
             tareasDelDia.forEach(tarea => {
                 content += `
-                    <button onclick="showTareaDetail(${tarea.id})" class="w-full text-left p-3 rounded-lg bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all border border-violet-200 dark:border-violet-500/20">
+                    <button onclick="Swal.close(); showTareaDetail(${tarea.id});" class="w-full text-left p-3 rounded-lg bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all border border-violet-200 dark:border-violet-500/20">
                         <p class="font-medium text-slate-900 dark:text-white">${tarea.texto}</p>
                         <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${new Date(tarea.fecha_hora).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} - Tarea</p>
                     </button>
@@ -2175,13 +2159,29 @@
             
             content += '</div>';
             
-            document.getElementById('citaDetailContent').innerHTML = `
-                <div>
-                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Eventos del ${new Date(fecha).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
-                    ${content}
-                </div>
-            `;
-            document.getElementById('citaDetailModal').classList.remove('hidden');
+            Swal.fire({
+                title: `Eventos del ${new Date(fecha).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`,
+                html: content,
+                width: window.innerWidth < 768 ? '90%' : '600px',
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: 'Cerrar',
+                cancelButtonColor: '#64748b',
+                customClass: {
+                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600',
+                    cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
+                },
+                didOpen: () => {
+                    const popup = document.querySelector('.swal2-popup');
+                    if (isDarkMode && popup) {
+                        popup.classList.add('dark');
+                        popup.style.backgroundColor = '#1e293b';
+                        popup.style.color = '#e2e8f0';
+                    }
+                }
+            });
         }
         
         function showDayCitas(fecha) {
@@ -2266,9 +2266,6 @@
             if (e.target === this) closeCitaModal();
         });
         
-        document.getElementById('citaDetailModal').addEventListener('click', function(e) {
-            if (e.target === this) closeCitaDetailModal();
-        });
         
         // Tarea Functions
         function toggleTareaRecurrenciaOptions() {
@@ -2903,10 +2900,10 @@
                 minute: '2-digit'
             });
             
-            document.getElementById('citaDetailContent').innerHTML = `
-                <div class="space-y-4">
+            const html = `
+                <div class="space-y-3 text-left">
                     <div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">${tarea.texto}</h4>
+                        <h4 class="text-base font-semibold text-slate-900 dark:text-white mb-2">${tarea.texto}</h4>
                         <div class="flex items-center gap-2 mb-2">
                             <span class="text-xs px-2 py-1 rounded-full ${tarea.estado === 'completado' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400'}">
                                 ${tarea.estado === 'completado' ? 'Completado' : 'Pendiente'}
@@ -2916,48 +2913,143 @@
                     
                     <div class="space-y-2 text-sm">
                         <div class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <p class="text-slate-600 dark:text-slate-400">Fecha y Hora: ${fechaHora}</p>
+                            <p class="text-slate-600 dark:text-slate-300">Fecha y Hora: ${fechaHora}</p>
                         </div>
                         
                         ${tarea.lista ? `
                             <div class="flex items-start gap-2">
-                                <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
-                                <p class="text-slate-600 dark:text-slate-400">Lista: ${tarea.lista.nombre}</p>
+                                <p class="text-slate-600 dark:text-slate-300">Lista: ${tarea.lista.nombre}</p>
                             </div>
                         ` : ''}
                         
                         ${tarea.tipo ? `
                             <div class="flex items-start gap-2">
-                                <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                 </svg>
-                                <p class="text-slate-600 dark:text-slate-400">Tipo: ${tarea.tipo}</p>
+                                <p class="text-slate-600 dark:text-slate-300">Tipo: ${tarea.tipo}</p>
                             </div>
                         ` : ''}
                     </div>
-                    
-                    <div class="flex gap-2 pt-2">
-                        <button onclick="editTarea(${tarea.id})" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all"
-                            Editar
-                        </button>
-                        <button onclick="deleteTareaConfirm(${tarea.id})" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all">
-                            Eliminar
-                        </button>
-                    </div>
                 </div>
             `;
-            document.getElementById('citaDetailModal').classList.remove('hidden');
+            
+            Swal.fire({
+                title: 'Detalle de Tarea',
+                html: html,
+                width: window.innerWidth < 768 ? '90%' : '600px',
+                customClass: {
+                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600',
+                    confirmButton: isDarkMode ? 'bg-violet-500 hover:bg-violet-600' : '',
+                    denyButton: isDarkMode ? 'bg-red-500 hover:bg-red-600' : '',
+                    cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
+                },
+                showCancelButton: false,
+                showDenyButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Editar',
+                denyButtonText: 'Eliminar',
+                confirmButtonColor: '#8b5cf6',
+                denyButtonColor: '#ef4444',
+                buttonsStyling: true,
+                didOpen: () => {
+                    const popup = document.querySelector('.swal2-popup');
+                    if (isDarkMode && popup) {
+                        popup.classList.add('dark');
+                        popup.style.backgroundColor = '#1e293b';
+                        popup.style.color = '#e2e8f0';
+                    }
+                },
+                preConfirm: () => {
+                    Swal.close();
+                    showNuevaTareaModal(tareaId);
+                },
+                preDeny: async () => {
+                    const result = await Swal.fire({
+                        title: '¿Eliminar tarea?',
+                        text: 'Esta acción no se puede deshacer',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                            title: isDarkMode ? 'text-white' : 'text-slate-900',
+                            htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                        }
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/walee-tareas/${tareaId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminada',
+                                    text: 'La tarea ha sido eliminada',
+                                    confirmButtonColor: '#8b5cf6',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'Error al eliminar',
+                                    confirmButtonColor: '#8b5cf6',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
+                                });
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión: ' + error.message,
+                                confirmButtonColor: '#8b5cf6',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                }
+                            });
+                        }
+                    }
+                    return false;
+                }
+            });
         }
         
         function editTarea(tareaId) {
             const tarea = tareasData.find(t => t.id === tareaId);
             if (!tarea) return;
-            closeCitaDetailModal();
+            Swal.close();
             showNuevaTareaModal(tareaId);
         }
         

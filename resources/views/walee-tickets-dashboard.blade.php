@@ -259,7 +259,9 @@
             const datos = @json(collect($ticketsPorDia)->pluck('total'));
             const fechas = @json(collect($ticketsPorDia)->map(function($item) {
                 $fecha = \Carbon\Carbon::createFromFormat('Y-m-d', $item['dia']);
-                return $fecha->format('d/m');
+                // Mostrar día de la semana abreviado (Lun, Mar, Mié, etc.)
+                $diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                return $diasSemana[$fecha->dayOfWeek] . ' ' . $fecha->format('d');
             }));
             
             new Chart(ctx, {

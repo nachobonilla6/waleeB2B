@@ -58,6 +58,23 @@
         ::-webkit-scrollbar-thumb { background: rgba(213, 159, 59, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(213, 159, 59, 0.5); }
         
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .product-card {
+                margin-bottom: 0;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (min-width: 475px) {
+            .xs\:inline {
+                display: inline;
+            }
+            .xs\:hidden {
+                display: none;
+            }
+        }
+        
         /* SweetAlert2 Dark Mode Support */
         .dark .swal2-popup {
             background: #1e293b !important;
@@ -145,43 +162,44 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = 'Productos'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
+                <div class="flex-1">
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
                         Productos
                     </h1>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Gestiona tus productos y servicios</p>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5 sm:mt-1 hidden sm:block">Gestiona tus productos y servicios</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="openCreateModal()" class="px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white font-medium rounded-xl transition-all flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="openCreateModal()" class="flex-1 sm:flex-none px-3 py-2 sm:px-4 bg-walee-500 hover:bg-walee-600 text-white text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1.5 sm:gap-2">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span>Nuevo Producto</span>
+                        <span class="hidden xs:inline sm:inline">Nuevo</span>
+                        <span class="xs:hidden">+</span>
                     </button>
-                    <a href="{{ route('walee.herramientas') }}" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl transition-all flex items-center gap-2">
+                    <a href="{{ route('walee.herramientas') }}" class="px-2.5 py-2 sm:px-4 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        <span class="hidden sm:inline">Volver</span>
+                        <span class="hidden sm:inline ml-1.5">Volver</span>
                     </a>
                     @include('partials.walee-dark-mode-toggle')
                 </div>
             </header>
             
             <!-- Filters -->
-            <div class="mb-6 flex flex-wrap gap-4 animate-fade-in-up">
-                <select id="filterEstado" onchange="filterProducts()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
+            <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-4 animate-fade-in-up">
+                <select id="filterEstado" onchange="filterProducts()" class="flex-1 sm:flex-none px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
                     <option value="">Todos los estados</option>
                     <option value="activo">Activo</option>
                     <option value="inactivo">Inactivo</option>
                 </select>
-                <select id="filterTipo" onchange="filterProducts()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
+                <select id="filterTipo" onchange="filterProducts()" class="flex-1 sm:flex-none px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
                     <option value="">Todos los tipos</option>
                     <option value="bot">Bot</option>
                     <option value="sitio">Sitio</option>
@@ -190,7 +208,7 @@
             </div>
             
             <!-- Products Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productsGrid">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6" id="productsGrid">
                 @forelse($productos as $producto)
                     <div class="product-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up hover:shadow-lg dark:hover:shadow-none transition-all"
                          data-estado="{{ $producto->estado }}"
@@ -272,12 +290,12 @@
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-full text-center py-12">
-                        <svg class="w-16 h-16 mx-auto text-slate-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="col-span-full text-center py-8 sm:py-12">
+                        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-slate-400 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
-                        <p class="text-slate-600 dark:text-slate-400">No hay productos registrados</p>
-                        <button onclick="openCreateModal()" class="mt-4 px-6 py-2 bg-walee-500 hover:bg-walee-600 text-white font-medium rounded-xl transition-all">
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4">No hay productos registrados</p>
+                        <button onclick="openCreateModal()" class="mt-3 sm:mt-4 px-4 sm:px-6 py-2 bg-walee-500 hover:bg-walee-600 text-white text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-all">
                             Crear primer producto
                         </button>
                     </div>

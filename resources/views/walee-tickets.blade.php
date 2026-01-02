@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -810,22 +811,6 @@
         </div>
     </div>
     
-    <!-- Ticket Detail Modal -->
-    <div id="ticketModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Ticket</h3>
-                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-4 overflow-y-auto max-h-[70vh]" id="modalContent">
-                <!-- Content will be inserted here -->
-            </div>
-        </div>
-    </div>
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -1179,9 +1164,23 @@
             }
         });
         
-        function showTicketDetail(ticketId) {
+        async function showTicketDetail(ticketId) {
             const ticket = ticketsData.find(t => t.id === ticketId);
             if (!ticket) return;
+            
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '700px';
+            } else if (isTablet) {
+                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
             
             const createdAt = new Date(ticket.created_at).toLocaleString('es-ES', {
                 year: 'numeric',
@@ -1191,82 +1190,87 @@
                 minute: '2-digit'
             });
             
-            document.getElementById('modalTitle').textContent = `Ticket #${ticket.id}`;
-            document.getElementById('modalContent').innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-xs px-2 py-1 rounded-full
-                                ${ticket.estado === 'enviado' ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400' : ''}
-                                ${ticket.estado === 'recibido' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400' : ''}
-                                ${ticket.estado === 'resuelto' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : ''}">
-                                ${ticket.estado.charAt(0).toUpperCase() + ticket.estado.slice(1)}
-                            </span>
-                            <span class="text-xs text-slate-600 dark:text-slate-500">${createdAt}</span>
-                        </div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">${ticket.asunto}</h4>
-                        ${ticket.name ? `<p class="text-sm text-walee-600 dark:text-walee-400 mb-1"><strong>Empresa:</strong> ${ticket.name}</p>` : ''}
-                        ${ticket.email ? `<p class="text-sm text-blue-600 dark:text-blue-400 mb-1"><strong>Email:</strong> ${ticket.email}</p>` : ''}
-                        ${ticket.website ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-1"><strong>Web:</strong> <a href="${ticket.website}" target="_blank" class="text-walee-600 dark:text-walee-400 hover:underline">${ticket.website}</a></p>` : ''}
-                        ${ticket.user && !ticket.name ? `<p class="text-sm text-slate-600 dark:text-slate-400">De: ${ticket.user.name} (${ticket.user.email})</p>` : ''}
-                    </div>
-                    
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                        <h5 class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Mensaje</h5>
-                        <p class="text-slate-900 dark:text-white whitespace-pre-wrap">${ticket.mensaje}</p>
-                    </div>
-                    
-                    ${ticket.imagen ? (() => {
-                        let archivos = [];
-                        try {
-                            const decoded = JSON.parse(ticket.imagen);
-                            if (Array.isArray(decoded)) {
-                                archivos = decoded;
-                            } else {
-                                archivos = [ticket.imagen];
-                            }
-                        } catch(e) {
-                            archivos = [ticket.imagen];
-                        }
-                        
-                        if (archivos.length === 0) return '';
-                        
-                        return `
-                            <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                                <h5 class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
-                                    ${archivos.length === 1 ? 'Archivo adjunto' : archivos.length + ' archivos adjuntos'}
-                                </h5>
-                                <div class="space-y-3">
-                                    ${archivos.map((archivo, idx) => {
-                                        const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo);
-                                        return `
-                                            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                                                ${isImage ? `
-                                                    <a href="/storage/${archivo}" target="_blank" class="block">
-                                                        <img src="/storage/${archivo}" alt="Archivo ${idx + 1}" class="rounded-lg max-h-64 object-contain mx-auto border border-slate-300 dark:border-slate-700 hover:border-walee-500 dark:hover:border-walee-500 transition-colors">
-                                                    </a>
-                                                ` : `
-                                                    <a href="/storage/${archivo}" target="_blank" class="flex items-center gap-2 text-walee-600 dark:text-walee-400 hover:text-walee-500 dark:hover:text-walee-300">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                                        </svg>
-                                                        <span>Ver archivo ${idx + 1}</span>
-                                                    </a>
-                                                `}
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
+            // Procesar archivos
+            let archivosHtml = '';
+            if (ticket.imagen) {
+                let archivos = [];
+                try {
+                    const decoded = JSON.parse(ticket.imagen);
+                    if (Array.isArray(decoded)) {
+                        archivos = decoded;
+                    } else {
+                        archivos = [ticket.imagen];
+                    }
+                } catch(e) {
+                    archivos = [ticket.imagen];
+                }
+                
+                if (archivos.length > 0) {
+                    archivosHtml = `
+                        <div class="mt-3 pt-3 border-t ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}">
+                            <p class="text-xs font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mb-2">Archivos adjuntos:</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${archivos.map((archivo, idx) => {
+                                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo);
+                                    return `
+                                        <a href="/storage/${archivo}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">
+                                            ${isImage ? '🖼️' : '📄'} Archivo ${idx + 1}
+                                        </a>
+                                    `;
+                                }).join('')}
                             </div>
-                        `;
-                    })() : ''}
+                        </div>
+                    `;
+                }
+            }
+            
+            const html = `
+                <div class="text-left space-y-2 ${isMobile ? 'text-xs' : 'text-sm'}">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs px-2 py-0.5 rounded-full
+                            ${ticket.estado === 'enviado' ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400' : ''}
+                            ${ticket.estado === 'recibido' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400' : ''}
+                            ${ticket.estado === 'resuelto' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : ''}">
+                            ${ticket.estado.charAt(0).toUpperCase() + ticket.estado.slice(1)}
+                        </span>
+                        ${ticket.urgente ? '<span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400">⚠️ Urgente</span>' : ''}
+                        ${ticket.prioritario ? '<span class="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400">⭐ Prioritario</span>' : ''}
+                        ${ticket.a_discutir ? '<span class="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400">💬 A Discutir</span>' : ''}
+                    </div>
+                    <div>
+                        <p class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mb-1">Fecha: ${createdAt}</p>
+                        <h4 class="${isMobile ? 'text-sm' : 'text-base'} font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2">${ticket.asunto}</h4>
+                    </div>
+                    ${ticket.name ? `<p class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}"><strong>Empresa:</strong> ${ticket.name}</p>` : ''}
+                    ${ticket.email ? `<p class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}"><strong>Email:</strong> ${ticket.email}</p>` : ''}
+                    ${ticket.telefono ? `<p class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}"><strong>Teléfono:</strong> ${ticket.telefono}</p>` : ''}
+                    ${ticket.website ? `<p class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}"><strong>Web:</strong> <a href="${ticket.website}" target="_blank" class="${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">${ticket.website}</a></p>` : ''}
+                    ${ticket.user && !ticket.name ? `<p class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">De: ${ticket.user.name} (${ticket.user.email})</p>` : ''}
+                    <div class="mt-2 pt-2 border-t ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}">
+                        <p class="text-xs font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mb-1">Mensaje:</p>
+                        <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap ${isMobile ? 'text-xs' : 'text-sm'}">${ticket.mensaje}</p>
+                    </div>
+                    ${archivosHtml}
                 </div>
             `;
-            document.getElementById('ticketModal').classList.remove('hidden');
-        }
-        
-        function closeModal() {
-            document.getElementById('ticketModal').classList.add('hidden');
+            
+            await Swal.fire({
+                title: `Ticket #${ticket.id}`,
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#D59F3B',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                }
+            });
         }
         
         function showNotification(title, body, type = 'info') {
@@ -1304,15 +1308,56 @@
             }, 5000);
         }
         
-        // Close modal on backdrop click
-        document.getElementById('ticketModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-        
-        // Close modal on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
-        });
+        // Estilos para SweetAlert dark/light mode
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background: #1e293b !important;
+                color: #e2e8f0 !important;
+            }
+            .light-swal {
+                background: #ffffff !important;
+                color: #1e293b !important;
+            }
+            .dark-swal-title {
+                color: #f1f5f9 !important;
+            }
+            .light-swal-title {
+                color: #0f172a !important;
+            }
+            .dark-swal-html {
+                color: #cbd5e1 !important;
+            }
+            .light-swal-html {
+                color: #334155 !important;
+            }
+            .dark-swal-confirm {
+                background: #D59F3B !important;
+            }
+            .light-swal-confirm {
+                background: #D59F3B !important;
+            }
+            @media (max-width: 640px) {
+                .swal2-popup {
+                    width: 95% !important;
+                    margin: 0.5rem !important;
+                    padding: 1rem !important;
+                }
+                .swal2-title {
+                    font-size: 1.125rem !important;
+                    margin-bottom: 0.75rem !important;
+                }
+                .swal2-html-container {
+                    margin: 0.5rem 0 !important;
+                    font-size: 0.875rem !important;
+                }
+                .swal2-confirm {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem 1rem !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
     @include('partials.walee-support-button')
 </body>

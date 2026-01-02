@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -81,25 +82,25 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = 'Templates de Emails'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4 animate-fade-in-up">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 md:mb-8 gap-3 sm:gap-4 animate-fade-in-up">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
                         Templates de Emails
                     </h1>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden sm:block">
                         Crea, guarda y envía templates de emails con AI
                     </p>
                 </div>
                 <button 
                     onclick="showNuevoTemplateModal()"
-                    class="px-4 py-2 rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto"
+                    class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg w-full sm:w-auto text-xs sm:text-sm"
                 >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     <span>Nuevo Template</span>
@@ -107,25 +108,25 @@
             </div>
             
             <!-- Search Bar -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.05s;">
+            <div class="mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.05s;">
                 <div class="relative">
                     <input 
                         type="text" 
                         id="templateSearchInput"
-                        placeholder="Buscar templates por nombre, asunto o contenido..."
-                        class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        placeholder="Buscar templates..."
+                        class="w-full px-3 py-2 sm:px-4 sm:py-3 pl-10 sm:pl-12 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg sm:rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-xs sm:text-sm"
                         oninput="filterTemplates()"
                     >
-                    <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <button 
                         id="clearSearchBtn"
                         onclick="clearTemplateSearch()"
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hidden"
+                        class="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hidden"
                         style="display: none;"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -133,63 +134,63 @@
             </div>
             
             <!-- Templates Grid -->
-            <div id="templatesContainer" class="grid grid-cols-1 gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div id="templatesContainer" class="grid grid-cols-1 gap-2.5 sm:gap-3 md:gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
                 @forelse($templates as $template)
-                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-6 hover:shadow-lg dark:hover:shadow-none transition-all group w-full" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-1">{{ $template->nombre }}</h3>
-                                <p class="text-sm text-slate-600 dark:text-slate-400">{{ $template->asunto }}</p>
+                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 hover:shadow-lg dark:hover:shadow-none transition-all group w-full" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
+                        <div class="flex items-start justify-between mb-2 sm:mb-3 md:mb-4">
+                            <div class="flex-1 min-w-0 pr-2">
+                                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-0.5 sm:mb-1 truncate">{{ $template->nombre }}</h3>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $template->asunto }}</p>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                                 <button 
                                     onclick="editTemplate({{ $template->id }})"
-                                    class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all"
+                                    class="p-1.5 sm:p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all"
                                     title="Editar"
                                 >
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </button>
                                 <button 
                                     onclick="deleteTemplate({{ $template->id }})"
-                                    class="p-2 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 transition-all"
+                                    class="p-1.5 sm:p-2 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 transition-all"
                                     title="Eliminar"
                                 >
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
                                 </button>
                             </div>
                         </div>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">{{ \Illuminate\Support\Str::limit($template->contenido, 150) }}</p>
-                        <div class="flex items-center gap-2">
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-2 sm:mb-3 md:mb-4 line-clamp-2 sm:line-clamp-3">{{ \Illuminate\Support\Str::limit($template->contenido, 120) }}</p>
+                        <div class="flex items-center gap-1.5 sm:gap-2">
                             <button 
                                 onclick="enviarTemplate({{ $template->id }})"
-                                class="flex-1 px-4 py-2 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium transition-all text-sm"
+                                class="flex-1 px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium transition-all text-xs sm:text-sm"
                             >
                                 Enviar
                             </button>
                             <button 
                                 onclick="verTemplate({{ $template->id }})"
-                                class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all text-sm"
+                                class="px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all text-xs sm:text-sm"
                             >
                                 Ver
                             </button>
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-full text-center py-12">
-                        <svg class="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="col-span-full text-center py-8 sm:py-12">
+                        <svg class="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 dark:text-slate-700 mx-auto mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                         </svg>
-                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No hay templates guardados</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1 sm:mb-2">No hay templates guardados</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 sm:mb-4">
                             Crea tu primer template usando inteligencia artificial
                         </p>
                         <button 
                             onclick="showNuevoTemplateModal()"
-                            class="px-6 py-3 rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all"
+                            class="px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all text-xs sm:text-sm"
                         >
                             Crear Template
                         </button>
@@ -198,12 +199,12 @@
             </div>
             
             <!-- No Results Message -->
-            <div id="noResultsMessage" class="hidden text-center py-12">
-                <svg class="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div id="noResultsMessage" class="hidden text-center py-8 sm:py-12">
+                <svg class="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 dark:text-slate-700 mx-auto mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No se encontraron templates</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400">
+                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1 sm:mb-2">No se encontraron templates</h3>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                     Intenta con otros términos de búsqueda
                 </p>
             </div>
@@ -371,31 +372,6 @@
         </div>
     </div>
     
-    <!-- Modal Ver Template -->
-    <div id="verTemplateModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-2xl max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="ver_template_nombre">Template</h3>
-                <button onclick="closeVerTemplateModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto max-h-[70vh]">
-                <div class="mb-4">
-                    <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Asunto:</p>
-                    <p class="text-lg font-semibold text-slate-900 dark:text-white" id="ver_template_asunto"></p>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Contenido:</p>
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                        <p class="text-slate-800 dark:text-white whitespace-pre-wrap" id="ver_template_contenido"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     
     @php
         $templatesData = $templates->map(function($template) {
@@ -543,14 +519,52 @@
             const template = templatesData.find(t => t.id === templateId);
             if (!template) return;
             
-            document.getElementById('ver_template_nombre').textContent = template.nombre;
-            document.getElementById('ver_template_asunto').textContent = template.asunto;
-            document.getElementById('ver_template_contenido').textContent = template.contenido;
-            document.getElementById('verTemplateModal').classList.remove('hidden');
-        }
-        
-        function closeVerTemplateModal() {
-            document.getElementById('verTemplateModal').classList.add('hidden');
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
+                modalWidth = '700px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const html = `
+                <div class="text-left space-y-3 sm:space-y-4 ${isMobile ? 'text-xs' : 'text-sm'}">
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto:</label>
+                        <p class="font-semibold ${isMobile ? 'text-sm' : 'text-base md:text-lg'} ${isDarkMode ? 'text-white' : 'text-slate-900'}">${template.asunto || 'Sin asunto'}</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido:</label>
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
+                            <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap ${isMobile ? 'text-xs' : 'text-sm'}">${template.contenido || 'Sin contenido'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: template.nombre || 'Template',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#D59F3B',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                }
+            });
         }
         
         async function generateTemplateWithAI() {
@@ -702,9 +716,61 @@
             if (e.target === this) closeEnviarTemplateModal();
         });
         
-        document.getElementById('verTemplateModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeVerTemplateModal();
-        });
+        // Estilos para SweetAlert dark/light mode
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background: #1e293b !important;
+                color: #e2e8f0 !important;
+            }
+            .light-swal {
+                background: #ffffff !important;
+                color: #1e293b !important;
+            }
+            .dark-swal-title {
+                color: #f1f5f9 !important;
+            }
+            .light-swal-title {
+                color: #0f172a !important;
+            }
+            .dark-swal-html {
+                color: #cbd5e1 !important;
+            }
+            .light-swal-html {
+                color: #334155 !important;
+            }
+            @media (min-width: 1024px) {
+                .swal2-popup {
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                }
+                .swal2-html-container {
+                    max-height: calc(90vh - 150px) !important;
+                    overflow-y: auto !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                .swal2-popup {
+                    width: 95% !important;
+                    margin: 0.5rem !important;
+                    padding: 1rem !important;
+                }
+                .swal2-title {
+                    font-size: 1.125rem !important;
+                    margin-bottom: 0.75rem !important;
+                }
+                .swal2-html-container {
+                    margin: 0.5rem 0 !important;
+                    font-size: 0.875rem !important;
+                }
+                .swal2-confirm {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem 1rem !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
         
         // Template search functionality
         function filterTemplates() {

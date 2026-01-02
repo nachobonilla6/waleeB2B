@@ -263,16 +263,16 @@
             </div>
             
             <!-- Publicaciones Section - Mobile Visible -->
-            @if($clientePlaneadorId)
-                <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.25s;">
-                    <div class="rounded-lg sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-2.5 sm:p-4">
-                        <h2 class="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            Publicaciones
-                        </h2>
-                        <div class="space-y-2 sm:space-y-2.5">
+            <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.25s;">
+                <div class="rounded-lg sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-2.5 sm:p-4">
+                    <h2 class="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Publicaciones
+                    </h2>
+                    <div class="space-y-2 sm:space-y-2.5">
+                        @if($clientePlaneadorId)
                             @if($publicacionesProgramadas > 0)
                                 <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-2 sm:p-2.5 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 transition-all group">
                                     <div class="flex items-center gap-2 sm:gap-2.5">
@@ -314,10 +314,18 @@
                                     <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">Aún no hay publicaciones programadas</p>
                                 </div>
                             @endif
-                        </div>
+                        @else
+                            <div class="text-center py-4 sm:py-6">
+                                <svg class="w-8 h-8 sm:w-10 sm:h-10 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-xs sm:text-sm text-slate-800 dark:text-white">Sin publicaciones</p>
+                                <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">Aún no hay publicaciones programadas</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
-            @endif
+            </div>
             
             <!-- Citas Section -->
             <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.3s;">

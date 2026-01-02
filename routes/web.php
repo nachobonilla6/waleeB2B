@@ -3624,6 +3624,25 @@ Route::get('/walee-cliente/{id}', function ($id) {
     $publicacionesPublicadas = 0;
     $clientePlaneadorId = null;
     
+    // Si no existe clientePrincipal, intentar crearlo o buscarlo de otra manera
+    if (!$clientePrincipal && $cliente->email) {
+        $clientePrincipal = \App\Models\Cliente::where('correo', $cliente->email)->first();
+        
+        // Si aún no existe, crear uno nuevo basado en el Client
+        if (!$clientePrincipal) {
+            $clientePrincipal = \App\Models\Cliente::create([
+                'nombre_empresa' => $cliente->name,
+                'correo' => $cliente->email ?: '',
+                'telefono' => $cliente->telefono_1,
+                'telefono_alternativo' => $cliente->telefono_2,
+                'direccion' => $cliente->address,
+                'url_sitio' => $cliente->website,
+                'fecha_registro' => $cliente->created_at ? $cliente->created_at->toDateString() : now()->toDateString(),
+            ]);
+        }
+    }
+    
+    // Si ahora tenemos clientePrincipal, obtener publicaciones
     if ($clientePrincipal) {
         $ahora = now();
         

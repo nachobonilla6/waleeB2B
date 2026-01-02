@@ -160,13 +160,13 @@
                                 <div class="flex-1">
                                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">{{ $producto->nombre }}</h3>
                                     <div class="flex items-center gap-2 flex-wrap">
-                                        <label class="relative inline-flex items-center cursor-pointer">
+                                        <label class="relative inline-flex items-center cursor-pointer" id="toggle-{{ $producto->id }}">
                                             <input type="checkbox" 
                                                    class="sr-only peer" 
                                                    {{ $producto->estado === 'activo' ? 'checked' : '' }}
-                                                   onchange="toggleEstado({{ $producto->id }}, this.checked)">
+                                                   onchange="toggleEstado({{ $producto->id }}, this.checked, this)">
                                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-walee-300 dark:peer-focus:ring-walee-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-green-500"></div>
-                                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300" id="estado-text-{{ $producto->id }}">
                                                 {{ $producto->estado === 'activo' ? 'Activo' : 'Inactivo' }}
                                             </span>
                                         </label>
@@ -539,7 +539,7 @@
             }
         }
         
-        async function toggleEstado(id, activo) {
+        async function toggleEstado(id, activo, checkbox) {
             try {
                 const response = await fetch(`/walee-productos/${id}/toggle-estado`, {
                     method: 'POST',
@@ -552,31 +552,29 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Actualizar el badge visualmente en todas las tarjetas del producto
-                    const cards = document.querySelectorAll(`.product-card[data-estado]`);
-                    cards.forEach(card => {
-                        if (card.closest('[data-product-id]')?.dataset.productId === id.toString() || 
-                            card.querySelector(`button[onclick*="${id}"]`)) {
-                            card.dataset.estado = data.estado;
-                            const badge = card.querySelector('.px-2.py-1');
-                            if (badge) {
-                                badge.className = data.estado === 'activo' 
-                                    ? 'px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
-                                    : 'px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
-                            }
-                        }
-                    });
+                    // Actualizar el card
+                    const card = document.querySelector(`[data-product-id="${id}"]`);
+                    if (card) {
+                        card.dataset.estado = data.estado;
+                    }
+                    
+                    // Actualizar el texto del estado
+                    const estadoText = document.getElementById(`estado-text-${id}`);
+                    if (estadoText) {
+                        estadoText.textContent = data.estado === 'activo' ? 'Activo' : 'Inactivo';
+                    }
+                    
                     showNotification('Estado actualizado correctamente', 'success');
                 } else {
+                    // Revertir el checkbox
+                    checkbox.checked = !activo;
                     showNotification('Error: ' + data.message, 'error');
-                    // Revertir el toggle recargando
-                    location.reload();
                 }
             } catch (error) {
                 console.error('Error:', error);
+                // Revertir el checkbox
+                checkbox.checked = !activo;
                 showNotification('Error al cambiar el estado', 'error');
-                // Revertir el toggle recargando
-                location.reload();
             }
         }
     </script>

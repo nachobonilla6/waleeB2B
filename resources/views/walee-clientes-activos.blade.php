@@ -159,9 +159,7 @@
                                         @if($cliente->foto)
                                             <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/50 transition-all">
                                         @else
-                                            <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center group-hover:border-emerald-400/40 transition-all">
-                                                <span class="text-sm sm:text-base lg:text-xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                            </div>
+                                            <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/40 transition-all opacity-80">
                                         @endif
                                     </div>
                                     

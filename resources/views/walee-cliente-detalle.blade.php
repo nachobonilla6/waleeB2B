@@ -92,9 +92,7 @@
                     @if($fotoUrl)
                         <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl object-cover border-2 border-emerald-500/30 flex-shrink-0">
                     @else
-                        <div class="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                            <span class="text-lg sm:text-2xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                        </div>
+                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl object-cover border-2 border-emerald-500/30 flex-shrink-0 opacity-80">
                     @endif
                     <div class="flex-1 min-w-0">
                         <h1 class="text-base sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white truncate">{{ $cliente->name }}</h1>
@@ -741,9 +739,7 @@
                                 <div id="fotoPreviewContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 border-emerald-500/30">
                                     ${clienteData.fotoUrl ? 
                                         `<img src="${clienteData.fotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
-                                        `<div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center">
-                                            <span class="text-lg sm:text-xl font-bold text-emerald-400">${clienteData.inicial}</span>
-                                        </div>`
+                                        `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
                                     }
                                 </div>
                             </div>

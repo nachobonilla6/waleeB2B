@@ -2897,7 +2897,7 @@ Route::post('/walee-productos', function (\Illuminate\Http\Request $request) {
     }
 })->middleware(['auth']);
 
-Route::post('/walee-productos/{id}', function (\Illuminate\Http\Request $request, $id) {
+Route::match(['post', 'put', 'patch'], '/walee-productos/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $producto = \App\Models\Rproducto::findOrFail($id);
         

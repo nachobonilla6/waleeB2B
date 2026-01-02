@@ -437,8 +437,6 @@
             
             const productId = document.getElementById('productId').value;
             if (productId) {
-                formData.append('_method', 'PUT');
-                
                 // Capturar fotos existentes
                 const existingFotosInputs = document.querySelectorAll('input[name="existing_fotos[]"]');
                 existingFotosInputs.forEach((input, index) => {

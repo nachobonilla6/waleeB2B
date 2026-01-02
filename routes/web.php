@@ -1539,6 +1539,48 @@ Route::get('/walee-clientes/dashboard', function () {
     return view('walee-clientes-dashboard');
 })->middleware(['auth'])->name('walee.clientes.dashboard');
 
+Route::post('/walee-clientes/create', function (\Illuminate\Http\Request $request) {
+    try {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'telefono_1' => 'nullable|string|max:20',
+            'telefono_2' => 'nullable|string|max:20',
+            'website' => 'nullable|url|max:255',
+            'address' => 'nullable|string',
+            'estado' => 'nullable|string|in:pending,propuesta_enviada,activo,accepted',
+        ]);
+        
+        $client = \App\Models\Client::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? null,
+            'telefono_1' => $validated['telefono_1'] ?? null,
+            'telefono_2' => $validated['telefono_2'] ?? null,
+            'website' => $validated['website'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'estado' => $validated['estado'] ?? 'pending',
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cliente creado correctamente',
+            'client' => $client
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error de validación',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Error al crear cliente: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al crear el cliente: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.clientes.create');
+
 // Ruta para WALEE Clientes Activos - Lista de clientes aceptados
 Route::get('/walee-clientes-activos', function () {
     return view('walee-clientes-activos');

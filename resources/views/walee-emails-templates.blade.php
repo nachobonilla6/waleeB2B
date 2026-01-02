@@ -212,165 +212,6 @@
         </div>
     </div>
     
-    <!-- Modal Nuevo/Editar Template -->
-    <div id="templateModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-6xl max-h-[85vh] sm:max-h-[70vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="templateModalTitle">Nuevo Template</h3>
-                <button onclick="closeTemplateModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <form id="template-form" class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[70vh] sm:max-h-[55vh]">
-                <input type="hidden" name="template_id" id="template_id">
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre del Template</label>
-                    <input 
-                        type="text" 
-                        name="nombre" 
-                        id="template_nombre"
-                        required
-                        placeholder="Ej: Propuesta para restaurantes"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                    >
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Asunto</label>
-                    <input 
-                        type="text" 
-                        name="asunto" 
-                        id="template_asunto"
-                        required
-                        placeholder="Asunto del email"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                    >
-                </div>
-                
-                <div class="bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl p-4">
-                    <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                        </svg>
-                        Generar con AI
-                    </h4>
-                    <div class="mb-3">
-                        <label for="ai_prompt" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Instrucciones para AI</label>
-                        <textarea 
-                            id="ai_prompt" 
-                            name="ai_prompt"
-                            rows="3"
-                            placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante, mencionando servicios de diseño web y marketing digital..."
-                            class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
-                        ></textarea>
-                    </div>
-                    <button 
-                        type="button" 
-                        id="generateBtn"
-                        onclick="generateTemplateWithAI()"
-                        class="w-full px-4 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                        </svg>
-                        Generar Contenido con AI
-                    </button>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido</label>
-                    <textarea 
-                        name="contenido" 
-                        id="template_contenido"
-                        required
-                        rows="8"
-                        placeholder="Contenido del email..."
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
-                    ></textarea>
-                </div>
-                
-                <div class="flex gap-2 pt-2">
-                    <button 
-                        type="submit"
-                        class="flex-1 px-6 py-3 rounded-xl walee-gradient text-white font-medium transition-all hover:opacity-90"
-                    >
-                        Guardar Template
-                    </button>
-                    <button 
-                        type="button"
-                        id="deleteTemplateBtn"
-                        onclick="deleteTemplateFromModal()"
-                        class="px-6 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all hidden"
-                    >
-                        Eliminar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Modal Enviar Template -->
-    <div id="enviarTemplateModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Enviar Template</h3>
-                <button onclick="closeEnviarTemplateModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <form id="enviar-template-form" class="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
-                <input type="hidden" name="template_id_enviar" id="template_id_enviar">
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email destinatario</label>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        id="enviar_email"
-                        required
-                        placeholder="cliente@correo.com"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                    >
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Asunto</label>
-                    <input 
-                        type="text" 
-                        name="asunto" 
-                        id="enviar_asunto"
-                        required
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
-                    >
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido</label>
-                    <textarea 
-                        name="contenido" 
-                        id="enviar_contenido"
-                        required
-                        rows="6"
-                        class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
-                    ></textarea>
-                </div>
-                
-                <div class="flex gap-2 pt-2">
-                    <button 
-                        type="submit"
-                        class="flex-1 px-6 py-3 rounded-xl walee-gradient text-white font-medium transition-all hover:opacity-90"
-                    >
-                        Enviar Email
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
     
     
     @php
@@ -389,20 +230,194 @@
         const templatesData = @json($templatesData);
         const clientes = @json(\App\Models\Client::orderBy('name')->get(['id', 'name', 'email']));
         
-        function showNuevoTemplateModal() {
-            document.getElementById('templateModalTitle').textContent = 'Nuevo Template';
-            document.getElementById('template-form').reset();
-            document.getElementById('template_id').value = '';
-            document.getElementById('deleteTemplateBtn').classList.add('hidden');
-            document.getElementById('templateModal').classList.remove('hidden');
+        async function showNuevoTemplateModal() {
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
+                modalWidth = '700px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
             // Restaurar datos guardados
-            restoreTemplateFormData();
+            const savedData = localStorage.getItem('templateFormData');
+            let formData = {
+                nombre: '',
+                asunto: '',
+                contenido: '',
+                ai_prompt: ''
+            };
+            
+            if (savedData) {
+                try {
+                    formData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error('Error restaurando datos:', e);
+                }
+            }
+            
+            const html = `
+                <form id="template-form" class="space-y-3 sm:space-y-4 text-left">
+                    <input type="hidden" name="template_id" id="template_id" value="">
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Nombre del Template *</label>
+                        <input 
+                            type="text" 
+                            name="nombre" 
+                            id="template_nombre"
+                            required
+                            placeholder="Ej: Propuesta para restaurantes"
+                            value="${formData.nombre || ''}"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto *</label>
+                        <input 
+                            type="text" 
+                            name="asunto" 
+                            id="template_asunto"
+                            required
+                            placeholder="Asunto del email"
+                            value="${formData.asunto || ''}"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div class="bg-gradient-to-br ${isDarkMode ? 'from-violet-500/10 to-violet-600/5 border-violet-500/20' : 'from-violet-50 to-violet-100/50 border-violet-200'} border rounded-lg sm:rounded-xl p-3 sm:p-4">
+                        <h4 class="text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Generar con AI
+                        </h4>
+                        <div class="mb-2 sm:mb-3">
+                            <label for="ai_prompt" class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Instrucciones para AI</label>
+                            <textarea 
+                                id="ai_prompt" 
+                                name="ai_prompt"
+                                rows="3"
+                                placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante..."
+                                value="${formData.ai_prompt || ''}"
+                                class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
+                            >${formData.ai_prompt || ''}</textarea>
+                        </div>
+                        <button 
+                            type="button" 
+                            id="generateBtn"
+                            onclick="generateTemplateWithAI()"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                        >
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Generar Contenido con AI
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido *</label>
+                        <textarea 
+                            name="contenido" 
+                            id="template_contenido"
+                            required
+                            rows="6"
+                            placeholder="Contenido del email..."
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                        >${formData.contenido || ''}</textarea>
+                    </div>
+                </form>
+            `;
+            
+            const result = await Swal.fire({
+                title: 'Nuevo Template',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Guardar',
+                confirmButtonColor: '#D59F3B',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
+                },
+                didOpen: () => {
+                    // Agregar event listeners para guardar datos mientras se escribe
+                    const form = document.getElementById('template-form');
+                    if (form) {
+                        const inputs = form.querySelectorAll('input, textarea');
+                        inputs.forEach(input => {
+                            input.addEventListener('input', saveTemplateFormDataFromModal);
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    const form = document.getElementById('template-form');
+                    if (!form) return false;
+                    
+                    const nombre = form.querySelector('[name="nombre"]')?.value;
+                    const asunto = form.querySelector('[name="asunto"]')?.value;
+                    const contenido = form.querySelector('[name="contenido"]')?.value;
+                    
+                    if (!nombre || nombre.trim() === '') {
+                        Swal.showValidationMessage('El nombre es requerido');
+                        return false;
+                    }
+                    if (!asunto || asunto.trim() === '') {
+                        Swal.showValidationMessage('El asunto es requerido');
+                        return false;
+                    }
+                    if (!contenido || contenido.trim() === '') {
+                        Swal.showValidationMessage('El contenido es requerido');
+                        return false;
+                    }
+                    
+                    return {
+                        nombre: nombre.trim(),
+                        asunto: asunto.trim(),
+                        contenido: contenido.trim(),
+                        ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || null,
+                        template_id: form.querySelector('[name="template_id"]')?.value || ''
+                    };
+                }
+            });
+            
+            if (result.isConfirmed && result.value) {
+                await saveTemplate(result.value);
+            } else {
+                // Guardar datos antes de cerrar
+                saveTemplateFormDataFromModal();
+            }
         }
         
-        function closeTemplateModal() {
-            // Guardar datos antes de cerrar
-            saveTemplateFormData();
-            document.getElementById('templateModal').classList.add('hidden');
+        function saveTemplateFormDataFromModal() {
+            const form = document.getElementById('template-form');
+            if (!form) return;
+            
+            const formData = {
+                nombre: form.querySelector('[name="nombre"]')?.value || '',
+                asunto: form.querySelector('[name="asunto"]')?.value || '',
+                contenido: form.querySelector('[name="contenido"]')?.value || '',
+                ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || ''
+            };
+            
+            localStorage.setItem('templateFormData', JSON.stringify(formData));
         }
         
         function saveTemplateFormData() {
@@ -455,18 +470,172 @@
             }
         }
         
-        function editTemplate(templateId) {
+        async function editTemplate(templateId) {
             const template = templatesData.find(t => t.id === templateId);
             if (!template) return;
             
-            document.getElementById('templateModalTitle').textContent = 'Editar Template';
-            document.getElementById('template_id').value = template.id;
-            document.getElementById('template_nombre').value = template.nombre;
-            document.getElementById('template_asunto').value = template.asunto;
-            document.getElementById('template_contenido').value = template.contenido;
-            document.getElementById('deleteTemplateBtn').classList.remove('hidden');
-            document.getElementById('templateModal').classList.remove('hidden');
-            // No restaurar datos guardados cuando se edita un template existente
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
+                modalWidth = '700px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const html = `
+                <form id="template-form" class="space-y-3 sm:space-y-4 text-left">
+                    <input type="hidden" name="template_id" id="template_id" value="${template.id}">
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Nombre del Template *</label>
+                        <input 
+                            type="text" 
+                            name="nombre" 
+                            id="template_nombre"
+                            required
+                            placeholder="Ej: Propuesta para restaurantes"
+                            value="${template.nombre || ''}"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto *</label>
+                        <input 
+                            type="text" 
+                            name="asunto" 
+                            id="template_asunto"
+                            required
+                            placeholder="Asunto del email"
+                            value="${template.asunto || ''}"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div class="bg-gradient-to-br ${isDarkMode ? 'from-violet-500/10 to-violet-600/5 border-violet-500/20' : 'from-violet-50 to-violet-100/50 border-violet-200'} border rounded-lg sm:rounded-xl p-3 sm:p-4">
+                        <h4 class="text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Generar con AI
+                        </h4>
+                        <div class="mb-2 sm:mb-3">
+                            <label for="ai_prompt" class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Instrucciones para AI</label>
+                            <textarea 
+                                id="ai_prompt" 
+                                name="ai_prompt"
+                                rows="3"
+                                placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante..."
+                                class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
+                            ></textarea>
+                        </div>
+                        <button 
+                            type="button" 
+                            id="generateBtn"
+                            onclick="generateTemplateWithAI()"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                        >
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            Generar Contenido con AI
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido *</label>
+                        <textarea 
+                            name="contenido" 
+                            id="template_contenido"
+                            required
+                            rows="6"
+                            placeholder="Contenido del email..."
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                        >${template.contenido || ''}</textarea>
+                    </div>
+                </form>
+            `;
+            
+            const result = await Swal.fire({
+                title: 'Editar Template',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Guardar',
+                confirmButtonColor: '#D59F3B',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                showDenyButton: true,
+                denyButtonText: 'Eliminar',
+                denyButtonColor: '#ef4444',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
+                    denyButton: isDarkMode ? 'dark-swal-deny' : 'light-swal-deny',
+                },
+                didOpen: () => {
+                    // Agregar event listeners para guardar datos mientras se escribe
+                    const form = document.getElementById('template-form');
+                    if (form) {
+                        const inputs = form.querySelectorAll('input, textarea');
+                        inputs.forEach(input => {
+                            input.addEventListener('input', saveTemplateFormDataFromModal);
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    const form = document.getElementById('template-form');
+                    if (!form) return false;
+                    
+                    const nombre = form.querySelector('[name="nombre"]')?.value;
+                    const asunto = form.querySelector('[name="asunto"]')?.value;
+                    const contenido = form.querySelector('[name="contenido"]')?.value;
+                    
+                    if (!nombre || nombre.trim() === '') {
+                        Swal.showValidationMessage('El nombre es requerido');
+                        return false;
+                    }
+                    if (!asunto || asunto.trim() === '') {
+                        Swal.showValidationMessage('El asunto es requerido');
+                        return false;
+                    }
+                    if (!contenido || contenido.trim() === '') {
+                        Swal.showValidationMessage('El contenido es requerido');
+                        return false;
+                    }
+                    
+                    return {
+                        nombre: nombre.trim(),
+                        asunto: asunto.trim(),
+                        contenido: contenido.trim(),
+                        ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || null,
+                        template_id: template.id
+                    };
+                }
+            });
+            
+            if (result.isConfirmed && result.value) {
+                await saveTemplate(result.value);
+            } else if (result.isDenied) {
+                // Eliminar template
+                deleteTemplate(templateId);
+            } else {
+                // Guardar datos antes de cerrar
+                saveTemplateFormDataFromModal();
+            }
         }
         
         function deleteTemplate(templateId) {
@@ -493,26 +662,208 @@
             });
         }
         
-        function deleteTemplateFromModal() {
-            const templateId = document.getElementById('template_id').value;
-            if (templateId) {
-                deleteTemplate(templateId);
-            }
-        }
-        
-        function enviarTemplate(templateId) {
+        async function enviarTemplate(templateId) {
             const template = templatesData.find(t => t.id === templateId);
             if (!template) return;
             
-            document.getElementById('template_id_enviar').value = template.id;
-            document.getElementById('enviar_asunto').value = template.asunto;
-            document.getElementById('enviar_contenido').value = template.contenido;
-            document.getElementById('enviar_email').value = '';
-            document.getElementById('enviarTemplateModal').classList.remove('hidden');
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '600px';
+            } else if (isTablet) {
+                modalWidth = '550px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const html = `
+                <form id="enviar-template-form" class="space-y-3 sm:space-y-4 text-left">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Email destinatario *</label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            id="enviar_email"
+                            required
+                            placeholder="cliente@correo.com"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto *</label>
+                        <input 
+                            type="text" 
+                            name="asunto" 
+                            id="enviar_asunto"
+                            required
+                            value="${template.asunto || ''}"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido *</label>
+                        <textarea 
+                            name="contenido" 
+                            id="enviar_contenido"
+                            required
+                            rows="5"
+                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                        >${template.contenido || ''}</textarea>
+                    </div>
+                </form>
+            `;
+            
+            const result = await Swal.fire({
+                title: 'Enviar Template',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Enviar',
+                confirmButtonColor: '#D59F3B',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
+                },
+                preConfirm: () => {
+                    const form = document.getElementById('enviar-template-form');
+                    if (!form) return false;
+                    
+                    const email = form.querySelector('[name="email"]')?.value;
+                    const asunto = form.querySelector('[name="asunto"]')?.value;
+                    const contenido = form.querySelector('[name="contenido"]')?.value;
+                    
+                    if (!email || email.trim() === '') {
+                        Swal.showValidationMessage('El email es requerido');
+                        return false;
+                    }
+                    if (!asunto || asunto.trim() === '') {
+                        Swal.showValidationMessage('El asunto es requerido');
+                        return false;
+                    }
+                    if (!contenido || contenido.trim() === '') {
+                        Swal.showValidationMessage('El contenido es requerido');
+                        return false;
+                    }
+                    
+                    return {
+                        email: email.trim(),
+                        subject: asunto.trim(),
+                        body: contenido.trim()
+                    };
+                }
+            });
+            
+            if (result.isConfirmed && result.value) {
+                await enviarEmail(result.value);
+            }
         }
         
-        function closeEnviarTemplateModal() {
-            document.getElementById('enviarTemplateModal').classList.add('hidden');
+        async function enviarEmail(formData) {
+            try {
+                const response = await fetch('/walee-emails/enviar', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email enviado',
+                        text: 'El email se ha enviado correctamente',
+                        confirmButtonColor: '#D59F3B',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al enviar el email',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión al enviar el email',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
+        async function saveTemplate(formData) {
+            try {
+                const templateId = formData.template_id;
+                const url = templateId ? `/email-templates/${templateId}` : '/email-templates';
+                const method = templateId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: formData.nombre,
+                        asunto: formData.asunto,
+                        contenido: formData.contenido,
+                        ai_prompt: formData.ai_prompt || null,
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    // Limpiar datos guardados después de enviar exitosamente
+                    clearTemplateFormData();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Template guardado',
+                        text: templateId ? 'El template se ha actualizado correctamente' : 'El template se ha creado correctamente',
+                        confirmButtonColor: '#D59F3B',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al guardar el template',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión al guardar el template',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
         
         function verTemplate(templateId) {
@@ -568,13 +919,19 @@
         }
         
         async function generateTemplateWithAI() {
-            const aiPrompt = document.getElementById('ai_prompt').value;
+            const aiPromptInput = document.getElementById('ai_prompt');
             const generateBtn = document.getElementById('generateBtn');
+            const contenidoInput = document.getElementById('template_contenido');
+            const asuntoInput = document.getElementById('template_asunto');
+            
+            if (!aiPromptInput || !generateBtn || !contenidoInput) return;
+            
+            const aiPrompt = aiPromptInput.value;
             const originalText = generateBtn.innerHTML;
             
             generateBtn.disabled = true;
             generateBtn.innerHTML = `
-                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -597,124 +954,34 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('template_contenido').value = data.body || '';
-                    if (data.subject) {
-                        document.getElementById('template_asunto').value = data.subject;
+                    contenidoInput.value = data.body || '';
+                    if (data.subject && asuntoInput) {
+                        asuntoInput.value = data.subject;
                     }
+                    // Guardar datos después de generar
+                    saveTemplateFormDataFromModal();
                 } else {
-                    alert('Error: ' + (data.message || 'No se pudo generar el email'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'No se pudo generar el email',
+                        confirmButtonColor: '#ef4444'
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error de conexión al generar el email');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión al generar el email',
+                    confirmButtonColor: '#ef4444'
+                });
             } finally {
                 generateBtn.disabled = false;
                 generateBtn.innerHTML = originalText;
             }
         }
         
-        // Template form handler
-        const templateForm = document.getElementById('template-form');
-        if (templateForm) {
-            // Guardar datos mientras se escribe
-            const nombreInput = templateForm.querySelector('[name="nombre"]');
-            const asuntoInput = templateForm.querySelector('[name="asunto"]');
-            const contenidoInput = templateForm.querySelector('[name="contenido"]');
-            const aiPromptInput = templateForm.querySelector('[name="ai_prompt"]');
-            
-            if (nombreInput) {
-                nombreInput.addEventListener('input', saveTemplateFormData);
-            }
-            if (asuntoInput) {
-                asuntoInput.addEventListener('input', saveTemplateFormData);
-            }
-            if (contenidoInput) {
-                contenidoInput.addEventListener('input', saveTemplateFormData);
-            }
-            if (aiPromptInput) {
-                aiPromptInput.addEventListener('input', saveTemplateFormData);
-            }
-            
-            templateForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const formData = {
-                    nombre: document.getElementById('template_nombre').value,
-                    asunto: document.getElementById('template_asunto').value,
-                    contenido: document.getElementById('template_contenido').value,
-                    ai_prompt: document.getElementById('ai_prompt').value || null,
-                };
-                
-                const templateId = document.getElementById('template_id').value;
-                const url = templateId ? `/email-templates/${templateId}` : '/email-templates';
-                const method = templateId ? 'PUT' : 'POST';
-                
-                try {
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
-                    
-                    const data = await response.json();
-                    if (data.success) {
-                        // Limpiar datos guardados después de enviar exitosamente
-                        clearTemplateFormData();
-                        location.reload();
-                    } else {
-                        alert('Error al guardar el template: ' + (data.message || 'Error desconocido'));
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al guardar el template');
-                }
-            });
-        }
-        
-        // Enviar template form handler
-        document.getElementById('enviar-template-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                email: document.getElementById('enviar_email').value,
-                subject: document.getElementById('enviar_asunto').value,
-                body: document.getElementById('enviar_contenido').value,
-            };
-            
-            try {
-                const response = await fetch('/walee-emails/enviar', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    alert('Email enviado correctamente');
-                    closeEnviarTemplateModal();
-                } else {
-                    alert('Error al enviar el email: ' + (data.message || 'Error desconocido'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al enviar el email');
-            }
-        });
-        
-        // Close modals on backdrop click
-        document.getElementById('templateModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeTemplateModal();
-        });
-        
-        document.getElementById('enviarTemplateModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeEnviarTemplateModal();
-        });
         
         // Estilos para SweetAlert dark/light mode
         const style = document.createElement('style');
@@ -739,13 +1006,31 @@
             .light-swal-html {
                 color: #334155 !important;
             }
+            .dark-swal-confirm {
+                background: #D59F3B !important;
+            }
+            .light-swal-confirm {
+                background: #D59F3B !important;
+            }
+            .dark-swal-cancel {
+                background: #475569 !important;
+            }
+            .light-swal-cancel {
+                background: #6b7280 !important;
+            }
+            .dark-swal-deny {
+                background: #ef4444 !important;
+            }
+            .light-swal-deny {
+                background: #ef4444 !important;
+            }
             @media (min-width: 1024px) {
                 .swal2-popup {
                     max-height: 90vh !important;
                     overflow-y: auto !important;
                 }
                 .swal2-html-container {
-                    max-height: calc(90vh - 150px) !important;
+                    max-height: calc(90vh - 200px) !important;
                     overflow-y: auto !important;
                 }
             }
@@ -764,9 +1049,15 @@
                     margin: 0.5rem 0 !important;
                     font-size: 0.875rem !important;
                 }
-                .swal2-confirm {
+                .swal2-confirm,
+                .swal2-cancel,
+                .swal2-deny {
                     font-size: 0.875rem !important;
                     padding: 0.5rem 1rem !important;
+                }
+                .swal2-actions {
+                    margin-top: 1rem !important;
+                    gap: 0.5rem !important;
                 }
             }
         `;

@@ -2768,6 +2768,11 @@ Route::get('/walee-herramientas', function () {
     return view('walee-herramientas');
 })->middleware(['auth'])->name('walee.herramientas');
 
+// Google Sheets Viewer
+Route::get('/walee-google-sheets', function () {
+    return view('walee-google-sheets');
+})->middleware(['auth'])->name('walee.google-sheets');
+
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {
     $clientes = \App\Models\Client::orderBy('name', 'asc')->get();

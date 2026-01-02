@@ -25,6 +25,12 @@
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ - [L]
+    
+    # Allow direct access to storage/productos files
+    RewriteCond %{REQUEST_URI} ^/storage/productos/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ - [L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d

@@ -131,10 +131,13 @@
             $recibidosEsteMes = 0;
         }
         
-        // Estadísticas de emails enviados
-        $totalEnviados = \App\Models\PropuestaPersonalizada::count();
-        $enviadosHoy = \App\Models\PropuestaPersonalizada::whereDate('created_at', today())->count();
-        $enviadosEsteMes = \App\Models\PropuestaPersonalizada::whereMonth('created_at', now()->month)
+        // Estadísticas de emails enviados (basado en clientes agregados en clientes en proceso)
+        $totalEnviados = \App\Models\Client::where('estado', 'pending')->count();
+        $enviadosHoy = \App\Models\Client::where('estado', 'pending')
+            ->whereDate('created_at', today())
+            ->count();
+        $enviadosEsteMes = \App\Models\Client::where('estado', 'pending')
+            ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
         
@@ -159,8 +162,9 @@
             $emailsRecientesRecibidos = collect();
         }
         
-        // Emails recientes enviados (últimos 5)
-        $emailsRecientesEnviados = \App\Models\PropuestaPersonalizada::orderBy('created_at', 'desc')
+        // Clientes recientes agregados en proceso (últimos 5)
+        $emailsRecientesEnviados = \App\Models\Client::where('estado', 'pending')
+            ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
         
@@ -192,7 +196,10 @@
                 $recibidosPorDia[] = 0;
             }
             
-            $enviadosPorDia[] = \App\Models\PropuestaPersonalizada::whereDate('created_at', $fecha->format('Y-m-d'))->count();
+            // Clientes agregados en proceso por día
+            $enviadosPorDia[] = \App\Models\Client::where('estado', 'pending')
+                ->whereDate('created_at', $fecha->format('Y-m-d'))
+                ->count();
         }
     @endphp
 
@@ -429,25 +436,25 @@
                 <!-- Recent Sent -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.8s">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Emails Enviados Recientes</h2>
-                        <a href="{{ route('walee.emails.enviados') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Ver todos</a>
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Clientes Agregados Recientes</h2>
+                        <a href="{{ route('walee.clientes.proceso') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Ver todos</a>
                     </div>
                     <div class="space-y-3">
-                        @forelse($emailsRecientesEnviados as $email)
+                        @forelse($emailsRecientesEnviados as $cliente)
                             <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all">
                                 <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-slate-900 dark:text-white truncate">{{ $email->subject ?: 'Sin asunto' }}</p>
-                                    <p class="text-sm text-slate-600 dark:text-slate-400 truncate">{{ $email->email }}</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">{{ $email->created_at->diffForHumans() }}</p>
+                                    <p class="font-medium text-slate-900 dark:text-white truncate">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">{{ $cliente->created_at->diffForHumans() }}</p>
                                 </div>
                             </div>
                         @empty
-                            <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay emails enviados recientes</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay clientes agregados recientes</p>
                         @endforelse
                     </div>
                 </div>

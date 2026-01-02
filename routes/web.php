@@ -1505,6 +1505,10 @@ Route::get('/walee-clientes', function () {
     return view('walee-clientes');
 })->middleware(['auth'])->name('walee.clientes');
 
+Route::get('/walee-clientes/dashboard', function () {
+    return view('walee-clientes-dashboard');
+})->middleware(['auth'])->name('walee.clientes.dashboard');
+
 // Ruta para WALEE Clientes Activos - Lista de clientes aceptados
 Route::get('/walee-clientes-activos', function () {
     return view('walee-clientes-activos');

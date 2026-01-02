@@ -257,12 +257,7 @@
         const ctx = document.getElementById('ticketsChart');
         if (ctx) {
             const datos = @json(collect($ticketsPorDia)->pluck('total'));
-            const fechas = @json(collect($ticketsPorDia)->map(function($item) {
-                $fecha = \Carbon\Carbon::createFromFormat('Y-m-d', $item['dia']);
-                // Mostrar día de la semana abreviado (Lun, Mar, Mié, etc.)
-                $diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-                return $diasSemana[$fecha->dayOfWeek] . ' ' . $fecha->format('d');
-            }));
+            const fechas = @json(collect($ticketsPorDia)->pluck('diaSemana'));
             
             new Chart(ctx, {
                 type: 'line',

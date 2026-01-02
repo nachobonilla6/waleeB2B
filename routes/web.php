@@ -397,11 +397,14 @@ Route::get('/walee-tickets-dashboard', function () {
     
     // Rellenar todos los días de los últimos 15 días
     $ticketsPorDia = [];
+    $diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     for ($i = 14; $i >= 0; $i--) {
-        $fecha = now()->subDays($i)->format('Y-m-d');
-        $ticket = $ticketsPorDiaRaw->get($fecha);
+        $fecha = now()->subDays($i);
+        $fechaStr = $fecha->format('Y-m-d');
+        $ticket = $ticketsPorDiaRaw->get($fechaStr);
         $ticketsPorDia[] = [
-            'dia' => $fecha,
+            'dia' => $fechaStr,
+            'diaSemana' => $diasSemana[$fecha->dayOfWeek] . ' ' . $fecha->format('d'),
             'total' => $ticket ? (int)$ticket->total : 0
         ];
     }

@@ -574,30 +574,19 @@
                                 $anoISO = (int)$inicioSemana->format('o');
                                 $numSemanaISO = (int)$inicioSemana->format('W');
                                 
-                                // Calcular semana anterior usando setISODate (igual que el backend)
-                                $semanaAnteriorNum = $numSemanaISO - 1;
-                                $anoAnteriorNum = $anoISO;
-                                if ($semanaAnteriorNum < 1) {
-                                    $anoAnteriorNum = $anoISO - 1;
-                                    $semanaAnteriorNum = 53; // Última semana del año anterior
-                                }
-                                try {
-                                    $fechaAnterior = \Carbon\Carbon::now()->setISODate($anoAnteriorNum, $semanaAnteriorNum);
-                                    $anoAnteriorISO = (int)$fechaAnterior->format('o');
-                                    $numSemanaAnteriorISO = (int)$fechaAnterior->format('W');
-                                    $semanaAnteriorFormato = $anoAnteriorISO . '-' . $numSemanaAnteriorISO;
-                                } catch (\Exception $e) {
-                                    $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                    $anoAnteriorISO = (int)$semanaAnterior->format('o');
-                                    $numSemanaAnteriorISO = (int)$semanaAnterior->format('W');
-                                    $semanaAnteriorFormato = $anoAnteriorISO . '-' . $numSemanaAnteriorISO;
-                                }
+                                // Calcular semana anterior - usar subWeek directamente (método que funciona)
+                                $semanaAnterior = $inicioSemana->copy()->subWeek();
+                                $anoAnteriorISO = (int)$semanaAnterior->format('o');
+                                $numSemanaAnteriorISO = (int)$semanaAnterior->format('W');
+                                // Asegurar formato con padding (ej: "01" en lugar de "1")
+                                $semanaAnteriorFormato = $anoAnteriorISO . '-' . str_pad($numSemanaAnteriorISO, 2, '0', STR_PAD_LEFT);
                                 
                                 // Calcular semana siguiente - usar addWeek directamente (igual que funciona para anterior)
                                 $semanaSiguiente = $inicioSemana->copy()->addWeek();
                                 $anoSiguienteISO = (int)$semanaSiguiente->format('o');
                                 $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
-                                $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
+                                // Asegurar formato con padding (ej: "01" en lugar de "1")
+                                $semanaSiguienteFormato = $anoSiguienteISO . '-' . str_pad($numSemanaSiguienteISO, 2, '0', STR_PAD_LEFT);
                                 
                                 // Calcular semana actual
                                 $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);

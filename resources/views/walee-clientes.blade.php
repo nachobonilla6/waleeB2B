@@ -103,6 +103,7 @@
         use App\Models\Client;
         
         $clientesActivos = Client::where('estado', 'accepted')->count();
+        // Contador de clientes con propuesta enviada
         $clientesEnProceso = Client::where('estado', 'propuesta_enviada')->count();
         $clientesTotales = Client::count();
     @endphp

@@ -104,27 +104,27 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = 'Emails Enviados'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
                         Emails Enviados
                     </h1>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Historial de propuestas y emails enviados</p>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Historial de propuestas y emails enviados</p>
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('walee.emails.crear') }}" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="{{ route('walee.emails.crear') }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         <span class="hidden sm:inline">Nuevo</span>
                     </a>
-                    <button onclick="window.open('https://mail.google.com', '_blank')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="window.open('https://mail.google.com', '_blank')" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                         </svg>
                         <span class="hidden sm:inline">Ir a Gmail</span>
@@ -133,41 +133,41 @@
             </header>
             
             <!-- Email List -->
-            <div class="space-y-4 animate-fade-in-up">
+            <div class="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-up">
                 @forelse($emails as $index => $email)
-                    <div class="email-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all cursor-pointer shadow-sm dark:shadow-none" style="animation-delay: {{ $index * 0.05 }}s" onclick="showEmailDetail({{ $email->id }})">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="email-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all cursor-pointer shadow-sm dark:shadow-none" style="animation-delay: {{ $index * 0.05 }}s" onclick="showEmailDetail({{ $email->id }})">
+                        <div class="flex items-start gap-2 sm:gap-3 md:gap-4">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-1">
-                                    <h3 class="font-semibold text-slate-900 dark:text-white truncate">{{ $email->subject }}</h3>
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0 ml-2">{{ $email->created_at->diffForHumans() }}</span>
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <h3 class="font-semibold text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $email->subject }}</h3>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0 whitespace-nowrap">{{ $email->created_at->diffForHumans() }}</span>
                                 </div>
-                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1 sm:mb-2 truncate">
                                     <span class="text-blue-600 dark:text-blue-400">{{ $email->email }}</span>
                                     @if($email->cliente_nombre)
                                         <span class="text-slate-500 dark:text-slate-500"> · {{ $email->cliente_nombre }}</span>
                                     @endif
                                 </p>
-                                <p class="text-sm text-slate-600 dark:text-slate-500 line-clamp-2">{{ Str::limit(strip_tags($email->body), 120) }}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-16">
-                        <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="text-center py-12 sm:py-16">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 sm:mb-4">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">No hay emails enviados</h3>
-                        <p class="text-slate-600 dark:text-slate-500 mb-4">Aún no has enviado ninguna propuesta personalizada</p>
-                        <a href="{{ route('walee.emails.crear') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-xl transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-2">No hay emails enviados</h3>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-500 mb-3 sm:mb-4">Aún no has enviado ninguna propuesta personalizada</p>
+                        <a href="{{ route('walee.emails.crear') }}" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all text-xs sm:text-sm">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             Crear primer email
@@ -178,28 +178,28 @@
             
             <!-- Pagination -->
             @if($emails->hasPages())
-                <div class="mt-8 flex justify-center gap-2">
+                <div class="mt-4 sm:mt-6 md:mt-8 flex flex-wrap justify-center gap-2">
                     @if($emails->onFirstPage())
-                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Anterior</span>
+                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg sm:rounded-xl cursor-not-allowed text-xs sm:text-sm">Anterior</span>
                     @else
-                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Anterior</a>
+                        <a href="{{ $emails->previousPageUrl() }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg sm:rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs sm:text-sm">Anterior</a>
                     @endif
                     
-                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
                         Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
                     </span>
                     
                     @if($emails->hasMorePages())
-                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Siguiente</a>
+                        <a href="{{ $emails->nextPageUrl() }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg sm:rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs sm:text-sm">Siguiente</a>
                     @else
-                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Siguiente</span>
+                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg sm:rounded-xl cursor-not-allowed text-xs sm:text-sm">Siguiente</span>
                     @endif
                 </div>
             @endif
             
             <!-- Footer -->
-            <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-600 dark:text-slate-500">
+            <footer class="text-center py-4 sm:py-6 md:py-8 mt-4 sm:mt-6 md:mt-8">
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500">
                     <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
@@ -207,17 +207,17 @@
     </div>
     
     <!-- Email Detail Modal -->
-    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalSubject">Email</h3>
-                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 dark:border-slate-700 max-w-2xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-hidden shadow-xl">
+            <div class="flex items-center justify-between p-2.5 sm:p-3 md:p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white truncate pr-2 sm:pr-4" id="modalSubject">Email</h3>
+                <button onclick="closeModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors flex-shrink-0">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <div class="p-4 overflow-y-auto max-h-[70vh]" id="modalContent">
+            <div class="p-2 sm:p-3 md:p-4 overflow-y-auto max-h-[calc(100vh-60px)] sm:max-h-[70vh]" id="modalContent">
                 <!-- Modal content will be inserted here -->
             </div>
         </div>
@@ -233,20 +233,20 @@
             
             document.getElementById('modalSubject').textContent = email.subject;
             document.getElementById('modalContent').innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                        <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2 sm:space-y-3 md:space-y-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                             <div>
                                 <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Para</h4>
-                                <p class="text-slate-900 dark:text-white">${email.email}</p>
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white break-words">${email.email}</p>
                             </div>
                             <div>
                                 <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Cliente</h4>
-                                <p class="text-slate-900 dark:text-white">${email.cliente_nombre || 'N/A'}</p>
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white">${email.cliente_nombre || 'N/A'}</p>
                             </div>
-                            <div class="col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Enviado</h4>
-                                <p class="text-slate-900 dark:text-white">${new Date(email.created_at).toLocaleString('es-ES', { 
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white">${new Date(email.created_at).toLocaleString('es-ES', { 
                                     year: 'numeric', 
                                     month: 'long', 
                                     day: 'numeric',
@@ -257,19 +257,19 @@
                         </div>
                     </div>
                     ${email.ai_prompt ? `
-                        <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-xl p-4">
+                        <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4">
                             <h4 class="text-xs font-medium text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                                 </svg>
                                 Prompt de AI
                             </h4>
-                            <p class="text-sm text-slate-700 dark:text-slate-300">${email.ai_prompt}</p>
+                            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">${email.ai_prompt}</p>
                         </div>
                     ` : ''}
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
                         <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Mensaje</h4>
-                        <div class="text-slate-900 dark:text-white whitespace-pre-wrap text-sm">${email.body}</div>
+                        <div class="text-slate-900 dark:text-white whitespace-pre-wrap text-xs sm:text-sm">${email.body}</div>
                     </div>
                 </div>
             `;

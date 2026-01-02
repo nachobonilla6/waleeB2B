@@ -229,7 +229,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
             @php 
                 $pageTitle = 'Emails Recibidos';
                 if($noLeidos > 0) {
@@ -239,18 +239,18 @@
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <header class="flex items-center justify-between mb-8 animate-fade-in-up">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-                        Emails Recibidos
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white flex flex-wrap items-center gap-2">
+                        <span>Emails Recibidos</span>
                         @if($noLeidos > 0)
-                            <span class="ml-2 px-2.5 py-1 text-sm font-semibold bg-emerald-500 text-white rounded-full">{{ $noLeidos }} sin leer</span>
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-xs sm:text-sm font-semibold bg-emerald-500 text-white rounded-full">{{ $noLeidos }} sin leer</span>
                         @endif
                     </h1>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Bandeja de entrada</p>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Bandeja de entrada</p>
                 </div>
-                <button onclick="window.open('https://mail.google.com', '_blank')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button onclick="window.open('https://mail.google.com', '_blank')" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                     </svg>
                     <span class="hidden sm:inline">Ir a Gmail</span>
@@ -262,55 +262,55 @@
             
             <!-- Pagination -->
             @if($emails->hasPages())
-                <div class="mb-6 flex justify-center gap-2">
+                <div class="mb-4 sm:mb-6 flex flex-wrap justify-center gap-2">
                     @if($emails->onFirstPage())
-                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Anterior</span>
+                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg sm:rounded-xl cursor-not-allowed text-xs sm:text-sm">Anterior</span>
                     @else
-                        <a href="{{ $emails->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Anterior</a>
+                        <a href="{{ $emails->previousPageUrl() }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg sm:rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs sm:text-sm">Anterior</a>
                     @endif
                     
-                    <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
                         Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
                     </span>
                     
                     @if($emails->hasMorePages())
-                        <a href="{{ $emails->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none">Siguiente</a>
+                        <a href="{{ $emails->nextPageUrl() }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg sm:rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs sm:text-sm">Siguiente</a>
                     @else
-                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-xl cursor-not-allowed">Siguiente</span>
+                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg sm:rounded-xl cursor-not-allowed text-xs sm:text-sm">Siguiente</span>
                     @endif
                 </div>
             @endif
             
             <!-- Email List -->
-            <div class="space-y-3 animate-fade-in-up">
+            <div class="space-y-2 sm:space-y-3 animate-fade-in-up">
                 @forelse($emails as $index => $email)
                     <div 
-                        class="email-card group bg-white dark:bg-slate-800/50 border {{ $email->is_read ? 'border-slate-200 dark:border-slate-700' : 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5' }} rounded-2xl p-4 hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all cursor-pointer shadow-sm dark:shadow-none" 
+                        class="email-card group bg-white dark:bg-slate-800/50 border {{ $email->is_read ? 'border-slate-200 dark:border-slate-700' : 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5' }} rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all cursor-pointer shadow-sm dark:shadow-none" 
                         style="animation-delay: {{ $index * 0.05 }}s" 
                         onclick="showEmailDetail({{ $email->id }})"
                     >
-                        <div class="flex items-start gap-4">
+                        <div class="flex items-start gap-2 sm:gap-3 md:gap-4">
                             <!-- Unread indicator -->
                             <div class="flex-shrink-0 mt-1">
                                 @if(!$email->is_read)
-                                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500"></div>
                                 @else
-                                    <div class="w-3 h-3 rounded-full bg-slate-400 dark:bg-slate-600"></div>
+                                    <div class="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-slate-400 dark:bg-slate-600"></div>
                                 @endif
                             </div>
                             
-                            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex-shrink-0 flex items-center justify-center">
-                                <span class="text-sm font-bold text-emerald-600 dark:text-emerald-400">{{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 1)) }}</span>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex-shrink-0 flex items-center justify-center">
+                                <span class="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400">{{ strtoupper(substr($email->from_name ?? $email->from_email, 0, 1)) }}</span>
                             </div>
                             
                             <div class="flex-1 min-w-0 overflow-hidden">
                                 <div class="flex items-start justify-between gap-2 mb-1">
-                                    <h3 class="font-semibold {{ $email->is_read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white' }} truncate flex-1 min-w-0">
+                                    <h3 class="font-semibold text-xs sm:text-sm md:text-base {{ $email->is_read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white' }} truncate flex-1 min-w-0">
                                         {{ $email->from_name ?? $email->from_email }}
                                     </h3>
-                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                    <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                                         @if($email->is_starred)
-                                            <svg class="w-4 h-4 text-walee-600 dark:text-walee-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-walee-600 dark:text-walee-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                             </svg>
                                         @endif
@@ -323,30 +323,30 @@
                                         </span>
                                     </div>
                                 </div>
-                                <p class="text-sm {{ $email->is_read ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-white font-medium' }} truncate mb-1">
+                                <p class="text-xs sm:text-sm {{ $email->is_read ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-white font-medium' }} truncate mb-1">
                                     {{ $email->subject }}
                                 </p>
-                                <p class="text-sm text-slate-600 dark:text-slate-500 line-clamp-2 overflow-hidden">{{ Str::limit(strip_tags($email->body ?? ''), 120) }}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2 overflow-hidden">{{ Str::limit(strip_tags($email->body ?? ''), 100) }}</p>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-16">
-                        <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-                            <svg class="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="text-center py-12 sm:py-16">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 sm:mb-4">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Bandeja de entrada vacía</h3>
-                        <p class="text-slate-600 dark:text-slate-500">No hay emails recibidos todavía</p>
+                        <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-2">Bandeja de entrada vacía</h3>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-500">No hay emails recibidos todavía</p>
                     </div>
                 @endforelse
             </div>
             
             
             <!-- Footer -->
-            <footer class="text-center py-8 mt-8">
-                <p class="text-sm text-slate-600 dark:text-slate-500">
+            <footer class="text-center py-4 sm:py-6 md:py-8 mt-4 sm:mt-6 md:mt-8">
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500">
                     <span class="text-walee-600 dark:text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>
@@ -356,28 +356,28 @@
     <!-- Email Detail Modal -->
     <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-0 sm:p-4">
         <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 dark:border-slate-700 max-w-5xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate pr-2 sm:pr-4" id="modalSubject">Email</h3>
-                <div class="flex items-center gap-2">
-                    <button onclick="openGmail()" class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 text-sm font-medium transition-colors flex items-center gap-1.5" title="Ir a Gmail">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-between p-2.5 sm:p-3 md:p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white truncate pr-2 sm:pr-4" id="modalSubject">Email</h3>
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <button onclick="openGmail()" class="px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-1.5" title="Ir a Gmail">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                         </svg>
                         <span class="hidden sm:inline">Gmail</span>
                     </button>
-                    <button onclick="replyInGmail()" class="px-3 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm font-medium transition-colors flex items-center gap-1.5" title="Responder en Gmail">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="replyInGmail()" class="px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-1.5" title="Responder en Gmail">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                         </svg>
                         <span class="hidden sm:inline">Responder</span>
                     </button>
-                    <button onclick="toggleStar()" id="starBtn" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" id="starIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="toggleStar()" id="starBtn" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" id="starIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                         </svg>
                     </button>
-                    <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="closeModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -424,15 +424,15 @@
             const receivedDate = email.received_at ? new Date(email.received_at) : new Date(email.created_at);
             
             document.getElementById('modalContent').innerHTML = `
-                <div class="space-y-3 sm:space-y-4">
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
-                                <span class="text-lg font-bold text-emerald-600 dark:text-emerald-400">${(email.from_name || email.from_email).charAt(0).toUpperCase()}</span>
+                <div class="space-y-2 sm:space-y-3 md:space-y-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                <span class="text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400">${(email.from_name || email.from_email).charAt(0).toUpperCase()}</span>
                             </div>
-                            <div class="flex-1">
-                                <h4 class="font-semibold text-slate-900 dark:text-white">${email.from_name || 'Sin nombre'}</h4>
-                                <p class="text-sm text-emerald-600 dark:text-emerald-400">${email.from_email}</p>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-sm sm:text-base text-slate-900 dark:text-white truncate">${email.from_name || 'Sin nombre'}</h4>
+                                <p class="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 truncate">${email.from_email}</p>
                             </div>
                         </div>
                         <div class="text-xs text-slate-600 dark:text-slate-500">
@@ -446,7 +446,7 @@
                             })}
                         </div>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-1 sm:p-4 border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
                         <div class="prose prose-slate dark:prose-invert prose-sm max-w-none email-html-content" style="padding: 0 !important; margin: 0 !important;">
                             ${email.body_html || email.body.replace(/\n/g, '<br>')}
                         </div>

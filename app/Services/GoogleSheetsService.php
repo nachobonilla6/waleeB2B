@@ -5,6 +5,7 @@ namespace App\Services;
 use Google_Client;
 use Google_Service_Sheets;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class GoogleSheetsService
 {
@@ -126,27 +127,88 @@ class GoogleSheetsService
      */
     public function getSheetData(string $spreadsheetId, ?string $range = null): ?array
     {
+        // Si no se especifica rango, obtener toda la hoja
+        if (!$range) {
+            $range = 'A1:Z1000'; // Rango por defecto
+        }
+
+        // Primero intentar con OAuth2 (para sheets privados)
         try {
             $service = $this->getService();
-            if (!$service) {
+            if ($service) {
+                $response = $service->spreadsheets_values->get($spreadsheetId, $range);
+                $values = $response->getValues();
+
+                if (!empty($values)) {
+                    return $values;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::debug('Error con OAuth2, intentando API pública: ' . $e->getMessage());
+        }
+
+        // Si falla OAuth2 o no hay credenciales, intentar con exportación CSV (para sheets públicos)
+        try {
+            // Para sheets públicos, usar exportación CSV
+            // Extraer el nombre de la hoja del rango si está especificado
+            $sheetName = 'Sheet1'; // Por defecto
+            if (strpos($range, '!') !== false) {
+                $parts = explode('!', $range);
+                $sheetName = $parts[0];
+                $range = $parts[1] ?? 'A1:Z1000';
+            }
+            
+            // URL de exportación CSV (funciona para sheets públicos)
+            $url = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/gviz/tq?tqx=out:csv&sheet={$sheetName}";
+            
+            $response = Http::get($url);
+            
+            if ($response->successful()) {
+                $csvData = $response->body();
+                
+                // Parsear CSV
+                $lines = str_getcsv($csvData, "\n");
+                $values = [];
+                
+                foreach ($lines as $line) {
+                    if (!empty(trim($line))) {
+                        $values[] = str_getcsv($line);
+                    }
+                }
+                
+                if (empty($values)) {
+                    return [];
+                }
+                
+                // Aplicar filtro de rango si es necesario (simplificado)
+                // Por ahora, devolvemos todos los datos
+                return $values;
+            } else {
+                // Si CSV falla, intentar con API v4 usando API key si está disponible
+                $apiKey = config('services.google.calendar_api_key');
+                if ($apiKey) {
+                    $encodedRange = urlencode($range);
+                    $url = "https://sheets.googleapis.com/v4/spreadsheets/{$spreadsheetId}/values/{$encodedRange}?key={$apiKey}";
+                    
+                    $response = Http::get($url);
+                    
+                    if ($response->successful()) {
+                        $data = $response->json();
+                        $values = $data['values'] ?? [];
+                        
+                        if (empty($values)) {
+                            return [];
+                        }
+                        
+                        return $values;
+                    }
+                }
+                
+                Log::error('Error en exportación CSV de Google Sheets: ' . $response->body());
                 return null;
             }
-
-            // Si no se especifica rango, obtener toda la hoja
-            if (!$range) {
-                $range = 'A1:Z1000'; // Rango por defecto
-            }
-
-            $response = $service->spreadsheets_values->get($spreadsheetId, $range);
-            $values = $response->getValues();
-
-            if (empty($values)) {
-                return [];
-            }
-
-            return $values;
         } catch (\Exception $e) {
-            Log::error('Error obteniendo datos de Google Sheets: ' . $e->getMessage());
+            Log::error('Error obteniendo datos de Google Sheets (método público): ' . $e->getMessage());
             return null;
         }
     }
@@ -156,30 +218,58 @@ class GoogleSheetsService
      */
     public function getSpreadsheetInfo(string $spreadsheetId): ?array
     {
+        // Primero intentar con OAuth2
         try {
             $service = $this->getService();
-            if (!$service) {
-                return null;
-            }
+            if ($service) {
+                $spreadsheet = $service->spreadsheets->get($spreadsheetId);
+                
+                $sheets = [];
+                foreach ($spreadsheet->getSheets() as $sheet) {
+                    $sheets[] = [
+                        'id' => $sheet->getProperties()->getSheetId(),
+                        'title' => $sheet->getProperties()->getTitle(),
+                    ];
+                }
 
-            $spreadsheet = $service->spreadsheets->get($spreadsheetId);
-            
-            $sheets = [];
-            foreach ($spreadsheet->getSheets() as $sheet) {
-                $sheets[] = [
-                    'id' => $sheet->getProperties()->getSheetId(),
-                    'title' => $sheet->getProperties()->getTitle(),
+                return [
+                    'title' => $spreadsheet->getProperties()->getTitle(),
+                    'sheets' => $sheets,
                 ];
             }
-
-            return [
-                'title' => $spreadsheet->getProperties()->getTitle(),
-                'sheets' => $sheets,
-            ];
         } catch (\Exception $e) {
-            Log::error('Error obteniendo información del spreadsheet: ' . $e->getMessage());
-            return null;
+            Log::debug('Error obteniendo info con OAuth2, intentando API pública: ' . $e->getMessage());
         }
+
+        // Si falla OAuth2, intentar con API pública
+        try {
+            $url = "https://sheets.googleapis.com/v4/spreadsheets/{$spreadsheetId}";
+            $response = Http::get($url);
+            
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                $sheets = [];
+                if (isset($data['sheets'])) {
+                    foreach ($data['sheets'] as $sheet) {
+                        $properties = $sheet['properties'] ?? [];
+                        $sheets[] = [
+                            'id' => $properties['sheetId'] ?? null,
+                            'title' => $properties['title'] ?? 'Sin nombre',
+                        ];
+                    }
+                }
+
+                return [
+                    'title' => $data['properties']['title'] ?? 'Sin título',
+                    'sheets' => $sheets,
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error('Error obteniendo información del spreadsheet (API pública): ' . $e->getMessage());
+        }
+
+        return null;
     }
 
     /**

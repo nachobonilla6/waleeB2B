@@ -138,7 +138,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
             @php $pageTitle = 'Tickets de Soporte'; @endphp
             @include('partials.walee-navbar')
             
@@ -146,66 +146,66 @@
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
             
             <!-- Tabs -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-2 flex flex-wrap gap-2 shadow-sm dark:shadow-none">
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'todos']) }}" id="tab-todos" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-gradient-to-r from-walee-500 to-walee-600 text-white shadow-md shadow-walee-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                        <span class="relative z-10 flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg sm:rounded-xl p-1.5 sm:p-2 flex flex-wrap gap-1.5 sm:gap-2 shadow-sm dark:shadow-none">
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'todos']) }}" id="tab-todos" class="tab-button group flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-2 sm:px-4 md:px-5 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-gradient-to-r from-walee-500 to-walee-600 text-white shadow-md shadow-walee-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
-                            <span>Todos</span>
-                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $totalTickets }}</span>
+                            <span class="hidden xs:inline">Todos</span>
+                            <span class="px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $totalTickets }}</span>
                         </span>
                     </a>
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" id="tab-enviados" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                        <span class="relative z-10 flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" id="tab-enviados" class="tab-button group flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-2 sm:px-4 md:px-5 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Enviados</span>
-                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $enviados }}</span>
+                            <span class="hidden xs:inline">Enviados</span>
+                            <span class="px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $enviados }}</span>
                         </span>
                     </a>
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" id="tab-recibidos" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                        <span class="relative z-10 flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" id="tab-recibidos" class="tab-button group flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-2 sm:px-4 md:px-5 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            <span>Recibidos</span>
-                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $recibidos }}</span>
+                            <span class="hidden xs:inline">Recibidos</span>
+                            <span class="px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $recibidos }}</span>
                         </span>
                     </a>
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" id="tab-resueltos" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
-                        <span class="relative z-10 flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" id="tab-resueltos" class="tab-button group flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-2 sm:px-4 md:px-5 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Resueltos</span>
-                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $resueltos }}</span>
+                            <span class="hidden xs:inline">Resueltos</span>
+                            <span class="px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $resueltos }}</span>
                         </span>
                     </a>
                 </div>
             </div>
             
             <!-- Search Bar -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
                 <div class="relative">
                     <input 
                         type="text" 
                         id="ticketSearchInput"
-                        placeholder="Buscar en tickets (asunto, mensaje, nombre, email...)"
-                        class="w-full px-4 py-3 pl-12 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
+                        placeholder="Buscar tickets..."
+                        class="w-full px-3 sm:px-4 py-2 sm:py-3 pl-10 sm:pl-12 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg sm:rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-xs sm:text-sm"
                     >
-                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     <button 
                         id="clearSearchBtn"
                         onclick="clearSearch()"
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                        class="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 hidden text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -220,10 +220,10 @@
                 @forelse($ticketsToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
-                        <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
-                            <div class="flex-1 min-w-0 flex items-center gap-2">
-                                <span class="text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full flex-shrink-0
+                        <div class="px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                            <div class="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2">
+                                <span class="text-[10px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
+                                <span class="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full flex-shrink-0
                                     @if($ticket->estado === 'enviado') bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400
                                     @elseif($ticket->estado === 'recibido') bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400
                                     @else bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400
@@ -231,52 +231,52 @@
                                     {{ ucfirst($ticket->estado) }}
                                 </span>
                                 @if($ticket->urgente)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
                                 @endif
                                 @if($ticket->prioritario)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
                                 @endif
                                 @if($ticket->a_discutir)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
                                 @endif
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
+                                <h3 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
                             </div>
-                            <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0">{{ $ticket->created_at->diffForHumans() }}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0 hidden sm:inline">{{ $ticket->created_at->diffForHumans() }}</span>
                         </div>
                         
                         <!-- Línea 2: Botones -->
-                        <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1.5 flex-wrap" onclick="event.stopPropagation();">
-                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
+                        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1 sm:gap-1.5 flex-wrap" onclick="event.stopPropagation();">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
                                 Enviado
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-500/20' }}">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-500/20' }}">
                                 Recibido
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' }}">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' }}">
                                 Resuelto
                             </button>
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        Ver
+                                        <span class="hidden xs:inline">Ver</span>
                                     </a>
                                 @else
-                                    <div class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
                                         {{ count($archivos) }}
                                     </div>
                                 @endif
                             @endif
-                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-2 py-1 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
+                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
                                 Detalle
                             </button>
-                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-2 py-1 text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
+                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
                                 Eliminar
                             </button>
                         </div>
@@ -311,59 +311,59 @@
                 @forelse($enviadosToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
-                        <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
-                            <div class="flex-1 min-w-0 flex items-center gap-2">
-                                <span class="text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 flex-shrink-0">
+                        <div class="px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                            <div class="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2">
+                                <span class="text-[10px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
+                                <span class="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 flex-shrink-0">
                                     Enviado
                                 </span>
                                 @if($ticket->urgente)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
                                 @endif
                                 @if($ticket->prioritario)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
                                 @endif
                                 @if($ticket->a_discutir)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
                                 @endif
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
+                                <h3 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
                             </div>
-                            <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0">{{ $ticket->created_at->diffForHumans() }}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0 hidden sm:inline">{{ $ticket->created_at->diffForHumans() }}</span>
                         </div>
                         
                         <!-- Línea 2: Botones -->
-                        <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1.5 flex-wrap" onclick="event.stopPropagation();">
-                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-2 py-1 text-xs rounded transition-all bg-amber-500 text-white">
+                        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1 sm:gap-1.5 flex-wrap" onclick="event.stopPropagation();">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all bg-amber-500 text-white">
                                 Enviado
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-500/20' }}">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-500/20' }}">
                                 Recibido
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' }}">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' }}">
                                 Resuelto
                             </button>
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        Ver
+                                        <span class="hidden xs:inline">Ver</span>
                                     </a>
                                 @else
-                                    <div class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
                                         {{ count($archivos) }}
                                     </div>
                                 @endif
                             @endif
-                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-2 py-1 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
+                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
                                 Detalle
                             </button>
-                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-2 py-1 text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
+                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
                                 Eliminar
                             </button>
                         </div>
@@ -398,59 +398,59 @@
                 @forelse($recibidosToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
-                        <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
-                            <div class="flex-1 min-w-0 flex items-center gap-2">
-                                <span class="text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">
+                        <div class="px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                            <div class="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2">
+                                <span class="text-[10px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
+                                <span class="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">
                                     Recibido
                                 </span>
                                 @if($ticket->urgente)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
                                 @endif
                                 @if($ticket->prioritario)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
                                 @endif
                                 @if($ticket->a_discutir)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
                                 @endif
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
+                                <h3 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
                             </div>
-                            <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0">{{ $ticket->created_at->diffForHumans() }}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0 hidden sm:inline">{{ $ticket->created_at->diffForHumans() }}</span>
                         </div>
                         
                         <!-- Línea 2: Botones -->
-                        <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1.5 flex-wrap" onclick="event.stopPropagation();">
-                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
+                        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1 sm:gap-1.5 flex-wrap" onclick="event.stopPropagation();">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
                                 Enviado
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-2 py-1 text-xs rounded transition-all bg-blue-500 text-white">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all bg-blue-500 text-white">
                                 Recibido
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' }}">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'resuelto' ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20' }}">
                                 Resuelto
                             </button>
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        Ver
+                                        <span class="hidden xs:inline">Ver</span>
                                     </a>
                                 @else
-                                    <div class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
                                         {{ count($archivos) }}
                                     </div>
                                 @endif
                             @endif
-                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-2 py-1 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
+                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
                                 Detalle
                             </button>
-                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-2 py-1 text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
+                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
                                 Eliminar
                             </button>
                         </div>
@@ -486,59 +486,59 @@
                 @forelse($resueltosToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
-                        <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
-                            <div class="flex-1 min-w-0 flex items-center gap-2">
-                                <span class="text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
-                                <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex-shrink-0">
+                        <div class="px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
+                            <div class="flex-1 min-w-0 flex items-center gap-1.5 sm:gap-2">
+                                <span class="text-[10px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex-shrink-0">#{{ $ticket->id }}</span>
+                                <span class="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex-shrink-0">
                                     Resuelto
                                 </span>
                                 @if($ticket->urgente)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 flex-shrink-0">⚠️</span>
                                 @endif
                                 @if($ticket->prioritario)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex-shrink-0">⭐</span>
                                 @endif
                                 @if($ticket->a_discutir)
-                                    <span class="text-xs px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
+                                    <span class="text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex-shrink-0">💬</span>
                                 @endif
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
+                                <h3 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $ticket->asunto }}</h3>
                             </div>
-                            <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0">{{ $ticket->created_at->diffForHumans() }}</span>
+                            <span class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap flex-shrink-0 hidden sm:inline">{{ $ticket->created_at->diffForHumans() }}</span>
                         </div>
                         
                         <!-- Línea 2: Botones -->
-                        <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1.5 flex-wrap" onclick="event.stopPropagation();">
-                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
+                        <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1 sm:gap-1.5 flex-wrap" onclick="event.stopPropagation();">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
                                 Enviado
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-2 py-1 text-xs rounded transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-500/20' }}">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'recibido')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'recibido' ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-500/20' }}">
                                 Recibido
                             </button>
-                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-2 py-1 text-xs rounded transition-all bg-emerald-500 text-white">
+                            <button onclick="changeStatus({{ $ticket->id }}, 'resuelto')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all bg-emerald-500 text-white">
                                 Resuelto
                             </button>
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        Ver
+                                        <span class="hidden xs:inline">Ver</span>
                                     </a>
                                 @else
-                                    <div class="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white rounded flex items-center gap-0.5 sm:gap-1">
+                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
                                         {{ count($archivos) }}
                                     </div>
                                 @endif
                             @endif
-                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-2 py-1 text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
+                            <button onclick="showTicketDetail({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-walee-500 hover:bg-walee-400 text-white rounded transition-all">
                                 Detalle
                             </button>
-                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-2 py-1 text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
+                            <button onclick="deleteTicket({{ $ticket->id }})" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-red-500 hover:bg-red-400 text-white rounded transition-all">
                                 Eliminar
                             </button>
                         </div>

@@ -2834,14 +2834,22 @@ Route::get('/walee-productos/{id}', function ($id) {
 
 Route::post('/walee-productos', function (\Illuminate\Http\Request $request) {
     try {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:activo,inactivo',
-            'tipo' => 'required|string|max:255',
-            'fotos' => 'nullable|array|max:10',
-            'fotos.*' => 'image|max:5120', // 5MB por imagen
-        ]);
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'estado' => 'required|in:activo,inactivo',
+                'tipo' => 'required|string|max:255',
+                'fotos' => 'nullable|array|max:10',
+                'fotos.*' => 'image|max:5120', // 5MB por imagen
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
         $fotos = [];
         if ($request->hasFile('fotos')) {
@@ -2877,7 +2885,11 @@ Route::post('/walee-productos', function (\Illuminate\Http\Request $request) {
             'producto' => $producto
         ]);
     } catch (\Exception $e) {
-        \Log::error('Error creando producto: ' . $e->getMessage());
+        \Log::error('Error creando producto: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]);
         return response()->json([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage()
@@ -2889,15 +2901,23 @@ Route::post('/walee-productos/{id}', function (\Illuminate\Http\Request $request
     try {
         $producto = \App\Models\Rproducto::findOrFail($id);
         
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'estado' => 'required|in:activo,inactivo',
-            'tipo' => 'required|string|max:255',
-            'fotos' => 'nullable|array|max:10',
-            'fotos.*' => 'image|max:5120',
-            'existing_fotos' => 'nullable|array',
-        ]);
+        try {
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'estado' => 'required|in:activo,inactivo',
+                'tipo' => 'required|string|max:255',
+                'fotos' => 'nullable|array|max:10',
+                'fotos.*' => 'image|max:5120',
+                'existing_fotos' => 'nullable|array',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
         // Procesar fotos existentes (pueden venir como URLs completas o rutas relativas)
         $existingFotos = $request->input('existing_fotos', []);

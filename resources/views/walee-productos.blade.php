@@ -459,29 +459,39 @@
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': csrfToken
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
                     },
                     body: formData
                 });
                 
-                // Verificar si la respuesta es JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    console.error('Respuesta no JSON:', text);
-                    throw new Error('Error en la respuesta del servidor');
-                }
+                // Leer la respuesta como texto primero para debugging
+                const responseText = await response.text();
+                let data;
                 
-                const data = await response.json();
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Error parseando JSON:', parseError);
+                    console.error('Respuesta del servidor:', responseText);
+                    throw new Error('El servidor devolvió una respuesta inválida. Ver consola para detalles.');
+                }
                 
                 if (data.success) {
                     closeModal();
                     location.reload();
                 } else {
-                    alert('Error: ' + (data.message || 'No se pudo guardar el producto'));
+                    // Mostrar errores de validación si existen
+                    let errorMessage = data.message || 'No se pudo guardar el producto';
+                    if (data.errors) {
+                        const errorList = Object.values(data.errors).flat().join(', ');
+                        errorMessage += ': ' + errorList;
+                    }
+                    alert('Error: ' + errorMessage);
                 }
             } catch (error) {
                 console.error('Error:', error);
+                console.error('Stack:', error.stack);
                 alert('Error al guardar el producto: ' + error.message);
             }
         }

@@ -570,33 +570,17 @@
                         <!-- Vista Semanal -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                             @php
-                                // Obtener año y semana ISO actuales
-                                $anoActualISO = (int)$inicioSemana->format('o');
-                                $numSemanaActualISO = (int)$inicioSemana->format('W');
-                                
-                                // Calcular semana anterior
+                                // Calcular semana anterior (mismo método que funciona)
                                 $semanaAnterior = $inicioSemana->copy()->subWeek();
                                 $anoAnteriorISO = (int)$semanaAnterior->format('o');
                                 $numSemanaAnteriorISO = (int)$semanaAnterior->format('W');
                                 $semanaAnteriorFormato = $anoAnteriorISO . '-' . $numSemanaAnteriorISO;
                                 
-                                // Calcular semana siguiente usando setISODate para mayor precisión
-                                try {
-                                    $semanaSiguienteNum = $numSemanaActualISO + 1;
-                                    $anoSiguienteNum = $anoActualISO;
-                                    
-                                    // Usar setISODate para calcular correctamente, incluso si cruza años
-                                    $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoSiguienteNum, $semanaSiguienteNum);
-                                    $anoSiguienteISO = (int)$fechaSiguiente->format('o');
-                                    $numSemanaSiguienteISO = (int)$fechaSiguiente->format('W');
-                                    $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
-                                } catch (\Exception $e) {
-                                    // Fallback: usar addWeek
-                                    $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                    $anoSiguienteISO = (int)$semanaSiguiente->format('o');
-                                    $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
-                                    $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
-                                }
+                                // Calcular semana siguiente (mismo método que semana anterior)
+                                $semanaSiguiente = $inicioSemana->copy()->addWeek();
+                                $anoSiguienteISO = (int)$semanaSiguiente->format('o');
+                                $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
+                                $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
                                 
                                 // Calcular semana actual
                                 $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);

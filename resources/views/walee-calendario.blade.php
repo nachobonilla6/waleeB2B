@@ -490,33 +490,36 @@
                             {{ $meses[$mes] }} {{ $ano }}
                         </p>
                     </div>
-                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <div class="flex flex-wrap gap-1.5 sm:gap-2 w-full sm:w-auto">
                         <button 
                             onclick="showNuevaCitaModal()"
-                            class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm"
+                            class="flex-1 sm:flex-none px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
                         >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <span>Nueva Cita</span>
+                            <span class="hidden xs:inline">Nueva Cita</span>
+                            <span class="xs:hidden">Cita</span>
                         </button>
                         <button 
                             onclick="showNuevaTareaModal()"
-                            class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm"
+                            class="flex-1 sm:flex-none px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
                         >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
-                            <span>Nueva Tarea</span>
+                            <span class="hidden xs:inline">Nueva Tarea</span>
+                            <span class="xs:hidden">Tarea</span>
                         </button>
                         <button 
                             onclick="showNuevaNotaModal()"
-                            class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-2 text-sm"
+                            class="flex-1 sm:flex-none px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
                         >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
-                            <span>Nueva Nota</span>
+                            <span class="hidden xs:inline">Nueva Nota</span>
+                            <span class="xs:hidden">Nota</span>
                         </button>
                     </div>
                 </div>
@@ -575,13 +578,20 @@
                                 $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
                             @endphp
                             
-                            <!-- Botón Semana Anterior (solo móvil) -->
-                            <div class="md:hidden p-3 border-b border-slate-200 dark:border-slate-700">
-                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="w-full px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center gap-2 transition-all">
-                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Navegación Semanal (solo móvil) -->
+                            <div class="md:hidden p-2 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Semana Anterior</span>
+                                </a>
+                                <h2 class="text-sm font-semibold text-slate-900 dark:text-white text-center">
+                                    {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
+                                </h2>
+                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
                                 </a>
                             </div>
                             
@@ -605,13 +615,6 @@
                                         Esta Semana
                                     </a>
                                 </div>
-                            </div>
-                            
-                            <!-- Título Semana (solo móvil) -->
-                            <div class="md:hidden p-3 border-b border-slate-200 dark:border-slate-700 text-center">
-                                <h2 class="text-base font-semibold text-slate-900 dark:text-white">
-                                    {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
-                                </h2>
                             </div>
                             
                             <!-- Días de la Semana - Desktop: Grid 7 columnas, Mobile: Columna -->
@@ -781,26 +784,26 @@
                                         $itemsDelDia = $itemsDelDia->sortBy('hora');
                                         $espaciadoClase = 'space-y-1.5';
                                     @endphp
-                                    <div class="p-3 {{ $esHoy ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-white dark:bg-slate-800' }}">
-                                        <div class="mb-2">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    <div class="p-2 {{ $esHoy ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-white dark:bg-slate-800' }}">
+                                        <div class="mb-1.5">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-1.5">
+                                                    <div class="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase">
                                                         {{ ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][$diaSemana->dayOfWeek] }}
                                                     </div>
-                                                    <span class="text-lg font-semibold {{ $esHoy ? 'text-blue-600 dark:text-blue-400' : 'text-slate-900 dark:text-white' }}">
+                                                    <span class="text-base font-semibold {{ $esHoy ? 'text-blue-600 dark:text-blue-400' : 'text-slate-900 dark:text-white' }}">
                                                         {{ $diaSemana->day }}
                                                     </span>
                                                     @if($esHoy)
-                                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                                                     @endif
                                                 </div>
-                                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                                <span class="text-[10px] text-slate-500 dark:text-slate-400">
                                                     {{ $diaSemana->format('d/m/Y') }}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="{{ $espaciadoClase }}">
+                                        <div class="space-y-1">
                                             @foreach($itemsDelDia as $itemOrdenado)
                                                 @if($itemOrdenado['tipo'] === 'cita')
                                                     @php $cita = $itemOrdenado['item']; @endphp
@@ -816,13 +819,13 @@
                                                     @endphp
                                                     <button 
                                                         onclick="showCitaDetail({{ $cita->id }})"
-                                                        class="w-full text-left px-2 py-2 rounded text-xs font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1.5"
+                                                        class="w-full text-left px-1.5 py-1 rounded text-[11px] font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
                                                         style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
                                                         title="{{ $cita->titulo }}"
                                                     >
-                                                        <div class="flex items-center gap-1.5">
-                                                            <span class="text-xs font-semibold opacity-75 whitespace-nowrap">{{ $cita->fecha_inicio->format('H:i') }}</span>
-                                                            <span class="flex-1 truncate">{{ $cita->titulo }}</span>
+                                                        <div class="flex items-center gap-1">
+                                                            <span class="text-[10px] font-semibold opacity-75 whitespace-nowrap">{{ $cita->fecha_inicio->format('H:i') }}</span>
+                                                            <span class="flex-1 truncate text-[11px]">{{ $cita->titulo }}</span>
                                                         </div>
                                                     </button>
                                                 @elseif($itemOrdenado['tipo'] === 'tarea')
@@ -839,30 +842,30 @@
                                                     @endphp
                                                     <button 
                                                         onclick="showTareaDetail({{ $tarea->id }})"
-                                                        class="w-full text-left px-2 py-2 rounded text-xs font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1.5"
+                                                        class="w-full text-left px-1.5 py-1 rounded text-[11px] font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }}"
                                                         style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
                                                         title="{{ $tarea->texto }}"
                                                     >
-                                                        <div class="flex items-center gap-1.5">
-                                                            <span class="text-xs font-semibold opacity-75 whitespace-nowrap">{{ $tarea->fecha_hora->format('H:i') }}</span>
-                                                            <span class="flex-1 truncate">{{ $tarea->texto }}</span>
+                                                        <div class="flex items-center gap-1">
+                                                            <span class="text-[10px] font-semibold opacity-75 whitespace-nowrap">{{ $tarea->fecha_hora->format('H:i') }}</span>
+                                                            <span class="flex-1 truncate text-[11px]">{{ $tarea->texto }}</span>
                                                         </div>
                                                     </button>
                                                 @elseif($itemOrdenado['tipo'] === 'nota')
                                                     @php $nota = $itemOrdenado['item']; @endphp
                                                     <button 
                                                         onclick="editNota({{ $nota->id }})"
-                                                        class="w-full text-left px-2 py-2 rounded text-xs font-medium transition-all hover:opacity-80 mb-1.5 bg-blue-100 dark:bg-blue-600/30 text-blue-800 dark:text-blue-200 border-l-3 border-blue-700 dark:border-blue-500 {{ $nota->pinned ? 'ring-2 ring-blue-400 dark:ring-blue-600' : '' }}"
+                                                        class="w-full text-left px-1.5 py-1 rounded text-[11px] font-medium transition-all hover:opacity-80 bg-blue-100 dark:bg-blue-600/30 text-blue-800 dark:text-blue-200 border-l-2 border-blue-700 dark:border-blue-500 {{ $nota->pinned ? 'ring-1 ring-blue-400 dark:ring-blue-600' : '' }}"
                                                         title="{{ Str::limit($nota->content, 100) }}"
                                                     >
-                                                        <div class="flex items-center gap-1.5">
+                                                        <div class="flex items-center gap-1">
                                                             @if($nota->pinned)
-                                                                <svg class="w-3 h-3 text-blue-700 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                                <svg class="w-2.5 h-2.5 text-blue-700 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                                                     <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                                                                 </svg>
                                                             @endif
-                                                            <span class="text-xs font-semibold opacity-75 uppercase">{{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}</span>
-                                                            <span class="flex-1 truncate">{{ Str::limit($nota->content, 30) }}</span>
+                                                            <span class="text-[10px] font-semibold opacity-75 uppercase">{{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}</span>
+                                                            <span class="flex-1 truncate text-[11px]">{{ Str::limit($nota->content, 30) }}</span>
                                                         </div>
                                                     </button>
                                                 @endif
@@ -873,11 +876,18 @@
                                 @endfor
                             </div>
                             
-                            <!-- Botón Semana Siguiente (solo móvil) -->
-                            <div class="md:hidden p-3 border-t border-slate-200 dark:border-slate-700">
-                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="w-full px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center gap-2 transition-all">
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Próxima Semana</span>
-                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Navegación Semanal Inferior (solo móvil) -->
+                            <div class="md:hidden p-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                    </svg>
+                                </a>
+                                <a href="?vista=semanal&semana={{ $semanaActualFormato }}" class="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all text-xs">
+                                    Esta Semana
+                                </a>
+                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </a>

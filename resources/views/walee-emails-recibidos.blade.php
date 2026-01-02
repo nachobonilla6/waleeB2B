@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -353,41 +354,6 @@
         </div>
     </div>
     
-    <!-- Email Detail Modal -->
-    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 dark:border-slate-700 max-w-5xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-2.5 sm:p-3 md:p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white truncate pr-2 sm:pr-4" id="modalSubject">Email</h3>
-                <div class="flex items-center gap-1.5 sm:gap-2">
-                    <button onclick="openGmail()" class="px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-1.5" title="Ir a Gmail">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                        </svg>
-                        <span class="hidden sm:inline">Gmail</span>
-                    </button>
-                    <button onclick="replyInGmail()" class="px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-1.5" title="Responder en Gmail">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                        </svg>
-                        <span class="hidden sm:inline">Responder</span>
-                    </button>
-                    <button onclick="toggleStar()" id="starBtn" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" id="starIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                        </svg>
-                    </button>
-                    <button onclick="closeModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div class="p-2 sm:p-4 overflow-y-auto max-h-[calc(100vh-80px)] sm:max-h-[70vh]" id="modalContent">
-                <!-- Modal content will be inserted here -->
-            </div>
-        </div>
-    </div>
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -396,7 +362,7 @@
         // Email data
         const emailsData = @json($emails->items());
         
-        function showEmailDetail(emailId) {
+        async function showEmailDetail(emailId) {
             currentEmailId = emailId;
             const email = emailsData.find(e => e.id === emailId);
             if (!email) return;
@@ -407,24 +373,34 @@
                 email.is_read = true;
             }
             
-            document.getElementById('modalSubject').textContent = email.subject;
-            
-            // Update star icon
-            const starIcon = document.getElementById('starIcon');
-            if (email.is_starred) {
-                starIcon.setAttribute('fill', 'currentColor');
-                starIcon.classList.remove('text-slate-600', 'dark:text-slate-400');
-                starIcon.classList.add('text-walee-600', 'dark:text-walee-400');
-            } else {
-                starIcon.setAttribute('fill', 'none');
-                starIcon.classList.remove('text-walee-600', 'dark:text-walee-400');
-                starIcon.classList.add('text-slate-600', 'dark:text-slate-400');
-            }
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
             
             const receivedDate = email.received_at ? new Date(email.received_at) : new Date(email.created_at);
             
-            document.getElementById('modalContent').innerHTML = `
-                <div class="space-y-2 sm:space-y-3 md:space-y-4">
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
+                modalWidth = '700px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const starIconHtml = email.is_starred ? `
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-walee-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            ` : `
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+            `;
+            
+            const html = `
+                <div class="text-left space-y-2 sm:space-y-3 md:space-y-4 ${isMobile ? 'text-xs' : 'text-sm'}">
                     <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
                         <div class="flex items-center gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
@@ -452,15 +428,15 @@
                         </div>
                     </div>
                     ${email.attachments && email.attachments.length > 0 ? `
-                        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                            <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Archivos adjuntos</h4>
-                            <div class="space-y-2">
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
+                            <h4 class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 mb-2 sm:mb-3">Archivos adjuntos</h4>
+                            <div class="space-y-1.5 sm:space-y-2">
                                 ${email.attachments.map(att => `
-                                    <div class="flex items-center gap-3 p-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
-                                        <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                                         </svg>
-                                        <span class="text-sm text-slate-900 dark:text-white">${att.name || att}</span>
+                                        <span class="text-xs sm:text-sm text-slate-900 dark:text-white truncate">${att.name || att}</span>
                                     </div>
                                 `).join('')}
                             </div>
@@ -468,7 +444,64 @@
                     ` : ''}
                 </div>
             `;
-            document.getElementById('emailModal').classList.remove('hidden');
+            
+            const result = await Swal.fire({
+                title: email.subject || 'Email',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#10b981',
+                showCancelButton: true,
+                cancelButtonText: 'Gmail',
+                cancelButtonColor: '#3b82f6',
+                showDenyButton: true,
+                denyButtonText: 'Responder',
+                denyButtonColor: '#10b981',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
+                    denyButton: isDarkMode ? 'dark-swal-deny' : 'light-swal-deny',
+                },
+                footer: `
+                    <div class="flex items-center justify-center gap-2 mt-2">
+                        <button onclick="toggleStarFromModal(${emailId})" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            ${starIconHtml}
+                        </button>
+                    </div>
+                `,
+                didOpen: () => {
+                    // Agregar event listeners a los botones del footer
+                    const starBtn = document.querySelector('[onclick*="toggleStarFromModal"]');
+                    if (starBtn) {
+                        starBtn.onclick = () => toggleStarFromModal(emailId);
+                    }
+                }
+            });
+            
+            if (result.isConfirmed) {
+                // Cerrar
+            } else if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                // Gmail
+                openGmail();
+            } else if (result.isDenied) {
+                // Responder
+                replyInGmail();
+            }
+        }
+        
+        function toggleStarFromModal(emailId) {
+            currentEmailId = emailId;
+            toggleStar();
+            // Cerrar y volver a abrir el modal para actualizar el icono
+            Swal.close();
+            setTimeout(() => showEmailDetail(emailId), 100);
         }
         
         async function markAsRead(emailId) {
@@ -559,10 +592,6 @@
             }
         }
         
-        function closeModal() {
-            document.getElementById('emailModal').classList.add('hidden');
-            currentEmailId = null;
-        }
         
         function openGmail() {
             window.open('https://mail.google.com', '_blank');
@@ -636,19 +665,85 @@
             }, 5000);
         }
         
-        // Close modal on escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
+        // Estilos para SweetAlert dark/light mode
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background: #1e293b !important;
+                color: #e2e8f0 !important;
             }
-        });
-        
-        // Close modal on backdrop click
-        document.getElementById('emailModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+            .light-swal {
+                background: #ffffff !important;
+                color: #1e293b !important;
             }
-        });
+            .dark-swal-title {
+                color: #f1f5f9 !important;
+            }
+            .light-swal-title {
+                color: #0f172a !important;
+            }
+            .dark-swal-html {
+                color: #cbd5e1 !important;
+            }
+            .light-swal-html {
+                color: #334155 !important;
+            }
+            .dark-swal-confirm {
+                background: #10b981 !important;
+            }
+            .light-swal-confirm {
+                background: #10b981 !important;
+            }
+            .dark-swal-cancel {
+                background: #3b82f6 !important;
+            }
+            .light-swal-cancel {
+                background: #3b82f6 !important;
+            }
+            .dark-swal-deny {
+                background: #10b981 !important;
+            }
+            .light-swal-deny {
+                background: #10b981 !important;
+            }
+            @media (min-width: 1024px) {
+                .swal2-popup {
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                }
+                .swal2-html-container {
+                    max-height: calc(90vh - 200px) !important;
+                    overflow-y: auto !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                .swal2-popup {
+                    width: 95% !important;
+                    margin: 0.5rem !important;
+                    padding: 1rem !important;
+                }
+                .swal2-title {
+                    font-size: 1.125rem !important;
+                    margin-bottom: 0.75rem !important;
+                }
+                .swal2-html-container {
+                    margin: 0.5rem 0 !important;
+                    font-size: 0.875rem !important;
+                }
+                .swal2-confirm,
+                .swal2-cancel,
+                .swal2-deny {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem 1rem !important;
+                }
+                .swal2-actions {
+                    margin-top: 1rem !important;
+                    gap: 0.5rem !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
     @include('partials.walee-support-button')
 </body>

@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -206,34 +207,31 @@
         </div>
     </div>
     
-    <!-- Email Detail Modal -->
-    <div id="emailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-0 sm:border border-slate-200 dark:border-slate-700 max-w-2xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-2.5 sm:p-3 md:p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white truncate pr-2 sm:pr-4" id="modalSubject">Email</h3>
-                <button onclick="closeModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-2 sm:p-3 md:p-4 overflow-y-auto max-h-[calc(100vh-60px)] sm:max-h-[70vh]" id="modalContent">
-                <!-- Modal content will be inserted here -->
-            </div>
-        </div>
-    </div>
     
     <script>
         // Email data
         const emailsData = @json($emails->items());
         
-        function showEmailDetail(emailId) {
+        async function showEmailDetail(emailId) {
             const email = emailsData.find(e => e.id === emailId);
             if (!email) return;
             
-            document.getElementById('modalSubject').textContent = email.subject;
-            document.getElementById('modalContent').innerHTML = `
-                <div class="space-y-2 sm:space-y-3 md:space-y-4">
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
+                modalWidth = '700px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const html = `
+                <div class="text-left space-y-2 sm:space-y-3 md:space-y-4 ${isMobile ? 'text-xs' : 'text-sm'}">
                     <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                             <div>
@@ -273,26 +271,81 @@
                     </div>
                 </div>
             `;
-            document.getElementById('emailModal').classList.remove('hidden');
+            
+            Swal.fire({
+                title: email.subject || 'Email',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#D59F3B',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                }
+            });
         }
         
-        function closeModal() {
-            document.getElementById('emailModal').classList.add('hidden');
-        }
-        
-        // Close modal on escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
+        // Estilos para SweetAlert dark/light mode
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background: #1e293b !important;
+                color: #e2e8f0 !important;
             }
-        });
-        
-        // Close modal on backdrop click
-        document.getElementById('emailModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+            .light-swal {
+                background: #ffffff !important;
+                color: #1e293b !important;
             }
-        });
+            .dark-swal-title {
+                color: #f1f5f9 !important;
+            }
+            .light-swal-title {
+                color: #0f172a !important;
+            }
+            .dark-swal-html {
+                color: #cbd5e1 !important;
+            }
+            .light-swal-html {
+                color: #334155 !important;
+            }
+            @media (min-width: 1024px) {
+                .swal2-popup {
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                }
+                .swal2-html-container {
+                    max-height: calc(90vh - 150px) !important;
+                    overflow-y: auto !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                .swal2-popup {
+                    width: 95% !important;
+                    margin: 0.5rem !important;
+                    padding: 1rem !important;
+                }
+                .swal2-title {
+                    font-size: 1.125rem !important;
+                    margin-bottom: 0.75rem !important;
+                }
+                .swal2-html-container {
+                    margin: 0.5rem 0 !important;
+                    font-size: 0.875rem !important;
+                }
+                .swal2-confirm {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem 1rem !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
     @include('partials.walee-support-button')
 </body>

@@ -580,11 +580,23 @@
                                 $numSemanaAnteriorISO = (int)$semanaAnterior->format('W');
                                 $semanaAnteriorFormato = $anoAnteriorISO . '-' . $numSemanaAnteriorISO;
                                 
-                                // Calcular semana siguiente - usar addWeek y luego obtener ISO
-                                $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                $anoSiguienteISO = (int)$semanaSiguiente->format('o');
-                                $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
-                                $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
+                                // Calcular semana siguiente usando setISODate para mayor precisión
+                                try {
+                                    $semanaSiguienteNum = $numSemanaActualISO + 1;
+                                    $anoSiguienteNum = $anoActualISO;
+                                    
+                                    // Usar setISODate para calcular correctamente, incluso si cruza años
+                                    $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoSiguienteNum, $semanaSiguienteNum);
+                                    $anoSiguienteISO = (int)$fechaSiguiente->format('o');
+                                    $numSemanaSiguienteISO = (int)$fechaSiguiente->format('W');
+                                    $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
+                                } catch (\Exception $e) {
+                                    // Fallback: usar addWeek
+                                    $semanaSiguiente = $inicioSemana->copy()->addWeek();
+                                    $anoSiguienteISO = (int)$semanaSiguiente->format('o');
+                                    $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
+                                    $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
+                                }
                                 
                                 // Calcular semana actual
                                 $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);

@@ -416,6 +416,12 @@
             previewPhotos(input);
         }
         
+        function removeExistingPhoto(btn) {
+            if (confirm('¿Eliminar esta foto?')) {
+                btn.closest('div').remove();
+            }
+        }
+        
         async function saveProduct(e) {
             e.preventDefault();
             
@@ -432,8 +438,15 @@
             const productId = document.getElementById('productId').value;
             if (productId) {
                 formData.append('_method', 'PUT');
+                
+                // Capturar fotos existentes
+                const existingFotosInputs = document.querySelectorAll('input[name="existing_fotos[]"]');
+                existingFotosInputs.forEach((input, index) => {
+                    formData.append(`existing_fotos[${index}]`, input.value);
+                });
             }
             
+            // Agregar nuevas fotos seleccionadas
             selectedPhotos.forEach((photo, index) => {
                 formData.append(`fotos[${index}]`, photo);
             });
@@ -451,17 +464,25 @@
                     body: formData
                 });
                 
+                // Verificar si la respuesta es JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Respuesta no JSON:', text);
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                
                 const data = await response.json();
                 
                 if (data.success) {
                     closeModal();
                     location.reload();
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Error: ' + (data.message || 'No se pudo guardar el producto'));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al guardar el producto');
+                alert('Error al guardar el producto: ' + error.message);
             }
         }
         
@@ -492,15 +513,26 @@
                 const preview = document.getElementById('photosPreview');
                 preview.innerHTML = '';
                 if (product.fotos && product.fotos.length > 0) {
-                    // Usar fotos_paths si está disponible, sino usar fotos (URLs)
-                    const fotosPaths = product.fotos_paths || product.fotos;
+                    // Usar fotos_paths si está disponible, sino extraer de las URLs
+                    const fotosPaths = product.fotos_paths || [];
                     product.fotos.forEach((fotoUrl, index) => {
                         const div = document.createElement('div');
                         div.className = 'relative';
-                        const fotoPath = fotosPaths[index] || fotoUrl;
+                        // Si tenemos fotos_paths, usarlo, sino extraer de la URL
+                        let fotoPath = fotosPaths[index];
+                        if (!fotoPath && fotoUrl) {
+                            // Extraer la ruta relativa de la URL completa
+                            const match = fotoUrl.match(/\/storage\/(.+)$/);
+                            fotoPath = match ? match[1] : fotoUrl;
+                        }
                         div.innerHTML = `
                             <img src="${fotoUrl}" class="w-full h-24 object-cover rounded-lg">
-                            <input type="hidden" name="existing_fotos[]" value="${fotoPath}">
+                            <button type="button" onclick="removeExistingPhoto(this)" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                            <input type="hidden" name="existing_fotos[]" value="${fotoPath || fotoUrl}">
                         `;
                         preview.appendChild(div);
                     });

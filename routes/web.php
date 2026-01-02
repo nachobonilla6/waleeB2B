@@ -2903,15 +2903,26 @@ Route::post('/walee-productos/{id}', function (\Illuminate\Http\Request $request
         $existingFotos = $request->input('existing_fotos', []);
         $fotos = [];
         
-        foreach ($existingFotos as $foto) {
-            // Si viene como URL completa, extraer la ruta relativa
-            if (strpos($foto, '/storage/') !== false) {
-                $foto = str_replace(asset('storage/'), '', $foto);
-                $foto = str_replace(url('storage/'), '', $foto);
-            }
-            // Si ya es una ruta relativa, usarla directamente
-            if (!empty($foto) && file_exists(storage_path('app/public/' . $foto))) {
-                $fotos[] = $foto;
+        if (!empty($existingFotos) && is_array($existingFotos)) {
+            foreach ($existingFotos as $foto) {
+                if (empty($foto)) continue;
+                
+                // Si viene como URL completa, extraer la ruta relativa
+                if (strpos($foto, '/storage/') !== false || strpos($foto, 'http') === 0) {
+                    // Extraer la ruta relativa de la URL
+                    $foto = preg_replace('#^.*?/storage/#', '', $foto);
+                    $foto = preg_replace('#\?.*$#', '', $foto); // Remover query strings
+                }
+                
+                // Si ya es una ruta relativa, verificar que el archivo existe
+                if (!empty($foto)) {
+                    $fullPath = storage_path('app/public/' . $foto);
+                    if (file_exists($fullPath)) {
+                        $fotos[] = $foto;
+                    } else {
+                        \Log::warning('Foto existente no encontrada', ['foto' => $foto, 'path' => $fullPath]);
+                    }
+                }
             }
         }
         

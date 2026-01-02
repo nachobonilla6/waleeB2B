@@ -3027,6 +3027,7 @@
                 cancelButtonColor: '#64748b',
                 buttonsStyling: true,
                 didOpen: () => {
+                    optimizeSwalForMobile();
                     const popup = document.querySelector('.swal2-popup');
                     if (isDarkMode && popup) {
                         popup.classList.add('dark');

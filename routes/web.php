@@ -3684,8 +3684,27 @@ Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\
             'feedback' => $request->input('feedback'),
         ];
         
+        // Procesar eliminación de foto
+        if ($request->input('delete_foto') == '1') {
+            // Eliminar foto existente si existe
+            if ($cliente->foto) {
+                $oldPath = storage_path('app/public/' . $cliente->foto);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+            $data['foto'] = null;
+        }
+        
         // Procesar foto si se subió una nueva
         if ($request->hasFile('foto_file')) {
+            // Eliminar foto anterior si existe
+            if ($cliente->foto) {
+                $oldPath = storage_path('app/public/' . $cliente->foto);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
             $file = $request->file('foto_file');
             $path = $file->store('clientes_en_proceso_fotos', 'public');
             $data['foto'] = $path;

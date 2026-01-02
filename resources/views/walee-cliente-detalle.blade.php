@@ -735,22 +735,40 @@
                     <div class="mb-3 sm:mb-4">
                         <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Foto del Cliente</label>
                         <div class="flex items-center gap-2 sm:gap-3">
-                            <div class="flex-shrink-0">
+                            <div class="flex-shrink-0 relative">
                                 <div id="fotoPreviewContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 border-emerald-500/30">
                                     ${clienteData.fotoUrl ? 
                                         `<img src="${clienteData.fotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
                                         `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
                                     }
                                 </div>
+                                ${clienteData.fotoUrl ? `
+                                    <button type="button" onclick="deleteClientPhoto()" class="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-lg" title="Eliminar foto">
+                                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                ` : ''}
                             </div>
                             <div class="flex-1">
-                                <label for="foto_file" class="cursor-pointer inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span>Cambiar foto</span>
-                                </label>
+                                <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-2">
+                                    <label for="foto_file" class="cursor-pointer inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
+                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span>Cambiar foto</span>
+                                    </label>
+                                    ${clienteData.fotoUrl ? `
+                                        <button type="button" onclick="deleteClientPhoto()" class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs sm:text-sm font-medium">
+                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            <span>Eliminar</span>
+                                        </button>
+                                    ` : ''}
+                                </div>
                                 <input type="file" name="foto_file" id="foto_file" accept="image/*" class="hidden" onchange="previewClientImage(this)">
+                                <input type="hidden" name="delete_foto" id="delete_foto" value="0">
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">JPG, PNG o GIF. Máx 2MB</p>
                             </div>
                         </div>
@@ -875,9 +893,42 @@
                 reader.onload = function(e) {
                     const container = document.getElementById('fotoPreviewContainer');
                     container.innerHTML = `<img src="${e.target.result}" alt="Preview" id="fotoPreview" class="w-full h-full object-cover">`;
+                    
+                    // Resetear el flag de eliminación si se sube una nueva foto
+                    const deleteFotoInput = document.getElementById('delete_foto');
+                    if (deleteFotoInput) {
+                        deleteFotoInput.value = '0';
+                    }
+                    
+                    // Ocultar botones de eliminar si existen
+                    const deleteButtons = container.parentElement.querySelectorAll('button[onclick="deleteClientPhoto()"]');
+                    deleteButtons.forEach(btn => btn.style.display = 'none');
                 };
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+        
+        function deleteClientPhoto() {
+            const container = document.getElementById('fotoPreviewContainer');
+            const deleteFotoInput = document.getElementById('delete_foto');
+            const fotoFileInput = document.getElementById('foto_file');
+            
+            // Mostrar imagen genérica
+            container.innerHTML = `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`;
+            
+            // Marcar para eliminar
+            if (deleteFotoInput) {
+                deleteFotoInput.value = '1';
+            }
+            
+            // Limpiar input de archivo
+            if (fotoFileInput) {
+                fotoFileInput.value = '';
+            }
+            
+            // Ocultar botones de eliminar
+            const deleteButtons = container.parentElement.querySelectorAll('button[onclick="deleteClientPhoto()"]');
+            deleteButtons.forEach(btn => btn.style.display = 'none');
         }
         
         async function updateClient(formData) {

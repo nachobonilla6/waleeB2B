@@ -197,11 +197,11 @@
                                 }
                             @endphp
                             <a href="{{ $urlPlaneador }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
                                     @if($cliente->foto)
                                         <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
                                     @else
-                                        <span class="text-sm md:text-base font-bold text-blue-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">

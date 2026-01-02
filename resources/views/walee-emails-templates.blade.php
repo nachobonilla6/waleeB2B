@@ -420,54 +420,8 @@
             localStorage.setItem('templateFormData', JSON.stringify(formData));
         }
         
-        function saveTemplateFormData() {
-            const form = document.getElementById('template-form');
-            if (!form) return;
-            
-            const formData = {
-                nombre: form.querySelector('[name="nombre"]')?.value || '',
-                asunto: form.querySelector('[name="asunto"]')?.value || '',
-                contenido: form.querySelector('[name="contenido"]')?.value || '',
-                ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || ''
-            };
-            
-            localStorage.setItem('templateFormData', JSON.stringify(formData));
-        }
-        
-        function restoreTemplateFormData() {
-            const form = document.getElementById('template-form');
-            if (!form) return;
-            
-            // Solo restaurar si no hay un template_id (es un nuevo template, no edición)
-            const templateId = form.querySelector('[name="template_id"]')?.value;
-            if (templateId) return; // No restaurar si estamos editando
-            
-            const savedData = localStorage.getItem('templateFormData');
-            if (savedData) {
-                try {
-                    const formData = JSON.parse(savedData);
-                    
-                    const nombreInput = form.querySelector('[name="nombre"]');
-                    const asuntoInput = form.querySelector('[name="asunto"]');
-                    const contenidoInput = form.querySelector('[name="contenido"]');
-                    const aiPromptInput = form.querySelector('[name="ai_prompt"]');
-                    
-                    if (nombreInput) nombreInput.value = formData.nombre || '';
-                    if (asuntoInput) asuntoInput.value = formData.asunto || '';
-                    if (contenidoInput) contenidoInput.value = formData.contenido || '';
-                    if (aiPromptInput) aiPromptInput.value = formData.ai_prompt || '';
-                } catch (e) {
-                    console.error('Error restaurando datos del formulario:', e);
-                }
-            }
-        }
-        
         function clearTemplateFormData() {
             localStorage.removeItem('templateFormData');
-            const form = document.getElementById('template-form');
-            if (form) {
-                form.reset();
-            }
         }
         
         async function editTemplate(templateId) {

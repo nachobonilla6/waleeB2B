@@ -511,6 +511,208 @@
                 }
             });
         }
+        
+        // Modal para crear cliente
+        function openCreateClientModal() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            const html = `
+                <form id="createClientForm" class="space-y-3 sm:space-y-4 text-left">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
+                        <input type="text" id="clientName" name="name" required
+                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Email</label>
+                        <input type="email" id="clientEmail" name="email"
+                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 1</label>
+                            <input type="tel" id="clientTelefono1" name="telefono_1"
+                                   class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 2</label>
+                            <input type="tel" id="clientTelefono2" name="telefono_2"
+                                   class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sitio Web</label>
+                        <input type="url" id="clientWebsite" name="website"
+                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Dirección</label>
+                        <textarea id="clientAddress" name="address" rows="2"
+                                  class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado</label>
+                        <select id="clientEstado" name="estado"
+                                class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="pending">Pendiente</option>
+                            <option value="propuesta_enviada">Propuesta Enviada</option>
+                            <option value="activo">Activo</option>
+                            <option value="accepted">Aceptado</option>
+                        </select>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: 'Agregar Cliente',
+                html: html,
+                width: isMobile ? '95%' : '600px',
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Focus en el primer campo
+                    document.getElementById('clientName')?.focus();
+                },
+                preConfirm: () => {
+                    const form = document.getElementById('createClientForm');
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData);
+                    
+                    // Validar nombre requerido
+                    if (!data.name || data.name.trim() === '') {
+                        Swal.showValidationMessage('El nombre es requerido');
+                        return false;
+                    }
+                    
+                    return data;
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    createClient(result.value);
+                }
+            });
+        }
+        
+        async function createClient(data) {
+            try {
+                const response = await fetch('{{ route("walee.clientes.create") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cliente creado!',
+                        text: 'El cliente se ha agregado correctamente',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    let errorMessage = 'Error al crear el cliente';
+                    if (result.message) {
+                        errorMessage = result.message;
+                    } else if (result.errors) {
+                        const errors = Object.values(result.errors).flat();
+                        errorMessage = errors.join(', ');
+                    }
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage,
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión. Por favor, intenta nuevamente.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
+        // Estilos para SweetAlert dark/light mode
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background: #1e293b !important;
+                color: #e2e8f0 !important;
+            }
+            .light-swal {
+                background: #ffffff !important;
+                color: #1e293b !important;
+            }
+            .dark-swal-title {
+                color: #f1f5f9 !important;
+            }
+            .light-swal-title {
+                color: #0f172a !important;
+            }
+            .dark-swal-html {
+                color: #cbd5e1 !important;
+            }
+            .light-swal-html {
+                color: #334155 !important;
+            }
+            @media (max-width: 640px) {
+                .swal2-popup {
+                    width: 95% !important;
+                    margin: 0.5rem !important;
+                    padding: 1rem !important;
+                }
+                .swal2-title {
+                    font-size: 1.125rem !important;
+                    margin-bottom: 0.75rem !important;
+                }
+                .swal2-html-container {
+                    margin: 0.5rem 0 !important;
+                    font-size: 0.875rem !important;
+                }
+                .swal2-confirm,
+                .swal2-cancel {
+                    font-size: 0.875rem !important;
+                    padding: 0.5rem 1rem !important;
+                }
+                .swal2-actions {
+                    margin-top: 1rem !important;
+                    gap: 0.5rem !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
     @include('partials.walee-support-button')
 </body>

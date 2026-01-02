@@ -393,7 +393,7 @@
                 @if(isset($ticketsTodos) && $ticketsTodos->hasPages())
                     <div class="mt-6 flex justify-center">
                         <div class="flex items-center gap-2">
-                            {{ $ticketsTodos->links('pagination::tailwind') }}
+                            {{ $ticketsTodos->links() }}
                         </div>
                     </div>
                 @endif

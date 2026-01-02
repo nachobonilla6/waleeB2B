@@ -396,7 +396,8 @@ Route::get('/walee-tickets/{tab}', function ($tab) {
             ->orderBy('urgente', 'desc')
             ->orderBy('prioritario', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->paginate(5)
+            ->withPath(route('walee.tickets.tab', ['tab' => 'todos']));
         
         return view('walee-tickets', [
             'activeTab' => $tab,

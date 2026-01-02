@@ -260,56 +260,64 @@
                     </div>
                 </div>
                 
-                <!-- Publicaciones -->
-                @if($clientePlaneadorId)
-                    <div class="rounded-lg sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-2 sm:p-4 sm:col-span-2 lg:col-span-1">
-                        <div class="flex items-start gap-2 sm:gap-3">
-                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-1 sm:mb-2">
-                                    <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400">Publicaciones</p>
+            </div>
+            
+            <!-- Publicaciones Section - Mobile Visible -->
+            @if($clientePlaneadorId)
+                <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.25s;">
+                    <div class="rounded-lg sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-2.5 sm:p-4">
+                        <h2 class="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Publicaciones
+                        </h2>
+                        <div class="space-y-2 sm:space-y-2.5">
+                            @if($publicacionesProgramadas > 0)
+                                <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-2 sm:p-2.5 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 transition-all group">
+                                    <div class="flex items-center gap-2 sm:gap-2.5">
+                                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-violet-400 transition-colors">Programadas</p>
+                                            <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">Publicaciones futuras</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-base sm:text-lg font-bold text-violet-600 dark:text-violet-400">{{ $publicacionesProgramadas }}</span>
+                                </a>
+                            @endif
+                            @if($publicacionesPublicadas > 0)
+                                <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-2 sm:p-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all group">
+                                    <div class="flex items-center gap-2 sm:gap-2.5">
+                                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-400 transition-colors">Publicadas</p>
+                                            <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">Ya publicadas</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400">{{ $publicacionesPublicadas }}</span>
+                                </a>
+                            @endif
+                            @if($publicacionesProgramadas == 0 && $publicacionesPublicadas == 0)
+                                <div class="text-center py-4 sm:py-6">
+                                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="text-xs sm:text-sm text-slate-800 dark:text-white">Sin publicaciones</p>
+                                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">Aún no hay publicaciones programadas</p>
                                 </div>
-                                <div class="space-y-1 sm:space-y-2">
-                                    @if($publicacionesProgramadas > 0)
-                                        <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-1.5 sm:p-2 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 transition-all group">
-                                            <div class="flex items-center gap-1.5 sm:gap-2">
-                                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                                                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                    </svg>
-                                                </div>
-                                                <span class="text-[10px] sm:text-sm text-slate-700 dark:text-slate-300 group-hover:text-violet-400 transition-colors">Programadas</span>
-                                            </div>
-                                            <span class="text-xs sm:text-base font-bold text-violet-600 dark:text-violet-400">{{ $publicacionesProgramadas }}</span>
-                                        </a>
-                                    @endif
-                                    @if($publicacionesPublicadas > 0)
-                                        <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-1.5 sm:p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 transition-all group">
-                                            <div class="flex items-center gap-1.5 sm:gap-2">
-                                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                                                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                                    </svg>
-                                                </div>
-                                                <span class="text-[10px] sm:text-sm text-slate-700 dark:text-slate-300 group-hover:text-emerald-400 transition-colors">Publicadas</span>
-                                            </div>
-                                            <span class="text-xs sm:text-base font-bold text-emerald-600 dark:text-emerald-400">{{ $publicacionesPublicadas }}</span>
-                                        </a>
-                                    @endif
-                                    @if($publicacionesProgramadas == 0 && $publicacionesPublicadas == 0)
-                                        <p class="text-xs sm:text-base text-slate-800 dark:text-white">Sin publicaciones</p>
-                                        <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aún no hay publicaciones programadas</p>
-                                    @endif
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
             
             <!-- Citas Section -->
             <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.3s;">

@@ -64,7 +64,16 @@
         $googleCalendarService = new \App\Services\GoogleCalendarService();
         $googleCalendarConnected = $googleCalendarService->isAuthorized();
         
+        // Detectar si es móvil y forzar vista semanal
+        $userAgent = request()->userAgent();
+        $esMobile = preg_match('/(android|iphone|ipad|ipod|blackberry|windows phone)/i', $userAgent);
+        
         $vista = request()->get('vista', 'mensual');
+        // En móvil, siempre usar vista semanal
+        if ($esMobile) {
+            $vista = 'semanal';
+        }
+        
         $mes = request()->get('mes', now()->month);
         $ano = request()->get('ano', now()->year);
         
@@ -875,8 +884,8 @@
                             </div>
                         </div>
                     @else
-                        <!-- Vista Mensual -->
-                        <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
+                        <!-- Vista Mensual (oculta en móvil) -->
+                        <div class="hidden md:block bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                 <!-- Days of Week Header -->
                 <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
                     @foreach(['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'] as $dia)

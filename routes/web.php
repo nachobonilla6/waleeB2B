@@ -3595,12 +3595,18 @@ Route::get('/walee-cliente/{id}', function ($id) {
     $clientePlaneadorId = null;
     
     if ($clientePrincipal) {
+        $ahora = now();
+        
+        // Contar publicaciones programadas (fecha_inicio aún no ha pasado)
         $publicacionesProgramadas = \App\Models\PublicidadEvento::where('cliente_id', $clientePrincipal->id)
-            ->where('estado', 'programado')
+            ->where('fecha_inicio', '>', $ahora)
             ->count();
+        
+        // Contar publicaciones publicadas (fecha_inicio ya pasó)
         $publicacionesPublicadas = \App\Models\PublicidadEvento::where('cliente_id', $clientePrincipal->id)
-            ->where('estado', 'publicado')
+            ->where('fecha_inicio', '<=', $ahora)
             ->count();
+        
         $clientePlaneadorId = $clientePrincipal->id;
     }
     

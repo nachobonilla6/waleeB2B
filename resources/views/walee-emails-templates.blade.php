@@ -134,49 +134,55 @@
             </div>
             
             <!-- Templates Grid -->
-            <div id="templatesContainer" class="grid grid-cols-1 gap-2.5 sm:gap-3 md:gap-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div id="templatesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 @forelse($templates as $template)
-                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 hover:shadow-lg dark:hover:shadow-none transition-all group w-full" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
-                        <div class="flex items-start justify-between mb-2 sm:mb-3 md:mb-4">
-                            <div class="flex-1 min-w-0 pr-2">
-                                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-0.5 sm:mb-1 truncate">{{ $template->nombre }}</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $template->asunto }}</p>
-                            </div>
-                            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 hover:shadow-lg dark:hover:shadow-none transition-all group w-full flex flex-col" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
+                        <div class="mb-3 sm:mb-4">
+                            <h3 class="text-base sm:text-lg md:text-xl font-semibold text-slate-900 dark:text-white mb-1 sm:mb-2">{{ $template->nombre }}</h3>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-2 sm:mb-3">{{ $template->asunto }}</p>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 sm:line-clamp-4">{{ \Illuminate\Support\Str::limit($template->contenido, 150) }}</p>
+                        </div>
+                        
+                        <div class="mt-auto pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                <button 
+                                    onclick="verTemplate({{ $template->id }})"
+                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
+                                >
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    <span>Ver</span>
+                                </button>
                                 <button 
                                     onclick="editTemplate({{ $template->id }})"
-                                    class="p-1.5 sm:p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all"
-                                    title="Editar"
+                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-700 dark:text-blue-400 font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
                                 >
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
+                                    <span>Editar</span>
+                                </button>
+                                <button 
+                                    onclick="enviarTemplate({{ $template->id }})"
+                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
+                                >
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
+                                    <span>Enviar</span>
                                 </button>
                                 <button 
                                     onclick="deleteTemplate({{ $template->id }})"
-                                    class="p-1.5 sm:p-2 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 transition-all"
-                                    title="Eliminar"
+                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-400 font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
                                 >
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
+                                    <span>Eliminar</span>
                                 </button>
                             </div>
-                        </div>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-2 sm:mb-3 md:mb-4 line-clamp-2 sm:line-clamp-3">{{ \Illuminate\Support\Str::limit($template->contenido, 120) }}</p>
-                        <div class="flex items-center gap-1.5 sm:gap-2">
-                            <button 
-                                onclick="enviarTemplate({{ $template->id }})"
-                                class="flex-1 px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium transition-all text-xs sm:text-sm"
-                            >
-                                Enviar
-                            </button>
-                            <button 
-                                onclick="verTemplate({{ $template->id }})"
-                                class="px-2.5 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 transition-all text-xs sm:text-sm"
-                            >
-                                Ver
-                            </button>
                         </div>
                     </div>
                 @empty

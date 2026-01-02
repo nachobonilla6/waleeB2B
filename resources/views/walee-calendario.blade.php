@@ -570,23 +570,27 @@
                         <!-- Vista Semanal -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                             @php
+                                // Obtener año y semana ISO actuales
+                                $anoActualISO = (int)$inicioSemana->format('o');
+                                $numSemanaActualISO = (int)$inicioSemana->format('W');
+                                
                                 // Calcular semana anterior
                                 $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                $anoAnterior = $semanaAnterior->format('o'); // Año ISO
-                                $numSemanaAnterior = $semanaAnterior->format('W'); // Semana ISO
-                                $semanaAnteriorFormato = $anoAnterior . '-' . $numSemanaAnterior;
+                                $anoAnteriorISO = (int)$semanaAnterior->format('o');
+                                $numSemanaAnteriorISO = (int)$semanaAnterior->format('W');
+                                $semanaAnteriorFormato = $anoAnteriorISO . '-' . $numSemanaAnteriorISO;
                                 
-                                // Calcular semana siguiente
+                                // Calcular semana siguiente - usar addWeek y luego obtener ISO
                                 $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                $anoSiguiente = $semanaSiguiente->format('o'); // Año ISO
-                                $numSemanaSiguiente = $semanaSiguiente->format('W'); // Semana ISO
-                                $semanaSiguienteFormato = $anoSiguiente . '-' . $numSemanaSiguiente;
+                                $anoSiguienteISO = (int)$semanaSiguiente->format('o');
+                                $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
+                                $semanaSiguienteFormato = $anoSiguienteISO . '-' . $numSemanaSiguienteISO;
                                 
                                 // Calcular semana actual
                                 $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                $anoActual = $semanaActual->format('o'); // Año ISO
-                                $numSemanaActual = $semanaActual->format('W'); // Semana ISO
-                                $semanaActualFormato = $anoActual . '-' . $numSemanaActual;
+                                $anoActualISO = (int)$semanaActual->format('o');
+                                $numSemanaActualISO = (int)$semanaActual->format('W');
+                                $semanaActualFormato = $anoActualISO . '-' . $numSemanaActualISO;
                             @endphp
                             
                             <!-- Navegación Semanal (solo móvil) -->

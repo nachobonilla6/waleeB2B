@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -1475,6 +1476,12 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const citasData = @json($citas->flatten());
         const tareasData = @json($tareas->flatten());
+        const notasData = @json($notas->flatten());
+        const clientesData = @json($clientes);
+        const listasData = @json($listas);
+        
+        // Detectar modo oscuro
+        const isDarkMode = document.documentElement.classList.contains('dark');
         
         function navegarAFecha() {
             const dia = document.getElementById('selectDia').value;
@@ -1560,30 +1567,338 @@
             }
         });
         
-        function showNuevaCitaModal() {
-            document.getElementById('modalTitle').textContent = 'Nueva Cita';
-            document.getElementById('cita-form').reset();
-            document.getElementById('cita_id').value = '';
-            document.getElementById('deleteBtn').classList.add('hidden');
-            document.getElementById('recurrencia_fin_container').classList.add('hidden');
-            document.getElementById('recurrencia_dias_container').classList.add('hidden');
-            document.getElementById('color').value = '#10b981';
-            document.getElementById('color_text').value = '#10b981';
-            
-            // Establecer fecha y hora por defecto a "ahora"
+        // Función auxiliar para generar HTML del formulario de Cita
+        function generateCitaFormHTML(cita = null) {
+            const isEdit = !!cita;
             const now = new Date();
-            const fechaInicio = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-            document.getElementById('fecha_inicio').value = fechaInicio;
+            const fechaInicioDefault = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            const fechaFinDefault = new Date(now.getTime() + (2 * 60 * 60 * 1000) - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
             
-            // Establecer fecha fin a 2 horas después
-            const fechaFin = new Date(now.getTime() + (2 * 60 * 60 * 1000) - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-            document.getElementById('fecha_fin').value = fechaFin;
+            return `
+                <form id="swal-cita-form" class="space-y-4 text-left overflow-y-auto max-h-[70vh]">
+                    <input type="hidden" name="cita_id" id="swal-cita_id" value="${cita ? cita.id : ''}">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Título</label>
+                            <input type="text" name="titulo" id="swal-titulo" required placeholder="Título de la cita"
+                                value="${cita ? (cita.titulo || '') : ''}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Cliente</label>
+                            <select name="client_id" id="swal-client_id"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <option value="">Sin cliente</option>
+                                ${clientesData.map(cliente => `
+                                    <option value="${cliente.id}" ${cita && cita.client_id == cliente.id ? 'selected' : ''}>${cliente.name || cliente.nombre_empresa} ${cliente.email ? '(' + cliente.email + ')' : ''}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Fecha y Hora de Inicio</label>
+                            <input type="datetime-local" name="fecha_inicio" id="swal-fecha_inicio" required
+                                value="${cita ? (new Date(cita.fecha_inicio).toISOString().slice(0, 16)) : fechaInicioDefault}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Fecha y Hora de Fin (opcional)</label>
+                            <input type="datetime-local" name="fecha_fin" id="swal-fecha_fin"
+                                value="${cita && cita.fecha_fin ? (new Date(cita.fecha_fin).toISOString().slice(0, 16)) : fechaFinDefault}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Ubicación (opcional)</label>
+                            <input type="text" name="ubicacion" id="swal-ubicacion" placeholder="Ubicación de la cita"
+                                value="${cita ? (cita.ubicacion || '') : ''}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Recurrencia</label>
+                            <select name="recurrencia" id="swal-recurrencia" onchange="toggleSwalRecurrenciaOptions()"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <option value="none" ${cita && cita.recurrencia === 'none' ? 'selected' : ''}>Sin recurrencia</option>
+                                <option value="semanal" ${cita && cita.recurrencia === 'semanal' ? 'selected' : ''}>Semanal</option>
+                                <option value="mensual" ${cita && cita.recurrencia === 'mensual' ? 'selected' : ''}>Mensual</option>
+                                <option value="anual" ${cita && cita.recurrencia === 'anual' ? 'selected' : ''}>Anual</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="swal-recurrencia_dias_container" class="hidden">
+                        <label class="block text-sm font-medium mb-2">Días específicos</label>
+                        <div id="swal-recurrencia_dias_semanal" class="hidden">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((dia, idx) => `
+                                    <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                        <input type="checkbox" name="recurrencia_dias[]" value="${idx}" class="rounded"
+                                            ${cita && cita.recurrencia_dias && cita.recurrencia_dias.includes(idx) ? 'checked' : ''}>
+                                        <span class="text-sm">${dia}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div id="swal-recurrencia_dias_mensual" class="hidden">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                            <input type="text" name="recurrencia_dias_mensual" id="swal-recurrencia_dias_mensual"
+                                placeholder="Ej: 1,15,30 o cada Lunes"
+                                value="${cita && cita.recurrencia_dias ? cita.recurrencia_dias.join(',') : ''}"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    
+                    <div id="swal-recurrencia_fin_container" class="hidden">
+                        <label class="block text-sm font-medium mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                        <input type="datetime-local" name="recurrencia_fin" id="swal-recurrencia_fin"
+                            value="${cita && cita.recurrencia_fin ? (new Date(cita.recurrencia_fin).toISOString().slice(0, 16)) : ''}"
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Descripción (opcional)</label>
+                        <textarea name="descripcion" id="swal-descripcion" rows="3" placeholder="Descripción de la cita..."
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">${cita ? (cita.descripcion || '') : ''}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Notas (opcional)</label>
+                        <textarea name="notas" id="swal-notas" rows="3" placeholder="Notas adicionales sobre la cita..."
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">${cita ? (cita.notas || '') : ''}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Invitar personas (emails separados por comas)</label>
+                        <input type="text" name="invitados_emails" id="swal-invitados_emails"
+                            placeholder="email1@ejemplo.com, email2@ejemplo.com"
+                            value="${cita ? (cita.invitados_emails || '') : ''}"
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Color</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" name="color" id="swal-color" value="${cita ? (cita.color || '#10b981') : '#10b981'}"
+                                    class="w-14 h-10 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
+                                <input type="text" id="swal-color_text" value="${cita ? (cita.color || '#10b981') : '#10b981'}"
+                                    placeholder="#10b981" onchange="document.getElementById('swal-color').value = this.value"
+                                    class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Estado</label>
+                            <select name="estado" id="swal-estado"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <option value="programada" ${cita && cita.estado === 'programada' ? 'selected' : ''}>Programada</option>
+                                <option value="completada" ${cita && cita.estado === 'completada' ? 'selected' : ''}>Completada</option>
+                                <option value="cancelada" ${cita && cita.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            `;
+        }
+        
+        function toggleSwalRecurrenciaOptions() {
+            const recurrencia = document.getElementById('swal-recurrencia').value;
+            const finContainer = document.getElementById('swal-recurrencia_fin_container');
+            const diasContainer = document.getElementById('swal-recurrencia_dias_container');
+            const diasSemanal = document.getElementById('swal-recurrencia_dias_semanal');
+            const diasMensual = document.getElementById('swal-recurrencia_dias_mensual');
             
-            document.getElementById('citaModal').classList.remove('hidden');
+            if (recurrencia === 'none') {
+                finContainer.classList.add('hidden');
+                diasContainer.classList.add('hidden');
+            } else {
+                finContainer.classList.remove('hidden');
+                if (recurrencia === 'semanal') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.remove('hidden');
+                    diasMensual.classList.add('hidden');
+                } else if (recurrencia === 'mensual') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.add('hidden');
+                    diasMensual.classList.remove('hidden');
+                } else {
+                    diasContainer.classList.add('hidden');
+                }
+            }
+        }
+        
+        function showNuevaCitaModal(citaId = null) {
+            const cita = citaId ? citasData.find(c => c.id === citaId) : null;
+            const isEdit = !!cita;
+            const html = generateCitaFormHTML(cita);
+            
+            Swal.fire({
+                title: isEdit ? 'Editar Cita' : 'Nueva Cita',
+                html: html,
+                width: window.innerWidth < 768 ? '95%' : (window.innerWidth < 1024 ? '700px' : '900px'),
+                customClass: {
+                    popup: isDarkMode ? 'dark' : '',
+                    title: 'text-slate-900 dark:text-white',
+                    htmlContainer: 'text-slate-800 dark:text-slate-200'
+                },
+                showCancelButton: true,
+                showDenyButton: isEdit,
+                confirmButtonText: 'Guardar',
+                denyButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#10b981',
+                denyButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                buttonsStyling: true,
+                didOpen: () => {
+                    if (isDarkMode) {
+                        document.querySelector('.swal2-popup').classList.add('dark');
+                    }
+                    toggleSwalRecurrenciaOptions();
+                    // Sincronizar color picker
+                    document.getElementById('swal-color').addEventListener('input', function(e) {
+                        document.getElementById('swal-color_text').value = e.target.value;
+                    });
+                    document.getElementById('swal-color_text').addEventListener('input', function(e) {
+                        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                            document.getElementById('swal-color').value = e.target.value;
+                        }
+                    });
+                },
+                preConfirm: async () => {
+                    const form = document.getElementById('swal-cita-form');
+                    const formData = new FormData(form);
+                    const citaId = formData.get('cita_id');
+                    const url = citaId ? `/citas/${citaId}` : '/citas';
+                    const method = citaId ? 'PUT' : 'POST';
+                    
+                    let recurrenciaDias = null;
+                    const recurrencia = formData.get('recurrencia') || 'none';
+                    if (recurrencia === 'semanal') {
+                        const diasCheckboxes = document.querySelectorAll('#swal-recurrencia_dias_container input[type="checkbox"]:checked');
+                        recurrenciaDias = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+                    } else if (recurrencia === 'mensual') {
+                        const diasMensual = formData.get('recurrencia_dias_mensual');
+                        if (diasMensual) {
+                            const dias = diasMensual.split(',').map(d => d.trim());
+                            recurrenciaDias = dias.map(d => {
+                                const diaNum = parseInt(d);
+                                if (!isNaN(diaNum)) return diaNum;
+                                const diasSemana = {
+                                    'domingo': 0, 'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3,
+                                    'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+                                };
+                                const diaLower = d.toLowerCase().replace('cada ', '');
+                                return diasSemana[diaLower] !== undefined ? diasSemana[diaLower] : null;
+                            }).filter(d => d !== null);
+                        }
+                    }
+                    
+                    const data = {
+                        titulo: formData.get('titulo'),
+                        client_id: formData.get('client_id') || null,
+                        fecha_inicio: formData.get('fecha_inicio'),
+                        fecha_fin: formData.get('fecha_fin') || null,
+                        ubicacion: formData.get('ubicacion') || null,
+                        descripcion: formData.get('descripcion') || null,
+                        notas: formData.get('notas') || null,
+                        estado: formData.get('estado'),
+                        recurrencia: recurrencia,
+                        recurrencia_fin: formData.get('recurrencia_fin') || null,
+                        recurrencia_dias: recurrenciaDias,
+                        color: formData.get('color') || '#10b981',
+                        invitados_emails: formData.get('invitados_emails') || null,
+                    };
+                    
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            Swal.showValidationMessage(result.message || 'Error al guardar');
+                            return false;
+                        }
+                    } catch (error) {
+                        Swal.showValidationMessage('Error de conexión: ' + error.message);
+                        return false;
+                    }
+                },
+                preDeny: async () => {
+                    const form = document.getElementById('swal-cita-form');
+                    const formData = new FormData(form);
+                    const citaId = formData.get('cita_id');
+                    if (!citaId) return false;
+                    
+                    const result = await Swal.fire({
+                        title: '¿Eliminar cita?',
+                        text: 'Esta acción no se puede deshacer',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/citas/${citaId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminada',
+                                    text: 'La cita ha sido eliminada',
+                                    confirmButtonColor: '#10b981'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'Error al eliminar',
+                                    confirmButtonColor: '#10b981'
+                                });
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión: ' + error.message,
+                                confirmButtonColor: '#10b981'
+                            });
+                        }
+                    }
+                    return false;
+                }
+            });
         }
         
         function closeCitaModal() {
-            document.getElementById('citaModal').classList.add('hidden');
+            Swal.close();
         }
         
         function showCitaDetail(citaId) {
@@ -1674,43 +1989,8 @@
         function editCita(citaId) {
             const cita = citasData.find(c => c.id === citaId);
             if (!cita) return;
-            
-            document.getElementById('modalTitle').textContent = 'Editar Cita';
-            document.getElementById('cita_id').value = cita.id;
-            document.getElementById('titulo').value = cita.titulo;
-            const clientIdField = document.getElementById('client_id');
-            if (clientIdField) {
-                clientIdField.value = cita.client_id || '';
-            }
-            document.getElementById('fecha_inicio').value = new Date(cita.fecha_inicio).toISOString().slice(0, 16);
-            document.getElementById('fecha_fin').value = cita.fecha_fin ? new Date(cita.fecha_fin).toISOString().slice(0, 16) : '';
-            document.getElementById('ubicacion').value = cita.ubicacion || '';
-            document.getElementById('descripcion').value = cita.descripcion || '';
-            document.getElementById('notas').value = cita.notas || '';
-            document.getElementById('invitados_emails').value = cita.invitados_emails || '';
-            document.getElementById('estado').value = cita.estado || 'programada';
-            document.getElementById('recurrencia').value = cita.recurrencia || 'none';
-            document.getElementById('recurrencia_fin').value = cita.recurrencia_fin ? new Date(cita.recurrencia_fin).toISOString().slice(0, 16) : '';
-            document.getElementById('color').value = cita.color || '#10b981';
-            document.getElementById('color_text').value = cita.color || '#10b981';
-            
-            // Cargar días de recurrencia
-            if (cita.recurrencia_dias && Array.isArray(cita.recurrencia_dias)) {
-                if (cita.recurrencia === 'semanal') {
-                    cita.recurrencia_dias.forEach(dia => {
-                        const checkbox = document.querySelector(`#recurrencia_dias_container input[value="${dia}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                } else if (cita.recurrencia === 'mensual') {
-                    document.getElementById('recurrencia_dias_mensual').value = cita.recurrencia_dias.join(',');
-                }
-            }
-            
-            toggleRecurrenciaOptions();
-            document.getElementById('deleteBtn').classList.remove('hidden');
-            
             closeCitaDetailModal();
-            document.getElementById('citaModal').classList.remove('hidden');
+            showNuevaCitaModal(citaId);
         }
         
         function deleteCitaConfirm(citaId) {
@@ -1950,46 +2230,496 @@
             }
         }
         
-        function showNuevaTareaModal() {
-            document.getElementById('tareaModalTitle').textContent = 'Nueva Tarea';
-            document.getElementById('tarea-form').reset();
-            document.getElementById('tarea_id').value = '';
-            document.getElementById('deleteTareaBtn').classList.add('hidden');
-            document.getElementById('tarea_recurrencia_fin_container').classList.add('hidden');
-            
-            // Establecer fecha y hora por defecto a "ahora"
+        // Función auxiliar para generar HTML del formulario de Tarea
+        function generateTareaFormHTML(tarea = null) {
+            const isEdit = !!tarea;
             const now = new Date();
-            const fechaHora = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-            document.getElementById('tarea_fecha_hora').value = fechaHora;
-            document.getElementById('tarea_recurrencia_dias_container').classList.add('hidden');
-            document.getElementById('tarea_color').value = '#8b5cf6';
-            document.getElementById('tarea_color_text').value = '#8b5cf6';
+            const fechaHoraDefault = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
             
-            // Resetear notificaciones
-            document.getElementById('tarea_notificacion_habilitada').checked = false;
-            document.getElementById('notificacion_options_container').classList.add('hidden');
-            document.getElementById('tarea_notificacion_tipo').value = 'relativa';
-            document.getElementById('tarea_notificacion_minutos_antes').value = '60';
+            return `
+                <form id="swal-tarea-form" class="space-y-4 text-left overflow-y-auto max-h-[70vh]">
+                    <input type="hidden" name="tarea_id" id="swal-tarea_id" value="${tarea ? tarea.id : ''}">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Texto de la Tarea</label>
+                            <input type="text" name="texto" id="swal-tarea_texto" required placeholder="Descripción de la tarea"
+                                value="${tarea ? (tarea.texto || '') : ''}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Lista</label>
+                            <select name="lista_id" id="swal-tarea_lista_id"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
+                                <option value="">Sin lista</option>
+                                ${listasData.map(lista => `
+                                    <option value="${lista.id}" ${tarea && tarea.lista_id == lista.id ? 'selected' : ''}>${lista.nombre}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Fecha y Hora</label>
+                            <input type="datetime-local" name="fecha_hora" id="swal-tarea_fecha_hora" required
+                                value="${tarea ? (new Date(tarea.fecha_hora).toISOString().slice(0, 16)) : fechaHoraDefault}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Recurrencia</label>
+                            <select name="recurrencia" id="swal-tarea_recurrencia" onchange="toggleSwalTareaRecurrenciaOptions()"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                                <option value="none" ${tarea && tarea.recurrencia === 'none' ? 'selected' : ''}>Sin recurrencia</option>
+                                <option value="diaria" ${tarea && tarea.recurrencia === 'diaria' ? 'selected' : ''}>Diaria</option>
+                                <option value="semanal" ${tarea && tarea.recurrencia === 'semanal' ? 'selected' : ''}>Semanal</option>
+                                <option value="mensual" ${tarea && tarea.recurrencia === 'mensual' ? 'selected' : ''}>Mensual</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="swal-tarea_recurrencia_dias_container" class="hidden">
+                        <label class="block text-sm font-medium mb-2">Días específicos</label>
+                        <div id="swal-tarea_recurrencia_dias_semanal" class="hidden">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((dia, idx) => `
+                                    <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                        <input type="checkbox" name="recurrencia_dias[]" value="${idx}" class="rounded"
+                                            ${tarea && tarea.recurrencia_dias && tarea.recurrencia_dias.includes(idx) ? 'checked' : ''}>
+                                        <span class="text-sm">${dia}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div id="swal-tarea_recurrencia_dias_mensual" class="hidden">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                            <input type="text" name="recurrencia_dias_mensual" id="swal-tarea_recurrencia_dias_mensual"
+                                placeholder="Ej: 1,15,30 o cada Lunes"
+                                value="${tarea && tarea.recurrencia_dias ? tarea.recurrencia_dias.join(',') : ''}"
+                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    
+                    <div id="swal-tarea_recurrencia_fin_container" class="hidden">
+                        <label class="block text-sm font-medium mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                        <input type="datetime-local" name="recurrencia_fin" id="swal-tarea_recurrencia_fin"
+                            value="${tarea && tarea.recurrencia_fin ? (new Date(tarea.recurrencia_fin).toISOString().slice(0, 16)) : ''}"
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Color</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" name="color" id="swal-tarea_color" value="${tarea ? (tarea.color || '#8b5cf6') : '#8b5cf6'}"
+                                class="w-16 h-12 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
+                            <input type="text" id="swal-tarea_color_text" value="${tarea ? (tarea.color || '#8b5cf6') : '#8b5cf6'}"
+                                placeholder="#8b5cf6" onchange="document.getElementById('swal-tarea_color').value = this.value"
+                                class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                </form>
+            `;
+        }
+        
+        function toggleSwalTareaRecurrenciaOptions() {
+            const recurrencia = document.getElementById('swal-tarea_recurrencia').value;
+            const finContainer = document.getElementById('swal-tarea_recurrencia_fin_container');
+            const diasContainer = document.getElementById('swal-tarea_recurrencia_dias_container');
+            const diasSemanal = document.getElementById('swal-tarea_recurrencia_dias_semanal');
+            const diasMensual = document.getElementById('swal-tarea_recurrencia_dias_mensual');
             
-            document.getElementById('tareaModal').classList.remove('hidden');
+            if (recurrencia === 'none') {
+                finContainer.classList.add('hidden');
+                diasContainer.classList.add('hidden');
+            } else {
+                finContainer.classList.remove('hidden');
+                if (recurrencia === 'semanal') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.remove('hidden');
+                    diasMensual.classList.add('hidden');
+                } else if (recurrencia === 'mensual') {
+                    diasContainer.classList.remove('hidden');
+                    diasSemanal.classList.add('hidden');
+                    diasMensual.classList.remove('hidden');
+                } else {
+                    diasContainer.classList.add('hidden');
+                }
+            }
+        }
+        
+        function showNuevaTareaModal(tareaId = null) {
+            const tarea = tareaId ? tareasData.find(t => t.id === tareaId) : null;
+            const isEdit = !!tarea;
+            const html = generateTareaFormHTML(tarea);
+            
+            Swal.fire({
+                title: isEdit ? 'Editar Tarea' : 'Nueva Tarea',
+                html: html,
+                width: window.innerWidth < 768 ? '95%' : (window.innerWidth < 1024 ? '700px' : '900px'),
+                customClass: {
+                    popup: isDarkMode ? 'dark' : '',
+                    title: 'text-slate-900 dark:text-white',
+                    htmlContainer: 'text-slate-800 dark:text-slate-200'
+                },
+                showCancelButton: true,
+                showDenyButton: isEdit,
+                confirmButtonText: 'Guardar',
+                denyButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                denyButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                buttonsStyling: true,
+                didOpen: () => {
+                    if (isDarkMode) {
+                        document.querySelector('.swal2-popup').classList.add('dark');
+                    }
+                    toggleSwalTareaRecurrenciaOptions();
+                    // Sincronizar color picker
+                    document.getElementById('swal-tarea_color').addEventListener('input', function(e) {
+                        document.getElementById('swal-tarea_color_text').value = e.target.value;
+                    });
+                    document.getElementById('swal-tarea_color_text').addEventListener('input', function(e) {
+                        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                            document.getElementById('swal-tarea_color').value = e.target.value;
+                        }
+                    });
+                },
+                preConfirm: async () => {
+                    const form = document.getElementById('swal-tarea-form');
+                    const formData = new FormData(form);
+                    const tareaId = formData.get('tarea_id');
+                    const url = tareaId ? `/walee-tareas/${tareaId}` : '/walee-tareas';
+                    const method = tareaId ? 'PUT' : 'POST';
+                    
+                    let recurrenciaDias = null;
+                    const recurrencia = formData.get('recurrencia') || 'none';
+                    if (recurrencia === 'semanal') {
+                        const diasCheckboxes = document.querySelectorAll('#swal-tarea_recurrencia_dias_container input[type="checkbox"]:checked');
+                        recurrenciaDias = Array.from(diasCheckboxes).map(cb => parseInt(cb.value));
+                    } else if (recurrencia === 'mensual') {
+                        const diasMensual = formData.get('recurrencia_dias_mensual');
+                        if (diasMensual) {
+                            const dias = diasMensual.split(',').map(d => d.trim());
+                            recurrenciaDias = dias.map(d => {
+                                const diaNum = parseInt(d);
+                                if (!isNaN(diaNum)) return diaNum;
+                                const diasSemana = {
+                                    'domingo': 0, 'lunes': 1, 'martes': 2, 'miércoles': 3, 'miercoles': 3,
+                                    'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+                                };
+                                const diaLower = d.toLowerCase().replace('cada ', '');
+                                return diasSemana[diaLower] !== undefined ? diasSemana[diaLower] : null;
+                            }).filter(d => d !== null);
+                        }
+                    }
+                    
+                    const data = {
+                        texto: formData.get('texto'),
+                        lista_id: formData.get('lista_id') || null,
+                        fecha_hora: formData.get('fecha_hora'),
+                        recurrencia: recurrencia,
+                        recurrencia_fin: formData.get('recurrencia_fin') || null,
+                        recurrencia_dias: recurrenciaDias,
+                        color: formData.get('color') || '#8b5cf6',
+                    };
+                    
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            Swal.showValidationMessage(result.message || 'Error al guardar');
+                            return false;
+                        }
+                    } catch (error) {
+                        Swal.showValidationMessage('Error de conexión: ' + error.message);
+                        return false;
+                    }
+                },
+                preDeny: async () => {
+                    const form = document.getElementById('swal-tarea-form');
+                    const formData = new FormData(form);
+                    const tareaId = formData.get('tarea_id');
+                    if (!tareaId) return false;
+                    
+                    const result = await Swal.fire({
+                        title: '¿Eliminar tarea?',
+                        text: 'Esta acción no se puede deshacer',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/walee-tareas/${tareaId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminada',
+                                    text: 'La tarea ha sido eliminada',
+                                    confirmButtonColor: '#8b5cf6'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'Error al eliminar',
+                                    confirmButtonColor: '#8b5cf6'
+                                });
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión: ' + error.message,
+                                confirmButtonColor: '#8b5cf6'
+                            });
+                        }
+                    }
+                    return false;
+                }
+            });
         }
         
         function closeTareaModal() {
-            document.getElementById('tareaModal').classList.add('hidden');
+            Swal.close();
         }
         
-        function showNuevaNotaModal() {
-            document.getElementById('notaModalTitle').textContent = 'Nueva Nota';
-            document.getElementById('nota-form').reset();
-            document.getElementById('nota_id').value = '';
-            document.getElementById('deleteNotaBtn').classList.add('hidden');
-            document.getElementById('nota_type').value = 'note';
-            document.getElementById('nota_pinned').checked = false;
-            document.getElementById('notaModal').classList.remove('hidden');
+        function showNuevaNotaModal(notaId = null, notaData = null) {
+            const nota = notaData || (notaId ? notasData.find(n => n.id === notaId) : null);
+            const isEdit = !!nota;
+            
+            const now = new Date();
+            const fechaDefault = now.toISOString().split('T')[0];
+            
+            const html = `
+                <form id="swal-nota-form" class="space-y-4 text-left">
+                    <input type="hidden" name="nota_id" id="swal-nota_id" value="${nota ? nota.id : ''}">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Fecha</label>
+                            <input 
+                                type="date" 
+                                name="fecha" 
+                                id="swal-nota_fecha" 
+                                required
+                                value="${nota ? (nota.fecha ? new Date(nota.fecha).toISOString().split('T')[0] : fechaDefault) : fechaDefault}"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Tipo</label>
+                            <select 
+                                name="type" 
+                                id="swal-nota_type" 
+                                required
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                            >
+                                <option value="note" ${nota && nota.type === 'note' ? 'selected' : ''}>Nota</option>
+                                <option value="call" ${nota && nota.type === 'call' ? 'selected' : ''}>Llamada</option>
+                                <option value="meeting" ${nota && nota.type === 'meeting' ? 'selected' : ''}>Reunión</option>
+                                <option value="email" ${nota && nota.type === 'email' ? 'selected' : ''}>Email</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Contenido de la Nota</label>
+                        <textarea 
+                            name="content" 
+                            id="swal-nota_content" 
+                            required 
+                            rows="4"
+                            placeholder="Escribe el contenido de la nota..."
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none"
+                        >${nota ? (nota.content || '') : ''}</textarea>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Máximo 5000 caracteres</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Cliente (opcional)</label>
+                            <select 
+                                name="cliente_id" 
+                                id="swal-nota_cliente_id"
+                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all"
+                            >
+                                <option value="">Sin cliente</option>
+                                ${clientesData.map(cliente => `
+                                    <option value="${cliente.id}" ${nota && nota.cliente_id == cliente.id ? 'selected' : ''}>${cliente.nombre_empresa || cliente.name}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Estado</label>
+                            <label class="flex items-center gap-2 cursor-pointer h-full min-h-[42px] px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl">
+                                <input 
+                                    type="checkbox" 
+                                    name="pinned" 
+                                    id="swal-nota_pinned"
+                                    ${nota && nota.pinned ? 'checked' : ''}
+                                    class="w-5 h-5 rounded border-slate-300 dark:border-slate-700 text-blue-500 focus:ring-blue-500"
+                                >
+                                <span class="text-sm font-medium">Marcar como fijada</span>
+                            </label>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Las notas fijadas aparecen primero</p>
+                        </div>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: isEdit ? 'Editar Nota' : 'Nueva Nota',
+                html: html,
+                width: window.innerWidth < 768 ? '95%' : (window.innerWidth < 1024 ? '700px' : '900px'),
+                customClass: {
+                    popup: isDarkMode ? 'dark' : '',
+                    title: 'text-slate-900 dark:text-white',
+                    htmlContainer: 'text-slate-800 dark:text-slate-200'
+                },
+                showCancelButton: true,
+                showDenyButton: isEdit,
+                confirmButtonText: 'Guardar',
+                denyButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#3b82f6',
+                denyButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                buttonsStyling: true,
+                didOpen: () => {
+                    // Aplicar estilos de modo oscuro si es necesario
+                    if (isDarkMode) {
+                        document.querySelector('.swal2-popup').classList.add('dark');
+                    }
+                },
+                preConfirm: async () => {
+                    const form = document.getElementById('swal-nota-form');
+                    const formData = new FormData(form);
+                    const notaId = formData.get('nota_id');
+                    const url = notaId ? `/notas/${notaId}` : '/notas';
+                    const method = notaId ? 'PUT' : 'POST';
+                    
+                    const data = {
+                        fecha: formData.get('fecha'),
+                        type: formData.get('type'),
+                        content: formData.get('content'),
+                        cliente_id: formData.get('cliente_id') || null,
+                        pinned: document.getElementById('swal-nota_pinned').checked
+                    };
+                    
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            Swal.showValidationMessage(result.message || 'Error al guardar');
+                            return false;
+                        }
+                    } catch (error) {
+                        Swal.showValidationMessage('Error de conexión: ' + error.message);
+                        return false;
+                    }
+                },
+                preDeny: async () => {
+                    const form = document.getElementById('swal-nota-form');
+                    const formData = new FormData(form);
+                    const notaId = formData.get('nota_id');
+                    if (!notaId) return false;
+                    
+                    const result = await Swal.fire({
+                        title: '¿Eliminar nota?',
+                        text: 'Esta acción no se puede deshacer',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/notas/${notaId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminada',
+                                    text: 'La nota ha sido eliminada',
+                                    confirmButtonColor: '#3b82f6'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'Error al eliminar',
+                                    confirmButtonColor: '#3b82f6'
+                                });
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión: ' + error.message,
+                                confirmButtonColor: '#3b82f6'
+                            });
+                        }
+                    }
+                    return false;
+                }
+            });
         }
         
         function closeNotaModal() {
-            document.getElementById('notaModal').classList.add('hidden');
+            Swal.close();
         }
         
         function showTareaDetail(tareaId) {
@@ -2058,51 +2788,8 @@
         function editTarea(tareaId) {
             const tarea = tareasData.find(t => t.id === tareaId);
             if (!tarea) return;
-            
-            document.getElementById('tareaModalTitle').textContent = 'Editar Tarea';
-            document.getElementById('tarea_id').value = tarea.id;
-            document.getElementById('tarea_texto').value = tarea.texto;
-            document.getElementById('tarea_lista_id').value = tarea.lista_id || '';
-            document.getElementById('tarea_fecha_hora').value = new Date(tarea.fecha_hora).toISOString().slice(0, 16);
-            document.getElementById('tarea_tipo').value = tarea.tipo || '';
-            document.getElementById('tarea_recurrencia').value = tarea.recurrencia || 'none';
-            document.getElementById('tarea_recurrencia_fin').value = tarea.recurrencia_fin ? new Date(tarea.recurrencia_fin).toISOString().slice(0, 16) : '';
-            document.getElementById('tarea_color').value = tarea.color || '#8b5cf6';
-            document.getElementById('tarea_color_text').value = tarea.color || '#8b5cf6';
-            
-            // Cargar notificaciones
-            const notificacionHabilitada = tarea.notificacion_habilitada || false;
-            document.getElementById('tarea_notificacion_habilitada').checked = notificacionHabilitada;
-            if (notificacionHabilitada) {
-                document.getElementById('notificacion_options_container').classList.remove('hidden');
-                document.getElementById('tarea_notificacion_tipo').value = tarea.notificacion_tipo || 'relativa';
-                if (tarea.notificacion_tipo === 'relativa') {
-                    document.getElementById('tarea_notificacion_minutos_antes').value = tarea.notificacion_minutos_antes || '60';
-                } else if (tarea.notificacion_tipo === 'especifica' && tarea.notificacion_fecha_hora) {
-                    document.getElementById('tarea_notificacion_fecha_hora').value = new Date(tarea.notificacion_fecha_hora).toISOString().slice(0, 16);
-                }
-                toggleNotificacionTipo();
-            } else {
-                document.getElementById('notificacion_options_container').classList.add('hidden');
-            }
-            
-            // Cargar días de recurrencia
-            if (tarea.recurrencia_dias && Array.isArray(tarea.recurrencia_dias)) {
-                if (tarea.recurrencia === 'semanal') {
-                    tarea.recurrencia_dias.forEach(dia => {
-                        const checkbox = document.querySelector(`#tarea_recurrencia_dias_container input[value="${dia}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                } else if (tarea.recurrencia === 'mensual') {
-                    document.getElementById('tarea_recurrencia_dias_mensual').value = tarea.recurrencia_dias.join(',');
-                }
-            }
-            
-            toggleTareaRecurrenciaOptions();
-            document.getElementById('deleteTareaBtn').classList.remove('hidden');
-            
             closeCitaDetailModal();
-            document.getElementById('tareaModal').classList.remove('hidden');
+            showNuevaTareaModal(tareaId);
         }
         
         function deleteTareaConfirm(tareaId) {
@@ -2264,24 +2951,23 @@
                 const data = await response.json();
                 
                 if (data.success && data.nota) {
-                    const nota = data.nota;
-                    document.getElementById('nota_id').value = nota.id;
-                    document.getElementById('nota_content').value = nota.content || '';
-                    document.getElementById('nota_type').value = nota.type || 'note';
-                    document.getElementById('nota_cliente_id').value = nota.cliente_id || '';
-                    document.getElementById('nota_pinned').checked = nota.pinned || false;
-                    // La fecha ya viene formateada desde el backend como YYYY-MM-DD
-                    document.getElementById('nota_fecha').value = nota.fecha || new Date().toISOString().split('T')[0];
-                    document.getElementById('notaModalTitle').textContent = 'Editar Nota';
-                    const deleteBtn = document.getElementById('deleteNotaBtn');
-                    if (deleteBtn) deleteBtn.classList.remove('hidden');
-                    document.getElementById('notaModal').classList.remove('hidden');
+                    showNuevaNotaModal(notaId, data.nota);
                 } else {
-                    alert('Error al cargar la nota');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar la nota',
+                        confirmButtonColor: '#3b82f6'
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error de conexión');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión',
+                    confirmButtonColor: '#3b82f6'
+                });
             }
         }
         

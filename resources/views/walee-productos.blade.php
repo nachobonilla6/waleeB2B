@@ -225,19 +225,19 @@
                                              data-index="{{ $index }}">
                                     @endforeach
                                     @if(count($producto->fotos) > 1)
-                                        <button onclick="prevImage(this)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button onclick="prevImage(this)" class="absolute left-1.5 sm:left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 rounded-full transition-all">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                             </svg>
                                         </button>
-                                        <button onclick="nextImage(this)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button onclick="nextImage(this)" class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 rounded-full transition-all">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                             </svg>
                                         </button>
-                                        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                                        <div class="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
                                             @foreach($producto->fotos as $index => $foto)
-                                                <div class="carousel-dot w-2 h-2 rounded-full bg-white/50 {{ $index === 0 ? 'bg-white' : '' }}" data-index="{{ $index }}"></div>
+                                                <div class="carousel-dot w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/50 {{ $index === 0 ? 'bg-white' : '' }}" data-index="{{ $index }}"></div>
                                             @endforeach
                                         </div>
                                     @endif

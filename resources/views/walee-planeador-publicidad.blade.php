@@ -1016,7 +1016,11 @@
             const textoInput = document.getElementById('texto_publicacion');
             const btnGenerar = document.getElementById('btnGenerarTexto');
             const aiLoading = document.getElementById('aiLoading');
-            const plataforma = document.getElementById('plataforma_publicacion').value;
+            
+            // Obtener la plataforma seleccionada del radio button
+            const plataformaRadio = document.querySelector('input[name="plataforma_publicacion"]:checked');
+            const plataforma = plataformaRadio ? plataformaRadio.value : null;
+            
             const promptPersonalizado = document.getElementById('prompt_personalizado').value;
             
             btnGenerar.disabled = true;
@@ -1050,6 +1054,7 @@
                     alert('Error: ' + (result.message || 'Error al generar texto'));
                 }
             } catch (error) {
+                console.error('Error al generar texto AI:', error);
                 alert('Error de conexión: ' + error.message);
             } finally {
                 btnGenerar.disabled = false;

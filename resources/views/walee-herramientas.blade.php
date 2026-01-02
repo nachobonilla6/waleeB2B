@@ -178,6 +178,16 @@
                     </div>
                     <span class="text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">Google Sheets</span>
                 </a>
+                
+                <!-- Productos -->
+                <a href="{{ route('walee.productos') }}" class="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-walee-500 dark:hover:border-walee-500 hover:bg-walee-50 dark:hover:bg-walee-500/10 transition-all duration-300 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.6s;">
+                    <div class="w-14 h-14 rounded-xl bg-walee-100 dark:bg-walee-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <span class="text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-walee-600 dark:group-hover:text-walee-400 transition-colors">Productos</span>
+                </a>
             </div>
             
             <!-- Footer -->

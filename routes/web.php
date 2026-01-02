@@ -2778,6 +2778,138 @@ Route::get('/walee-sheets-dashboard', function () {
     return view('walee-sheets-dashboard');
 })->middleware(['auth'])->name('walee.sheets.dashboard');
 
+// Productos
+Route::get('/walee-productos', function () {
+    $productos = \App\Models\Rproducto::orderBy('created_at', 'desc')->get();
+    return view('walee-productos', compact('productos'));
+})->middleware(['auth'])->name('walee.productos');
+
+Route::get('/walee-productos/{id}', function ($id) {
+    $producto = \App\Models\Rproducto::findOrFail($id);
+    $producto->fotos = $producto->fotos ? array_map(function($foto) {
+        return asset('storage/' . $foto);
+    }, $producto->fotos) : [];
+    return response()->json($producto);
+})->middleware(['auth']);
+
+Route::post('/walee-productos', function (\Illuminate\Http\Request $request) {
+    try {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'estado' => 'required|in:activo,inactivo',
+            'tipo' => 'required|string|max:255',
+            'fotos' => 'nullable|array|max:10',
+            'fotos.*' => 'image|max:5120', // 5MB por imagen
+        ]);
+
+        $fotos = [];
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $foto) {
+                $path = $foto->store('productos', 'public');
+                $fotos[] = $path;
+            }
+        }
+
+        $producto = \App\Models\Rproducto::create([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'estado' => $request->estado,
+            'tipo' => $request->tipo,
+            'fotos' => !empty($fotos) ? $fotos : null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto creado correctamente',
+            'producto' => $producto
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error creando producto: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
+Route::post('/walee-productos/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $producto = \App\Models\Rproducto::findOrFail($id);
+        
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'estado' => 'required|in:activo,inactivo',
+            'tipo' => 'required|string|max:255',
+            'fotos' => 'nullable|array|max:10',
+            'fotos.*' => 'image|max:5120',
+            'existing_fotos' => 'nullable|array',
+        ]);
+
+        $fotos = $request->input('existing_fotos', []);
+        
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $foto) {
+                $path = $foto->store('productos', 'public');
+                $fotos[] = $path;
+            }
+        }
+
+        // Limitar a 10 fotos
+        $fotos = array_slice($fotos, 0, 10);
+
+        $producto->update([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'estado' => $request->estado,
+            'tipo' => $request->tipo,
+            'fotos' => !empty($fotos) ? $fotos : null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto actualizado correctamente',
+            'producto' => $producto
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error actualizando producto: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
+Route::delete('/walee-productos/{id}', function ($id) {
+    try {
+        $producto = \App\Models\Rproducto::findOrFail($id);
+        
+        // Eliminar fotos del storage
+        if ($producto->fotos) {
+            foreach ($producto->fotos as $foto) {
+                $path = storage_path('app/public/' . $foto);
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
+        }
+        
+        $producto->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto eliminado correctamente'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error eliminando producto: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
 // Subir imagen para Google Sheets
 Route::post('/walee-sheets/upload-image', function (\Illuminate\Http\Request $request) {
     try {

@@ -96,7 +96,64 @@
                     $range = request('range', 'A1:Z1000');
                     $data = $sheetsService->getSheetData($spreadsheetId, $range);
                     $info = $sheetsService->getSpreadsheetInfo($spreadsheetId);
+                    $isAuthenticated = $sheetsService->isAuthenticated();
+                    $tokenPath = storage_path('app/google-sheets-token.json');
+                    $hasToken = file_exists($tokenPath);
+                    $credentialsPath = config('services.google.credentials_path');
+                    $hasCredentials = $credentialsPath && file_exists($credentialsPath);
                 @endphp
+                
+                <!-- Estado de Conexión -->
+                <div class="mb-6 animate-fade-in-up">
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2">
+                                    @if($hasCredentials)
+                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">Credenciales configuradas</span>
+                                    @else
+                                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">Credenciales no encontradas</span>
+                                    @endif
+                                </div>
+                                <span class="text-slate-400">•</span>
+                                <div class="flex items-center gap-2">
+                                    @if($hasToken)
+                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">Token de acceso</span>
+                                    @else
+                                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">Token no encontrado</span>
+                                    @endif
+                                </div>
+                                <span class="text-slate-400">•</span>
+                                <div class="flex items-center gap-2">
+                                    @if($isAuthenticated)
+                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">Conectado</span>
+                                    @else
+                                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">No conectado</span>
+                                    @endif
+                                </div>
+                            </div>
+                            @if(!$hasToken || !$isAuthenticated)
+                                <a href="{{ route('walee.google-sheets') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                    Configurar conexión
+                                </a>
+                            @endif
+                        </div>
+                        @if(!$hasToken)
+                            <div class="mt-3 p-3 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg">
+                                <p class="text-sm text-yellow-800 dark:text-yellow-300">
+                                    <strong>⚠️ Acción requerida:</strong> Para editar el sheet, necesitas autenticarte. 
+                                    Ejecuta: <code class="bg-yellow-100 dark:bg-yellow-500/20 px-2 py-1 rounded">php artisan-auth-google-sheets.php</code>
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
                 
                 @if($data === null || empty($data))
                     <!-- Error -->
@@ -131,7 +188,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <input type="hidden" id="spreadsheet_id" value="{{ $spreadsheetId }}">
+                                <input type="hidden" id="spreadsheet_id_hidden" value="{{ $spreadsheetId }}">
                             </div>
                         </div>
                     @endif
@@ -159,10 +216,11 @@
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors" data-row="{{ $rowIndex + 2 }}">
                                             @foreach($row as $cellIndex => $cell)
                                                 <td class="px-4 py-3 text-sm text-slate-900 dark:text-slate-200">
-                                                    <span class="editable-cell" 
+                                                    <span class="editable-cell focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-50 dark:focus:bg-blue-500/10 px-2 py-1 rounded min-w-[100px] block" 
                                                           data-row="{{ $rowIndex + 2 }}" 
                                                           data-col="{{ $cellIndex + 1 }}" 
-                                                          contenteditable="true">
+                                                          contenteditable="{{ $isAuthenticated ? 'true' : 'false' }}"
+                                                          @if(!$isAuthenticated) title="Autentica para editar" @endif>
                                                         {{ $cell ?: '-' }}
                                                     </span>
                                                 </td>
@@ -170,10 +228,11 @@
                                             @if(count($row) < count($data[0]))
                                                 @for($i = count($row); $i < count($data[0]); $i++)
                                                     <td class="px-4 py-3 text-sm text-slate-400 dark:text-slate-500">
-                                                        <span class="editable-cell" 
+                                                        <span class="editable-cell focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-50 dark:focus:bg-blue-500/10 px-2 py-1 rounded min-w-[100px] block" 
                                                               data-row="{{ $rowIndex + 2 }}" 
                                                               data-col="{{ $i + 1 }}" 
-                                                              contenteditable="true">-</span>
+                                                              contenteditable="{{ $isAuthenticated ? 'true' : 'false' }}"
+                                                              @if(!$isAuthenticated) title="Autentica para editar" @endif>-</span>
                                                     </td>
                                                 @endfor
                                             @endif
@@ -189,7 +248,9 @@
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                         </svg>
                                                     </label>
-                                                    <button onclick="saveRow({{ $rowIndex + 2 }})" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                                                    <button onclick="saveRow({{ $rowIndex + 2 }})" 
+                                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            @if(!$isAuthenticated) disabled title="Autentica para guardar" @endif>
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                         </svg>
@@ -246,8 +307,9 @@
     </div>
     
     <script>
-        const spreadsheetId = document.getElementById('spreadsheet_id')?.value;
+        const spreadsheetId = document.getElementById('spreadsheet_id_hidden')?.value || '{{ request('spreadsheet_id') }}';
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const isAuthenticated = {{ $isAuthenticated ?? 'false' ? 'true' : 'false' }};
         
         // Manejar subida de imágenes
         document.querySelectorAll('.image-upload').forEach(input => {
@@ -331,6 +393,13 @@
             const endCol = String.fromCharCode(64 + cells.length); // Convertir número a letra
             const range = `${startCol}${row}:${endCol}${row}`;
             
+            // Mostrar loading
+            const saveBtn = rowElement.querySelector('button');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>';
+            }
+            
             try {
                 const response = await fetch('{{ route("walee.sheets.update-row") }}', {
                     method: 'POST',
@@ -347,9 +416,13 @@
                 
                 const data = await response.json();
                 
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+                }
+                
                 if (data.success) {
                     // Mostrar feedback visual
-                    const saveBtn = rowElement.querySelector('button');
                     if (saveBtn) {
                         const originalColor = saveBtn.classList.contains('text-blue-600') ? 'text-blue-600' : 'text-blue-400';
                         saveBtn.classList.remove(originalColor);
@@ -365,9 +438,46 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al guardar');
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+                }
+                showNotification('Error al guardar: ' + error.message, 'error');
             }
         }
+        
+        // Mejorar la experiencia de edición
+        document.querySelectorAll('.editable-cell').forEach(cell => {
+            // Guardar valor original
+            let originalValue = cell.textContent;
+            
+            // Al hacer focus, seleccionar todo el texto
+            cell.addEventListener('focus', function() {
+                originalValue = this.textContent;
+                if (window.getSelection && document.createRange) {
+                    const range = document.createRange();
+                    range.selectNodeContents(this);
+                    range.collapse(false);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            });
+            
+            // Al presionar Enter, guardar y salir
+            cell.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.blur();
+                    const row = this.dataset.row;
+                    saveRow(row);
+                }
+                if (e.key === 'Escape') {
+                    this.textContent = originalValue;
+                    this.blur();
+                }
+            });
+        });
     </script>
     @include('partials.walee-support-button')
 </body>

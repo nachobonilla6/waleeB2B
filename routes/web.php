@@ -586,15 +586,6 @@ Route::delete('/publicidad-eventos/{id}', function ($id) {
 // Generar texto con AI para publicaciones
 Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\Request $request) {
     try {
-        $apiKey = config('services.openai.api_key');
-        
-        if (!$apiKey) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Falta OPENAI_API_KEY. Configura la API key en el servidor.',
-            ], 500);
-        }
-        
         $prompt = $request->input('prompt');
         $clienteId = $request->input('cliente_id');
         $clienteNombre = $request->input('cliente_nombre', 'el cliente');
@@ -604,32 +595,45 @@ Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\R
             $clienteNombre = $cliente->nombre_empresa;
         }
         
-        $systemPrompt = 'You are an expert in digital marketing and social media content creation. Generate creative, attractive, and professional texts for social media posts. The text must be engaging, use emojis strategically, and have a clear call to action. Respond ONLY with the post text, no additional explanations. The text must be exactly 50 words in English.';
+        // Preparar datos para el webhook de n8n
+        $webhookData = [
+            'prompt' => $prompt,
+            'cliente_id' => $clienteId,
+            'cliente_nombre' => $clienteNombre,
+        ];
         
-        $userPrompt = $prompt . ($clienteNombre !== 'el cliente' ? " The client is {$clienteNombre}." : '') . " Generate exactly 50 words in English.";
-        
-        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
-            ->timeout(60)
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => 'gpt-4o-mini',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => $systemPrompt,
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $userPrompt,
-                    ],
-                ],
-            ]);
+        // Llamar al webhook de n8n
+        $response = \Illuminate\Support\Facades\Http::timeout(60)
+            ->post('https://n8n.srv1137974.hstgr.cloud/webhook-test/39146dbf-212d-4ce2-a62a-e7c44377b5f7', $webhookData);
         
         if ($response->successful()) {
             $responseData = $response->json();
-            $texto = $responseData['choices'][0]['message']['content'] ?? '';
+            
+            // n8n puede devolver el texto en diferentes formatos
+            // Intentar obtener el texto de diferentes campos posibles
+            $texto = null;
+            
+            if (isset($responseData['texto'])) {
+                $texto = $responseData['texto'];
+            } elseif (isset($responseData['text'])) {
+                $texto = $responseData['text'];
+            } elseif (isset($responseData['content'])) {
+                $texto = $responseData['content'];
+            } elseif (isset($responseData['message'])) {
+                $texto = $responseData['message'];
+            } elseif (is_string($responseData)) {
+                $texto = $responseData;
+            } elseif (isset($responseData[0]) && is_string($responseData[0])) {
+                $texto = $responseData[0];
+            } elseif (isset($responseData['data']['texto'])) {
+                $texto = $responseData['data']['texto'];
+            } elseif (isset($responseData['data']['text'])) {
+                $texto = $responseData['data']['text'];
+            }
             
             if (empty($texto)) {
-                throw new \RuntimeException('La respuesta de AI está vacía.');
+                \Log::error('Respuesta de n8n sin texto', ['response' => $responseData]);
+                throw new \RuntimeException('La respuesta del webhook está vacía o en formato no reconocido.');
             }
             
             return response()->json([
@@ -637,9 +641,17 @@ Route::post('/publicidad-eventos/generar-texto-ai', function (\Illuminate\Http\R
                 'texto' => trim($texto),
             ]);
         } else {
-            throw new \Exception('Error en la respuesta de OpenAI: ' . $response->status());
+            \Log::error('Error en webhook de n8n', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+            throw new \Exception('Error en la respuesta del webhook: ' . $response->status());
         }
     } catch (\Exception $e) {
+        \Log::error('Error al generar texto AI con n8n', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
         return response()->json([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage(),

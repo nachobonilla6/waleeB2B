@@ -59,18 +59,27 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        // Obtener todos los tickets ordenados por prioridad: urgente > prioritario > fecha, y a_discutir al final
-        $tickets = \App\Models\Ticket::with('user')
-            ->orderBy('a_discutir', 'asc') // A discutir al final (asc = false primero)
-            ->orderBy('urgente', 'desc') // Urgentes primero
-            ->orderBy('prioritario', 'desc') // Luego prioritarios
-            ->orderBy('created_at', 'desc') // Finalmente por fecha más reciente
-            ->get();
-        
-        $totalTickets = $tickets->count();
-        $enviados = $tickets->where('estado', 'enviado')->count();
-        $recibidos = $tickets->where('estado', 'recibido')->count();
-        $resueltos = $tickets->where('estado', 'resuelto')->count();
+        // Si hay ticketsTodos con paginación, usarlos; si no, obtener todos
+        if (isset($ticketsTodos)) {
+            $tickets = $ticketsTodos;
+            $totalTickets = \App\Models\Ticket::count();
+            $enviados = \App\Models\Ticket::where('estado', 'enviado')->count();
+            $recibidos = \App\Models\Ticket::where('estado', 'recibido')->count();
+            $resueltos = \App\Models\Ticket::where('estado', 'resuelto')->count();
+        } else {
+            // Obtener todos los tickets ordenados por prioridad: urgente > prioritario > fecha, y a_discutir al final
+            $tickets = \App\Models\Ticket::with('user')
+                ->orderBy('a_discutir', 'asc') // A discutir al final (asc = false primero)
+                ->orderBy('urgente', 'desc') // Urgentes primero
+                ->orderBy('prioritario', 'desc') // Luego prioritarios
+                ->orderBy('created_at', 'desc') // Finalmente por fecha más reciente
+                ->get();
+            
+            $totalTickets = $tickets->count();
+            $enviados = $tickets->where('estado', 'enviado')->count();
+            $recibidos = $tickets->where('estado', 'recibido')->count();
+            $resueltos = $tickets->where('estado', 'resuelto')->count();
+        }
         
         // Ordenar cada grupo también por prioridad: urgente > prioritario > fecha, y a_discutir al final
         $ticketsEnviados = $tickets->where('estado', 'enviado')
@@ -170,7 +179,10 @@
             
             <!-- Tickets List - Todos -->
             <div id="ticketsList-todos" class="tickets-container space-y-4 {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? '' : 'hidden' }}">
-                @forelse($tickets as $index => $ticket)
+                @php
+                    $ticketsToShow = isset($ticketsTodos) ? $ticketsTodos : $tickets;
+                @endphp
+                @forelse($ticketsToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-xl md:rounded-2xl overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none cursor-pointer" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
                         <div class="p-2.5 md:p-4" onclick="event.stopPropagation();">
                             <div class="flex items-start gap-2 md:gap-4">
@@ -376,6 +388,15 @@
                         <p class="text-slate-600 dark:text-slate-400">Aún no se han recibido tickets de soporte</p>
                     </div>
                 @endforelse
+                
+                <!-- Paginación para tab "todos" -->
+                @if(isset($ticketsTodos) && $ticketsTodos->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        <div class="flex items-center gap-2">
+                            {{ $ticketsTodos->links('pagination::tailwind') }}
+                        </div>
+                    </div>
+                @endif
             </div>
             
             <!-- Tickets List - Enviados -->

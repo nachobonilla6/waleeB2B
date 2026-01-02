@@ -388,6 +388,22 @@ Route::get('/walee-tickets/{tab}', function ($tab) {
     if (!in_array($tab, $validTabs)) {
         return redirect()->route('walee.tickets.tab', ['tab' => 'todos']);
     }
+    
+    // Si es "todos", usar paginación de 5
+    if ($tab === 'todos') {
+        $ticketsTodos = \App\Models\Ticket::with('user')
+            ->orderBy('a_discutir', 'asc')
+            ->orderBy('urgente', 'desc')
+            ->orderBy('prioritario', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+        
+        return view('walee-tickets', [
+            'activeTab' => $tab,
+            'ticketsTodos' => $ticketsTodos
+        ]);
+    }
+    
     return view('walee-tickets', ['activeTab' => $tab]);
 })->middleware(['auth'])->where('tab', 'todos|enviados|recibidos|resueltos')->name('walee.tickets.tab');
 

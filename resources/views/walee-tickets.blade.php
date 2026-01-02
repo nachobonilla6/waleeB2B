@@ -127,6 +127,23 @@
             }
             return [$ticket->imagen];
         }
+        
+        // Helper function to get archivo URL
+        function getArchivoUrl($archivo) {
+            if (empty($archivo)) {
+                return null;
+            }
+            // Si ya es una URL completa, retornarla
+            if (str_starts_with($archivo, 'http://') || str_starts_with($archivo, 'https://')) {
+                return $archivo;
+            }
+            // Si empieza con storage/, usar asset directamente
+            if (str_starts_with($archivo, 'storage/')) {
+                return asset($archivo);
+            }
+            // Si es una ruta relativa, agregar storage/
+            return asset('storage/' . $archivo);
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -258,7 +275,7 @@
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                    <a href="{{ getArchivoUrl($archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
                                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
@@ -345,7 +362,7 @@
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                    <a href="{{ getArchivoUrl($archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
                                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
@@ -432,7 +449,7 @@
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                    <a href="{{ getArchivoUrl($archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
                                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
@@ -520,7 +537,7 @@
                             @php $archivos = getArchivos($ticket); @endphp
                             @if(count($archivos) > 0)
                                 @if(count($archivos) === 1)
-                                    <a href="{{ asset('storage/' . $archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
+                                    <a href="{{ getArchivoUrl($archivos[0]) }}" target="_blank" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded transition-all flex items-center gap-0.5 sm:gap-1">
                                         <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
@@ -976,7 +993,7 @@
                                 ${archivos.map((archivo, idx) => {
                                     const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo);
                                     return `
-                                        <a href="/storage/${archivo}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">
+                                        <a href="${archivo.startsWith('http') ? archivo : (archivo.startsWith('storage/') ? '{{ url('') }}/' + archivo : '{{ url('') }}/storage/' + archivo)}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">
                                             ${isImage ? '🖼️' : '📄'} Archivo ${idx + 1}
                                         </a>
                                     `;

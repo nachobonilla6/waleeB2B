@@ -315,77 +315,80 @@
                 </div>
             </div>
             
-            <!-- Clientes con Publicaciones -->
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up mb-4 sm:mb-6 md:mb-8" style="animation-delay: 0.7s">
-                <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes con Publicaciones</h2>
-                </div>
-                <div class="space-y-2 sm:space-y-3">
-                    @forelse($clientesConPublicaciones as $item)
-                        @php
-                            $fotoPath = $item['client']->foto ?? null;
-                            $fotoUrl = null;
-                            if ($fotoPath) {
-                                if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                    $fotoUrl = $fotoPath;
-                                } else {
-                                    $filename = basename($fotoPath);
-                                    $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                                }
-                            }
-                        @endphp
-                        <a href="{{ route('walee.cliente.detalle', $item['client']->id) }}" class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
-                            @if($fotoUrl)
-                                <img src="{{ $fotoUrl }}" alt="{{ $item['client']->name }}" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg object-cover border-2 border-violet-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
-                            @else
+            <!-- Grid: En Proceso (izquierda) y Clientes con Publicaciones (derecha) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
+                <!-- En Proceso - Izquierda -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">En Proceso</h2>
+                        <a href="{{ route('walee.clientes.proceso') }}" class="text-xs sm:text-sm text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
+                    </div>
+                    <div class="space-y-2 sm:space-y-3">
+                        @forelse($clientesEnProcesoRecientes as $cliente)
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
                                 <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    <span class="text-xs sm:text-sm md:text-base font-bold text-violet-600 dark:text-violet-400">{{ strtoupper(substr($item['client']->name ?: 'C', 0, 1)) }}</span>
+                                    <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                 </div>
-                            @endif
-                            <div class="flex-1 min-w-0">
-                                <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $item['client']->name ?: 'Sin nombre' }}</p>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $item['client']->email ?: 'Sin email' }}</p>
-                            </div>
-                            <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                                <div class="text-right">
-                                    <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
-                                        <span class="text-violet-600 dark:text-violet-400">{{ $item['programadas'] }}</span>
-                                        <span class="text-slate-500 dark:text-slate-400">/</span>
-                                        <span class="text-slate-700 dark:text-slate-300">{{ $item['total_publicaciones'] }}</span>
-                                    </p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-500">Programadas / Total</p>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->updated_at->diffForHumans() }}</p>
                                 </div>
-                            </div>
-                        </a>
-                    @empty
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes con publicaciones</p>
-                    @endforelse
+                            </a>
+                        @empty
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes en proceso</p>
+                        @endforelse
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Recent In Process -->
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up mb-4 sm:mb-6 md:mb-8" style="animation-delay: 0.9s">
-                <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">En Proceso</h2>
-                    <a href="{{ route('walee.clientes.proceso') }}" class="text-xs sm:text-sm text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
-                </div>
-                <div class="space-y-2 sm:space-y-3">
-                    @forelse($clientesEnProcesoRecientes as $cliente)
-                        <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->updated_at->diffForHumans() }}</p>
-                            </div>
-                        </a>
-                    @empty
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes en proceso</p>
-                    @endforelse
+                
+                <!-- Clientes con Publicaciones - Derecha -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.8s">
+                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes con Publicaciones</h2>
+                    </div>
+                    <div class="space-y-2 sm:space-y-3">
+                        @forelse($clientesConPublicaciones as $item)
+                            @php
+                                $fotoPath = $item['client']->foto ?? null;
+                                $fotoUrl = null;
+                                if ($fotoPath) {
+                                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                        $fotoUrl = $fotoPath;
+                                    } else {
+                                        $filename = basename($fotoPath);
+                                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                                    }
+                                }
+                            @endphp
+                            <a href="{{ route('walee.cliente.detalle', $item['client']->id) }}" class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $item['client']->name }}" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg object-cover border-2 border-violet-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
+                                @else
+                                    <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                        <span class="text-xs sm:text-sm md:text-base font-bold text-violet-600 dark:text-violet-400">{{ strtoupper(substr($item['client']->name ?: 'C', 0, 1)) }}</span>
+                                    </div>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $item['client']->name ?: 'Sin nombre' }}</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $item['client']->email ?: 'Sin email' }}</p>
+                                </div>
+                                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                                    <div class="text-right">
+                                        <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+                                            <span class="text-violet-600 dark:text-violet-400">{{ $item['programadas'] }}</span>
+                                            <span class="text-slate-500 dark:text-slate-400">/</span>
+                                            <span class="text-slate-700 dark:text-slate-300">{{ $item['total_publicaciones'] }}</span>
+                                        </p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-500">Programadas / Total</p>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes con publicaciones</p>
+                        @endforelse
+                    </div>
                 </div>
             </div>
             

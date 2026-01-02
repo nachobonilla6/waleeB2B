@@ -515,23 +515,27 @@
         // Modal para crear cliente
         function openCreateClientModal() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             const html = `
-                <form id="createClientForm" class="space-y-3 sm:space-y-4 text-left">
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
-                        <input type="text" id="clientName" name="name" required
-                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <form id="createClientForm" class="space-y-3 sm:space-y-3 md:space-y-4 text-left">
+                    <div class="grid grid-cols-1 ${isDesktop ? 'md:grid-cols-2' : ''} gap-3 sm:gap-3 md:gap-4">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
+                            <input type="text" id="clientName" name="name" required
+                                   class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Email</label>
+                            <input type="email" id="clientEmail" name="email"
+                                   class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Email</label>
-                        <input type="email" id="clientEmail" name="email"
-                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3 md:gap-4">
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 1</label>
                             <input type="tel" id="clientTelefono1" name="telefono_1"
@@ -545,10 +549,23 @@
                         </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sitio Web</label>
-                        <input type="url" id="clientWebsite" name="website"
-                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <div class="grid grid-cols-1 ${isDesktop ? 'md:grid-cols-2' : ''} gap-3 sm:gap-3 md:gap-4">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sitio Web</label>
+                            <input type="url" id="clientWebsite" name="website"
+                                   class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado</label>
+                            <select id="clientEstado" name="estado"
+                                    class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="pending">Pendiente</option>
+                                <option value="propuesta_enviada">Propuesta Enviada</option>
+                                <option value="activo">Activo</option>
+                                <option value="accepted">Aceptado</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div>
@@ -556,24 +573,22 @@
                         <textarea id="clientAddress" name="address" rows="2"
                                   class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                     </div>
-                    
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado</label>
-                        <select id="clientEstado" name="estado"
-                                class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="pending">Pendiente</option>
-                            <option value="propuesta_enviada">Propuesta Enviada</option>
-                            <option value="activo">Activo</option>
-                            <option value="accepted">Aceptado</option>
-                        </select>
-                    </div>
                 </form>
             `;
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '800px';
+            } else if (isTablet) {
+                modalWidth = '700px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
             
             Swal.fire({
                 title: 'Agregar Cliente',
                 html: html,
-                width: isMobile ? '95%' : '600px',
+                width: modalWidth,
                 padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
@@ -687,6 +702,17 @@
             .light-swal-html {
                 color: #334155 !important;
             }
+            @media (min-width: 1024px) {
+                .swal2-popup {
+                    max-height: 90vh !important;
+                    overflow-y: auto !important;
+                }
+                .swal2-html-container {
+                    max-height: calc(90vh - 150px) !important;
+                    overflow-y: auto !important;
+                }
+            }
+            
             @media (max-width: 640px) {
                 .swal2-popup {
                     width: 95% !important;

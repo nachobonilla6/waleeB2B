@@ -149,6 +149,15 @@
                 @endphp
                 
                 @if($data === null)
+                    <!-- Link to Dashboard -->
+                    <div class="mb-4">
+                        <a href="{{ route('walee.sheets.dashboard', ['spreadsheet_id' => request('spreadsheet_id'), 'range' => request('range', 'A1:Z1000')]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span>Ir a Dashboard de Control</span>
+                        </a>
+                    </div>
                     <!-- Error -->
                     <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-2xl p-6 animate-fade-in-up">
                         <div class="flex items-center gap-3">

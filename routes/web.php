@@ -2773,6 +2773,91 @@ Route::get('/walee-google-sheets', function () {
     return view('walee-google-sheets');
 })->middleware(['auth'])->name('walee.google-sheets');
 
+// Google Sheets Dashboard - Control de Contenido
+Route::get('/walee-sheets-dashboard', function () {
+    return view('walee-sheets-dashboard');
+})->middleware(['auth'])->name('walee.sheets.dashboard');
+
+// Subir imagen para Google Sheets
+Route::post('/walee-sheets/upload-image', function (\Illuminate\Http\Request $request) {
+    try {
+        $request->validate([
+            'image' => 'required|image|max:5120', // 5MB max
+            'spreadsheet_id' => 'required|string',
+            'row' => 'required|integer',
+            'col' => 'nullable|integer',
+        ]);
+
+        $image = $request->file('image');
+        $spreadsheetId = $request->input('spreadsheet_id');
+        $row = $request->input('row');
+        $col = $request->input('col');
+
+        // Guardar imagen
+        $path = $image->store('sheets-images', 'public');
+        $imageUrl = asset('storage/' . $path);
+
+        // Si se especifica una columna, actualizar directamente en el sheet
+        if ($col) {
+            $sheetsService = new \App\Services\GoogleSheetsService();
+            // Convertir número de columna a letra (1 = A, 2 = B, etc.)
+            $colLetter = chr(64 + $col);
+            $range = "{$colLetter}{$row}";
+            
+            $sheetsService->updateCell($spreadsheetId, $range, $imageUrl);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'image_url' => $imageUrl,
+            'path' => $path,
+            'message' => 'Imagen subida correctamente'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error subiendo imagen para sheets: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.sheets.upload-image');
+
+// Actualizar fila en Google Sheets
+Route::post('/walee-sheets/update-row', function (\Illuminate\Http\Request $request) {
+    try {
+        $request->validate([
+            'spreadsheet_id' => 'required|string',
+            'range' => 'required|string',
+            'values' => 'required|array',
+        ]);
+
+        $spreadsheetId = $request->input('spreadsheet_id');
+        $range = $request->input('range');
+        $values = $request->input('values');
+
+        $sheetsService = new \App\Services\GoogleSheetsService();
+        $success = $sheetsService->updateRow($spreadsheetId, $range, $values);
+
+        if ($success) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Fila actualizada correctamente'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo actualizar el sheet. Verifica que tengas permisos de escritura.'
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        \Log::error('Error actualizando fila en sheets: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.sheets.update-row');
+
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {
     $clientes = \App\Models\Client::orderBy('name', 'asc')->get();

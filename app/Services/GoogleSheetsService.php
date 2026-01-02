@@ -38,6 +38,7 @@ class GoogleSheetsService
 
             $client->setAuthConfig($credentialsPath);
             $client->addScope('https://www.googleapis.com/auth/spreadsheets.readonly');
+            $client->addScope('https://www.googleapis.com/auth/spreadsheets');
             $client->setAccessType('offline');
             $client->setPrompt('select_account consent');
 
@@ -297,6 +298,86 @@ class GoogleSheetsService
     {
         $client = $this->getClient();
         return $client !== null;
+    }
+
+    /**
+     * Actualizar una celda específica en el Google Sheet
+     * 
+     * @param string $spreadsheetId ID del spreadsheet
+     * @param string $range Rango de la celda (ej: 'Sheet1!A1' o 'A1')
+     * @param mixed $value Valor a escribir
+     * @return bool
+     */
+    public function updateCell(string $spreadsheetId, string $range, $value): bool
+    {
+        try {
+            $service = $this->getService();
+            if (!$service) {
+                Log::error('No se puede actualizar: servicio no disponible');
+                return false;
+            }
+
+            // Preparar los datos para actualizar
+            $body = new \Google_Service_Sheets_ValueRange([
+                'values' => [[$value]]
+            ]);
+
+            $params = [
+                'valueInputOption' => 'RAW'
+            ];
+
+            $service->spreadsheets_values->update(
+                $spreadsheetId,
+                $range,
+                $body,
+                $params
+            );
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error actualizando celda en Google Sheets: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Actualizar una fila completa en el Google Sheet
+     * 
+     * @param string $spreadsheetId ID del spreadsheet
+     * @param string $range Rango de la fila (ej: 'Sheet1!A1:Z1' o 'A1:Z1')
+     * @param array $values Array de valores para la fila
+     * @return bool
+     */
+    public function updateRow(string $spreadsheetId, string $range, array $values): bool
+    {
+        try {
+            $service = $this->getService();
+            if (!$service) {
+                Log::error('No se puede actualizar: servicio no disponible');
+                return false;
+            }
+
+            // Preparar los datos para actualizar
+            $body = new \Google_Service_Sheets_ValueRange([
+                'values' => [$values]
+            ]);
+
+            $params = [
+                'valueInputOption' => 'RAW'
+            ];
+
+            $service->spreadsheets_values->update(
+                $spreadsheetId,
+                $range,
+                $body,
+                $params
+            );
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error actualizando fila en Google Sheets: ' . $e->getMessage());
+            return false;
+        }
     }
 }
 

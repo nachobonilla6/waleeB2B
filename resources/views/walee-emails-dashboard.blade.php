@@ -315,7 +315,7 @@
                 <!-- Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Actividad Últimos 7 Días</h2>
-                    <div class="relative" style="height: 300px;">
+                    <div class="relative w-full" style="height: 300px;">
                         <canvas id="activityChart"></canvas>
                     </div>
                 </div>
@@ -498,8 +498,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 1.5,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'top',

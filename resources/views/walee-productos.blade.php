@@ -57,6 +57,83 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(213, 159, 59, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(213, 159, 59, 0.5); }
+        
+        /* SweetAlert2 Dark Mode Support */
+        .dark .swal2-popup {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        }
+        
+        .dark .swal2-title {
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .swal2-html-container {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark .swal2-input,
+        .dark .swal2-textarea,
+        .dark .swal2-select {
+            background: #334155 !important;
+            border-color: #475569 !important;
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .swal2-input:focus,
+        .dark .swal2-textarea:focus,
+        .dark .swal2-select:focus {
+            border-color: #D59F3B !important;
+            box-shadow: 0 0 0 3px rgba(213, 159, 59, 0.2) !important;
+        }
+        
+        .dark .swal2-cancel {
+            background: #475569 !important;
+            color: #f1f5f9 !important;
+        }
+        
+        .dark .swal2-cancel:hover {
+            background: #64748b !important;
+        }
+        
+        .dark .swal2-confirm {
+            background: #D59F3B !important;
+        }
+        
+        .dark .swal2-confirm:hover {
+            background: #C78F2E !important;
+        }
+        
+        .dark .swal2-close {
+            color: #94a3b8 !important;
+        }
+        
+        .dark .swal2-close:hover {
+            color: #cbd5e1 !important;
+        }
+        
+        /* Light mode styles */
+        .swal2-popup {
+            background: #ffffff !important;
+            color: #1e293b !important;
+        }
+        
+        .swal2-title {
+            color: #0f172a !important;
+        }
+        
+        .swal2-html-container {
+            color: #334155 !important;
+        }
+        
+        .swal2-input,
+        .swal2-textarea,
+        .swal2-select {
+            background: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -339,6 +416,9 @@
                 </form>
             `;
             
+            // Detectar modo oscuro
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
             Swal.fire({
                 title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
                 html: html,
@@ -347,7 +427,16 @@
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#D59F3B',
-                cancelButtonColor: '#6b7280',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
                 didOpen: () => {
                     // Cargar fotos existentes si es edición
                     if (isEdit && product.fotos && product.fotos.length > 0) {
@@ -483,12 +572,16 @@
                     throw new Error('El servidor devolvió una respuesta inválida');
                 }
                 
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
                         title: '¡Éxito!',
                         text: data.message || 'Producto guardado correctamente',
-                        confirmButtonColor: '#D59F3B'
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
                     }).then(() => {
                         location.reload();
                     });
@@ -517,25 +610,32 @@
                 showProductModal(product);
             } catch (error) {
                 console.error('Error:', error);
+                const isDarkMode = document.documentElement.classList.contains('dark');
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
                     text: 'Error al cargar el producto',
-                    confirmButtonColor: '#D59F3B'
+                    confirmButtonColor: '#D59F3B',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
                 });
             }
         }
         
         async function deleteProduct(id) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
             const result = await Swal.fire({
                 title: '¿Estás seguro?',
                 text: 'Esta acción no se puede deshacer',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#6b7280',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b'
             });
             
             if (!result.isConfirmed) return;
@@ -551,12 +651,16 @@
                 
                 const data = await response.json();
                 
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
                         title: '¡Eliminado!',
                         text: 'El producto ha sido eliminado',
-                        confirmButtonColor: '#D59F3B'
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
                     }).then(() => {
                         location.reload();
                     });
@@ -565,16 +669,21 @@
                         icon: 'error',
                         title: 'Error',
                         text: data.message || 'No se pudo eliminar el producto',
-                        confirmButtonColor: '#D59F3B'
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
                     });
                 }
             } catch (error) {
                 console.error('Error:', error);
+                const isDarkMode = document.documentElement.classList.contains('dark');
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
                     text: 'Error al eliminar el producto',
-                    confirmButtonColor: '#D59F3B'
+                    confirmButtonColor: '#D59F3B',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
                 });
             }
         }
@@ -618,6 +727,7 @@
                             toggleCheckbox.checked = data.estado === 'activo';
                         }
                         
+                        const isDarkMode = document.documentElement.classList.contains('dark');
                         Swal.fire({
                             icon: 'success',
                             title: 'Estado actualizado',
@@ -625,7 +735,9 @@
                             timer: 1500,
                             showConfirmButton: false,
                             toast: true,
-                            position: 'top-end'
+                            position: 'top-end',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
                         });
                     } else {
                         // Revertir el checkbox
@@ -634,11 +746,14 @@
                         if (toggleCheckbox) {
                             toggleCheckbox.checked = estadoOriginal;
                         }
+                        const isDarkMode = document.documentElement.classList.contains('dark');
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: data.message || 'No se pudo actualizar el estado',
-                            confirmButtonColor: '#D59F3B'
+                            confirmButtonColor: '#D59F3B',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
                         });
                     }
                 } catch (error) {
@@ -649,11 +764,14 @@
                     if (toggleCheckbox) {
                         toggleCheckbox.checked = estadoOriginal;
                     }
+                    const isDarkMode = document.documentElement.classList.contains('dark');
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'Error al cambiar el estado. Por favor, recarga la página.',
-                        confirmButtonColor: '#D59F3B'
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
                     });
                 }
         }

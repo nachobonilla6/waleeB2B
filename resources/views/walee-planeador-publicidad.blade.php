@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -81,6 +82,53 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
+        
+        /* SweetAlert Dark/Light Mode */
+        .dark-swal {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        
+        .light-swal {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+        }
+        
+        .dark-swal-title {
+            color: #e2e8f0 !important;
+        }
+        
+        .light-swal-title {
+            color: #1e293b !important;
+        }
+        
+        .dark-swal-html {
+            color: #e2e8f0 !important;
+        }
+        
+        .light-swal-html {
+            color: #1e293b !important;
+        }
+        
+        .dark-swal-confirm {
+            background-color: #8b5cf6 !important;
+            color: #ffffff !important;
+        }
+        
+        .light-swal-confirm {
+            background-color: #8b5cf6 !important;
+            color: #ffffff !important;
+        }
+        
+        .dark-swal-cancel {
+            background-color: #475569 !important;
+            color: #ffffff !important;
+        }
+        
+        .light-swal-cancel {
+            background-color: #6b7280 !important;
+            color: #ffffff !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -719,29 +767,6 @@
         </div>
     </div>
     
-    <!-- Modal Detalle Evento -->
-    <div id="detalleEventoModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-2xl max-h-[85vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Detalle de Publicación</h3>
-                <button onclick="closeDetalleEventoModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-4 md:p-6 space-y-4 overflow-y-auto max-h-[calc(85vh-80px)]">
-                <div id="detalleEventoContent">
-                    <div class="flex items-center justify-center py-8">
-                        <svg class="animate-spin w-6 h-6 text-violet-500" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -924,17 +949,27 @@
         }
         
         async function showEventoDetail(eventoId) {
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
             try {
-                // Mostrar modal con loading
-                document.getElementById('detalleEventoModal').classList.remove('hidden');
-                document.getElementById('detalleEventoContent').innerHTML = `
-                    <div class="flex items-center justify-center py-8">
-                        <svg class="animate-spin w-6 h-6 text-violet-500" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                `;
+                // Mostrar loading con SweetAlert
+                Swal.fire({
+                    title: 'Cargando...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    customClass: {
+                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    }
+                });
                 
                 // Obtener detalles del evento
                 const response = await fetch(`/publicidad-eventos/${eventoId}`, {
@@ -1000,7 +1035,6 @@
                     let imagenHTML = '';
                     if (evento.imagen_url) {
                         let imageUrl = evento.imagen_url;
-                        console.log('URL original de imagen:', imageUrl);
                         
                         // Si la URL ya es completa (http/https), usarla directamente
                         if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -1013,7 +1047,6 @@
                             imageUrl = window.location.origin + imageUrl;
                         } else {
                             // Ruta relativa, construir URL completa
-                            // Si contiene 'publicidad/', usar directamente
                             if (imageUrl.includes('publicidad/')) {
                                 imageUrl = window.location.origin + '/' + imageUrl;
                             } else {
@@ -1021,105 +1054,127 @@
                             }
                         }
                         
-                        console.log('URL final de imagen:', imageUrl);
-                        
                         imagenHTML = `
-                            <div class="mt-4">
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen</label>
+                            <div class="mt-3 space-y-2">
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Imagen</label>
                                 <div class="relative">
-                                    <img id="detalleEventoImagen" src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border border-slate-200 dark:border-slate-700" 
-                                         onerror="handleImageError(this, '${imageUrl}');">
-                                    <div id="detalleEventoImagenError" class="hidden mt-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                                        <p class="text-sm text-red-600 dark:text-red-400 mb-2">⚠️ No se pudo cargar la imagen</p>
-                                        <p class="text-xs text-red-500 dark:text-red-500 mb-2">URL: ${imageUrl}</p>
-                                        <a href="${imageUrl}" target="_blank" class="text-xs text-violet-600 dark:text-violet-400 hover:underline">Intentar abrir en nueva pestaña</a>
+                                    <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}" 
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display:none;" class="mt-2 p-3 rounded-lg ${isDarkMode ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border">
+                                        <p class="text-xs ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-1">⚠️ No se pudo cargar la imagen</p>
+                                        <a href="${imageUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-violet-400' : 'text-violet-600'} hover:underline">Abrir en nueva pestaña</a>
                                     </div>
-                                    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                                        <a href="${imageUrl}" target="_blank" class="text-violet-600 dark:text-violet-400 hover:underline">Abrir imagen en nueva pestaña</a>
+                                    <div class="mt-2">
+                                        <a href="${imageUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-violet-400' : 'text-violet-600'} hover:underline">Abrir imagen en nueva pestaña</a>
                                     </div>
                                 </div>
                             </div>
                         `;
                     }
                     
-                    document.getElementById('detalleEventoContent').innerHTML = `
-                        <div class="space-y-4">
+                    let modalWidth = '95%';
+                    if (isDesktop) {
+                        modalWidth = '700px';
+                    } else if (isTablet) {
+                        modalWidth = '600px';
+                    } else if (isMobile) {
+                        modalWidth = '95%';
+                    }
+                    
+                    const html = `
+                        <div class="text-left space-y-3 ${isMobile ? 'text-xs' : 'text-sm'}">
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Título</label>
-                                <p class="text-sm font-semibold text-slate-900 dark:text-white">${evento.titulo || 'Sin título'}</p>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                                <p class="font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}">${evento.titulo || 'Sin título'}</p>
                             </div>
                             
                             ${evento.texto ? `
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Texto</label>
-                                <p class="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">${evento.texto}</p>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
+                                <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${evento.texto}</p>
                             </div>
                             ` : ''}
                             
                             ${evento.descripcion ? `
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
-                                <p class="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap">${evento.descripcion}</p>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
+                                <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${evento.descripcion}</p>
                             </div>
                             ` : ''}
                             
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Plataforma</label>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Plataforma</label>
                                     <div class="flex items-center gap-2">
                                         ${plataformaIcono}
-                                        <span class="text-sm text-slate-800 dark:text-slate-200">${plataformaNombre}</span>
+                                        <span class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${plataformaNombre}</span>
                                     </div>
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Estado</label>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
                                     ${estadoBadge}
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Fecha y Hora</label>
-                                <p class="text-sm text-slate-800 dark:text-slate-200">${fechaFormateada}</p>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                                <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${fechaFormateada}</p>
                             </div>
                             
                             ${imagenHTML}
                         </div>
                     `;
+                    
+                    Swal.fire({
+                        title: 'Detalle de Publicación',
+                        html: html,
+                        width: modalWidth,
+                        padding: isMobile ? '1rem' : '1.5rem',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Cerrar',
+                        confirmButtonColor: '#8b5cf6',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                        customClass: {
+                            popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                            title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                            htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                            confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                        }
+                    });
                 } else {
-                    document.getElementById('detalleEventoContent').innerHTML = `
-                        <div class="text-center py-8">
-                            <p class="text-sm text-red-600 dark:text-red-400">Error al cargar los detalles del evento</p>
-                        </div>
-                    `;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los detalles del evento',
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                        customClass: {
+                            popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                            title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                            confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('detalleEventoContent').innerHTML = `
-                    <div class="text-center py-8">
-                        <p class="text-sm text-red-600 dark:text-red-400">Error de conexión: ${error.message}</p>
-                    </div>
-                `;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: error.message,
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    customClass: {
+                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    }
+                });
             }
         }
-        
-        function closeDetalleEventoModal() {
-            document.getElementById('detalleEventoModal').classList.add('hidden');
-        }
-        
-        function handleImageError(img, url) {
-            console.error('Error cargando imagen:', url);
-            img.style.display = 'none';
-            const errorDiv = document.getElementById('detalleEventoImagenError');
-            if (errorDiv) {
-                errorDiv.classList.remove('hidden');
-            }
-        }
-        
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('detalleEventoModal').addEventListener('click', function(e) {
-            if (e.target === this) closeDetalleEventoModal();
-        });
         
         // Sincronizar color picker
         document.getElementById('color').addEventListener('input', function(e) {

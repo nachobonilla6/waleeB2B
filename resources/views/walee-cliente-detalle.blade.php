@@ -652,6 +652,7 @@
             const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
+            // Datos del cliente
             @php
                 $fotoPath = $cliente->foto ?? null;
                 $fotoUrl = null;
@@ -665,7 +666,18 @@
                 }
             @endphp
             
-            const currentFotoUrl = @json($fotoUrl);
+            const clienteData = {
+                fotoUrl: @json($fotoUrl),
+                name: @json($cliente->name ?? ''),
+                email: @json($cliente->email ?? ''),
+                telefono_1: @json($cliente->telefono_1 ?? ''),
+                telefono_2: @json($cliente->telefono_2 ?? ''),
+                website: @json($cliente->website ?? ''),
+                estado: @json($cliente->estado ?? 'pending'),
+                address: @json($cliente->address ?? ''),
+                feedback: @json($cliente->feedback ?? ''),
+                inicial: @json(strtoupper(substr($cliente->name, 0, 1)))
+            };
             
             const html = `
                 <form id="editClientForm" class="space-y-2.5 sm:space-y-3 text-left">
@@ -675,10 +687,10 @@
                         <div class="flex items-center gap-2 sm:gap-3">
                             <div class="flex-shrink-0">
                                 <div id="fotoPreviewContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 border-emerald-500/30">
-                                    ${currentFotoUrl ? 
-                                        `<img src="${currentFotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
+                                    ${clienteData.fotoUrl ? 
+                                        `<img src="${clienteData.fotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
                                         `<div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center">
-                                            <span class="text-lg sm:text-xl font-bold text-emerald-400">${@json(strtoupper(substr($cliente->name, 0, 1)))}</span>
+                                            <span class="text-lg sm:text-xl font-bold text-emerald-400">${clienteData.inicial}</span>
                                         </div>`
                                     }
                                 </div>
@@ -699,13 +711,13 @@
                     <div class="grid grid-cols-1 ${isDesktop ? 'sm:grid-cols-2' : ''} gap-2.5 sm:gap-3">
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
-                            <input type="text" id="clientName" name="name" required value="@json($cliente->name)"
+                            <input type="text" id="clientName" name="name" required value="${clienteData.name}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                         
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Email</label>
-                            <input type="email" id="clientEmail" name="email" value="@json($cliente->email ?? '')"
+                            <input type="email" id="clientEmail" name="email" value="${clienteData.email}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                     </div>
@@ -713,13 +725,13 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 1</label>
-                            <input type="tel" id="clientTelefono1" name="telefono_1" value="@json($cliente->telefono_1 ?? '')"
+                            <input type="tel" id="clientTelefono1" name="telefono_1" value="${clienteData.telefono_1}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                         
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 2</label>
-                            <input type="tel" id="clientTelefono2" name="telefono_2" value="@json($cliente->telefono_2 ?? '')"
+                            <input type="tel" id="clientTelefono2" name="telefono_2" value="${clienteData.telefono_2}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                     </div>
@@ -727,7 +739,7 @@
                     <div class="grid grid-cols-1 ${isDesktop ? 'sm:grid-cols-2' : ''} gap-2.5 sm:gap-3">
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sitio Web</label>
-                            <input type="url" id="clientWebsite" name="website" value="@json($cliente->website ?? '')"
+                            <input type="url" id="clientWebsite" name="website" value="${clienteData.website}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                         
@@ -735,26 +747,26 @@
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado</label>
                             <select id="clientEstado" name="estado"
                                     class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                                <option value="pending" {{ $cliente->estado == 'pending' ? 'selected' : '' }}>Pendiente</option>
-                                <option value="contactado" {{ $cliente->estado == 'contactado' ? 'selected' : '' }}>Contactado</option>
-                                <option value="propuesta_enviada" {{ $cliente->estado == 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
-                                <option value="accepted" {{ $cliente->estado == 'accepted' ? 'selected' : '' }}>Aceptado</option>
-                                <option value="activo" {{ $cliente->estado == 'activo' ? 'selected' : '' }}>Activo</option>
-                                <option value="rechazado" {{ $cliente->estado == 'rechazado' ? 'selected' : '' }}>Rechazado</option>
+                                <option value="pending" ${clienteData.estado === 'pending' ? 'selected' : ''}>Pendiente</option>
+                                <option value="contactado" ${clienteData.estado === 'contactado' ? 'selected' : ''}>Contactado</option>
+                                <option value="propuesta_enviada" ${clienteData.estado === 'propuesta_enviada' ? 'selected' : ''}>Propuesta Enviada</option>
+                                <option value="accepted" ${clienteData.estado === 'accepted' ? 'selected' : ''}>Aceptado</option>
+                                <option value="activo" ${clienteData.estado === 'activo' ? 'selected' : ''}>Activo</option>
+                                <option value="rechazado" ${clienteData.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
                             </select>
                         </div>
                     </div>
                     
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Dirección</label>
-                        <input type="text" id="clientAddress" name="address" value="@json($cliente->address ?? '')"
+                        <input type="text" id="clientAddress" name="address" value="${clienteData.address}"
                                class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                     </div>
                     
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Feedback / Notas</label>
                         <textarea id="clientFeedback" name="feedback" rows="3"
-                                  class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400 resize-none">@json($cliente->feedback ?? '')</textarea>
+                                  class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400 resize-none">${clienteData.feedback}</textarea>
                     </div>
                 </form>
             `;

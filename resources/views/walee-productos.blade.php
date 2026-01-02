@@ -162,6 +162,7 @@
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <label class="relative inline-flex items-center cursor-pointer" id="toggle-{{ $producto->id }}">
                                             <input type="checkbox" 
+                                                   id="toggle-checkbox-{{ $producto->id }}"
                                                    class="sr-only peer" 
                                                    {{ $producto->estado === 'activo' ? 'checked' : '' }}
                                                    onchange="toggleEstado({{ $producto->id }}, this.checked, this)">
@@ -540,14 +541,21 @@
         }
         
         async function toggleEstado(id, activo, checkbox) {
+            // Guardar el estado original para revertir si falla
+            const estadoOriginal = !activo;
+            
             try {
                 const response = await fetch(`/walee-productos/${id}/toggle-estado`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json'
+                        'Accept': 'application/json'
                     }
                 });
+                
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor: ' + response.status);
+                }
                 
                 const data = await response.json();
                 
@@ -564,17 +572,31 @@
                         estadoText.textContent = data.estado === 'activo' ? 'Activo' : 'Inactivo';
                     }
                     
-                    showNotification('Estado actualizado correctamente', 'success');
+                    // El checkbox ya está en el estado correcto por el onchange
+                    // Solo nos aseguramos de que esté sincronizado
+                    const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                    if (toggleCheckbox && toggleCheckbox.checked !== (data.estado === 'activo')) {
+                        toggleCheckbox.checked = data.estado === 'activo';
+                    }
                 } else {
                     // Revertir el checkbox
-                    checkbox.checked = !activo;
-                    showNotification('Error: ' + data.message, 'error');
+                    checkbox.checked = estadoOriginal;
+                    const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                    if (toggleCheckbox) {
+                        toggleCheckbox.checked = estadoOriginal;
+                    }
+                    console.error('Error:', data.message);
+                    alert('Error: ' + (data.message || 'No se pudo actualizar el estado'));
                 }
             } catch (error) {
                 console.error('Error:', error);
                 // Revertir el checkbox
-                checkbox.checked = !activo;
-                showNotification('Error al cambiar el estado', 'error');
+                checkbox.checked = estadoOriginal;
+                const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                if (toggleCheckbox) {
+                    toggleCheckbox.checked = estadoOriginal;
+                }
+                alert('Error al cambiar el estado. Por favor, recarga la página.');
             }
         }
     </script>

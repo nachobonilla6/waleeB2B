@@ -138,6 +138,7 @@
         
         .swal2-title {
             color: #0f172a !important;
+            font-size: 1.25rem !important;
         }
         
         .swal2-html-container {
@@ -150,6 +151,36 @@
             background: #ffffff !important;
             border-color: #cbd5e1 !important;
             color: #1e293b !important;
+        }
+        
+        /* Mobile optimizations for SweetAlert */
+        @media (max-width: 640px) {
+            .swal2-popup {
+                width: 95% !important;
+                margin: 0.5rem !important;
+                padding: 1rem !important;
+            }
+            
+            .swal2-title {
+                font-size: 1.125rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .swal2-html-container {
+                margin: 0.5rem 0 !important;
+                font-size: 0.875rem !important;
+            }
+            
+            .swal2-confirm,
+            .swal2-cancel {
+                font-size: 0.875rem !important;
+                padding: 0.5rem 1rem !important;
+            }
+            
+            .swal2-actions {
+                margin-top: 1rem !important;
+                gap: 0.5rem !important;
+            }
         }
     </style>
 </head>
@@ -376,57 +407,58 @@
         
         function showProductModal(product = null) {
             const isEdit = product !== null;
+            const isMobile = window.innerWidth < 640;
             const html = `
-                <form id="productForm" class="space-y-4 text-left">
+                <form id="productForm" class="space-y-3 sm:space-y-4 text-left">
                     <input type="hidden" id="productId" name="id" value="${product?.id || ''}">
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre *</label>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
                         <input type="text" id="productNombre" name="nombre" required
                                value="${product?.nombre || ''}"
-                               class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
-                        <textarea id="productDescripcion" name="descripcion" rows="3"
-                                  class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">${product?.descripcion || ''}</textarea>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Descripción</label>
+                        <textarea id="productDescripcion" name="descripcion" rows="2" 
+                                  class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">${product?.descripcion || ''}</textarea>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado *</label>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado *</label>
                             <select id="productEstado" name="estado" required
-                                    class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                                    class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
                                 <option value="activo" ${product?.estado === 'activo' ? 'selected' : ''}>Activo</option>
                                 <option value="inactivo" ${product?.estado === 'inactivo' ? 'selected' : ''}>Inactivo</option>
                             </select>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo *</label>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Tipo *</label>
                             <div class="flex gap-2">
                                 <select id="productTipo" name="tipo" required
-                                        class="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                                        class="flex-1 px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
                                     <option value="bot" ${product?.tipo === 'bot' ? 'selected' : ''}>Bot</option>
                                     <option value="sitio" ${product?.tipo === 'sitio' ? 'selected' : ''}>Sitio</option>
                                     <option value="servicio" ${product?.tipo === 'servicio' ? 'selected' : ''}>Servicio</option>
                                 </select>
                                 <input type="text" id="productTipoCustom" name="tipo_custom" placeholder="Otro tipo"
                                        value="${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? product.tipo : ''}"
-                                       class="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500 ${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? '' : 'hidden'}">
+                                       class="flex-1 px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500 ${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? '' : 'hidden'}">
                             </div>
-                            <button type="button" onclick="toggleCustomTypeSwal()" class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                            <button type="button" onclick="toggleCustomTypeSwal()" class="mt-1.5 sm:mt-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
                                 Crear tipo personalizado
                             </button>
                         </div>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fotos (máximo 10)</label>
-                        <div class="grid grid-cols-5 gap-2 mb-2 max-h-32 overflow-y-auto" id="photosPreviewSwal"></div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Fotos (máximo 10)</label>
+                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2 mb-2 max-h-24 sm:max-h-32 overflow-y-auto" id="photosPreviewSwal"></div>
                         <input type="file" id="productFotosSwal" name="fotos[]" multiple accept="image/*" onchange="previewPhotosSwal(this)" class="hidden">
-                        <label for="productFotosSwal" class="inline-block px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl cursor-pointer transition-all text-sm">
+                        <label for="productFotosSwal" class="inline-block px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl cursor-pointer transition-all text-xs sm:text-sm">
                             Seleccionar fotos
                         </label>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes seleccionar hasta 10 imágenes</p>
@@ -440,7 +472,8 @@
             Swal.fire({
                 title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
                 html: html,
-                width: '600px',
+                width: isMobile ? '95%' : '600px',
+                padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
@@ -461,6 +494,7 @@
                         const preview = document.getElementById('photosPreviewSwal');
                         preview.innerHTML = '';
                         const fotosPaths = product.fotos_paths || [];
+                        const isMobile = window.innerWidth < 640;
                         product.fotos.forEach((fotoUrl, index) => {
                             const div = document.createElement('div');
                             div.className = 'relative';
@@ -470,9 +504,9 @@
                                 fotoPath = match ? match[1] : fotoUrl;
                             }
                             div.innerHTML = `
-                                <img src="${fotoUrl}" class="w-full h-16 object-cover rounded-lg">
-                                <button type="button" onclick="removeExistingPhotoSwal(this)" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <img src="${fotoUrl}" class="w-full h-12 sm:h-16 object-cover rounded-lg">
+                                <button type="button" onclick="removeExistingPhotoSwal(this)" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 sm:p-1">
+                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                 </button>
@@ -510,6 +544,7 @@
             selectedPhotos = files;
             const preview = document.getElementById('photosPreviewSwal');
             preview.innerHTML = '';
+            const isMobile = window.innerWidth < 640;
             
             files.forEach((file, index) => {
                 const reader = new FileReader();
@@ -517,9 +552,9 @@
                     const div = document.createElement('div');
                     div.className = 'relative';
                     div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-16 object-cover rounded-lg">
-                        <button type="button" onclick="removePhotoSwal(${index})" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <img src="${e.target.result}" class="w-full h-12 sm:h-16 object-cover rounded-lg">
+                        <button type="button" onclick="removePhotoSwal(${index})" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 sm:p-1">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>

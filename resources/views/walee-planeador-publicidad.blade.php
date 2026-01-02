@@ -314,6 +314,11 @@
         
         $tiposPublicidad = ['post', 'historia', 'reel', 'anuncio', 'video', 'carousel'];
         $plataformas = ['facebook', 'instagram', 'tiktok', 'twitter', 'linkedin', 'youtube'];
+        
+        // Buscar el Client correspondiente para el botón de perfil
+        $client = \App\Models\Client::where('email', $cliente->correo)
+            ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
+            ->first();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -344,11 +349,20 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0 flex-wrap">
+                            @if($client)
+                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-slate-500 hover:bg-slate-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Perfil</span>
+                                    <span class="sm:hidden">👤</span>
+                                </a>
+                            @endif
                             <button onclick="showProgramarPublicacionModal()" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
                                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                <span class="hidden sm:inline">Programar</span>
+                                <span class="hidden sm:inline">Crear Publicación</span>
                                 <span class="sm:hidden">+</span>
                             </button>
                             @if($vista === 'semanal')
@@ -806,12 +820,12 @@
             `;
             
             Swal.fire({
-                title: 'Programar Publicación',
+                title: 'Crear Publicación',
                 html: html,
                 width: modalWidth,
                 padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
-                confirmButtonText: 'Programar Publicación',
+                confirmButtonText: 'Crear Publicación',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
@@ -881,8 +895,8 @@
                         if (response.ok && responseData.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: '¡Publicación programada!',
-                                text: responseData.message || 'La publicación se ha programado correctamente',
+                                title: '¡Publicación creada!',
+                                text: responseData.message || 'La publicación se ha creado correctamente',
                                 confirmButtonColor: '#8b5cf6',
                                 timer: 2000,
                                 showConfirmButton: false,

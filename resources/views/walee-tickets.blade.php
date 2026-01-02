@@ -85,30 +85,42 @@
             $resueltos = $tickets->where('estado', 'resuelto')->count();
         }
         
-        // Ordenar cada grupo también por prioridad: urgente > prioritario > fecha, y a_discutir al final
-        $ticketsEnviados = $allTicketsForData->where('estado', 'enviado')
-            ->sortBy([
-                ['a_discutir', 'asc'], // A discutir al final
-                ['urgente', 'desc'],
-                ['prioritario', 'desc'],
-                ['created_at', 'desc']
-            ])->values();
+        // Usar variables paginadas si están disponibles, sino usar todas
+        if (isset($ticketsEnviados)) {
+            // Ya viene paginado desde la ruta
+        } else {
+            $ticketsEnviados = $allTicketsForData->where('estado', 'enviado')
+                ->sortBy([
+                    ['a_discutir', 'asc'],
+                    ['urgente', 'desc'],
+                    ['prioritario', 'desc'],
+                    ['created_at', 'desc']
+                ])->values();
+        }
         
-        $ticketsRecibidos = $allTicketsForData->where('estado', 'recibido')
-            ->sortBy([
-                ['a_discutir', 'asc'], // A discutir al final
-                ['urgente', 'desc'],
-                ['prioritario', 'desc'],
-                ['created_at', 'desc']
-            ])->values();
+        if (isset($ticketsRecibidos)) {
+            // Ya viene paginado desde la ruta
+        } else {
+            $ticketsRecibidos = $allTicketsForData->where('estado', 'recibido')
+                ->sortBy([
+                    ['a_discutir', 'asc'],
+                    ['urgente', 'desc'],
+                    ['prioritario', 'desc'],
+                    ['created_at', 'desc']
+                ])->values();
+        }
         
-        $ticketsResueltos = $allTicketsForData->where('estado', 'resuelto')
-            ->sortBy([
-                ['a_discutir', 'asc'], // A discutir al final
-                ['urgente', 'desc'],
-                ['prioritario', 'desc'],
-                ['created_at', 'desc']
-            ])->values();
+        if (isset($ticketsResueltos)) {
+            // Ya viene paginado desde la ruta
+        } else {
+            $ticketsResueltos = $allTicketsForData->where('estado', 'resuelto')
+                ->sortBy([
+                    ['a_discutir', 'asc'],
+                    ['urgente', 'desc'],
+                    ['prioritario', 'desc'],
+                    ['created_at', 'desc']
+                ])->values();
+        }
         
         // Helper function to get archivos array
         function getArchivos($ticket) {
@@ -141,18 +153,43 @@
             
             <!-- Tabs -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-1.5 flex flex-wrap gap-1.5 shadow-sm dark:shadow-none">
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'todos']) }}" id="tab-todos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
-                        <span class="hidden sm:inline">Todos </span>({{ $totalTickets }})
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-2 flex flex-wrap gap-2 shadow-sm dark:shadow-none">
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'todos']) }}" id="tab-todos" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-gradient-to-r from-walee-500 to-walee-600 text-white shadow-md shadow-walee-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <span>Todos</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'todos') || (!isset($activeTab)) ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $totalTickets }}</span>
+                        </span>
                     </a>
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" id="tab-enviados" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
-                        <span class="hidden sm:inline">Enviados </span>({{ $enviados }})
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'enviados']) }}" id="tab-enviados" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Enviados</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'enviados') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $enviados }}</span>
+                        </span>
                     </a>
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" id="tab-recibidos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
-                        <span class="hidden sm:inline">Recibidos </span>({{ $recibidos }})
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'recibidos']) }}" id="tab-recibidos" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <span>Recibidos</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'recibidos') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $recibidos }}</span>
+                        </span>
                     </a>
-                    <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" id="tab-resueltos" class="tab-button flex-1 min-w-[calc(50%-0.375rem)] sm:min-w-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-xs sm:text-sm transition-all text-center {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-walee-500 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50' }}">
-                        <span class="hidden sm:inline">Resueltos </span>({{ $resueltos }})
+                    <a href="{{ route('walee.tickets.tab', ['tab' => 'resueltos']) }}" id="tab-resueltos" class="tab-button group flex-1 min-w-[calc(50%-0.5rem)] sm:min-w-0 px-4 sm:px-5 py-3 rounded-lg font-semibold text-sm transition-all duration-200 text-center relative overflow-hidden {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/30' : 'bg-slate-100 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700' }}">
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Resueltos</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs {{ (isset($activeTab) && $activeTab === 'resueltos') ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300' }}">{{ $resueltos }}</span>
+                        </span>
                     </a>
                 </div>
             </div>
@@ -274,7 +311,10 @@
             
             <!-- Tickets List - Enviados -->
             <div id="ticketsList-enviados" class="tickets-container space-y-2 md:space-y-3 {{ (isset($activeTab) && $activeTab === 'enviados') ? '' : 'hidden' }}">
-                @forelse($ticketsEnviados as $index => $ticket)
+                @php
+                    $enviadosToShow = isset($ticketsEnviados) ? $ticketsEnviados : $ticketsEnviados;
+                @endphp
+                @forelse($enviadosToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
                         <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
@@ -345,11 +385,23 @@
                         <p class="text-slate-600 dark:text-slate-400">No se han encontrado tickets con estado "enviado"</p>
                     </div>
                 @endforelse
+                
+                <!-- Paginación para tab "enviados" -->
+                @if(isset($ticketsEnviados) && $ticketsEnviados->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        <div class="flex items-center gap-2">
+                            {{ $ticketsEnviados->links() }}
+                        </div>
+                    </div>
+                @endif
             </div>
             
             <!-- Tickets List - Recibidos -->
             <div id="ticketsList-recibidos" class="tickets-container space-y-2 md:space-y-3 {{ (isset($activeTab) && $activeTab === 'recibidos') ? '' : 'hidden' }}">
-                @forelse($ticketsRecibidos as $index => $ticket)
+                @php
+                    $recibidosToShow = isset($ticketsRecibidos) ? $ticketsRecibidos : $ticketsRecibidos;
+                @endphp
+                @forelse($recibidosToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
                         <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
@@ -421,11 +473,23 @@
                         <p class="text-slate-600 dark:text-slate-400">No se han encontrado tickets con estado "recibido"</p>
                     </div>
                 @endforelse
+                
+                <!-- Paginación para tab "recibidos" -->
+                @if(isset($ticketsRecibidos) && $ticketsRecibidos->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        <div class="flex items-center gap-2">
+                            {{ $ticketsRecibidos->links() }}
+                        </div>
+                    </div>
+                @endif
             </div>
             
             <!-- Tickets List - Resueltos -->
             <div id="ticketsList-resueltos" class="tickets-container space-y-2 md:space-y-3 {{ (isset($activeTab) && $activeTab === 'resueltos') ? '' : 'hidden' }}">
-                @forelse($ticketsResueltos as $index => $ticket)
+                @php
+                    $resueltosToShow = isset($ticketsResueltos) ? $ticketsResueltos : $ticketsResueltos;
+                @endphp
+                @forelse($resueltosToShow as $index => $ticket)
                     <div class="ticket-card bg-white dark:bg-slate-800/50 border @if($ticket->urgente) border-red-500 dark:border-red-500 @elseif($ticket->prioritario) border-yellow-500 dark:border-yellow-500 @elseif($ticket->a_discutir) border-blue-500 dark:border-blue-500 @else border-slate-200 dark:border-slate-700/50 @endif rounded-lg overflow-hidden hover:border-orange-400 dark:hover:border-orange-500/30 transition-all animate-fade-in-up shadow-sm dark:shadow-none" style="animation-delay: {{ 0.15 + ($index * 0.05) }}s;" data-id="{{ $ticket->id }}">
                         <!-- Línea 1: Info del ticket -->
                         <div class="px-3 py-2 flex items-center justify-between gap-2" onclick="event.stopPropagation(); showTicketDetail({{ $ticket->id }})">
@@ -496,6 +560,15 @@
                         <p class="text-slate-600 dark:text-slate-400">No se han encontrado tickets con estado "resuelto"</p>
                     </div>
                 @endforelse
+                
+                <!-- Paginación para tab "resueltos" -->
+                @if(isset($ticketsResueltos) && $ticketsResueltos->hasPages())
+                    <div class="mt-6 flex justify-center">
+                        <div class="flex items-center gap-2">
+                            {{ $ticketsResueltos->links() }}
+                        </div>
+                    </div>
+                @endif
             </div>
             
             <!-- Footer -->

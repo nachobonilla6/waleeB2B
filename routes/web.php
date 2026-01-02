@@ -389,23 +389,31 @@ Route::get('/walee-tickets/{tab}', function ($tab) {
         return redirect()->route('walee.tickets.tab', ['tab' => 'todos']);
     }
     
-    // Si es "todos", usar paginación de 5
-    if ($tab === 'todos') {
-        $ticketsTodos = \App\Models\Ticket::with('user')
-            ->orderBy('a_discutir', 'asc')
-            ->orderBy('urgente', 'desc')
-            ->orderBy('prioritario', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(5)
-            ->withPath(route('walee.tickets.tab', ['tab' => 'todos']));
-        
-        return view('walee-tickets', [
-            'activeTab' => $tab,
-            'ticketsTodos' => $ticketsTodos
-        ]);
+    // Usar paginación de 5 para todas las pestañas
+    $query = \App\Models\Ticket::with('user')
+        ->orderBy('a_discutir', 'asc')
+        ->orderBy('urgente', 'desc')
+        ->orderBy('prioritario', 'desc')
+        ->orderBy('created_at', 'desc');
+    
+    // Filtrar por estado según la pestaña
+    if ($tab === 'enviados') {
+        $query->where('estado', 'enviado');
+    } elseif ($tab === 'recibidos') {
+        $query->where('estado', 'recibido');
+    } elseif ($tab === 'resueltos') {
+        $query->where('estado', 'resuelto');
     }
     
-    return view('walee-tickets', ['activeTab' => $tab]);
+    $ticketsPaginated = $query->paginate(5)->withPath(route('walee.tickets.tab', ['tab' => $tab]));
+    
+    return view('walee-tickets', [
+        'activeTab' => $tab,
+        'ticketsTodos' => $tab === 'todos' ? $ticketsPaginated : null,
+        'ticketsEnviados' => $tab === 'enviados' ? $ticketsPaginated : null,
+        'ticketsRecibidos' => $tab === 'recibidos' ? $ticketsPaginated : null,
+        'ticketsResueltos' => $tab === 'resueltos' ? $ticketsPaginated : null,
+    ]);
 })->middleware(['auth'])->where('tab', 'todos|enviados|recibidos|resueltos')->name('walee.tickets.tab');
 
 // Tareas

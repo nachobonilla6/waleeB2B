@@ -203,8 +203,8 @@
                                             >
                                                 <div class="flex items-center gap-2 sm:gap-3">
                                                     <!-- Avatar -->
-                                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl {{ $estadoConfig['bg'] }} flex items-center justify-center flex-shrink-0">
-                                                        <span class="text-xs sm:text-sm font-bold {{ $estadoConfig['text'] }}">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden flex-shrink-0">
+                                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover opacity-80">
                                                     </div>
                                                     
                                                     <!-- Info -->

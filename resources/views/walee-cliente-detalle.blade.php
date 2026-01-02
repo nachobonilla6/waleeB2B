@@ -441,31 +441,31 @@
                     <!-- Cotizaciones Tab -->
                     <div id="content-cotizaciones" class="tab-content hidden">
                         @if($cotizaciones->count() > 0)
-                            <div class="space-y-3">
+                            <div class="space-y-2 sm:space-y-3">
                                 @foreach($cotizaciones as $cotizacion)
-                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400/50 transition-all">
-                                        <div class="flex items-center gap-4 flex-1 min-w-0">
-                                            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="flex items-center justify-between p-2.5 sm:p-3 md:p-4 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400/50 transition-all">
+                                        <div class="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
+                                            <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-slate-900 dark:text-white">
+                                                <p class="text-xs sm:text-sm font-medium text-slate-900 dark:text-white truncate">
                                                     {{ $cotizacion->numero_cotizacion ?? 'Cotización #' . $cotizacion->id }}
                                                 </p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1">
                                                     {{ number_format($cotizacion->monto, 2, ',', '.') }} CRC · {{ $cotizacion->tipo_servicio ?? 'N/A' }} · {{ $cotizacion->fecha ? $cotizacion->fecha->format('d/m/Y') : $cotizacion->created_at->format('d/m/Y') }}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4 relative z-10" style="pointer-events: auto;">
+                                        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 ml-2 sm:ml-4 relative z-10" style="pointer-events: auto;">
                                             @if($cotizacion->enlace || ($cotizacion->pdf_path ?? false))
-                                                <a href="{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium cursor-pointer relative z-10" style="pointer-events: auto; display: inline-block;">
+                                                <a href="{{ $cotizacion->enlace ?? '/storage/' . ($cotizacion->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 sm:px-3 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-all text-xs font-medium cursor-pointer relative z-10" style="pointer-events: auto; display: inline-block;">
                                                     Ver PDF
                                                 </a>
                                             @endif
-                                            <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $cotizacion->estado == 'enviada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30' }}">
+                                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-medium {{ $cotizacion->estado == 'enviada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-slate-500/20 text-slate-400 border border-slate-500/30' }}">
                                                 {{ ucfirst($cotizacion->estado ?? 'pendiente') }}
                                             </span>
                                         </div>
@@ -473,11 +473,11 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-center py-8">
-                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="text-center py-6 sm:py-8">
+                                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-slate-400 mx-auto mb-2 sm:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                <p class="text-slate-500 dark:text-slate-400">No hay cotizaciones</p>
+                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">No hay cotizaciones</p>
                             </div>
                         @endif
                     </div>
@@ -485,20 +485,20 @@
                     <!-- Facturas Tab -->
                     <div id="content-facturas" class="tab-content hidden">
                         @if($facturas->count() > 0)
-                            <div class="space-y-3">
+                            <div class="space-y-2 sm:space-y-3">
                                 @foreach($facturas as $factura)
-                                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-red-400/50 transition-all">
-                                        <div class="flex items-center gap-4 flex-1 min-w-0">
-                                            <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="flex items-center justify-between p-2.5 sm:p-3 md:p-4 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-red-400/50 transition-all">
+                                        <div class="flex items-center gap-2 sm:gap-3 md:gap-4 flex-1 min-w-0">
+                                            <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-slate-900 dark:text-white">
+                                                <p class="text-xs sm:text-sm font-medium text-slate-900 dark:text-white truncate">
                                                     {{ $factura->numero_factura ?? 'Factura #' . $factura->id }}
                                                 </p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1">
                                                     {{ number_format($factura->total, 2, ',', '.') }} CRC · {{ $factura->fecha_emision ? $factura->fecha_emision->format('d/m/Y') : $factura->created_at->format('d/m/Y') }}
                                                     @if($factura->fecha_vencimiento)
                                                         · Vence: {{ $factura->fecha_vencimiento->format('d/m/Y') }}
@@ -506,13 +506,13 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2 flex-shrink-0 ml-4 relative z-10" style="pointer-events: auto;">
+                                        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 ml-2 sm:ml-4 relative z-10" style="pointer-events: auto;">
                                             @if($factura->enlace || ($factura->pdf_path ?? false))
-                                                <a href="{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium cursor-pointer relative z-10" style="pointer-events: auto; display: inline-block;">
+                                                <a href="{{ $factura->enlace ?? '/storage/' . ($factura->pdf_path ?? '') }}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 sm:px-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs font-medium cursor-pointer relative z-10" style="pointer-events: auto; display: inline-block;">
                                                     Ver PDF
                                                 </a>
                                             @endif
-                                            <span class="px-3 py-1 rounded-lg text-xs font-medium {{ $factura->estado == 'pagada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($factura->estado == 'pendiente' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30') }}">
+                                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-medium {{ $factura->estado == 'pagada' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : ($factura->estado == 'pendiente' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30') }}">
                                                 {{ ucfirst($factura->estado ?? 'pendiente') }}
                                             </span>
                                         </div>
@@ -520,11 +520,11 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-center py-8">
-                                <svg class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="text-center py-6 sm:py-8">
+                                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-slate-400 mx-auto mb-2 sm:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                <p class="text-slate-500 dark:text-slate-400">No hay facturas</p>
+                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">No hay facturas</p>
                             </div>
                         @endif
                     </div>

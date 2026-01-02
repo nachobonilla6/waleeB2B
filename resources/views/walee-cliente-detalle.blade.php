@@ -60,13 +60,13 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6">
+        <div class="relative max-w-[90rem] mx-auto px-2.5 py-2.5 sm:px-4 sm:py-6">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header Compacto -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 animate-fade-in-up">
-                <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-3 sm:mb-6 animate-fade-in-up">
+                <div class="flex items-center gap-2 sm:gap-4">
                     @php
                         $fotoPath = $cliente->foto ?? null;
                         $fotoUrl = null;
@@ -84,21 +84,21 @@
                         }
                     @endphp
                     @if($fotoUrl)
-                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl object-cover border-2 border-emerald-500/30 flex-shrink-0">
+                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl object-cover border-2 border-emerald-500/30 flex-shrink-0">
                     @else
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                            <span class="text-xl sm:text-2xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                        <div class="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                            <span class="text-lg sm:text-2xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                         </div>
                     @endif
                     <div class="flex-1 min-w-0">
-                        <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white truncate">{{ $cliente->name }}</h1>
-                        <div class="flex items-center gap-2 mt-1 flex-wrap">
-                            <span class="inline-block px-2 py-0.5 sm:px-2.5 sm:py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                        <h1 class="text-base sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white truncate">{{ $cliente->name }}</h1>
+                        <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
+                            <span class="inline-block px-1.5 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
                                 {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                             </span>
                             @if($emailsEnviados > 0)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 text-xs font-medium {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span class="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-medium {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
+                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                     {{ $emailsEnviados }}
@@ -107,9 +107,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="openEditClientModal()" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <button onclick="openEditClientModal()" class="inline-flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-[10px] sm:text-sm font-medium">
+                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                         <span class="hidden sm:inline">Editar</span>
@@ -118,73 +118,75 @@
             </div>
             
             <!-- Action Buttons Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <!-- Email with AI Button -->
-                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-center gap-2 sm:gap-3 px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all group">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-2 sm:py-3.5 rounded-lg sm:rounded-2xl bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all group">
+                    <svg class="w-4 h-4 sm:w-6 sm:h-6 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                     </svg>
-                    <span class="text-sm sm:text-base font-medium truncate">Email con AI</span>
+                    <span class="text-xs sm:text-base font-medium truncate hidden xs:inline">Email con AI</span>
+                    <span class="text-xs font-medium xs:hidden">Email</span>
                 </a>
                 
                 <!-- WhatsApp Button -->
                 @if($whatsappLink)
-                    <a href="{{ $whatsappLink }}" target="_blank" class="flex items-center justify-center gap-2 sm:gap-3 px-4 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 transition-all group">
-                        <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ $whatsappLink }}" target="_blank" class="flex items-center justify-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-2 sm:py-3.5 rounded-lg sm:rounded-2xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 transition-all group">
+                        <svg class="w-4 h-4 sm:w-6 sm:h-6 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                         </svg>
-                        <span class="text-sm sm:text-base font-medium truncate">WhatsApp</span>
+                        <span class="text-xs sm:text-base font-medium truncate hidden xs:inline">WhatsApp</span>
+                        <span class="text-xs font-medium xs:hidden">WA</span>
                     </a>
                 @endif
             </div>
             
             <!-- Info Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
                 @if($cliente->email)
-                    <div class="rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-3 sm:p-4 hover:border-blue-400/50 dark:hover:border-blue-500/30 transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2 sm:p-4 hover:border-blue-400/50 dark:hover:border-blue-500/30 transition-all">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-slate-600 dark:text-slate-500 mb-0.5 sm:mb-1">Email</p>
-                                <p class="text-sm sm:text-base text-slate-800 dark:text-white truncate">{{ $cliente->email }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500 mb-0.5">Email</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white truncate">{{ $cliente->email }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 @if($phone)
-                    <div class="rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-3 sm:p-4 hover:border-green-400/50 dark:hover:border-green-500/30 transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2 sm:p-4 hover:border-green-400/50 dark:hover:border-green-500/30 transition-all">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-slate-600 dark:text-slate-500 mb-0.5 sm:mb-1">Teléfono</p>
-                                <p class="text-sm sm:text-base text-slate-800 dark:text-white truncate">{{ $phone }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500 mb-0.5">Teléfono</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white truncate">{{ $phone }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 @if($cliente->website)
-                    <a href="{{ $cliente->website }}" target="_blank" class="block rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-purple-400/50 dark:hover:border-purple-500/30 p-3 sm:p-4 transition-all group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ $cliente->website }}" target="_blank" class="block rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-purple-400/50 dark:hover:border-purple-500/30 p-2 sm:p-4 transition-all group">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-slate-600 dark:text-slate-500 mb-0.5 sm:mb-1">Sitio Web</p>
-                                <p class="text-sm sm:text-base text-slate-800 dark:text-white truncate group-hover:text-purple-400 transition-colors">{{ $cliente->website }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500 mb-0.5">Sitio Web</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white truncate group-hover:text-purple-400 transition-colors">{{ $cliente->website }}</p>
                             </div>
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 group-hover:text-purple-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-slate-400 group-hover:text-purple-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                             </svg>
                         </div>
@@ -192,67 +194,67 @@
                 @endif
                 
                 @if($cliente->address)
-                    <div class="rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-3 sm:p-4 hover:border-orange-400/50 dark:hover:border-orange-500/30 transition-all">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2 sm:p-4 hover:border-orange-400/50 dark:hover:border-orange-500/30 transition-all">
+                        <div class="flex items-start gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-slate-600 dark:text-slate-500 mb-0.5 sm:mb-1">Dirección</p>
-                                <p class="text-sm sm:text-base text-slate-800 dark:text-white line-clamp-2">{{ $cliente->address }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500 mb-0.5">Dirección</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white line-clamp-2">{{ $cliente->address }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 @if($cliente->feedback)
-                    <div class="rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-3 sm:p-4 hover:border-cyan-400/50 dark:hover:border-cyan-500/30 transition-all sm:col-span-2 lg:col-span-1">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2 sm:p-4 hover:border-cyan-400/50 dark:hover:border-cyan-500/30 transition-all sm:col-span-2 lg:col-span-1">
+                        <div class="flex items-start gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-slate-600 dark:text-slate-500 mb-0.5 sm:mb-1">Feedback</p>
-                                <p class="text-sm sm:text-base text-slate-800 dark:text-white line-clamp-3">{{ $cliente->feedback }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500 mb-0.5">Feedback</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white line-clamp-3">{{ $cliente->feedback }}</p>
                             </div>
                         </div>
                     </div>
                 @endif
                 
                 <!-- Emails Enviados -->
-                <div class="rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-3 sm:p-4 sm:col-span-2 lg:col-span-1">
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="rounded-lg sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-2 sm:p-4 sm:col-span-2 lg:col-span-1">
+                    <div class="flex items-start gap-2 sm:gap-3">
+                        <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between mb-1.5 sm:mb-2">
-                                <p class="text-xs text-slate-600 dark:text-slate-400">Emails enviados</p>
+                            <div class="flex items-center justify-between mb-1 sm:mb-2">
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400">Emails enviados</p>
                                 @if($emailsEnviados >= 3)
-                                    <span class="px-1.5 py-0.5 text-[10px] font-bold bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
+                                    <span class="px-1 py-0.5 text-[9px] sm:text-[10px] font-bold bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
                                         ⚠️
                                     </span>
                                 @elseif($emailsEnviados >= 1)
-                                    <span class="px-1.5 py-0.5 text-[10px] font-medium bg-amber-500/20 text-amber-400 rounded-full border border-amber-500/30">
+                                    <span class="px-1 py-0.5 text-[9px] sm:text-[10px] font-medium bg-amber-500/20 text-amber-400 rounded-full border border-amber-500/30">
                                         ✓
                                     </span>
                                 @endif
                             </div>
                             @if($emailsEnviados > 0)
-                                <p class="text-xl sm:text-2xl font-bold {{ $emailsColor }} mb-0.5 sm:mb-1">{{ $emailsEnviados }}</p>
-                                <p class="text-xs text-slate-600 dark:text-slate-500">
+                                <p class="text-lg sm:text-2xl font-bold {{ $emailsColor }} mb-0.5">{{ $emailsEnviados }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500">
                                     {{ $emailsEnviados == 1 ? 'email' : 'emails' }} con propuestas
                                 </p>
                             @else
-                                <p class="text-sm sm:text-base text-slate-800 dark:text-white">Sin emails</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aún no ha recibido propuestas</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white">Sin emails</p>
+                                <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aún no ha recibido propuestas</p>
                             @endif
                         </div>
                     </div>
@@ -260,47 +262,47 @@
                 
                 <!-- Publicaciones -->
                 @if($clientePlaneadorId)
-                    <div class="rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-3 sm:p-4 sm:col-span-2 lg:col-span-1">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="rounded-lg sm:rounded-2xl bg-gradient-to-br from-violet-500/10 to-violet-600/5 border border-violet-500/20 p-2 sm:p-4 sm:col-span-2 lg:col-span-1">
+                        <div class="flex items-start gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-1.5 sm:mb-2">
-                                    <p class="text-xs text-slate-600 dark:text-slate-400">Publicaciones</p>
+                                <div class="flex items-center justify-between mb-1 sm:mb-2">
+                                    <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400">Publicaciones</p>
                                 </div>
-                                <div class="space-y-1.5 sm:space-y-2">
+                                <div class="space-y-1 sm:space-y-2">
                                     @if($publicacionesProgramadas > 0)
-                                        <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-2 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 transition-all group">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                                                    <svg class="w-3.5 h-3.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-1.5 sm:p-2 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 transition-all group">
+                                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-violet-500/20 flex items-center justify-center">
+                                                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                     </svg>
                                                 </div>
-                                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 group-hover:text-violet-400 transition-colors">Programadas</span>
+                                                <span class="text-[10px] sm:text-sm text-slate-700 dark:text-slate-300 group-hover:text-violet-400 transition-colors">Programadas</span>
                                             </div>
-                                            <span class="text-sm sm:text-base font-bold text-violet-600 dark:text-violet-400">{{ $publicacionesProgramadas }}</span>
+                                            <span class="text-xs sm:text-base font-bold text-violet-600 dark:text-violet-400">{{ $publicacionesProgramadas }}</span>
                                         </a>
                                     @endif
                                     @if($publicacionesPublicadas > 0)
-                                        <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 transition-all group">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-between p-1.5 sm:p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 transition-all group">
+                                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                                    <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                     </svg>
                                                 </div>
-                                                <span class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 group-hover:text-emerald-400 transition-colors">Publicadas</span>
+                                                <span class="text-[10px] sm:text-sm text-slate-700 dark:text-slate-300 group-hover:text-emerald-400 transition-colors">Publicadas</span>
                                             </div>
-                                            <span class="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400">{{ $publicacionesPublicadas }}</span>
+                                            <span class="text-xs sm:text-base font-bold text-emerald-600 dark:text-emerald-400">{{ $publicacionesPublicadas }}</span>
                                         </a>
                                     @endif
                                     @if($publicacionesProgramadas == 0 && $publicacionesPublicadas == 0)
-                                        <p class="text-sm sm:text-base text-slate-800 dark:text-white">Sin publicaciones</p>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aún no hay publicaciones programadas</p>
+                                        <p class="text-xs sm:text-base text-slate-800 dark:text-white">Sin publicaciones</p>
+                                        <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aún no hay publicaciones programadas</p>
                                     @endif
                                 </div>
                             </div>
@@ -310,9 +312,9 @@
             </div>
             
             <!-- Citas Section -->
-            <div class="mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.3s;">
-                <div class="rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-3 sm:p-4 md:p-6">
-                    <h2 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 md:mb-6 flex items-center gap-2">
+            <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2.5 sm:p-4 md:p-6">
+                    <h2 class="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-4 md:mb-6 flex items-center gap-1.5 sm:gap-2">
                         <svg class="w-5 h-5 sm:w-6 sm:h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
@@ -320,11 +322,11 @@
                     </h2>
                     
                     <!-- Tabs -->
-                    <div class="flex gap-1 sm:gap-2 mb-3 sm:mb-4 md:mb-6 border-b border-slate-200 dark:border-slate-700">
-                        <button onclick="showCitasTab('pendientes')" id="tab-citas-pendientes" class="tab-button-citas active px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-walee-400 border-b-2 border-walee-400">
+                    <div class="flex gap-1 sm:gap-2 mb-2 sm:mb-4 md:mb-6 border-b border-slate-200 dark:border-slate-700">
+                        <button onclick="showCitasTab('pendientes')" id="tab-citas-pendientes" class="tab-button-citas active px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-medium text-walee-400 border-b-2 border-walee-400">
                             Pendientes ({{ $citasPendientes->count() }})
                         </button>
-                        <button onclick="showCitasTab('pasadas')" id="tab-citas-pasadas" class="tab-button-citas px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400">
+                        <button onclick="showCitasTab('pasadas')" id="tab-citas-pasadas" class="tab-button-citas px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400">
                             Pasadas ({{ $citasPasadas->count() }})
                         </button>
                     </div>
@@ -436,9 +438,9 @@
             </div>
             
             <!-- Documentos Section -->
-            <div class="mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.4s;">
-                <div class="rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-3 sm:p-4 md:p-6">
-                    <h2 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 md:mb-6 flex items-center gap-2">
+            <div class="mb-3 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2.5 sm:p-4 md:p-6">
+                    <h2 class="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-4 md:mb-6 flex items-center gap-1.5 sm:gap-2">
                         <svg class="w-5 h-5 sm:w-6 sm:h-6 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
@@ -446,14 +448,14 @@
                     </h2>
                     
                     <!-- Tabs -->
-                    <div class="flex gap-1 sm:gap-2 mb-3 sm:mb-4 md:mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
-                        <button onclick="showTab('contratos')" id="tab-contratos" class="tab-button active px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-walee-400 border-b-2 border-walee-400 whitespace-nowrap">
+                    <div class="flex gap-1 sm:gap-2 mb-2 sm:mb-4 md:mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
+                        <button onclick="showTab('contratos')" id="tab-contratos" class="tab-button active px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-medium text-walee-400 border-b-2 border-walee-400 whitespace-nowrap">
                             Contratos ({{ $contratos->count() }})
                         </button>
-                        <button onclick="showTab('cotizaciones')" id="tab-cotizaciones" class="tab-button px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400 whitespace-nowrap">
+                        <button onclick="showTab('cotizaciones')" id="tab-cotizaciones" class="tab-button px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400 whitespace-nowrap">
                             Cotizaciones ({{ $cotizaciones->count() }})
                         </button>
-                        <button onclick="showTab('facturas')" id="tab-facturas" class="tab-button px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400 whitespace-nowrap">
+                        <button onclick="showTab('facturas')" id="tab-facturas" class="tab-button px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent hover:text-walee-400 whitespace-nowrap">
                             Facturas ({{ $facturas->count() }})
                         </button>
                     </div>

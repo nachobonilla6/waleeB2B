@@ -14,3 +14,5 @@ yarn-error.log
 /.vscode
 storage/app/google-credentials.json
 storage/app/google-calendar-token.json
+storage/app/google-sheets-token.json
+storage/app/google-gmail-token.json

@@ -56,6 +56,20 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.5); }
+        
+        /* Optimización para móvil: modales encima de todo con backdrop opaco */
+        @media (max-width: 768px) {
+            .swal2-container {
+                z-index: 99999 !important;
+            }
+            .swal2-backdrop-show {
+                background: rgba(0, 0, 0, 0.75) !important;
+            }
+            .swal2-popup {
+                z-index: 100000 !important;
+                margin: 1rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -1663,6 +1677,27 @@
         // Detectar modo oscuro
         const isDarkMode = document.documentElement.classList.contains('dark');
         
+        // Función helper para optimizar modales en móvil
+        function optimizeSwalForMobile() {
+            if (window.innerWidth < 768) {
+                setTimeout(() => {
+                    const container = document.querySelector('.swal2-container');
+                    if (container) {
+                        container.style.zIndex = '99999';
+                    }
+                    const backdrop = document.querySelector('.swal2-backdrop-show');
+                    if (backdrop) {
+                        backdrop.style.background = 'rgba(0, 0, 0, 0.75)';
+                        backdrop.style.zIndex = '99998';
+                    }
+                    const popup = document.querySelector('.swal2-popup');
+                    if (popup) {
+                        popup.style.zIndex = '100000';
+                    }
+                }, 10);
+            }
+        }
+        
         // Detectar si es móvil y forzar vista semanal
         function esMobile() {
             return window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -2197,6 +2232,9 @@
                 title: 'Detalle de Cita',
                 html: html,
                 width: window.innerWidth < 768 ? '90%' : '600px',
+                backdrop: true,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
                 customClass: {
                     popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
                     title: isDarkMode ? 'text-white' : 'text-slate-900',
@@ -2214,6 +2252,7 @@
                 denyButtonColor: '#ef4444',
                 buttonsStyling: true,
                 didOpen: () => {
+                    optimizeSwalForMobile();
                     if (isDarkMode) {
                         const popup = document.querySelector('.swal2-popup');
                         if (popup) {
@@ -2380,6 +2419,9 @@
                 title: `Eventos del ${new Date(fecha).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`,
                 html: content,
                 width: window.innerWidth < 768 ? '90%' : '600px',
+                backdrop: true,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
                 showConfirmButton: false,
                 showCancelButton: true,
                 cancelButtonText: 'Cerrar',
@@ -2391,6 +2433,7 @@
                     cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
                 },
                 didOpen: () => {
+                    optimizeSwalForMobile();
                     const popup = document.querySelector('.swal2-popup');
                     if (isDarkMode && popup) {
                         popup.classList.add('dark');
@@ -2689,6 +2732,9 @@
                 title: isEdit ? 'Editar Tarea' : 'Nueva Tarea',
                 html: html,
                 width: window.innerWidth < 768 ? '90%' : '650px',
+                backdrop: true,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
                 customClass: {
                     popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
                     title: isDarkMode ? 'text-white' : 'text-slate-900',
@@ -2707,6 +2753,7 @@
                 cancelButtonColor: '#64748b',
                 buttonsStyling: true,
                 didOpen: () => {
+                    optimizeSwalForMobile();
                     const popup = document.querySelector('.swal2-popup');
                     if (isDarkMode && popup) {
                         popup.classList.add('dark');
@@ -2959,6 +3006,9 @@
                 title: isEdit ? 'Editar Nota' : 'Nueva Nota',
                 html: html,
                 width: window.innerWidth < 768 ? '90%' : '650px',
+                backdrop: true,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
                 customClass: {
                     popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
                     title: isDarkMode ? 'text-white' : 'text-slate-900',
@@ -3161,6 +3211,9 @@
                 title: 'Detalle de Tarea',
                 html: html,
                 width: window.innerWidth < 768 ? '90%' : '600px',
+                backdrop: true,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
                 customClass: {
                     popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
                     title: isDarkMode ? 'text-white' : 'text-slate-900',
@@ -3178,6 +3231,7 @@
                 denyButtonColor: '#ef4444',
                 buttonsStyling: true,
                 didOpen: () => {
+                    optimizeSwalForMobile();
                     const popup = document.querySelector('.swal2-popup');
                     if (isDarkMode && popup) {
                         popup.classList.add('dark');

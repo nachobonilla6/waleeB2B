@@ -1559,20 +1559,20 @@
             const fechaFinDefault = new Date(now.getTime() + (2 * 60 * 60 * 1000) - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
             
             return `
-                <form id="swal-cita-form" class="space-y-4 text-left overflow-y-auto max-h-[70vh]">
+                <form id="swal-cita-form" class="space-y-2.5 text-left overflow-y-auto max-h-[60vh]">
                     <input type="hidden" name="cita_id" id="swal-cita_id" value="${cita ? cita.id : ''}">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Título</label>
+                            <label class="block text-xs font-medium mb-1">Título</label>
                             <input type="text" name="titulo" id="swal-titulo" required placeholder="Título de la cita"
                                 value="${cita ? (cita.titulo || '') : ''}"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Cliente</label>
+                            <label class="block text-xs font-medium mb-1">Cliente</label>
                             <select name="client_id" id="swal-client_id"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 <option value="">Sin cliente</option>
                                 ${clientesData.map(cliente => `
                                     <option value="${cliente.id}" ${cita && cita.client_id == cliente.id ? 'selected' : ''}>${cliente.name || cliente.nombre_empresa} ${cliente.email ? '(' + cliente.email + ')' : ''}</option>
@@ -1581,32 +1581,32 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Fecha y Hora de Inicio</label>
+                            <label class="block text-xs font-medium mb-1">Fecha y Hora de Inicio</label>
                             <input type="datetime-local" name="fecha_inicio" id="swal-fecha_inicio" required
                                 value="${cita ? (new Date(cita.fecha_inicio).toISOString().slice(0, 16)) : fechaInicioDefault}"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Fecha y Hora de Fin (opcional)</label>
+                            <label class="block text-xs font-medium mb-1">Fecha y Hora de Fin (opcional)</label>
                             <input type="datetime-local" name="fecha_fin" id="swal-fecha_fin"
                                 value="${cita && cita.fecha_fin ? (new Date(cita.fecha_fin).toISOString().slice(0, 16)) : fechaFinDefault}"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Ubicación (opcional)</label>
+                            <label class="block text-xs font-medium mb-1">Ubicación (opcional)</label>
                             <input type="text" name="ubicacion" id="swal-ubicacion" placeholder="Ubicación de la cita"
                                 value="${cita ? (cita.ubicacion || '') : ''}"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Recurrencia</label>
+                            <label class="block text-xs font-medium mb-1">Recurrencia</label>
                             <select name="recurrencia" id="swal-recurrencia" onchange="toggleSwalRecurrenciaOptions()"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 <option value="none" ${cita && cita.recurrencia === 'none' ? 'selected' : ''}>Sin recurrencia</option>
                                 <option value="semanal" ${cita && cita.recurrencia === 'semanal' ? 'selected' : ''}>Semanal</option>
                                 <option value="mensual" ${cita && cita.recurrencia === 'mensual' ? 'selected' : ''}>Mensual</option>
@@ -1616,70 +1616,71 @@
                     </div>
                     
                     <div id="swal-recurrencia_dias_container" class="hidden">
-                        <label class="block text-sm font-medium mb-2">Días específicos</label>
+                        <label class="block text-xs font-medium mb-1">Días específicos</label>
                         <div id="swal-recurrencia_dias_semanal" class="hidden">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días de la semana:</p>
-                            <div class="flex flex-wrap gap-2">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1.5">Selecciona los días de la semana:</p>
+                            <div class="flex flex-wrap gap-1.5">
                                 ${['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((dia, idx) => `
-                                    <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
-                                        <input type="checkbox" name="recurrencia_dias[]" value="${idx}" class="rounded"
+                                    <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                                        <input type="checkbox" name="recurrencia_dias[]" value="${idx}" class="rounded text-xs"
                                             ${cita && cita.recurrencia_dias && cita.recurrencia_dias.includes(idx) ? 'checked' : ''}>
-                                        <span class="text-sm">${dia}</span>
+                                        <span class="text-xs">${dia}</span>
                                     </label>
                                 `).join('')}
                             </div>
                         </div>
                         <div id="swal-recurrencia_dias_mensual" class="hidden">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Selecciona los días del mes (1-31):</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1.5">Selecciona los días del mes (1-31):</p>
                             <input type="text" name="recurrencia_dias_mensual" id="swal-recurrencia_dias_mensual"
                                 placeholder="Ej: 1,15,30 o cada Lunes"
                                 value="${cita && cita.recurrencia_dias ? cita.recurrencia_dias.join(',') : ''}"
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                         </div>
                     </div>
                     
                     <div id="swal-recurrencia_fin_container" class="hidden">
-                        <label class="block text-sm font-medium mb-2">Fecha de Fin de Recurrencia (opcional)</label>
+                        <label class="block text-xs font-medium mb-1">Fecha de Fin de Recurrencia (opcional)</label>
                         <input type="datetime-local" name="recurrencia_fin" id="swal-recurrencia_fin"
                             value="${cita && cita.recurrencia_fin ? (new Date(cita.recurrencia_fin).toISOString().slice(0, 16)) : ''}"
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                            class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Descripción (opcional)</label>
+                            <textarea name="descripcion" id="swal-descripcion" rows="2" placeholder="Descripción de la cita..."
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">${cita ? (cita.descripcion || '') : ''}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1">Notas (opcional)</label>
+                            <textarea name="notas" id="swal-notas" rows="2" placeholder="Notas adicionales sobre la cita..."
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">${cita ? (cita.notas || '') : ''}</textarea>
+                        </div>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-2">Descripción (opcional)</label>
-                        <textarea name="descripcion" id="swal-descripcion" rows="3" placeholder="Descripción de la cita..."
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">${cita ? (cita.descripcion || '') : ''}</textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Notas (opcional)</label>
-                        <textarea name="notas" id="swal-notas" rows="3" placeholder="Notas adicionales sobre la cita..."
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">${cita ? (cita.notas || '') : ''}</textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Invitar personas (emails separados por comas)</label>
+                        <label class="block text-xs font-medium mb-1">Invitar personas (emails separados por comas)</label>
                         <input type="text" name="invitados_emails" id="swal-invitados_emails"
                             placeholder="email1@ejemplo.com, email2@ejemplo.com"
                             value="${cita ? (cita.invitados_emails || '') : ''}"
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                            class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-sm font-medium mb-2">Color</label>
-                            <div class="flex items-center gap-3">
+                            <label class="block text-xs font-medium mb-1">Color</label>
+                            <div class="flex items-center gap-2">
                                 <input type="color" name="color" id="swal-color" value="${cita ? (cita.color || '#10b981') : '#10b981'}"
-                                    class="w-14 h-10 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
+                                    class="w-12 h-9 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer">
                                 <input type="text" id="swal-color_text" value="${cita ? (cita.color || '#10b981') : '#10b981'}"
                                     placeholder="#10b981" onchange="document.getElementById('swal-color').value = this.value"
-                                    class="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    class="flex-1 px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-2">Estado</label>
+                            <label class="block text-xs font-medium mb-1">Estado</label>
                             <select name="estado" id="swal-estado"
-                                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 <option value="programada" ${cita && cita.estado === 'programada' ? 'selected' : ''}>Programada</option>
                                 <option value="completada" ${cita && cita.estado === 'completada' ? 'selected' : ''}>Completada</option>
                                 <option value="cancelada" ${cita && cita.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option>

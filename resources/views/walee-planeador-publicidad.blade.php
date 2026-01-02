@@ -1201,48 +1201,65 @@
                         modalWidth = '95%';
                     }
                     
+                    // Layout horizontal: imagen a la izquierda, contenido a la derecha
                     const html = `
-                        <div class="text-left space-y-3 ${isMobile ? 'text-xs' : 'text-sm'}">
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
-                                <p class="font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}">${evento.titulo || 'Sin título'}</p>
-                            </div>
-                            
-                            ${evento.texto ? `
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
-                                <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${evento.texto}</p>
-                            </div>
-                            ` : ''}
-                            
-                            ${evento.descripcion ? `
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
-                                <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${evento.descripcion}</p>
-                            </div>
-                            ` : ''}
-                            
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Plataforma</label>
-                                    <div class="flex items-center gap-2">
-                                        ${plataformaIcono}
-                                        <span class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${plataformaNombre}</span>
-                                    </div>
+                        <div class="text-left ${isMobile ? 'text-xs space-y-2' : 'text-sm'}">
+                            <div class="grid ${isDesktop ? 'grid-cols-2 gap-4' : 'grid-cols-1 gap-3'}">
+                                <!-- Columna izquierda: Imagen (solo en desktop) -->
+                                ${isDesktop && imagenHTML ? `
+                                <div class="flex-shrink-0">
+                                    ${imagenHTML.replace('mt-3 space-y-2', 'space-y-2')}
                                 </div>
+                                ` : ''}
                                 
-                                <div>
-                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
-                                    ${estadoBadge}
+                                <!-- Columna derecha: Contenido -->
+                                <div class="space-y-2.5 ${isDesktop ? '' : 'space-y-2'}">
+                                    <div>
+                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                                        <p class="font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}">${evento.titulo || 'Sin título'}</p>
+                                    </div>
+                                    
+                                    <div class="grid ${isDesktop ? 'grid-cols-3' : 'grid-cols-1'} gap-3">
+                                        <div>
+                                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Plataforma</label>
+                                            <div class="flex items-center gap-2">
+                                                ${plataformaIcono}
+                                                <span class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${plataformaNombre}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
+                                            ${estadoBadge}
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                                            <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} text-xs">${fechaFormateada}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    ${evento.texto ? `
+                                    <div>
+                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
+                                        <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap text-xs">${evento.texto}</p>
+                                    </div>
+                                    ` : ''}
+                                    
+                                    ${evento.descripcion ? `
+                                    <div>
+                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
+                                        <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap text-xs">${evento.descripcion}</p>
+                                    </div>
+                                    ` : ''}
+                                    
+                                    ${!isDesktop && imagenHTML ? `
+                                    <div class="mt-2">
+                                        ${imagenHTML}
+                                    </div>
+                                    ` : ''}
                                 </div>
                             </div>
-                            
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${fechaFormateada}</p>
-                            </div>
-                            
-                            ${imagenHTML}
                         </div>
                     `;
                     
@@ -1254,6 +1271,8 @@
                         showConfirmButton: true,
                         confirmButtonText: 'Cerrar',
                         confirmButtonColor: '#8b5cf6',
+                        heightAuto: false,
+                        maxHeight: isDesktop ? '80vh' : '90vh',
                         background: isDarkMode ? '#1e293b' : '#ffffff',
                         color: isDarkMode ? '#e2e8f0' : '#1e293b',
                         customClass: {

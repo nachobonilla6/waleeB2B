@@ -3650,30 +3650,54 @@ Route::get('/walee-cliente/{id}/editar', function ($id) {
 })->middleware(['auth'])->name('walee.cliente.editar');
 
 // Ruta para actualizar un cliente
-Route::put('/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $id) {
-    $cliente = \App\Models\Client::findOrFail($id);
-    
-    $data = [
-        'name' => $request->input('name'),
-        'email' => $request->input('email'),
-        'telefono_1' => $request->input('telefono_1'),
-        'telefono_2' => $request->input('telefono_2'),
-        'website' => $request->input('website'),
-        'address' => $request->input('address'),
-        'estado' => $request->input('estado'),
-        'feedback' => $request->input('feedback'),
-    ];
-    
-    // Procesar foto si se subió una nueva
-    if ($request->hasFile('foto_file')) {
-        $file = $request->file('foto_file');
-        $path = $file->store('clientes_en_proceso_fotos', 'public');
-        $data['foto'] = $path;
+Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        
+        $data = [
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'telefono_1' => $request->input('telefono_1'),
+            'telefono_2' => $request->input('telefono_2'),
+            'website' => $request->input('website'),
+            'address' => $request->input('address'),
+            'estado' => $request->input('estado'),
+            'feedback' => $request->input('feedback'),
+        ];
+        
+        // Procesar foto si se subió una nueva
+        if ($request->hasFile('foto_file')) {
+            $file = $request->file('foto_file');
+            $path = $file->store('clientes_en_proceso_fotos', 'public');
+            $data['foto'] = $path;
+        }
+        
+        $cliente->update($data);
+        
+        // Si es una petición AJAX, devolver JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente actualizado correctamente'
+            ]);
+        }
+        
+        return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
+    } catch (\Exception $e) {
+        \Log::error('Error al actualizar cliente', [
+            'id' => $id,
+            'error' => $e->getMessage()
+        ]);
+        
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el cliente: ' . $e->getMessage()
+            ], 500);
+        }
+        
+        return redirect()->route('walee.cliente.detalle', $id)->with('error', 'Error al actualizar el cliente');
     }
-    
-    $cliente->update($data);
-    
-    return redirect()->route('walee.cliente.detalle', $id)->with('success', 'Cliente actualizado correctamente');
 })->middleware(['auth'])->name('walee.cliente.actualizar');
 
 // Ruta para settings del cliente (redirige al detalle del cliente)

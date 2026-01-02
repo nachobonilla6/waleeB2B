@@ -10,6 +10,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -107,12 +108,12 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <a href="{{ route('walee.cliente.editar', $cliente->id) }}" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
+                    <button onclick="openEditClientModal()" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                         <span class="hidden sm:inline">Editar</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             
@@ -642,6 +643,224 @@
             const activeTab = document.getElementById('tab-' + tabName);
             activeTab.classList.add('active', 'text-walee-400', 'border-walee-400');
             activeTab.classList.remove('text-slate-500', 'dark:text-slate-400', 'border-transparent');
+        }
+        
+        // Modal para editar cliente
+        function openEditClientModal() {
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            @php
+                $fotoPath = $cliente->foto ?? null;
+                $fotoUrl = null;
+                if ($fotoPath) {
+                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                        $fotoUrl = $fotoPath;
+                    } else {
+                        $filename = basename($fotoPath);
+                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                    }
+                }
+            @endphp
+            
+            const currentFotoUrl = @json($fotoUrl);
+            
+            const html = `
+                <form id="editClientForm" class="space-y-2.5 sm:space-y-3 text-left">
+                    <!-- Foto -->
+                    <div class="mb-3 sm:mb-4">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Foto del Cliente</label>
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <div class="flex-shrink-0">
+                                <div id="fotoPreviewContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 border-emerald-500/30">
+                                    ${currentFotoUrl ? 
+                                        `<img src="${currentFotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
+                                        `<div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center">
+                                            <span class="text-lg sm:text-xl font-bold text-emerald-400">${@json(strtoupper(substr($cliente->name, 0, 1)))}</span>
+                                        </div>`
+                                    }
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <label for="foto_file" class="cursor-pointer inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
+                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>Cambiar foto</span>
+                                </label>
+                                <input type="file" name="foto_file" id="foto_file" accept="image/*" class="hidden" onchange="previewClientImage(this)">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">JPG, PNG o GIF. Máx 2MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 ${isDesktop ? 'sm:grid-cols-2' : ''} gap-2.5 sm:gap-3">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
+                            <input type="text" id="clientName" name="name" required value="@json($cliente->name)"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Email</label>
+                            <input type="email" id="clientEmail" name="email" value="@json($cliente->email ?? '')"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 1</label>
+                            <input type="tel" id="clientTelefono1" name="telefono_1" value="@json($cliente->telefono_1 ?? '')"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 2</label>
+                            <input type="tel" id="clientTelefono2" name="telefono_2" value="@json($cliente->telefono_2 ?? '')"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 ${isDesktop ? 'sm:grid-cols-2' : ''} gap-2.5 sm:gap-3">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sitio Web</label>
+                            <input type="url" id="clientWebsite" name="website" value="@json($cliente->website ?? '')"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado</label>
+                            <select id="clientEstado" name="estado"
+                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                                <option value="pending" {{ $cliente->estado == 'pending' ? 'selected' : '' }}>Pendiente</option>
+                                <option value="contactado" {{ $cliente->estado == 'contactado' ? 'selected' : '' }}>Contactado</option>
+                                <option value="propuesta_enviada" {{ $cliente->estado == 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
+                                <option value="accepted" {{ $cliente->estado == 'accepted' ? 'selected' : '' }}>Aceptado</option>
+                                <option value="activo" {{ $cliente->estado == 'activo' ? 'selected' : '' }}>Activo</option>
+                                <option value="rechazado" {{ $cliente->estado == 'rechazado' ? 'selected' : '' }}>Rechazado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Dirección</label>
+                        <input type="text" id="clientAddress" name="address" value="@json($cliente->address ?? '')"
+                               class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Feedback / Notas</label>
+                        <textarea id="clientFeedback" name="feedback" rows="3"
+                                  class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400 resize-none">@json($cliente->feedback ?? '')</textarea>
+                    </div>
+                </form>
+            `;
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '700px';
+            } else if (isTablet) {
+                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            Swal.fire({
+                title: 'Editar Cliente',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    document.getElementById('clientName')?.focus();
+                },
+                preConfirm: () => {
+                    const form = document.getElementById('editClientForm');
+                    const formData = new FormData(form);
+                    
+                    // Validar nombre requerido
+                    if (!formData.get('name') || formData.get('name').trim() === '') {
+                        Swal.showValidationMessage('El nombre es requerido');
+                        return false;
+                    }
+                    
+                    return formData;
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    updateClient(result.value);
+                }
+            });
+        }
+        
+        function previewClientImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.getElementById('fotoPreviewContainer');
+                    container.innerHTML = `<img src="${e.target.result}" alt="Preview" id="fotoPreview" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        async function updateClient(formData) {
+            try {
+                const response = await fetch('{{ route("walee.cliente.actualizar", $cliente->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cliente actualizado!',
+                        text: 'Los cambios se han guardado correctamente',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Error al actualizar el cliente',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión. Por favor, intenta de nuevo.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
     </script>
 </body>

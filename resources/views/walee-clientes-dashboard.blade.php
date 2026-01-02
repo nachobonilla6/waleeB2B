@@ -241,7 +241,7 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">En Proceso</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Clientes Entrantes</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ number_format($clientesPending) }}</p>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -315,12 +315,12 @@
                 </div>
             </div>
             
-            <!-- Grid: En Proceso (izquierda) y Clientes con Publicaciones (derecha) -->
+            <!-- Grid: Clientes Entrantes (izquierda) y Clientes con Publicaciones (derecha) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
-                <!-- En Proceso - Izquierda -->
+                <!-- Clientes Entrantes - Izquierda -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">En Proceso</h2>
+                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes Entrantes</h2>
                         <a href="{{ route('walee.clientes.proceso') }}" class="text-xs sm:text-sm text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
                     </div>
                     <div class="space-y-2 sm:space-y-3">

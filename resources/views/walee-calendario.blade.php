@@ -247,6 +247,11 @@
             $anoActualISO = (int)$semanaActual->format('o');
             $numSemanaActualISO = (int)$semanaActual->format('W');
             $semanaActualFormato = $anoActualISO . '-' . str_pad($numSemanaActualISO, 2, '0', STR_PAD_LEFT);
+        } else {
+            // Si no es vista semanal, inicializar variables para evitar errores
+            $semanaAnteriorFormato = '';
+            $semanaSiguienteFormato = '';
+            $semanaActualFormato = '';
         }
         
         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);

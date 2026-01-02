@@ -557,17 +557,28 @@
                     @if($vista === 'semanal')
                         <!-- Vista Semanal -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
-                            <!-- Header de la Semana -->
-                            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                            @php
+                                $semanaAnterior = $inicioSemana->copy()->subWeek();
+                                $semanaSiguiente = $inicioSemana->copy()->addWeek();
+                                $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                                $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . $semanaAnterior->format('W');
+                                $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . $semanaSiguiente->format('W');
+                                $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
+                            @endphp
+                            
+                            <!-- Botón Semana Anterior (solo móvil) -->
+                            <div class="md:hidden p-3 border-b border-slate-200 dark:border-slate-700">
+                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="w-full px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center gap-2 transition-all">
+                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Semana Anterior</span>
+                                </a>
+                            </div>
+                            
+                            <!-- Header de la Semana (desktop) -->
+                            <div class="hidden md:flex p-4 border-b border-slate-200 dark:border-slate-700 items-center justify-between">
                                 <div class="flex items-center gap-2">
-                                    @php
-                                        $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                        $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                        $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                        $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . $semanaAnterior->format('W');
-                                        $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . $semanaSiguiente->format('W');
-                                        $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
-                                    @endphp
                                     <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center transition-all">
                                         <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -587,8 +598,15 @@
                                 </div>
                             </div>
                             
-                            <!-- Días de la Semana -->
-                            <div class="grid grid-cols-7 divide-x divide-slate-200 dark:divide-slate-700">
+                            <!-- Título Semana (solo móvil) -->
+                            <div class="md:hidden p-3 border-b border-slate-200 dark:border-slate-700 text-center">
+                                <h2 class="text-base font-semibold text-slate-900 dark:text-white">
+                                    {{ $inicioSemana->format('d/m') }} - {{ $finSemana->format('d/m/Y') }}
+                                </h2>
+                            </div>
+                            
+                            <!-- Días de la Semana - Desktop: Grid 7 columnas, Mobile: Columna -->
+                            <div class="hidden md:grid md:grid-cols-7 divide-x divide-slate-200 dark:divide-slate-700">
                                 @php
                                     $diaSemana = $inicioSemana->copy();
                                     $hoy = now();
@@ -627,17 +645,17 @@
                                         $itemsDelDia = $itemsDelDia->sortBy('hora');
                                         $espaciadoClase = 'space-y-1.5';
                                     @endphp
-                                    <div class="min-h-[400px] sm:min-h-[600px] p-2 sm:p-3 {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-white dark:bg-slate-800' }}">
+                                    <div class="min-h-[400px] sm:min-h-[600px] p-2 sm:p-3 {{ $esHoy ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-white dark:bg-slate-800' }}">
                                         <div class="mb-2 sm:mb-3">
                                             <div class="text-xs sm:text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                                                 {{ ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][$diaSemana->dayOfWeek] }}
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="text-base sm:text-lg font-semibold {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white' }}">
+                                                <span class="text-base sm:text-lg font-semibold {{ $esHoy ? 'text-blue-600 dark:text-blue-400' : 'text-slate-900 dark:text-white' }}">
                                                     {{ $diaSemana->day }}
                                                 </span>
                                                 @if($esHoy)
-                                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                                                 @endif
                                             </div>
                                         </div>
@@ -712,6 +730,148 @@
                                     </div>
                                     @php $diaSemana->addDay(); @endphp
                                 @endfor
+                            </div>
+                            
+                            <!-- Días de la Semana - Mobile: Columna vertical -->
+                            <div class="md:hidden flex flex-col divide-y divide-slate-200 dark:divide-slate-700">
+                                @php
+                                    $diaSemana = $inicioSemana->copy();
+                                    $hoy = now();
+                                @endphp
+                                @for($i = 0; $i < 7; $i++)
+                                    @php
+                                        $esHoy = $diaSemana->isSameDay($hoy);
+                                        $fechaKey = $diaSemana->format('Y-m-d');
+                                        $citasDelDia = $citas->get($fechaKey, collect());
+                                        $tareasDelDia = $tareas->get($fechaKey, collect());
+                                        $notasDelDia = $notas->get($fechaKey, collect());
+                                        
+                                        // Combinar y ordenar por hora
+                                        $itemsDelDia = collect();
+                                        foreach ($citasDelDia as $cita) {
+                                            $itemsDelDia->push([
+                                                'tipo' => 'cita',
+                                                'item' => $cita,
+                                                'hora' => $cita->fecha_inicio
+                                            ]);
+                                        }
+                                        foreach ($tareasDelDia as $tarea) {
+                                            $itemsDelDia->push([
+                                                'tipo' => 'tarea',
+                                                'item' => $tarea,
+                                                'hora' => $tarea->fecha_hora
+                                            ]);
+                                        }
+                                        foreach ($notasDelDia as $nota) {
+                                            $itemsDelDia->push([
+                                                'tipo' => 'nota',
+                                                'item' => $nota,
+                                                'hora' => $nota->fecha ? \Carbon\Carbon::parse($nota->fecha)->setTime(12, 0) : now()->setTime(12, 0)
+                                            ]);
+                                        }
+                                        $itemsDelDia = $itemsDelDia->sortBy('hora');
+                                        $espaciadoClase = 'space-y-1.5';
+                                    @endphp
+                                    <div class="p-3 {{ $esHoy ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-white dark:bg-slate-800' }}">
+                                        <div class="mb-2">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                                        {{ ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][$diaSemana->dayOfWeek] }}
+                                                    </div>
+                                                    <span class="text-lg font-semibold {{ $esHoy ? 'text-blue-600 dark:text-blue-400' : 'text-slate-900 dark:text-white' }}">
+                                                        {{ $diaSemana->day }}
+                                                    </span>
+                                                    @if($esHoy)
+                                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                                    @endif
+                                                </div>
+                                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                                    {{ $diaSemana->format('d/m/Y') }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="{{ $espaciadoClase }}">
+                                            @foreach($itemsDelDia as $itemOrdenado)
+                                                @if($itemOrdenado['tipo'] === 'cita')
+                                                    @php $cita = $itemOrdenado['item']; @endphp
+                                                    @php
+                                                        $colorCita = $cita->color ?? '#10b981';
+                                                        $colorHex = ltrim($colorCita, '#');
+                                                        $r = hexdec(substr($colorHex, 0, 2));
+                                                        $g = hexdec(substr($colorHex, 2, 2));
+                                                        $b = hexdec(substr($colorHex, 4, 2));
+                                                        $colorBg = $cita->estado === 'completada' 
+                                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorCita}; border-left: 3px solid {$colorCita};";
+                                                    @endphp
+                                                    <button 
+                                                        onclick="showCitaDetail({{ $cita->id }})"
+                                                        class="w-full text-left px-2 py-2 rounded text-xs font-medium transition-all hover:opacity-80 {{ $cita->estado === 'completada' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1.5"
+                                                        style="{{ $cita->estado !== 'completada' ? $colorBg : '' }}"
+                                                        title="{{ $cita->titulo }}"
+                                                    >
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="text-xs font-semibold opacity-75 whitespace-nowrap">{{ $cita->fecha_inicio->format('H:i') }}</span>
+                                                            <span class="flex-1 truncate">{{ $cita->titulo }}</span>
+                                                        </div>
+                                                    </button>
+                                                @elseif($itemOrdenado['tipo'] === 'tarea')
+                                                    @php $tarea = $itemOrdenado['item']; @endphp
+                                                    @php
+                                                        $colorTarea = $tarea->color ?? '#8b5cf6';
+                                                        $colorHex = ltrim($colorTarea, '#');
+                                                        $r = hexdec(substr($colorHex, 0, 2));
+                                                        $g = hexdec(substr($colorHex, 2, 2));
+                                                        $b = hexdec(substr($colorHex, 4, 2));
+                                                        $colorBg = $tarea->estado === 'completado' 
+                                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' 
+                                                            : "background-color: rgba({$r}, {$g}, {$b}, 0.25); color: {$colorTarea}; border-left: 3px solid {$colorTarea};";
+                                                    @endphp
+                                                    <button 
+                                                        onclick="showTareaDetail({{ $tarea->id }})"
+                                                        class="w-full text-left px-2 py-2 rounded text-xs font-medium transition-all hover:opacity-80 {{ $tarea->estado === 'completado' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' : '' }} mb-1.5"
+                                                        style="{{ $tarea->estado !== 'completado' ? $colorBg : '' }}"
+                                                        title="{{ $tarea->texto }}"
+                                                    >
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="text-xs font-semibold opacity-75 whitespace-nowrap">{{ $tarea->fecha_hora->format('H:i') }}</span>
+                                                            <span class="flex-1 truncate">{{ $tarea->texto }}</span>
+                                                        </div>
+                                                    </button>
+                                                @elseif($itemOrdenado['tipo'] === 'nota')
+                                                    @php $nota = $itemOrdenado['item']; @endphp
+                                                    <button 
+                                                        onclick="editNota({{ $nota->id }})"
+                                                        class="w-full text-left px-2 py-2 rounded text-xs font-medium transition-all hover:opacity-80 mb-1.5 bg-blue-100 dark:bg-blue-600/30 text-blue-800 dark:text-blue-200 border-l-3 border-blue-700 dark:border-blue-500 {{ $nota->pinned ? 'ring-2 ring-blue-400 dark:ring-blue-600' : '' }}"
+                                                        title="{{ Str::limit($nota->content, 100) }}"
+                                                    >
+                                                        <div class="flex items-center gap-1.5">
+                                                            @if($nota->pinned)
+                                                                <svg class="w-3 h-3 text-blue-700 dark:text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                                                </svg>
+                                                            @endif
+                                                            <span class="text-xs font-semibold opacity-75 uppercase">{{ $nota->type === 'note' ? 'Nota' : ($nota->type === 'call' ? 'Llamada' : ($nota->type === 'meeting' ? 'Reunión' : 'Email')) }}</span>
+                                                            <span class="flex-1 truncate">{{ Str::limit($nota->content, 30) }}</span>
+                                                        </div>
+                                                    </button>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @php $diaSemana->addDay(); @endphp
+                                @endfor
+                            </div>
+                            
+                            <!-- Botón Semana Siguiente (solo móvil) -->
+                            <div class="md:hidden p-3 border-t border-slate-200 dark:border-slate-700">
+                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="w-full px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-center gap-2 transition-all">
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Próxima Semana</span>
+                                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
                             </div>
                         </div>
                     @else

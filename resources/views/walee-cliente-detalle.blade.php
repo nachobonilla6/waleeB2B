@@ -66,8 +66,22 @@
             <!-- Header Compacto -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 animate-fade-in-up">
                 <div class="flex items-center gap-3 sm:gap-4">
-                    @if($cliente->foto)
-                        <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl object-cover border-2 border-emerald-500/30 flex-shrink-0">
+                    @php
+                        $fotoPath = $cliente->foto ?? null;
+                        $fotoUrl = null;
+                        
+                        if ($fotoPath) {
+                            if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                // Si es una URL completa, usarla directamente
+                                $fotoUrl = $fotoPath;
+                            } else {
+                                // Usar Storage::url() para obtener la URL correcta
+                                $fotoUrl = \Illuminate\Support\Facades\Storage::url($fotoPath);
+                            }
+                        }
+                    @endphp
+                    @if($fotoUrl)
+                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl object-cover border-2 border-emerald-500/30 flex-shrink-0">
                     @else
                         <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-2 border-emerald-500/20 flex items-center justify-center flex-shrink-0">
                             <span class="text-xl sm:text-2xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>

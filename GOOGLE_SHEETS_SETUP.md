@@ -55,9 +55,24 @@ Esta guía te ayudará a configurar las credenciales de Google OAuth2 para poder
 
 ## Paso 5: Obtener Token de Acceso (Primera vez)
 
-Para obtener el token de acceso inicial, necesitas autenticarte una vez. Tienes dos opciones:
+Para obtener el token de acceso inicial, usa el script incluido en el proyecto:
 
-### Opción A: Usar un script de autenticación
+```bash
+php artisan-auth-google-sheets.php
+```
+
+El script te guiará paso a paso:
+1. Te mostrará una URL para autorizar
+2. Abre la URL en tu navegador
+3. Autoriza la aplicación
+4. Copia el código de la URL (el parámetro `code=...`)
+5. Pégalo en el script
+
+El token se guardará automáticamente en `storage/app/google-sheets-token.json`
+
+**Nota**: Si ya tienes un token válido, el script te lo indicará. Si está expirado, intentará refrescarlo automáticamente.
+
+### Si prefieres hacerlo manualmente:
 
 Crea un archivo `auth-google-sheets.php` en la raíz del proyecto:
 

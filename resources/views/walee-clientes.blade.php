@@ -192,26 +192,6 @@
                     </div>
                 </a>
                 
-                <!-- Extraer Clientes -->
-                <a href="{{ route('walee.extraer.clientes') }}" class="option-card group relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 p-3 sm:p-5 lg:p-8 hover:border-blue-400/50 hover:from-blue-500/15 hover:to-blue-600/10 transition-all duration-500">
-                    <div class="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-blue-500/10 rounded-full blur-3xl transform translate-x-10 sm:translate-x-16 lg:translate-x-20 -translate-y-10 sm:-translate-y-16 lg:-translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
-                    <div class="relative flex items-center gap-3 sm:gap-4 lg:gap-6">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-lg sm:rounded-xl lg:rounded-2xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                            </svg>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h2 class="text-base sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white mb-1 sm:mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">Extraer Clientes</h2>
-                            <p class="text-xs sm:text-sm lg:text-base text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Importar nuevos clientes desde Google Maps y otras fuentes</p>
-                        </div>
-                        <div class="hidden sm:flex w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-500/10 items-center justify-center group-hover:bg-blue-500/20 transition-colors flex-shrink-0">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-400 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                </a>
             </div>
             
             <!-- Footer -->

@@ -164,13 +164,13 @@
             $clientesPorDia[] = Client::whereDate('created_at', $fecha->format('Y-m-d'))->count();
         }
         
-        // Distribución por estado
-        $distribucionEstados = [
-            'pending' => Client::where('estado', 'pending')->count(),
-            'propuesta_enviada' => Client::where('estado', 'propuesta_enviada')->count(),
-            'activo' => Client::where('estado', 'activo')->count(),
-            'otros' => Client::whereNotIn('estado', ['pending', 'propuesta_enviada', 'activo'])->count(),
-        ];
+        // Clientes en proceso agregados hoy
+        $clientesEnProcesoHoy = Client::where('estado', 'pending')
+            ->whereDate('created_at', today())
+            ->count();
+        $metaClientes = 150;
+        $porcentajeClientesHoy = $metaClientes > 0 ? min(100, ($clientesEnProcesoHoy / $metaClientes) * 100) : 0;
+        $clientesFaltantes = max(0, $metaClientes - $clientesEnProcesoHoy);
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -293,16 +293,24 @@
                 <!-- Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
                     <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes Nuevos - Últimos 7 Días</h2>
-                    <div class="relative" style="height: 200px; sm:height: 250px; md:height: 300px;">
+                    <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
                         <canvas id="clientesChart"></canvas>
                     </div>
                 </div>
                 
-                <!-- Distribution Chart -->
+                <!-- Clientes en Proceso Hoy Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.6s">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Distribución por Estado</h2>
-                    <div class="relative" style="height: 200px; sm:height: 250px; md:height: 300px;">
-                        <canvas id="estadosChart"></canvas>
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes en Proceso - Hoy</h2>
+                    <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
+                        <canvas id="clientesProcesoChart"></canvas>
+                    </div>
+                    <div class="mt-3 sm:mt-4 text-center">
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                            <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProcesoHoy }}</span> de <span class="font-semibold">{{ $metaClientes }}</span> clientes agregados hoy
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                            Faltan <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $clientesFaltantes }}</span> para alcanzar la meta
+                        </p>
                     </div>
                 </div>
             </div>
@@ -427,8 +435,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 1.5,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'top',
@@ -463,30 +470,26 @@
             });
         }
         
-        // Chart configuration - Distribución por estado
-        const ctxEstados = document.getElementById('estadosChart');
-        if (ctxEstados) {
-            new Chart(ctxEstados, {
+        // Chart configuration - Clientes en Proceso Hoy
+        const ctxProceso = document.getElementById('clientesProcesoChart');
+        if (ctxProceso) {
+            const clientesHoy = {{ $clientesEnProcesoHoy }};
+            const metaClientes = {{ $metaClientes }};
+            const porcentaje = {{ $porcentajeClientesHoy }};
+            const faltantes = {{ $clientesFaltantes }};
+            
+            new Chart(ctxProceso, {
                 type: 'doughnut',
                 data: {
-                    labels: ['En Proceso', 'Propuesta Enviada', 'Activos', 'Otros'],
+                    labels: ['Agregados Hoy', 'Faltantes'],
                     datasets: [{
-                        data: [
-                            {{ $distribucionEstados['pending'] }},
-                            {{ $distribucionEstados['propuesta_enviada'] }},
-                            {{ $distribucionEstados['activo'] }},
-                            {{ $distribucionEstados['otros'] }}
-                        ],
+                        data: [clientesHoy, faltantes],
                         backgroundColor: [
                             'rgba(139, 92, 246, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(148, 163, 184, 0.8)'
+                            'rgba(148, 163, 184, 0.3)'
                         ],
                         borderColor: [
                             'rgb(139, 92, 246)',
-                            'rgb(59, 130, 246)',
-                            'rgb(16, 185, 129)',
                             'rgb(148, 163, 184)'
                         ],
                         borderWidth: 2
@@ -502,6 +505,16 @@
                                 color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
                                 padding: 15,
                                 usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const percentage = ((value / metaClientes) * 100).toFixed(1);
+                                    return label + ': ' + value + ' (' + percentage + '%)';
+                                }
                             }
                         }
                     }

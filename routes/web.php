@@ -3589,7 +3589,22 @@ Route::get('/walee-cliente/{id}', function ($id) {
         return $cita->fecha_inicio && $cita->fecha_inicio->gte(now());
     })->sortBy('fecha_inicio')->values();
     
-    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal', 'citasPasadas', 'citasPendientes'));
+    // Obtener publicaciones del cliente
+    $publicacionesProgramadas = 0;
+    $publicacionesPublicadas = 0;
+    $clientePlaneadorId = null;
+    
+    if ($clientePrincipal) {
+        $publicacionesProgramadas = \App\Models\PublicidadEvento::where('cliente_id', $clientePrincipal->id)
+            ->where('estado', 'programado')
+            ->count();
+        $publicacionesPublicadas = \App\Models\PublicidadEvento::where('cliente_id', $clientePrincipal->id)
+            ->where('estado', 'publicado')
+            ->count();
+        $clientePlaneadorId = $clientePrincipal->id;
+    }
+    
+    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId'));
 })->middleware(['auth'])->name('walee.cliente.detalle');
 
 // Ruta para editar un cliente

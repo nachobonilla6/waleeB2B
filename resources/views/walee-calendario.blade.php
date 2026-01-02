@@ -167,24 +167,35 @@
         $mes = request()->get('mes', now()->month);
         $ano = request()->get('ano', now()->year);
         
-        // Si es vista semanal, calcular la semana
+        // Si es vista semanal, calcular la semana usando el mismo método que walee-planeador-publicidad
         if ($vista === 'semanal') {
             $semanaParam = request()->get('semana');
-            if ($semanaParam) {
-                // Si viene el parámetro, parsearlo
-                if (strpos($semanaParam, '-') !== false) {
-                    list($anoSemana, $numSemana) = explode('-', $semanaParam);
+            // Si viene parámetro de semana (formato Y-W), parsearlo
+            if ($semanaParam && strpos($semanaParam, '-') !== false) {
+                $partes = explode('-', $semanaParam);
+                $anoSemana = isset($partes[0]) ? (int)trim($partes[0]) : null;
+                $numSemana = isset($partes[1]) ? (int)trim($partes[1]) : null;
+                
+                if ($anoSemana && $numSemana && $numSemana >= 1 && $numSemana <= 53) {
                     try {
-                        $fechaSemana = \Carbon\Carbon::now()->setISODate((int)$anoSemana, (int)$numSemana);
-                        $inicioSemana = $fechaSemana->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                        $finSemana = $fechaSemana->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
+                        // Usar setISODate para obtener la fecha de la semana
+                        // setISODate maneja correctamente las semanas ISO, incluyendo el cambio de año
+                        // setISODate devuelve el lunes de la semana ISO
+                        $fechaSemana = \Carbon\Carbon::now()->setISODate($anoSemana, $numSemana);
+                        // Ajustar al domingo como inicio de semana (restar 1 día del lunes ISO)
+                        // Esto mantiene la semana ISO correcta pero muestra desde el domingo
+                        $inicioSemana = $fechaSemana->copy()->subDay()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                        // Si al restar 1 día cambiamos de semana ISO, usar el lunes original
+                        if ($inicioSemana->format('o') != $anoSemana || $inicioSemana->format('W') != $numSemana) {
+                            $inicioSemana = $fechaSemana->copy();
+                        }
+                        $finSemana = $inicioSemana->copy()->addDays(6);
                     } catch (\Exception $e) {
                         // Si falla, usar la semana actual
                         $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                         $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                     }
                 } else {
-                    // Si no tiene formato correcto, usar la semana actual
                     $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                     $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
                 }
@@ -193,6 +204,49 @@
                 $inicioSemana = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
                 $finSemana = now()->copy()->endOfWeek(\Carbon\Carbon::SATURDAY);
             }
+            
+            // Calcular semana anterior y siguiente para los botones de navegación (mismo método que planeador)
+            $anoActualSemana = (int)$inicioSemana->format('o');
+            $numActualSemana = (int)$inicioSemana->format('W');
+            
+            // Calcular semana siguiente
+            try {
+                $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->addWeek();
+                $anoSemanaSiguiente = (int)$fechaSiguiente->format('o');
+                $numSemanaSiguiente = (int)$fechaSiguiente->format('W');
+            } catch (\Exception $e) {
+                // Si falla, calcular manualmente
+                $numSemanaSiguiente = $numActualSemana + 1;
+                $anoSemanaSiguiente = $anoActualSemana;
+                if ($numSemanaSiguiente > 53) {
+                    $numSemanaSiguiente = 1;
+                    $anoSemanaSiguiente = $anoActualSemana + 1;
+                }
+            }
+            
+            // Calcular semana anterior
+            try {
+                $fechaAnterior = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->subWeek();
+                $anoSemanaAnterior = (int)$fechaAnterior->format('o');
+                $numSemanaAnterior = (int)$fechaAnterior->format('W');
+            } catch (\Exception $e) {
+                // Si falla, calcular manualmente
+                $numSemanaAnterior = $numActualSemana - 1;
+                $anoSemanaAnterior = $anoActualSemana;
+                if ($numSemanaAnterior < 1) {
+                    $numSemanaAnterior = 53;
+                    $anoSemanaAnterior = $anoActualSemana - 1;
+                }
+            }
+            
+            $semanaAnteriorFormato = $anoSemanaAnterior . '-' . str_pad($numSemanaAnterior, 2, '0', STR_PAD_LEFT);
+            $semanaSiguienteFormato = $anoSemanaSiguiente . '-' . str_pad($numSemanaSiguiente, 2, '0', STR_PAD_LEFT);
+            
+            // Calcular semana actual para botón "Esta Semana"
+            $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+            $anoActualISO = (int)$semanaActual->format('o');
+            $numSemanaActualISO = (int)$semanaActual->format('W');
+            $semanaActualFormato = $anoActualISO . '-' . str_pad($numSemanaActualISO, 2, '0', STR_PAD_LEFT);
         }
         
         $fechaActual = \Carbon\Carbon::create($ano, $mes, 1);

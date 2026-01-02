@@ -363,61 +363,29 @@
                 </div>
             </div>
             
-            <!-- Recent Clients -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
-                <!-- Recent All -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.9s">
-                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes Recientes</h2>
-                        <a href="{{ route('walee.clientes') }}" class="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 hover:underline">Ver todos</a>
-                    </div>
-                    <div class="space-y-2 sm:space-y-3">
-                        @forelse($clientesRecientes as $cliente)
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:bg-emerald-50/50 dark:hover:bg-emerald-500/10 transition-all cursor-pointer group">
-                                <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->updated_at->diffForHumans() }}</p>
-                                </div>
-                                <span class="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex-shrink-0">
-                                    {{ ucfirst($cliente->estado) }}
-                                </span>
-                            </a>
-                        @empty
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes recientes</p>
-                        @endforelse
-                    </div>
+            <!-- Recent In Process -->
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up mb-4 sm:mb-6 md:mb-8" style="animation-delay: 0.9s">
+                <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">En Proceso</h2>
+                    <a href="{{ route('walee.clientes.proceso') }}" class="text-xs sm:text-sm text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
                 </div>
-                
-                <!-- Recent In Process -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 1s">
-                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">En Proceso</h2>
-                        <a href="{{ route('walee.clientes.proceso') }}" class="text-xs sm:text-sm text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
-                    </div>
-                    <div class="space-y-2 sm:space-y-3">
-                        @forelse($clientesEnProcesoRecientes as $cliente)
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
-                                <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->updated_at->diffForHumans() }}</p>
-                                </div>
-                            </a>
-                        @empty
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes en proceso</p>
-                        @endforelse
-                    </div>
+                <div class="space-y-2 sm:space-y-3">
+                    @forelse($clientesEnProcesoRecientes as $cliente)
+                        <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
+                            <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->updated_at->diffForHumans() }}</p>
+                            </div>
+                        </a>
+                    @empty
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes en proceso</p>
+                    @endforelse
                 </div>
             </div>
             

@@ -1740,11 +1740,14 @@
             Swal.fire({
                 title: isEdit ? 'Editar Cita' : 'Nueva Cita',
                 html: html,
-                width: window.innerWidth < 768 ? '95%' : (window.innerWidth < 1024 ? '700px' : '900px'),
+                width: window.innerWidth < 768 ? '90%' : '650px',
                 customClass: {
-                    popup: isDarkMode ? 'dark' : '',
-                    title: 'text-slate-900 dark:text-white',
-                    htmlContainer: 'text-slate-800 dark:text-slate-200'
+                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600',
+                    confirmButton: isDarkMode ? 'bg-emerald-500 hover:bg-emerald-600' : '',
+                    denyButton: isDarkMode ? 'bg-red-500 hover:bg-red-600' : '',
+                    cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
                 },
                 showCancelButton: true,
                 showDenyButton: isEdit,
@@ -1756,8 +1759,11 @@
                 cancelButtonColor: '#64748b',
                 buttonsStyling: true,
                 didOpen: () => {
-                    if (isDarkMode) {
-                        document.querySelector('.swal2-popup').classList.add('dark');
+                    const popup = document.querySelector('.swal2-popup');
+                    if (isDarkMode && popup) {
+                        popup.classList.add('dark');
+                        popup.style.backgroundColor = '#1e293b';
+                        popup.style.color = '#e2e8f0';
                     }
                     toggleSwalRecurrenciaOptions();
                     // Sincronizar color picker
@@ -1871,7 +1877,12 @@
                                     icon: 'success',
                                     title: 'Eliminada',
                                     text: 'La cita ha sido eliminada',
-                                    confirmButtonColor: '#10b981'
+                                    confirmButtonColor: '#10b981',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
                                 }).then(() => {
                                     location.reload();
                                 });
@@ -1880,16 +1891,26 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: data.message || 'Error al eliminar',
-                                    confirmButtonColor: '#10b981'
+                                    confirmButtonColor: '#10b981',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
                                 });
                             }
                         } catch (error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Error de conexión: ' + error.message,
-                                confirmButtonColor: '#10b981'
-                            });
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error de conexión: ' + error.message,
+                                    confirmButtonColor: '#10b981',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
+                                });
                         }
                     }
                     return false;
@@ -1921,10 +1942,10 @@
                 minute: '2-digit'
             }) : null;
             
-            document.getElementById('citaDetailContent').innerHTML = `
-                <div class="space-y-4">
+            const html = `
+                <div class="space-y-3 text-left">
                     <div>
-                        <h4 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">${cita.titulo}</h4>
+                        <h4 class="text-base font-semibold text-slate-900 dark:text-white mb-2">${cita.titulo}</h4>
                         <div class="flex items-center gap-2 mb-2">
                             <span class="text-xs px-2 py-1 rounded-full ${cita.estado === 'completada' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : (cita.estado === 'cancelada' ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400')}">
                                 ${cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)}
@@ -1934,56 +1955,153 @@
                     
                     <div class="space-y-2 text-sm">
                         <div class="flex items-start gap-2">
-                            <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             <div>
-                                <p class="text-slate-600 dark:text-slate-400">Inicio: ${fechaInicio}</p>
-                                ${fechaFin ? `<p class="text-slate-600 dark:text-slate-400">Fin: ${fechaFin}</p>` : ''}
+                                <p class="text-slate-600 dark:text-slate-300">Inicio: ${fechaInicio}</p>
+                                ${fechaFin ? `<p class="text-slate-600 dark:text-slate-300">Fin: ${fechaFin}</p>` : ''}
                             </div>
                         </div>
                         
                         ${cita.ubicacion ? `
                             <div class="flex items-start gap-2">
-                                <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
-                                <p class="text-slate-600 dark:text-slate-400">${cita.ubicacion}</p>
+                                <p class="text-slate-600 dark:text-slate-300">${cita.ubicacion}</p>
                             </div>
                         ` : ''}
                         
                         ${cita.cliente ? `
                             <div class="flex items-start gap-2">
-                                <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                 </svg>
-                                <p class="text-slate-600 dark:text-slate-400">${cita.cliente.nombre_empresa}</p>
+                                <p class="text-slate-600 dark:text-slate-300">${cita.cliente.nombre_empresa || cita.cliente.name}</p>
                             </div>
                         ` : ''}
                         
                         ${cita.descripcion ? `
-                            <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                                <p class="text-slate-600 dark:text-slate-400 whitespace-pre-wrap">${cita.descripcion}</p>
+                            <div class="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                                <p class="text-slate-600 dark:text-slate-300 whitespace-pre-wrap text-sm">${cita.descripcion}</p>
                             </div>
                         ` : ''}
                     </div>
-                    
-                    <div class="flex gap-2 pt-2">
-                        <button onclick="editCita(${cita.id})" class="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-medium transition-all">
-                            Editar
-                        </button>
-                        <button onclick="deleteCitaConfirm(${cita.id})" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all">
-                            Eliminar
-                        </button>
-                    </div>
                 </div>
             `;
-            document.getElementById('citaDetailModal').classList.remove('hidden');
+            
+            Swal.fire({
+                title: 'Detalle de Cita',
+                html: html,
+                width: window.innerWidth < 768 ? '90%' : '600px',
+                customClass: {
+                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600',
+                    confirmButton: isDarkMode ? 'bg-emerald-500 hover:bg-emerald-600' : '',
+                    denyButton: isDarkMode ? 'bg-red-500 hover:bg-red-600' : '',
+                    cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
+                },
+                showCancelButton: false,
+                showDenyButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Editar',
+                denyButtonText: 'Eliminar',
+                confirmButtonColor: '#10b981',
+                denyButtonColor: '#ef4444',
+                buttonsStyling: true,
+                didOpen: () => {
+                    if (isDarkMode) {
+                        const popup = document.querySelector('.swal2-popup');
+                        if (popup) {
+                            popup.classList.add('dark');
+                            popup.style.backgroundColor = '#1e293b';
+                            popup.style.color = '#e2e8f0';
+                        }
+                    }
+                },
+                preConfirm: () => {
+                    Swal.close();
+                    showNuevaCitaModal(citaId);
+                },
+                preDeny: async () => {
+                    const result = await Swal.fire({
+                        title: '¿Eliminar cita?',
+                        text: 'Esta acción no se puede deshacer',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                            title: isDarkMode ? 'text-white' : 'text-slate-900',
+                            htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                        }
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/citas/${citaId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken,
+                                },
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Eliminada',
+                                    text: 'La cita ha sido eliminada',
+                                    confirmButtonColor: '#10b981',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'Error al eliminar',
+                                    confirmButtonColor: '#10b981',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
+                                });
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión: ' + error.message,
+                                confirmButtonColor: '#10b981',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                }
+                            });
+                        }
+                    }
+                    return false;
+                }
+            });
         }
         
         function closeCitaDetailModal() {
-            document.getElementById('citaDetailModal').classList.add('hidden');
+            Swal.close();
         }
         
         function editCita(citaId) {
@@ -2356,11 +2474,14 @@
             Swal.fire({
                 title: isEdit ? 'Editar Tarea' : 'Nueva Tarea',
                 html: html,
-                width: window.innerWidth < 768 ? '95%' : (window.innerWidth < 1024 ? '700px' : '900px'),
+                width: window.innerWidth < 768 ? '90%' : '650px',
                 customClass: {
-                    popup: isDarkMode ? 'dark' : '',
-                    title: 'text-slate-900 dark:text-white',
-                    htmlContainer: 'text-slate-800 dark:text-slate-200'
+                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600',
+                    confirmButton: isDarkMode ? 'bg-violet-500 hover:bg-violet-600' : '',
+                    denyButton: isDarkMode ? 'bg-red-500 hover:bg-red-600' : '',
+                    cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
                 },
                 showCancelButton: true,
                 showDenyButton: isEdit,
@@ -2372,8 +2493,11 @@
                 cancelButtonColor: '#64748b',
                 buttonsStyling: true,
                 didOpen: () => {
-                    if (isDarkMode) {
-                        document.querySelector('.swal2-popup').classList.add('dark');
+                    const popup = document.querySelector('.swal2-popup');
+                    if (isDarkMode && popup) {
+                        popup.classList.add('dark');
+                        popup.style.backgroundColor = '#1e293b';
+                        popup.style.color = '#e2e8f0';
                     }
                     toggleSwalTareaRecurrenciaOptions();
                     // Sincronizar color picker
@@ -2462,7 +2586,12 @@
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
                         confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                            title: isDarkMode ? 'text-white' : 'text-slate-900',
+                            htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                        }
                     });
                     
                     if (result.isConfirmed) {
@@ -2600,11 +2729,14 @@
             Swal.fire({
                 title: isEdit ? 'Editar Nota' : 'Nueva Nota',
                 html: html,
-                width: window.innerWidth < 768 ? '95%' : (window.innerWidth < 1024 ? '700px' : '900px'),
+                width: window.innerWidth < 768 ? '90%' : '650px',
                 customClass: {
-                    popup: isDarkMode ? 'dark' : '',
-                    title: 'text-slate-900 dark:text-white',
-                    htmlContainer: 'text-slate-800 dark:text-slate-200'
+                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600',
+                    confirmButton: isDarkMode ? 'bg-blue-500 hover:bg-blue-600' : '',
+                    denyButton: isDarkMode ? 'bg-red-500 hover:bg-red-600' : '',
+                    cancelButton: isDarkMode ? 'bg-slate-600 hover:bg-slate-700' : ''
                 },
                 showCancelButton: true,
                 showDenyButton: isEdit,
@@ -2616,9 +2748,11 @@
                 cancelButtonColor: '#64748b',
                 buttonsStyling: true,
                 didOpen: () => {
-                    // Aplicar estilos de modo oscuro si es necesario
-                    if (isDarkMode) {
-                        document.querySelector('.swal2-popup').classList.add('dark');
+                    const popup = document.querySelector('.swal2-popup');
+                    if (isDarkMode && popup) {
+                        popup.classList.add('dark');
+                        popup.style.backgroundColor = '#1e293b';
+                        popup.style.color = '#e2e8f0';
                     }
                 },
                 preConfirm: async () => {
@@ -2673,7 +2807,12 @@
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
                         confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                            title: isDarkMode ? 'text-white' : 'text-slate-900',
+                            htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                        }
                     });
                     
                     if (result.isConfirmed) {
@@ -2692,7 +2831,12 @@
                                     icon: 'success',
                                     title: 'Eliminada',
                                     text: 'La nota ha sido eliminada',
-                                    confirmButtonColor: '#3b82f6'
+                                    confirmButtonColor: '#3b82f6',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
                                 }).then(() => {
                                     location.reload();
                                 });
@@ -2701,7 +2845,12 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: data.message || 'Error al eliminar',
-                                    confirmButtonColor: '#3b82f6'
+                                    confirmButtonColor: '#3b82f6',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
                                 });
                             }
                         } catch (error) {
@@ -2709,7 +2858,12 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: 'Error de conexión: ' + error.message,
-                                confirmButtonColor: '#3b82f6'
+                                confirmButtonColor: '#3b82f6',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                }
                             });
                         }
                     }
@@ -2923,22 +3077,7 @@
             }
         });
         
-        // Nota Functions
-        function showNuevaNotaModal() {
-            document.getElementById('notaModalTitle').textContent = 'Nueva Nota';
-            document.getElementById('nota-form').reset();
-            document.getElementById('nota_id').value = '';
-            document.getElementById('deleteNotaBtn').classList.add('hidden');
-            document.getElementById('nota_type').value = 'note';
-            document.getElementById('nota_pinned').checked = false;
-            document.getElementById('nota_fecha').value = new Date().toISOString().split('T')[0];
-            document.getElementById('notaModal').classList.remove('hidden');
-        }
-        
-        function closeNotaModal() {
-            document.getElementById('notaModal').classList.add('hidden');
-        }
-        
+        // Nota Functions - Ya están definidas arriba con SweetAlert
         async function editNota(notaId) {
             try {
                 const response = await fetch(`/notas/${notaId}`, {
@@ -2957,7 +3096,12 @@
                         icon: 'error',
                         title: 'Error',
                         text: 'Error al cargar la nota',
-                        confirmButtonColor: '#3b82f6'
+                        confirmButtonColor: '#3b82f6',
+                        customClass: {
+                            popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                            title: isDarkMode ? 'text-white' : 'text-slate-900',
+                            htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                        }
                     });
                 }
             } catch (error) {
@@ -2966,7 +3110,12 @@
                     icon: 'error',
                     title: 'Error',
                     text: 'Error de conexión',
-                    confirmButtonColor: '#3b82f6'
+                    confirmButtonColor: '#3b82f6',
+                    customClass: {
+                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                    }
                 });
             }
         }

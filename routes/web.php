@@ -406,9 +406,9 @@ Route::get('/walee-tickets-dashboard', function () {
         ];
     }
     
-    // Tickets recientes (últimos 10)
+    // Tickets recientes (últimos 5)
     $ticketsRecientes = \App\Models\Ticket::orderBy('created_at', 'desc')
-        ->limit(10)
+        ->limit(5)
         ->get();
     
     return view('walee-tickets-dashboard', compact(

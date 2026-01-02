@@ -86,9 +86,7 @@
         }
         
         // Usar variables paginadas si están disponibles, sino usar todas
-        if (isset($ticketsEnviados)) {
-            // Ya viene paginado desde la ruta
-        } else {
+        if (!isset($ticketsEnviados)) {
             $ticketsEnviados = $allTicketsForData->where('estado', 'enviado')
                 ->sortBy([
                     ['a_discutir', 'asc'],
@@ -98,9 +96,7 @@
                 ])->values();
         }
         
-        if (isset($ticketsRecibidos)) {
-            // Ya viene paginado desde la ruta
-        } else {
+        if (!isset($ticketsRecibidos)) {
             $ticketsRecibidos = $allTicketsForData->where('estado', 'recibido')
                 ->sortBy([
                     ['a_discutir', 'asc'],
@@ -110,9 +106,7 @@
                 ])->values();
         }
         
-        if (isset($ticketsResueltos)) {
-            // Ya viene paginado desde la ruta
-        } else {
+        if (!isset($ticketsResueltos)) {
             $ticketsResueltos = $allTicketsForData->where('estado', 'resuelto')
                 ->sortBy([
                     ['a_discutir', 'asc'],
@@ -387,7 +381,7 @@
                 @endforelse
                 
                 <!-- Paginación para tab "enviados" -->
-                @if(isset($ticketsEnviados) && $ticketsEnviados->hasPages())
+                @if(isset($ticketsEnviados) && method_exists($ticketsEnviados, 'hasPages') && $ticketsEnviados->hasPages())
                     <div class="mt-6 flex justify-center">
                         <div class="flex items-center gap-2">
                             {{ $ticketsEnviados->links() }}
@@ -475,7 +469,7 @@
                 @endforelse
                 
                 <!-- Paginación para tab "recibidos" -->
-                @if(isset($ticketsRecibidos) && $ticketsRecibidos->hasPages())
+                @if(isset($ticketsRecibidos) && method_exists($ticketsRecibidos, 'hasPages') && $ticketsRecibidos->hasPages())
                     <div class="mt-6 flex justify-center">
                         <div class="flex items-center gap-2">
                             {{ $ticketsRecibidos->links() }}
@@ -562,7 +556,7 @@
                 @endforelse
                 
                 <!-- Paginación para tab "resueltos" -->
-                @if(isset($ticketsResueltos) && $ticketsResueltos->hasPages())
+                @if(isset($ticketsResueltos) && method_exists($ticketsResueltos, 'hasPages') && $ticketsResueltos->hasPages())
                     <div class="mt-6 flex justify-center">
                         <div class="flex items-center gap-2">
                             {{ $ticketsResueltos->links() }}

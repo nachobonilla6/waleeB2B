@@ -496,9 +496,9 @@
             }
         }
         
-        function toggleStarFromModal(emailId) {
+        async function toggleStarFromModal(emailId) {
             currentEmailId = emailId;
-            toggleStar();
+            await toggleStar();
             // Cerrar y volver a abrir el modal para actualizar el icono
             Swal.close();
             setTimeout(() => showEmailDetail(emailId), 100);
@@ -598,6 +598,7 @@
         }
         
         function replyInGmail() {
+            if (!currentEmailId) return;
             const email = emailsData.find(e => e.id === currentEmailId);
             if (!email) return;
             

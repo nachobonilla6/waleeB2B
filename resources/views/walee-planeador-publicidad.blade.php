@@ -648,124 +648,6 @@
         </div>
     </div>
     
-    <!-- Modal Programar Publicación -->
-    <div id="programarPublicacionModal" class="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-sm z-[9999] hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-200 dark:border-slate-700 w-full sm:max-w-4xl lg:max-w-5xl max-h-[85vh] overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Programar Publicación</h3>
-                <button onclick="closeProgramarPublicacionModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
-                    <svg class="w-5 h-5 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <form id="programar-publicacion-form" class="p-4 md:p-5 space-y-3 overflow-y-auto max-h-[calc(85vh-80px)]">
-                <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
-                
-                <!-- Prompt personalizado (arriba) -->
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Prompt Personalizado (opcional)</label>
-                    <textarea name="prompt_personalizado" id="prompt_personalizado" rows="1" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                </div>
-                
-                <!-- Layout horizontal: Imagen y Texto lado a lado -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- Imagen (más pequeña) -->
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Imagen</label>
-                        <div class="relative">
-                            <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
-                            <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer hover:border-violet-500 dark:hover:border-violet-500 transition-colors bg-slate-50 dark:bg-slate-800/50">
-                                <div id="imagePreview" class="hidden w-full h-full rounded-lg overflow-hidden">
-                                    <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
-                                </div>
-                                <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-4">
-                                    <svg class="w-8 h-8 text-slate-400 dark:text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400">Subir imagen</p>
-                                </div>
-                            </label>
-                            <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-1.5 px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-all">
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Texto con AI -->
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Texto</label>
-                        <div class="flex gap-2">
-                            <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                            <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap h-fit">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                                </svg>
-                                <span class="hidden sm:inline text-xs">AI</span>
-                            </button>
-                        </div>
-                        <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">
-                            <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Generando...
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Plataforma con iconos y Fecha -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Plataforma</label>
-                        <div class="grid grid-cols-4 gap-2">
-                            <input type="radio" name="plataforma_publicacion" id="plataforma_facebook" value="facebook" checked class="hidden">
-                            <label for="plataforma_facebook" class="flex items-center justify-center p-2 rounded-lg border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all plataforma-radio" title="Facebook">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                </svg>
-                            </label>
-                            
-                            <input type="radio" name="plataforma_publicacion" id="plataforma_instagram" value="instagram" class="hidden">
-                            <label for="plataforma_instagram" class="flex items-center justify-center p-2 rounded-lg border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all plataforma-radio" title="Instagram">
-                                <svg class="w-4 h-4 text-pink-600 dark:text-pink-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                                </svg>
-                            </label>
-                            
-                            <input type="radio" name="plataforma_publicacion" id="plataforma_linkedin" value="linkedin" class="hidden">
-                            <label for="plataforma_linkedin" class="flex items-center justify-center p-2 rounded-lg border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all plataforma-radio" title="LinkedIn">
-                                <svg class="w-4 h-4 text-blue-700 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                </svg>
-                            </label>
-                            
-                            <input type="radio" name="plataforma_publicacion" id="plataforma_twitter" value="twitter" class="hidden">
-                            <label for="plataforma_twitter" class="flex items-center justify-center p-2 rounded-lg border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-all plataforma-radio" title="Twitter">
-                                <svg class="w-4 h-4 text-sky-500 dark:text-sky-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                </svg>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha y Hora</label>
-                        <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
-                    </div>
-                </div>
-                
-                <div class="flex gap-2 pt-1">
-                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all">
-                        Programar Publicación
-                    </button>
-                    <button type="button" onclick="closeProgramarPublicacionModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-sm font-medium transition-all">
-                        Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
     
     
     <script>
@@ -801,11 +683,10 @@
         }
         
         function showProgramarPublicacionModal() {
-            document.getElementById('programar-publicacion-form').reset();
-            document.getElementById('imagePreview').classList.add('hidden');
-            document.getElementById('imagePlaceholder').classList.remove('hidden');
-            document.getElementById('removeImageBtn').classList.add('hidden');
-            document.getElementById('imagen_publicacion').value = '';
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
             
             // Establecer fecha por defecto: hora actual
             const now = new Date();
@@ -814,13 +695,246 @@
             const day = String(now.getDate()).padStart(2, '0');
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('fecha_publicacion').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            const fechaDefault = `${year}-${month}-${day}T${hours}:${minutes}`;
             
-            // Pre-seleccionar Facebook
-            document.getElementById('plataforma_facebook').checked = true;
-            updatePlataformaStyles();
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '900px';
+            } else if (isTablet) {
+                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
             
-            document.getElementById('programarPublicacionModal').classList.remove('hidden');
+            const html = `
+                <form id="programar-publicacion-form" class="space-y-3 text-left">
+                    <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
+                    
+                    <!-- Prompt personalizado (arriba) -->
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Prompt Personalizado (opcional)</label>
+                        <textarea name="prompt_personalizado" id="prompt_personalizado" rows="1" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-2 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                    </div>
+                    
+                    <!-- Layout horizontal: Imagen y Texto lado a lado -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Imagen -->
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Imagen</label>
+                            <div class="relative">
+                                <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
+                                <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed ${isDarkMode ? 'border-slate-700 bg-slate-800/50 hover:border-violet-500' : 'border-slate-300 bg-slate-50 hover:border-violet-500'} rounded-lg cursor-pointer transition-colors">
+                                    <div id="imagePreview" class="hidden w-full h-full rounded-lg overflow-hidden">
+                                        <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
+                                    </div>
+                                    <div id="imagePlaceholder" class="flex flex-col items-center justify-center p-4">
+                                        <svg class="w-8 h-8 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'} mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <p class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">Subir imagen</p>
+                                    </div>
+                                </label>
+                                <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-1.5 px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-all">
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Texto con AI -->
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Texto</label>
+                            <div class="flex gap-2">
+                                <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                                <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap h-fit">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline text-xs">AI</span>
+                                </button>
+                            </div>
+                            <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">
+                                <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Generando...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plataforma con iconos y Fecha -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Plataforma</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <input type="radio" name="plataforma_publicacion" id="plataforma_facebook" value="facebook" checked class="hidden">
+                                <label for="plataforma_facebook" class="flex items-center justify-center p-2 rounded-lg border-2 border-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all plataforma-radio" title="Facebook">
+                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                </label>
+                                
+                                <input type="radio" name="plataforma_publicacion" id="plataforma_instagram" value="instagram" class="hidden">
+                                <label for="plataforma_instagram" class="flex items-center justify-center p-2 rounded-lg border-2 ${isDarkMode ? 'border-slate-700 bg-slate-800 hover:bg-slate-700' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'} cursor-pointer transition-all plataforma-radio" title="Instagram">
+                                    <svg class="w-4 h-4 text-pink-600 dark:text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                </label>
+                                
+                                <input type="radio" name="plataforma_publicacion" id="plataforma_linkedin" value="linkedin" class="hidden">
+                                <label for="plataforma_linkedin" class="flex items-center justify-center p-2 rounded-lg border-2 ${isDarkMode ? 'border-slate-700 bg-slate-800 hover:bg-slate-700' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'} cursor-pointer transition-all plataforma-radio" title="LinkedIn">
+                                    <svg class="w-4 h-4 text-blue-700 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                </label>
+                                
+                                <input type="radio" name="plataforma_publicacion" id="plataforma_twitter" value="twitter" class="hidden">
+                                <label for="plataforma_twitter" class="flex items-center justify-center p-2 rounded-lg border-2 ${isDarkMode ? 'border-slate-700 bg-slate-800 hover:bg-slate-700' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'} cursor-pointer transition-all plataforma-radio" title="Twitter">
+                                    <svg class="w-4 h-4 text-sky-500 dark:text-sky-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Fecha y Hora</label>
+                            <input type="datetime-local" name="fecha_publicacion" id="fecha_publicacion" required value="${fechaDefault}" class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: 'Programar Publicación',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Programar Publicación',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Pre-seleccionar Facebook y actualizar estilos
+                    document.getElementById('plataforma_facebook').checked = true;
+                    updatePlataformaStyles();
+                    
+                    // Agregar event listeners a los radio buttons
+                    document.querySelectorAll('input[name="plataforma_publicacion"]').forEach(radio => {
+                        radio.addEventListener('change', updatePlataformaStyles);
+                    });
+                },
+                preConfirm: () => {
+                    const form = document.getElementById('programar-publicacion-form');
+                    const formData = new FormData(form);
+                    const imagen = formData.get('imagen');
+                    
+                    // Validar que haya imagen o texto
+                    if (!imagen || imagen.size === 0) {
+                        if (!formData.get('texto') || formData.get('texto').trim() === '') {
+                            Swal.showValidationMessage('Por favor, agrega una imagen o un texto para la publicación');
+                            return false;
+                        }
+                    }
+                    
+                    return formData;
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed && result.value) {
+                    const formData = result.value;
+                    try {
+                        Swal.fire({
+                            title: 'Programando...',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                            customClass: {
+                                popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                            }
+                        });
+                        
+                        const response = await fetch('/publicidad-eventos/programar', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: formData
+                        });
+                        
+                        const responseData = await response.json();
+                        
+                        if (response.ok && responseData.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Publicación programada!',
+                                text: responseData.message || 'La publicación se ha programado correctamente',
+                                confirmButtonColor: '#8b5cf6',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                                }
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            let errorMessage = 'Error al programar la publicación.';
+                            if (responseData.errors) {
+                                errorMessage = Object.values(responseData.errors).flat().join('\n');
+                            } else if (responseData.message) {
+                                errorMessage = responseData.message;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: errorMessage,
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: 'No se pudo conectar con el servidor. Intenta de nuevo.',
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                            customClass: {
+                                popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                                confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                            }
+                        });
+                    }
+                }
+            });
         }
         
         function updatePlataformaStyles() {
@@ -862,29 +976,35 @@
             });
         }
         
-        function closeProgramarPublicacionModal() {
-            document.getElementById('programarPublicacionModal').classList.add('hidden');
-        }
-        
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('previewImg').src = e.target.result;
-                    document.getElementById('imagePreview').classList.remove('hidden');
-                    document.getElementById('imagePlaceholder').classList.add('hidden');
-                    document.getElementById('removeImageBtn').classList.remove('hidden');
+                    const preview = document.getElementById('previewImg');
+                    const previewContainer = document.getElementById('imagePreview');
+                    const placeholder = document.getElementById('imagePlaceholder');
+                    const removeBtn = document.getElementById('removeImageBtn');
+                    
+                    if (preview) preview.src = e.target.result;
+                    if (previewContainer) previewContainer.classList.remove('hidden');
+                    if (placeholder) placeholder.classList.add('hidden');
+                    if (removeBtn) removeBtn.classList.remove('hidden');
                 };
                 reader.readAsDataURL(file);
             }
         }
         
         function removeImage() {
-            document.getElementById('imagen_publicacion').value = '';
-            document.getElementById('imagePreview').classList.add('hidden');
-            document.getElementById('imagePlaceholder').classList.remove('hidden');
-            document.getElementById('removeImageBtn').classList.add('hidden');
+            const fileInput = document.getElementById('imagen_publicacion');
+            const previewContainer = document.getElementById('imagePreview');
+            const placeholder = document.getElementById('imagePlaceholder');
+            const removeBtn = document.getElementById('removeImageBtn');
+            
+            if (fileInput) fileInput.value = '';
+            if (previewContainer) previewContainer.classList.add('hidden');
+            if (placeholder) placeholder.classList.remove('hidden');
+            if (removeBtn) removeBtn.classList.add('hidden');
         }
         
         async function generarTextoAI() {
@@ -1074,7 +1194,7 @@
                     
                     let modalWidth = '95%';
                     if (isDesktop) {
-                        modalWidth = '700px';
+                        modalWidth = '900px';
                     } else if (isTablet) {
                         modalWidth = '600px';
                     } else if (isMobile) {
@@ -1234,55 +1354,6 @@
             if (e.target === this) closeEventoModal();
         });
         
-        // Form submit programar publicación
-        document.getElementById('programar-publicacion-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const imagen = formData.get('imagen');
-            
-            // Validar que haya imagen o texto
-            if (!imagen || imagen.size === 0) {
-                if (!formData.get('texto') || formData.get('texto').trim() === '') {
-                    alert('Por favor, agrega una imagen o un texto para la publicación');
-                    return;
-                }
-            }
-            
-            try {
-                const response = await fetch('/publicidad-eventos/programar', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    closeProgramarPublicacionModal();
-                    location.reload();
-                } else {
-                    alert('Error: ' + (result.message || 'Error al programar publicación'));
-                }
-            } catch (error) {
-                alert('Error de conexión: ' + error.message);
-            }
-        });
-        
-        // Close modal on backdrop click
-        document.getElementById('programarPublicacionModal').addEventListener('click', function(e) {
-            if (e.target === this) closeProgramarPublicacionModal();
-        });
-        
-        // Close modal on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeEventoModal();
-                closeProgramarPublicacionModal();
-            }
-        });
     </script>
     @include('partials.walee-support-button')
 </body>

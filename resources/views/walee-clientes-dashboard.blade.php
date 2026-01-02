@@ -365,6 +365,40 @@
                 </div>
             </div>
             
+            <!-- Clientes con Publicaciones -->
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up mb-4 sm:mb-6 md:mb-8" style="animation-delay: 1s">
+                <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes con Publicaciones</h2>
+                </div>
+                <div class="space-y-2 sm:space-y-3">
+                    @forelse($clientesConPublicaciones as $item)
+                        <a href="{{ route('walee.cliente.detalle', $item['client']->id) }}" class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
+                            <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $item['client']->name ?: 'Sin nombre' }}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $item['client']->email ?: 'Sin email' }}</p>
+                            </div>
+                            <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                                <div class="text-right">
+                                    <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+                                        <span class="text-violet-600 dark:text-violet-400">{{ $item['programadas'] }}</span>
+                                        <span class="text-slate-500 dark:text-slate-400">/</span>
+                                        <span class="text-slate-700 dark:text-slate-300">{{ $item['total_publicaciones'] }}</span>
+                                    </p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500">Programadas / Total</p>
+                                </div>
+                            </div>
+                        </a>
+                    @empty
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes con publicaciones</p>
+                    @endforelse
+                </div>
+            </div>
+            
             <!-- Footer -->
             <footer class="text-center py-4 sm:py-6 md:py-8">
                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500">

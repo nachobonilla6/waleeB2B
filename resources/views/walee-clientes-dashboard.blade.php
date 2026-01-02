@@ -325,11 +325,26 @@
                     </div>
                     <div class="space-y-2 sm:space-y-3">
                         @forelse($clientesEnProcesoRecientes as $cliente)
+                            @php
+                                $fotoPath = $cliente->foto ?? null;
+                                $fotoUrl = null;
+                                
+                                if ($fotoPath) {
+                                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                        $fotoUrl = $fotoPath;
+                                    } else {
+                                        $filename = basename($fotoPath);
+                                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                                    }
+                                }
+                            @endphp
                             <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
-                                <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
+                                <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg overflow-hidden flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    @if($fotoUrl)
+                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover border-2 border-violet-500/30">
+                                    @else
+                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover border-2 border-violet-500/30 opacity-80">
+                                    @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>

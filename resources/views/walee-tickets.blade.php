@@ -60,6 +60,14 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
+        // Obtener TODOS los tickets para ticketsData (necesario para el modal de detalles)
+        $allTicketsForData = \App\Models\Ticket::with('user')
+            ->orderBy('a_discutir', 'asc')
+            ->orderBy('urgente', 'desc')
+            ->orderBy('prioritario', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
         // Si hay ticketsTodos con paginación, usarlos; si no, obtener todos
         if (isset($ticketsTodos)) {
             $tickets = $ticketsTodos;
@@ -69,12 +77,7 @@
             $resueltos = \App\Models\Ticket::where('estado', 'resuelto')->count();
         } else {
             // Obtener todos los tickets ordenados por prioridad: urgente > prioritario > fecha, y a_discutir al final
-            $tickets = \App\Models\Ticket::with('user')
-                ->orderBy('a_discutir', 'asc') // A discutir al final (asc = false primero)
-                ->orderBy('urgente', 'desc') // Urgentes primero
-                ->orderBy('prioritario', 'desc') // Luego prioritarios
-                ->orderBy('created_at', 'desc') // Finalmente por fecha más reciente
-                ->get();
+            $tickets = $allTicketsForData;
             
             $totalTickets = $tickets->count();
             $enviados = $tickets->where('estado', 'enviado')->count();
@@ -83,7 +86,7 @@
         }
         
         // Ordenar cada grupo también por prioridad: urgente > prioritario > fecha, y a_discutir al final
-        $ticketsEnviados = $tickets->where('estado', 'enviado')
+        $ticketsEnviados = $allTicketsForData->where('estado', 'enviado')
             ->sortBy([
                 ['a_discutir', 'asc'], // A discutir al final
                 ['urgente', 'desc'],
@@ -91,7 +94,7 @@
                 ['created_at', 'desc']
             ])->values();
         
-        $ticketsRecibidos = $tickets->where('estado', 'recibido')
+        $ticketsRecibidos = $allTicketsForData->where('estado', 'recibido')
             ->sortBy([
                 ['a_discutir', 'asc'], // A discutir al final
                 ['urgente', 'desc'],
@@ -99,7 +102,7 @@
                 ['created_at', 'desc']
             ])->values();
         
-        $ticketsResueltos = $tickets->where('estado', 'resuelto')
+        $ticketsResueltos = $allTicketsForData->where('estado', 'resuelto')
             ->sortBy([
                 ['a_discutir', 'asc'], // A discutir al final
                 ['urgente', 'desc'],
@@ -814,7 +817,7 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const ticketsData = @json($tickets);
+        const ticketsData = @json($allTicketsForData);
         
         // Search functionality
         function filterTickets(searchTerm) {

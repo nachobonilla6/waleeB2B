@@ -102,9 +102,9 @@
     @php
         use App\Models\Client;
         
-        $clientesActivos = Client::where('estado', 'accepted')->count();
-        // Contador de clientes con propuesta enviada
-        $clientesEnProceso = Client::where('estado', 'propuesta_enviada')->count();
+        $clientesActivos = Client::where('estado', 'activo')->count();
+        // Contador de clientes en proceso (pending)
+        $clientesEnProceso = Client::where('estado', 'pending')->count();
         $clientesTotales = Client::count();
     @endphp
 

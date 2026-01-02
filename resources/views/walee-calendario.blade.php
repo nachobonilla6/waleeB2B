@@ -2610,7 +2610,12 @@
                                     icon: 'success',
                                     title: 'Eliminada',
                                     text: 'La tarea ha sido eliminada',
-                                    confirmButtonColor: '#8b5cf6'
+                                    confirmButtonColor: '#8b5cf6',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
                                 }).then(() => {
                                     location.reload();
                                 });
@@ -2619,7 +2624,12 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: data.message || 'Error al eliminar',
-                                    confirmButtonColor: '#8b5cf6'
+                                    confirmButtonColor: '#8b5cf6',
+                                    customClass: {
+                                        popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                        title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                        htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                    }
                                 });
                             }
                         } catch (error) {
@@ -2627,7 +2637,12 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: 'Error de conexión: ' + error.message,
-                                confirmButtonColor: '#8b5cf6'
+                                confirmButtonColor: '#8b5cf6',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark bg-slate-800' : 'bg-white',
+                                    title: isDarkMode ? 'text-white' : 'text-slate-900',
+                                    htmlContainer: isDarkMode ? 'text-slate-200' : 'text-slate-600'
+                                }
                             });
                         }
                     }

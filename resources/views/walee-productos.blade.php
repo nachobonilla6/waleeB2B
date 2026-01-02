@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -207,84 +209,6 @@
         </div>
     </div>
     
-    <!-- Create/Edit Modal -->
-    <div id="productModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white" id="modalTitle">Nuevo Producto</h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <form id="productForm" onsubmit="saveProduct(event)" class="p-6 space-y-6">
-                <input type="hidden" id="productId" name="id">
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre *</label>
-                    <input type="text" id="productNombre" name="nombre" required
-                           class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
-                    <textarea id="productDescripcion" name="descripcion" rows="4"
-                              class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500"></textarea>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado *</label>
-                        <select id="productEstado" name="estado" required
-                                class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo *</label>
-                        <div class="flex gap-2">
-                            <select id="productTipo" name="tipo" required
-                                    class="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
-                                <option value="bot">Bot</option>
-                                <option value="sitio">Sitio</option>
-                                <option value="servicio">Servicio</option>
-                            </select>
-                            <input type="text" id="productTipoCustom" name="tipo_custom" placeholder="Otro tipo"
-                                   class="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500 hidden">
-                        </div>
-                        <button type="button" onclick="toggleCustomType()" class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                            Crear tipo personalizado
-                        </button>
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fotos (máximo 10)</label>
-                    <div class="grid grid-cols-5 gap-4 mb-4" id="photosPreview"></div>
-                    <input type="file" id="productFotos" name="fotos[]" multiple accept="image/*" onchange="previewPhotos(this)" class="hidden">
-                    <label for="productFotos" class="inline-block px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl cursor-pointer transition-all">
-                        Seleccionar fotos
-                    </label>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Puedes seleccionar hasta 10 imágenes</p>
-                </div>
-                
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <button type="button" onclick="closeModal()" class="px-6 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl transition-all">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="px-6 py-2 bg-walee-500 hover:bg-walee-600 text-white font-medium rounded-xl transition-all">
-                        Guardar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -349,23 +273,115 @@
             });
         }
         
-        // Modal functions
+        // Modal functions with SweetAlert
         function openCreateModal() {
-            document.getElementById('modalTitle').textContent = 'Nuevo Producto';
-            document.getElementById('productForm').reset();
-            document.getElementById('productId').value = '';
-            document.getElementById('photosPreview').innerHTML = '';
             selectedPhotos = [];
-            document.getElementById('productModal').classList.remove('hidden');
-            document.getElementById('productModal').classList.add('flex');
+            showProductModal();
         }
         
-        function closeModal() {
-            document.getElementById('productModal').classList.add('hidden');
-            document.getElementById('productModal').classList.remove('flex');
+        function showProductModal(product = null) {
+            const isEdit = product !== null;
+            const html = `
+                <form id="productForm" class="space-y-4 text-left">
+                    <input type="hidden" id="productId" name="id" value="${product?.id || ''}">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre *</label>
+                        <input type="text" id="productNombre" name="nombre" required
+                               value="${product?.nombre || ''}"
+                               class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
+                        <textarea id="productDescripcion" name="descripcion" rows="3"
+                                  class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">${product?.descripcion || ''}</textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado *</label>
+                            <select id="productEstado" name="estado" required
+                                    class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                                <option value="activo" ${product?.estado === 'activo' ? 'selected' : ''}>Activo</option>
+                                <option value="inactivo" ${product?.estado === 'inactivo' ? 'selected' : ''}>Inactivo</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo *</label>
+                            <div class="flex gap-2">
+                                <select id="productTipo" name="tipo" required
+                                        class="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                                    <option value="bot" ${product?.tipo === 'bot' ? 'selected' : ''}>Bot</option>
+                                    <option value="sitio" ${product?.tipo === 'sitio' ? 'selected' : ''}>Sitio</option>
+                                    <option value="servicio" ${product?.tipo === 'servicio' ? 'selected' : ''}>Servicio</option>
+                                </select>
+                                <input type="text" id="productTipoCustom" name="tipo_custom" placeholder="Otro tipo"
+                                       value="${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? product.tipo : ''}"
+                                       class="flex-1 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500 ${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? '' : 'hidden'}">
+                            </div>
+                            <button type="button" onclick="toggleCustomTypeSwal()" class="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Crear tipo personalizado
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fotos (máximo 10)</label>
+                        <div class="grid grid-cols-5 gap-2 mb-2 max-h-32 overflow-y-auto" id="photosPreviewSwal"></div>
+                        <input type="file" id="productFotosSwal" name="fotos[]" multiple accept="image/*" onchange="previewPhotosSwal(this)" class="hidden">
+                        <label for="productFotosSwal" class="inline-block px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl cursor-pointer transition-all text-sm">
+                            Seleccionar fotos
+                        </label>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes seleccionar hasta 10 imágenes</p>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: '#6b7280',
+                didOpen: () => {
+                    // Cargar fotos existentes si es edición
+                    if (isEdit && product.fotos && product.fotos.length > 0) {
+                        const preview = document.getElementById('photosPreviewSwal');
+                        preview.innerHTML = '';
+                        const fotosPaths = product.fotos_paths || [];
+                        product.fotos.forEach((fotoUrl, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'relative';
+                            let fotoPath = fotosPaths[index];
+                            if (!fotoPath && fotoUrl) {
+                                const match = fotoUrl.match(/\/storage\/(.+)$/);
+                                fotoPath = match ? match[1] : fotoUrl;
+                            }
+                            div.innerHTML = `
+                                <img src="${fotoUrl}" class="w-full h-16 object-cover rounded-lg">
+                                <button type="button" onclick="removeExistingPhotoSwal(this)" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                                <input type="hidden" name="existing_fotos[]" value="${fotoPath || fotoUrl}">
+                            `;
+                            preview.appendChild(div);
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    return saveProductSwal(isEdit ? product.id : null);
+                }
+            });
         }
         
-        function toggleCustomType() {
+        function toggleCustomTypeSwal() {
             const select = document.getElementById('productTipo');
             const custom = document.getElementById('productTipoCustom');
             
@@ -382,10 +398,10 @@
             }
         }
         
-        function previewPhotos(input) {
+        function previewPhotosSwal(input) {
             const files = Array.from(input.files).slice(0, 10);
             selectedPhotos = files;
-            const preview = document.getElementById('photosPreview');
+            const preview = document.getElementById('photosPreviewSwal');
             preview.innerHTML = '';
             
             files.forEach((file, index) => {
@@ -394,9 +410,9 @@
                     const div = document.createElement('div');
                     div.className = 'relative';
                     div.innerHTML = `
-                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg">
-                        <button type="button" onclick="removePhoto(${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <img src="${e.target.result}" class="w-full h-16 object-cover rounded-lg">
+                        <button type="button" onclick="removePhotoSwal(${index})" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
@@ -407,24 +423,20 @@
             });
         }
         
-        function removePhoto(index) {
+        function removePhotoSwal(index) {
             selectedPhotos.splice(index, 1);
-            const input = document.getElementById('productFotos');
+            const input = document.getElementById('productFotosSwal');
             const dt = new DataTransfer();
             selectedPhotos.forEach(file => dt.items.add(file));
             input.files = dt.files;
-            previewPhotos(input);
+            previewPhotosSwal(input);
         }
         
-        function removeExistingPhoto(btn) {
-            if (confirm('¿Eliminar esta foto?')) {
-                btn.closest('div').remove();
-            }
+        function removeExistingPhotoSwal(btn) {
+            btn.closest('div').remove();
         }
         
-        async function saveProduct(e) {
-            e.preventDefault();
-            
+        async function saveProductSwal(productId) {
             const formData = new FormData();
             formData.append('nombre', document.getElementById('productNombre').value);
             formData.append('descripcion', document.getElementById('productDescripcion').value);
@@ -435,7 +447,6 @@
             const tipo = tipoCustom.classList.contains('hidden') ? tipoSelect.value : tipoCustom.value;
             formData.append('tipo', tipo);
             
-            const productId = document.getElementById('productId').value;
             if (productId) {
                 // Capturar fotos existentes
                 const existingFotosInputs = document.querySelectorAll('input[name="existing_fotos[]"]');
@@ -463,100 +474,71 @@
                     body: formData
                 });
                 
-                // Leer la respuesta como texto primero para debugging
                 const responseText = await response.text();
                 let data;
                 
                 try {
                     data = JSON.parse(responseText);
                 } catch (parseError) {
-                    console.error('Error parseando JSON:', parseError);
-                    console.error('Respuesta del servidor:', responseText);
-                    throw new Error('El servidor devolvió una respuesta inválida. Ver consola para detalles.');
+                    throw new Error('El servidor devolvió una respuesta inválida');
                 }
                 
                 if (data.success) {
-                    closeModal();
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message || 'Producto guardado correctamente',
+                        confirmButtonColor: '#D59F3B'
+                    }).then(() => {
+                        location.reload();
+                    });
+                    return true;
                 } else {
-                    // Mostrar errores de validación si existen
                     let errorMessage = data.message || 'No se pudo guardar el producto';
                     if (data.errors) {
                         const errorList = Object.values(data.errors).flat().join(', ');
                         errorMessage += ': ' + errorList;
                     }
-                    alert('Error: ' + errorMessage);
+                    Swal.showValidationMessage(errorMessage);
+                    return false;
                 }
             } catch (error) {
-                console.error('Error:', error);
-                console.error('Stack:', error.stack);
-                alert('Error al guardar el producto: ' + error.message);
+                Swal.showValidationMessage('Error: ' + error.message);
+                return false;
             }
         }
+        
         
         async function editProduct(id) {
             try {
                 const response = await fetch(`/walee-productos/${id}`);
                 const product = await response.json();
-                
-                document.getElementById('modalTitle').textContent = 'Editar Producto';
-                document.getElementById('productId').value = product.id;
-                document.getElementById('productNombre').value = product.nombre;
-                document.getElementById('productDescripcion').value = product.descripcion || '';
-                document.getElementById('productEstado').value = product.estado;
-                
-                // Check if tipo is in select options
-                const tipoSelect = document.getElementById('productTipo');
-                if (['bot', 'sitio', 'servicio'].includes(product.tipo)) {
-                    tipoSelect.value = product.tipo;
-                    tipoSelect.classList.remove('hidden');
-                    document.getElementById('productTipoCustom').classList.add('hidden');
-                } else {
-                    document.getElementById('productTipoCustom').value = product.tipo;
-                    document.getElementById('productTipoCustom').classList.remove('hidden');
-                    tipoSelect.classList.add('hidden');
-                }
-                
-                // Load existing photos
-                const preview = document.getElementById('photosPreview');
-                preview.innerHTML = '';
-                if (product.fotos && product.fotos.length > 0) {
-                    // Usar fotos_paths si está disponible, sino extraer de las URLs
-                    const fotosPaths = product.fotos_paths || [];
-                    product.fotos.forEach((fotoUrl, index) => {
-                        const div = document.createElement('div');
-                        div.className = 'relative';
-                        // Si tenemos fotos_paths, usarlo, sino extraer de la URL
-                        let fotoPath = fotosPaths[index];
-                        if (!fotoPath && fotoUrl) {
-                            // Extraer la ruta relativa de la URL completa
-                            const match = fotoUrl.match(/\/storage\/(.+)$/);
-                            fotoPath = match ? match[1] : fotoUrl;
-                        }
-                        div.innerHTML = `
-                            <img src="${fotoUrl}" class="w-full h-24 object-cover rounded-lg">
-                            <button type="button" onclick="removeExistingPhoto(this)" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                            <input type="hidden" name="existing_fotos[]" value="${fotoPath || fotoUrl}">
-                        `;
-                        preview.appendChild(div);
-                    });
-                }
-                
                 selectedPhotos = [];
-                document.getElementById('productModal').classList.remove('hidden');
-                document.getElementById('productModal').classList.add('flex');
+                showProductModal(product);
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al cargar el producto');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al cargar el producto',
+                    confirmButtonColor: '#D59F3B'
+                });
             }
         }
         
         async function deleteProduct(id) {
-            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            });
+            
+            if (!result.isConfirmed) return;
             
             try {
                 const response = await fetch(`/walee-productos/${id}`, {
@@ -570,13 +552,30 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: 'El producto ha sido eliminado',
+                        confirmButtonColor: '#D59F3B'
+                    }).then(() => {
+                        location.reload();
+                    });
                 } else {
-                    alert('Error: ' + data.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'No se pudo eliminar el producto',
+                        confirmButtonColor: '#D59F3B'
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al eliminar el producto');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al eliminar el producto',
+                    confirmButtonColor: '#D59F3B'
+                });
             }
         }
         
@@ -599,45 +598,64 @@
                 
                 const data = await response.json();
                 
-                if (data.success) {
-                    // Actualizar el card
-                    const card = document.querySelector(`[data-product-id="${id}"]`);
-                    if (card) {
-                        card.dataset.estado = data.estado;
+                    if (data.success) {
+                        // Actualizar el card
+                        const card = document.querySelector(`[data-product-id="${id}"]`);
+                        if (card) {
+                            card.dataset.estado = data.estado;
+                        }
+                        
+                        // Actualizar el texto del estado
+                        const estadoText = document.getElementById(`estado-text-${id}`);
+                        if (estadoText) {
+                            estadoText.textContent = data.estado === 'activo' ? 'Activo' : 'Inactivo';
+                        }
+                        
+                        // El checkbox ya está en el estado correcto por el onchange
+                        // Solo nos aseguramos de que esté sincronizado
+                        const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                        if (toggleCheckbox && toggleCheckbox.checked !== (data.estado === 'activo')) {
+                            toggleCheckbox.checked = data.estado === 'activo';
+                        }
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Estado actualizado',
+                            text: 'El estado ha sido cambiado a ' + (data.estado === 'activo' ? 'Activo' : 'Inactivo'),
+                            timer: 1500,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    } else {
+                        // Revertir el checkbox
+                        checkbox.checked = estadoOriginal;
+                        const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                        if (toggleCheckbox) {
+                            toggleCheckbox.checked = estadoOriginal;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'No se pudo actualizar el estado',
+                            confirmButtonColor: '#D59F3B'
+                        });
                     }
-                    
-                    // Actualizar el texto del estado
-                    const estadoText = document.getElementById(`estado-text-${id}`);
-                    if (estadoText) {
-                        estadoText.textContent = data.estado === 'activo' ? 'Activo' : 'Inactivo';
-                    }
-                    
-                    // El checkbox ya está en el estado correcto por el onchange
-                    // Solo nos aseguramos de que esté sincronizado
-                    const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
-                    if (toggleCheckbox && toggleCheckbox.checked !== (data.estado === 'activo')) {
-                        toggleCheckbox.checked = data.estado === 'activo';
-                    }
-                } else {
+                } catch (error) {
+                    console.error('Error:', error);
                     // Revertir el checkbox
                     checkbox.checked = estadoOriginal;
                     const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
                     if (toggleCheckbox) {
                         toggleCheckbox.checked = estadoOriginal;
                     }
-                    console.error('Error:', data.message);
-                    alert('Error: ' + (data.message || 'No se pudo actualizar el estado'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cambiar el estado. Por favor, recarga la página.',
+                        confirmButtonColor: '#D59F3B'
+                    });
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                // Revertir el checkbox
-                checkbox.checked = estadoOriginal;
-                const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
-                if (toggleCheckbox) {
-                    toggleCheckbox.checked = estadoOriginal;
-                }
-                alert('Error al cambiar el estado. Por favor, recarga la página.');
-            }
         }
     </script>
     @include('partials.walee-support-button')

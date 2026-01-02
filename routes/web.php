@@ -2835,9 +2835,21 @@ Route::post('/walee-productos', function (\Illuminate\Http\Request $request) {
 
         $fotos = [];
         if ($request->hasFile('fotos')) {
+            // Asegurar que el directorio existe
+            $productosDir = storage_path('app/public/productos');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            
             foreach ($request->file('fotos') as $foto) {
                 $path = $foto->store('productos', 'public');
                 $fotos[] = $path;
+                
+                // Asegurar permisos públicos
+                $fullPath = storage_path('app/public/' . $path);
+                if (file_exists($fullPath)) {
+                    chmod($fullPath, 0644);
+                }
             }
         }
 
@@ -2880,9 +2892,21 @@ Route::post('/walee-productos/{id}', function (\Illuminate\Http\Request $request
         $fotos = $request->input('existing_fotos', []);
         
         if ($request->hasFile('fotos')) {
+            // Asegurar que el directorio existe
+            $productosDir = storage_path('app/public/productos');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            
             foreach ($request->file('fotos') as $foto) {
                 $path = $foto->store('productos', 'public');
                 $fotos[] = $path;
+                
+                // Asegurar permisos públicos
+                $fullPath = storage_path('app/public/' . $path);
+                if (file_exists($fullPath)) {
+                    chmod($fullPath, 0644);
+                }
             }
         }
 

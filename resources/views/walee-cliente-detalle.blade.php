@@ -75,8 +75,10 @@
                                 // Si es una URL completa, usarla directamente
                                 $fotoUrl = $fotoPath;
                             } else {
-                                // Usar Storage::url() para obtener la URL correcta
-                                $fotoUrl = \Illuminate\Support\Facades\Storage::url($fotoPath);
+                                // Extraer el nombre del archivo de la ruta
+                                $filename = basename($fotoPath);
+                                // Usar la ruta pública para acceder a la foto
+                                $fotoUrl = route('storage.clientes', ['filename' => $filename]);
                             }
                         }
                     @endphp

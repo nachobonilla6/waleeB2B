@@ -106,6 +106,36 @@ Route::get('/storage/productos/{filename}', function ($filename) {
     }
 })->where('filename', '.*')->name('storage.productos');
 
+// Ruta para servir fotos de clientes (pública, sin autenticación)
+Route::get('/storage/clientes/{filename}', function ($filename) {
+    try {
+        // Limpiar el nombre del archivo para seguridad
+        $filename = basename($filename);
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+        
+        // Buscar en el directorio de clientes_en_proceso_fotos
+        $path = storage_path('app/public/clientes_en_proceso_fotos/' . $filename);
+        
+        if (!file_exists($path) || !is_file($path)) {
+            abort(404);
+        }
+        
+        $file = file_get_contents($path);
+        $type = mime_content_type($path);
+        
+        return response($file, 200)
+            ->header('Content-Type', $type)
+            ->header('Content-Length', filesize($path))
+            ->header('Cache-Control', 'public, max-age=3600');
+    } catch (\Exception $e) {
+        \Log::error('Error sirviendo foto de cliente', [
+            'filename' => $filename,
+            'error' => $e->getMessage()
+        ]);
+        abort(404);
+    }
+})->where('filename', '.*')->name('storage.clientes');
+
 // Ruta de prueba para verificar que los archivos existen
 Route::get('/test-storage', function () {
     $publicacionesPath = storage_path('app/public/publicaciones');

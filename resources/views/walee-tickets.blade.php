@@ -992,8 +992,19 @@
                             <div class="flex flex-wrap gap-2">
                                 ${archivos.map((archivo, idx) => {
                                     const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo);
+                                    // Construir URL correcta
+                                    let archivoUrl = '';
+                                    if (archivo.startsWith('http://') || archivo.startsWith('https://')) {
+                                        archivoUrl = archivo;
+                                    } else if (archivo.startsWith('storage/')) {
+                                        archivoUrl = '{{ url('') }}/' + archivo;
+                                    } else if (archivo.startsWith('tickets/')) {
+                                        archivoUrl = '{{ url('') }}/storage/' + archivo;
+                                    } else {
+                                        archivoUrl = '{{ url('') }}/storage/tickets/' + archivo;
+                                    }
                                     return `
-                                        <a href="${archivo.startsWith('http') ? archivo : (archivo.startsWith('storage/') ? '{{ url('') }}/' + archivo : '{{ url('') }}/storage/' + archivo)}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">
+                                        <a href="${archivoUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">
                                             ${isImage ? '🖼️' : '📄'} Archivo ${idx + 1}
                                         </a>
                                     `;

@@ -97,7 +97,7 @@
         use App\Models\Client;
         use App\Models\PropuestaPersonalizada;
         
-        $clientes = Client::where('estado', 'accepted')
+        $clientes = Client::where('estado', 'activo')
             ->orderBy('created_at', 'desc')
             ->get();
         
@@ -253,7 +253,7 @@
                             </svg>
                         </div>
                         <h3 class="text-lg font-semibold text-slate-400 mb-2">No hay clientes activos</h3>
-                        <p class="text-sm text-slate-600">Los clientes con estado "accepted" aparecerán aquí</p>
+                        <p class="text-sm text-slate-600">Los clientes con estado "activo" aparecerán aquí</p>
                     </div>
                 @endforelse
             </div>

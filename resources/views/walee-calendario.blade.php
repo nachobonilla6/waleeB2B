@@ -67,7 +67,83 @@
             }
             .swal2-popup {
                 z-index: 100000 !important;
-                margin: 1rem !important;
+                margin: 0.5rem !important;
+                padding: 0.75rem !important;
+                max-width: calc(100vw - 1rem) !important;
+            }
+            .swal2-title {
+                font-size: 1rem !important;
+                margin-bottom: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+                line-height: 1.3 !important;
+            }
+            .swal2-html-container {
+                font-size: 0.875rem !important;
+                margin: 0.5rem 0 !important;
+                padding: 0 !important;
+            }
+            .swal2-html-container form {
+                padding: 0 !important;
+            }
+            .swal2-html-container label {
+                font-size: 0.75rem !important;
+                margin-bottom: 0.25rem !important;
+                line-height: 1.2 !important;
+            }
+            .swal2-html-container input,
+            .swal2-html-container select,
+            .swal2-html-container textarea {
+                font-size: 0.875rem !important;
+                padding: 0.5rem 0.75rem !important;
+                line-height: 1.4 !important;
+            }
+            .swal2-html-container .space-y-2\.5 > * + *,
+            .swal2-html-container .space-y-2 > * + * {
+                margin-top: 0.5rem !important;
+            }
+            .swal2-html-container .gap-2\.5,
+            .swal2-html-container .gap-2 {
+                gap: 0.5rem !important;
+            }
+            .swal2-html-container .mb-1 {
+                margin-bottom: 0.25rem !important;
+            }
+            .swal2-html-container .mb-1\.5 {
+                margin-bottom: 0.375rem !important;
+            }
+            .swal2-html-container .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+            .swal2-html-container .mb-2\.5 {
+                margin-bottom: 0.625rem !important;
+            }
+            .swal2-html-container .text-xs {
+                font-size: 0.7rem !important;
+            }
+            .swal2-html-container .text-sm {
+                font-size: 0.8rem !important;
+            }
+            .swal2-html-container .grid {
+                gap: 0.5rem !important;
+            }
+            .swal2-actions {
+                margin-top: 0.75rem !important;
+                gap: 0.5rem !important;
+                flex-wrap: wrap !important;
+            }
+            .swal2-confirm,
+            .swal2-deny,
+            .swal2-cancel {
+                font-size: 0.875rem !important;
+                padding: 0.5rem 1rem !important;
+                margin: 0 !important;
+                flex: 1 1 auto !important;
+                min-width: calc(50% - 0.25rem) !important;
+            }
+            .swal2-html-container p {
+                font-size: 0.75rem !important;
+                line-height: 1.4 !important;
+                margin: 0.25rem 0 !important;
             }
         }
     </style>

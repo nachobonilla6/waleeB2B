@@ -115,7 +115,8 @@
                 @forelse($productos as $producto)
                     <div class="product-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up hover:shadow-lg dark:hover:shadow-none transition-all"
                          data-estado="{{ $producto->estado }}"
-                         data-tipo="{{ $producto->tipo }}">
+                         data-tipo="{{ $producto->tipo }}"
+                         data-product-id="{{ $producto->id }}">
                         <!-- Images Carousel -->
                         <div class="relative h-48 bg-slate-100 dark:bg-slate-700 overflow-hidden">
                             @if($producto->fotos && count($producto->fotos) > 0)
@@ -159,9 +160,16 @@
                                 <div class="flex-1">
                                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">{{ $producto->nombre }}</h3>
                                     <div class="flex items-center gap-2 flex-wrap">
-                                        <span class="px-2 py-1 text-xs rounded-full {{ $producto->estado === 'activo' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400' }}">
-                                            {{ ucfirst($producto->estado) }}
-                                        </span>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" 
+                                                   class="sr-only peer" 
+                                                   {{ $producto->estado === 'activo' ? 'checked' : '' }}
+                                                   onchange="toggleEstado({{ $producto->id }}, this.checked)">
+                                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-walee-300 dark:peer-focus:ring-walee-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-green-500"></div>
+                                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                {{ $producto->estado === 'activo' ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </label>
                                         <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400">
                                             {{ ucfirst($producto->tipo) }}
                                         </span>
@@ -483,12 +491,15 @@
                 const preview = document.getElementById('photosPreview');
                 preview.innerHTML = '';
                 if (product.fotos && product.fotos.length > 0) {
-                    product.fotos.forEach((foto, index) => {
+                    // Usar fotos_paths si está disponible, sino usar fotos (URLs)
+                    const fotosPaths = product.fotos_paths || product.fotos;
+                    product.fotos.forEach((fotoUrl, index) => {
                         const div = document.createElement('div');
                         div.className = 'relative';
+                        const fotoPath = fotosPaths[index] || fotoUrl;
                         div.innerHTML = `
-                            <img src="${foto}" class="w-full h-24 object-cover rounded-lg">
-                            <input type="hidden" name="existing_fotos[]" value="${foto}">
+                            <img src="${fotoUrl}" class="w-full h-24 object-cover rounded-lg">
+                            <input type="hidden" name="existing_fotos[]" value="${fotoPath}">
                         `;
                         preview.appendChild(div);
                     });
@@ -525,6 +536,47 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error al eliminar el producto');
+            }
+        }
+        
+        async function toggleEstado(id, activo) {
+            try {
+                const response = await fetch(`/walee-productos/${id}/toggle-estado`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Actualizar el badge visualmente en todas las tarjetas del producto
+                    const cards = document.querySelectorAll(`.product-card[data-estado]`);
+                    cards.forEach(card => {
+                        if (card.closest('[data-product-id]')?.dataset.productId === id.toString() || 
+                            card.querySelector(`button[onclick*="${id}"]`)) {
+                            card.dataset.estado = data.estado;
+                            const badge = card.querySelector('.px-2.py-1');
+                            if (badge) {
+                                badge.className = data.estado === 'activo' 
+                                    ? 'px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
+                                    : 'px-2 py-1 text-xs rounded-full bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
+                            }
+                        }
+                    });
+                    showNotification('Estado actualizado correctamente', 'success');
+                } else {
+                    showNotification('Error: ' + data.message, 'error');
+                    // Revertir el toggle recargando
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cambiar el estado', 'error');
+                // Revertir el toggle recargando
+                location.reload();
             }
         }
     </script>

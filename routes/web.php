@@ -2816,10 +2816,20 @@ Route::get('/walee-productos', function () {
 
 Route::get('/walee-productos/{id}', function ($id) {
     $producto = \App\Models\Rproducto::findOrFail($id);
-    $producto->fotos = $producto->fotos ? array_map(function($foto) {
+    // Devolver las fotos como URLs completas para mostrar, pero también incluir las rutas originales
+    $fotosUrls = $producto->fotos ? array_map(function($foto) {
         return asset('storage/' . $foto);
     }, $producto->fotos) : [];
-    return response()->json($producto);
+    
+    return response()->json([
+        'id' => $producto->id,
+        'nombre' => $producto->nombre,
+        'descripcion' => $producto->descripcion,
+        'estado' => $producto->estado,
+        'tipo' => $producto->tipo,
+        'fotos' => $fotosUrls,
+        'fotos_paths' => $producto->fotos ?: [] // Rutas originales para guardar
+    ]);
 })->middleware(['auth']);
 
 Route::post('/walee-productos', function (\Illuminate\Http\Request $request) {
@@ -2889,7 +2899,21 @@ Route::post('/walee-productos/{id}', function (\Illuminate\Http\Request $request
             'existing_fotos' => 'nullable|array',
         ]);
 
-        $fotos = $request->input('existing_fotos', []);
+        // Procesar fotos existentes (pueden venir como URLs completas o rutas relativas)
+        $existingFotos = $request->input('existing_fotos', []);
+        $fotos = [];
+        
+        foreach ($existingFotos as $foto) {
+            // Si viene como URL completa, extraer la ruta relativa
+            if (strpos($foto, '/storage/') !== false) {
+                $foto = str_replace(asset('storage/'), '', $foto);
+                $foto = str_replace(url('storage/'), '', $foto);
+            }
+            // Si ya es una ruta relativa, usarla directamente
+            if (!empty($foto) && file_exists(storage_path('app/public/' . $foto))) {
+                $fotos[] = $foto;
+            }
+        }
         
         if ($request->hasFile('fotos')) {
             // Asegurar que el directorio existe
@@ -2957,6 +2981,27 @@ Route::delete('/walee-productos/{id}', function ($id) {
         ]);
     } catch (\Exception $e) {
         \Log::error('Error eliminando producto: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
+// Toggle estado de producto
+Route::post('/walee-productos/{id}/toggle-estado', function ($id) {
+    try {
+        $producto = \App\Models\Rproducto::findOrFail($id);
+        $producto->estado = $producto->estado === 'activo' ? 'inactivo' : 'activo';
+        $producto->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado correctamente',
+            'estado' => $producto->estado
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error cambiando estado del producto: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage()

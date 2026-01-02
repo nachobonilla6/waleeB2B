@@ -210,12 +210,12 @@
             <!-- Products Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6" id="productsGrid">
                 @forelse($productos as $producto)
-                    <div class="product-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up hover:shadow-lg dark:hover:shadow-none transition-all"
+                    <div class="product-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up hover:shadow-lg dark:hover:shadow-none transition-all"
                          data-estado="{{ $producto->estado }}"
                          data-tipo="{{ $producto->tipo }}"
                          data-product-id="{{ $producto->id }}">
                         <!-- Images Carousel -->
-                        <div class="relative h-48 bg-slate-100 dark:bg-slate-700 overflow-hidden">
+                        <div class="relative h-40 sm:h-48 bg-slate-100 dark:bg-slate-700 overflow-hidden">
                             @if($producto->fotos && count($producto->fotos) > 0)
                                 <div class="carousel-container relative h-full">
                                     @foreach($producto->fotos as $index => $foto)
@@ -252,23 +252,23 @@
                         </div>
                         
                         <!-- Content -->
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-3">
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">{{ $producto->nombre }}</h3>
-                                    <div class="flex items-center gap-2 flex-wrap">
+                        <div class="p-4 sm:p-5 md:p-6">
+                            <div class="flex items-start justify-between mb-2 sm:mb-3">
+                                <div class="flex-1 min-w-0 pr-2">
+                                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 truncate">{{ $producto->nombre }}</h3>
+                                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                                         <label class="relative inline-flex items-center cursor-pointer" id="toggle-{{ $producto->id }}">
                                             <input type="checkbox" 
                                                    id="toggle-checkbox-{{ $producto->id }}"
                                                    class="sr-only peer" 
                                                    {{ $producto->estado === 'activo' ? 'checked' : '' }}
                                                    onchange="toggleEstado({{ $producto->id }}, this.checked, this)">
-                                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-walee-300 dark:peer-focus:ring-walee-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-green-500"></div>
-                                            <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300" id="estado-text-{{ $producto->id }}">
+                                            <div class="w-9 h-5 sm:w-11 sm:h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 sm:peer-focus:ring-4 peer-focus:ring-walee-300 dark:peer-focus:ring-walee-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-green-500"></div>
+                                            <span class="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300" id="estado-text-{{ $producto->id }}">
                                                 {{ $producto->estado === 'activo' ? 'Activo' : 'Inactivo' }}
                                             </span>
                                         </label>
-                                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400">
+                                        <span class="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400">
                                             {{ ucfirst($producto->tipo) }}
                                         </span>
                                     </div>
@@ -276,14 +276,14 @@
                             </div>
                             
                             @if($producto->descripcion)
-                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">{{ $producto->descripcion }}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">{{ $producto->descripcion }}</p>
                             @endif
                             
                             <div class="flex items-center gap-2">
-                                <button onclick="editProduct({{ $producto->id }})" class="flex-1 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all text-sm">
+                                <button onclick="editProduct({{ $producto->id }})" class="flex-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all text-xs sm:text-sm">
                                     Editar
                                 </button>
-                                <button onclick="deleteProduct({{ $producto->id }})" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all text-sm">
+                                <button onclick="deleteProduct({{ $producto->id }})" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all text-xs sm:text-sm">
                                     Eliminar
                                 </button>
                             </div>

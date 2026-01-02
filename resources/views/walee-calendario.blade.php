@@ -570,12 +570,23 @@
                         <!-- Vista Semanal -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                             @php
+                                // Calcular semana anterior
                                 $semanaAnterior = $inicioSemana->copy()->subWeek();
+                                $anoAnterior = $semanaAnterior->format('o'); // Año ISO
+                                $numSemanaAnterior = $semanaAnterior->format('W'); // Semana ISO
+                                $semanaAnteriorFormato = $anoAnterior . '-' . $numSemanaAnterior;
+                                
+                                // Calcular semana siguiente
                                 $semanaSiguiente = $inicioSemana->copy()->addWeek();
+                                $anoSiguiente = $semanaSiguiente->format('o'); // Año ISO
+                                $numSemanaSiguiente = $semanaSiguiente->format('W'); // Semana ISO
+                                $semanaSiguienteFormato = $anoSiguiente . '-' . $numSemanaSiguiente;
+                                
+                                // Calcular semana actual
                                 $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                $semanaAnteriorFormato = $semanaAnterior->format('Y') . '-' . $semanaAnterior->format('W');
-                                $semanaSiguienteFormato = $semanaSiguiente->format('Y') . '-' . $semanaSiguiente->format('W');
-                                $semanaActualFormato = $semanaActual->format('Y') . '-' . $semanaActual->format('W');
+                                $anoActual = $semanaActual->format('o'); // Año ISO
+                                $numSemanaActual = $semanaActual->format('W'); // Semana ISO
+                                $semanaActualFormato = $anoActual . '-' . $numSemanaActual;
                             @endphp
                             
                             <!-- Navegación Semanal (solo móvil) -->

@@ -986,30 +986,56 @@
                 }
                 
                 if (archivos.length > 0) {
+                    const imagenes = archivos.filter(archivo => /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo));
+                    const otrosArchivos = archivos.filter(archivo => !/\.(jpg|jpeg|png|gif|webp)$/i.test(archivo));
+                    
                     archivosHtml = `
                         <div class="mt-3 pt-3 border-t ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}">
                             <p class="text-xs font-medium ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mb-2">Archivos adjuntos:</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${archivos.map((archivo, idx) => {
-                                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(archivo);
-                                    // Construir URL correcta
-                                    let archivoUrl = '';
-                                    if (archivo.startsWith('http://') || archivo.startsWith('https://')) {
-                                        archivoUrl = archivo;
-                                    } else if (archivo.startsWith('storage/')) {
-                                        archivoUrl = '{{ url('') }}/' + archivo;
-                                    } else if (archivo.startsWith('tickets/')) {
-                                        archivoUrl = '{{ url('') }}/storage/' + archivo;
-                                    } else {
-                                        archivoUrl = '{{ url('') }}/storage/tickets/' + archivo;
-                                    }
-                                    return `
-                                        <a href="${archivoUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline">
-                                            ${isImage ? '🖼️' : '📄'} Archivo ${idx + 1}
-                                        </a>
-                                    `;
-                                }).join('')}
-                            </div>
+                            ${imagenes.length > 0 ? `
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                                    ${imagenes.map((archivo) => {
+                                        // Construir URL correcta
+                                        let archivoUrl = '';
+                                        if (archivo.startsWith('http://') || archivo.startsWith('https://')) {
+                                            archivoUrl = archivo;
+                                        } else if (archivo.startsWith('storage/')) {
+                                            archivoUrl = '{{ url('') }}/' + archivo;
+                                        } else if (archivo.startsWith('tickets/')) {
+                                            archivoUrl = '{{ url('') }}/storage/' + archivo;
+                                        } else {
+                                            archivoUrl = '{{ url('') }}/storage/tickets/' + archivo;
+                                        }
+                                        return `
+                                            <a href="${archivoUrl}" target="_blank" class="block rounded-lg overflow-hidden border ${isDarkMode ? 'border-slate-700' : 'border-slate-200'} hover:border-walee-500 transition-all group">
+                                                <img src="${archivoUrl}" alt="Imagen adjunta" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 24 24\\'%3E%3Cpath fill=\\'%23ccc\\' d=\\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\\'/%3E%3C/svg%3E';" />
+                                            </a>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                            ${otrosArchivos.length > 0 ? `
+                                <div class="flex flex-wrap gap-2">
+                                    ${otrosArchivos.map((archivo, idx) => {
+                                        // Construir URL correcta
+                                        let archivoUrl = '';
+                                        if (archivo.startsWith('http://') || archivo.startsWith('https://')) {
+                                            archivoUrl = archivo;
+                                        } else if (archivo.startsWith('storage/')) {
+                                            archivoUrl = '{{ url('') }}/' + archivo;
+                                        } else if (archivo.startsWith('tickets/')) {
+                                            archivoUrl = '{{ url('') }}/storage/' + archivo;
+                                        } else {
+                                            archivoUrl = '{{ url('') }}/storage/tickets/' + archivo;
+                                        }
+                                        return `
+                                            <a href="${archivoUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-walee-400' : 'text-walee-600'} hover:underline flex items-center gap-1">
+                                                📄 ${archivo.split('/').pop() || 'Archivo ' + (idx + 1)}
+                                            </a>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 }

@@ -238,13 +238,16 @@
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Recibidos -->
-                <div class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                <a href="{{ route('walee.emails.recibidos') }}" class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none hover:border-emerald-400 dark:hover:border-emerald-500/40 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
                             </svg>
                         </div>
+                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </div>
                     <div class="mb-2">
                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Emails Recibidos</p>
@@ -253,16 +256,19 @@
                     <div class="flex items-center gap-2 text-sm">
                         <span class="text-emerald-600 dark:text-emerald-400 font-medium">{{ $noLeidos }} no leídos</span>
                     </div>
-                </div>
+                </a>
                 
                 <!-- Total Enviados -->
-                <div class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                <a href="{{ route('walee.emails.enviados') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none hover:border-blue-400 dark:hover:border-blue-500/40 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
                             </svg>
                         </div>
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </div>
                     <div class="mb-2">
                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Emails Enviados</p>
@@ -271,16 +277,19 @@
                     <div class="flex items-center gap-2 text-sm">
                         <span class="text-blue-600 dark:text-blue-400 font-medium">{{ $enviadosEsteMes }} este mes</span>
                     </div>
-                </div>
+                </a>
                 
                 <!-- Recibidos Hoy -->
-                <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                <a href="{{ route('walee.emails.recibidos') }}" class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none hover:border-violet-400 dark:hover:border-violet-500/40 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
+                        <svg class="w-5 h-5 text-violet-600 dark:text-violet-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </div>
                     <div class="mb-2">
                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Recibidos Hoy</p>
@@ -289,16 +298,19 @@
                     <div class="flex items-center gap-2 text-sm">
                         <span class="text-violet-600 dark:text-violet-400 font-medium">{{ $recibidosEsteMes }} este mes</span>
                     </div>
-                </div>
+                </a>
                 
                 <!-- Enviados Hoy -->
-                <div class="stat-card bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-500/10 dark:to-walee-600/5 border border-walee-200 dark:border-walee-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none">
+                <a href="{{ route('walee.emails.enviados') }}" class="stat-card bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-500/10 dark:to-walee-600/5 border border-walee-200 dark:border-walee-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none hover:border-walee-400 dark:hover:border-walee-500/40 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-walee-500/20 dark:bg-walee-500/10 flex items-center justify-center">
+                        <div class="w-12 h-12 rounded-xl bg-walee-500/20 dark:bg-walee-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
+                        <svg class="w-5 h-5 text-walee-600 dark:text-walee-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </div>
                     <div class="mb-2">
                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-1">Enviados Hoy</p>
@@ -307,7 +319,7 @@
                     <div class="flex items-center gap-2 text-sm">
                         <span class="text-walee-600 dark:text-walee-400 font-medium">Total: {{ $totalEnviados }}</span>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Charts and Recent Activity -->
@@ -412,8 +424,8 @@
                     </div>
                     <div class="space-y-3">
                         @forelse($emailsRecientesRecibidos as $email)
-                            <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 transition-all">
-                                <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                            <a href="{{ route('walee.emails.recibidos') }}" class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                                     <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H6.911a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661z"/>
                                     </svg>
@@ -423,10 +435,15 @@
                                     <p class="text-sm text-slate-600 dark:text-slate-400 truncate">{{ $email->from_email }}</p>
                                     <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">{{ $email->received_at ? $email->received_at->diffForHumans() : 'N/A' }}</p>
                                 </div>
-                                @if(!$email->is_read)
-                                    <div class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0 mt-2"></div>
-                                @endif
-                            </div>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    @if(!$email->is_read)
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                    @endif
+                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+                            </a>
                         @empty
                             <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay emails recibidos recientes</p>
                         @endforelse
@@ -441,8 +458,8 @@
                     </div>
                     <div class="space-y-3">
                         @forelse($emailsRecientesEnviados as $cliente)
-                            <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all">
-                                <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                                     <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
@@ -452,7 +469,10 @@
                                     <p class="text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
                                     <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">{{ $cliente->created_at->diffForHumans() }}</p>
                                 </div>
-                            </div>
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
                         @empty
                             <p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay clientes agregados recientes</p>
                         @endforelse

@@ -714,29 +714,8 @@
                         <!-- Vista Semanal -->
                         <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.2s;">
                             @php
-                                // Obtener año y semana ISO de la semana actual mostrada
-                                $anoISO = (int)$inicioSemana->format('o');
-                                $numSemanaISO = (int)$inicioSemana->format('W');
-                                
-                                // Calcular semana anterior - usar subWeek directamente (método que funciona)
-                                $semanaAnterior = $inicioSemana->copy()->subWeek();
-                                $anoAnteriorISO = (int)$semanaAnterior->format('o');
-                                $numSemanaAnteriorISO = (int)$semanaAnterior->format('W');
-                                // Asegurar formato con padding (ej: "01" en lugar de "1")
-                                $semanaAnteriorFormato = $anoAnteriorISO . '-' . str_pad($numSemanaAnteriorISO, 2, '0', STR_PAD_LEFT);
-                                
-                                // Calcular semana siguiente - usar addWeek directamente (igual que funciona para anterior)
-                                $semanaSiguiente = $inicioSemana->copy()->addWeek();
-                                $anoSiguienteISO = (int)$semanaSiguiente->format('o');
-                                $numSemanaSiguienteISO = (int)$semanaSiguiente->format('W');
-                                // Asegurar formato con padding (ej: "01" en lugar de "1")
-                                $semanaSiguienteFormato = $anoSiguienteISO . '-' . str_pad($numSemanaSiguienteISO, 2, '0', STR_PAD_LEFT);
-                                
-                                // Calcular semana actual
-                                $semanaActual = now()->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                                $anoActualISO = (int)$semanaActual->format('o');
-                                $numSemanaActualISO = (int)$semanaActual->format('W');
-                                $semanaActualFormato = $anoActualISO . '-' . $numSemanaActualISO;
+                                // Las semanas ya están calculadas arriba usando el mismo método que walee-planeador-publicidad
+                                // $semanaAnteriorFormato, $semanaSiguienteFormato y $semanaActualFormato ya están definidos
                             @endphp
                             
                             <!-- Navegación Semanal (solo móvil) -->

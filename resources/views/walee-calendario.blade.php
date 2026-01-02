@@ -1636,6 +1636,26 @@
         // Detectar modo oscuro
         const isDarkMode = document.documentElement.classList.contains('dark');
         
+        // Detectar si es móvil y forzar vista semanal
+        function esMobile() {
+            return window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+        
+        // Si es móvil y no está en vista semanal, redirigir
+        if (esMobile() && !window.location.search.includes('vista=semanal')) {
+            const url = new URL(window.location);
+            url.searchParams.set('vista', 'semanal');
+            if (!url.searchParams.has('semana')) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const startOfYear = new Date(year, 0, 1);
+                const days = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
+                const weekNumber = Math.ceil((days + startOfYear.getDay() + 1) / 7);
+                url.searchParams.set('semana', year + '-' + weekNumber);
+            }
+            window.location.href = url.toString();
+        }
+        
         function navegarAFecha() {
             const dia = document.getElementById('selectDia').value;
             const mes = document.getElementById('selectMes').value;

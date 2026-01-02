@@ -593,8 +593,8 @@
             </div>
             
             <!-- Footer -->
-            <footer class="text-center py-8 mt-6">
-                <p class="text-sm text-slate-600 dark:text-slate-500">
+            <footer class="text-center py-3 sm:py-6 md:py-8 mt-3 sm:mt-6">
+                <p class="text-[10px] sm:text-sm text-slate-600 dark:text-slate-500">
                     <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>
             </footer>

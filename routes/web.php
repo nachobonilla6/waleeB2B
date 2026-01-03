@@ -1932,6 +1932,11 @@ Route::get('/walee-emails/dashboard', function () {
     return view('walee-emails-dashboard');
 })->middleware(['auth'])->name('walee.emails.dashboard');
 
+// Ruta para análisis de emails vs clientes
+Route::get('/walee-analisis-emails-clientes', function () {
+    return view('walee-analisis-emails-clientes');
+})->middleware(['auth'])->name('walee.analisis.emails.clientes');
+
 Route::get('/walee-emails/crear', function () {
     return view('walee-emails-crear');
 })->middleware(['auth'])->name('walee.emails.crear');

@@ -164,18 +164,12 @@
             $clientesPorDia[] = Client::whereDate('created_at', $fecha->format('Y-m-d'))->count();
         }
         
-        // Clientes en proceso agregados hoy (pending y received)
-        $clientesEnProcesoHoy = Client::whereIn('estado', ['pending', 'received'])
-            ->whereDate('created_at', today())
-            ->count();
-        $clientesPendingHoy = Client::where('estado', 'pending')
-            ->whereDate('created_at', today())
-            ->count();
-        $clientesReceivedHoy = Client::where('estado', 'received')
-            ->whereDate('created_at', today())
-            ->count();
-        $totalClientesHoy = Client::whereDate('created_at', today())->count();
-        $porcentajeClientesHoy = $totalClientesHoy > 0 ? (($clientesEnProcesoHoy / $totalClientesHoy) * 100) : 0;
+        // Clientes en proceso (pending y received) - Todos los tiempos
+        $clientesEnProceso = Client::whereIn('estado', ['pending', 'received'])->count();
+        $clientesPending = Client::where('estado', 'pending')->count();
+        $clientesReceived = Client::where('estado', 'received')->count();
+        $totalClientes = Client::count();
+        $porcentajeClientes = $totalClientes > 0 ? (($clientesEnProceso / $totalClientes) * 100) : 0;
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -303,25 +297,25 @@
                     </div>
                 </div>
                 
-                <!-- Clientes en Proceso Hoy Chart -->
+                <!-- Clientes en Proceso Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.6s">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes en Proceso - Hoy</h2>
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes en Proceso</h2>
                     <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
                         <canvas id="clientesProcesoChart"></canvas>
                     </div>
                     <div class="mt-3 sm:mt-4 text-center">
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                            <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProcesoHoy }}</span> clientes en proceso hoy
+                            <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProceso }}</span> clientes en proceso
                         </p>
                         <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ number_format($porcentajeClientesHoy, 1) }}%</span> del total de clientes agregados hoy
+                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ number_format($porcentajeClientes, 1) }}%</span> del total de clientes
                         </p>
                         <div class="flex items-center justify-center gap-3 sm:gap-4 mt-2">
                             <span class="text-xs text-slate-600 dark:text-slate-400">
-                                <span class="font-semibold text-emerald-500">{{ $clientesPendingHoy }}</span> Enviados
+                                <span class="font-semibold text-emerald-500">{{ $clientesPending }}</span> Enviados
                             </span>
                             <span class="text-xs text-slate-600 dark:text-slate-400">
-                                <span class="font-semibold text-blue-500">{{ $clientesReceivedHoy }}</span> Emails pendientes
+                                <span class="font-semibold text-blue-500">{{ $clientesReceived }}</span> Emails pendientes
                             </span>
                         </div>
                     </div>
@@ -481,21 +475,21 @@
             });
         }
         
-        // Chart configuration - Clientes en Proceso Hoy
+        // Chart configuration - Clientes en Proceso
         const ctxProceso = document.getElementById('clientesProcesoChart');
         if (ctxProceso) {
-            const clientesPendingHoy = {{ $clientesPendingHoy }};
-            const clientesReceivedHoy = {{ $clientesReceivedHoy }};
-            const clientesEnProcesoHoy = {{ $clientesEnProcesoHoy }};
-            const totalClientesHoy = {{ $totalClientesHoy }};
-            const porcentaje = {{ $porcentajeClientesHoy }};
+            const clientesPending = {{ $clientesPending }};
+            const clientesReceived = {{ $clientesReceived }};
+            const clientesEnProceso = {{ $clientesEnProceso }};
+            const totalClientes = {{ $totalClientes }};
+            const porcentaje = {{ $porcentajeClientes }};
             
             new Chart(ctxProceso, {
                 type: 'doughnut',
                 data: {
                     labels: ['Enviados', 'Emails pendientes'],
                     datasets: [{
-                        data: [clientesPendingHoy, clientesReceivedHoy],
+                        data: [clientesPending, clientesReceived],
                         backgroundColor: [
                             'rgba(16, 185, 129, 0.8)',
                             'rgba(59, 130, 246, 0.8)'
@@ -524,7 +518,7 @@
                                 label: function(context) {
                                     const label = context.label || '';
                                     const value = context.parsed || 0;
-                                    const total = clientesEnProcesoHoy > 0 ? clientesEnProcesoHoy : 1;
+                                    const total = clientesEnProceso > 0 ? clientesEnProceso : 1;
                                     const percentage = ((value / total) * 100).toFixed(1);
                                     return label + ': ' + value + ' (' + percentage + '%)';
                                 }

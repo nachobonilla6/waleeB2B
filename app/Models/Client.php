@@ -15,6 +15,7 @@ class Client extends Model
         'website',
         'address',
         'telefono_1',
+        'horario',
         'telefono_2',
         'feedback',
         'propuesta',

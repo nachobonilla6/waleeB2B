@@ -258,7 +258,15 @@
                                 </p>
                             @else
                                 <p class="text-xs sm:text-base text-slate-800 dark:text-white">Sin emails</p>
-                                <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Aún no ha recibido propuestas</p>
+                                <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    @if($cliente->estado == 'pending')
+                                        Se envió email
+                                    @elseif($cliente->estado == 'received')
+                                        Received
+                                    @else
+                                        Aún no ha recibido propuestas
+                                    @endif
+                                </p>
                             @endif
                         </div>
                     </div>

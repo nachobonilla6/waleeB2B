@@ -259,9 +259,9 @@
                             @else
                                 <p class="text-xs sm:text-base text-slate-800 dark:text-white">Sin emails</p>
                                 <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                    @if($cliente->estado == 'pending')
+                                    @if($cliente->estado == 'pending' && $cliente->created_at->isToday())
                                         Enviados
-                                    @elseif($cliente->estado == 'received')
+                                    @elseif($cliente->estado == 'received' && $cliente->created_at->isToday())
                                         Emails pendientes
                                     @else
                                         Aún no ha recibido propuestas

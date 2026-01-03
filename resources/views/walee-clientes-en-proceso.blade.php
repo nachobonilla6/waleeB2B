@@ -226,11 +226,11 @@
                                             </p>
                                         @endif
                                         <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
-                                            @if($cliente->estado == 'pending')
+                                            @if($cliente->estado == 'pending' && $cliente->created_at->isToday())
                                                 <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
                                                     Enviados
                                                 </span>
-                                            @elseif($cliente->estado == 'received')
+                                            @elseif($cliente->estado == 'received' && $cliente->created_at->isToday())
                                                 <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">
                                                     Emails pendientes
                                                 </span>

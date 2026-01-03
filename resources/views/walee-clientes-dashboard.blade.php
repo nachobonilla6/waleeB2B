@@ -318,10 +318,10 @@
                         </p>
                         <div class="flex items-center justify-center gap-3 sm:gap-4 mt-2">
                             <span class="text-xs text-slate-600 dark:text-slate-400">
-                                <span class="font-semibold text-emerald-500">{{ $clientesPendingHoy }}</span> Pending
+                                <span class="font-semibold text-emerald-500">{{ $clientesPendingHoy }}</span> Enviados
                             </span>
                             <span class="text-xs text-slate-600 dark:text-slate-400">
-                                <span class="font-semibold text-blue-500">{{ $clientesReceivedHoy }}</span> Received
+                                <span class="font-semibold text-blue-500">{{ $clientesReceivedHoy }}</span> Emails pendientes
                             </span>
                         </div>
                     </div>
@@ -493,7 +493,7 @@
             new Chart(ctxProceso, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pending', 'Received'],
+                    labels: ['Enviados', 'Emails pendientes'],
                     datasets: [{
                         data: [clientesPendingHoy, clientesReceivedHoy],
                         backgroundColor: [

@@ -260,9 +260,9 @@
                                 <p class="text-xs sm:text-base text-slate-800 dark:text-white">Sin emails</p>
                                 <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                     @if($cliente->estado == 'pending')
-                                        Se envió email
+                                        Enviados
                                     @elseif($cliente->estado == 'received')
-                                        Received
+                                        Emails pendientes
                                     @else
                                         Aún no ha recibido propuestas
                                     @endif

@@ -228,11 +228,11 @@
                                         <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
                                             @if($cliente->estado == 'pending')
                                                 <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
-                                                    Pending
+                                                    Enviados
                                                 </span>
                                             @elseif($cliente->estado == 'received')
                                                 <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">
-                                                    Received
+                                                    Emails pendientes
                                                 </span>
                                             @else
                                                 <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30 whitespace-nowrap">

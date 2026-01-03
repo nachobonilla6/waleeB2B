@@ -579,7 +579,7 @@
             });
         }
         
-        // Chart configuration - Clientes en Proceso por Día (Barras)
+        // Chart configuration - Clientes en Proceso por Día (Línea)
         const ctxBarras = document.getElementById('clientesEnProcesoBarrasChart');
         if (ctxBarras) {
             const diasLabels = @json($diasLabels);
@@ -588,30 +588,33 @@
             const clientesReceivedPorDia = @json($clientesReceivedPorDia);
             
             new Chart(ctxBarras, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: diasLabels,
                     datasets: [
                         {
                             label: 'Total en Proceso',
                             data: clientesEnProcesoPorDia,
-                            backgroundColor: 'rgba(139, 92, 246, 0.8)',
                             borderColor: 'rgb(139, 92, 246)',
-                            borderWidth: 2
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
                         },
                         {
                             label: 'Enviados (Pending)',
                             data: clientesPendingPorDia,
-                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
                             borderColor: 'rgb(16, 185, 129)',
-                            borderWidth: 2
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
                         },
                         {
                             label: 'Emails Pendientes (Received)',
                             data: clientesReceivedPorDia,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
                             borderColor: 'rgb(59, 130, 246)',
-                            borderWidth: 2
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
                         }
                     ]
                 },
@@ -623,15 +626,8 @@
                             position: 'top',
                             labels: {
                                 color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
-                                padding: 15,
-                                usePointStyle: true
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.y;
-                                }
+                                usePointStyle: true,
+                                padding: 15
                             }
                         }
                     },

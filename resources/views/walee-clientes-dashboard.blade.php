@@ -164,13 +164,18 @@
             $clientesPorDia[] = Client::whereDate('created_at', $fecha->format('Y-m-d'))->count();
         }
         
-        // Clientes en proceso agregados hoy
-        $clientesEnProcesoHoy = Client::where('estado', 'pending')
+        // Clientes en proceso agregados hoy (pending y received)
+        $clientesEnProcesoHoy = Client::whereIn('estado', ['pending', 'received'])
             ->whereDate('created_at', today())
             ->count();
-        $metaClientes = 150;
-        $porcentajeClientesHoy = $metaClientes > 0 ? min(100, ($clientesEnProcesoHoy / $metaClientes) * 100) : 0;
-        $clientesFaltantes = max(0, $metaClientes - $clientesEnProcesoHoy);
+        $clientesPendingHoy = Client::where('estado', 'pending')
+            ->whereDate('created_at', today())
+            ->count();
+        $clientesReceivedHoy = Client::where('estado', 'received')
+            ->whereDate('created_at', today())
+            ->count();
+        $totalClientesHoy = Client::whereDate('created_at', today())->count();
+        $porcentajeClientesHoy = $totalClientesHoy > 0 ? (($clientesEnProcesoHoy / $totalClientesHoy) * 100) : 0;
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -306,11 +311,19 @@
                     </div>
                     <div class="mt-3 sm:mt-4 text-center">
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                            <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProcesoHoy }}</span> de <span class="font-semibold">{{ $metaClientes }}</span> clientes agregados hoy
+                            <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProcesoHoy }}</span> clientes en proceso hoy
                         </p>
                         <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                            Faltan <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $clientesFaltantes }}</span> para alcanzar la meta
+                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ number_format($porcentajeClientesHoy, 1) }}%</span> del total de clientes agregados hoy
                         </p>
+                        <div class="flex items-center justify-center gap-3 sm:gap-4 mt-2">
+                            <span class="text-xs text-slate-600 dark:text-slate-400">
+                                <span class="font-semibold text-emerald-500">{{ $clientesPendingHoy }}</span> Pending
+                            </span>
+                            <span class="text-xs text-slate-600 dark:text-slate-400">
+                                <span class="font-semibold text-blue-500">{{ $clientesReceivedHoy }}</span> Received
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -471,24 +484,25 @@
         // Chart configuration - Clientes en Proceso Hoy
         const ctxProceso = document.getElementById('clientesProcesoChart');
         if (ctxProceso) {
-            const clientesHoy = {{ $clientesEnProcesoHoy }};
-            const metaClientes = {{ $metaClientes }};
+            const clientesPendingHoy = {{ $clientesPendingHoy }};
+            const clientesReceivedHoy = {{ $clientesReceivedHoy }};
+            const clientesEnProcesoHoy = {{ $clientesEnProcesoHoy }};
+            const totalClientesHoy = {{ $totalClientesHoy }};
             const porcentaje = {{ $porcentajeClientesHoy }};
-            const faltantes = {{ $clientesFaltantes }};
             
             new Chart(ctxProceso, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Agregados Hoy', 'Faltantes'],
+                    labels: ['Pending', 'Received'],
                     datasets: [{
-                        data: [clientesHoy, faltantes],
+                        data: [clientesPendingHoy, clientesReceivedHoy],
                         backgroundColor: [
-                            'rgba(139, 92, 246, 0.8)',
-                            'rgba(148, 163, 184, 0.3)'
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(59, 130, 246, 0.8)'
                         ],
                         borderColor: [
-                            'rgb(139, 92, 246)',
-                            'rgb(148, 163, 184)'
+                            'rgb(16, 185, 129)',
+                            'rgb(59, 130, 246)'
                         ],
                         borderWidth: 2
                     }]
@@ -510,9 +524,20 @@
                                 label: function(context) {
                                     const label = context.label || '';
                                     const value = context.parsed || 0;
-                                    const percentage = ((value / metaClientes) * 100).toFixed(1);
+                                    const total = clientesEnProcesoHoy > 0 ? clientesEnProcesoHoy : 1;
+                                    const percentage = ((value / total) * 100).toFixed(1);
                                     return label + ': ' + value + ' (' + percentage + '%)';
                                 }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: porcentaje.toFixed(1) + '% del total',
+                            position: 'top',
+                            color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
                             }
                         }
                     }

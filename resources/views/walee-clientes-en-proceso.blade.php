@@ -84,7 +84,7 @@
         use App\Models\Client;
         use App\Models\PropuestaPersonalizada;
         
-        $clientes = Client::where('estado', 'pending')
+        $clientes = Client::whereIn('estado', ['pending', 'received'])
             ->orderBy('updated_at', 'desc')
             ->paginate(5);
         
@@ -106,7 +106,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-2.5 py-2.5 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Clientes Pendientes'; @endphp
+            @php $pageTitle = 'Clientes en Proceso'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Search Bar and Delete Actions -->
@@ -226,9 +226,19 @@
                                             </p>
                                         @endif
                                         <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
-                                            <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
-                                                Pendiente
-                                            </span>
+                                            @if($cliente->estado == 'pending')
+                                                <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+                                                    Pending
+                                                </span>
+                                            @elseif($cliente->estado == 'received')
+                                                <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">
+                                                    Received
+                                                </span>
+                                            @else
+                                                <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30 whitespace-nowrap">
+                                                    {{ ucfirst($cliente->estado ?? 'Sin estado') }}
+                                                </span>
+                                            @endif
                                             @if($propuestasCount > 0)
                                                 <span class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500">
                                                     @if($propuestasCount >= 3)

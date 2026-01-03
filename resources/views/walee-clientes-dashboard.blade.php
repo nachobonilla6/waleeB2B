@@ -170,6 +170,33 @@
         $clientesReceived = Client::where('estado', 'received')->count();
         $totalClientes = Client::count();
         $porcentajeClientes = $totalClientes > 0 ? (($clientesEnProceso / $totalClientes) * 100) : 0;
+        
+        // Datos para gráfico de barras: Clientes en proceso por día (últimos 7 días)
+        $clientesEnProcesoPorDia = [];
+        $clientesPendingPorDia = [];
+        $clientesReceivedPorDia = [];
+        $diasLabels = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $fecha = now()->subDays($i);
+            $fechaStr = $fecha->format('Y-m-d');
+            $diasLabels[] = $fecha->format('d/m');
+            
+            // Clientes en proceso creados ese día
+            $clientesEnProcesoPorDia[] = Client::whereIn('estado', ['pending', 'received'])
+                ->whereDate('created_at', $fechaStr)
+                ->count();
+            
+            // Clientes pending creados ese día
+            $clientesPendingPorDia[] = Client::where('estado', 'pending')
+                ->whereDate('created_at', $fechaStr)
+                ->count();
+            
+            // Clientes received creados ese día
+            $clientesReceivedPorDia[] = Client::where('estado', 'received')
+                ->whereDate('created_at', $fechaStr)
+                ->count();
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -319,6 +346,19 @@
                             </span>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico de Barras: Clientes en Proceso por Día -->
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up mb-4 sm:mb-6 md:mb-8" style="animation-delay: 0.65s">
+                <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes en Proceso - Evolución Diaria (Últimos 7 Días)</h2>
+                <div class="relative w-full" style="height: 300px; sm:height: 350px; md:height: 400px;">
+                    <canvas id="clientesEnProcesoBarrasChart"></canvas>
+                </div>
+                <div class="mt-3 sm:mt-4 text-center">
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                        Total: <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProceso }}</span> clientes en proceso
+                    </p>
                 </div>
             </div>
             
@@ -532,6 +572,86 @@
                             font: {
                                 size: 14,
                                 weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Chart configuration - Clientes en Proceso por Día (Barras)
+        const ctxBarras = document.getElementById('clientesEnProcesoBarrasChart');
+        if (ctxBarras) {
+            const diasLabels = @json($diasLabels);
+            const clientesEnProcesoPorDia = @json($clientesEnProcesoPorDia);
+            const clientesPendingPorDia = @json($clientesPendingPorDia);
+            const clientesReceivedPorDia = @json($clientesReceivedPorDia);
+            
+            new Chart(ctxBarras, {
+                type: 'bar',
+                data: {
+                    labels: diasLabels,
+                    datasets: [
+                        {
+                            label: 'Total en Proceso',
+                            data: clientesEnProcesoPorDia,
+                            backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                            borderColor: 'rgb(139, 92, 246)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Enviados (Pending)',
+                            data: clientesPendingPorDia,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Emails Pendientes (Received)',
+                            data: clientesReceivedPorDia,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b'
+                            },
+                            grid: {
+                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
                             }
                         }
                     }

@@ -585,7 +585,6 @@
             const diasLabels = @json($diasLabels);
             const clientesEnProcesoPorDia = @json($clientesEnProcesoPorDia);
             const clientesPendingPorDia = @json($clientesPendingPorDia);
-            const clientesReceivedPorDia = @json($clientesReceivedPorDia);
             
             new Chart(ctxBarras, {
                 type: 'line',
@@ -593,7 +592,7 @@
                     labels: diasLabels,
                     datasets: [
                         {
-                            label: 'Total en Proceso',
+                            label: 'Total (Pending + Received)',
                             data: clientesEnProcesoPorDia,
                             borderColor: 'rgb(139, 92, 246)',
                             backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -605,14 +604,6 @@
                             data: clientesPendingPorDia,
                             borderColor: 'rgb(16, 185, 129)',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Emails Pendientes (Received)',
-                            data: clientesReceivedPorDia,
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
                             tension: 0.4,
                             fill: true
                         }

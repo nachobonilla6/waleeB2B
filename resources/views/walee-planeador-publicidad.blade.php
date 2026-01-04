@@ -1151,7 +1151,7 @@
                 if (data.evento) {
                     const evento = data.evento;
                     
-                    // Formatear fecha
+                    // Formatear fecha completa
                     let fechaFormateada = 'No especificada';
                     if (evento.fecha_inicio) {
                         const fecha = new Date(evento.fecha_inicio);
@@ -1160,6 +1160,16 @@
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                    
+                    // Formatear solo hora para mostrar arriba
+                    let horaFormateada = '';
+                    if (evento.fecha_inicio) {
+                        const fecha = new Date(evento.fecha_inicio);
+                        horaFormateada = fecha.toLocaleTimeString('es-ES', {
                             hour: '2-digit',
                             minute: '2-digit'
                         });
@@ -1261,46 +1271,40 @@
                         <div class="space-y-2.5 text-left">
                             ${imagenHTML ? imagenHTML : ''}
                             
-                            <!-- Prompt, Texto a la izquierda, Fecha y Estado a la derecha -->
-                            <div class="flex flex-col md:flex-row gap-2 items-start">
-                                <!-- Izquierda: Prompt y Texto -->
-                                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2">
-                                    <!-- Prompt personalizado (solo lectura) -->
-                                    ${evento.prompt_personalizado ? `
-                                    <div>
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Prompt Personalizado</label>
-                                        <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
-                                            ${evento.prompt_personalizado}
-                                        </div>
+                            <!-- Estado y Hora arriba -->
+                            <div class="flex items-center gap-2">
+                                ${estadoBadge}
+                                ${horaFormateada ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${horaFormateada}</span>` : ''}
+                            </div>
+                            
+                            <!-- Prompt y Texto en la misma línea -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <!-- Prompt personalizado (solo lectura) -->
+                                ${evento.prompt_personalizado ? `
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Prompt Personalizado</label>
+                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                        ${evento.prompt_personalizado}
                                     </div>
-                                    ` : ''}
-                                    
-                                    <!-- Texto (solo lectura) -->
-                                    ${evento.texto ? `
-                                    <div>
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
-                                        <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-pre-wrap">
-                                            ${evento.texto}
-                                        </div>
-                                    </div>
-                                    ` : ''}
                                 </div>
+                                ` : ''}
                                 
-                                <!-- Derecha: Fecha y Estado -->
-                                <div class="flex flex-col md:flex-row gap-2 items-end">
-                                    <!-- Fecha y Hora (solo lectura) -->
-                                    <div class="text-right">
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                        <div class="px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-nowrap">
-                                            ${fechaFormateada}
-                                        </div>
+                                <!-- Texto (solo lectura) -->
+                                ${evento.texto ? `
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
+                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-pre-wrap">
+                                        ${evento.texto}
                                     </div>
-                                    
-                                    <!-- Estado (badge) -->
-                                    <div class="text-right">
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
-                                        ${estadoBadge}
-                                    </div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <!-- Fecha completa (solo lectura) -->
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                                <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                    ${fechaFormateada}
                                 </div>
                             </div>
                         </div>

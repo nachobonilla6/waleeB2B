@@ -281,27 +281,27 @@
                         <div class="flex items-start gap-3 p-3">
                             <!-- Imagen a la izquierda -->
                             <div class="relative w-1/2 aspect-square flex-shrink-0">
-                                @if($fotoUrl)
+                    @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
-                                @else
+                    @else
                                     <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center rounded-xl">
                                         <span class="text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                                     </div>
-                                @endif
+                    @endif
                             </div>
                             
                             <!-- Nombre y estado a la derecha -->
-                            <div class="flex-1 min-w-0">
+                    <div class="flex-1 min-w-0">
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
                                         <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                    </span>
-                                </div>
-                            </div>
+                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                            </span>
                         </div>
+                    </div>
+                </div>
                         
                         <!-- Acciones Rápidas Mobile -->
                         <div class="px-3 pb-3">
@@ -311,21 +311,21 @@
                                     <a href="{{ $cliente->website }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-blue-600 dark:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                        </svg>
+                        </svg>
                                     </a>
                                 @else
                                     <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                                         </svg>
-                                    </div>
+                </div>
                                 @endif
                                 
                                 <!-- Email Button -->
                                 <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
+                    </svg>
                                 </a>
                                 
                                 <!-- Publicaciones Button (Facebook Icon) -->
@@ -333,26 +333,26 @@
                                     <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-center p-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
+                    </svg>
                                     </a>
                                 @else
                                     <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                    </div>
-                                @endif
-                                
+                                </svg>
+                    </div>
+                @endif
+                
                                 <!-- WhatsApp Button -->
                                 <button onclick="openWhatsAppModal()" 
                                         class="flex items-center justify-center p-2 rounded-lg bg-emerald-100 dark:bg-slate-800 hover:bg-emerald-200 dark:hover:bg-slate-700 text-emerald-600 dark:text-emerald-600 border border-emerald-600 dark:border-slate-700 transition-all group shadow-sm {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}"
                                         {{ !$whatsappLink ? 'disabled' : '' }}>
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-emerald-600 dark:text-emerald-700" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                    </svg>
+                                </svg>
                                 </button>
                             </div>
-                        </div>
+                            </div>
                         
                         <!-- Alertas/Información -->
                         <div class="px-3 pb-3 space-y-1.5">
@@ -366,9 +366,9 @@
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                    </svg>
+                                </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones en FB</span>
-                                </div>
+                            </div>
                                 <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $totalPublicaciones }}</span>
                             </div>
                             
@@ -377,9 +377,9 @@
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                                    </svg>
+                                </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
-                                </div>
+                            </div>
                                 <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
                             </div>
                             
@@ -388,9 +388,9 @@
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
+                                </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
-                                </div>
+                            </div>
                                 <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
                             </div>
                             
@@ -399,24 +399,24 @@
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
+                            </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
-                                </div>
+                        </div>
                                 <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
-                            </div>
-                            
+                </div>
+                
                             <!-- Contratos -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-100 dark:bg-walee-500/10 border border-walee-600 dark:border-walee-500/20">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
+                        </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contratos</span>
-                                </div>
+                                        </div>
                                 <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
-                            </div>
-                        </div>
-                    </div>
+                                        </div>
+                                    </div>
+                                        </div>
                     
                     <!-- Desktop: Layout original -->
                     <div class="hidden sm:block p-4 sm:p-5 lg:p-6">
@@ -426,23 +426,23 @@
                                 <!-- Imagen -->
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
-                                @else
+                        @else
                                     <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
                                         <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                    </div>
-                                @endif
+                            </div>
+                        @endif
                                 
                                 <!-- Nombre y estado a la derecha -->
-                                <div class="flex-1 min-w-0">
+                                            <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex items-center gap-2">
                                         <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                        </span>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
                             </div>
                             
                             <!-- Acciones Rápidas Desktop -->
@@ -455,20 +455,20 @@
                                         </svg>
                                         <span class="text-sm font-medium">Website</span>
                                     </a>
-                                @else
+                        @else
                                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                        </svg>
+                                </svg>
                                         <span class="text-sm font-medium text-slate-400">Website</span>
-                                    </div>
-                                @endif
+                            </div>
+                        @endif
                                 
                                 <!-- Email Button -->
                                 <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
+                                                </svg>
                                     <span class="text-sm font-medium">Email</span>
                                 </a>
                                 
@@ -480,14 +480,14 @@
                                         </svg>
                                         <span class="text-sm font-medium">Publicaciones</span>
                                     </a>
-                                @else
+                        @else
                                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
+                                </svg>
                                         <span class="text-sm font-medium text-slate-400">Publicaciones</span>
-                                    </div>
-                                @endif
+                            </div>
+                        @endif
                                 
                                 <!-- WhatsApp Button -->
                                 <button onclick="openWhatsAppModal()" 
@@ -495,11 +495,11 @@
                                         {{ !$whatsappLink ? 'disabled' : '' }}>
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-emerald-600 dark:text-emerald-700" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                    </svg>
+                        </svg>
                                     <span class="text-sm font-medium">WhatsApp</span>
-                                </button>
-                            </div>
-                            
+                        </button>
+                    </div>
+                    
                             <!-- Alertas Desktop -->
                             <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
                                 @php
@@ -512,58 +512,58 @@
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
+                                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones en FB</span>
-                                    </div>
+                                            </div>
                                     <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $totalPublicaciones }}</span>
-                                </div>
+                                            </div>
                                 
                                 <!-- Citas -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                                        </svg>
+                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
-                                    </div>
+                            </div>
                                     <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
-                                </div>
-                                
+                    </div>
+                    
                                 <!-- Facturas -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
-                                    </div>
+                                            </div>
                                     <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
-                                </div>
+                                            </div>
                                 
                                 <!-- Cotizaciones -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
-                                    </div>
+                            </div>
                                     <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
-                                </div>
-                                
+                    </div>
+                    
                                 <!-- Contratos -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contratos</span>
-                                    </div>
+                                            </div>
                                     <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
                 </div>
             </div>
             
@@ -628,7 +628,8 @@
                 <form id="whatsappForm" class="space-y-4 text-left">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Redactar mensaje para ${clienteName}</label>
-                        <textarea id="whatsappPrompt" rows="3" placeholder="Describe el mensaje que quieres enviar (ej: saludar y preguntar sobre disponibilidad para una reunión)"
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Prompt</label>
+                        <textarea id="whatsappPrompt" rows="4" placeholder="Describe el mensaje que quieres enviar (ej: saludar y preguntar sobre disponibilidad para una reunión)"
                                   class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                     </div>
                     <div>
@@ -652,8 +653,8 @@
                 title: '',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : (isDesktop ? '1.25rem' : '1.5rem'),
-                titleText: '',
+                padding: isMobile ? '0.75rem' : (isDesktop ? '1.5rem' : '1.5rem'),
+                heightAuto: true,
                 customClass: {
                     container: isMobile ? 'swal2-container-mobile' : '',
                     popup: isMobile ? 'swal2-popup-mobile' : (isDarkMode ? 'dark-swal' : 'light-swal'),
@@ -679,6 +680,9 @@
                         popup.style.color = '#1e293b';
                         popup.style.borderColor = 'rgba(203, 213, 225, 0.5)';
                     }
+                    // Hacer el modal más alto
+                    popup.style.minHeight = isMobile ? 'auto' : '500px';
+                    popup.style.maxHeight = isMobile ? '90vh' : '80vh';
                 },
                 preConfirm: () => {
                     const generatedMessage = document.getElementById('generatedMessage')?.value;
@@ -894,8 +898,8 @@
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Email</label>
                             <input type="email" id="clientEmail" name="email" value="${clienteData.email}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                        </div>
-                        
+                    </div>
+                    
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Estado</label>
                             <select id="clientEstado" name="estado"
@@ -911,13 +915,13 @@
                     </div>
                     
                     <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3 sm:gap-2.5">
-                        <div>
+                    <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-1.5">Teléfono</label>
                             <input type="tel" id="clientTelefono1" name="telefono_1" value="${clienteData.telefono_1}"
                                    class="w-full px-3 sm:px-3 py-2 sm:py-2 text-sm sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                        </div>
-                        
-                        <div>
+                    </div>
+                    
+                    <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-1.5">Sitio Web</label>
                             <input type="url" id="clientWebsite" name="website" value="${clienteData.website}"
                                    class="w-full px-3 sm:px-3 py-2 sm:py-2 text-sm sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">

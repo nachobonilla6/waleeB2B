@@ -95,6 +95,46 @@
         .light-swal-html {
             color: #1e293b !important;
         }
+        
+        /* Asegurar que el contenido ocupe casi toda la modal en mobile */
+        @media (max-width: 640px) {
+            .swal2-popup {
+                max-height: 90vh !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+            
+            .swal2-html-container {
+                flex: 1 !important;
+                overflow-y: auto !important;
+                padding: 0.5rem !important;
+                margin: 0 !important;
+            }
+            
+            .swal2-title {
+                padding: 0.5rem 0.5rem 0.25rem 0.5rem !important;
+                margin: 0 !important;
+                font-size: 1rem !important;
+            }
+            
+            .swal2-actions {
+                padding: 0.5rem !important;
+                margin: 0 !important;
+                flex-shrink: 0 !important;
+            }
+        }
+        
+        /* En desktop, asegurar que sea más ancha que alta */
+        @media (min-width: 641px) {
+            .swal2-popup {
+                max-height: 85vh !important;
+            }
+            
+            .swal2-html-container {
+                max-height: calc(85vh - 120px) !important;
+                overflow-y: auto !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -457,58 +497,66 @@
                 day: 'numeric' 
             });
             
-            const modalWidth = isMobile ? '90%' : '500px';
+            // Modal más ancha que alta
+            const modalWidth = isMobile ? '95%' : '700px';
+            const modalPadding = isMobile ? '0.5rem' : '1rem';
+            const maxHeight = isMobile ? '90vh' : '85vh';
             
             Swal.fire({
                 title: 'Nueva Cita',
                 html: `
-                    <form id="citaForm" class="space-y-3 text-left">
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha</label>
-                            <input type="date" id="cita_fecha" value="${fecha}" required
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                            <p class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">${fechaFormateada}</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
+                    <form id="citaForm" class="space-y-2 text-left">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora inicio <span class="text-red-500">*</span></label>
-                                <input type="time" id="cita_hora_inicio" required
-                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Fecha</label>
+                                <input type="date" id="cita_fecha" value="${fecha}" required
+                                    class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                <p class="text-[9px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">${fechaFormateada}</p>
                             </div>
-                            <div>
-                                <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora fin</label>
-                                <input type="time" id="cita_hora_fin"
-                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Hora inicio <span class="text-red-500">*</span></label>
+                                    <input type="time" id="cita_hora_inicio" required
+                                        class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Hora fin</label>
+                                    <input type="time" id="cita_hora_fin"
+                                        class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                </div>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Título <span class="text-red-500">*</span></label>
                             <input type="text" id="cita_titulo" required placeholder="Ej: Reunión de seguimiento"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Ubicación</label>
+                                <input type="text" id="cita_ubicacion" placeholder="Ej: Oficina, Zoom, etc."
+                                    class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Estado</label>
+                                <select id="cita_estado"
+                                    class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                    <option value="programada">Programada</option>
+                                    <option value="completada">Completada</option>
+                                    <option value="cancelada">Cancelada</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Ubicación</label>
-                            <input type="text" id="cita_ubicacion" placeholder="Ej: Oficina, Zoom, etc."
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
-                            <textarea id="cita_descripcion" rows="3" placeholder="Notas adicionales..."
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
-                            <select id="cita_estado"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                                <option value="programada">Programada</option>
-                                <option value="completada">Completada</option>
-                                <option value="cancelada">Cancelada</option>
-                            </select>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Descripción</label>
+                            <textarea id="cita_descripcion" rows="2" placeholder="Notas adicionales..."
+                                class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none"></textarea>
                         </div>
                     </form>
                 `,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1.25rem',
+                padding: modalPadding,
+                maxHeight: maxHeight,
                 showCancelButton: true,
                 showConfirmButton: true,
                 confirmButtonText: 'Crear Cita',

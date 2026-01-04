@@ -142,154 +142,189 @@
                 </div>
             </div>
             
-            <!-- Productos List -->
-            @if($productos->count() > 0)
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
-                <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                    Productos del Cliente
-                </h3>
-                
-                <!-- Search -->
-                <div class="mb-4">
-                    <div class="relative">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="Buscar por nombre o descripción..." class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
-                    </div>
-                </div>
-                
-                <div id="productosList" class="space-y-2 max-h-96 overflow-y-auto">
-                @forelse($productos as $index => $producto)
-                    <div class="producto-item bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4 hover:border-purple-400 dark:hover:border-purple-500/30 transition-all" 
-                         data-search="{{ strtolower($producto->nombre) }} {{ strtolower($producto->descripcion ?? '') }}">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex flex-wrap items-center gap-2 mb-2">
-                                    @if($producto->estado === 'activo')
-                                    <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        <span>Activo</span>
-                                    </span>
-                                    @else
-                                    <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">Inactivo</span>
-                                    @endif
-                                    @if($producto->tipo)
-                                    <span class="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-400/10 px-2 py-0.5 rounded">{{ ucfirst($producto->tipo) }}</span>
+            <!-- Filters -->
+            <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-4 animate-fade-in-up">
+                <select id="filterEstado" onchange="filterProducts()" class="flex-1 sm:flex-none px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+                <select id="filterTipo" onchange="filterProducts()" class="flex-1 sm:flex-none px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
+                    <option value="">Todos los tipos</option>
+                    <option value="bot">Bot</option>
+                    <option value="sitio">Sitio</option>
+                    <option value="servicio">Servicio</option>
+                </select>
+            </div>
+            
+            <!-- Products Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6" id="productsGrid">
+                @forelse($productos as $producto)
+                    <div class="product-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm dark:shadow-none animate-fade-in-up hover:shadow-lg dark:hover:shadow-none transition-all"
+                         data-estado="{{ $producto->estado }}"
+                         data-tipo="{{ $producto->tipo }}"
+                         data-product-id="{{ $producto->id }}">
+                        <!-- Images Carousel -->
+                        <div class="relative h-40 sm:h-48 bg-slate-100 dark:bg-slate-700 overflow-hidden">
+                            @if($producto->fotos && count($producto->fotos) > 0)
+                                <div class="carousel-container relative h-full">
+                                    @foreach($producto->fotos as $index => $foto)
+                                        <img src="{{ asset('storage/' . $foto) }}" 
+                                             alt="{{ $producto->nombre }}"
+                                             class="carousel-image absolute inset-0 w-full h-full object-cover {{ $index === 0 ? 'opacity-100' : 'opacity-0' }} transition-opacity duration-300"
+                                             data-index="{{ $index }}">
+                                    @endforeach
+                                    @if(count($producto->fotos) > 1)
+                                        <button onclick="prevImage(this)" class="absolute left-1.5 sm:left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 rounded-full transition-all">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                            </svg>
+                                        </button>
+                                        <button onclick="nextImage(this)" class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 rounded-full transition-all">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                        </button>
+                                        <div class="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                                            @foreach($producto->fotos as $index => $foto)
+                                                <div class="carousel-dot w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/50 {{ $index === 0 ? 'bg-white' : '' }}" data-index="{{ $index }}"></div>
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </div>
-                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-1">{{ $producto->nombre }}</h4>
-                                @if($producto->descripcion)
-                                <p class="text-sm text-slate-700 dark:text-slate-300 mb-2 line-clamp-2">
-                                    {{ $producto->descripcion }}
-                                </p>
-                                @endif
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs text-slate-500 dark:text-slate-400">
-                                    <span>{{ $producto->created_at?->format('d/m/Y') ?? 'Sin fecha' }}</span>
+                            @else
+                                <div class="flex items-center justify-center h-full text-slate-400">
+                                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="p-4 sm:p-5 md:p-6">
+                            <div class="flex items-start justify-between mb-2 sm:mb-3">
+                                <div class="flex-1 min-w-0 pr-2">
+                                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2 truncate">{{ $producto->nombre }}</h3>
+                                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                        <label class="relative inline-flex items-center cursor-pointer" id="toggle-{{ $producto->id }}">
+                                            <input type="checkbox" 
+                                                   id="toggle-checkbox-{{ $producto->id }}"
+                                                   class="sr-only peer" 
+                                                   {{ $producto->estado === 'activo' ? 'checked' : '' }}
+                                                   onchange="toggleEstado({{ $producto->id }}, this.checked, this)">
+                                            <div class="w-9 h-5 sm:w-11 sm:h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 sm:peer-focus:ring-4 peer-focus:ring-walee-300 dark:peer-focus:ring-walee-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-green-500"></div>
+                                            <span class="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300" id="estado-text-{{ $producto->id }}">
+                                                {{ $producto->estado === 'activo' ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </label>
+                                        <span class="px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400">
+                                            {{ ucfirst($producto->tipo) }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-3 gap-1.5 sm:flex sm:flex-nowrap sm:gap-2 sm:ml-3">
-                                <button onclick="eliminarProducto({{ $producto->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                    <span class="hidden xs:inline">Eliminar</span>
+                            
+                            @if($producto->descripcion)
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3">{{ $producto->descripcion }}</p>
+                            @endif
+                            
+                            <div class="flex items-center gap-2">
+                                <button onclick="editProduct({{ $producto->id }})" class="flex-1 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all text-xs sm:text-sm">
+                                    Editar
                                 </button>
-                                <button onclick="verProductoModal({{ $producto->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-purple-500 hover:bg-purple-400 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                    <span class="hidden xs:inline">Ver</span>
-                                </button>
-                                @if($contrato->pdf_path)
-                                <button onclick="verPDFContrato({{ $contrato->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="hidden xs:inline">PDF</span>
-                                </button>
-                                @else
-                                <button disabled class="px-2 sm:px-2.5 sm:px-3 py-2 bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-500 text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5 cursor-not-allowed opacity-50">
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="hidden xs:inline">PDF</span>
-                                </button>
-                                @endif
-                                <button onclick="enviarContratoEmail({{ $contrato->id }}, '{{ $contrato->correo }}', {{ $contrato->enviada_at ? 'true' : 'false' }})" class="px-2 sm:px-2.5 sm:px-3 py-2 {{ $contrato->enviada_at ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500' }} text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
-                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="hidden xs:inline">{{ $contrato->enviada_at ? 'Reenviar' : 'Enviar' }}</span>
+                                <button onclick="deleteProduct({{ $producto->id }})" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-all text-xs sm:text-sm">
+                                    Eliminar
                                 </button>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm dark:shadow-none text-center">
-                        <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="col-span-full text-center py-8 sm:py-12">
+                        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-slate-400 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
-                        <p class="text-slate-600 dark:text-slate-400 mb-4">No hay productos para este cliente</p>
-                <button onclick="abrirModalProducto()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    <span>Crear Primer Producto</span>
-                </button>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4">No hay productos registrados para este cliente</p>
+                        <button onclick="abrirModalProducto()" class="mt-3 sm:mt-4 px-4 sm:px-6 py-2 bg-walee-500 hover:bg-walee-600 text-white text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-all">
+                            Crear primer producto
+                        </button>
                     </div>
                 @endforelse
-                </div>
             </div>
-            @else
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm dark:shadow-none text-center">
-                <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                </svg>
-                <p class="text-slate-600 dark:text-slate-400 mb-4">No hay productos para este cliente</p>
-                <button onclick="abrirModalProducto()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    <span>Crear Primer Producto</span>
-                </button>
-            </div>
-            @endif
             
         </div>
     </div>
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let currentImageIndex = {};
+        let selectedPhotos = [];
         
         // Dark mode helper
         function isDarkMode() {
             return document.documentElement.classList.contains('dark');
         }
         
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const items = document.querySelectorAll('.producto-item');
+        // Carousel functions
+        function nextImage(btn) {
+            const container = btn.closest('.carousel-container');
+            const images = container.querySelectorAll('.carousel-image');
+            const dots = container.querySelectorAll('.carousel-dot');
+            let currentIndex = Array.from(images).findIndex(img => img.classList.contains('opacity-100'));
+            let nextIndex = (currentIndex + 1) % images.length;
             
-            items.forEach(item => {
-                const searchData = item.dataset.search;
-                if (searchData && searchData.includes(searchTerm)) {
-                    item.style.display = '';
+            images[currentIndex].classList.remove('opacity-100');
+            images[currentIndex].classList.add('opacity-0');
+            images[nextIndex].classList.remove('opacity-0');
+            images[nextIndex].classList.add('opacity-100');
+            
+            dots[currentIndex].classList.remove('bg-white');
+            dots[currentIndex].classList.add('bg-white/50');
+            dots[nextIndex].classList.remove('bg-white/50');
+            dots[nextIndex].classList.add('bg-white');
+        }
+        
+        function prevImage(btn) {
+            const container = btn.closest('.carousel-container');
+            const images = container.querySelectorAll('.carousel-image');
+            const dots = container.querySelectorAll('.carousel-dot');
+            let currentIndex = Array.from(images).findIndex(img => img.classList.contains('opacity-100'));
+            let prevIndex = (currentIndex - 1 + images.length) % images.length;
+            
+            images[currentIndex].classList.remove('opacity-100');
+            images[currentIndex].classList.add('opacity-0');
+            images[prevIndex].classList.remove('opacity-0');
+            images[prevIndex].classList.add('opacity-100');
+            
+            dots[currentIndex].classList.remove('bg-white');
+            dots[currentIndex].classList.add('bg-white/50');
+            dots[prevIndex].classList.remove('bg-white/50');
+            dots[prevIndex].classList.add('bg-white');
+        }
+        
+        // Filter products
+        function filterProducts() {
+            const estado = document.getElementById('filterEstado').value;
+            const tipo = document.getElementById('filterTipo').value;
+            const cards = document.querySelectorAll('.product-card');
+            
+            cards.forEach(card => {
+                const cardEstado = card.dataset.estado;
+                const cardTipo = card.dataset.tipo;
+                
+                const matchEstado = !estado || cardEstado === estado;
+                const matchTipo = !tipo || cardTipo === tipo;
+                
+                if (matchEstado && matchTipo) {
+                    card.style.display = 'block';
                 } else {
-                    item.style.display = 'none';
+                    card.style.display = 'none';
                 }
             });
-        });
+        }
         
-        // Eliminar producto
-        async function eliminarProducto(productoId) {
+        // Delete product
+        async function deleteProduct(id) {
             const result = await Swal.fire({
                 title: '¿Eliminar producto?',
                 text: '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
@@ -317,7 +352,7 @@
                     color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });
                 
-                const response = await fetch(`/walee-productos/${productoId}`, {
+                const response = await fetch(`/walee-productos/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -332,7 +367,7 @@
                         icon: 'success',
                         title: '¡Eliminado!',
                         text: data.message || 'Producto eliminado correctamente',
-                        confirmButtonColor: '#9333ea',
+                        confirmButtonColor: '#D59F3B',
                         background: isDarkMode() ? '#1e293b' : '#ffffff',
                         color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                     }).then(() => {
@@ -353,164 +388,345 @@
             }
         }
         
-        // Ver producto modal
-        async function verProductoModal(productoId) {
+        // Edit product
+        async function editProduct(id) {
             try {
-                Swal.fire({
-                    title: 'Cargando producto...',
-                    allowOutsideClick: false,
-                    background: isDarkMode() ? '#1e293b' : '#ffffff',
-                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-                
-                const response = await fetch(`/walee-productos/${productoId}`);
-                if (!response.ok) throw new Error('Error al cargar el producto');
-                
-                const producto = await response.json();
-                if (!producto || !producto.id) throw new Error('Producto no encontrado');
-                
-                const modalHtml = `
-                    <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto">
-                        <!-- Header -->
-                        <div class="bg-gradient-to-r from-purple-500/10 to-purple-600/5 rounded-lg p-4 border border-purple-200 dark:border-purple-500/20">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400">${producto.nombre || 'Producto'}</h3>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Creado: ${producto.created_at || 'N/A'}</p>
-                                </div>
-                                <div class="text-right">
-                                    ${producto.estado === 'activo' ? '<span class="text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded">Activo</span>' : '<span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">Inactivo</span>'}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Descripción -->
-                        ${producto.descripcion ? `
-                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Descripción</p>
-                            <p class="text-sm font-semibold text-slate-900 dark:text-white">${producto.descripcion}</p>
-                        </div>
-                        ` : ''}
-                        
-                        <!-- Información -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Tipo</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">${producto.tipo ? producto.tipo.charAt(0).toUpperCase() + producto.tipo.slice(1) : 'N/A'}</p>
-                            </div>
-                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Estado</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">${producto.estado ? producto.estado.charAt(0).toUpperCase() + producto.estado.slice(1) : 'N/A'}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                Swal.fire({
-                    title: '',
-                    html: modalHtml,
-                    width: '90%',
-                    maxWidth: '600px',
-                    showConfirmButton: false,
-                    showCloseButton: false,
-                    allowOutsideClick: true,
-                    allowEscapeKey: true,
-                    background: isDarkMode() ? '#1e293b' : '#ffffff',
-                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                    customClass: {
-                        popup: 'z-[9999] relative',
-                        container: 'z-[9999]',
-                    },
-                    didOpen: () => {
-                        const popup = document.querySelector('.swal2-popup');
-                        if (popup) {
-                            const closeButton = document.createElement('button');
-                            closeButton.innerHTML = `
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            `;
-                            closeButton.className = 'absolute -top-3 -right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-[10000] transition-all hover:scale-110 cursor-pointer';
-                            closeButton.style.zIndex = '10000';
-                            closeButton.onclick = () => Swal.close();
-                            popup.appendChild(closeButton);
-                        }
-                    }
-                });
+                const response = await fetch(`/walee-productos/${id}`);
+                const product = await response.json();
+                selectedPhotos = [];
+                showProductModal(product);
             } catch (error) {
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: error.message || 'No se pudo cargar el contrato',
-                    confirmButtonColor: '#ef4444',
+                    text: 'Error al cargar el producto',
+                    confirmButtonColor: '#D59F3B',
                     background: isDarkMode() ? '#1e293b' : '#ffffff',
-                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                 });
             }
         }
         
-        // Ver PDF contrato
-        function verPDFContrato(contratoId) {
-            const pdfUrl = `/walee-contratos/${contratoId}/pdf`;
+        // Toggle estado
+        async function toggleEstado(id, activo, checkbox) {
+            const estadoOriginal = !activo;
             
-            // En móvil, abrir directamente en la misma pestaña
-            const isMobile = window.innerWidth < 640;
-            if (isMobile) {
-                window.location.href = pdfUrl;
-                return;
+            try {
+                const response = await fetch(`/walee-productos/${id}/toggle-estado`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor: ' + response.status);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const card = document.querySelector(`[data-product-id="${id}"]`);
+                    if (card) {
+                        card.dataset.estado = data.estado;
+                    }
+                    
+                    const estadoText = document.getElementById(`estado-text-${id}`);
+                    if (estadoText) {
+                        estadoText.textContent = data.estado === 'activo' ? 'Activo' : 'Inactivo';
+                    }
+                    
+                    const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                    if (toggleCheckbox && toggleCheckbox.checked !== (data.estado === 'activo')) {
+                        toggleCheckbox.checked = data.estado === 'activo';
+                    }
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Estado actualizado',
+                        text: 'El estado ha sido cambiado a ' + (data.estado === 'activo' ? 'Activo' : 'Inactivo'),
+                        timer: 1500,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
+                    });
+                } else {
+                    checkbox.checked = estadoOriginal;
+                    const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                    if (toggleCheckbox) {
+                        toggleCheckbox.checked = estadoOriginal;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'No se pudo actualizar el estado',
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                checkbox.checked = estadoOriginal;
+                const toggleCheckbox = document.getElementById(`toggle-checkbox-${id}`);
+                if (toggleCheckbox) {
+                    toggleCheckbox.checked = estadoOriginal;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al cambiar el estado. Por favor, recarga la página.',
+                    confirmButtonColor: '#D59F3B',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b'
+                });
             }
+        }
+        
+        // Modal functions with SweetAlert
+        function showProductModal(product = null) {
+            const isEdit = product !== null;
+            const isMobile = window.innerWidth < 640;
+            const html = `
+                <form id="productForm" class="space-y-3 sm:space-y-4 text-left">
+                    <input type="hidden" id="productId" name="id" value="${product?.id || ''}">
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
+                        <input type="text" id="productNombre" name="nombre" required
+                               value="${product?.nombre || ''}"
+                               class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Descripción</label>
+                        <textarea id="productDescripcion" name="descripcion" rows="2" 
+                                  class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">${product?.descripcion || ''}</textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado *</label>
+                            <select id="productEstado" name="estado" required
+                                    class="w-full px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                                <option value="activo" ${product?.estado === 'activo' ? 'selected' : ''}>Activo</option>
+                                <option value="inactivo" ${product?.estado === 'inactivo' ? 'selected' : ''}>Inactivo</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Tipo *</label>
+                            <div class="flex gap-2">
+                                <select id="productTipo" name="tipo" required
+                                        class="flex-1 px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                                    <option value="bot" ${product?.tipo === 'bot' ? 'selected' : ''}>Bot</option>
+                                    <option value="sitio" ${product?.tipo === 'sitio' ? 'selected' : ''}>Sitio</option>
+                                    <option value="servicio" ${product?.tipo === 'servicio' ? 'selected' : ''}>Servicio</option>
+                                </select>
+                                <input type="text" id="productTipoCustom" name="tipo_custom" placeholder="Otro tipo"
+                                       value="${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? product.tipo : ''}"
+                                       class="flex-1 px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500 ${product?.tipo && !['bot', 'sitio', 'servicio'].includes(product.tipo) ? '' : 'hidden'}">
+                            </div>
+                            <button type="button" onclick="toggleCustomTypeSwal()" class="mt-1.5 sm:mt-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Crear tipo personalizado
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Fotos (máximo 10)</label>
+                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2 mb-2 max-h-24 sm:max-h-32 overflow-y-auto" id="photosPreviewSwal"></div>
+                        <input type="file" id="productFotosSwal" name="fotos[]" multiple accept="image/*" onchange="previewPhotosSwal(this)" class="hidden">
+                        <label for="productFotosSwal" class="inline-block px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl cursor-pointer transition-all text-xs sm:text-sm">
+                            Seleccionar fotos
+                        </label>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Puedes seleccionar hasta 10 imágenes</p>
+                    </div>
+                </form>
+            `;
+            
+            const isDark = isDarkMode();
             
             Swal.fire({
-                title: '',
-                html: `
-                    <div style="width: 100%; height: calc(100vh - 120px); max-height: 800px; overflow: hidden;">
-                        <iframe src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
-                    </div>
-                `,
-                width: '95%',
-                maxWidth: '900px',
-                padding: '0',
-                showConfirmButton: false,
-                showCloseButton: false,
-                allowOutsideClick: true,
-                allowEscapeKey: true,
-                customClass: {
-                    popup: 'z-[9999] relative p-0',
-                    container: 'z-[9999]',
-                    htmlContainer: 'p-0 m-0',
-                },
+                title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
+                html: html,
+                width: isMobile ? '95%' : '600px',
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: isDark ? '#475569' : '#6b7280',
+                background: isDark ? '#1e293b' : '#ffffff',
+                color: isDark ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
-                    const popup = document.querySelector('.swal2-popup');
-                    if (popup) {
-                        popup.style.zIndex = '9999';
-                        popup.style.position = 'relative';
-                        popup.style.padding = '0';
-                        popup.style.maxHeight = 'calc(100vh - 40px)';
-                        
-                        const closeButton = document.createElement('button');
-                        closeButton.innerHTML = `
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        `;
-                        closeButton.className = 'absolute -top-3 -right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-[10000] transition-all hover:scale-110 cursor-pointer';
-                        closeButton.style.zIndex = '10000';
-                        closeButton.onclick = () => Swal.close();
-                        popup.appendChild(closeButton);
+                    if (isEdit && product.fotos && product.fotos.length > 0) {
+                        const preview = document.getElementById('photosPreviewSwal');
+                        preview.innerHTML = '';
+                        const fotosPaths = product.fotos_paths || [];
+                        product.fotos.forEach((fotoUrl, index) => {
+                            const div = document.createElement('div');
+                            div.className = 'relative';
+                            let fotoPath = fotosPaths[index];
+                            if (!fotoPath && fotoUrl) {
+                                const match = fotoUrl.match(/\/storage\/(.+)$/);
+                                fotoPath = match ? match[1] : fotoUrl;
+                            }
+                            div.innerHTML = `
+                                <img src="${fotoUrl}" class="w-full h-12 sm:h-16 object-cover rounded-lg">
+                                <button type="button" onclick="removeExistingPhotoSwal(this)" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 sm:p-1">
+                                    <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                                <input type="hidden" name="existing_fotos[]" value="${fotoPath || fotoUrl}">
+                            `;
+                            preview.appendChild(div);
+                        });
                     }
                 },
-                background: isDarkMode() ? '#1e293b' : '#ffffff',
-                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    return saveProductSwal(isEdit ? product.id : null);
+                }
             });
+        }
+        
+        function toggleCustomTypeSwal() {
+            const select = document.getElementById('productTipo');
+            const custom = document.getElementById('productTipoCustom');
+            
+            if (custom.classList.contains('hidden')) {
+                custom.classList.remove('hidden');
+                select.classList.add('hidden');
+                custom.required = true;
+                select.required = false;
+            } else {
+                custom.classList.add('hidden');
+                select.classList.remove('hidden');
+                custom.required = false;
+                select.required = true;
+            }
+        }
+        
+        function previewPhotosSwal(input) {
+            const files = Array.from(input.files).slice(0, 10);
+            selectedPhotos = files;
+            const preview = document.getElementById('photosPreviewSwal');
+            preview.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-12 sm:h-16 object-cover rounded-lg">
+                        <button type="button" onclick="removePhotoSwal(${index})" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 sm:p-1">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function removePhotoSwal(index) {
+            selectedPhotos.splice(index, 1);
+            const input = document.getElementById('productFotosSwal');
+            const dt = new DataTransfer();
+            selectedPhotos.forEach(file => dt.items.add(file));
+            input.files = dt.files;
+            previewPhotosSwal(input);
+        }
+        
+        function removeExistingPhotoSwal(btn) {
+            btn.closest('div').remove();
+        }
+        
+        async function saveProductSwal(productId) {
+            const formData = new FormData();
+            formData.append('nombre', document.getElementById('productNombre').value);
+            formData.append('descripcion', document.getElementById('productDescripcion').value);
+            formData.append('estado', document.getElementById('productEstado').value);
+            formData.append('cliente_id', '{{ $cliente->id }}');
+            
+            const tipoSelect = document.getElementById('productTipo');
+            const tipoCustom = document.getElementById('productTipoCustom');
+            const tipo = tipoCustom.classList.contains('hidden') ? tipoSelect.value : tipoCustom.value;
+            formData.append('tipo', tipo);
+            
+            if (productId) {
+                const existingFotosInputs = document.querySelectorAll('input[name="existing_fotos[]"]');
+                existingFotosInputs.forEach((input, index) => {
+                    formData.append(`existing_fotos[${index}]`, input.value);
+                });
+            }
+            
+            selectedPhotos.forEach((photo, index) => {
+                formData.append(`fotos[${index}]`, photo);
+            });
+            
+            try {
+                const url = productId 
+                    ? `/walee-productos/${productId}`
+                    : '/walee-productos';
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                
+                const responseText = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    throw new Error('El servidor devolvió una respuesta inválida');
+                }
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: data.message || 'Producto guardado correctamente',
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
+                    }).then(() => {
+                        location.reload();
+                    });
+                    return true;
+                } else {
+                    let errorMessage = data.message || 'No se pudo guardar el producto';
+                    if (data.errors) {
+                        const errorList = Object.values(data.errors).flat().join(', ');
+                        errorMessage += ': ' + errorList;
+                    }
+                    Swal.showValidationMessage(errorMessage);
+                    return false;
+                }
+            } catch (error) {
+                Swal.showValidationMessage('Error: ' + error.message);
+                return false;
+            }
         }
         
         // Abrir modal de crear producto
         function abrirModalProducto() {
-            // Redirigir a la página de creación de productos con el cliente_id
-            window.location.href = '/walee-productos?cliente_id={{ $cliente->id }}';
+            selectedPhotos = [];
+            showProductModal();
         }
     </script>
     @include('partials.walee-support-button')

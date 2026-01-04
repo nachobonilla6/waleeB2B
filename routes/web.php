@@ -3813,6 +3813,9 @@ Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\
         if ($request->has('facebook')) {
             $data['facebook'] = $request->input('facebook');
         }
+        if ($request->has('ciudad')) {
+            $data['ciudad'] = $request->input('ciudad');
+        }
         if ($request->has('address')) {
             $data['address'] = $request->input('address');
         }

@@ -331,9 +331,7 @@
                     @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
                     @else
-                                    <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center rounded-xl">
-                                        <span class="text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                    </div>
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl opacity-80">
                     @endif
                             </div>
                             
@@ -478,9 +476,7 @@
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
                         @else
-                                    <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
-                                        <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                        </div>
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md opacity-80">
                         @endif
                                 
                                 <!-- Nombre y estado a la derecha -->

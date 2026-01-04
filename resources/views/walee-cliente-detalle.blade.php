@@ -2151,6 +2151,7 @@
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {

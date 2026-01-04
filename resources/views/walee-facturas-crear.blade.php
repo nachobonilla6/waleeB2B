@@ -169,18 +169,30 @@
         // Obtener URL de la foto del cliente
         $fotoUrl = null;
         if ($clientInfo) {
-            $fotoPath = $clientInfo->foto ?? null;
-            if ($fotoPath) {
-                if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                    $fotoUrl = $fotoPath;
-                } else {
-                    if (isset($clientInfo->id) && $clientInfo instanceof \App\Models\Client) {
-                        // Si es Client, usar la ruta de storage
+            // Si tenemos un Cliente, buscar el Client correspondiente para obtener la foto
+            $clientParaFoto = null;
+            if ($clientInfo instanceof \App\Models\Cliente) {
+                // Buscar Client por email o nombre
+                if ($clientInfo->correo) {
+                    $clientParaFoto = \App\Models\Client::where('email', $clientInfo->correo)->first();
+                }
+                if (!$clientParaFoto && $clientInfo->nombre_empresa) {
+                    $clientParaFoto = \App\Models\Client::where('name', $clientInfo->nombre_empresa)->first();
+                }
+            } else {
+                // Si ya es Client, usarlo directamente
+                $clientParaFoto = $clientInfo;
+            }
+            
+            // Obtener la foto del Client
+            if ($clientParaFoto) {
+                $fotoPath = $clientParaFoto->foto ?? null;
+                if ($fotoPath) {
+                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                        $fotoUrl = $fotoPath;
+                    } else {
                         $filename = basename($fotoPath);
                         $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                    } else {
-                        // Si es Cliente, usar Storage::url
-                        $fotoUrl = \Illuminate\Support\Facades\Storage::url($fotoPath);
                     }
                 }
             }

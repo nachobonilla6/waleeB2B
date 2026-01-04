@@ -1070,47 +1070,127 @@
                 }
             @endphp
             
-            // Actualizar estado del horario al cargar
-            @if($cliente->horario)
-            document.addEventListener('DOMContentLoaded', function() {
-                const horario = @json($cliente->horario);
-                const estado = getEstadoHorario(horario);
-                
-                // Indicador principal del negocio (destacado)
-                const negocioEstadoMobile = document.getElementById('negocioEstadoMobile');
-                const negocioEstadoDesktop = document.getElementById('negocioEstadoDesktop');
-                
-                if (estado.abierto === true) {
-                    const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>Negocio Abierto</span>';
-                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
-                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
-                } else if (estado.abierto === false) {
-                    const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full border border-red-600 dark:border-red-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-red-400"></div>Negocio Cerrado</span>';
-                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
-                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+        // Función para determinar si está abierto o cerrado
+        function getEstadoHorario(horario) {
+            try {
+                let horarios = [];
+                if (typeof horario === 'string') {
+                    // Intentar parsear como JSON
+                    try {
+                        horarios = JSON.parse(horario);
+                    } catch (e) {
+                        // Si no es JSON válido, intentar parsear manualmente
+                        horarios = horario.replace(/^\[|\]$/g, '').split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+                    }
+                } else if (Array.isArray(horario)) {
+                    horarios = horario;
+                } else {
+                    return { abierto: null, texto: 'N/A' };
                 }
                 
-                // Badge pequeño en el botón de horario
-                const estadoMobile = document.getElementById('horarioEstado');
-                const estadoDesktop = document.getElementById('horarioEstadoDesktop');
-                const btnMobile = document.getElementById('horarioBtn');
-                const btnDesktop = document.getElementById('horarioBtnDesktop');
+                const ahora = new Date();
+                const diaActual = ahora.getDay(); // 0 = domingo, 1 = lunes, etc.
+                const horaActual = ahora.getHours();
+                const minutoActual = ahora.getMinutes();
+                const horaActualDecimal = horaActual + (minutoActual / 60);
                 
-                if (estado.abierto === true) {
-                    const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Abierto</span>';
-                    if (estadoMobile) estadoMobile.innerHTML = badge;
-                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
-                    if (btnMobile) btnMobile.classList.add('border-emerald-300', 'dark:border-emerald-700');
-                    if (btnDesktop) btnDesktop.classList.add('border-emerald-300', 'dark:border-emerald-700');
-                } else if (estado.abierto === false) {
-                    const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
-                    if (estadoMobile) estadoMobile.innerHTML = badge;
-                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
-                    if (btnMobile) btnMobile.classList.add('border-red-300', 'dark:border-red-700');
-                    if (btnDesktop) btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
+                // Mapeo de días
+                const diasMap = {
+                    0: 'domingo',
+                    1: 'lunes',
+                    2: 'martes',
+                    3: 'miércoles',
+                    4: 'jueves',
+                    5: 'viernes',
+                    6: 'sábado'
+                };
+                
+                const diaNombre = diasMap[diaActual];
+                const horarioDia = horarios.find(h => {
+                    const hStr = String(h).toLowerCase();
+                    return hStr.startsWith(diaNombre.toLowerCase());
+                });
+                
+                if (!horarioDia) return { abierto: false, texto: 'Cerrado' };
+                
+                const partes = String(horarioDia).split(':');
+                const horas = partes.slice(1).join(':').trim();
+                
+                // Parsear rangos de horas (ej: "19:00–0:30" o "12:00–16:00, 19:00–0:30")
+                const rangos = horas.split(',').map(r => r.trim());
+                
+                for (const rango of rangos) {
+                    const [inicio, fin] = rango.split('–').map(h => h.trim());
+                    if (!inicio || !fin) continue;
+                    
+                    const [horaInicio, minutoInicio] = inicio.split(':').map(Number);
+                    const [horaFin, minutoFin] = fin.split(':').map(Number);
+                    
+                    let horaInicioDecimal = horaInicio + (minutoInicio / 60);
+                    let horaFinDecimal = horaFin + (minutoFin / 60);
+                    
+                    // Si la hora de fin es menor que la de inicio, significa que cruza medianoche
+                    if (horaFinDecimal < horaInicioDecimal) {
+                        horaFinDecimal += 24;
+                        // Si la hora actual es antes de medianoche, ajustar
+                        if (horaActualDecimal < horaInicioDecimal) {
+                            horaActualDecimal += 24;
+                        }
+                    }
+                    
+                    if (horaActualDecimal >= horaInicioDecimal && horaActualDecimal <= horaFinDecimal) {
+                        return { abierto: true, texto: 'Abierto' };
+                    }
                 }
-            });
-            @endif
+                
+                return { abierto: false, texto: 'Cerrado' };
+            } catch (e) {
+                console.error('Error al calcular estado del horario:', e);
+                return { abierto: null, texto: 'N/A' };
+            }
+        }
+        
+        // Actualizar estado del horario al cargar
+        @if($cliente->horario)
+        document.addEventListener('DOMContentLoaded', function() {
+            const horario = @json($cliente->horario);
+            const estado = getEstadoHorario(horario);
+            
+            // Indicador principal del negocio (destacado)
+            const negocioEstadoMobile = document.getElementById('negocioEstadoMobile');
+            const negocioEstadoDesktop = document.getElementById('negocioEstadoDesktop');
+            
+            if (estado.abierto === true) {
+                const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>Negocio Abierto</span>';
+                if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
+                if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+            } else if (estado.abierto === false) {
+                const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full border border-red-600 dark:border-red-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-red-400"></div>Negocio Cerrado</span>';
+                if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
+                if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+            }
+            
+            // Badge pequeño en el botón de horario
+            const estadoMobile = document.getElementById('horarioEstado');
+            const estadoDesktop = document.getElementById('horarioEstadoDesktop');
+            const btnMobile = document.getElementById('horarioBtn');
+            const btnDesktop = document.getElementById('horarioBtnDesktop');
+            
+            if (estado.abierto === true) {
+                const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Abierto</span>';
+                if (estadoMobile) estadoMobile.innerHTML = badge;
+                if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                if (btnMobile) btnMobile.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                if (btnDesktop) btnDesktop.classList.add('border-emerald-300', 'dark:border-emerald-700');
+            } else if (estado.abierto === false) {
+                const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
+                if (estadoMobile) estadoMobile.innerHTML = badge;
+                if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                if (btnMobile) btnMobile.classList.add('border-red-300', 'dark:border-red-700');
+                if (btnDesktop) btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
+            }
+        });
+        @endif
             
             const clienteData = {
                 fotoUrl: @json($fotoUrl),
@@ -2011,69 +2091,6 @@
             });
         }
         
-        // Función para determinar si está abierto o cerrado
-        function getEstadoHorario(horario) {
-            try {
-                let horarios = [];
-                if (typeof horario === 'string') {
-                    horarios = JSON.parse(horario);
-                } else {
-                    horarios = horario;
-                }
-                
-                const ahora = new Date();
-                const diaActual = ahora.getDay(); // 0 = domingo, 1 = lunes, etc.
-                const horaActual = ahora.getHours();
-                const minutoActual = ahora.getMinutes();
-                const horaActualDecimal = horaActual + (minutoActual / 60);
-                
-                // Mapeo de días
-                const diasMap = {
-                    0: 'domingo',
-                    1: 'lunes',
-                    2: 'martes',
-                    3: 'miércoles',
-                    4: 'jueves',
-                    5: 'viernes',
-                    6: 'sábado'
-                };
-                
-                const diaNombre = diasMap[diaActual];
-                const horarioDia = horarios.find(h => h.toLowerCase().startsWith(diaNombre.toLowerCase()));
-                
-                if (!horarioDia) return { abierto: false, texto: 'Cerrado' };
-                
-                const partes = horarioDia.split(':');
-                const horas = partes.slice(1).join(':').trim();
-                
-                // Parsear rangos de horas (ej: "19:00–0:30" o "12:00–16:00, 19:00–0:30")
-                const rangos = horas.split(',').map(r => r.trim());
-                
-                for (const rango of rangos) {
-                    const [inicio, fin] = rango.split('–').map(h => h.trim());
-                    if (!inicio || !fin) continue;
-                    
-                    const [horaInicio, minutoInicio] = inicio.split(':').map(Number);
-                    const [horaFin, minutoFin] = fin.split(':').map(Number);
-                    
-                    let horaInicioDecimal = horaInicio + (minutoInicio / 60);
-                    let horaFinDecimal = horaFin + (minutoFin / 60);
-                    
-                    // Si la hora de fin es menor que la de inicio, significa que cruza medianoche
-                    if (horaFinDecimal < horaInicioDecimal) {
-                        horaFinDecimal += 24;
-                    }
-                    
-                    if (horaActualDecimal >= horaInicioDecimal && horaActualDecimal <= horaFinDecimal) {
-                        return { abierto: true, texto: 'Abierto' };
-                    }
-                }
-                
-                return { abierto: false, texto: 'Cerrado' };
-            } catch (e) {
-                return { abierto: null, texto: 'N/A' };
-            }
-        }
     </script>
 </body>
 </html>

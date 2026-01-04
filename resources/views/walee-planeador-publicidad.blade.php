@@ -1299,14 +1299,6 @@
                                 </div>
                                 ` : ''}
                             </div>
-                            
-                            <!-- Fecha completa (solo lectura) -->
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
-                                    ${fechaFormateada}
-                                </div>
-                            </div>
                         </div>
                     `;
                     

@@ -1072,6 +1072,22 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
     }
 })->middleware(['auth']);
 
+Route::get('/walee-calendario', function (\Illuminate\Http\Request $request) {
+    $clienteId = $request->get('cliente_id');
+    
+    if (!$clienteId) {
+        return redirect()->route('walee.clientes.activos')->with('error', 'Cliente no especificado');
+    }
+    
+    $cliente = \App\Models\Client::find($clienteId);
+    
+    if (!$cliente) {
+        return redirect()->route('walee.clientes.activos')->with('error', 'Cliente no encontrado');
+    }
+    
+    return view('walee-calendario', compact('cliente'));
+})->middleware(['auth'])->name('walee.calendario');
+
 Route::get('/citas/{id}/detalle', function ($id) {
     $cita = \App\Models\Cita::with(['cliente', 'client'])->findOrFail($id);
     $meses = [

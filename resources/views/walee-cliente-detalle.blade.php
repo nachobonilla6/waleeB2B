@@ -340,10 +340,19 @@
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-1.5">
                                         <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                 {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                             </span>
+                            @if($cliente->ciudad)
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="text-xs text-slate-600 dark:text-slate-400">{{ $cliente->ciudad }}</span>
+                                </div>
+                            @endif
                         </div>
                 </div>
             </div>
@@ -484,10 +493,19 @@
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-2">
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                                     </span>
+                            @if($cliente->ciudad)
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">{{ $cliente->ciudad }}</span>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

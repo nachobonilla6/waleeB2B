@@ -92,7 +92,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Contratos - ' . $cliente->name; @endphp
+            @php $pageTitle = 'Productos - ' . $cliente->name; @endphp
             @include('partials.walee-navbar')
             
             <!-- Cliente Info -->
@@ -116,44 +116,40 @@
                                 </p>
                             </div>
                         </a>
-                        <button onclick="abrirModalContrato()" class="w-full sm:w-auto px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                        <button onclick="abrirModalProducto()" class="w-full sm:w-auto px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            <span>Crear Contrato</span>
+                            <span>Crear Producto</span>
                         </button>
                     </div>
                 </div>
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
                 <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-slate-900 dark:text-white">{{ $totalContratos }}</div>
+                    <div class="text-xl font-bold text-slate-900 dark:text-white">{{ $totalProductos }}</div>
                     <div class="text-xs text-slate-600 dark:text-slate-400">Total</div>
                 </div>
                 <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ $contratosEnviados }}</div>
-                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Enviados</div>
+                    <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ $productosActivos }}</div>
+                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Activos</div>
                 </div>
                 <div class="bg-amber-50 dark:bg-amber-500/10 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ $contratosPendientes }}</div>
-                    <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Pendientes</div>
-                </div>
-                <div class="bg-blue-50 dark:bg-blue-500/10 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($totalMonto, 2) }}</div>
-                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Total</div>
+                    <div class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ $productosInactivos }}</div>
+                    <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Inactivos</div>
                 </div>
             </div>
             
-            <!-- Contratos List -->
-            @if($contratos->count() > 0)
+            <!-- Productos List -->
+            @if($productos->count() > 0)
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
                 <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
-                    Contratos del Cliente
+                    Productos del Cliente
                 </h3>
                 
                 <!-- Search -->
@@ -162,60 +158,49 @@
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Buscar por servicios o correo..." class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all">
+                        <input type="text" id="searchInput" placeholder="Buscar por nombre o descripción..." class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
                     </div>
                 </div>
                 
-                <div id="contratosList" class="space-y-2 max-h-96 overflow-y-auto">
-                @forelse($contratos as $index => $contrato)
-                    @php
-                        $serviciosTexto = '';
-                        if ($contrato->servicios && is_array($contrato->servicios)) {
-                            $serviciosTexto = implode(', ', $contrato->servicios);
-                        } elseif ($contrato->servicios) {
-                            $serviciosTexto = $contrato->servicios;
-                        }
-                    @endphp
-                    <div class="contrato-item bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4 hover:border-walee-400 dark:hover:border-walee-500/30 transition-all" 
-                         data-search="{{ strtolower($serviciosTexto) }} {{ strtolower($contrato->correo ?? '') }}">
+                <div id="productosList" class="space-y-2 max-h-96 overflow-y-auto">
+                @forelse($productos as $index => $producto)
+                    <div class="producto-item bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4 hover:border-purple-400 dark:hover:border-purple-500/30 transition-all" 
+                         data-search="{{ strtolower($producto->nombre) }} {{ strtolower($producto->descripcion ?? '') }}">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div class="flex-1 min-w-0">
                                 <div class="flex flex-wrap items-center gap-2 mb-2">
-                                    @if($contrato->enviada_at)
+                                    @if($producto->estado === 'activo')
                                     <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded flex items-center gap-1">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
-                                        <span class="hidden sm:inline">Enviado </span>{{ \Carbon\Carbon::parse($contrato->enviada_at)->format('d/m/Y') }}
+                                        <span>Activo</span>
                                     </span>
                                     @else
-                                    <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">No enviado</span>
+                                    <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">Inactivo</span>
                                     @endif
-                                    @if($contrato->estado)
-                                    <span class="text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded">{{ ucfirst($contrato->estado) }}</span>
-                                    @endif
-                                    @if($contrato->idioma)
-                                    <span class="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-400/10 px-2 py-0.5 rounded">{{ strtoupper($contrato->idioma) }}</span>
+                                    @if($producto->tipo)
+                                    <span class="text-xs text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-400/10 px-2 py-0.5 rounded">{{ ucfirst($producto->tipo) }}</span>
                                     @endif
                                 </div>
+                                <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-1">{{ $producto->nombre }}</h4>
+                                @if($producto->descripcion)
                                 <p class="text-sm text-slate-700 dark:text-slate-300 mb-2 line-clamp-2">
-                                    {{ $serviciosTexto ?: 'Sin servicios especificados' }}
+                                    {{ $producto->descripcion }}
                                 </p>
+                                @endif
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs text-slate-500 dark:text-slate-400">
-                                    <span>{{ $contrato->created_at?->format('d/m/Y') ?? 'Sin fecha' }}</span>
-                                    @if($contrato->precio)
-                                    <span class="font-semibold text-slate-900 dark:text-white text-sm">₡{{ number_format($contrato->precio, 2) }}</span>
-                                    @endif
+                                    <span>{{ $producto->created_at?->format('d/m/Y') ?? 'Sin fecha' }}</span>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-4 gap-1.5 sm:flex sm:flex-nowrap sm:gap-2 sm:ml-3">
-                                <button onclick="eliminarContrato({{ $contrato->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
+                            <div class="grid grid-cols-3 gap-1.5 sm:flex sm:flex-nowrap sm:gap-2 sm:ml-3">
+                                <button onclick="eliminarProducto({{ $producto->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
                                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
                                     <span class="hidden xs:inline">Eliminar</span>
                                 </button>
-                                <button onclick="verContratoModal({{ $contrato->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-walee-500 hover:bg-walee-400 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
+                                <button onclick="verProductoModal({{ $producto->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-purple-500 hover:bg-purple-400 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
                                     <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -249,14 +234,14 @@
                 @empty
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm dark:shadow-none text-center">
                         <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
-                        <p class="text-slate-600 dark:text-slate-400 mb-4">No hay contratos para este cliente</p>
-                <button onclick="abrirModalContrato()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
+                        <p class="text-slate-600 dark:text-slate-400 mb-4">No hay productos para este cliente</p>
+                <button onclick="abrirModalProducto()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
-                    <span>Crear Primer Contrato</span>
+                    <span>Crear Primer Producto</span>
                 </button>
                     </div>
                 @endforelse
@@ -265,14 +250,14 @@
             @else
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm dark:shadow-none text-center">
                 <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
-                <p class="text-slate-600 dark:text-slate-400 mb-4">No hay contratos para este cliente</p>
-                <button onclick="abrirModalContrato()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
+                <p class="text-slate-600 dark:text-slate-400 mb-4">No hay productos para este cliente</p>
+                <button onclick="abrirModalProducto()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
-                    <span>Crear Primer Contrato</span>
+                    <span>Crear Primer Producto</span>
                 </button>
             </div>
             @endif
@@ -291,7 +276,7 @@
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            const items = document.querySelectorAll('.contrato-item');
+            const items = document.querySelectorAll('.producto-item');
             
             items.forEach(item => {
                 const searchData = item.dataset.search;
@@ -303,11 +288,11 @@
             });
         });
         
-        // Eliminar contrato
-        async function eliminarContrato(contratoId) {
+        // Eliminar producto
+        async function eliminarProducto(productoId) {
             const result = await Swal.fire({
-                title: '¿Eliminar contrato?',
-                text: '¿Está seguro de que desea eliminar este contrato? Esta acción no se puede deshacer.',
+                title: '¿Eliminar producto?',
+                text: '¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, eliminar',
@@ -332,7 +317,7 @@
                     color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });
                 
-                const response = await fetch(`/walee-contratos/${contratoId}/eliminar`, {
+                const response = await fetch(`/walee-productos/${productoId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -346,21 +331,21 @@
                     Swal.fire({
                         icon: 'success',
                         title: '¡Eliminado!',
-                        text: data.message,
-                        confirmButtonColor: '#C78F2E',
+                        text: data.message || 'Producto eliminado correctamente',
+                        confirmButtonColor: '#9333ea',
                         background: isDarkMode() ? '#1e293b' : '#ffffff',
                         color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                     }).then(() => {
                         location.reload();
                     });
                 } else {
-                    throw new Error(data.message || 'Error al eliminar el contrato');
+                    throw new Error(data.message || 'Error al eliminar el producto');
                 }
             } catch (error) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: error.message || 'No se pudo eliminar el contrato',
+                    text: error.message || 'No se pudo eliminar el producto',
                     confirmButtonColor: '#ef4444',
                     background: isDarkMode() ? '#1e293b' : '#ffffff',
                     color: isDarkMode() ? '#e2e8f0' : '#1e293b',
@@ -368,11 +353,11 @@
             }
         }
         
-        // Ver contrato modal
-        async function verContratoModal(contratoId) {
+        // Ver producto modal
+        async function verProductoModal(productoId) {
             try {
                 Swal.fire({
-                    title: 'Cargando contrato...',
+                    title: 'Cargando producto...',
                     allowOutsideClick: false,
                     background: isDarkMode() ? '#1e293b' : '#ffffff',
                     color: isDarkMode() ? '#e2e8f0' : '#1e293b',
@@ -381,70 +366,46 @@
                     }
                 });
                 
-                const response = await fetch(`/walee-contratos/${contratoId}/json`);
-                if (!response.ok) throw new Error('Error al cargar el contrato');
+                const response = await fetch(`/walee-productos/${productoId}`);
+                if (!response.ok) throw new Error('Error al cargar el producto');
                 
-                const data = await response.json();
-                if (!data.success) throw new Error(data.message || 'Error al cargar el contrato');
-                
-                const contrato = data.contrato;
+                const producto = await response.json();
+                if (!producto || !producto.id) throw new Error('Producto no encontrado');
                 
                 const modalHtml = `
                     <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto">
                         <!-- Header -->
-                        <div class="bg-gradient-to-r from-walee-500/10 to-walee-600/5 rounded-lg p-4 border border-walee-200 dark:border-walee-500/20">
+                        <div class="bg-gradient-to-r from-purple-500/10 to-purple-600/5 rounded-lg p-4 border border-purple-200 dark:border-purple-500/20">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h3 class="text-lg font-bold text-walee-600 dark:text-walee-400">Contrato #${contrato.id}</h3>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Creado: ${contrato.created_at}</p>
+                                    <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400">${producto.nombre || 'Producto'}</h3>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Creado: ${producto.created_at || 'N/A'}</p>
                                 </div>
                                 <div class="text-right">
-                                    ${contrato.enviada_at ? '<span class="text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded">Enviado</span>' : '<span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">Pendiente</span>'}
+                                    ${producto.estado === 'activo' ? '<span class="text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded">Activo</span>' : '<span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">Inactivo</span>'}
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Servicios -->
+                        <!-- Descripción -->
+                        ${producto.descripcion ? `
                         <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Servicios</p>
-                            <p class="text-sm font-semibold text-slate-900 dark:text-white">${contrato.servicios || 'Sin servicios especificados'}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Descripción</p>
+                            <p class="text-sm font-semibold text-slate-900 dark:text-white">${producto.descripcion}</p>
                         </div>
+                        ` : ''}
                         
                         <!-- Información -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Precio</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">₡${contrato.precio ? parseFloat(contrato.precio).toLocaleString('es-CR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0.00'}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Tipo</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${producto.tipo ? producto.tipo.charAt(0).toUpperCase() + producto.tipo.slice(1) : 'N/A'}</p>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Idioma</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">${contrato.idioma ? contrato.idioma.toUpperCase() : 'N/A'}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Estado</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${producto.estado ? producto.estado.charAt(0).toUpperCase() + producto.estado.slice(1) : 'N/A'}</p>
                             </div>
                         </div>
-                        
-                        <!-- Estado -->
-                        ${contrato.estado ? `
-                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Estado</p>
-                            <p class="text-sm font-medium text-slate-900 dark:text-white">${contrato.estado}</p>
-                        </div>
-                        ` : ''}
-                        
-                        <!-- Correo -->
-                        ${contrato.correo ? `
-                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Correo</p>
-                            <p class="text-sm text-slate-700 dark:text-slate-300">${contrato.correo}</p>
-                        </div>
-                        ` : ''}
-                        
-                        <!-- Fecha de envío -->
-                        ${contrato.enviada_at ? `
-                        <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 border border-emerald-200 dark:border-emerald-500/20">
-                            <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-1">Enviado el</p>
-                            <p class="text-sm font-medium text-emerald-700 dark:text-emerald-300">${contrato.enviada_at}</p>
-                        </div>
-                        ` : ''}
                     </div>
                 `;
                 
@@ -559,14 +520,9 @@
         };
         
         // Abrir modal de crear contrato
-        function abrirModalContrato() {
-            currentPhase = 1;
-            // Inicializar datos si hay cliente desde URL
-            @if(isset($cliente))
-            contratoData.cliente_id = '{{ $cliente->id }}';
-            contratoData.correo = '{{ $cliente->email ?? '' }}';
-            @endif
-            mostrarFase1Contrato();
+        function abrirModalProducto() {
+            // Redirigir a la página de creación de productos con el cliente_id
+            window.location.href = '/walee-productos?cliente_id={{ $cliente->id }}';
         }
         
         // FASE 1: Cliente y Correo

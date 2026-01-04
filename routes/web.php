@@ -3039,6 +3039,26 @@ Route::get('/walee-productos/cliente/{id}', function ($id) {
     }
 })->middleware(['auth'])->name('walee.productos.cliente');
 
+// API: Obtener datos de producto en JSON
+Route::get('/walee-productos/{id}', function ($id) {
+    try {
+        $producto = \App\Models\Rproducto::findOrFail($id);
+        return response()->json([
+            'id' => $producto->id,
+            'nombre' => $producto->nombre,
+            'descripcion' => $producto->descripcion,
+            'estado' => $producto->estado,
+            'tipo' => $producto->tipo,
+            'created_at' => $producto->created_at ? $producto->created_at->format('d/m/Y') : null,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.json');
+
 // API: Obtener datos de contrato en JSON
 Route::get('/walee-contratos/{id}/json', function ($id) {
     try {

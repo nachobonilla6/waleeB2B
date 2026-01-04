@@ -116,9 +116,11 @@
         // Cargar cotizaciones del cliente si está seleccionado
         $cotizacionesCliente = collect();
         $clientInfo = null;
+        $clienteIdParaPerfil = null;
         if ($clienteSeleccionado) {
             // Obtener información del cliente para mostrar
             $clientInfo = $clienteSeleccionado;
+            $clienteIdParaPerfil = $clienteSeleccionado->id;
             
             // Buscar cotizaciones SOLO por cliente_id (no por correo para evitar cotizaciones de otros clientes)
             $cotizacionesCliente = \App\Models\Cotizacion::where('cliente_id', $clienteSeleccionado->id)
@@ -129,6 +131,7 @@
             $clientEnProceso = \App\Models\Client::find(intval($clienteIdFromUrl));
             if ($clientEnProceso) {
                 $clientInfo = $clientEnProceso;
+                $clienteIdParaPerfil = $clientEnProceso->id; // ID del Client para el perfil
                 
                 // Buscar el Cliente correspondiente por email o nombre
                 $clienteCorrespondiente = \App\Models\Cliente::where('correo', $clientEnProceso->email)->first();
@@ -144,6 +147,26 @@
                 } else {
                     // Si no hay Cliente correspondiente, no mostrar cotizaciones (evitar mostrar cotizaciones de otros)
                     $cotizacionesCliente = collect();
+                }
+            }
+        }
+        
+        // Obtener URL de la foto del cliente
+        $fotoUrl = null;
+        if ($clientInfo) {
+            $fotoPath = $clientInfo->foto ?? null;
+            if ($fotoPath) {
+                if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                    $fotoUrl = $fotoPath;
+                } else {
+                    if (isset($clientInfo->id) && $clientInfo instanceof \App\Models\Client) {
+                        // Si es Client, usar la ruta de storage
+                        $filename = basename($fotoPath);
+                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                    } else {
+                        // Si es Cliente, usar Storage::url
+                        $fotoUrl = \Illuminate\Support\Facades\Storage::url($fotoPath);
+                    }
                 }
             }
         }
@@ -191,11 +214,15 @@
                 <!-- Cliente Info Card -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none mb-4">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
+                        <a href="{{ $clienteIdParaPerfil ? route('walee.cliente.detalle', $clienteIdParaPerfil) : '#' }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $clientInfo->nombre_empresa ?? $clientInfo->name ?? 'Cliente' }}" class="w-full h-full object-cover">
+                                @else
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                @endif
                             </div>
                             <div class="min-w-0 flex-1">
                                 <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate">
@@ -205,7 +232,7 @@
                                     {{ $clientInfo->correo ?? $clientInfo->email ?? '' }}
                                 </p>
                             </div>
-                        </div>
+                        </a>
                         <button onclick="abrirModalCotizacion()" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>

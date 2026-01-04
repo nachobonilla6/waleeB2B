@@ -1126,10 +1126,8 @@
         }
         
         function showNuevoEventoModal() {
-            document.getElementById('modalTitle').textContent = 'Nueva Publicación';
-            document.getElementById('evento-form').reset();
-            document.getElementById('evento_id').value = '';
-            document.getElementById('eventoModal').classList.remove('hidden');
+            // Usar la función de SweetAlert2 que permite adjuntar foto y envía al webhook
+            showProgramarPublicacionModal();
         }
         
         function closeEventoModal() {

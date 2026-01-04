@@ -348,6 +348,11 @@
                                         <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                 {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                             </span>
+                            @if($cliente->horario)
+                                <div id="negocioEstadoMobile" class="mb-1.5">
+                                    <!-- Se actualizará con JavaScript -->
+                                </div>
+                            @endif
                             @if($cliente->ciudad)
                                 <div class="flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -510,6 +515,11 @@
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                                     </span>
+                            @if($cliente->horario)
+                                <div id="negocioEstadoDesktop" class="mb-2">
+                                    <!-- Se actualizará con JavaScript -->
+                                </div>
+                            @endif
                             @if($cliente->ciudad)
                                 <div class="flex items-center gap-1.5">
                                     <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1066,6 +1076,21 @@
                 const horario = @json($cliente->horario);
                 const estado = getEstadoHorario(horario);
                 
+                // Indicador principal del negocio (destacado)
+                const negocioEstadoMobile = document.getElementById('negocioEstadoMobile');
+                const negocioEstadoDesktop = document.getElementById('negocioEstadoDesktop');
+                
+                if (estado.abierto === true) {
+                    const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>Negocio Abierto</span>';
+                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
+                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                } else if (estado.abierto === false) {
+                    const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full border border-red-600 dark:border-red-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-red-400"></div>Negocio Cerrado</span>';
+                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
+                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                }
+                
+                // Badge pequeño en el botón de horario
                 const estadoMobile = document.getElementById('horarioEstado');
                 const estadoDesktop = document.getElementById('horarioEstadoDesktop');
                 const btnMobile = document.getElementById('horarioBtn');

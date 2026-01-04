@@ -236,7 +236,7 @@
             
             // Calcular semana siguiente
             try {
-                $fechaSiguiente = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->addWeek();
+                $fechaSiguiente = $inicioSemana->copy()->addWeek();
                 $anoSemanaSiguiente = (int)$fechaSiguiente->format('o');
                 $numSemanaSiguiente = (int)$fechaSiguiente->format('W');
             } catch (\Exception $e) {
@@ -251,7 +251,7 @@
             
             // Calcular semana anterior
             try {
-                $fechaAnterior = \Carbon\Carbon::now()->setISODate($anoActualSemana, $numActualSemana)->subWeek();
+                $fechaAnterior = $inicioSemana->copy()->subWeek();
                 $anoSemanaAnterior = (int)$fechaAnterior->format('o');
                 $numSemanaAnterior = (int)$fechaAnterior->format('W');
             } catch (\Exception $e) {

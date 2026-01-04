@@ -300,9 +300,7 @@
                             <!-- Estado -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
+                                    <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</span>
                                 </div>
                                 <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
@@ -311,10 +309,10 @@
                             <!-- Publicaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    <svg class="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                     </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones</span>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones en FB</span>
                                 </div>
                                 <span class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
                             </div>
@@ -322,8 +320,8 @@
                             <!-- Citas -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-500/10 border border-walee-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    <svg class="w-4 h-4 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
                                     </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
                                 </div>

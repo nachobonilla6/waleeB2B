@@ -32,10 +32,10 @@
     <style>
         * { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        .animate-fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
         
         /* Asegurar que el modal esté encima de todo */
         .swal2-container {
@@ -197,8 +197,8 @@
             @include('partials.walee-navbar')
             
             <!-- Header Profesional -->
-            <div class="mb-6 sm:mb-8 lg:mb-10 animate-fade-in-up">
-                <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
+            <div class="mb-6 sm:mb-8 lg:mb-10">
+                <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
                     @php
                         $fotoPath = $cliente->foto ?? null;
                         $fotoUrl = null;
@@ -214,7 +214,7 @@
                     @endphp
                     
                     <!-- Botón de editar en esquina superior derecha -->
-                    <button onclick="openEditClientModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg">
+                    <button onclick="openEditClientModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" style="position: absolute; top: 0.75rem; right: 0.75rem;">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>

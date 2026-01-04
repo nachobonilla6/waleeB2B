@@ -300,7 +300,7 @@
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
         </div>
-        
+            
         <!-- Contenido principal con ancho más amplio -->
         <div class="relative max-w-full mx-auto px-3 py-0 sm:px-4 sm:py-0 lg:px-12 xl:px-16 h-full overflow-hidden flex flex-col">
             <!-- Header Profesional -->
@@ -335,7 +335,7 @@
                     @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
                     @else
-                                    <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl opacity-80">
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl opacity-80">
                     @endif
                             </div>
                             
@@ -378,7 +378,7 @@
                     </svg>
             </div>
                                 @endif
-                                
+            
                                 <!-- Email Button -->
                                 <button onclick="openEmailModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -489,9 +489,9 @@
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
                         @else
-                                    <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md opacity-80">
-                        @endif
-                                
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md opacity-80">
+                @endif
+                
                                 <!-- Nombre y estado a la derecha -->
                         <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
@@ -508,7 +508,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     </svg>
                                     <span class="text-sm text-slate-600 dark:text-slate-400">{{ $cliente->ciudad }}</span>
-                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>
@@ -523,7 +523,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                         </svg>
                                         <span class="text-sm font-medium">Website</span>
-                                    </a>
+                                </a>
                         @else
                                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -532,7 +532,7 @@
                                         <span class="text-sm font-medium text-slate-400">Website</span>
                             </div>
                         @endif
-                    
+            
                                 <!-- Email Button -->
                                 <button onclick="openEmailModal()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -557,7 +557,7 @@
                                         <span class="text-sm font-medium text-slate-400">Facebook</span>
                             </div>
                         @endif
-            
+                    
                                 <!-- WhatsApp Button -->
                                 <button onclick="openWhatsAppModal()" 
                                         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-100 dark:bg-slate-800 hover:bg-emerald-200 dark:hover:bg-slate-700 text-emerald-600 dark:text-emerald-600 border border-emerald-600 dark:border-slate-700 transition-all group shadow-sm {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}"
@@ -567,8 +567,8 @@
                                                 </svg>
                                     <span class="text-sm font-medium">WhatsApp</span>
                         </button>
-                    </div>
-                    
+            </div>
+            
                             <!-- Alertas Desktop -->
                             <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
                                 @php
@@ -587,7 +587,7 @@
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                                 </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones</span>
-                                            </div>
+                    </div>
                                     <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $publicacionesPublicadas }}/{{ $publicacionesProgramadas }}</span>
                                             </a>
                                 
@@ -596,9 +596,9 @@
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                                </svg>
+                                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
-                            </div>
+                                            </div>
                                     <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
                     </a>
                     
@@ -606,21 +606,21 @@
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                                </svg>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
-                                            </div>
+                            </div>
                                     <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
-                                            </div>
-                                
+                    </div>
+                    
                                 <!-- Cotizaciones -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
-                            </div>
+                                            </div>
                                     <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
                     </div>
                     
@@ -1050,7 +1050,7 @@
                 website: @json($cliente->website ?? ''),
                 facebook: @json($cliente->facebook ?? ''),
                 estado: @json($cliente->estado ?? 'pending'),
-                address: @json($cliente->address ?? ''),
+                ciudad: @json($cliente->ciudad ?? ''),
                 feedback: @json($cliente->feedback ?? ''),
                 inicial: @json(strtoupper(substr($cliente->name, 0, 1)))
             };
@@ -1065,7 +1065,7 @@
                                 <div id="fotoPreviewContainer" class="w-20 h-20 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 border-emerald-500/30 shadow-sm">
                                     ${clienteData.fotoUrl ? 
                                         `<img src="${clienteData.fotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
-                                        `<img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
+                                        `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
                                     }
                                 </div>
                                 ${clienteData.fotoUrl ? `
@@ -1147,8 +1147,8 @@
                         </div>
                         
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-1.5">Dirección</label>
-                            <input type="text" id="clientAddress" name="address" value="${clienteData.address || ''}"
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-1.5">Ciudad</label>
+                            <input type="text" id="clientCiudad" name="ciudad" value="${clienteData.ciudad || ''}"
                                    class="w-full px-3 sm:px-3 py-2 sm:py-2 text-sm sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                     </div>
@@ -1288,7 +1288,7 @@
             const fotoFileInput = document.getElementById('foto_file');
             
             // Mostrar imagen genérica
-            container.innerHTML = `<img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`;
+            container.innerHTML = `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`;
             
             // Marcar para eliminar
             if (deleteFotoInput) {

@@ -24,10 +24,13 @@
             <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
                 <strong>Email:</strong> websolutionscrnow@gmail.com
             </p>
-            <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
-                <strong>WhatsApp:</strong> +506 8806 1829
+            <p style="color: #6b7280; font-size: 14px; margin: 10px 0;">
+                <strong>WhatsApp:</strong>
             </p>
-            <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
+            <a href="https://wa.me/50688061829" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold; margin: 5px 0;">
+                💬 Contactar por WhatsApp
+            </a>
+            <p style="color: #6b7280; font-size: 14px; margin: 10px 0 5px 0;">
                 <strong>Web:</strong> websolutions.work
             </p>
         </div>

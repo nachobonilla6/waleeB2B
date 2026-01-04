@@ -254,7 +254,7 @@
             
             <!-- Header Profesional -->
             <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col">
-                <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
+                <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
                     @php
                         $fotoPath = $cliente->foto ?? null;
                         $fotoUrl = null;

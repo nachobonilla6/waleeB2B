@@ -766,7 +766,7 @@
             
             let modalWidth = '90%';
             if (isDesktop) {
-                modalWidth = '550px';
+                modalWidth = '750px';
             } else if (isTablet) {
                 modalWidth = '500px';
             } else if (isMobile) {

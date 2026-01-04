@@ -759,16 +759,23 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
                 ->first();
         }
         
-        // Verificar si el cliente tiene webhook configurado
-        if (!$client || !$client->webhook_url) {
-            $perfilUrl = route('walee.cliente.detalle', ['id' => $clienteId]);
-            return response()->json([
-                'success' => false,
-                'message' => 'El cliente no tiene webhook configurado. Por favor, configure el webhook antes de publicar.',
-                'error_type' => 'missing_webhook',
-                'config_url' => $perfilUrl,
-                'instructions' => 'Vaya al perfil del cliente y haga clic en el botón de "Configuraciones" para configurar el webhook, Page ID y Token.'
-            ], 400);
+        // Webhook por defecto para todos los clientes
+        $webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/allaccounts';
+        
+        // Si no hay client, crear uno temporal o usar valores por defecto
+        if (!$client) {
+            // Intentar crear el Client si no existe
+            $client = new \App\Models\Client();
+            $client->email = $cliente ? $cliente->correo : '';
+            $client->name = $cliente ? $cliente->nombre_empresa : '';
+            $client->webhook_url = $webhookDefault;
+            $client->save();
+        }
+        
+        // Si el cliente no tiene webhook configurado, usar el webhook por defecto
+        if (!$client->webhook_url) {
+            $client->webhook_url = $webhookDefault;
+            $client->save();
         }
         
         $evento = new \App\Models\PublicidadEvento();

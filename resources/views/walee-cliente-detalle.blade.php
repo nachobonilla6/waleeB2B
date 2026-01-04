@@ -269,21 +269,12 @@
                         }
                     @endphp
                     
-                    <!-- Botones de acción en esquina superior derecha -->
-                    <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 flex items-center gap-2" style="position: absolute; top: 0.75rem; right: 0.75rem;">
-                        <!-- Botón de refresh -->
-                        <button onclick="window.location.reload()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg hover:rotate-180" title="Actualizar">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-                        </button>
-                        <!-- Botón de editar -->
-                        <button onclick="openEditClientModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Editar">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <!-- Botón de editar en esquina superior derecha -->
+                    <button onclick="openEditClientModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" style="position: absolute; top: 0.75rem; right: 0.75rem;">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </button>
                     
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden">
@@ -587,6 +578,139 @@
     @include('partials.walee-support-button')
     
     <script>
+        // Pull to refresh functionality
+        (function() {
+            let startY = 0;
+            let currentY = 0;
+            let isPulling = false;
+            let pullDistance = 0;
+            const pullThreshold = 80; // Distancia mínima para activar refresh
+            const maxPullDistance = 120;
+            
+            const refreshIndicator = document.createElement('div');
+            refreshIndicator.id = 'pull-to-refresh-indicator';
+            refreshIndicator.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%);
+                color: white;
+                font-weight: 600;
+                font-size: 14px;
+                z-index: 10000;
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            `;
+            refreshIndicator.innerHTML = `
+                <svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span id="refresh-text">Arrastra hacia abajo para actualizar</span>
+            `;
+            document.body.appendChild(refreshIndicator);
+            
+            const refreshText = document.getElementById('refresh-text');
+            const refreshIcon = refreshIndicator.querySelector('svg');
+            
+            function handleTouchStart(e) {
+                if (window.scrollY === 0) {
+                    startY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            }
+            
+            function handleTouchMove(e) {
+                if (!isPulling) return;
+                
+                currentY = e.touches[0].clientY;
+                pullDistance = currentY - startY;
+                
+                if (pullDistance > 0 && window.scrollY === 0) {
+                    e.preventDefault();
+                    const pullPercent = Math.min(pullDistance / maxPullDistance, 1);
+                    const translateY = Math.min(pullDistance, maxPullDistance) - 60;
+                    
+                    refreshIndicator.style.transform = `translateY(${translateY}px)`;
+                    
+                    if (pullDistance >= pullThreshold) {
+                        refreshText.textContent = 'Suelta para actualizar';
+                        refreshIndicator.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    } else {
+                        refreshText.textContent = 'Arrastra hacia abajo para actualizar';
+                        refreshIndicator.style.background = 'linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%)';
+                    }
+                } else {
+                    resetPull();
+                }
+            }
+            
+            function handleTouchEnd(e) {
+                if (!isPulling) return;
+                
+                if (pullDistance >= pullThreshold) {
+                    refreshText.textContent = 'Actualizando...';
+                    refreshIcon.style.display = 'block';
+                    refreshIndicator.style.background = 'linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%)';
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 300);
+                } else {
+                    resetPull();
+                }
+                
+                isPulling = false;
+                startY = 0;
+                currentY = 0;
+                pullDistance = 0;
+            }
+            
+            function resetPull() {
+                refreshIndicator.style.transform = 'translateY(-100%)';
+                refreshText.textContent = 'Arrastra hacia abajo para actualizar';
+                refreshIcon.style.display = 'none';
+                refreshIndicator.style.background = 'linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%)';
+            }
+            
+            // También soportar scroll con mouse (para desktop)
+            let lastScrollTop = 0;
+            function handleScroll() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop < lastScrollTop && scrollTop === 0 && !isPulling) {
+                    // Scroll hacia arriba desde la parte superior
+                    const pullPercent = Math.min(Math.abs(scrollTop - lastScrollTop) / 10, 1);
+                    if (pullPercent > 0.5) {
+                        refreshIndicator.style.transform = 'translateY(0)';
+                        refreshText.textContent = 'Suelta para actualizar';
+                        
+                        setTimeout(() => {
+                            if (window.scrollY === 0) {
+                                refreshText.textContent = 'Actualizando...';
+                                refreshIcon.style.display = 'block';
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 300);
+                            }
+                        }, 500);
+                    }
+                }
+                
+                lastScrollTop = scrollTop;
+            }
+            
+            document.addEventListener('touchstart', handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd);
+            window.addEventListener('scroll', handleScroll);
+        })();
+        
         function showWhatsAppError() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             

@@ -494,10 +494,23 @@
         }
         
         function openCreateCitaModal(fecha) {
-            // Resetear datos
-            citaModalData.fecha = fecha;
-            citaModalData.horaInicio = '';
-            citaModalData.horaFin = '';
+            // Calcular fecha de hoy en formato YYYY-MM-DD
+            const hoy = new Date();
+            const fechaHoy = hoy.toISOString().split('T')[0];
+            
+            // Calcular hora de inicio: una hora adelante, en punto
+            const horaActual = hoy.getHours();
+            const horaInicio = horaActual + 1;
+            const horaInicioFormato = String(horaInicio).padStart(2, '0') + ':00';
+            
+            // Calcular hora de fin: 3 horas más que la hora de inicio
+            const horaFin = horaInicio + 3;
+            const horaFinFormato = String(horaFin).padStart(2, '0') + ':00';
+            
+            // Resetear datos con valores por defecto
+            citaModalData.fecha = fechaHoy;
+            citaModalData.horaInicio = horaInicioFormato;
+            citaModalData.horaFin = horaFinFormato;
             citaModalData.titulo = '';
             citaModalData.descripcion = '';
             citaModalData.ubicacion = '';

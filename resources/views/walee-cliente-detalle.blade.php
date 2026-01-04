@@ -370,22 +370,22 @@
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                            </svg>
+                                </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones</span>
-                        </div>
+                            </div>
                                 <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $publicacionesPublicadas }}/{{ $publicacionesProgramadas }}</span>
                     </a>
                             
                             <!-- Citas -->
-                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-walee-500/10 border border-amber-600 dark:border-walee-500/20">
+                            <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-walee-500/10 border border-amber-600 dark:border-walee-500/20 hover:bg-amber-200 dark:hover:bg-walee-500/20 transition-colors cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                                </svg>
+                            </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
-                            </div>
+                        </div>
                                 <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
-                            </div>
+                            </a>
                             
                             <!-- Facturas -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-600 dark:border-red-500/20">
@@ -394,9 +394,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
-                        </div>
+                            </div>
                                 <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
-                    </div>
+                            </div>
                 
                             <!-- Cotizaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 border border-blue-600 dark:border-blue-500/20">
@@ -405,22 +405,22 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
-                            </div>
+                        </div>
                                 <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
-                            </div>
+                    </div>
                 
                             <!-- Contratos -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-100 dark:bg-walee-500/10 border border-walee-600 dark:border-walee-500/20">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
+                                </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contratos</span>
-                        </div>
+                            </div>
                                 <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
                 
                     <!-- Desktop: Layout original -->
                     <div class="hidden sm:block p-4 sm:p-5 lg:p-6">
@@ -433,22 +433,22 @@
                         @else
                                     <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
                                         <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-            </div>
+                        </div>
                         @endif
                                 
                                 <!-- Nombre y estado a la derecha -->
-                                            <div class="flex-1 min-w-0">
+                        <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                            </span>
-                                        </div>
-                                        </div>
-                                    </div>
-                            
+                                    </span>
+                        </div>
+                    </div>
+                </div>
+                
                             <!-- Acciones Rápidas Desktop -->
                             <div class="flex gap-2">
                                 <!-- Website Button -->
@@ -456,7 +456,7 @@
                                     <a href="{{ $cliente->website }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-blue-600 dark:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                            </svg>
+                        </svg>
                                         <span class="text-sm font-medium">Website</span>
                                     </a>
                         @else
@@ -527,7 +527,7 @@
                                             </a>
                                 
                                 <!-- Citas -->
-                                <div class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20">
+                                <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20 hover:bg-walee-500/20 transition-colors cursor-pointer">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
@@ -535,7 +535,7 @@
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
                             </div>
                                     <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
-                    </div>
+                    </a>
                     
                                 <!-- Facturas -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20">

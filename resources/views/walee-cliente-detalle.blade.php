@@ -320,12 +320,20 @@
                         }
                     @endphp
                     
-                    <!-- Botón de editar en esquina superior izquierda -->
-                    <button onclick="openEditClientModal()" class="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" style="position: absolute; top: 0.75rem; left: 0.75rem;">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                    </button>
+                    <!-- Botones de editar y configuraciones en esquina superior izquierda -->
+                    <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2">
+                        <button onclick="openEditClientModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </button>
+                        <button onclick="openConfiguracionesModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-violet-600/80 hover:bg-violet-600 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Configuraciones">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </button>
+                    </div>
                     
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden w-full">
@@ -2091,6 +2099,104 @@
             });
         }
         
+        // Función para abrir modal de configuraciones
+        function openConfiguracionesModal() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            const clienteId = {{ $cliente->id }};
+            const pageId = '{{ $cliente->page_id ?? "" }}';
+            const token = '{{ $cliente->token ?? "" }}';
+            const webhookUrl = '{{ $cliente->webhook_url ?? "" }}';
+            
+            const html = `
+                <form id="configuraciones-form" class="space-y-4 text-left">
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Page ID</label>
+                        <input type="text" name="page_id" id="page_id" value="${pageId}" placeholder="Ingrese el Page ID de Facebook" class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Token</label>
+                        <input type="text" name="token" id="token" value="${token}" placeholder="Ingrese el Token de acceso" class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Webhook URL</label>
+                        <input type="url" name="webhook_url" id="webhook_url" value="${webhookUrl}" placeholder="https://ejemplo.com/webhook" class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: 'Configuraciones',
+                html: html,
+                width: isMobile ? '95%' : '500px',
+                padding: isMobile ? '0.75rem' : '1.5rem',
+                showCancelButton: true,
+                showCloseButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isMobile ? '!w-[95%] !max-w-[95%]' : '',
+                    htmlContainer: isMobile ? '!w-full !max-w-full' : ''
+                },
+                didOpen: () => {
+                    // Asegurar que los inputs usen todo el ancho en mobile
+                    if (isMobile) {
+                        const form = document.getElementById('configuraciones-form');
+                        if (form) {
+                            form.style.width = '100%';
+                            form.style.maxWidth = '100%';
+                        }
+                    }
+                },
+                preConfirm: () => {
+                    const pageId = document.getElementById('page_id').value;
+                    const token = document.getElementById('token').value;
+                    const webhookUrl = document.getElementById('webhook_url').value;
+                    
+                    return fetch(`/walee-cliente/${clienteId}/webhook`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            page_id: pageId,
+                            token: token,
+                            webhook_url: webhookUrl
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            throw new Error(data.message || 'Error al guardar');
+                        }
+                        return data;
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(error.message || 'Error al guardar la configuración');
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Configuración guardada!',
+                        text: 'Los cambios se han guardado correctamente',
+                        confirmButtonColor: '#8b5cf6',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>

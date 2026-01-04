@@ -483,6 +483,7 @@
             fecha: '',
             horaInicio: '',
             horaFin: '',
+            tipoCita: '',
             titulo: '',
             descripcion: '',
             ubicacion: '',
@@ -511,6 +512,7 @@
             citaModalData.fecha = fechaHoy;
             citaModalData.horaInicio = horaInicioFormato;
             citaModalData.horaFin = horaFinFormato;
+            citaModalData.tipoCita = '';
             citaModalData.titulo = '';
             citaModalData.descripcion = '';
             citaModalData.ubicacion = '';
@@ -631,6 +633,22 @@
                     </div>
                     
                     <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo de Cita</label>
+                        <select id="cita_tipo" 
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="consulta" ${citaModalData.tipoCita === 'consulta' ? 'selected' : ''}>Consulta</option>
+                            <option value="reunion" ${citaModalData.tipoCita === 'reunion' ? 'selected' : ''}>Reunión</option>
+                            <option value="seguimiento" ${citaModalData.tipoCita === 'seguimiento' ? 'selected' : ''}>Seguimiento</option>
+                            <option value="presentacion" ${citaModalData.tipoCita === 'presentacion' ? 'selected' : ''}>Presentación</option>
+                            <option value="llamada" ${citaModalData.tipoCita === 'llamada' ? 'selected' : ''}>Llamada</option>
+                            <option value="visita" ${citaModalData.tipoCita === 'visita' ? 'selected' : ''}>Visita</option>
+                            <option value="capacitacion" ${citaModalData.tipoCita === 'capacitacion' ? 'selected' : ''}>Capacitación</option>
+                            <option value="otro" ${citaModalData.tipoCita === 'otro' ? 'selected' : ''}>Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div>
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título <span class="text-red-500">*</span></label>
                         <input type="text" id="cita_titulo" value="${citaModalData.titulo}" required placeholder="Ej: Reunión de seguimiento"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
@@ -665,6 +683,7 @@
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 preConfirm: () => {
+                    const tipoCita = document.getElementById('cita_tipo').value;
                     const titulo = document.getElementById('cita_titulo').value;
                     const descripcion = document.getElementById('cita_descripcion').value;
                     
@@ -673,6 +692,7 @@
                         return false;
                     }
                     
+                    citaModalData.tipoCita = tipoCita;
                     citaModalData.titulo = titulo;
                     citaModalData.descripcion = descripcion;
                     return true;

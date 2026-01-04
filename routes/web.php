@@ -750,6 +750,27 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             ], 400);
         }
         
+        // Validar que el cliente tenga webhook configurado ANTES de crear el evento
+        $cliente = \App\Models\Cliente::find($clienteId);
+        $client = null;
+        if ($cliente) {
+            $client = \App\Models\Client::where('email', $cliente->correo)
+                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
+                ->first();
+        }
+        
+        // Verificar si el cliente tiene webhook configurado
+        if (!$client || !$client->webhook_url) {
+            $perfilUrl = route('walee.cliente.detalle', ['id' => $clienteId]);
+            return response()->json([
+                'success' => false,
+                'message' => 'El cliente no tiene webhook configurado. Por favor, configure el webhook antes de publicar.',
+                'error_type' => 'missing_webhook',
+                'config_url' => $perfilUrl,
+                'instructions' => 'Vaya al perfil del cliente y haga clic en el botón de "Configuraciones" para configurar el webhook, Page ID y Token.'
+            ], 400);
+        }
+        
         $evento = new \App\Models\PublicidadEvento();
         $evento->titulo = $request->input('titulo', 'Publicación programada');
         $evento->texto = $request->input('texto', '');
@@ -805,57 +826,18 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             'texto' => substr($evento->texto, 0, 50) . '...'
         ]);
         
-        // Obtener cliente para datos del webhook
-        $cliente = \App\Models\Cliente::find($evento->cliente_id);
+        // Obtener datos del webhook (ya validado anteriormente)
+        $webhookUrl = $client->webhook_url;
+        $pageId = $client->page_id;
+        $token = $client->token;
         
-        // Buscar el Client correspondiente (donde están los campos webhook_url, page_id, token)
-        $client = null;
-        if ($cliente) {
-            $client = \App\Models\Client::where('email', $cliente->correo)
-                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
-                ->first();
-        }
-        
-        // Obtener webhook del cliente específico, o usar el webhook por defecto
-        $webhookUrl = null;
-        $pageId = null;
-        $token = null;
-        
-        if ($client) {
-            // Usar webhook del cliente si está configurado
-            if ($client->webhook_url) {
-                $webhookUrl = $client->webhook_url;
-                $pageId = $client->page_id;
-                $token = $client->token;
-                
-                \Log::info('Webhook del cliente encontrado', [
-                    'cliente_id' => $evento->cliente_id,
-                    'client_id' => $client->id,
-                    'webhook_url' => $webhookUrl,
-                    'page_id' => $pageId ? 'configurado' : 'no configurado',
-                    'token' => $token ? 'configurado' : 'no configurado'
-                ]);
-            } else {
-                \Log::info('Cliente encontrado pero sin webhook configurado', [
-                    'cliente_id' => $evento->cliente_id,
-                    'client_id' => $client->id
-                ]);
-            }
-        } else {
-            \Log::info('No se encontró Client correspondiente al Cliente', [
-                'cliente_id' => $evento->cliente_id,
-                'cliente_correo' => $cliente ? $cliente->correo : 'N/A',
-                'cliente_nombre' => $cliente ? $cliente->nombre_empresa : 'N/A'
-            ]);
-        }
-        
-        // Si no hay webhook del cliente, usar el webhook por defecto
-        if (!$webhookUrl) {
-            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
-            \Log::info('Usando webhook por defecto', [
-                'webhook_url' => $webhookUrl
-            ]);
-        }
+        \Log::info('Webhook del cliente encontrado', [
+            'cliente_id' => $evento->cliente_id,
+            'client_id' => $client->id,
+            'webhook_url' => $webhookUrl,
+            'page_id' => $pageId ? 'configurado' : 'no configurado',
+            'token' => $token ? 'configurado' : 'no configurado'
+        ]);
         
         try {
             // Generar URL completa de la imagen si existe

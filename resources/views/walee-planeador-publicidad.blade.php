@@ -1060,12 +1060,23 @@
                             });
                         } else {
                             let errorMessage = 'Error al programar la publicación.';
+                            let showConfigButton = false;
+                            let configUrl = null;
+                            
                             if (responseData.errors) {
                                 errorMessage = Object.values(responseData.errors).flat().join('\n');
                             } else if (responseData.message) {
                                 errorMessage = responseData.message;
                             }
-                            Swal.fire({
+                            
+                            // Si es error de webhook faltante, mostrar mensaje especial con botón
+                            if (responseData.error_type === 'missing_webhook') {
+                                errorMessage = responseData.message + '\n\n' + (responseData.instructions || '');
+                                showConfigButton = true;
+                                configUrl = responseData.config_url;
+                            }
+                            
+                            const swalConfig = {
                                 icon: 'error',
                                 title: 'Error',
                                 text: errorMessage,
@@ -1076,6 +1087,20 @@
                                     popup: isDarkMode ? 'dark-swal' : 'light-swal',
                                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
                                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                                }
+                            };
+                            
+                            if (showConfigButton && configUrl) {
+                                swalConfig.showCancelButton = true;
+                                swalConfig.cancelButtonText = 'Cerrar';
+                                swalConfig.confirmButtonText = 'Ir a Configuraciones';
+                                swalConfig.confirmButtonColor = '#8b5cf6';
+                                swalConfig.reverseButtons = true;
+                            }
+                            
+                            Swal.fire(swalConfig).then((result) => {
+                                if (result.isConfirmed && showConfigButton && configUrl) {
+                                    window.location.href = configUrl;
                                 }
                             });
                         }

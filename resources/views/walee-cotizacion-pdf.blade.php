@@ -368,10 +368,10 @@
                     @endif
                 </td>
                 <td>{{ $cotizacion->plan }}</td>
-                <td class="text-right">₡{{ number_format($cotizacion->monto / 1.13, 2, ',', ' ') }}</td>
-                <td class="text-right">₡{{ number_format($cotizacion->monto * 0.13 / 1.13, 2, ',', ' ') }}</td>
+                <td class="text-right">&#8353;{{ number_format($cotizacion->monto / 1.13, 2, ',', ' ') }}</td>
+                <td class="text-right">&#8353;{{ number_format($cotizacion->monto * 0.13 / 1.13, 2, ',', ' ') }}</td>
                 <td class="text-right">
-                    <strong>₡{{ number_format($cotizacion->monto, 2, ',', ' ') }}</strong>
+                    <strong>&#8353;{{ number_format($cotizacion->monto, 2, ',', ' ') }}</strong>
                 </td>
             </tr>
         </tbody>
@@ -382,15 +382,15 @@
         <div class="totals-table">
             <div class="totals-row">
                 <span>Subtotal:</span>
-                <span><strong>₡{{ number_format($cotizacion->monto / 1.13, 2, ',', ' ') }}</strong></span>
+                <span><strong>&#8353;{{ number_format($cotizacion->monto / 1.13, 2, ',', ' ') }}</strong></span>
             </div>
             <div class="totals-row">
                 <span>IVA (13%):</span>
-                <span><strong>₡{{ number_format($cotizacion->monto * 0.13 / 1.13, 2, ',', ' ') }}</strong></span>
+                <span><strong>&#8353;{{ number_format($cotizacion->monto * 0.13 / 1.13, 2, ',', ' ') }}</strong></span>
             </div>
             <div class="totals-row total">
                 <span>Total:</span>
-                <span>₡{{ number_format($cotizacion->monto, 2, ',', ' ') }}</span>
+                <span>&#8353;{{ number_format($cotizacion->monto, 2, ',', ' ') }}</span>
             </div>
         </div>
     </div>

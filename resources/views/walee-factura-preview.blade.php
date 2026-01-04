@@ -376,10 +376,10 @@
                                 @endif
                             </td>
                             <td class="text-center">{{ $cantidad }}</td>
-                            <td class="text-right">₡{{ number_format($precioUnitario, 2, ',', ' ') }}</td>
-                            <td class="text-right">₡{{ number_format($ivaItem, 2, ',', ' ') }}</td>
+                            <td class="text-right">&#8353;{{ number_format($precioUnitario, 2, ',', ' ') }}</td>
+                            <td class="text-right">&#8353;{{ number_format($ivaItem, 2, ',', ' ') }}</td>
                             <td class="text-right">
-                                <strong>₡{{ number_format($totalItem, 2, ',', ' ') }}</strong>
+                                <strong>&#8353;{{ number_format($totalItem, 2, ',', ' ') }}</strong>
                             </td>
                         </tr>
                     @endif
@@ -398,25 +398,25 @@
             @if($descuentoAntes > 0)
             <div class="totals-row">
                 <span>Descuento antes de impuestos:</span>
-                <span style="color: #dc2626;">-₡{{ number_format($descuentoAntes, 2, ',', ' ') }}</span>
+                <span style="color: #dc2626;">-&#8353;{{ number_format($descuentoAntes, 2, ',', ' ') }}</span>
             </div>
             @endif
             
             <div class="totals-row">
                 <span>Subtotal:</span>
-                <span><strong>₡{{ number_format($subtotalConDescuento, 2, ',', ' ') }}</strong></span>
+                <span><strong>&#8353;{{ number_format($subtotalConDescuento, 2, ',', ' ') }}</strong></span>
             </div>
             
             @if($descuentoDespues > 0)
             <div class="totals-row">
                 <span>Descuento después de impuestos:</span>
-                <span style="color: #dc2626;">-₡{{ number_format($descuentoDespues, 2, ',', ' ') }}</span>
+                <span style="color: #dc2626;">-&#8353;{{ number_format($descuentoDespues, 2, ',', ' ') }}</span>
             </div>
             @endif
             
             <div class="totals-row total">
                 <span>Total:</span>
-                <span>₡{{ number_format($total, 2, ',', ' ') }}</span>
+                <span>&#8353;{{ number_format($total, 2, ',', ' ') }}</span>
             </div>
         </div>
     </div>
@@ -439,7 +439,7 @@
                         <tr>
                             <td>{{ $pago['descripcion'] ?? '' }}</td>
                             <td class="text-center">{{ isset($pago['fecha']) ? \Carbon\Carbon::parse($pago['fecha'])->format('d/m/Y') : '' }}</td>
-                            <td class="text-right"><strong>₡{{ number_format(floatval($pago['importe'] ?? 0), 2, ',', ' ') }}</strong></td>
+                            <td class="text-right"><strong>&#8353;{{ number_format(floatval($pago['importe'] ?? 0), 2, ',', ' ') }}</strong></td>
                         </tr>
                     @endif
                 @endforeach

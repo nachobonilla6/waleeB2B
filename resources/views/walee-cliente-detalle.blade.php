@@ -357,6 +357,14 @@
                                     <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->ciudad) }}&zoom=6" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer">{{ $cliente->ciudad }}</a>
                                 </div>
                             @endif
+                            @if($cliente->horario)
+                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Horario</span>
+                                </button>
+                            @endif
                         </div>
                 </div>
             </div>
@@ -509,6 +517,14 @@
                                     </svg>
                                     <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->ciudad) }}&zoom=6" target="_blank" rel="noopener noreferrer" class="text-sm text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer">{{ $cliente->ciudad }}</a>
                             </div>
+                            @endif
+                            @if($cliente->horario)
+                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Horario</span>
+                                </button>
                             @endif
                         </div>
                     </div>
@@ -1859,6 +1875,33 @@
                     <span>Generar con AI</span>
                 `;
             }
+        }
+        
+        function showHorarioModal(horario) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const isMobile = window.innerWidth < 640;
+            
+            Swal.fire({
+                title: 'Horario',
+                html: `
+                    <div class="text-left">
+                        <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${horario}</p>
+                    </div>
+                `,
+                width: isMobile ? '85%' : '400px',
+                padding: isMobile ? '0.75rem' : '1rem',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#10b981',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                }
+            });
         }
     </script>
 </body>

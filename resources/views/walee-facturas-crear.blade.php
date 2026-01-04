@@ -1081,6 +1081,7 @@
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
@@ -1168,6 +1169,7 @@
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Anterior',
                 confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 preConfirm: () => {
@@ -1254,6 +1256,7 @@
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Anterior',
                 confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
@@ -1384,6 +1387,7 @@
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Anterior',
                 confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
@@ -1499,6 +1503,7 @@
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Anterior',
                 confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
@@ -1581,6 +1586,7 @@
                 confirmButtonText: 'Crear Factura',
                 cancelButtonText: 'Anterior',
                 confirmButtonColor: '#10b981',
+                reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 preConfirm: async () => {

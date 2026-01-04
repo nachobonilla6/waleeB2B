@@ -223,142 +223,133 @@
                     
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden">
-                        <!-- Header con imagen y nombre -->
-                        <div class="flex items-start gap-3 p-4 border-b border-slate-200 dark:border-slate-700">
-                            <!-- Imagen -->
-                            <div class="relative w-20 h-20 flex-shrink-0">
+                        <div class="flex items-center gap-2 p-3">
+                            <!-- Imagen a la izquierda (mitad de ancho y alto) -->
+                            <div class="relative w-1/2 aspect-square flex-shrink-0">
                                 @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl shadow-md">
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center rounded-xl shadow-md border border-emerald-500/20">
-                                        <span class="text-2xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                    <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center rounded-xl">
+                                        <span class="text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                                     </div>
                                 @endif
                             </div>
                             
-                            <!-- Nombre -->
-                            <div class="flex-1 min-w-0 pt-1">
-                                <h1 class="text-lg font-bold text-slate-900 dark:text-white break-words leading-tight">{{ $cliente->name }}</h1>
+                            <!-- Nombre a la derecha -->
+                            <div class="flex-1 min-w-0">
+                                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words">{{ $cliente->name }}</h1>
                             </div>
                         </div>
                         
                         <!-- Acciones Rápidas Mobile -->
-                        <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                            <div class="grid grid-cols-4 gap-2">
+                        <div class="px-3 pb-3">
+                            <div class="grid grid-cols-4 gap-1.5">
                                 <!-- Website Button -->
                                 @if($cliente->website)
-                                    <a href="{{ $cliente->website }}" target="_blank" class="flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 hover:to-blue-600/20 text-blue-500 border border-blue-500/20 transition-all group active:scale-95">
-                                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ $cliente->website }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 text-blue-400 border border-blue-500/30 transition-all group shadow-sm">
+                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                                         </svg>
-                                        <span class="text-[9px] font-medium text-blue-600 dark:text-blue-400">Website</span>
                                     </a>
                                 @else
-                                    <div class="flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                    <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                                         </svg>
-                                        <span class="text-[9px] font-medium text-slate-400">Website</span>
                                     </div>
                                 @endif
                                 
                                 <!-- Email Button -->
-                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl bg-gradient-to-br from-walee-500/10 to-walee-600/10 hover:from-walee-500/20 hover:to-walee-600/20 text-walee-500 border border-walee-500/20 transition-all group active:scale-95">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-center p-2 rounded-lg bg-gradient-to-r from-walee-500/20 to-walee-600/20 hover:from-walee-500/30 hover:to-walee-600/30 text-walee-400 border border-walee-500/30 transition-all group shadow-sm">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
-                                    <span class="text-[9px] font-medium text-walee-600 dark:text-walee-400">Email</span>
                                 </a>
                                 
                                 <!-- Publicaciones Button (Facebook Icon) -->
                                 @if($clientePlaneadorId)
-                                    <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl bg-gradient-to-br from-violet-500/10 to-violet-600/10 hover:from-violet-500/20 hover:to-violet-600/20 text-violet-500 border border-violet-500/20 transition-all group active:scale-95">
-                                        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ route('walee.planeador.publicidad', $clientePlaneadorId) }}" class="flex items-center justify-center p-2 rounded-lg bg-gradient-to-r from-violet-500/20 to-violet-600/20 hover:from-violet-500/30 hover:to-violet-600/30 text-violet-400 border border-violet-500/30 transition-all group shadow-sm">
+                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                         </svg>
-                                        <span class="text-[9px] font-medium text-violet-600 dark:text-violet-400">FB</span>
                                     </a>
                                 @else
-                                    <div class="flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                    <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                         </svg>
-                                        <span class="text-[9px] font-medium text-slate-400">FB</span>
                                     </div>
                                 @endif
                                 
                                 <!-- WhatsApp Button -->
                                 <a href="{{ $whatsappLink ?: '#' }}" 
                                    @if($whatsappLink) target="_blank" @else onclick="event.preventDefault(); showWhatsAppError(); return false;" @endif
-                                   class="flex flex-col items-center justify-center gap-1 p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 hover:from-emerald-500/20 hover:to-emerald-600/20 text-emerald-500 border border-emerald-500/20 transition-all group active:scale-95 {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}">
-                                    <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                   class="flex items-center justify-center p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition-all group shadow-sm {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                                     </svg>
-                                    <span class="text-[9px] font-medium text-emerald-600 dark:text-emerald-400">WA</span>
                                 </a>
                             </div>
                         </div>
                         
                         <!-- Alertas/Información -->
-                        <div class="px-4 py-3">
+                        <div class="px-3 pb-3 space-y-1.5">
                             @php
                                 $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
                                 $totalCitas = $citasPendientes->count() + $citasPasadas->count();
                             @endphp
                             
-                            <div class="grid grid-cols-2 gap-2">
-                                <!-- Estado -->
-                                <div class="flex items-center justify-between p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Estado</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
+                            <!-- Estado -->
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</span>
                                 </div>
-                                
-                                <!-- Publicaciones -->
-                                <div class="flex items-center justify-between p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">FB</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
+                                <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
+                            </div>
+                            
+                            <!-- Publicaciones -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones en FB</span>
                                 </div>
-                                
-                                <!-- Citas -->
-                                <div class="flex items-center justify-between p-2.5 rounded-xl bg-walee-500/10 border border-walee-500/20">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
-                                        </svg>
-                                        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Citas</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-walee-600 dark:text-walee-400">{{ $totalCitas }}</span>
+                                <span class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
+                            </div>
+                            
+                            <!-- Citas -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-500/10 border border-walee-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
                                 </div>
-                                
-                                <!-- Facturas -->
-                                <div class="flex items-center justify-between p-2.5 rounded-xl bg-red-500/10 border border-red-500/20">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Facturas</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-red-600 dark:text-red-400">{{ $facturas->count() }}</span>
+                                <span class="text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $totalCitas }}</span>
+                            </div>
+                            
+                            <!-- Facturas -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-red-500/10 border border-red-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
                                 </div>
-                                
-                                <!-- Cotizaciones -->
-                                <div class="flex items-center justify-between p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                        <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Cotiz.</span>
-                                    </div>
-                                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
+                                <span class="text-sm font-semibold text-red-600 dark:text-red-400">{{ $facturas->count() }}</span>
+                            </div>
+                            
+                            <!-- Cotizaciones -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
                                 </div>
+                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
                             </div>
                         </div>
                     </div>

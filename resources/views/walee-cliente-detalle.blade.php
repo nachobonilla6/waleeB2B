@@ -713,15 +713,11 @@
                 return;
             }
             
-            // Mostrar loading
-            Swal.fire({
-                title: 'Generando mensaje...',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+            // Deshabilitar botón y mostrar loading
+            const generateButton = event.target;
+            const originalText = generateButton.innerHTML;
+            generateButton.disabled = true;
+            generateButton.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Generando...';
             
             try {
                 const response = await fetch('{{ route("walee.whatsapp.generar-mensaje") }}', {
@@ -736,16 +732,19 @@
                 
                 const result = await response.json();
                 
+                // Restaurar botón
+                generateButton.disabled = false;
+                generateButton.innerHTML = originalText;
+                
                 if (result.success) {
-                    // Cerrar loading
-                    Swal.close();
-                    
                     // Mostrar mensaje generado
                     const container = document.getElementById('generatedMessageContainer');
                     const textarea = document.getElementById('generatedMessage');
                     if (container && textarea) {
                         container.classList.remove('hidden');
                         textarea.value = result.message;
+                        // Scroll al mensaje generado
+                        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 } else {
                     Swal.fire({
@@ -756,6 +755,11 @@
                     });
                 }
             } catch (error) {
+                // Restaurar botón
+                generateButton.disabled = false;
+                generateButton.innerHTML = originalText;
+                
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',

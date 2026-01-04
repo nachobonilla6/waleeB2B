@@ -79,6 +79,45 @@
             .swal2-html-container-mobile > * {
                 width: 100% !important;
             }
+            /* Mejorar botones en mobile */
+            .swal2-actions {
+                margin-top: 1rem !important;
+                gap: 0.75rem !important;
+            }
+            .swal2-confirm,
+            .swal2-cancel {
+                flex: 1 !important;
+                padding: 0.75rem 1rem !important;
+                font-size: 0.875rem !important;
+                font-weight: 600 !important;
+                border-radius: 0.5rem !important;
+                transition: all 0.2s !important;
+            }
+            .swal2-confirm {
+                background: linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%) !important;
+                border: none !important;
+                box-shadow: 0 2px 8px rgba(213, 159, 59, 0.3) !important;
+            }
+            .swal2-confirm:hover {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 12px rgba(213, 159, 59, 0.4) !important;
+            }
+            .swal2-cancel {
+                background: #f1f5f9 !important;
+                color: #475569 !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            .swal2-cancel:hover {
+                background: #e2e8f0 !important;
+            }
+            html.dark .swal2-cancel {
+                background: #1e293b !important;
+                color: #cbd5e1 !important;
+                border-color: #334155 !important;
+            }
+            html.dark .swal2-cancel:hover {
+                background: #334155 !important;
+            }
         }
         
         /* Estilos para desktop - modal más ancho y compacto */

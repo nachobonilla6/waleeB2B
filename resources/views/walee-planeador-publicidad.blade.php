@@ -877,7 +877,7 @@
             `;
             
             Swal.fire({
-                title: 'Crear Publicación',
+                title: '',
                 html: html,
                 width: modalWidth,
                 padding: isMobile ? '0.75rem' : '1rem',

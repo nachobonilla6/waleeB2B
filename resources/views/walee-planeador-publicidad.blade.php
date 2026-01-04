@@ -1197,7 +1197,7 @@
                         estadoBadge = '<span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300">Programada</span>';
                     }
                     
-                    // Construir HTML del detalle
+                    // Construir HTML del detalle - mismo diseño que Crear Publicación pero solo lectura
                     let imagenHTML = '';
                     if (evento.imagen_url) {
                         let imageUrl = evento.imagen_url;
@@ -1221,104 +1221,97 @@
                         }
                         
                         imagenHTML = `
-                            <div class="mt-3 space-y-2">
+                            <div>
                                 <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Imagen</label>
                                 <div class="relative">
-                                    <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-auto rounded-lg border ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}" 
+                                    <img src="${imageUrl}" alt="Imagen de publicación" class="w-full h-48 object-cover rounded-lg border ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}" 
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                     <div style="display:none;" class="mt-2 p-3 rounded-lg ${isDarkMode ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} border">
                                         <p class="text-xs ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-1">⚠️ No se pudo cargar la imagen</p>
                                         <a href="${imageUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-violet-400' : 'text-violet-600'} hover:underline">Abrir en nueva pestaña</a>
-                                    </div>
-                                    <div class="mt-2">
-                                        <a href="${imageUrl}" target="_blank" class="text-xs ${isDarkMode ? 'text-violet-400' : 'text-violet-600'} hover:underline">Abrir imagen en nueva pestaña</a>
                                     </div>
                                 </div>
                             </div>
                         `;
                     }
                     
-                    let modalWidth = '90%';
+                    // Formatear fecha para input datetime-local
+                    let fechaInput = '';
+                    if (evento.fecha_inicio) {
+                        const fecha = new Date(evento.fecha_inicio);
+                        const year = fecha.getFullYear();
+                        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+                        const day = String(fecha.getDate()).padStart(2, '0');
+                        const hours = String(fecha.getHours()).padStart(2, '0');
+                        const minutes = String(fecha.getMinutes()).padStart(2, '0');
+                        fechaInput = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    }
+                    
+                    let modalWidth = '85%';
                     if (isDesktop) {
                         modalWidth = '500px';
                     } else if (isTablet) {
                         modalWidth = '450px';
                     } else if (isMobile) {
-                        modalWidth = '90%';
+                        modalWidth = '85%';
                     }
                     
-                    // Layout horizontal: imagen a la izquierda, contenido a la derecha
+                    // Layout igual que Crear Publicación: Imagen arriba, Prompt y Texto abajo juntos
                     const html = `
-                        <div class="text-left ${isMobile ? 'text-xs space-y-2' : 'text-sm'}">
-                            <div class="grid ${isDesktop ? 'grid-cols-2 gap-4' : 'grid-cols-1 gap-3'}">
-                                <!-- Columna izquierda: Imagen (solo en desktop) -->
-                                ${isDesktop && imagenHTML ? `
-                                <div class="flex-shrink-0">
-                                    ${imagenHTML.replace('mt-3 space-y-2', 'space-y-2')}
+                        <div class="space-y-2.5 text-left">
+                            ${imagenHTML ? imagenHTML : ''}
+                            
+                            <!-- Prompt y Texto separados (igual que Crear Publicación) -->
+                            <div class="space-y-2">
+                                <!-- Prompt personalizado (solo lectura) -->
+                                ${evento.prompt_personalizado ? `
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Prompt Personalizado</label>
+                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                        ${evento.prompt_personalizado}
+                                    </div>
                                 </div>
                                 ` : ''}
                                 
-                                <!-- Columna derecha: Contenido -->
-                                <div class="space-y-2.5 ${isDesktop ? '' : 'space-y-2'}">
-                                    <div>
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
-                                        <p class="font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}">${evento.titulo || 'Sin título'}</p>
+                                <!-- Texto (solo lectura) -->
+                                ${evento.texto ? `
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
+                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-pre-wrap">
+                                        ${evento.texto}
                                     </div>
-                                    
-                                    <div class="grid ${isDesktop ? 'grid-cols-3' : 'grid-cols-1'} gap-3">
-                                        <div>
-                                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Plataforma</label>
-                                            <div class="flex items-center gap-2">
-                                                ${plataformaIcono}
-                                                <span class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${plataformaNombre}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
-                                            ${estadoBadge}
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                            <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} text-xs">${fechaFormateada}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    ${evento.texto ? `
-                                    <div>
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
-                                        <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap text-xs">${evento.texto}</p>
-                                    </div>
-                                    ` : ''}
-                                    
-                                    ${evento.descripcion ? `
-                                    <div>
-                                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
-                                        <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap text-xs">${evento.descripcion}</p>
-                                    </div>
-                                    ` : ''}
-                                    
-                                    ${!isDesktop && imagenHTML ? `
-                                    <div class="mt-2">
-                                        ${imagenHTML}
-                                    </div>
-                                    ` : ''}
                                 </div>
+                                ` : ''}
+                            </div>
+                            
+                            <!-- Fecha y Hora (solo lectura) -->
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                                <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                    ${fechaFormateada}
+                                </div>
+                            </div>
+                            
+                            <!-- Estado (badge) -->
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
+                                ${estadoBadge}
                             </div>
                         </div>
                     `;
                     
                     Swal.fire({
-                        title: 'Detalle de Publicación',
+                        title: '',
                         html: html,
                         width: modalWidth,
-                        padding: isMobile ? '1rem' : '1.25rem',
+                        padding: isMobile ? '0.75rem' : '1rem',
                         showConfirmButton: true,
                         confirmButtonText: 'Cerrar',
-                        confirmButtonColor: '#8b5cf6',
+                        confirmButtonColor: '#3b82f6',
+                        cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                        reverseButtons: false,
                         heightAuto: false,
-                        maxHeight: isDesktop ? '70vh' : '85vh',
+                        maxHeight: isDesktop ? '80vh' : '85vh',
                         allowOutsideClick: true,
                         allowEscapeKey: true,
                         backdrop: true,

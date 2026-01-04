@@ -627,19 +627,33 @@
         function openCreateCitaModal(fecha) {
             // Calcular fecha de hoy en formato YYYY-MM-DD
             const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
             const fechaHoy = hoy.toISOString().split('T')[0];
             
-            // Calcular hora de inicio: una hora adelante, en punto
-            const horaActual = hoy.getHours();
-            const horaInicio = horaActual + 1;
-            const horaInicioFormato = String(horaInicio).padStart(2, '0') + ':00';
+            // Comparar si la fecha seleccionada es hoy
+            const fechaSeleccionada = new Date(fecha + 'T00:00:00');
+            fechaSeleccionada.setHours(0, 0, 0, 0);
+            const esHoy = fechaSeleccionada.getTime() === hoy.getTime();
             
-            // Calcular hora de fin: 2 horas más que la hora de inicio
-            const horaFin = horaInicio + 2;
-            const horaFinFormato = String(horaFin).padStart(2, '0') + ':00';
+            let horaInicioFormato, horaFinFormato;
+            
+            if (esHoy) {
+                // Si es el mismo día: una hora adelante, en punto, y 2 horas de duración
+                const horaActual = new Date().getHours();
+                const horaInicio = horaActual + 1;
+                horaInicioFormato = String(horaInicio).padStart(2, '0') + ':00';
+                
+                // Calcular hora de fin: 2 horas más que la hora de inicio
+                const horaFin = horaInicio + 2;
+                horaFinFormato = String(horaFin).padStart(2, '0') + ':00';
+            } else {
+                // Si es otro día futuro: 9:00 AM a 11:00 AM
+                horaInicioFormato = '09:00';
+                horaFinFormato = '11:00';
+            }
             
             // Resetear datos con valores por defecto
-            citaModalData.fecha = fechaHoy;
+            citaModalData.fecha = fecha;
             citaModalData.horaInicio = horaInicioFormato;
             citaModalData.horaFin = horaFinFormato;
             citaModalData.tipoCita = '';

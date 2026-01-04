@@ -780,6 +780,7 @@
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
+                reverseButtons: true,
                 didOpen: () => {
                     // Aplicar tema dark/light al modal
                     const isDark = document.documentElement.classList.contains('dark');

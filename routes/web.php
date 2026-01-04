@@ -3020,9 +3020,17 @@ Route::get('/walee-productos/cliente/{id}', function ($id) {
         $cliente = \App\Models\Client::findOrFail($id);
         
         // Obtener productos del cliente
-        $productos = \App\Models\Rproducto::where('cliente_id', $cliente->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Verificar si la columna cliente_id existe antes de usarla
+        $productos = collect();
+        try {
+            $productos = \App\Models\Rproducto::where('cliente_id', $cliente->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } catch (\Exception $e) {
+            // Si la columna no existe, retornar colección vacía
+            \Log::warning('La columna cliente_id no existe en rproductos. Ejecute la migración: ' . $e->getMessage());
+            $productos = collect();
+        }
         
         return view('walee-productos-cliente', compact('cliente', 'productos'));
     } catch (\Exception $e) {

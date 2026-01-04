@@ -39,12 +39,10 @@
         
         /* Asegurar que el card de perfil use todo el ancho en mobile */
         @media (max-width: 640px) {
-            /* Contenedor principal de la página */
-            .relative.max-w-\\[90rem\\] {
+            /* Contenedor principal de la página - usar selector de atributo */
+            div[class*="max-w-[90rem]"] {
                 width: 100% !important;
                 max-width: 100% !important;
-                padding-left: 0.75rem !important;
-                padding-right: 0.75rem !important;
             }
             
             /* Contenedor principal del header */
@@ -73,14 +71,14 @@
                 min-width: 0 !important;
             }
             
-            /* Contenedor flex del layout mobile */
-            .header-profesional-card .block.sm\\:hidden {
+            /* Contenedor flex del layout mobile - usar selector más específico */
+            .header-profesional-card > div.block {
                 width: 100% !important;
                 max-width: 100% !important;
                 display: block !important;
             }
             
-            .header-profesional-card .block.sm\\:hidden > div {
+            .header-profesional-card > div.block > div {
                 width: 100% !important;
                 max-width: 100% !important;
             }

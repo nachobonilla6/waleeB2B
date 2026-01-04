@@ -528,18 +528,18 @@
                             </div>
                             <div class="flex-1">
                                 <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-2">
-                                    <label for="foto_file" class="cursor-pointer inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
-                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <label for="foto_file" class="cursor-pointer inline-flex items-center justify-center ${isMobile ? 'gap-0' : 'gap-1.5 sm:gap-2'} ${isMobile ? 'px-2.5 py-2' : 'px-2.5 sm:px-3 py-1.5 sm:py-2'} rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'} font-medium">
+                                        <svg class="${isMobile ? 'w-4 h-4' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        <span>Cambiar foto</span>
+                                        ${isMobile ? '' : '<span>Cambiar foto</span>'}
                                     </label>
                                     ${clienteData.fotoUrl ? `
-                                        <button type="button" onclick="deleteClientPhoto()" class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs sm:text-sm font-medium">
-                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button type="button" onclick="deleteClientPhoto()" class="inline-flex items-center justify-center ${isMobile ? 'gap-0' : 'gap-1.5 sm:gap-2'} ${isMobile ? 'px-2.5 py-2' : 'px-2.5 sm:px-3 py-1.5 sm:py-2'} rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'} font-medium">
+                                            <svg class="${isMobile ? 'w-4 h-4' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
-                                            <span>Eliminar</span>
+                                            ${isMobile ? '' : '<span>Eliminar</span>'}
                                         </button>
                                     ` : ''}
                                 </div>
@@ -609,7 +609,7 @@
             }
             
             Swal.fire({
-                title: '<svg class="w-6 h-6 text-walee-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
+                title: isMobile ? '' : '<svg class="w-6 h-6 text-walee-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>',
                 html: html,
                 width: modalWidth,
                 padding: isMobile ? '0.75rem' : (isDesktop ? '1.25rem' : '1.5rem'),

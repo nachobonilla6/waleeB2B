@@ -92,11 +92,26 @@
         // Total de clientes en proceso (excluyendo activos) - Negocios Extraídos
         $totalClientesEnProceso = \App\Models\Client::where('estado', '!=', 'activo')->count();
         
+        // Clientes en proceso creados hoy (excluyendo activos)
+        $clientesEnProcesoHoy = \App\Models\Client::where('estado', '!=', 'activo')
+            ->whereDate('created_at', today())
+            ->count();
+        
         // Clientes con estado received
         $clientesReceived = \App\Models\Client::where('estado', 'received')->count();
         
+        // Clientes marcados como received hoy
+        $clientesReceivedHoy = \App\Models\Client::where('estado', 'received')
+            ->whereDate('updated_at', today())
+            ->count();
+        
         // Clientes con estado pending
         $clientesPending = \App\Models\Client::where('estado', 'pending')->count();
+        
+        // Clientes marcados como pending hoy
+        $clientesPendingHoy = \App\Models\Client::where('estado', 'pending')
+            ->whereDate('updated_at', today())
+            ->count();
         
         // Obtener correos de clientes en proceso (excluyendo activos)
         $clientesEmails = \App\Models\Client::where('estado', '!=', 'activo')
@@ -238,6 +253,9 @@
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Negocios Extraídos</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($totalClientesEnProceso) }}</p>
                     </div>
+                    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <span class="text-emerald-600 dark:text-emerald-400 font-medium">{{ $clientesEnProcesoHoy }} hoy</span>
+                    </div>
                 </div>
                 
                 <!-- Estado Pending - Emails Enviados -->
@@ -253,6 +271,9 @@
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Emails Enviados</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesPending) }}</p>
                     </div>
+                    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <span class="text-violet-600 dark:text-violet-400 font-medium">{{ $clientesPendingHoy }} hoy</span>
+                    </div>
                 </div>
                 
                 <!-- Estado Received - Faltan -->
@@ -267,6 +288,9 @@
                     <div class="mb-1 sm:mb-2">
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Faltan</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesReceived) }}</p>
+                    </div>
+                    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                        <span class="text-walee-600 dark:text-walee-400 font-medium">{{ $clientesReceivedHoy }} hoy</span>
                     </div>
                 </div>
             </div>

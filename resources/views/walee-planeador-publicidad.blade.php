@@ -83,87 +83,87 @@
         ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
         
-        /* Mejorar botones en mobile */
+        /* Mejorar botones en mobile - más compactos */
         @media (max-width: 640px) {
-            /* Botones principales del header - más grandes y visibles */
+            /* Botones principales del header - compactos pero táctiles */
             .header-actions button,
             .header-actions a {
-                min-height: 48px !important;
-                min-width: 48px !important;
-                padding: 0.75rem 1.25rem !important;
-                font-size: 0.9375rem !important;
+                min-height: 40px !important;
+                min-width: 40px !important;
+                padding: 0.5rem 0.875rem !important;
+                font-size: 0.8125rem !important;
                 font-weight: 600 !important;
-                border-radius: 0.875rem !important;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
-                gap: 0.5rem !important;
+                border-radius: 0.625rem !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+                gap: 0.375rem !important;
             }
             
             .header-actions button:active,
             .header-actions a:active {
-                transform: scale(0.96) !important;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
-            }
-            
-            /* Botones de eventos en el calendario - más grandes y táctiles */
-            button[onclick*="showEventoDetail"] {
-                min-height: 56px !important;
-                padding: 0.875rem 1rem !important;
-                font-size: 0.875rem !important;
-                border-radius: 0.75rem !important;
-                margin-bottom: 0.5rem !important;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-            }
-            
-            button[onclick*="showEventoDetail"]:active {
                 transform: scale(0.97) !important;
                 box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
             }
             
-            /* Botones del modal - más grandes */
+            /* Botones de eventos en el calendario - compactos */
+            button[onclick*="showEventoDetail"] {
+                min-height: 44px !important;
+                padding: 0.625rem 0.75rem !important;
+                font-size: 0.8125rem !important;
+                border-radius: 0.625rem !important;
+                margin-bottom: 0.375rem !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            button[onclick*="showEventoDetail"]:active {
+                transform: scale(0.98) !important;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+            }
+            
+            /* Botones del modal - compactos */
             #evento-form button[type="submit"],
             #evento-form button[type="button"] {
-                min-height: 52px !important;
-                padding: 0.875rem 1.5rem !important;
-                font-size: 1rem !important;
+                min-height: 44px !important;
+                padding: 0.625rem 1.125rem !important;
+                font-size: 0.875rem !important;
                 font-weight: 600 !important;
-                border-radius: 0.875rem !important;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+                border-radius: 0.625rem !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
             }
             
             #evento-form button[type="submit"]:active,
             #evento-form button[type="button"]:active {
-                transform: scale(0.96) !important;
+                transform: scale(0.97) !important;
             }
             
-            /* Botón de generar AI */
+            /* Botón de generar AI - compacto */
             #btnGenerarTexto {
-                min-height: 48px !important;
-                padding: 0.75rem 1.25rem !important;
-                font-size: 0.9375rem !important;
+                min-height: 40px !important;
+                padding: 0.5rem 0.875rem !important;
+                font-size: 0.8125rem !important;
                 font-weight: 600 !important;
-                border-radius: 0.875rem !important;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+                border-radius: 0.625rem !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
             }
             
             #btnGenerarTexto:active {
-                transform: scale(0.96) !important;
+                transform: scale(0.97) !important;
             }
             
             /* Mejorar contenedor de botones del header */
             .header-actions {
-                gap: 0.75rem !important;
+                gap: 0.5rem !important;
                 flex-wrap: wrap !important;
             }
             
             /* Asegurar que los botones tengan buen contraste */
             .header-actions button,
             .header-actions a {
-                border: 2px solid transparent !important;
+                border: 1px solid transparent !important;
             }
             
             .header-actions button:hover,
             .header-actions a:hover {
-                border-color: rgba(255, 255, 255, 0.3) !important;
+                border-color: rgba(255, 255, 255, 0.2) !important;
             }
         }
         

@@ -388,21 +388,12 @@
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0 flex-wrap header-actions">
                             @if($client)
-                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-slate-500 hover:bg-slate-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
-                                    <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 font-medium text-xs transition-all flex items-center justify-center shadow-sm hover:shadow">
+                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
-                                    <span class="hidden sm:inline">Perfil</span>
-                                    <span class="sm:hidden">👤</span>
                                 </a>
                             @endif
-                            <button onclick="showProgramarPublicacionModal()" class="px-4 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-2 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
-                                <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                </svg>
-                                <span class="hidden sm:inline">Crear Publicación</span>
-                                <span class="sm:inline">Crear</span>
-                            </button>
                             @if($vista === 'semanal')
                                 <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                     <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

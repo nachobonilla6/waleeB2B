@@ -228,7 +228,7 @@
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
                         Dashboard de Clientes
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Resumen y estadísticas de tus clientes</p>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Total: {{ number_format($clientesActivos) }} clientes activos</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3">
                     <button onclick="openCreateClientModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">

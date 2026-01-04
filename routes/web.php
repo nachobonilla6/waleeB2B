@@ -2843,6 +2843,12 @@ Route::get('/walee-facturas/lista', function () {
     return view('walee-facturas-lista');
 })->middleware(['auth'])->name('walee.facturas.lista');
 
+// Lista de facturas por cliente
+Route::get('/walee-facturas/cliente/{id}', function ($id) {
+    $cliente = \App\Models\Client::findOrFail($id);
+    return view('walee-facturas-cliente', compact('cliente'));
+})->middleware(['auth'])->name('walee.facturas.cliente');
+
 // Ver factura individual
 Route::get('/walee-facturas/{id}', function ($id) {
     $factura = \App\Models\Factura::with('cliente')->findOrFail($id);

@@ -39,11 +39,21 @@
         
         /* Asegurar que el card de perfil use todo el ancho en mobile */
         @media (max-width: 640px) {
+            /* Contenedor principal de la página */
+            .relative.max-w-\\[90rem\\] {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            
             /* Contenedor principal del header */
             .header-profesional-wrapper {
                 width: 100% !important;
                 max-width: 100% !important;
                 min-width: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
             }
             
             /* Card de perfil */
@@ -52,6 +62,8 @@
                 max-width: 100% !important;
                 min-width: 0 !important;
                 box-sizing: border-box !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
             }
             
             /* Todos los contenedores dentro del card */
@@ -65,6 +77,7 @@
             .header-profesional-card .block.sm\\:hidden {
                 width: 100% !important;
                 max-width: 100% !important;
+                display: block !important;
             }
             
             .header-profesional-card .block.sm\\:hidden > div {

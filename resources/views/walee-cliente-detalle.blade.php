@@ -58,16 +58,17 @@
                 padding: 0 !important;
                 width: calc(100% - 1rem) !important;
                 max-width: calc(100% - 1rem) !important;
-                max-height: 85vh !important;
+                max-height: 90vh !important;
                 display: flex !important;
                 flex-direction: column !important;
+                overflow: hidden !important;
             }
             .swal2-html-container-mobile {
                 padding: 0.75rem !important;
                 margin: 0 !important;
                 flex: 1 !important;
-                overflow-y: auto !important;
-                max-height: calc(85vh - 80px) !important;
+                overflow: visible !important;
+                max-height: none !important;
             }
             .swal2-html-container-mobile form {
                 width: 100% !important;

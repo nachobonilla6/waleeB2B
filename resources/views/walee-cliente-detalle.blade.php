@@ -218,7 +218,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white h-screen overflow-hidden transition-colors duration-200">
     @php
         use App\Models\PropuestaPersonalizada;
         
@@ -239,14 +239,14 @@
         $emailsBorder = $emailsEnviados >= 3 ? 'border-red-500/30' : ($emailsEnviados >= 1 ? 'border-amber-500/30' : 'border-slate-700');
     @endphp
 
-    <div class="min-h-screen relative">
+    <div class="h-screen overflow-hidden relative flex flex-col">
         <!-- Background -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-[90rem] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div class="relative max-w-[90rem] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 h-full overflow-hidden flex flex-col">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
             

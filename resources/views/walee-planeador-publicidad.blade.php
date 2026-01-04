@@ -374,6 +374,18 @@
         $client = \App\Models\Client::where('email', $cliente->correo)
             ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
             ->first();
+        
+        // Obtener foto del cliente
+        $fotoUrl = null;
+        if ($client && $client->foto) {
+            $fotoPath = $client->foto;
+            if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                $fotoUrl = $fotoPath;
+            } else {
+                $filename = basename($fotoPath);
+                $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+            }
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -394,10 +406,14 @@
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
                         <div class="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                             @if($client)
-                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0 hover:bg-blue-200 dark:hover:bg-blue-900/60 transition-colors cursor-pointer">
-                                    <svg class="w-5 h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                    </svg>
+                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="w-10 h-10 md:w-12 md:h-12 rounded-lg overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity cursor-pointer border-2 border-blue-500/30 dark:border-blue-500/20">
+                                    @if($fotoUrl)
+                                        <img src="{{ $fotoUrl }}" alt="{{ $client->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-br from-blue-500/20 to-violet-500/20 flex items-center justify-center">
+                                            <span class="text-lg md:text-xl font-bold text-blue-600 dark:text-blue-400">{{ strtoupper(substr($client->name, 0, 1)) }}</span>
+                                        </div>
+                                    @endif
                                 </a>
                             @else
                                 <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">

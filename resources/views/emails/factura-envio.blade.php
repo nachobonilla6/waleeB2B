@@ -16,8 +16,8 @@ Le enviamos la factura adjunta a este correo.
 Saludos cordiales,
 Web Solutions</pre>
         
-        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-            <a href="https://wa.me/50688061829" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold; margin: 5px 0;">
+        <div style="margin-top: 20px;">
+            <a href="https://wa.me/50688061829" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold; margin: 5px 0 10px 0;">
                 💬 Contactar por WhatsApp
             </a>
             <p style="color: #6b7280; font-size: 14px; margin: 10px 0 5px 0;">

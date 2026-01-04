@@ -4121,20 +4121,38 @@ Route::delete('/walee-cotizaciones/{id}/eliminar', function ($id) {
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);
     
-    // Buscar contratos por email del cliente en proceso
-    $contratos = \App\Models\Contrato::where('correo', $cliente->email)
-        ->orderBy('created_at', 'desc')
-        ->get();
+    // Buscar cliente en tabla clientes por email (prioridad) o nombre para obtener cotizaciones y facturas
+    $clientePrincipal = null;
+    if ($cliente->email) {
+        // Primero buscar por email exacto (más preciso)
+        $clientePrincipal = \App\Models\Cliente::where('correo', $cliente->email)->first();
+    }
+    // Si no se encontró por email, buscar por nombre (solo si no hay email o no se encontró)
+    if (!$clientePrincipal && $cliente->name) {
+        $clientePrincipal = \App\Models\Cliente::where('nombre_empresa', $cliente->name)->first();
+    }
     
-    // Buscar cliente en tabla clientes por email o nombre para obtener cotizaciones y facturas
-    $clientePrincipal = \App\Models\Cliente::where('correo', $cliente->email)
-        ->orWhere('nombre_empresa', 'like', '%' . $cliente->name . '%')
-        ->first();
+    // Buscar contratos: primero por cliente_id si existe clientePrincipal, luego por correo
+    $contratos = collect();
+    if ($clientePrincipal) {
+        // Buscar contratos por cliente_id (más preciso)
+        $contratos = \App\Models\Contrato::where('cliente_id', $clientePrincipal->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+    // Si no hay contratos por cliente_id, buscar por correo (solo del cliente actual)
+    if ($contratos->isEmpty() && $cliente->email) {
+        $contratos = \App\Models\Contrato::where('correo', $cliente->email)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
     
+    // Buscar cotizaciones SOLO por cliente_id del clientePrincipal (no por correo)
     $cotizaciones = $clientePrincipal ? \App\Models\Cotizacion::where('cliente_id', $clientePrincipal->id)
         ->orderBy('created_at', 'desc')
         ->get() : collect();
     
+    // Buscar facturas SOLO por cliente_id del clientePrincipal (no por correo)
     $facturas = $clientePrincipal ? \App\Models\Factura::where('cliente_id', $clientePrincipal->id)
         ->orderBy('created_at', 'desc')
         ->get() : collect();

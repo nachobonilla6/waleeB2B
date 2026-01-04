@@ -65,10 +65,6 @@
             ->orderBy('created_at', 'desc')
             ->get();
         
-        $totalProductos = $productos->count();
-        $productosActivos = $productos->where('estado', 'activo')->count();
-        $productosInactivos = $productos->where('estado', 'inactivo')->count();
-        
         // Obtener foto del cliente
         $fotoUrl = null;
         if ($cliente->foto) {

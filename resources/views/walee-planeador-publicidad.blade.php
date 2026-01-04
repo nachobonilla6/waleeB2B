@@ -83,6 +83,31 @@
         ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
         
+        /* Modal de crear - usar todo el ancho en mobile */
+        @media (max-width: 640px) {
+            .swal2-popup {
+                width: 98% !important;
+                max-width: 98% !important;
+                margin: 0.5rem auto !important;
+            }
+            
+            .swal2-html-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            
+            #programar-publicacion-form {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            #programar-publicacion-form > * {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+        
         /* Mejorar botones en mobile - más compactos */
         @media (max-width: 640px) {
             /* Botones principales del header - compactos pero táctiles */
@@ -851,17 +876,17 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const fechaDefault = `${year}-${month}-${day}T${hours}:${minutes}`;
             
-            let modalWidth = '85%';
+            let modalWidth = '98%';
             if (isDesktop) {
                 modalWidth = '500px';
             } else if (isTablet) {
                 modalWidth = '450px';
             } else if (isMobile) {
-                modalWidth = '85%';
+                modalWidth = '98%';
             }
             
             const html = `
-                <form id="programar-publicacion-form" class="space-y-2.5 text-left">
+                <form id="programar-publicacion-form" class="space-y-2.5 text-left w-full ${isMobile ? 'max-w-full' : ''}">
                     <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
                     
                     <!-- Layout: Imagen arriba, Prompt y Texto abajo juntos -->
@@ -933,7 +958,11 @@
                 title: '<div class="flex items-center justify-center gap-2"><svg class="w-6 h-6" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '0.5rem' : '1rem',
+                customClass: {
+                    popup: isMobile ? '!w-[98%] !max-w-[98%] !mx-1' : '',
+                    htmlContainer: isMobile ? '!w-full !max-w-full' : ''
+                },
                 showCancelButton: false,
                 showCloseButton: true,
                 confirmButtonText: 'Crear Publicación',
@@ -1325,13 +1354,13 @@
                         fechaInput = `${year}-${month}-${day}T${hours}:${minutes}`;
                     }
                     
-                    let modalWidth = '85%';
+                    let modalWidth = '98%';
                     if (isDesktop) {
                         modalWidth = '500px';
                     } else if (isTablet) {
                         modalWidth = '450px';
                     } else if (isMobile) {
-                        modalWidth = '85%';
+                        modalWidth = '98%';
                     }
                     
                     // Icono y link de Facebook

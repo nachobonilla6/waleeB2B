@@ -488,20 +488,11 @@
                             </div>
                             
                             <!-- Alertas Desktop -->
-                            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                                 @php
                                     $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
                                     $totalCitas = $citasPendientes->count() + $citasPasadas->count();
                                 @endphp
-                                
-                                <!-- Estado -->
-                                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</span>
-                                    </div>
-                                    <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
-                                </div>
                                 
                                 <!-- Publicaciones -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">

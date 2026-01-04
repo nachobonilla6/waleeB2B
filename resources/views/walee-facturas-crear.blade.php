@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -62,6 +63,29 @@
         $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
         $ultimaFactura = \App\Models\Factura::orderBy('id', 'desc')->first();
         $siguienteNumero = $ultimaFactura ? intval($ultimaFactura->numero_factura) + 1 : 1;
+        
+        // Validar cliente_id desde URL
+        $clienteIdFromUrl = request()->get('cliente_id');
+        $clienteSeleccionado = null;
+        $errorCliente = null;
+        
+        if ($clienteIdFromUrl !== null) {
+            // Limpiar espacios en blanco
+            $clienteIdFromUrl = trim($clienteIdFromUrl);
+            
+            // Validar que no esté vacío después de trim
+            if ($clienteIdFromUrl === '') {
+                $errorCliente = 'El ID del cliente no puede estar vacío. Por favor, seleccione un cliente válido.';
+            } elseif (!is_numeric($clienteIdFromUrl)) {
+                $errorCliente = 'El ID del cliente debe ser un número válido.';
+            } else {
+                // Buscar el cliente
+                $clienteSeleccionado = \App\Models\Cliente::find(intval($clienteIdFromUrl));
+                if (!$clienteSeleccionado) {
+                    $errorCliente = 'El cliente especificado no existe. Por favor, seleccione un cliente válido.';
+                }
+            }
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -73,79 +97,107 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
             @php $pageTitle = 'Crear Factura'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>
             
-            <!-- Form -->
-            <form id="facturaForm" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;" enctype="multipart/form-data">
+            <!-- Error de Cliente desde URL -->
+            @if($errorCliente)
+            <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl animate-fade-in-up">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-red-800 dark:text-red-300">Error en el cliente</p>
+                        <p class="text-sm text-red-700 dark:text-red-400 mt-1">{{ $errorCliente }}</p>
+                    </div>
+                </div>
+            </div>
+            @endif
+            
+            <!-- Botón para abrir modal -->
+            <div class="flex justify-center items-center min-h-[60vh]">
+                <button onclick="abrirModalFactura()" class="px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>Crear Nueva Factura</span>
+                </button>
+            </div>
+            
+            <!-- Form oculto para mantener estructura -->
+            <form id="facturaForm" class="hidden" enctype="multipart/form-data">
                 @csrf
                 
                 <!-- Cliente Section -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
                         Cliente
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente</label>
-                            <select id="cliente_id" name="cliente_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Cliente <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <select id="cliente_id" name="cliente_id" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @if($errorCliente) border-red-500 @endif">
                                 <option value="">Seleccionar cliente...</option>
                                 @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}" data-email="{{ $cliente->correo }}">{{ $cliente->nombre_empresa }}</option>
+                                    <option value="{{ $cliente->id }}" data-email="{{ $cliente->correo }}" @if($clienteSeleccionado && $clienteSeleccionado->id == $cliente->id) selected @endif>{{ $cliente->nombre_empresa }}</option>
                                 @endforeach
                             </select>
+                            @if($errorCliente)
+                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $errorCliente }}</p>
+                            @endif
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <input type="email" id="correo" name="correo" required placeholder="correo@ejemplo.com" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Correo <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <input type="email" id="correo" name="correo" required placeholder="correo@ejemplo.com" value="{{ $clienteSeleccionado ? $clienteSeleccionado->correo : '' }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
                         </div>
                     </div>
                 </div>
                 
                 <!-- Factura Info -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         Información de Factura
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Factura <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <input type="text" id="numero_factura" name="numero_factura" required value="{{ str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT) }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Número de Factura <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <input type="text" id="numero_factura" name="numero_factura" required value="{{ str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT) }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Serie</label>
-                            <input type="text" id="serie" name="serie" value="A" placeholder="A, B, C..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Serie</label>
+                            <input type="text" id="serie" name="serie" value="A" placeholder="A, B, C..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Emisión <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <input type="date" id="fecha_emision" name="fecha_emision" required value="{{ date('Y-m-d') }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha de Emisión <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <input type="date" id="fecha_emision" name="fecha_emision" required value="{{ date('Y-m-d') }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Vencimiento</label>
-                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha de Vencimiento</label>
+                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
-                            <select id="estado" name="estado" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Estado</label>
+                            <select id="estado" name="estado" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                                 <option value="pendiente">Pendiente</option>
                                 <option value="pagada">Pagada</option>
                                 <option value="vencida">Vencida</option>
@@ -156,65 +208,65 @@
                 </div>
                 
                 <!-- Información del Cliente (Cálculo Automático) -->
-                <div id="clienteInfoCard" class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-2xl p-6 shadow-sm dark:shadow-none hidden">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div id="clienteInfoCard" class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 shadow-sm dark:shadow-none hidden">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
                         Resumen del Cliente
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Facturado</p>
-                            <p class="text-lg font-bold text-slate-900 dark:text-white" id="infoTotalFacturado">₡0</p>
+                            <p class="text-base font-bold text-slate-900 dark:text-white" id="infoTotalFacturado">₡0</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Pagado</p>
-                            <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400" id="infoTotalPagado">₡0</p>
+                            <p class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="infoTotalPagado">₡0</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Saldo Pendiente</p>
-                            <p class="text-lg font-bold text-red-600 dark:text-red-400" id="infoSaldoPendiente">₡0</p>
+                            <p class="text-base font-bold text-red-600 dark:text-red-400" id="infoSaldoPendiente">₡0</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Facturas</p>
-                            <p class="text-lg font-bold text-slate-900 dark:text-white" id="infoFacturasCount">0</p>
+                            <p class="text-base font-bold text-slate-900 dark:text-white" id="infoFacturasCount">0</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Paquetes Predefinidos -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                         Paquetes Predefinidos
                     </h2>
-                    <div class="mb-4">
-                        <select id="paqueteSelect" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
+                    <div class="mb-3">
+                        <select id="paqueteSelect" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all">
                             <option value="">Seleccionar paquete...</option>
                         </select>
                     </div>
-                    <button type="button" onclick="agregarPaquete()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all text-sm">
+                    <button type="button" onclick="agregarPaquete()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-all text-xs">
                         Agregar Paquete
                     </button>
                 </div>
                 
                 <!-- Items de Factura -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
                         Items de Factura <span class="text-red-500 dark:text-red-400 text-sm font-normal">*</span>
                     </h2>
                     
-                    <div id="itemsContainer" class="space-y-3 mb-4">
+                    <div id="itemsContainer" class="space-y-2 mb-3">
                         <!-- Items se agregarán dinámicamente aquí -->
                     </div>
                     
-                    <button type="button" onclick="agregarItem()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                    <button type="button" onclick="agregarItem()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all text-xs flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -223,88 +275,88 @@
                 </div>
                 
                 <!-- Resumen y Totales -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Resumen y Totales
                     </h2>
                     
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Orden</label>
-                                <input type="text" id="numero_orden" name="numero_orden" placeholder="Ej: 1_191125 cliente" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Número de Orden</label>
+                                <input type="text" id="numero_orden" name="numero_orden" placeholder="Ej: 1_191125 cliente" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Subtotal</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Subtotal</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="subtotal" name="subtotal" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="subtotal" name="subtotal" value="0" readonly class="w-full pl-7 pr-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Antes Impuestos</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descuento Antes Impuestos</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="descuento_antes_impuestos" name="descuento_antes_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="descuento_antes_impuestos" name="descuento_antes_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">IVA (13%)</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">IVA (13%)</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="iva" name="iva" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="iva" name="iva" value="0" readonly class="w-full pl-7 pr-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Después Impuestos</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descuento Después Impuestos</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="descuento_despues_impuestos" name="descuento_despues_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="descuento_despues_impuestos" name="descuento_despues_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Total <span class="text-red-500 dark:text-red-400">*</span></label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Total <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="total" name="total" required value="0" readonly class="w-full pl-8 pr-4 py-3 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 dark:border-emerald-500 rounded-xl text-emerald-700 dark:text-emerald-400 font-bold">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="total" name="total" required value="0" readonly class="w-full pl-7 pr-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 dark:border-emerald-500 rounded-lg text-sm text-emerald-700 dark:text-emerald-400 font-bold">
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Monto Pagado</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Monto Pagado</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0" oninput="calcularSaldo()" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0" oninput="calcularSaldo()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Saldo Pendiente</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Saldo Pendiente</label>
                                 <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">₡</span>
-                                    <input type="number" step="0.01" id="saldo_pendiente" name="saldo_pendiente" value="0" readonly class="w-full pl-8 pr-4 py-3 bg-red-50 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-xl text-red-700 dark:text-red-400 font-semibold">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <input type="number" step="0.01" id="saldo_pendiente" name="saldo_pendiente" value="0" readonly class="w-full pl-7 pr-3 py-2 bg-red-50 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg text-sm text-red-700 dark:text-red-400 font-semibold">
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Método de Pago</label>
-                                <select id="metodo_pago" name="metodo_pago" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Método de Pago</label>
+                                <select id="metodo_pago" name="metodo_pago" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                     <option value="">Sin especificar</option>
                                     <option value="transferencia">Transferencia Bancaria</option>
                                     <option value="efectivo">Efectivo</option>
@@ -316,33 +368,33 @@
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto de Pago</label>
-                                <input type="text" id="concepto_pago" name="concepto_pago" placeholder="Ej: Pago inicial, Pago final..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Concepto de Pago</label>
+                                <input type="text" id="concepto_pago" name="concepto_pago" placeholder="Ej: Pago inicial, Pago final..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto General <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <textarea id="concepto" name="concepto" rows="2" placeholder="Descripción general de la factura (se generará automáticamente si se deja vacío)..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Concepto General <span class="text-red-500 dark:text-red-400">*</span></label>
+                            <textarea id="concepto" name="concepto" rows="2" placeholder="Descripción general de la factura (se generará automáticamente si se deja vacío)..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
                             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Si se deja vacío, se generará automáticamente basado en los items</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Pagos Recibidos -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Pagos Recibidos
                     </h2>
                     
-                    <div id="pagosContainer" class="space-y-3 mb-4">
+                    <div id="pagosContainer" class="space-y-2 mb-3">
                         <!-- Pagos se agregarán dinámicamente aquí -->
                     </div>
                     
-                    <button type="button" onclick="agregarPago()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all text-sm flex items-center gap-2">
+                    <button type="button" onclick="agregarPago()" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all text-xs flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -351,20 +403,20 @@
                 </div>
                 
                 <!-- Notas -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                         Notas Adicionales
                     </h2>
                     
-                    <textarea id="notas" name="notas" rows="3" placeholder="Notas adicionales para la factura..." class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"></textarea>
+                    <textarea id="notas" name="notas" rows="2" placeholder="Notas adicionales para la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"></textarea>
                 </div>
                 
                 <!-- Archivos Adjuntos Section -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h2 class="text-base font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                         </svg>
@@ -372,8 +424,8 @@
                     </h2>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Archivos</label>
-                        <input type="file" id="archivos" name="archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition-all @error('archivos') border-red-500 @enderror">
+                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Seleccionar Archivos</label>
+                        <input type="file" id="archivos" name="archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition-all @error('archivos') border-red-500 @enderror">
                         <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
                         @error('archivos')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -391,21 +443,21 @@
                 </div>
                 
                 <!-- Submit Buttons -->
-                <div class="space-y-3">
+                <div class="space-y-2">
                     <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                         <span class="text-red-500 dark:text-red-400">*</span>
                         <span>Campos obligatorios</span>
                     </p>
-                    <div class="flex gap-4">
-                        <button type="button" onclick="mostrarVistaPrevia()" class="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex gap-3">
+                        <button type="button" onclick="mostrarVistaPrevia()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
                             <span>Vista Previa</span>
                         </button>
-                        <button type="submit" id="submitBtn" class="flex-1 px-6 py-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="submit" id="submitBtn" class="flex-1 px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
                             <span>Crear Factura</span>
@@ -477,13 +529,39 @@
         
         // Auto-fill correo when cliente changes
         document.getElementById('cliente_id').addEventListener('change', function() {
+            const clienteId = this.value.trim();
+            
+            // Validar que no esté vacío
+            if (clienteId === '') {
+                document.getElementById('correo').value = '';
+                document.getElementById('clienteInfoCard').classList.add('hidden');
+                return;
+            }
+            
+            // Validar que sea numérico
+            if (!/^\d+$/.test(clienteId)) {
+                showNotification('Error', 'El ID del cliente debe ser un número válido', 'error');
+                this.value = '';
+                document.getElementById('correo').value = '';
+                document.getElementById('clienteInfoCard').classList.add('hidden');
+                return;
+            }
+            
             const selectedOption = this.options[this.selectedIndex];
             const email = selectedOption.dataset.email;
             if (email) {
                 document.getElementById('correo').value = email;
             }
-            cargarInfoCliente(this.value);
+            cargarInfoCliente(clienteId);
         });
+        
+        // Cargar cliente si viene pre-seleccionado desde URL
+        @if($clienteSeleccionado)
+        document.addEventListener('DOMContentLoaded', function() {
+            const clienteId = '{{ $clienteSeleccionado->id }}';
+            cargarInfoCliente(clienteId);
+        });
+        @endif
         
         // Agregar paquete
         function agregarPaquete() {
@@ -525,28 +603,28 @@
             
             items.forEach((item, index) => {
                 const itemDiv = document.createElement('div');
-                itemDiv.className = 'bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl p-4';
+                itemDiv.className = 'bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg p-3';
                 itemDiv.innerHTML = `
-                    <div class="grid grid-cols-12 gap-3 items-end">
+                    <div class="grid grid-cols-12 gap-2 items-end">
                         <div class="col-span-12 md:col-span-5">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
-                            <input type="text" value="${item.descripcion}" oninput="actualizarItem(${item.id}, 'descripcion', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <input type="text" value="${item.descripcion}" oninput="actualizarItem(${item.id}, 'descripcion', this.value)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                         </div>
                         <div class="col-span-4 md:col-span-2">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Cantidad</label>
-                            <input type="number" value="${item.cantidad}" min="1" oninput="actualizarItem(${item.id}, 'cantidad', parseFloat(this.value) || 1)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <input type="number" value="${item.cantidad}" min="1" oninput="actualizarItem(${item.id}, 'cantidad', parseFloat(this.value) || 1)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                         </div>
                         <div class="col-span-4 md:col-span-2">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Precio Unit.</label>
-                            <input type="number" step="0.01" value="${item.precio_unitario}" oninput="actualizarItem(${item.id}, 'precio_unitario', parseFloat(this.value) || 0)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <input type="number" step="0.01" value="${item.precio_unitario}" oninput="actualizarItem(${item.id}, 'precio_unitario', parseFloat(this.value) || 0)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                         </div>
                         <div class="col-span-4 md:col-span-2">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Subtotal</label>
-                            <input type="number" step="0.01" value="${item.subtotal.toFixed(2)}" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm font-semibold">
+                            <input type="number" step="0.01" value="${item.subtotal.toFixed(2)}" readonly class="w-full px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs font-semibold">
                         </div>
                         <div class="col-span-12 md:col-span-1">
-                            <button type="button" onclick="eliminarItem(${item.id})" class="w-full px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-sm">
-                                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="button" onclick="eliminarItem(${item.id})" class="w-full px-2.5 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-xs">
+                                <svg class="w-3.5 h-3.5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
                             </button>
@@ -598,24 +676,24 @@
             
             pagos.forEach((pago) => {
                 const pagoDiv = document.createElement('div');
-                pagoDiv.className = 'bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl p-4';
+                pagoDiv.className = 'bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg p-3';
                 pagoDiv.innerHTML = `
-                    <div class="grid grid-cols-12 gap-3 items-end">
+                    <div class="grid grid-cols-12 gap-2 items-end">
                         <div class="col-span-12 md:col-span-4">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
-                            <input type="text" value="${pago.descripcion}" oninput="actualizarPago(${pago.id}, 'descripcion', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <input type="text" value="${pago.descripcion}" oninput="actualizarPago(${pago.id}, 'descripcion', this.value)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                         </div>
                         <div class="col-span-6 md:col-span-2">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Fecha</label>
-                            <input type="date" value="${pago.fecha}" oninput="actualizarPago(${pago.id}, 'fecha', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <input type="date" value="${pago.fecha}" oninput="actualizarPago(${pago.id}, 'fecha', this.value)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                         </div>
                         <div class="col-span-6 md:col-span-2">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Importe</label>
-                            <input type="number" step="0.01" value="${pago.importe}" oninput="actualizarPago(${pago.id}, 'importe', parseFloat(this.value) || 0)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <input type="number" step="0.01" value="${pago.importe}" oninput="actualizarPago(${pago.id}, 'importe', parseFloat(this.value) || 0)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                         </div>
                         <div class="col-span-10 md:col-span-3">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Método</label>
-                            <select onchange="actualizarPago(${pago.id}, 'metodo_pago', this.value)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm">
+                            <select onchange="actualizarPago(${pago.id}, 'metodo_pago', this.value)" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-xs">
                                 <option value="">Seleccionar...</option>
                                 <option value="sinpe" ${pago.metodo_pago === 'sinpe' ? 'selected' : ''}>SINPE</option>
                                 <option value="transferencia" ${pago.metodo_pago === 'transferencia' ? 'selected' : ''}>Transferencia</option>
@@ -624,8 +702,8 @@
                             </select>
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <button type="button" onclick="eliminarPago(${pago.id})" class="w-full px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-sm">
-                                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="button" onclick="eliminarPago(${pago.id})" class="w-full px-2.5 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-xs">
+                                <svg class="w-3.5 h-3.5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
                             </button>
@@ -746,6 +824,20 @@
         document.getElementById('facturaForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Validar cliente
+            const clienteId = document.getElementById('cliente_id').value.trim();
+            if (!clienteId || clienteId === '') {
+                showNotification('Error', 'Debe seleccionar un cliente', 'error');
+                document.getElementById('cliente_id').focus();
+                return;
+            }
+            
+            if (!/^\d+$/.test(clienteId)) {
+                showNotification('Error', 'El ID del cliente debe ser un número válido', 'error');
+                document.getElementById('cliente_id').focus();
+                return;
+            }
+            
             if (items.length === 0) {
                 showNotification('Error', 'Debe agregar al menos un item', 'error');
                 return;
@@ -753,6 +845,9 @@
             
             const submitBtn = document.getElementById('submitBtn');
             const formData = new FormData(this);
+            
+            // Asegurar que cliente_id esté limpio (sin espacios)
+            formData.set('cliente_id', clienteId);
             
             // Agregar items al formData
             items.forEach((item, index) => {
@@ -879,10 +974,711 @@
             });
         }
         
+        // ========== SISTEMA DE MODAL POR FASES ==========
+        let facturaData = {
+            cliente_id: '',
+            correo: '',
+            numero_factura: '{{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }}',
+            serie: 'A',
+            fecha_emision: '{{ date("Y-m-d") }}',
+            fecha_vencimiento: '{{ date("Y-m-d", strtotime("+30 days")) }}',
+            estado: 'pendiente',
+            items: [],
+            subtotal: 0,
+            descuento_antes_impuestos: 0,
+            iva: 0,
+            descuento_despues_impuestos: 0,
+            total: 0,
+            monto_pagado: 0,
+            saldo_pendiente: 0,
+            metodo_pago: '',
+            concepto_pago: '',
+            concepto: '',
+            numero_orden: '',
+            pagos: [],
+            notas: '',
+            archivos: null
+        };
+        
+        let currentPhase = 1;
+        const totalPhases = 6;
+        
+        // Detectar modo oscuro
+        function isDarkMode() {
+            return document.documentElement.classList.contains('dark');
+        }
+        
+        // Abrir modal de factura
+        function abrirModalFactura() {
+            currentPhase = 1;
+            // Inicializar datos si hay cliente desde URL
+            @if($clienteSeleccionado)
+            facturaData.cliente_id = '{{ $clienteSeleccionado->id }}';
+            facturaData.correo = '{{ $clienteSeleccionado->correo }}';
+            @endif
+            mostrarFase1();
+        }
+        
+        // FASE 1: Cliente y Correo
+        function mostrarFase1() {
+            const clientesOptions = `@foreach($clientes as $cliente)<option value="{{ $cliente->id }}" data-email="{{ $cliente->correo }}" ${facturaData.cliente_id == '{{ $cliente->id }}' ? 'selected' : ''}>{{ $cliente->nombre_empresa }}</option>@endforeach`;
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente <span class="text-red-500">*</span></label>
+                        <select id="modal_cliente_id" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                            <option value="">Seleccionar cliente...</option>
+                            ${clientesOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo <span class="text-red-500">*</span></label>
+                        <input type="email" id="modal_correo" value="${facturaData.correo}" placeholder="correo@ejemplo.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 1: Información del Cliente',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#7c3aed',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    const select = document.getElementById('modal_cliente_id');
+                    const emailInput = document.getElementById('modal_correo');
+                    
+                    select.addEventListener('change', function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const email = selectedOption.dataset.email || '';
+                        emailInput.value = email;
+                    });
+                },
+                preConfirm: () => {
+                    const clienteId = document.getElementById('modal_cliente_id').value.trim();
+                    const correo = document.getElementById('modal_correo').value.trim();
+                    
+                    if (!clienteId) {
+                        Swal.showValidationMessage('Debe seleccionar un cliente');
+                        return false;
+                    }
+                    if (!correo || !correo.includes('@')) {
+                        Swal.showValidationMessage('Debe ingresar un correo válido');
+                        return false;
+                    }
+                    
+                    facturaData.cliente_id = clienteId;
+                    facturaData.correo = correo;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 2;
+                    mostrarFase2();
+                }
+            });
+        }
+        
+        // FASE 2: Información de Factura
+        function mostrarFase2() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Factura <span class="text-red-500">*</span></label>
+                            <input type="text" id="modal_numero_factura" value="${facturaData.numero_factura}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Serie</label>
+                            <input type="text" id="modal_serie" value="${facturaData.serie}" placeholder="A, B, C..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Emisión <span class="text-red-500">*</span></label>
+                            <input type="date" id="modal_fecha_emision" value="${facturaData.fecha_emision}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Vencimiento</label>
+                            <input type="date" id="modal_fecha_vencimiento" value="${facturaData.fecha_vencimiento}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
+                        <select id="modal_estado" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                            <option value="pendiente" ${facturaData.estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="pagada" ${facturaData.estado === 'pagada' ? 'selected' : ''}>Pagada</option>
+                            <option value="vencida" ${facturaData.estado === 'vencida' ? 'selected' : ''}>Vencida</option>
+                            <option value="cancelada" ${facturaData.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 2: Información de Factura',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const numeroFactura = document.getElementById('modal_numero_factura').value.trim();
+                    const fechaEmision = document.getElementById('modal_fecha_emision').value;
+                    
+                    if (!numeroFactura) {
+                        Swal.showValidationMessage('El número de factura es requerido');
+                        return false;
+                    }
+                    if (!fechaEmision) {
+                        Swal.showValidationMessage('La fecha de emisión es requerida');
+                        return false;
+                    }
+                    
+                    facturaData.numero_factura = numeroFactura;
+                    facturaData.serie = document.getElementById('modal_serie').value || 'A';
+                    facturaData.fecha_emision = fechaEmision;
+                    facturaData.fecha_vencimiento = document.getElementById('modal_fecha_vencimiento').value || facturaData.fecha_vencimiento;
+                    facturaData.estado = document.getElementById('modal_estado').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 3;
+                    mostrarFase3();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 1;
+                    mostrarFase1();
+                }
+            });
+        }
+        
+        // FASE 3: Items de Factura
+        function mostrarFase3() {
+            let itemsHtml = '';
+            if (facturaData.items.length === 0) {
+                itemsHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay items agregados</p>';
+            } else {
+                itemsHtml = facturaData.items.map((item, index) => `
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg mb-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${item.descripcion || 'Sin descripción'}</p>
+                                <p class="text-xs text-slate-500">Cant: ${item.cantidad} x ₡${parseFloat(item.precio_unitario).toLocaleString()} = ₡${parseFloat(item.subtotal).toLocaleString()}</p>
+                            </div>
+                            <button onclick="eliminarItemModal(${index})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div id="modal_items_list" class="max-h-60 overflow-y-auto mb-3">
+                        ${itemsHtml}
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="col-span-2">
+                            <input type="text" id="modal_item_descripcion" placeholder="Descripción" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="number" id="modal_item_cantidad" placeholder="Cantidad" value="1" min="1" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="number" id="modal_item_precio" step="0.01" placeholder="Precio" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <button onclick="agregarItemModal()" class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm">Agregar Item</button>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 3: Items de Factura',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.eliminarItemModal = function(index) {
+                        facturaData.items.splice(index, 1);
+                        calcularTotalesModal();
+                        mostrarFase3();
+                    };
+                    window.agregarItemModal = function() {
+                        const descripcion = document.getElementById('modal_item_descripcion').value.trim();
+                        const cantidad = parseFloat(document.getElementById('modal_item_cantidad').value) || 1;
+                        const precio = parseFloat(document.getElementById('modal_item_precio').value) || 0;
+                        
+                        if (!descripcion) {
+                            Swal.showValidationMessage('La descripción es requerida');
+                            return;
+                        }
+                        if (precio <= 0) {
+                            Swal.showValidationMessage('El precio debe ser mayor a 0');
+                            return;
+                        }
+                        
+                        facturaData.items.push({
+                            descripcion: descripcion,
+                            cantidad: cantidad,
+                            precio_unitario: precio,
+                            subtotal: cantidad * precio
+                        });
+                        
+                        document.getElementById('modal_item_descripcion').value = '';
+                        document.getElementById('modal_item_cantidad').value = '1';
+                        document.getElementById('modal_item_precio').value = '';
+                        
+                        calcularTotalesModal();
+                        mostrarFase3();
+                    };
+                },
+                preConfirm: () => {
+                    if (facturaData.items.length === 0) {
+                        Swal.showValidationMessage('Debe agregar al menos un item');
+                        return false;
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 4;
+                    mostrarFase4();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 2;
+                    mostrarFase2();
+                }
+            });
+        }
+        
+        // FASE 4: Resumen y Totales
+        function mostrarFase4() {
+            calcularTotalesModal();
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Orden</label>
+                        <input type="text" id="modal_numero_orden" value="${facturaData.numero_orden}" placeholder="Ej: 1_191125 cliente" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Subtotal</label>
+                            <input type="number" step="0.01" id="modal_subtotal" value="${facturaData.subtotal.toFixed(2)}" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Antes Impuestos</label>
+                            <input type="number" step="0.01" id="modal_descuento_antes" value="${facturaData.descuento_antes_impuestos}" oninput="calcularTotalesModal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">IVA (13%)</label>
+                            <input type="number" step="0.01" id="modal_iva" value="${facturaData.iva.toFixed(2)}" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Después Impuestos</label>
+                            <input type="number" step="0.01" id="modal_descuento_despues" value="${facturaData.descuento_despues_impuestos}" oninput="calcularTotalesModal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Monto Pagado</label>
+                            <input type="number" step="0.01" id="modal_monto_pagado" value="${facturaData.monto_pagado}" oninput="calcularTotalesModal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Total <span class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" id="modal_total" value="${facturaData.total.toFixed(2)}" readonly class="w-full px-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 rounded-lg text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Método de Pago</label>
+                            <select id="modal_metodo_pago" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                <option value="">Sin especificar</option>
+                                <option value="transferencia">Transferencia Bancaria</option>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                                <option value="sinpe">SINPE Móvil</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto de Pago</label>
+                            <input type="text" id="modal_concepto_pago" value="${facturaData.concepto_pago}" placeholder="Ej: Pago inicial..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto General <span class="text-red-500">*</span></label>
+                        <textarea id="modal_concepto" rows="2" placeholder="Descripción general..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">${facturaData.concepto}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 4: Resumen y Totales',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.calcularTotalesModal = function() {
+                        const subtotal = facturaData.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+                        const descuentoAntes = parseFloat(document.getElementById('modal_descuento_antes')?.value) || 0;
+                        const subtotalConDescuento = subtotal - descuentoAntes;
+                        const iva = subtotalConDescuento * 0.13;
+                        const descuentoDespues = parseFloat(document.getElementById('modal_descuento_despues')?.value) || 0;
+                        const total = subtotalConDescuento + iva - descuentoDespues;
+                        const montoPagado = parseFloat(document.getElementById('modal_monto_pagado')?.value) || 0;
+                        const saldoPendiente = total - montoPagado;
+                        
+                        facturaData.subtotal = subtotal;
+                        facturaData.descuento_antes_impuestos = descuentoAntes;
+                        facturaData.iva = iva;
+                        facturaData.descuento_despues_impuestos = descuentoDespues;
+                        facturaData.total = total;
+                        facturaData.monto_pagado = montoPagado;
+                        facturaData.saldo_pendiente = saldoPendiente;
+                        
+                        if (document.getElementById('modal_subtotal')) {
+                            document.getElementById('modal_subtotal').value = subtotal.toFixed(2);
+                            document.getElementById('modal_iva').value = iva.toFixed(2);
+                            document.getElementById('modal_total').value = total.toFixed(2);
+                        }
+                    };
+                },
+                preConfirm: () => {
+                    const concepto = document.getElementById('modal_concepto').value.trim();
+                    if (!concepto) {
+                        Swal.showValidationMessage('El concepto general es requerido');
+                        return false;
+                    }
+                    
+                    facturaData.numero_orden = document.getElementById('modal_numero_orden').value;
+                    facturaData.metodo_pago = document.getElementById('modal_metodo_pago').value;
+                    facturaData.concepto_pago = document.getElementById('modal_concepto_pago').value;
+                    facturaData.concepto = concepto;
+                    calcularTotalesModal();
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 5;
+                    mostrarFase5();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 3;
+                    mostrarFase3();
+                }
+            });
+        }
+        
+        // FASE 5: Pagos Recibidos
+        function mostrarFase5() {
+            let pagosHtml = '';
+            if (facturaData.pagos.length === 0) {
+                pagosHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay pagos agregados</p>';
+            } else {
+                pagosHtml = facturaData.pagos.map((pago, index) => `
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg mb-2">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${pago.descripcion || 'Sin descripción'}</p>
+                                <p class="text-xs text-slate-500">${pago.fecha} - ₡${parseFloat(pago.importe).toLocaleString()} (${pago.metodo_pago || 'Sin método'})</p>
+                            </div>
+                            <button onclick="eliminarPagoModal(${index})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div id="modal_pagos_list" class="max-h-60 overflow-y-auto mb-3">
+                        ${pagosHtml}
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="col-span-2">
+                            <input type="text" id="modal_pago_descripcion" placeholder="Descripción" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="date" id="modal_pago_fecha" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="number" id="modal_pago_importe" step="0.01" placeholder="Importe" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <select id="modal_pago_metodo" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                            <option value="">Método de pago...</option>
+                            <option value="sinpe">SINPE</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="tarjeta">Tarjeta</option>
+                        </select>
+                    </div>
+                    <button onclick="agregarPagoModal()" class="w-full px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">Agregar Pago</button>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 5: Pagos Recibidos',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.eliminarPagoModal = function(index) {
+                        facturaData.pagos.splice(index, 1);
+                        mostrarFase5();
+                    };
+                    window.agregarPagoModal = function() {
+                        const descripcion = document.getElementById('modal_pago_descripcion').value.trim();
+                        const fecha = document.getElementById('modal_pago_fecha').value;
+                        const importe = parseFloat(document.getElementById('modal_pago_importe').value) || 0;
+                        const metodo = document.getElementById('modal_pago_metodo').value;
+                        
+                        if (!descripcion || importe <= 0) {
+                            Swal.showValidationMessage('Complete la descripción y el importe');
+                            return;
+                        }
+                        
+                        facturaData.pagos.push({
+                            descripcion: descripcion,
+                            fecha: fecha,
+                            importe: importe,
+                            metodo_pago: metodo
+                        });
+                        
+                        document.getElementById('modal_pago_descripcion').value = '';
+                        document.getElementById('modal_pago_importe').value = '';
+                        document.getElementById('modal_pago_metodo').value = '';
+                        
+                        mostrarFase5();
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 6;
+                    mostrarFase6();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 4;
+                    mostrarFase4();
+                }
+            });
+        }
+        
+        // FASE 6: Notas y Archivos (Final)
+        function mostrarFase6() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notas Adicionales</label>
+                        <textarea id="modal_notas" rows="3" placeholder="Notas adicionales para la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">${facturaData.notas}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Archivos Adjuntos (Opcional)</label>
+                        <input type="file" id="modal_archivos" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        <p class="mt-1 text-xs text-slate-500">Formatos: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
+                        <h3 class="text-sm font-semibold mb-2">Resumen</h3>
+                        <div class="text-xs space-y-1">
+                            <p>Cliente: ${document.querySelector(`#modal_cliente_id option[value="${facturaData.cliente_id}"]`)?.text || 'N/A'}</p>
+                            <p>Total: ₡${facturaData.total.toLocaleString()}</p>
+                            <p>Items: ${facturaData.items.length}</p>
+                            <p>Pagos: ${facturaData.pagos.length}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 6: Notas y Archivos',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Crear Factura',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#10b981',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: async () => {
+                    facturaData.notas = document.getElementById('modal_notas').value;
+                    const archivosInput = document.getElementById('modal_archivos');
+                    if (archivosInput.files.length > 0) {
+                        facturaData.archivos = archivosInput.files;
+                    }
+                    
+                    // Enviar factura
+                    Swal.fire({
+                        title: 'Creando factura...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    const formData = new FormData();
+                    formData.append('_token', csrfToken);
+                    formData.append('cliente_id', facturaData.cliente_id);
+                    formData.append('correo', facturaData.correo);
+                    formData.append('numero_factura', facturaData.numero_factura);
+                    formData.append('serie', facturaData.serie);
+                    formData.append('fecha_emision', facturaData.fecha_emision);
+                    formData.append('fecha_vencimiento', facturaData.fecha_vencimiento);
+                    formData.append('estado', facturaData.estado);
+                    formData.append('concepto', facturaData.concepto);
+                    formData.append('concepto_pago', facturaData.concepto_pago);
+                    formData.append('subtotal', facturaData.subtotal);
+                    formData.append('total', facturaData.total);
+                    formData.append('monto_pagado', facturaData.monto_pagado);
+                    formData.append('metodo_pago', facturaData.metodo_pago);
+                    formData.append('descuento_antes_impuestos', facturaData.descuento_antes_impuestos);
+                    formData.append('descuento_despues_impuestos', facturaData.descuento_despues_impuestos);
+                    formData.append('numero_orden', facturaData.numero_orden);
+                    formData.append('notas', facturaData.notas);
+                    
+                    if (facturaData.archivos) {
+                        Array.from(facturaData.archivos).forEach(file => {
+                            formData.append('archivos[]', file);
+                        });
+                    }
+                    
+                    facturaData.items.forEach((item, index) => {
+                        formData.append(`items[${index}][descripcion]`, item.descripcion);
+                        formData.append(`items[${index}][cantidad]`, item.cantidad);
+                        formData.append(`items[${index}][precio_unitario]`, item.precio_unitario);
+                        formData.append(`items[${index}][subtotal]`, item.subtotal);
+                        formData.append(`items[${index}][orden]`, index);
+                    });
+                    
+                    facturaData.pagos.forEach((pago, index) => {
+                        if (pago.descripcion && pago.importe > 0) {
+                            formData.append(`pagos[${index}][descripcion]`, pago.descripcion);
+                            formData.append(`pagos[${index}][fecha]`, pago.fecha);
+                            formData.append(`pagos[${index}][importe]`, pago.importe);
+                            formData.append(`pagos[${index}][metodo_pago]`, pago.metodo_pago || '');
+                        }
+                    });
+                    
+                    try {
+                        const response = await fetch('{{ route("walee.facturas.guardar") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: formData,
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Factura Creada!',
+                                text: 'La factura ha sido creada correctamente',
+                                confirmButtonColor: '#10b981'
+                            }).then(() => {
+                                window.location.href = '{{ route("walee.facturas") }}';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al crear factura',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de Conexión',
+                            text: error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 5;
+                    mostrarFase5();
+                }
+            });
+        }
+        
+        function calcularTotalesModal() {
+            if (facturaData.items.length === 0) return;
+            
+            const subtotal = facturaData.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+            const descuentoAntes = facturaData.descuento_antes_impuestos || 0;
+            const subtotalConDescuento = subtotal - descuentoAntes;
+            const iva = subtotalConDescuento * 0.13;
+            const descuentoDespues = facturaData.descuento_despues_impuestos || 0;
+            const total = subtotalConDescuento + iva - descuentoDespues;
+            const montoPagado = facturaData.monto_pagado || 0;
+            const saldoPendiente = total - montoPagado;
+            
+            facturaData.subtotal = subtotal;
+            facturaData.iva = iva;
+            facturaData.total = total;
+            facturaData.saldo_pendiente = saldoPendiente;
+        }
+        
         // Inicializar
         cargarPaquetes();
-        agregarItem(); // Agregar un item inicial
-        agregarPago(); // Agregar un pago inicial
     </script>
     @include('partials.walee-support-button')
 </body>

@@ -2627,6 +2627,27 @@ Route::get('/walee-facturas/crear', function () {
 
 Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $request) {
     try {
+        // Validar cliente_id si se proporciona
+        $clienteId = $request->input('cliente_id');
+        if ($clienteId !== null) {
+            $clienteId = trim($clienteId);
+            if ($clienteId !== '' && !is_numeric($clienteId)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El ID del cliente debe ser un número válido.',
+                ], 422);
+            }
+            if ($clienteId !== '') {
+                $cliente = \App\Models\Cliente::find(intval($clienteId));
+                if (!$cliente) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'El cliente especificado no existe.',
+                    ], 422);
+                }
+            }
+        }
+        
         \DB::beginTransaction();
         
         // Procesar archivos adjuntos
@@ -2682,8 +2703,15 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             $concepto = 'Servicios varios';
         }
         
+        // Limpiar cliente_id antes de guardar
+        $clienteIdFinal = null;
+        if ($request->has('cliente_id')) {
+            $clienteIdInput = trim($request->input('cliente_id'));
+            $clienteIdFinal = ($clienteIdInput !== '' && is_numeric($clienteIdInput)) ? intval($clienteIdInput) : null;
+        }
+        
         $factura = \App\Models\Factura::create([
-            'cliente_id' => $request->input('cliente_id') ?: null,
+            'cliente_id' => $clienteIdFinal,
             'correo' => $request->input('correo'),
             'numero_factura' => $request->input('numero_factura'),
             'serie' => $request->input('serie'),

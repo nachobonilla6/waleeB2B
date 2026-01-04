@@ -3120,7 +3120,7 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
         }
         
         // Enviar email con PDF adjunto y archivos adicionales
-        \Mail::send('emails.factura-envio', [
+        \Mail::send(['emails.factura-envio', 'emails.factura-envio-plain'], [
             'factura' => $factura,
             'cliente' => $factura->cliente,
         ], function ($message) use ($factura, $pdfContent, $archivosAdjuntos) {

@@ -330,9 +330,10 @@
                                 
                                 <!-- Publicaciones Button (Facebook Icon) -->
                                 @php
-                                    $planeadorUrl = $clientePlaneadorId 
-                                        ? route('walee.planeador.publicidad', $clientePlaneadorId)
-                                        : route('walee.facebook.clientes');
+                                    // Intentar usar clientePlaneadorId si existe, sino usar el ID del cliente actual
+                                    // La ruta del planeador puede manejar ambos casos
+                                    $planeadorId = $clientePlaneadorId ?? $cliente->id;
+                                    $planeadorUrl = route('walee.planeador.publicidad', $planeadorId);
                                 @endphp
                                 <a href="{{ $planeadorUrl }}" class="flex items-center justify-center p-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">
@@ -471,9 +472,10 @@
                                 
                                 <!-- Publicaciones Button (Facebook Icon) -->
                                 @php
-                                    $planeadorUrl = $clientePlaneadorId 
-                                        ? route('walee.planeador.publicidad', $clientePlaneadorId)
-                                        : route('walee.facebook.clientes');
+                                    // Intentar usar clientePlaneadorId si existe, sino usar el ID del cliente actual
+                                    // La ruta del planeador puede manejar ambos casos
+                                    $planeadorId = $clientePlaneadorId ?? $cliente->id;
+                                    $planeadorUrl = route('walee.planeador.publicidad', $planeadorId);
                                 @endphp
                                 <a href="{{ $planeadorUrl }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">

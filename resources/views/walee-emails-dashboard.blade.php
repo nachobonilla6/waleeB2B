@@ -113,6 +113,10 @@
             ->whereDate('updated_at', today())
             ->count();
         
+        // Calcular porcentaje de envío: pending hoy / (pending hoy + received hoy) * 100
+        $totalMarcadosHoy = $clientesPendingHoy + $clientesReceivedHoy;
+        $porcentajeEnvio = $totalMarcadosHoy > 0 ? round(($clientesPendingHoy / $totalMarcadosHoy) * 100, 1) : 0;
+        
         // Obtener correos de clientes en proceso (excluyendo activos)
         $clientesEmails = \App\Models\Client::where('estado', '!=', 'activo')
             ->whereNotNull('email')
@@ -290,7 +294,7 @@
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesReceived) }}</p>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                        <span class="text-walee-600 dark:text-walee-400 font-medium">{{ $clientesReceivedHoy }} hoy</span>
+                        <span class="text-walee-600 dark:text-walee-400 font-medium">{{ $porcentajeEnvio }}% de envío</span>
                     </div>
                 </div>
             </div>

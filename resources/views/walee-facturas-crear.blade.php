@@ -2091,14 +2091,7 @@
                 }
                 
                 const modalHtml = `
-                    <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto relative">
-                        <!-- Botón X de cerrar -->
-                        <button onclick="Swal.close()" class="absolute -top-2 -left-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-50 transition-all hover:scale-110" style="z-index: 9999;">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                        
+                    <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto">
                         <!-- Header -->
                         <div class="bg-gradient-to-r from-violet-500/10 to-violet-600/5 rounded-lg p-4 border border-violet-200 dark:border-violet-500/20">
                             <div class="flex justify-between items-start">
@@ -2222,7 +2215,7 @@
                     allowEscapeKey: true,
                     backdrop: true,
                     customClass: {
-                        popup: 'z-[9999]',
+                        popup: 'z-[9999] relative',
                         container: 'z-[9999]',
                     },
                     didOpen: () => {
@@ -2230,6 +2223,19 @@
                         const popup = document.querySelector('.swal2-popup');
                         if (popup) {
                             popup.style.zIndex = '9999';
+                            popup.style.position = 'relative';
+                            
+                            // Crear y agregar botón X en la esquina superior izquierda del popup
+                            const closeButton = document.createElement('button');
+                            closeButton.innerHTML = `
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            `;
+                            closeButton.className = 'absolute -top-3 -left-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-[10000] transition-all hover:scale-110 cursor-pointer';
+                            closeButton.style.zIndex = '10000';
+                            closeButton.onclick = () => Swal.close();
+                            popup.appendChild(closeButton);
                         }
                         const container = document.querySelector('.swal2-container');
                         if (container) {

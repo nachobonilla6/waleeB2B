@@ -2063,51 +2063,31 @@
                     }
                 });
                 
-                const response = await fetch(`/walee-facturas/${facturaId}`);
+                const response = await fetch(`/walee-facturas/${facturaId}/json`);
                 if (!response.ok) throw new Error('Error al cargar la factura');
                 
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
+                const data = await response.json();
+                if (!data.success) throw new Error(data.message || 'Error al cargar la factura');
                 
-                // Extraer datos de la factura del HTML
-                const numeroFactura = doc.querySelector('.text-3xl.font-bold')?.textContent?.trim() || 'N/A';
-                const serie = doc.querySelector('.text-sm.text-slate-400')?.textContent?.trim() || '';
-                const clienteNombre = doc.querySelector('.text-lg.font-semibold.text-white')?.textContent?.trim() || 'Sin cliente';
-                const correo = doc.querySelector('.text-sm.text-slate-400')?.textContent?.trim() || '';
-                const fechaEmision = doc.querySelector('.grid.grid-cols-2 .text-white.font-medium')?.textContent?.trim() || 'N/A';
-                const fechaVencimiento = doc.querySelectorAll('.grid.grid-cols-2 .text-white.font-medium')[1]?.textContent?.trim() || 'N/A';
-                const concepto = doc.querySelector('.bg-slate-900\\/50 p')?.textContent?.trim() || 'Sin concepto';
-                const subtotal = doc.querySelectorAll('.flex.justify-between .text-white.font-medium')[0]?.textContent?.trim() || '₡0';
-                const total = doc.querySelector('.text-2xl.font-bold')?.textContent?.trim() || '₡0';
-                const montoPagado = doc.querySelectorAll('.flex.justify-between .text-emerald-400')[0]?.textContent?.trim() || null;
-                const saldoPendiente = doc.querySelector('.text-amber-400')?.textContent?.trim() || null;
-                const metodoPago = doc.querySelectorAll('.text-white.font-medium')[2]?.textContent?.trim() || 'No especificado';
-                const estado = doc.querySelector('.inline-flex')?.textContent?.trim() || 'Pendiente';
-                const notas = doc.querySelector('.text-slate-300')?.textContent?.trim() || null;
-                const enviadaAt = doc.querySelector('.text-xs.text-slate-400')?.textContent?.trim() || null;
+                const factura = data.factura;
                 
-                // Obtener items de la factura (si están en el HTML)
-                const itemsRows = doc.querySelectorAll('table tbody tr');
+                // Construir HTML de items
                 let itemsHtml = '';
-                if (itemsRows.length > 0) {
-                    itemsRows.forEach(row => {
-                        const descripcion = row.querySelector('td')?.textContent?.trim() || '';
-                        const cantidad = row.querySelectorAll('td')[1]?.textContent?.trim() || '0';
-                        const precio = row.querySelectorAll('td')[2]?.textContent?.trim() || '₡0';
-                        const totalItem = row.querySelectorAll('td')[4]?.textContent?.trim() || '₡0';
-                        if (descripcion && descripcion !== 'No hay items en esta factura') {
-                            itemsHtml += `
-                                <div class="flex justify-between items-start py-2 border-b border-slate-200 dark:border-slate-700 last:border-0">
-                                    <div class="flex-1">
-                                        <p class="text-sm font-medium text-slate-900 dark:text-white">${descripcion}</p>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400">Cantidad: ${cantidad} · ${precio}</p>
-                                    </div>
-                                    <span class="text-sm font-semibold text-slate-900 dark:text-white ml-4">${totalItem}</span>
+                if (factura.items && factura.items.length > 0) {
+                    factura.items.forEach(item => {
+                        itemsHtml += `
+                            <div class="flex justify-between items-start py-2 border-b border-slate-200 dark:border-slate-700 last:border-0">
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${item.descripcion || 'Sin descripción'}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Cantidad: ${item.cantidad} · ₡${item.precio_unitario}</p>
+                                    ${item.notas ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${item.notas}</p>` : ''}
                                 </div>
-                            `;
-                        }
+                                <span class="text-sm font-semibold text-slate-900 dark:text-white ml-4">₡${item.total}</span>
+                            </div>
+                        `;
                     });
+                } else {
+                    itemsHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-2">No hay items en esta factura</p>';
                 }
                 
                 const modalHtml = `
@@ -2116,11 +2096,11 @@
                         <div class="bg-gradient-to-r from-violet-500/10 to-violet-600/5 rounded-lg p-4 border border-violet-200 dark:border-violet-500/20">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h3 class="text-lg font-bold text-violet-600 dark:text-violet-400">Factura ${numeroFactura}</h3>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${serie}</p>
+                                    <h3 class="text-lg font-bold text-violet-600 dark:text-violet-400">Factura ${factura.numero_factura}</h3>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Serie ${factura.serie}</p>
                                 </div>
                                 <div class="text-right">
-                                    ${enviadaAt ? '<span class="text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded">Enviada</span>' : '<span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">Pendiente</span>'}
+                                    ${factura.enviada_at ? '<span class="text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded">Enviada</span>' : '<span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">Pendiente</span>'}
                                 </div>
                             </div>
                         </div>
@@ -2128,29 +2108,28 @@
                         <!-- Cliente -->
                         <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Cliente</p>
-                            <p class="text-sm font-semibold text-slate-900 dark:text-white">${clienteNombre}</p>
-                            <p class="text-xs text-slate-600 dark:text-slate-400">${correo}</p>
+                            <p class="text-sm font-semibold text-slate-900 dark:text-white">${factura.cliente_nombre}</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400">${factura.correo}</p>
                         </div>
                         
                         <!-- Fechas -->
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Emisión</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">${fechaEmision}</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${factura.fecha_emision}</p>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Vencimiento</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">${fechaVencimiento}</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${factura.fecha_vencimiento}</p>
                             </div>
                         </div>
                         
                         <!-- Concepto -->
                         <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Concepto</p>
-                            <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">${concepto}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">${factura.concepto}</p>
                         </div>
                         
-                        ${itemsHtml ? `
                         <!-- Items -->
                         <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Items</p>
@@ -2158,29 +2137,32 @@
                                 ${itemsHtml}
                             </div>
                         </div>
-                        ` : ''}
                         
                         <!-- Totales -->
                         <div class="bg-violet-50 dark:bg-violet-500/10 rounded-lg p-3 border border-violet-200 dark:border-violet-500/20">
                             <div class="space-y-2">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-600 dark:text-slate-400">Subtotal:</span>
-                                    <span class="font-medium text-slate-900 dark:text-white">${subtotal}</span>
+                                    <span class="font-medium text-slate-900 dark:text-white">₡${factura.subtotal}</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-600 dark:text-slate-400">IVA (13%):</span>
+                                    <span class="font-medium text-slate-900 dark:text-white">₡${factura.iva}</span>
                                 </div>
                                 <div class="flex justify-between text-base font-bold border-t border-violet-200 dark:border-violet-500/20 pt-2">
                                     <span class="text-slate-900 dark:text-white">Total:</span>
-                                    <span class="text-violet-600 dark:text-violet-400">${total}</span>
+                                    <span class="text-violet-600 dark:text-violet-400">₡${factura.total}</span>
                                 </div>
-                                ${montoPagado ? `
+                                ${factura.monto_pagado ? `
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-600 dark:text-slate-400">Pagado:</span>
-                                    <span class="font-medium text-emerald-600 dark:text-emerald-400">${montoPagado}</span>
+                                    <span class="font-medium text-emerald-600 dark:text-emerald-400">₡${factura.monto_pagado}</span>
                                 </div>
                                 ` : ''}
-                                ${saldoPendiente ? `
+                                ${factura.saldo_pendiente ? `
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-600 dark:text-slate-400">Pendiente:</span>
-                                    <span class="font-medium text-amber-600 dark:text-amber-400">${saldoPendiente}</span>
+                                    <span class="font-medium text-amber-600 dark:text-amber-400">₡${factura.saldo_pendiente}</span>
                                 </div>
                                 ` : ''}
                             </div>
@@ -2190,23 +2172,23 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Estado</p>
-                                <span class="text-xs font-medium px-2 py-1 rounded ${estado.toLowerCase() === 'pagada' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : estado.toLowerCase() === 'vencida' ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400'}">${estado}</span>
+                                <span class="text-xs font-medium px-2 py-1 rounded ${factura.estado.toLowerCase() === 'pagada' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : factura.estado.toLowerCase() === 'vencida' ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400'}">${factura.estado}</span>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Método de Pago</p>
-                                <p class="text-sm font-medium text-slate-900 dark:text-white">${metodoPago}</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${factura.metodo_pago}</p>
                             </div>
                         </div>
                         
-                        ${notas ? `
+                        ${factura.notas ? `
                         <!-- Notas -->
                         <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Notas</p>
-                            <p class="text-sm text-slate-700 dark:text-slate-300">${notas}</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">${factura.notas}</p>
                         </div>
                         ` : ''}
                         
-                        ${enviadaAt ? `
+                        ${factura.enviada_at ? `
                         <!-- Info de Envío -->
                         <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 border border-emerald-200 dark:border-emerald-500/20">
                             <div class="flex items-center gap-2">
@@ -2215,7 +2197,7 @@
                                 </svg>
                                 <div>
                                     <p class="text-xs font-medium text-emerald-600 dark:text-emerald-400">Factura enviada</p>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400">${enviadaAt}</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">${factura.enviada_at}</p>
                                 </div>
                             </div>
                         </div>
@@ -2224,7 +2206,7 @@
                 `;
                 
                 Swal.fire({
-                    title: `Factura ${numeroFactura}`,
+                    title: `Factura ${factura.numero_factura}`,
                     html: modalHtml,
                     width: '700px',
                     showConfirmButton: true,

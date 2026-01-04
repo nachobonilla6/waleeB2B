@@ -2938,6 +2938,51 @@ Route::get('/walee-facturas/{id}', function ($id) {
     return view('walee-factura-ver', compact('factura'));
 })->middleware(['auth'])->name('walee.factura.ver');
 
+// API: Obtener datos de factura en JSON
+Route::get('/walee-facturas/{id}/json', function ($id) {
+    try {
+        $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'factura' => [
+                'id' => $factura->id,
+                'numero_factura' => $factura->numero_factura,
+                'serie' => $factura->serie ?? 'A',
+                'cliente_nombre' => $factura->cliente?->nombre_empresa ?? 'Sin cliente',
+                'correo' => $factura->correo ?? '',
+                'fecha_emision' => $factura->fecha_emision ? $factura->fecha_emision->format('d/m/Y') : 'N/A',
+                'fecha_vencimiento' => $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('d/m/Y') : 'N/A',
+                'concepto' => $factura->concepto ?? 'Sin concepto',
+                'subtotal' => number_format($factura->subtotal ?? $factura->total, 2, ',', '.'),
+                'iva' => number_format(($factura->subtotal ?? $factura->total) * 0.13, 2, ',', '.'),
+                'total' => number_format($factura->total, 2, ',', '.'),
+                'monto_pagado' => $factura->monto_pagado > 0 ? number_format($factura->monto_pagado, 2, ',', '.') : null,
+                'saldo_pendiente' => ($factura->total - $factura->monto_pagado) > 0 ? number_format($factura->total - $factura->monto_pagado, 2, ',', '.') : null,
+                'metodo_pago' => ucfirst($factura->metodo_pago ?? 'No especificado'),
+                'estado' => ucfirst($factura->estado ?? 'Pendiente'),
+                'notas' => $factura->notas ?? null,
+                'enviada_at' => $factura->enviada_at ? $factura->enviada_at->format('d/m/Y H:i') . ' · ' . $factura->enviada_at->diffForHumans() : null,
+                'items' => $factura->items->map(function($item) {
+                    return [
+                        'descripcion' => $item->descripcion ?? '',
+                        'cantidad' => $item->cantidad ?? 1,
+                        'precio_unitario' => number_format($item->precio_unitario ?? 0, 2, ',', '.'),
+                        'subtotal' => number_format($item->subtotal ?? 0, 2, ',', '.'),
+                        'total' => number_format(($item->subtotal ?? 0) * 1.13, 2, ',', '.'),
+                        'notas' => $item->notas ?? null,
+                    ];
+                })->toArray(),
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al cargar la factura: ' . $e->getMessage()
+        ], 404);
+    }
+})->middleware(['auth'])->name('walee.factura.json');
+
 // Obtener información del cliente para cálculo automático
 Route::get('/walee-facturas/cliente/{id}/info', function ($id) {
     $cliente = \App\Models\Cliente::findOrFail($id);

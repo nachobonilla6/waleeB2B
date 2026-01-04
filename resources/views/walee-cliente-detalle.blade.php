@@ -213,39 +213,102 @@
                         }
                     @endphp
                     
-                    <!-- Mobile: Foto a ancho completo -->
+                    <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden">
-                        @if($fotoUrl)
-                            <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-64 object-cover">
-                        @else
-                            <div class="w-full h-64 bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center">
-                                <span class="text-6xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                            </div>
-                        @endif
-                        <div class="p-4">
-                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">{{ $cliente->name }}</h1>
-                            <div class="flex items-center gap-2 flex-wrap mb-4">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                </span>
-                                @if($emailsEnviados > 0)
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                        {{ $emailsEnviados }} {{ $emailsEnviados == 1 ? 'email' : 'emails' }}
-                                    </span>
-                                @endif
-                            </div>
-                            <button onclick="openEditClientModal()" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-walee-500/20 to-walee-600/20 hover:from-walee-500/30 hover:to-walee-600/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-semibold shadow-sm hover:shadow-md">
+                        <!-- Imagen cuadrada con botón de editar arriba a la derecha -->
+                        <div class="relative w-full aspect-square">
+                            @if($fotoUrl)
+                                <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center">
+                                    <span class="text-6xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                </div>
+                            @endif
+                            <!-- Botón de editar posicionado arriba a la derecha -->
+                            <button onclick="openEditClientModal()" class="absolute top-3 right-3 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg z-10">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
-                                <span>Editar</span>
                             </button>
+                        </div>
+                        
+                        <!-- Nombre -->
+                        <div class="p-4 pb-2">
+                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $cliente->name }}</h1>
+                        </div>
+                        
+                        <!-- Alertas/Información -->
+                        <div class="px-4 pb-4 space-y-2">
+                            @php
+                                $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
+                                $totalCitas = $citasPendientes->count() + $citasPasadas->count();
+                            @endphp
+                            
+                            <!-- Estado -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</span>
+                                </div>
+                                <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
+                            </div>
+                            
+                            <!-- Publicaciones -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-violet-500/10 border border-violet-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones</span>
+                                </div>
+                                <span class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
+                            </div>
+                            
+                            <!-- Citas -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-500/10 border border-walee-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
+                                </div>
+                                <span class="text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $totalCitas }}</span>
+                            </div>
+                            
+                            <!-- Facturas -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-red-500/10 border border-red-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
+                                </div>
+                                <span class="text-sm font-semibold text-red-600 dark:text-red-400">{{ $facturas->count() }}</span>
+                            </div>
+                            
+                            <!-- Cotizaciones -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
+                                </div>
+                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
+                            </div>
+                            
+                            <!-- Contratos -->
+                            <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-500/10 border border-walee-500/20">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contratos</span>
+                                </div>
+                                <span class="text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $contratos->count() }}</span>
+                            </div>
                         </div>
                     </div>
                     

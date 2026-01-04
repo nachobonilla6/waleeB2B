@@ -235,7 +235,7 @@
                             
                             <!-- Nombre a la derecha -->
                             <div class="flex-1 min-w-0">
-                                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate">{{ $cliente->name }}</h1>
+                                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words">{{ $cliente->name }}</h1>
                             </div>
                         </div>
                         

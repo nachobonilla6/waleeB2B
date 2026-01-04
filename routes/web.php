@@ -808,23 +808,53 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         // Obtener cliente para datos del webhook
         $cliente = \App\Models\Cliente::find($evento->cliente_id);
         
+        // Buscar el Client correspondiente (donde están los campos webhook_url, page_id, token)
+        $client = null;
+        if ($cliente) {
+            $client = \App\Models\Client::where('email', $cliente->correo)
+                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
+                ->first();
+        }
+        
         // Obtener webhook del cliente específico, o usar el webhook por defecto
         $webhookUrl = null;
         $pageId = null;
         $token = null;
         
-        if ($cliente) {
+        if ($client) {
             // Usar webhook del cliente si está configurado
-            if ($cliente->webhook_url) {
-                $webhookUrl = $cliente->webhook_url;
-                $pageId = $cliente->page_id;
-                $token = $cliente->token;
+            if ($client->webhook_url) {
+                $webhookUrl = $client->webhook_url;
+                $pageId = $client->page_id;
+                $token = $client->token;
+                
+                \Log::info('Webhook del cliente encontrado', [
+                    'cliente_id' => $evento->cliente_id,
+                    'client_id' => $client->id,
+                    'webhook_url' => $webhookUrl,
+                    'page_id' => $pageId ? 'configurado' : 'no configurado',
+                    'token' => $token ? 'configurado' : 'no configurado'
+                ]);
+            } else {
+                \Log::info('Cliente encontrado pero sin webhook configurado', [
+                    'cliente_id' => $evento->cliente_id,
+                    'client_id' => $client->id
+                ]);
             }
+        } else {
+            \Log::info('No se encontró Client correspondiente al Cliente', [
+                'cliente_id' => $evento->cliente_id,
+                'cliente_correo' => $cliente ? $cliente->correo : 'N/A',
+                'cliente_nombre' => $cliente ? $cliente->nombre_empresa : 'N/A'
+            ]);
         }
         
         // Si no hay webhook del cliente, usar el webhook por defecto
         if (!$webhookUrl) {
             $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
+            \Log::info('Usando webhook por defecto', [
+                'webhook_url' => $webhookUrl
+            ]);
         }
         
         try {

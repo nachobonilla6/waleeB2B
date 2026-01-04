@@ -294,7 +294,7 @@
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesReceived) }}</p>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                        <span class="text-walee-600 dark:text-walee-400 font-medium">{{ $porcentajeEnvio }}% de envío hoy</span>
+                        <span class="text-walee-600 dark:text-walee-400 font-medium">{{ $porcentajeEnvio }}% de envío hoy ({{ $clientesPendingHoy }}/{{ $totalMarcadosHoy }})</span>
                     </div>
                 </div>
             </div>

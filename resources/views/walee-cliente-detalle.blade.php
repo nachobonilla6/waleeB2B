@@ -198,7 +198,7 @@
             
             <!-- Header Profesional -->
             <div class="mb-6 sm:mb-8 lg:mb-10 animate-fade-in-up">
-                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
+                <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
                     @php
                         $fotoPath = $cliente->foto ?? null;
                         $fotoUrl = null;
@@ -213,6 +213,13 @@
                         }
                     @endphp
                     
+                    <!-- Botón de editar en esquina superior derecha -->
+                    <button onclick="openEditClientModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </button>
+                    
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden">
                         <div class="flex items-center gap-3 p-4">
@@ -225,12 +232,6 @@
                                         <span class="text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                                     </div>
                                 @endif
-                                <!-- Botón de editar posicionado arriba a la derecha -->
-                                <button onclick="openEditClientModal()" class="absolute top-2 right-2 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg z-10">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </button>
                             </div>
                             
                             <!-- Nombre a la derecha -->
@@ -365,7 +366,7 @@
                     
                     <!-- Desktop: Layout original -->
                     <div class="hidden sm:block p-4 sm:p-6 lg:p-8">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
                             <div class="flex items-start sm:items-center gap-3 sm:gap-4 lg:gap-6 flex-1 min-w-0">
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
@@ -393,14 +394,6 @@
                                         @endif
                                     </div>
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-2 sm:gap-3 lg:flex-col lg:items-end">
-                                <button onclick="openEditClientModal()" class="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl lg:rounded-2xl bg-gradient-to-r from-walee-500/20 to-walee-600/20 hover:from-walee-500/30 hover:to-walee-600/30 text-walee-400 border border-walee-400/30 transition-all text-sm sm:text-base font-semibold shadow-sm hover:shadow-md">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    <span>Editar</span>
-                                </button>
                             </div>
                         </div>
                     </div>

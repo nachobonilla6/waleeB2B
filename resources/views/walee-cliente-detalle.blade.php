@@ -39,12 +39,35 @@
         
         /* Asegurar que el card de perfil use todo el ancho en mobile */
         @media (max-width: 640px) {
+            /* Contenedor principal del header */
+            .header-profesional-wrapper {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+            }
+            
+            /* Card de perfil */
             .header-profesional-card {
                 width: 100% !important;
                 max-width: 100% !important;
+                min-width: 0 !important;
                 box-sizing: border-box !important;
             }
+            
+            /* Todos los contenedores dentro del card */
             .header-profesional-card > div {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+            }
+            
+            /* Contenedor flex del layout mobile */
+            .header-profesional-card .block.sm\\:hidden {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            .header-profesional-card .block.sm\\:hidden > div {
                 width: 100% !important;
                 max-width: 100% !important;
             }
@@ -266,7 +289,7 @@
             @include('partials.walee-navbar')
             
             <!-- Header Profesional -->
-            <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col w-full">
+            <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col w-full header-profesional-wrapper">
                 <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">
                     @php
                         $fotoPath = $cliente->foto ?? null;

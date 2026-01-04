@@ -55,14 +55,19 @@
         @media (max-width: 640px) {
             .swal2-popup-mobile {
                 margin: 0.5rem !important;
-                padding: 0.75rem !important;
+                padding: 0 !important;
                 width: calc(100% - 1rem) !important;
                 max-width: calc(100% - 1rem) !important;
-                max-height: 70vh !important;
+                max-height: 85vh !important;
+                display: flex !important;
+                flex-direction: column !important;
             }
             .swal2-html-container-mobile {
-                padding: 0 !important;
+                padding: 0.75rem !important;
                 margin: 0 !important;
+                flex: 1 !important;
+                overflow-y: auto !important;
+                max-height: calc(85vh - 80px) !important;
             }
             .swal2-html-container-mobile form {
                 width: 100% !important;
@@ -79,10 +84,17 @@
             .swal2-html-container-mobile > * {
                 width: 100% !important;
             }
-            /* Mejorar botones en mobile */
+            /* Mejorar botones en mobile - siempre visibles */
             .swal2-actions {
-                margin-top: 1rem !important;
+                margin: 0 !important;
+                padding: 0.75rem !important;
                 gap: 0.75rem !important;
+                border-top: 1px solid rgba(203, 213, 225, 0.3) !important;
+                flex-shrink: 0 !important;
+                background: inherit !important;
+            }
+            html.dark .swal2-actions {
+                border-top-color: rgba(51, 65, 85, 0.5) !important;
             }
             .swal2-confirm,
             .swal2-cancel {
@@ -92,6 +104,7 @@
                 font-weight: 600 !important;
                 border-radius: 0.5rem !important;
                 transition: all 0.2s !important;
+                margin: 0 !important;
             }
             .swal2-confirm {
                 background: linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%) !important;

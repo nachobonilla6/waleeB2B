@@ -325,50 +325,13 @@
             </div>
             
             <!-- Charts and Quick Actions -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
+            <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
                 <!-- Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
                     <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes Nuevos - Últimos 7 Días</h2>
                     <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
                         <canvas id="clientesChart"></canvas>
                     </div>
-                </div>
-                
-                <!-- Clientes en Proceso Chart -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.6s">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes en Proceso</h2>
-                    <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
-                        <canvas id="clientesProcesoChart"></canvas>
-                    </div>
-                    <div class="mt-3 sm:mt-4 text-center">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                            <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProceso }}</span> clientes en proceso
-                        </p>
-                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                            <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ number_format($porcentajeClientes, 1) }}%</span> del total de clientes
-                        </p>
-                        <div class="flex items-center justify-center gap-3 sm:gap-4 mt-2">
-                            <span class="text-xs text-slate-600 dark:text-slate-400">
-                                <span class="font-semibold text-emerald-500">{{ $clientesPending }}</span> Enviados
-                            </span>
-                            <span class="text-xs text-slate-600 dark:text-slate-400">
-                                <span class="font-semibold text-blue-500">{{ $clientesReceived }}</span> Emails pendientes
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Gráfico de Barras: Clientes en Proceso por Día -->
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up mb-4 sm:mb-6 md:mb-8" style="animation-delay: 0.65s">
-                <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes en Proceso - Evolución Diaria (Últimos 7 Días)</h2>
-                <div class="relative w-full" style="height: 300px; sm:height: 350px; md:height: 400px;">
-                    <canvas id="clientesEnProcesoBarrasChart"></canvas>
-                </div>
-                <div class="mt-3 sm:mt-4 text-center">
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                        Total: <span class="font-semibold text-violet-600 dark:text-violet-400">{{ $clientesEnProceso }}</span> clientes en proceso
-                    </p>
                 </div>
             </div>
             
@@ -487,137 +450,6 @@
                         tension: 0.4,
                         fill: true
                     }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
-                                usePointStyle: true,
-                                padding: 15
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b',
-                                stepSize: 1
-                            },
-                            grid: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#94a3b8' : '#64748b'
-                            },
-                            grid: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Chart configuration - Clientes en Proceso
-        const ctxProceso = document.getElementById('clientesProcesoChart');
-        if (ctxProceso) {
-            const clientesPending = {{ $clientesPending }};
-            const clientesReceived = {{ $clientesReceived }};
-            const clientesEnProceso = {{ $clientesEnProceso }};
-            const totalClientes = {{ $totalClientes }};
-            const porcentaje = {{ $porcentajeClientes }};
-            
-            new Chart(ctxProceso, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Enviados', 'Emails pendientes'],
-                    datasets: [{
-                        data: [clientesPending, clientesReceived],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(59, 130, 246, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgb(16, 185, 129)',
-                            'rgb(59, 130, 246)'
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
-                                padding: 15,
-                                usePointStyle: true
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed || 0;
-                                    const total = clientesEnProceso > 0 ? clientesEnProceso : 1;
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return label + ': ' + value + ' (' + percentage + '%)';
-                                }
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: porcentaje.toFixed(1) + '% del total',
-                            position: 'top',
-                            color: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#1e293b',
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Chart configuration - Clientes en Proceso por Día (Línea)
-        const ctxBarras = document.getElementById('clientesEnProcesoBarrasChart');
-        if (ctxBarras) {
-            const diasLabels = @json($diasLabels);
-            const clientesEnProcesoPorDia = @json($clientesEnProcesoPorDia);
-            const clientesPendingPorDia = @json($clientesPendingPorDia);
-            
-            new Chart(ctxBarras, {
-                type: 'line',
-                data: {
-                    labels: diasLabels,
-                    datasets: [
-                        {
-                            label: 'Total (Pending + Received)',
-                            data: clientesEnProcesoPorDia,
-                            borderColor: 'rgb(139, 92, 246)',
-                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        },
-                        {
-                            label: 'Enviados (Pending)',
-                            data: clientesPendingPorDia,
-                            borderColor: 'rgb(16, 185, 129)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }
-                    ]
                 },
                 options: {
                     responsive: true,

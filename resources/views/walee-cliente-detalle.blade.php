@@ -364,45 +364,45 @@
                             <!-- Publicaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-violet-100 dark:bg-violet-500/10 border border-violet-600 dark:border-violet-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                     </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones en FB</span>
                                 </div>
-                                <span class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
+                                <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $totalPublicaciones }}</span>
                             </div>
                             
                             <!-- Citas -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-walee-500/10 border border-amber-600 dark:border-walee-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
                                     </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
                                 </div>
-                                <span class="text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $totalCitas }}</span>
+                                <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
                             </div>
                             
                             <!-- Facturas -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-600 dark:border-red-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
                                 </div>
-                                <span class="text-sm font-semibold text-red-600 dark:text-red-400">{{ $facturas->count() }}</span>
+                                <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
                             </div>
                             
                             <!-- Cotizaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 border border-blue-600 dark:border-blue-500/20">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
                                 </div>
-                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
+                                <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
                             </div>
                         </div>
                     </div>
@@ -498,45 +498,45 @@
                                 <!-- Publicaciones -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                         </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones en FB</span>
                                     </div>
-                                    <span class="text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
+                                    <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $totalPublicaciones }}</span>
                                 </div>
                                 
                                 <!-- Citas -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-walee-500/10 border border-walee-500/20">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-walee-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-amber-600 dark:text-walee-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
                                         </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
                                     </div>
-                                    <span class="text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $totalCitas }}</span>
+                                    <span class="text-sm font-semibold text-amber-700 dark:text-walee-400">{{ $totalCitas }}</span>
                                 </div>
                                 
                                 <!-- Facturas -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                         </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
                                     </div>
-                                    <span class="text-sm font-semibold text-red-600 dark:text-red-400">{{ $facturas->count() }}</span>
+                                    <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
                                 </div>
                                 
                                 <!-- Cotizaciones -->
                                 <div class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                         </svg>
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
                                     </div>
-                                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
+                                    <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
                                 </div>
                             </div>
                         </div>

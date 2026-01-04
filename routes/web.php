@@ -3902,6 +3902,185 @@ Route::get('/walee-cotizaciones', function () {
     return view('walee-cotizaciones');
 })->middleware(['auth'])->name('walee.cotizaciones');
 
+Route::get('/walee-cotizaciones/crear', function () {
+    return view('walee-cotizaciones-crear');
+})->middleware(['auth'])->name('walee.cotizaciones.crear');
+
+Route::post('/walee-cotizaciones/guardar', function (\Illuminate\Http\Request $request) {
+    try {
+        $clienteId = $request->input('cliente_id');
+        if ($clienteId !== null) {
+            $clienteId = trim($clienteId);
+            if ($clienteId !== '' && !is_numeric($clienteId)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El ID del cliente debe ser un número válido.',
+                ], 422);
+            }
+            if ($clienteId !== '') {
+                $clienteIdInt = intval($clienteId);
+                $cliente = \App\Models\Cliente::where('id', $clienteIdInt)->first();
+                
+                if (!$cliente) {
+                    $clientEnProceso = \App\Models\Client::find($clienteIdInt);
+                    if ($clientEnProceso) {
+                        $cliente = \App\Models\Cliente::where('correo', $clientEnProceso->email)->first();
+                        
+                        if (!$cliente && $clientEnProceso->name) {
+                            $cliente = \App\Models\Cliente::where('nombre_empresa', $clientEnProceso->name)->first();
+                        }
+                        
+                        if (!$cliente) {
+                            $cliente = \App\Models\Cliente::create([
+                                'nombre_empresa' => $clientEnProceso->name,
+                                'correo' => $clientEnProceso->email ?: '',
+                                'telefono' => $clientEnProceso->telefono_1 ?? '',
+                                'ciudad' => $clientEnProceso->ciudad ?? '',
+                            ]);
+                        }
+                    }
+                }
+                
+                if (!$cliente) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'El cliente especificado (ID: ' . $clienteIdInt . ') no existe en la base de datos.',
+                    ], 422);
+                }
+            }
+        }
+        
+        $clienteIdFinal = null;
+        if ($request->has('cliente_id')) {
+            $clienteIdInput = trim($request->input('cliente_id'));
+            $clienteIdFinal = ($clienteIdInput !== '' && is_numeric($clienteIdInput)) ? intval($clienteIdInput) : null;
+        }
+        
+        $cotizacion = \App\Models\Cotizacion::create([
+            'cliente_id' => $clienteIdFinal,
+            'correo' => $request->input('correo'),
+            'numero_cotizacion' => $request->input('numero_cotizacion'),
+            'fecha' => $request->input('fecha'),
+            'idioma' => $request->input('idioma', 'es'),
+            'tipo_servicio' => $request->input('tipo_servicio'),
+            'plan' => $request->input('plan'),
+            'monto' => $request->input('monto', 0),
+            'vigencia' => $request->input('vigencia', '15'),
+            'descripcion' => $request->input('descripcion'),
+            'estado' => $request->input('estado', 'pendiente'),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cotización creada correctamente',
+            'cotizacion_id' => $cotizacion->id,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cotizaciones.guardar');
+
+Route::get('/walee-cotizaciones/{id}/json', function ($id) {
+    try {
+        $cotizacion = \App\Models\Cotizacion::with('cliente')->findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'cotizacion' => $cotizacion,
+            'cliente' => $cotizacion->cliente,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cotizaciones.json');
+
+Route::get('/walee-cotizaciones/{id}/pdf', function ($id) {
+    try {
+        $cotizacion = \App\Models\Cotizacion::with('cliente')->findOrFail($id);
+        
+        // Generar PDF usando la vista de cotización
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-cotizacion-pdf', [
+            'cotizacion' => $cotizacion,
+            'cliente' => $cotizacion->cliente,
+        ]);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'Arial',
+        ]);
+        
+        return $pdf->stream('cotizacion-' . $cotizacion->numero_cotizacion . '.pdf');
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cotizaciones.pdf');
+
+Route::post('/walee-cotizaciones/{id}/enviar-email', function ($id, \Illuminate\Http\Request $request) {
+    try {
+        $cotizacion = \App\Models\Cotizacion::with('cliente')->findOrFail($id);
+        
+        if (!$cotizacion->correo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La cotización no tiene un correo asociado',
+            ], 422);
+        }
+        
+        // Generar PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-cotizacion-pdf', [
+            'cotizacion' => $cotizacion,
+            'cliente' => $cotizacion->cliente,
+        ]);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'Arial',
+        ]);
+        
+        // Enviar email
+        $clienteNombre = $cotizacion->cliente ? $cotizacion->cliente->nombre_empresa : 'Cliente';
+        
+        \Mail::send(['emails.cotizacion-envio', 'emails.cotizacion-envio-plain'], [
+            'cotizacion' => $cotizacion,
+            'cliente' => $cotizacion->cliente,
+            'clienteNombre' => $clienteNombre,
+        ], function ($message) use ($cotizacion, $pdf, $clienteNombre) {
+            $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
+                    ->to($cotizacion->correo)
+                    ->subject('Cotización ' . $cotizacion->numero_cotizacion . ' - Web Solutions')
+                    ->attachData($pdf->output(), 'cotizacion-' . $cotizacion->numero_cotizacion . '.pdf', [
+                        'mime' => 'application/pdf',
+                    ]);
+        });
+        
+        // Marcar como enviada
+        $cotizacion->update([
+            'enviada_at' => now(),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cotización enviada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cotizaciones.enviar-email');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

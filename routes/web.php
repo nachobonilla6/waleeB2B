@@ -2932,6 +2932,40 @@ Route::get('/walee-facturas/cliente/{id}', function ($id) {
     }
 })->middleware(['auth'])->name('walee.facturas.cliente');
 
+// Lista de contratos por cliente
+Route::get('/walee-contratos/cliente/{id}', function ($id) {
+    try {
+        $client = \App\Models\Client::findOrFail($id);
+        
+        // Buscar el Cliente correspondiente por email
+        $cliente = null;
+        if ($client->email) {
+            $cliente = \App\Models\Cliente::where('correo', $client->email)->first();
+        }
+        
+        // Si no existe, buscar por nombre también
+        if (!$cliente && $client->name) {
+            $cliente = \App\Models\Cliente::where('nombre_empresa', $client->name)->first();
+        }
+        
+        if (!$cliente) {
+            // Si no existe, crear uno nuevo basado en el Client
+            $cliente = \App\Models\Cliente::create([
+                'nombre_empresa' => $client->name,
+                'correo' => $client->email ?: '',
+                'telefono' => $client->telefono_1 ?? '',
+                'ciudad' => $client->ciudad ?? '',
+            ]);
+        }
+        
+        // Usar el Client para mostrar en la vista (tiene foto, etc.)
+        return view('walee-contratos-cliente', ['cliente' => $client, 'clienteFacturas' => $cliente]);
+    } catch (\Exception $e) {
+        \Log::error('Error al cargar contratos del cliente: ' . $e->getMessage());
+        return redirect()->route('walee.clientes.activos')->with('error', 'Error al cargar los contratos del cliente');
+    }
+})->middleware(['auth'])->name('walee.contratos.cliente');
+
 // Ver factura individual
 Route::get('/walee-facturas/{id}', function ($id) {
     $factura = \App\Models\Factura::with('cliente')->findOrFail($id);

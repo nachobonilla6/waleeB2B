@@ -125,19 +125,31 @@
             
             <!-- Cliente Info -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="rounded-xl bg-walee-50 dark:bg-walee-900/20 border border-walee-200 dark:border-walee-800 p-4">
-                    <div class="flex items-center gap-3">
-                        <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 hover:opacity-90 transition-opacity cursor-pointer border-2 border-walee-500/30 dark:border-walee-500/20">
-                            @if($fotoUrl)
-                                <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
-                            @else
-                                <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
-                            @endif
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none mb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-walee-100 dark:bg-walee-500/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover opacity-80">
+                                @endif
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate">
+                                    {{ $cliente->name }}
+                                </h2>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
+                                    {{ $cliente->email ?? '' }}
+                                </p>
+                            </div>
                         </a>
-                        <div class="flex-1 min-w-0">
-                            <h2 class="text-lg font-semibold text-walee-900 dark:text-walee-300 truncate">{{ $cliente->name }}</h2>
-                            <p class="text-sm text-walee-700 dark:text-walee-400 truncate">Contratos del Cliente</p>
-                        </div>
+                        <a href="{{ route('walee.herramientas.enviar-contrato') }}?cliente_id={{ $cliente->id }}" class="w-full sm:w-auto px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span>Crear Contrato</span>
+                        </a>
                     </div>
                 </div>
             </div>

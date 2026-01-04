@@ -2091,7 +2091,14 @@
                 }
                 
                 const modalHtml = `
-                    <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto relative">
+                        <!-- Botón X de cerrar -->
+                        <button onclick="Swal.close()" class="absolute -top-2 -left-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-50 transition-all hover:scale-110" style="z-index: 9999;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                        
                         <!-- Header -->
                         <div class="bg-gradient-to-r from-violet-500/10 to-violet-600/5 rounded-lg p-4 border border-violet-200 dark:border-violet-500/20">
                             <div class="flex justify-between items-start">
@@ -2209,9 +2216,26 @@
                     title: `Factura ${factura.numero_factura}`,
                     html: modalHtml,
                     width: '700px',
-                    showConfirmButton: true,
-                    confirmButtonText: 'Cerrar',
-                    confirmButtonColor: '#7c3aed',
+                    showConfirmButton: false,
+                    showCloseButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: true,
+                    backdrop: true,
+                    customClass: {
+                        popup: 'z-[9999]',
+                        container: 'z-[9999]',
+                    },
+                    didOpen: () => {
+                        // Asegurar que el modal esté encima de todo
+                        const popup = document.querySelector('.swal2-popup');
+                        if (popup) {
+                            popup.style.zIndex = '9999';
+                        }
+                        const container = document.querySelector('.swal2-container');
+                        if (container) {
+                            container.style.zIndex = '9999';
+                        }
+                    },
                     background: isDarkMode() ? '#1e293b' : '#ffffff',
                     color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });

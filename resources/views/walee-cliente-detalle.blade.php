@@ -248,7 +248,7 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <div class="relative max-w-[90rem] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 h-full overflow-hidden flex flex-col">
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 h-full overflow-hidden flex flex-col">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
             

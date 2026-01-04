@@ -428,68 +428,8 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
-        async function showCitaDetail(citaId) {
-            const isMobile = window.innerWidth < 640;
-            const isDarkMode = document.documentElement.classList.contains('dark');
-            
-            try {
-                Swal.fire({
-                    title: 'Cargando...',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    },
-                    background: isDarkMode ? '#1e293b' : '#ffffff',
-                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                    customClass: {
-                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    }
-                });
-                
-                const response = await fetch(`/citas/${citaId}/detalle`, {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    window.location.href = `/citas/${citaId}/detalle`;
-                } else {
-                    const data = await response.json();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al cargar los detalles de la cita',
-                        confirmButtonColor: '#ef4444',
-                        background: isDarkMode ? '#1e293b' : '#ffffff',
-                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                        customClass: {
-                            popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                            title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                            confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: error.message,
-                    confirmButtonColor: '#ef4444',
-                    background: isDarkMode ? '#1e293b' : '#ffffff',
-                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                    customClass: {
-                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                    }
-                });
-            }
+        function showCitaDetail(citaId) {
+            window.location.href = `/citas/${citaId}/detalle`;
         }
     </script>
     @include('partials.walee-support-button')

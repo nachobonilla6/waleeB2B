@@ -79,10 +79,38 @@
             } elseif (!is_numeric($clienteIdFromUrl)) {
                 $errorCliente = 'El ID del cliente debe ser un número válido.';
             } else {
-                // Buscar el cliente
-                $clienteSeleccionado = \App\Models\Cliente::find(intval($clienteIdFromUrl));
+                // Buscar el cliente - puede venir de clientes o clientes_en_proceso
+                $clienteIdInt = intval($clienteIdFromUrl);
+                
+                // Primero buscar en la tabla clientes (modelo Cliente)
+                $clienteSeleccionado = \App\Models\Cliente::where('id', $clienteIdInt)->first();
+                
+                // Si no se encuentra, buscar en clientes_en_proceso (modelo Client)
                 if (!$clienteSeleccionado) {
-                    $errorCliente = 'El cliente especificado no existe. Por favor, seleccione un cliente válido.';
+                    $clientEnProceso = \App\Models\Client::find($clienteIdInt);
+                    if ($clientEnProceso) {
+                        // Si existe en clientes_en_proceso, buscar o crear el Cliente correspondiente
+                        $clienteSeleccionado = \App\Models\Cliente::where('correo', $clientEnProceso->email)->first();
+                        
+                        if (!$clienteSeleccionado && $clientEnProceso->name) {
+                            // Intentar buscar por nombre
+                            $clienteSeleccionado = \App\Models\Cliente::where('nombre_empresa', $clientEnProceso->name)->first();
+                        }
+                        
+                        // Si aún no existe, crear uno nuevo basado en el Client
+                        if (!$clienteSeleccionado) {
+                            $clienteSeleccionado = \App\Models\Cliente::create([
+                                'nombre_empresa' => $clientEnProceso->name,
+                                'correo' => $clientEnProceso->email ?: '',
+                                'telefono' => $clientEnProceso->telefono_1 ?? '',
+                                'ciudad' => $clientEnProceso->ciudad ?? '',
+                            ]);
+                        }
+                    }
+                }
+                
+                if (!$clienteSeleccionado) {
+                    $errorCliente = 'El cliente especificado (ID: ' . $clienteIdInt . ') no existe en la base de datos. Por favor, seleccione un cliente válido.';
                 }
             }
         }

@@ -2638,11 +2638,38 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
                 ], 422);
             }
             if ($clienteId !== '') {
-                $cliente = \App\Models\Cliente::find(intval($clienteId));
+                $clienteIdInt = intval($clienteId);
+                // Intentar buscar en la tabla clientes (modelo Cliente)
+                $cliente = \App\Models\Cliente::where('id', $clienteIdInt)->first();
+                
+                // Si no se encuentra, buscar en clientes_en_proceso (modelo Client)
+                if (!$cliente) {
+                    $clientEnProceso = \App\Models\Client::find($clienteIdInt);
+                    if ($clientEnProceso) {
+                        // Si existe en clientes_en_proceso, buscar o crear el Cliente correspondiente
+                        $cliente = \App\Models\Cliente::where('correo', $clientEnProceso->email)->first();
+                        
+                        if (!$cliente && $clientEnProceso->name) {
+                            // Intentar buscar por nombre
+                            $cliente = \App\Models\Cliente::where('nombre_empresa', $clientEnProceso->name)->first();
+                        }
+                        
+                        // Si aún no existe, crear uno nuevo basado en el Client
+                        if (!$cliente) {
+                            $cliente = \App\Models\Cliente::create([
+                                'nombre_empresa' => $clientEnProceso->name,
+                                'correo' => $clientEnProceso->email ?: '',
+                                'telefono' => $clientEnProceso->telefono_1 ?? '',
+                                'ciudad' => $clientEnProceso->ciudad ?? '',
+                            ]);
+                        }
+                    }
+                }
+                
                 if (!$cliente) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'El cliente especificado no existe.',
+                        'message' => 'El cliente especificado (ID: ' . $clienteIdInt . ') no existe en la base de datos.',
                     ], 422);
                 }
             }

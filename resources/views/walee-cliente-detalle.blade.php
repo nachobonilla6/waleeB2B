@@ -460,7 +460,7 @@
                             </a>
                             
                             <!-- Facturas -->
-                            <a href="{{ route('walee.facturas.cliente', $cliente->id) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-600 dark:border-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors cursor-pointer">
+                            <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-2.5 rounded-lg bg-red-100 dark:bg-red-500/10 border border-red-600 dark:border-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/20 transition-colors cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -631,7 +631,7 @@
                     </a>
                     
                                 <!-- Facturas -->
-                                <a href="{{ route('walee.facturas.cliente', $cliente->id) }}" class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
+                                <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>

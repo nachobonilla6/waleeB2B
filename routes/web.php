@@ -902,10 +902,17 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             
             \Log::info('Enviando webhook de publicación programada', [
                 'webhook_url' => $webhookUrl,
-                'data' => $webhookData
+                'data' => $webhookData,
+                'page_id_enviado' => isset($webhookData['page_id']),
+                'token_enviado' => isset($webhookData['token'])
             ]);
             
-            $response = \Illuminate\Support\Facades\Http::timeout(10)->post($webhookUrl, $webhookData);
+            // Enviar como JSON explícitamente para asegurar que page_id y token estén en el body
+            $response = \Illuminate\Support\Facades\Http::timeout(10)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                ])
+                ->post($webhookUrl, $webhookData);
             
             \Log::info('Respuesta del webhook', [
                 'status' => $response->status(),

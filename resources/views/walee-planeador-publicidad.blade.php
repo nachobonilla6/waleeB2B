@@ -863,14 +863,7 @@
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 didOpen: () => {
-                    // Pre-seleccionar Facebook y actualizar estilos
-                    document.getElementById('plataforma_facebook').checked = true;
-                    updatePlataformaStyles();
-                    
-                    // Agregar event listeners a los radio buttons
-                    document.querySelectorAll('input[name="plataforma_publicacion"]').forEach(radio => {
-                        radio.addEventListener('change', updatePlataformaStyles);
-                    });
+                    // Facebook está establecido por defecto como campo oculto
                 },
                 preConfirm: () => {
                     const form = document.getElementById('programar-publicacion-form');

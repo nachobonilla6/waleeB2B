@@ -83,6 +83,44 @@
         ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
         
+        /* Mejorar botones en mobile */
+        @media (max-width: 640px) {
+            button, a[class*="px-"], a[class*="py-"] {
+                min-height: 44px !important;
+                padding: 0.75rem 1rem !important;
+                font-size: 0.875rem !important;
+                font-weight: 600 !important;
+                border-radius: 0.75rem !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            button:active, a[class*="px-"]:active {
+                transform: scale(0.98) !important;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            /* Botones principales del header */
+            .header-actions button,
+            .header-actions a {
+                min-width: 44px !important;
+                padding: 0.625rem 1rem !important;
+            }
+            
+            /* Botones del modal */
+            #evento-form button[type="submit"],
+            #evento-form button[type="button"] {
+                min-height: 48px !important;
+                padding: 0.875rem 1.25rem !important;
+                font-size: 1rem !important;
+            }
+            
+            /* Botón de generar AI */
+            #btnGenerarTexto {
+                min-height: 44px !important;
+                padding: 0.75rem 1rem !important;
+            }
+        }
+        
         /* SweetAlert Dark/Light Mode */
         .dark-swal {
             background-color: #1e293b !important;
@@ -348,37 +386,37 @@
                                 <p class="text-xs md:text-sm text-violet-700 dark:text-violet-400 truncate">Planeador de Publicidad</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 flex-shrink-0 flex-wrap">
+                        <div class="flex items-center gap-2 flex-shrink-0 flex-wrap header-actions">
                             @if($client)
-                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-slate-500 hover:bg-slate-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="{{ route('walee.cliente.detalle', $client->id) }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-slate-500 hover:bg-slate-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                    <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                     <span class="hidden sm:inline">Perfil</span>
                                     <span class="sm:hidden">👤</span>
                                 </a>
                             @endif
-                            <button onclick="showProgramarPublicacionModal()" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
-                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button onclick="showProgramarPublicacionModal()" class="px-4 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-2 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
                                 <span class="hidden sm:inline">Crear Publicación</span>
-                                <span class="sm:hidden">+</span>
+                                <span class="sm:inline">Crear</span>
                             </button>
                             @if($vista === 'semanal')
-                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="?vista=semanal&semana={{ $semanaAnteriorFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                    <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                     <span class="hidden sm:inline">Semana Anterior</span>
-                                    <span class="sm:hidden">Anterior</span>
+                                    <span class="sm:inline">Anterior</span>
                                 </a>
-                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2 md:px-4 md:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium text-xs md:text-sm transition-all flex items-center gap-1.5 md:gap-2 shadow-sm">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                    <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
                                     <span class="hidden sm:inline">Semana Siguiente</span>
-                                    <span class="sm:hidden">Siguiente</span>
+                                    <span class="sm:inline">Siguiente</span>
                                 </a>
                             @endif
                         </div>
@@ -650,11 +688,11 @@
                     </div>
                 </div>
                 
-                <div class="flex gap-2 pt-2">
-                    <button type="submit" class="flex-1 px-4 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-medium transition-all">
+                <div class="flex gap-2 sm:gap-2 pt-2">
+                    <button type="submit" class="flex-1 px-4 py-3 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-base sm:text-sm transition-all shadow-md hover:shadow-lg active:scale-95">
                         Guardar
                     </button>
-                    <button type="button" onclick="closeEventoModal()" class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium transition-all">
+                    <button type="button" onclick="closeEventoModal()" class="px-4 py-3 sm:py-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold text-base sm:text-sm transition-all shadow-md hover:shadow-lg active:scale-95">
                         Cancelar
                     </button>
                 </div>
@@ -759,11 +797,12 @@
                             <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Texto</label>
                             <div class="flex gap-2">
                                 <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                                <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap h-fit">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-4 py-2.5 sm:px-3 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap h-fit shadow-md hover:shadow-lg active:scale-95">
+                                    <svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                     </svg>
                                     <span class="hidden sm:inline text-xs">AI</span>
+                                    <span class="sm:hidden">AI</span>
                                 </button>
                             </div>
                             <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">

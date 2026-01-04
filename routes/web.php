@@ -4685,7 +4685,17 @@ Route::get('/walee-facebook/publicaciones', function (\Illuminate\Http\Request $
 Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $request, $id) {
     try {
         $cliente = \App\Models\Client::findOrFail($id);
-        $cliente->webhook_url = $request->input('webhook_url');
+        
+        // Webhook por defecto
+        $webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/allaccounts';
+        
+        // Si el webhook está vacío, usar el webhook por defecto
+        $webhookUrl = $request->input('webhook_url');
+        if (empty($webhookUrl) || trim($webhookUrl) === '') {
+            $webhookUrl = $webhookDefault;
+        }
+        
+        $cliente->webhook_url = $webhookUrl;
         $cliente->page_id = $request->input('page_id');
         $cliente->token = $request->input('token');
         $cliente->save();

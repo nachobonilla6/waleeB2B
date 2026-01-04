@@ -198,56 +198,96 @@
             
             <!-- Header Profesional -->
             <div class="mb-6 sm:mb-8 lg:mb-10 animate-fade-in-up">
-                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 lg:p-8 shadow-sm dark:shadow-none">
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
-                        <div class="flex items-start sm:items-center gap-3 sm:gap-4 lg:gap-6 flex-1 min-w-0">
-                            @php
-                                $fotoPath = $cliente->foto ?? null;
-                                $fotoUrl = null;
-                                
-                                if ($fotoPath) {
-                                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                        $fotoUrl = $fotoPath;
-                                    } else {
-                                        $filename = basename($fotoPath);
-                                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                                    }
-                                }
-                            @endphp
-                            @if($fotoUrl)
-                                <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
-                            @else
-                                <div class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
-                                    <span class="text-2xl sm:text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                </div>
-                            @endif
-                            <div class="flex-1 min-w-0">
-                                <h1 class="text-xl sm:text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
-                                <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                    </span>
-                                    @if($emailsEnviados > 0)
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
-                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                            </svg>
-                                            {{ $emailsEnviados }} {{ $emailsEnviados == 1 ? 'email' : 'emails' }}
-                                        </span>
-                                    @endif
-                                </div>
+                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
+                    @php
+                        $fotoPath = $cliente->foto ?? null;
+                        $fotoUrl = null;
+                        
+                        if ($fotoPath) {
+                            if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                $fotoUrl = $fotoPath;
+                            } else {
+                                $filename = basename($fotoPath);
+                                $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                            }
+                        }
+                    @endphp
+                    
+                    <!-- Mobile: Foto a ancho completo -->
+                    <div class="block sm:hidden">
+                        @if($fotoUrl)
+                            <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-64 object-cover">
+                        @else
+                            <div class="w-full h-64 bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center">
+                                <span class="text-6xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-2 sm:gap-3 lg:flex-col lg:items-end">
-                            <button onclick="openEditClientModal()" class="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl lg:rounded-2xl bg-gradient-to-r from-walee-500/20 to-walee-600/20 hover:from-walee-500/30 hover:to-walee-600/30 text-walee-400 border border-walee-400/30 transition-all text-sm sm:text-base font-semibold shadow-sm hover:shadow-md">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @endif
+                        <div class="p-4">
+                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">{{ $cliente->name }}</h1>
+                            <div class="flex items-center gap-2 flex-wrap mb-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                </span>
+                                @if($emailsEnviados > 0)
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        {{ $emailsEnviados }} {{ $emailsEnviados == 1 ? 'email' : 'emails' }}
+                                    </span>
+                                @endif
+                            </div>
+                            <button onclick="openEditClientModal()" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-walee-500/20 to-walee-600/20 hover:from-walee-500/30 hover:to-walee-600/30 text-walee-400 border border-walee-400/30 transition-all text-sm font-semibold shadow-sm hover:shadow-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                                 <span>Editar</span>
                             </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Desktop: Layout original -->
+                    <div class="hidden sm:block p-4 sm:p-6 lg:p-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+                            <div class="flex items-start sm:items-center gap-3 sm:gap-4 lg:gap-6 flex-1 min-w-0">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
+                                @else
+                                    <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
+                                        <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                    </div>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
+                                    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                        </span>
+                                        @if($emailsEnviados > 0)
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold {{ $emailsBg }} {{ $emailsColor }} rounded-full border {{ $emailsBorder }}">
+                                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                </svg>
+                                                {{ $emailsEnviados }} {{ $emailsEnviados == 1 ? 'email' : 'emails' }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 sm:gap-3 lg:flex-col lg:items-end">
+                                <button onclick="openEditClientModal()" class="inline-flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl lg:rounded-2xl bg-gradient-to-r from-walee-500/20 to-walee-600/20 hover:from-walee-500/30 hover:to-walee-600/30 text-walee-400 border border-walee-400/30 transition-all text-sm sm:text-base font-semibold shadow-sm hover:shadow-md">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    <span>Editar</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -954,6 +954,76 @@
             });
         }
         
+        // Eliminar cotización
+        async function eliminarCotizacion(cotizacionId, numeroCotizacion) {
+            const result = await Swal.fire({
+                title: '¿Eliminar cotización?',
+                text: `¿Está seguro de que desea eliminar la cotización ${numeroCotizacion}? Esta acción no se puede deshacer.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            try {
+                Swal.fire({
+                    title: 'Eliminando...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const response = await fetch(`/walee-cotizaciones/${cotizacionId}/eliminar`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cotización eliminada',
+                        text: 'La cotización ha sido eliminada correctamente',
+                        confirmButtonColor: '#2563eb',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al eliminar la cotización',
+                        confirmButtonColor: '#2563eb',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión: ' + error.message,
+                    confirmButtonColor: '#2563eb',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                });
+            }
+        }
+        
         // Enviar cotización por email
         async function enviarCotizacionEmail(cotizacionId, correo, yaEnviada) {
             const result = await Swal.fire({

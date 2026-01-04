@@ -18,7 +18,7 @@ Web Solutions</p>
         
         <div style="margin-top: 20px;">
             <a href="https://wa.me/50688061829" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold; margin: 5px 0 10px 0;">
-                💬 Contactar por WhatsApp
+                <img src="https://static.whatsapp.net/rsrc.php/v3/yz/r/ujTY9i_Jhs8.png" alt="WhatsApp" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> WhatsApp
             </a>
             <p style="color: #6b7280; font-size: 14px; margin: 10px 0 5px 0;">
                 <a href="https://websolutions.work" target="_blank" style="color: #2563eb; text-decoration: none;">websolutions.work</a>

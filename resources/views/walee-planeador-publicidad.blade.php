@@ -184,6 +184,30 @@
             background-color: #6b7280 !important;
             color: #ffffff !important;
         }
+        
+        .dark-swal-close {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark-swal-close:hover {
+            color: #ffffff !important;
+        }
+        
+        .light-swal-close {
+            color: #1e293b !important;
+        }
+        
+        .light-swal-close:hover {
+            color: #0f172a !important;
+        }
+        
+        .swal2-close {
+            font-size: 1.5rem !important;
+            font-weight: 300 !important;
+            line-height: 1 !important;
+            top: 0.5rem !important;
+            right: 0.5rem !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -860,16 +884,14 @@
             `;
             
             Swal.fire({
-                title: '',
+                title: '<div class="flex items-center justify-center gap-2"><svg class="w-6 h-6" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>',
                 html: html,
                 width: modalWidth,
                 padding: isMobile ? '0.75rem' : '1rem',
-                showCancelButton: true,
+                showCancelButton: false,
+                showCloseButton: true,
                 confirmButtonText: 'Crear Publicación',
-                cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#3b82f6',
-                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
@@ -877,7 +899,7 @@
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
                     htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                    closeButton: isDarkMode ? 'dark-swal-close' : 'light-swal-close'
                 },
                 didOpen: () => {
                     // Facebook está establecido por defecto como campo oculto

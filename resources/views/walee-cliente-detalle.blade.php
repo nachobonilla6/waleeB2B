@@ -214,6 +214,22 @@
                     </div>
                 @endif
                 
+                @if($cliente->ciudad)
+                    <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2 sm:p-4 hover:border-indigo-400/50 dark:hover:border-indigo-500/30 transition-all">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <div class="w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 sm:w-5 sm:h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-500 mb-0.5">Ciudad</p>
+                                <p class="text-xs sm:text-base text-slate-800 dark:text-white truncate">{{ $cliente->ciudad }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
                 @if($cliente->feedback)
                     <div class="rounded-lg sm:rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 p-2 sm:p-4 hover:border-cyan-400/50 dark:hover:border-cyan-500/30 transition-all sm:col-span-2 lg:col-span-1">
                         <div class="flex items-start gap-2 sm:gap-3">

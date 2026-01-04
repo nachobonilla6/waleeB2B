@@ -2002,7 +2002,9 @@
                                 icon: 'success',
                                 title: '¡Factura Creada!',
                                 text: 'La factura ha sido creada correctamente',
-                                confirmButtonColor: '#10b981'
+                                confirmButtonColor: '#10b981',
+                                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                             }).then(() => {
                                 window.location.href = '{{ route("walee.facturas") }}';
                             });

@@ -432,11 +432,26 @@
                     </div>
                     <div class="space-y-2 sm:space-y-3">
                         @forelse($emailsRecientesEnviados as $cliente)
+                            @php
+                                // Obtener URL de la foto del cliente
+                                $fotoUrl = null;
+                                if ($cliente->foto) {
+                                    $fotoPath = $cliente->foto;
+                                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                        $fotoUrl = $fotoPath;
+                                    } else {
+                                        $filename = basename($fotoPath);
+                                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                                    }
+                                }
+                            @endphp
                             <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
+                                    @if($fotoUrl)
+                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
+                                    @else
+                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
+                                    @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate">{{ $cliente->name ?: 'Sin nombre' }}</p>

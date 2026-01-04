@@ -92,9 +92,9 @@
             }
         }
         
-        /* Asegurar que el modal respete el tema dark/light con gradiente */
+        /* Asegurar que el modal respete el tema dark/light */
         html.dark .swal2-popup {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+            background-color: #0f172a !important;
             color: #e2e8f0 !important;
             border: 1px solid rgba(213, 159, 59, 0.2) !important;
         }
@@ -114,7 +114,7 @@
         html.dark .swal2-html-container input,
         html.dark .swal2-html-container textarea,
         html.dark .swal2-html-container select {
-            background-color: rgba(15, 23, 42, 0.6) !important;
+            background-color: #1e293b !important;
             border-color: #475569 !important;
             color: #e2e8f0 !important;
         }
@@ -125,26 +125,34 @@
             border-color: #D59F3B !important;
             outline-color: #D59F3B !important;
             ring-color: #D59F3B !important;
-            background-color: rgba(15, 23, 42, 0.8) !important;
+            background-color: #334155 !important;
         }
         
-        /* Light mode con gradiente más oscuro */
+        /* Light mode - fondo blanco */
         html:not(.dark) .swal2-popup {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
-            color: #e2e8f0 !important;
-            border: 1px solid rgba(213, 159, 59, 0.3) !important;
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+            border: 1px solid rgba(203, 213, 225, 0.5) !important;
+        }
+        
+        html:not(.dark) .swal2-title {
+            color: #1e293b !important;
+        }
+        
+        html:not(.dark) .swal2-html-container {
+            color: #1e293b !important;
         }
         
         html:not(.dark) .swal2-html-container label {
-            color: #cbd5e1 !important;
+            color: #334155 !important;
         }
         
         html:not(.dark) .swal2-html-container input,
         html:not(.dark) .swal2-html-container textarea,
         html:not(.dark) .swal2-html-container select {
-            background-color: rgba(15, 23, 42, 0.5) !important;
-            border-color: #475569 !important;
-            color: #e2e8f0 !important;
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
         }
         
         html:not(.dark) .swal2-html-container input:focus,
@@ -152,7 +160,7 @@
         html:not(.dark) .swal2-html-container select:focus {
             border-color: #D59F3B !important;
             outline-color: #D59F3B !important;
-            background-color: rgba(15, 23, 42, 0.7) !important;
+            background-color: #f8fafc !important;
         }
     </style>
 </head>
@@ -995,16 +1003,20 @@
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 didOpen: () => {
-                    // Aplicar tema dark/light al modal con gradiente
+                    // Aplicar tema dark/light al modal
                     const isDark = document.documentElement.classList.contains('dark');
                     const popup = document.querySelector('.swal2-popup');
                     const container = document.querySelector('.swal2-html-container');
+                    const title = document.querySelector('.swal2-title');
                     
                     if (isDark) {
                         if (popup) {
-                            popup.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)';
+                            popup.style.backgroundColor = '#0f172a';
                             popup.style.color = '#e2e8f0';
                             popup.style.border = '1px solid rgba(213, 159, 59, 0.2)';
+                        }
+                        if (title) {
+                            title.style.color = '#e2e8f0';
                         }
                         if (container) {
                             container.style.color = '#e2e8f0';
@@ -1012,7 +1024,7 @@
                         // Aplicar estilos a inputs, textareas y selects
                         const inputs = container?.querySelectorAll('input, textarea, select');
                         inputs?.forEach(el => {
-                            el.style.backgroundColor = 'rgba(15, 23, 42, 0.6)';
+                            el.style.backgroundColor = '#1e293b';
                             el.style.borderColor = '#475569';
                             el.style.color = '#e2e8f0';
                         });
@@ -1023,24 +1035,27 @@
                         });
                     } else {
                         if (popup) {
-                            popup.style.background = 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)';
-                            popup.style.color = '#e2e8f0';
-                            popup.style.border = '1px solid rgba(213, 159, 59, 0.3)';
+                            popup.style.backgroundColor = '#ffffff';
+                            popup.style.color = '#1e293b';
+                            popup.style.border = '1px solid rgba(203, 213, 225, 0.5)';
+                        }
+                        if (title) {
+                            title.style.color = '#1e293b';
                         }
                         if (container) {
-                            container.style.color = '#e2e8f0';
+                            container.style.color = '#1e293b';
                         }
                         // Aplicar estilos a inputs, textareas y selects
                         const inputs = container?.querySelectorAll('input, textarea, select');
                         inputs?.forEach(el => {
-                            el.style.backgroundColor = 'rgba(15, 23, 42, 0.5)';
-                            el.style.borderColor = '#475569';
-                            el.style.color = '#e2e8f0';
+                            el.style.backgroundColor = '#ffffff';
+                            el.style.borderColor = '#cbd5e1';
+                            el.style.color = '#1e293b';
                         });
                         // Aplicar estilos a labels
                         const labels = container?.querySelectorAll('label');
                         labels?.forEach(el => {
-                            el.style.color = '#cbd5e1';
+                            el.style.color = '#334155';
                         });
                     }
                     

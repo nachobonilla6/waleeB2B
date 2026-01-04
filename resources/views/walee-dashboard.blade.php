@@ -327,13 +327,6 @@
             @php $pageTitle = 'Dashboard'; @endphp
             @include('partials.walee-navbar')
             
-            <!-- User Avatar -->
-            <div class="flex items-center justify-end mb-4">
-                <div class="w-10 h-10 rounded-full bg-violet-100 dark:bg-slate-800 border border-violet-300 dark:border-slate-700 flex items-center justify-center shadow-sm dark:shadow-none">
-                    <span class="text-sm font-medium text-walee-600 dark:text-walee-400">{{ substr(auth()->user()->name, 0, 1) }}</span>
-                </div>
-            </div>
-            
             <!-- Quick Actions -->
             <section class="mb-8">
                 <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">

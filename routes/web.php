@@ -2845,8 +2845,23 @@ Route::get('/walee-facturas/lista', function () {
 
 // Lista de facturas por cliente
 Route::get('/walee-facturas/cliente/{id}', function ($id) {
-    $cliente = \App\Models\Client::findOrFail($id);
-    return view('walee-facturas-cliente', compact('cliente'));
+    $client = \App\Models\Client::findOrFail($id);
+    
+    // Buscar el Cliente correspondiente por email
+    $cliente = \App\Models\Cliente::where('correo', $client->email)->first();
+    
+    if (!$cliente) {
+        // Si no existe, crear uno nuevo basado en el Client
+        $cliente = \App\Models\Cliente::create([
+            'nombre_empresa' => $client->name,
+            'correo' => $client->email ?: '',
+            'telefono' => $client->telefono_1 ?? '',
+            'ciudad' => $client->ciudad ?? '',
+        ]);
+    }
+    
+    // Usar el Client para mostrar en la vista (tiene foto, etc.)
+    return view('walee-facturas-cliente', ['cliente' => $client, 'clienteFacturas' => $cliente]);
 })->middleware(['auth'])->name('walee.facturas.cliente');
 
 // Ver factura individual

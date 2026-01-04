@@ -60,9 +60,12 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
         // Obtener facturas del cliente (usando clienteFacturas que es el modelo Cliente)
-        $facturas = \App\Models\Factura::where('cliente_id', $clienteFacturas->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $facturas = collect();
+        if (isset($clienteFacturas) && $clienteFacturas) {
+            $facturas = \App\Models\Factura::where('cliente_id', $clienteFacturas->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
         
         $totalFacturas = $facturas->count();
         $facturasEnviadas = $facturas->whereNotNull('enviada_at')->count();

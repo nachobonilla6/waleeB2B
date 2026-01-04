@@ -276,9 +276,20 @@
                     
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden">
-                        <div class="flex items-center gap-2 p-3">
-                            <!-- Imagen a la izquierda (mitad de ancho y alto) -->
-                            <div class="relative w-1/2 aspect-square flex-shrink-0">
+                        <div class="p-3">
+                            <!-- Nombre arriba -->
+                            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
+                            
+                            <!-- Estado debajo del nombre -->
+                            <div class="mb-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                    {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                </span>
+                            </div>
+                            
+                            <!-- Imagen -->
+                            <div class="relative w-1/2 aspect-square">
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
                                 @else
@@ -286,11 +297,6 @@
                                         <span class="text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
                                     </div>
                                 @endif
-                            </div>
-                            
-                            <!-- Nombre a la derecha -->
-                            <div class="flex-1 min-w-0">
-                                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words">{{ $cliente->name }}</h1>
                             </div>
                         </div>
                         
@@ -352,15 +358,6 @@
                                 $totalCitas = $citasPendientes->count() + $citasPasadas->count();
                             @endphp
                             
-                            <!-- Estado -->
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-600 dark:border-emerald-500/20">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</span>
-                                </div>
-                                <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
-                            </div>
-                            
                             <!-- Publicaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-violet-100 dark:bg-violet-500/10 border border-violet-600 dark:border-violet-500/20">
                                 <div class="flex items-center gap-2">
@@ -411,16 +408,27 @@
                     <div class="hidden sm:block p-4 sm:p-5 lg:p-6">
                         <div class="flex flex-col gap-4 lg:gap-6">
                             <!-- Header con imagen y nombre -->
-                            <div class="flex items-start sm:items-center gap-3 sm:gap-4 lg:gap-6">
-                                @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
-                                @else
-                                    <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
-                                        <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                    </div>
-                                @endif
-                                <div class="flex-1 min-w-0">
-                                    <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
+                            <div class="flex flex-col gap-3">
+                                <!-- Nombre arriba -->
+                                <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white truncate">{{ $cliente->name }}</h1>
+                                
+                                <!-- Estado debajo del nombre -->
+                                <div>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                        {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Imagen -->
+                                <div class="flex items-start gap-3 sm:gap-4 lg:gap-6">
+                                    @if($fotoUrl)
+                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
+                                    @else
+                                        <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
+                                            <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             

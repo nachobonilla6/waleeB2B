@@ -461,6 +461,88 @@
                     </div>
                 @endif
             </div>
+            
+            <!-- Alertas/Información -->
+            <div class="mb-6 sm:mb-8 lg:mb-10">
+                <h2 class="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    Alertas
+                </h2>
+                <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+                    @php
+                        $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
+                        $totalCitas = $citasPendientes->count() + $citasPasadas->count();
+                    @endphp
+                    
+                    <!-- Estado -->
+                    <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl lg:rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Estado</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400">{{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}</span>
+                    </div>
+                    
+                    <!-- Publicaciones -->
+                    <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl lg:rounded-2xl bg-violet-500/10 border border-violet-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-semibold text-violet-600 dark:text-violet-400">{{ $totalPublicaciones }}</span>
+                    </div>
+                    
+                    <!-- Citas -->
+                    <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl lg:rounded-2xl bg-walee-500/10 border border-walee-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Citas</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $totalCitas }}</span>
+                    </div>
+                    
+                    <!-- Facturas -->
+                    <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl lg:rounded-2xl bg-red-500/10 border border-red-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-semibold text-red-600 dark:text-red-400">{{ $facturas->count() }}</span>
+                    </div>
+                    
+                    <!-- Cotizaciones -->
+                    <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl lg:rounded-2xl bg-blue-500/10 border border-blue-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
+                    </div>
+                    
+                    <!-- Contratos -->
+                    <div class="flex items-center justify-between p-3 sm:p-4 rounded-xl lg:rounded-2xl bg-walee-500/10 border border-walee-500/20">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Contratos</span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-semibold text-walee-600 dark:text-walee-400">{{ $contratos->count() }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     @include('partials.walee-support-button')

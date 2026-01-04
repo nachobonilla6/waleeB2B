@@ -2966,6 +2966,182 @@ Route::get('/walee-contratos/cliente/{id}', function ($id) {
     }
 })->middleware(['auth'])->name('walee.contratos.cliente');
 
+// API: Obtener datos de contrato en JSON
+Route::get('/walee-contratos/{id}/json', function ($id) {
+    try {
+        $contrato = \App\Models\Contrato::findOrFail($id);
+        
+        $serviciosTexto = '';
+        if ($contrato->servicios && is_array($contrato->servicios)) {
+            $serviciosTexto = implode(', ', $contrato->servicios);
+        } elseif ($contrato->servicios) {
+            $serviciosTexto = $contrato->servicios;
+        }
+        
+        return response()->json([
+            'success' => true,
+            'contrato' => [
+                'id' => $contrato->id,
+                'servicios' => $serviciosTexto,
+                'precio' => $contrato->precio,
+                'idioma' => $contrato->idioma,
+                'estado' => $contrato->estado,
+                'correo' => $contrato->correo,
+                'enviada_at' => $contrato->enviada_at ? $contrato->enviada_at->format('d/m/Y H:i') : null,
+                'created_at' => $contrato->created_at->format('d/m/Y'),
+                'pdf_path' => $contrato->pdf_path,
+            ],
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.contratos.json');
+
+// Ver PDF de contrato
+Route::get('/walee-contratos/{id}/pdf', function ($id) {
+    try {
+        $contrato = \App\Models\Contrato::findOrFail($id);
+        
+        if (!$contrato->pdf_path) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este contrato no tiene PDF generado',
+            ], 404);
+        }
+        
+        $pdfPath = storage_path('app/public/' . $contrato->pdf_path);
+        
+        if (!file_exists($pdfPath)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El archivo PDF no existe',
+            ], 404);
+        }
+        
+        return response()->file($pdfPath);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.contratos.pdf');
+
+// Enviar contrato por email
+Route::post('/walee-contratos/{id}/enviar-email', function ($id, \Illuminate\Http\Request $request) {
+    try {
+        $contrato = \App\Models\Contrato::findOrFail($id);
+        
+        if (!$contrato->correo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este contrato no tiene correo electrónico asociado',
+            ], 400);
+        }
+        
+        if (!$contrato->pdf_path) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este contrato no tiene PDF generado',
+            ], 400);
+        }
+        
+        $pdfPath = storage_path('app/public/' . $contrato->pdf_path);
+        
+        if (!file_exists($pdfPath)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El archivo PDF no existe',
+            ], 404);
+        }
+        
+        $serviciosTexto = '';
+        if ($contrato->servicios && is_array($contrato->servicios)) {
+            $serviciosTexto = implode(', ', $contrato->servicios);
+        } elseif ($contrato->servicios) {
+            $serviciosTexto = $contrato->servicios;
+        }
+        
+        // Obtener nombre del cliente
+        $clienteNombre = 'Cliente';
+        if ($contrato->cliente_id) {
+            $cliente = \App\Models\Cliente::find($contrato->cliente_id);
+            if ($cliente) {
+                $clienteNombre = $cliente->nombre_empresa;
+            }
+        }
+        
+        // Buscar en Client por email
+        if ($contrato->correo) {
+            $client = \App\Models\Client::where('email', $contrato->correo)->first();
+            if ($client && $client->name) {
+                $clienteNombre = $client->name;
+            }
+        }
+        
+        // Preparar email body
+        $emailBody = view('contratos.contrato-envio', [
+            'clienteNombre' => $clienteNombre,
+            'servicios' => $serviciosTexto,
+        ])->render();
+        
+        \Illuminate\Support\Facades\Mail::send([], [], function ($message) use ($contrato, $pdfPath, $emailBody, $serviciosTexto) {
+            $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
+                    ->to($contrato->correo)
+                    ->subject('Contrato - ' . $serviciosTexto)
+                    ->html($emailBody)
+                    ->attach($pdfPath, [
+                        'as' => basename($contrato->pdf_path),
+                        'mime' => 'application/pdf',
+                    ]);
+        });
+        
+        // Actualizar fecha de envío
+        $contrato->enviada_at = now();
+        $contrato->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Contrato enviado correctamente a ' . $contrato->correo,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.contratos.enviar-email');
+
+// Eliminar contrato
+Route::delete('/walee-contratos/{id}/eliminar', function ($id) {
+    try {
+        $contrato = \App\Models\Contrato::findOrFail($id);
+        
+        // Eliminar PDF si existe
+        if ($contrato->pdf_path) {
+            $pdfPath = storage_path('app/public/' . $contrato->pdf_path);
+            if (file_exists($pdfPath)) {
+                unlink($pdfPath);
+            }
+        }
+        
+        $contrato->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Contrato eliminado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.contratos.eliminar');
+
 // Ver factura individual
 Route::get('/walee-facturas/{id}', function ($id) {
     $factura = \App\Models\Factura::with('cliente')->findOrFail($id);

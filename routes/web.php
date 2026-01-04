@@ -475,10 +475,6 @@ Route::get('/walee-tareas', function () {
 })->middleware(['auth'])->name('walee.tareas');
 
 // Calendario
-Route::get('/walee-calendario', function () {
-    return view('walee-calendario');
-})->middleware(['auth'])->name('walee.calendario');
-
 // Planeador de Publicidad - Requiere cliente_id
 Route::get('/walee-planeador-publicidad/{cliente_id}', function ($cliente_id) {
     // Primero intentar buscar en la tabla Cliente

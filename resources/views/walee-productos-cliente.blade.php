@@ -543,7 +543,22 @@
                 cancelButtonColor: isDark ? '#475569' : '#6b7280',
                 background: isDark ? '#1e293b' : '#ffffff',
                 color: isDark ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: 'z-[99999]',
+                    container: 'z-[99999]',
+                    backdrop: 'z-[99998]'
+                },
                 didOpen: () => {
+                    // Asegurar que el modal esté encima de todo
+                    const popup = document.querySelector('.swal2-popup');
+                    const container = document.querySelector('.swal2-container');
+                    if (popup) {
+                        popup.style.zIndex = '99999';
+                    }
+                    if (container) {
+                        container.style.zIndex = '99999';
+                    }
+                    
                     if (isEdit && product.fotos && product.fotos.length > 0) {
                         const preview = document.getElementById('photosPreviewSwal');
                         preview.innerHTML = '';

@@ -37,6 +37,19 @@
         }
         .animate-fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
         
+        /* Asegurar que el card de perfil use todo el ancho en mobile */
+        @media (max-width: 640px) {
+            .header-profesional-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .header-profesional-card > div {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+        
         /* Asegurar que el modal esté encima de todo */
         .swal2-container {
             z-index: 99999 !important;
@@ -253,8 +266,8 @@
             @include('partials.walee-navbar')
             
             <!-- Header Profesional -->
-            <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col">
-                <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
+            <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col w-full">
+                <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">
                     @php
                         $fotoPath = $cliente->foto ?? null;
                         $fotoUrl = null;

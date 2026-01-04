@@ -856,7 +856,6 @@
                 name: @json($cliente->name ?? ''),
                 email: @json($cliente->email ?? ''),
                 telefono_1: @json($cliente->telefono_1 ?? ''),
-                telefono_2: @json($cliente->telefono_2 ?? ''),
                 website: @json($cliente->website ?? ''),
                 estado: @json($cliente->estado ?? 'pending'),
                 address: @json($cliente->address ?? ''),
@@ -936,21 +935,13 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-2' : 'sm:grid-cols-2'} gap-2 sm:gap-2.5">
+                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-3' : 'sm:grid-cols-2'} gap-2 sm:gap-2.5">
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Teléfono 1</label>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Teléfono</label>
                             <input type="tel" id="clientTelefono1" name="telefono_1" value="${clienteData.telefono_1}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                         
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Teléfono 2</label>
-                            <input type="tel" id="clientTelefono2" name="telefono_2" value="${clienteData.telefono_2}"
-                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-2' : ''} gap-2 sm:gap-2.5">
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Sitio Web</label>
                             <input type="url" id="clientWebsite" name="website" value="${clienteData.website}"
@@ -963,20 +954,14 @@
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Feedback / Notas</label>
-                        <textarea id="clientFeedback" name="feedback" rows="2"
-                                  class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400 resize-none">${clienteData.feedback}</textarea>
-                    </div>
                 </form>
             `;
             
             let modalWidth = '98%';
             if (isDesktop) {
-                modalWidth = '900px';
+                modalWidth = '750px';
             } else if (isTablet) {
-                modalWidth = '700px';
+                modalWidth = '600px';
             } else if (isMobile) {
                 modalWidth = '98%';
             }

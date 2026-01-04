@@ -808,33 +808,24 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         // Obtener cliente para datos del webhook
         $cliente = \App\Models\Cliente::find($evento->cliente_id);
         
-        // Verificar si viene desde el planeador del cliente 626
-        $referer = $request->header('referer');
-        $esDesdePlaneador626 = false;
+        // Obtener webhook del cliente específico, o usar el webhook por defecto
+        $webhookUrl = null;
+        $pageId = null;
+        $token = null;
         
-        // Verificar si el parámetro desde_planeador_626 está presente
-        if ($request->input('desde_planeador_626') == '1') {
-            $esDesdePlaneador626 = true;
-        }
-        // Verificar si el referer contiene la ruta del planeador del cliente 626
-        elseif ($referer && str_contains($referer, 'walee-cliente/626/settings/planeador')) {
-            $esDesdePlaneador626 = true;
-        } else {
-            // También verificar si el Client 626 tiene un Cliente asociado y coincide
-            $client626 = \App\Models\Client::find(626);
-            if ($client626) {
-                $clienteAsociado626 = \App\Models\Cliente::where('correo', $client626->email)
-                    ->orWhere('nombre_empresa', 'like', '%' . $client626->name . '%')
-                    ->first();
-                
-                if ($clienteAsociado626 && $clienteAsociado626->id == $evento->cliente_id) {
-                    $esDesdePlaneador626 = true;
-                }
+        if ($cliente) {
+            // Usar webhook del cliente si está configurado
+            if ($cliente->webhook_url) {
+                $webhookUrl = $cliente->webhook_url;
+                $pageId = $cliente->page_id;
+                $token = $cliente->token;
             }
         }
         
-        // Webhook para publicaciones programadas
-        $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
+        // Si no hay webhook del cliente, usar el webhook por defecto
+        if (!$webhookUrl) {
+            $webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/39146dbf-212d-4ce2-a62a-e7c44377b5f7';
+        }
         
         try {
             // Generar URL completa de la imagen si existe
@@ -883,6 +874,10 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
                 'cliente_email' => $cliente ? ($cliente->correo ?? '') : '',
                 'tipo_publicidad' => $evento->tipo_publicidad ?? null,
                 'color' => $evento->color ?? '#8b5cf6',
+                // Agregar datos de configuración de Facebook del cliente
+                'page_id' => $pageId,
+                'token' => $token,
+                'webhook_url' => $webhookUrl,
             ];
             
             \Log::info('Enviando webhook de publicación programada', [

@@ -81,67 +81,42 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .datos-box {
-            background-color: #f9fafb;
+            background: #f9fafb;
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #e5e7eb;
+            border-left: 4px solid #2563eb;
         }
         .datos-title {
             font-weight: bold;
-            font-size: 12pt;
             color: #2563eb;
             margin-bottom: 10px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 5px;
+            font-size: 12pt;
         }
-        .datos-item {
-            margin-bottom: 8px;
+        .datos-content {
             font-size: 10pt;
-        }
-        .datos-label {
-            color: #6b7280;
-            font-weight: 500;
-        }
-        .datos-value {
-            color: #111827;
-            font-weight: 600;
-        }
-        .info-section {
-            background-color: #eff6ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 4px solid #2563eb;
-        }
-        .info-title {
-            font-weight: bold;
-            font-size: 13pt;
-            color: #2563eb;
-            margin-bottom: 15px;
+            color: #555;
+            line-height: 1.6;
         }
         .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 10pt;
+        }
+        .info-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #dbeafe;
-        }
-        .info-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
         }
         .info-label {
-            color: #6b7280;
-            font-size: 10pt;
+            font-weight: bold;
+            color: #666;
         }
         .info-value {
-            color: #111827;
-            font-weight: 600;
-            font-size: 10pt;
+            color: #333;
         }
         .monto-total {
             background-color: #2563eb;
@@ -236,12 +211,13 @@
             font-style: italic;
         }
         .totals-section {
-            margin-top: 30px;
-            display: flex;
-            justify-content: flex-end;
+            margin-top: 20px;
+            margin-bottom: 30px;
         }
         .totals-table {
-            width: 300px;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
             background-color: #f9fafb;
             padding: 15px;
             border-radius: 8px;
@@ -287,52 +263,52 @@
     <!-- Datos del Emisor y Cliente -->
     <div class="datos-section">
         <div class="datos-box">
-            <div class="datos-title">Emisor</div>
-            <div class="datos-item">
-                <span class="datos-label">Empresa:</span>
-                <span class="datos-value">Web Solutions CR</span>
-            </div>
-            <div class="datos-item">
-                <span class="datos-label">Email:</span>
-                <span class="datos-value">websolutionscrnow@gmail.com</span>
-            </div>
-            <div class="datos-item">
-                <span class="datos-label">WhatsApp:</span>
-                <span class="datos-value">+506 8806 1829</span>
-            </div>
-            <div class="datos-item">
-                <span class="datos-label">Web:</span>
-                <span class="datos-value">websolutions.work</span>
+            <div class="datos-title">Datos del emisor</div>
+            <div class="datos-content">
+                <div><strong>WebSolutions.Work</strong></div>
+                <div>Jaco, Puntarenas</div>
+                <div>506 8806 1829</div>
+                <div>websolutionscrnow@gmail.com</div>
+                <div>Costa Rica</div>
             </div>
         </div>
         
         <div class="datos-box">
-            <div class="datos-title">Cliente</div>
-            <div class="datos-item">
-                <span class="datos-label">Nombre:</span>
-                <span class="datos-value">{{ $cliente ? $cliente->nombre_empresa : 'N/A' }}</span>
+            <div class="datos-title">Datos del cliente</div>
+            <div class="datos-content">
+                @if($cliente)
+                    <div><strong>{{ $cliente->nombre_empresa }}</strong></div>
+                    @if($cliente->direccion)
+                        <div>{{ $cliente->direccion }}</div>
+                    @endif
+                    <div>Costa Rica</div>
+                    @if($cliente->telefono)
+                        <div>{{ $cliente->telefono }}</div>
+                    @endif
+                    @if($cliente->correo)
+                        <div>{{ $cliente->correo }}</div>
+                    @endif
+                @else
+                    <div><strong>{{ $cotizacion->correo ?? 'N/A' }}</strong></div>
+                @endif
             </div>
-            <div class="datos-item">
-                <span class="datos-label">Email:</span>
-                <span class="datos-value">{{ $cotizacion->correo }}</span>
-            </div>
-            @if($cliente && $cliente->telefono)
-            <div class="datos-item">
-                <span class="datos-label">Teléfono:</span>
-                <span class="datos-value">{{ $cliente->telefono }}</span>
-            </div>
-            @endif
         </div>
     </div>
     
-    <!-- Información de la Cotización -->
-    <div class="info-section">
-        <div class="info-title">Información General</div>
-        <div class="info-row">
+    <!-- Información de Cotización y Fechas -->
+    <div class="info-row">
+        <div class="info-item">
+            <span class="info-label">N° de cotización:</span>
+            <span class="info-value">{{ $cotizacion->numero_cotizacion }}</span>
+        </div>
+        <div class="info-item">
             <span class="info-label">Fecha:</span>
             <span class="info-value">{{ \Carbon\Carbon::parse($cotizacion->fecha)->format('d/m/Y') }}</span>
         </div>
-        <div class="info-row">
+    </div>
+    
+    <div class="info-row">
+        <div class="info-item">
             <span class="info-label">Idioma:</span>
             <span class="info-value">
                 @if($cotizacion->idioma === 'es') Español
@@ -342,7 +318,7 @@
                 @endif
             </span>
         </div>
-        <div class="info-row">
+        <div class="info-item">
             <span class="info-label">Vigencia:</span>
             <span class="info-value">{{ $cotizacion->vigencia }} días</span>
         </div>

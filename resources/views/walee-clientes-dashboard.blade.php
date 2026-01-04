@@ -109,6 +109,18 @@
             ->whereYear('created_at', now()->year)
             ->count();
         
+        // Clientes de esta semana (solo activos)
+        $inicioSemana = now()->startOfWeek();
+        $finSemana = now()->endOfWeek();
+        $clientesEstaSemana = Client::where('estado', 'activo')
+            ->whereBetween('created_at', [$inicioSemana, $finSemana])
+            ->count();
+        
+        // Clientes de este año (solo activos)
+        $clientesEsteAno = Client::where('estado', 'activo')
+            ->whereYear('created_at', now()->year)
+            ->count();
+        
         // Clientes recientes (últimos 5, solo activos)
         $clientesRecientes = Client::where('estado', 'activo')
             ->orderBy('updated_at', 'desc')
@@ -267,24 +279,34 @@
                     </div>
                 </a>
                 
-                <!-- Clientes en Proceso -->
-                <a href="{{ route('walee.clientes.proceso') }}" class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-none hover:scale-[1.02] transition-all duration-200 cursor-pointer group">
+                <!-- Estadísticas de Clientes Activos -->
+                <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Clientes Entrantes</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ number_format($clientesPending) }}</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Clientes Activos</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesActivos) }}</p>
                     </div>
-                    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                        <span class="text-violet-600 dark:text-violet-400 font-medium hidden sm:inline">Propuesta enviada: {{ $clientesPropuestaEnviada }}</span>
-                        <span class="text-violet-600 dark:text-violet-400 font-medium sm:hidden">{{ $clientesPropuestaEnviada }}</span>
+                    <div class="space-y-1 text-xs sm:text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-violet-600 dark:text-violet-400 font-medium">Hoy:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold">{{ number_format($clientesHoy) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-violet-600 dark:text-violet-400 font-medium">Esta semana:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold">{{ number_format($clientesEstaSemana) }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-violet-600 dark:text-violet-400 font-medium">Este año:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold">{{ number_format($clientesEsteAno) }}</span>
+                        </div>
                     </div>
-                </a>
+                </div>
                 
                 <!-- Clientes Activos -->
                 <a href="{{ route('walee.clientes.activos') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-none hover:scale-[1.02] transition-all duration-200 cursor-pointer group">

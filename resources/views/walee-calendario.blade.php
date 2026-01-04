@@ -344,16 +344,16 @@
                         </div>
                         @if($vista === 'semanal')
                             <div class="flex items-center gap-2 flex-shrink-0 flex-wrap header-actions">
-                                <a href="?cliente_id={{ $cliente->id }}&vista=semanal&semana={{ $semanaAnteriorFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                <a href="?cliente_id={{ $cliente->id }}&vista=semanal&semana={{ $semanaAnteriorFormato }}" class="px-4 py-3 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-2 sm:gap-2 shadow-lg hover:shadow-xl active:scale-95 min-h-[44px] sm:min-h-0">
                                     <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                     <span class="hidden sm:inline">Anterior</span>
                                     <span class="sm:hidden">Anterior</span>
                                 </a>
-                                <a href="?cliente_id={{ $cliente->id }}&vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                <a href="?cliente_id={{ $cliente->id }}&vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-4 py-3 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-2 sm:gap-2 shadow-lg hover:shadow-xl active:scale-95 min-h-[44px] sm:min-h-0">
                                     <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                                     </svg>
                                     <span class="hidden sm:inline">Siguiente</span>
                                     <span class="sm:hidden">Siguiente</span>
@@ -404,15 +404,15 @@
                                             <div class="flex items-center gap-2">
                                                 <button 
                                                     onclick="openCreateCitaModal('{{ $diaSemana->format('Y-m-d') }}')"
-                                                    class="w-7 h-7 md:w-6 md:h-6 flex items-center justify-center rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition-all hover:scale-110 active:scale-95 shadow-sm"
+                                                    class="w-10 h-10 md:w-6 md:h-6 flex items-center justify-center rounded-xl md:rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white transition-all hover:scale-110 active:scale-95 shadow-lg hover:shadow-xl"
                                                     title="Agregar cita"
                                                 >
-                                                    <svg class="w-4 h-4 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                    <svg class="w-5 h-5 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                                                     </svg>
                                                 </button>
                                                 <div class="md:hidden">
-                                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $citasOrdenadas->count() }} citas</span>
+                                                    <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 px-2 py-1 rounded-lg">{{ $citasOrdenadas->count() }} citas</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -443,8 +443,8 @@
                                                 @endphp
                                                 <button 
                                                     onclick="event.preventDefault(); showCitaDetail({{ $cita->id }});"
-                                                    class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 {{ $claseBtn }} shadow-sm md:shadow-none"
-                                                    style="border-left: 4px solid {{ $colorBorde }};"
+                                                    class="w-full text-left px-4 py-3 md:px-2 md:py-1.5 rounded-xl md:rounded text-sm md:text-xs font-semibold transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] {{ $claseBtn }} shadow-md md:shadow-none border-l-4"
+                                                    style="border-left-color: {{ $colorBorde }};"
                                                     title="{{ $cita->titulo }}"
                                                 >
                                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">

@@ -1881,15 +1881,25 @@
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
             
+            // Convertir saltos de línea en <br> y formatear el texto
+            const horarioFormateado = horario
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
             Swal.fire({
-                title: 'Horario',
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Horario</span></div>',
                 html: `
-                    <div class="text-left">
-                        <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${horario}</p>
+                    <div class="text-left space-y-3">
+                        <div class="p-4 rounded-xl bg-gradient-to-br ${isDarkMode ? 'from-emerald-900/20 to-emerald-800/10 border border-emerald-800/30' : 'from-emerald-50 to-emerald-100/50 border border-emerald-200'}">
+                            <div class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'} leading-relaxed">
+                                ${horarioFormateado}
+                            </div>
+                        </div>
                     </div>
                 `,
-                width: isMobile ? '85%' : '400px',
-                padding: isMobile ? '0.75rem' : '1rem',
+                width: isMobile ? '90%' : '500px',
+                padding: isMobile ? '1rem' : '1.5rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Cerrar',
                 confirmButtonColor: '#10b981',

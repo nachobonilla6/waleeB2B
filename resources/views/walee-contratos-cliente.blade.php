@@ -108,6 +108,12 @@
                 $fotoUrl = route('storage.clientes', ['filename' => $filename]);
             }
         }
+        
+        // Obtener lista de clientes para el select
+        $clientes = \App\Models\Client::whereNotNull('email')
+            ->where('email', '!=', '')
+            ->orderBy('name', 'asc')
+            ->get();
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -144,12 +150,12 @@
                                 </p>
                             </div>
                         </a>
-                        <a href="{{ route('walee.herramientas.enviar-contrato') }}?cliente_id={{ $cliente->id }}" class="w-full sm:w-auto px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                        <button onclick="abrirModalContrato()" class="w-full sm:w-auto px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span>Crear Contrato</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -280,12 +286,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         <p class="text-slate-600 dark:text-slate-400 mb-4">No hay contratos para este cliente</p>
-                        <a href="{{ route('walee.herramientas.enviar-contrato') }}?cliente_id={{ $cliente->id }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span>Crear Primer Contrato</span>
-                        </a>
+                <button onclick="abrirModalContrato()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>Crear Primer Contrato</span>
+                </button>
                     </div>
                 @endforelse
                 </div>
@@ -296,12 +302,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 <p class="text-slate-600 dark:text-slate-400 mb-4">No hay contratos para este cliente</p>
-                <a href="{{ route('walee.herramientas.enviar-contrato') }}?cliente_id={{ $cliente->id }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
+                <button onclick="abrirModalContrato()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     <span>Crear Primer Contrato</span>
-                </a>
+                </button>
             </div>
             @endif
             
@@ -572,6 +578,468 @@
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
             });
+        }
+        
+        // Variables para modal de crear contrato
+        let currentPhase = 1;
+        const totalPhases = 6;
+        let contratoData = {
+            cliente_id: null,
+            correo: null,
+            servicios: [],
+            precio: null,
+            idioma: 'es',
+            archivos: []
+        };
+        
+        // Abrir modal de crear contrato
+        function abrirModalContrato() {
+            currentPhase = 1;
+            // Inicializar datos si hay cliente desde URL
+            @if(isset($cliente))
+            contratoData.cliente_id = '{{ $cliente->id }}';
+            contratoData.correo = '{{ $cliente->email ?? '' }}';
+            @endif
+            mostrarFase1Contrato();
+        }
+        
+        // FASE 1: Cliente y Correo
+        function mostrarFase1Contrato() {
+            const clientesOptions = `@foreach($clientes as $cliente)<option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}" ${contratoData.cliente_id == '{{ $cliente->id }}' ? 'selected' : ''}>{{ $cliente->name }}</option>@endforeach`;
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-walee-500 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente <span class="text-red-500">*</span></label>
+                        <select id="modal_contrato_cliente_id" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                            <option value="">Seleccionar cliente...</option>
+                            ${clientesOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo <span class="text-red-500">*</span></label>
+                        <input type="email" id="modal_contrato_correo" value="${contratoData.correo || ''}" placeholder="correo@ejemplo.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 1: Información del Cliente',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#C78F2E',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    const select = document.getElementById('modal_contrato_cliente_id');
+                    const emailInput = document.getElementById('modal_contrato_correo');
+                    
+                    select.addEventListener('change', function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const email = selectedOption.dataset.email || '';
+                        emailInput.value = email;
+                    });
+                },
+                preConfirm: () => {
+                    const clienteId = document.getElementById('modal_contrato_cliente_id').value.trim();
+                    const correo = document.getElementById('modal_contrato_correo').value.trim();
+                    
+                    if (!clienteId) {
+                        Swal.showValidationMessage('Debe seleccionar un cliente');
+                        return false;
+                    }
+                    if (!correo || !correo.includes('@')) {
+                        Swal.showValidationMessage('Debe ingresar un correo válido');
+                        return false;
+                    }
+                    
+                    contratoData.cliente_id = clienteId;
+                    contratoData.correo = correo;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 2;
+                    mostrarFase2Contrato();
+                }
+            });
+        }
+        
+        // FASE 2: Servicios
+        function mostrarFase2Contrato() {
+            const servicios = [
+                { value: 'diseno_web', label: '🌐 Diseño Web' },
+                { value: 'redes_sociales', label: '📱 Gestión Redes Sociales' },
+                { value: 'seo', label: '🔍 SEO / Posicionamiento' },
+                { value: 'publicidad', label: '📢 Publicidad Digital' },
+                { value: 'mantenimiento', label: '🔧 Mantenimiento Web' },
+                { value: 'hosting', label: '☁️ Hosting & Dominio' },
+                { value: 'combo', label: '📦 Paquete Completo' }
+            ];
+            
+            const serviciosHtml = servicios.map(servicio => {
+                const checked = contratoData.servicios.includes(servicio.value) ? 'checked' : '';
+                return `
+                    <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                        <input type="checkbox" value="${servicio.value}" ${checked} class="servicio-checkbox w-5 h-5 text-walee-500 border-slate-300 rounded focus:ring-walee-500 focus:ring-2">
+                        <span class="text-slate-900 dark:text-white text-sm">${servicio.label}</span>
+                    </label>
+                `;
+            }).join('');
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-walee-500 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Seleccionar Servicios <span class="text-red-500">*</span></label>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            ${serviciosHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 2: Servicios',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#C78F2E',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const checkboxes = document.querySelectorAll('.servicio-checkbox:checked');
+                    const serviciosSeleccionados = Array.from(checkboxes).map(cb => cb.value);
+                    
+                    if (serviciosSeleccionados.length === 0) {
+                        Swal.showValidationMessage('Debe seleccionar al menos un servicio');
+                        return false;
+                    }
+                    
+                    contratoData.servicios = serviciosSeleccionados;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 3;
+                    mostrarFase3Contrato();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 1;
+                    mostrarFase1Contrato();
+                }
+            });
+        }
+        
+        // FASE 3: Precio
+        function mostrarFase3Contrato() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-walee-500 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (CRC) <span class="text-red-500">*</span></label>
+                        <input type="number" id="modal_contrato_precio" step="0.01" min="0" value="${contratoData.precio || ''}" placeholder="0.00" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 3: Precio',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#C78F2E',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const precio = parseFloat(document.getElementById('modal_contrato_precio').value);
+                    
+                    if (!precio || precio <= 0) {
+                        Swal.showValidationMessage('Debe ingresar un precio válido mayor a 0');
+                        return false;
+                    }
+                    
+                    contratoData.precio = precio;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 4;
+                    mostrarFase4Contrato();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 2;
+                    mostrarFase2Contrato();
+                }
+            });
+        }
+        
+        // FASE 4: Idioma
+        function mostrarFase4Contrato() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-walee-500 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Idioma <span class="text-red-500">*</span></label>
+                        <select id="modal_contrato_idioma" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                            <option value="es" ${contratoData.idioma === 'es' ? 'selected' : ''}>🇪🇸 Español</option>
+                            <option value="en" ${contratoData.idioma === 'en' ? 'selected' : ''}>🇬🇧 English</option>
+                            <option value="fr" ${contratoData.idioma === 'fr' ? 'selected' : ''}>🇫🇷 Français</option>
+                            <option value="zh" ${contratoData.idioma === 'zh' ? 'selected' : ''}>🇨🇳 中文 (Mandarin)</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 4: Idioma del Contrato',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#C78F2E',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const idioma = document.getElementById('modal_contrato_idioma').value;
+                    
+                    if (!idioma) {
+                        Swal.showValidationMessage('Debe seleccionar un idioma');
+                        return false;
+                    }
+                    
+                    contratoData.idioma = idioma;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 5;
+                    mostrarFase5Contrato();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 3;
+                    mostrarFase3Contrato();
+                }
+            });
+        }
+        
+        // FASE 5: Archivos Adjuntos (Opcional)
+        function mostrarFase5Contrato() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-walee-500 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Archivos Adjuntos (Opcional)</label>
+                        <input type="file" id="modal_contrato_archivos" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 5: Archivos Adjuntos',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#C78F2E',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const archivosInput = document.getElementById('modal_contrato_archivos');
+                    contratoData.archivos = archivosInput.files;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 6;
+                    mostrarFase6Contrato();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 4;
+                    mostrarFase4Contrato();
+                }
+            });
+        }
+        
+        // FASE 6: Resumen y Confirmación
+        function mostrarFase6Contrato() {
+            const serviciosLabels = {
+                'diseno_web': '🌐 Diseño Web',
+                'redes_sociales': '📱 Gestión Redes Sociales',
+                'seo': '🔍 SEO / Posicionamiento',
+                'publicidad': '📢 Publicidad Digital',
+                'mantenimiento': '🔧 Mantenimiento Web',
+                'hosting': '☁️ Hosting & Dominio',
+                'combo': '📦 Paquete Completo'
+            };
+            
+            const idiomaLabels = {
+                'es': '🇪🇸 Español',
+                'en': '🇬🇧 English',
+                'fr': '🇫🇷 Français',
+                'zh': '🇨🇳 中文 (Mandarin)'
+            };
+            
+            const serviciosTexto = contratoData.servicios.map(s => serviciosLabels[s] || s).join(', ');
+            const archivosCount = contratoData.archivos.length > 0 ? contratoData.archivos.length : 0;
+            
+            const html = `
+                <div class="text-left space-y-4 max-h-[60vh] overflow-y-auto">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-walee-500 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="bg-walee-50 dark:bg-walee-900/20 rounded-lg p-4 border border-walee-200 dark:border-walee-800">
+                        <h3 class="text-lg font-bold text-walee-600 dark:text-walee-400 mb-3">Resumen del Contrato</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Cliente:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${document.getElementById('modal_contrato_cliente_id')?.options[document.getElementById('modal_contrato_cliente_id')?.selectedIndex]?.text || 'N/A'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Correo:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${contratoData.correo}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Servicios:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${serviciosTexto}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Precio:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">₡${parseFloat(contratoData.precio).toLocaleString('es-CR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Idioma:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${idiomaLabels[contratoData.idioma] || contratoData.idioma}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Archivos adjuntos:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${archivosCount} archivo(s)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 6: Resumen y Confirmación',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Crear y Enviar Contrato',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#C78F2E',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await enviarContrato();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 5;
+                    mostrarFase5Contrato();
+                }
+            });
+        }
+        
+        // Enviar contrato
+        async function enviarContrato() {
+            try {
+                Swal.fire({
+                    title: 'Creando contrato...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const formData = new FormData();
+                formData.append('cliente_id', contratoData.cliente_id);
+                formData.append('servicios', JSON.stringify(contratoData.servicios));
+                formData.append('precio', contratoData.precio);
+                formData.append('idioma', contratoData.idioma);
+                
+                if (contratoData.archivos.length > 0) {
+                    for (let i = 0; i < contratoData.archivos.length; i++) {
+                        formData.append('archivos[]', contratoData.archivos[i]);
+                    }
+                }
+                
+                const response = await fetch('{{ route("walee.herramientas.enviar-contrato.post") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Contrato creado!',
+                        text: 'El contrato ha sido creado y enviado correctamente',
+                        confirmButtonColor: '#C78F2E',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    throw new Error('Error al crear el contrato');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'No se pudo crear el contrato',
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                });
+            }
         }
         
         // Enviar contrato por email

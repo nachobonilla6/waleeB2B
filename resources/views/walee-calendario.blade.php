@@ -503,8 +503,8 @@
             const horaInicio = horaActual + 1;
             const horaInicioFormato = String(horaInicio).padStart(2, '0') + ':00';
             
-            // Calcular hora de fin: 3 horas más que la hora de inicio
-            const horaFin = horaInicio + 3;
+            // Calcular hora de fin: 2 horas más que la hora de inicio
+            const horaFin = horaInicio + 2;
             const horaFinFormato = String(horaFin).padStart(2, '0') + ':00';
             
             // Resetear datos con valores por defecto

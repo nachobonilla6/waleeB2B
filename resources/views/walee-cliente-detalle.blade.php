@@ -108,11 +108,13 @@
                 margin: 0 !important;
             }
             .swal2-confirm {
-                background: linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%) !important;
+                background: #D59F3B !important;
                 border: none !important;
                 box-shadow: 0 2px 8px rgba(213, 159, 59, 0.3) !important;
+                color: #ffffff !important;
             }
             .swal2-confirm:hover {
+                background: #C78F2E !important;
                 transform: translateY(-1px) !important;
                 box-shadow: 0 4px 12px rgba(213, 159, 59, 0.4) !important;
             }

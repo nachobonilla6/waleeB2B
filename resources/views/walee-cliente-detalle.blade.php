@@ -252,6 +252,30 @@
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
             
+            <!-- Botones de acción arriba de la tarjeta -->
+            <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <button onclick="openEditClientModal()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <span class="hidden sm:inline">Editar</span>
+                </button>
+                
+                <button onclick="changeClientStatus()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="hidden sm:inline">Cambiar Estado</span>
+                </button>
+                
+                <button onclick="deleteClient()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <span class="hidden sm:inline">Eliminar</span>
+                </button>
+            </div>
+            
             <!-- Header Profesional -->
             <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col">
                 <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
@@ -1255,6 +1279,179 @@
                         icon: 'error',
                         title: 'Error',
                         text: result.message || 'Error al actualizar el cliente',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión. Por favor, intenta de nuevo.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
+        // Función para cambiar estado del cliente
+        function changeClientStatus() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const currentStatus = @json($cliente->estado ?? 'pending');
+            
+            const statusOptions = [
+                { value: 'pending', label: 'Pendiente' },
+                { value: 'received', label: 'Recibido' },
+                { value: 'propuesta_enviada', label: 'Propuesta Enviada' },
+                { value: 'activo', label: 'Activo' },
+                { value: 'accepted', label: 'Aceptado' }
+            ];
+            
+            const statusHtml = statusOptions.map(status => {
+                const isSelected = status.value === currentStatus;
+                return `
+                    <button type="button" onclick="selectStatus('${status.value}')" 
+                            class="w-full text-left px-4 py-2 rounded-lg transition-all ${isSelected ? 'bg-walee-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700'}">
+                        ${status.label}
+                    </button>
+                `;
+            }).join('');
+            
+            Swal.fire({
+                title: 'Cambiar Estado',
+                html: `<div class="space-y-2" id="statusOptions">${statusHtml}</div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.selectedStatus = currentStatus;
+                },
+                preConfirm: () => {
+                    return window.selectedStatus || currentStatus;
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    updateClientStatus(result.value);
+                }
+            });
+        }
+        
+        function selectStatus(status) {
+            window.selectedStatus = status;
+            const buttons = document.querySelectorAll('#statusOptions button');
+            buttons.forEach(btn => {
+                const btnStatus = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                if (btnStatus === status) {
+                    btn.className = 'w-full text-left px-4 py-2 rounded-lg transition-all bg-walee-500 text-white';
+                } else {
+                    btn.className = 'w-full text-left px-4 py-2 rounded-lg transition-all bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700';
+                }
+            });
+        }
+        
+        async function updateClientStatus(newStatus) {
+            try {
+                const response = await fetch('{{ route("walee.cliente.actualizar", $cliente->id) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        estado: newStatus
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Estado actualizado!',
+                        text: 'El estado del cliente se ha actualizado correctamente',
+                        confirmButtonColor: '#D59F3B',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Error al actualizar el estado',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión. Por favor, intenta de nuevo.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
+        // Función para eliminar cliente
+        function deleteClient() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const clienteName = @json($cliente->name ?? 'este cliente');
+            
+            Swal.fire({
+                icon: 'warning',
+                title: '¿Eliminar cliente?',
+                html: `¿Estás seguro de que deseas eliminar <strong>${clienteName}</strong>?<br><br>Esta acción no se puede deshacer.`,
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    performDeleteClient();
+                }
+            });
+        }
+        
+        async function performDeleteClient() {
+            try {
+                const response = await fetch('{{ route("walee.clientes.en-proceso.delete") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client_ids: [{{ $cliente->id }}]
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cliente eliminado!',
+                        text: 'El cliente ha sido eliminado correctamente',
+                        confirmButtonColor: '#D59F3B',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '{{ route("walee.clientes.dashboard") }}';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Error al eliminar el cliente',
                         confirmButtonColor: '#ef4444'
                     });
                 }

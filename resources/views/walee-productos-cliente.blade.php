@@ -536,7 +536,7 @@
             Swal.fire({
                 title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
                 html: html,
-                width: isMobile ? '95%' : '800px',
+                width: isMobile ? '90%' : '1000px',
                 padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',

@@ -89,8 +89,11 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
-        // Obtener correos de clientes con estado pending
-        $clientesEmails = \App\Models\Client::where('estado', 'pending')
+        // Total de clientes en proceso (excluyendo activos)
+        $totalClientesEnProceso = \App\Models\Client::where('estado', '!=', 'activo')->count();
+        
+        // Obtener correos de clientes en proceso (excluyendo activos)
+        $clientesEmails = \App\Models\Client::where('estado', '!=', 'activo')
             ->whereNotNull('email')
             ->where('email', '!=', '')
             ->pluck('email')
@@ -102,7 +105,7 @@
             ->values()
             ->toArray();
         
-        // Estadísticas de emails recibidos (solo de clientes pending)
+        // Estadísticas de emails recibidos (solo de clientes en proceso)
         if (!empty($clientesEmails) && count($clientesEmails) > 0) {
             $emailsRecibidosQuery = \App\Models\EmailRecibido::where(function($query) use ($clientesEmails) {
                 foreach ($clientesEmails as $clienteEmail) {
@@ -131,12 +134,12 @@
             $recibidosEsteMes = 0;
         }
         
-        // Estadísticas de emails enviados (basado en clientes agregados en clientes en proceso)
-        $totalEnviados = \App\Models\Client::where('estado', 'pending')->count();
-        $enviadosHoy = \App\Models\Client::where('estado', 'pending')
+        // Estadísticas de emails enviados (basado en clientes en proceso)
+        $totalEnviados = $totalClientesEnProceso;
+        $enviadosHoy = \App\Models\Client::where('estado', '!=', 'activo')
             ->whereDate('created_at', today())
             ->count();
-        $enviadosEsteMes = \App\Models\Client::where('estado', 'pending')
+        $enviadosEsteMes = \App\Models\Client::where('estado', '!=', 'activo')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
@@ -162,8 +165,8 @@
             $emailsRecientesRecibidos = collect();
         }
         
-        // Clientes recientes agregados en proceso (últimos 5)
-        $emailsRecientesEnviados = \App\Models\Client::where('estado', 'pending')
+        // Clientes recientes agregados en proceso (últimos 5, excluyendo activos)
+        $emailsRecientesEnviados = \App\Models\Client::where('estado', '!=', 'activo')
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
@@ -176,8 +179,8 @@
             $fecha = now()->subDays($i);
             $ultimos15Dias[] = $fecha->format('d/m');
             
-            // Clientes agregados en proceso por día
-            $enviadosPorDia[] = \App\Models\Client::where('estado', 'pending')
+            // Clientes agregados en proceso por día (excluyendo activos)
+            $enviadosPorDia[] = \App\Models\Client::where('estado', '!=', 'activo')
                 ->whereDate('created_at', $fecha->format('Y-m-d'))
                 ->count();
         }
@@ -250,8 +253,8 @@
                         </svg>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Emails Enviados</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ number_format($totalEnviados) }}</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Clientes en Proceso</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ number_format($totalClientesEnProceso) }}</p>
                     </div>
                     <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                         <span class="text-blue-600 dark:text-blue-400 font-medium">{{ $enviadosEsteMes }} este mes</span>

@@ -3096,7 +3096,7 @@ Route::get('/walee-facturas/{id}/pdf', function ($id) {
         $pdf->setOptions([
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
-            'defaultFont' => 'Arial',
+            'defaultFont' => 'DejaVu Sans',
         ]);
         
         return $pdf->stream('factura-' . $factura->numero_factura . '.pdf');
@@ -3156,7 +3156,7 @@ Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http
         $pdf->setOptions([
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
-            'defaultFont' => 'Arial',
+            'defaultFont' => 'DejaVu Sans',
         ]);
         
         // Generar contenido del PDF
@@ -4013,7 +4013,7 @@ Route::get('/walee-cotizaciones/{id}/pdf', function ($id) {
         $pdf->setOptions([
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
-            'defaultFont' => 'Arial',
+            'defaultFont' => 'DejaVu Sans',
         ]);
         
         return $pdf->stream('cotizacion-' . $cotizacion->numero_cotizacion . '.pdf');
@@ -4045,7 +4045,7 @@ Route::post('/walee-cotizaciones/{id}/enviar-email', function ($id, \Illuminate\
         $pdf->setOptions([
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
-            'defaultFont' => 'Arial',
+            'defaultFont' => 'DejaVu Sans',
         ]);
         
         // Enviar email

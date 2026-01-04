@@ -252,31 +252,6 @@
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
             
-            <!-- Botones de acción arriba de la tarjeta -->
-            <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                <button onclick="openEditClientModal()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                    <span class="hidden sm:inline">Editar</span>
-                </button>
-                
-                <select onchange="updateClientStatus(this.value)" class="flex-1 sm:flex-initial px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md border-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-walee-400 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M6%209l3%203%203-3H6z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px] bg-[right_0.75rem_center] bg-no-repeat pr-8 sm:pr-10">
-                    <option value="pending" {{ $cliente->estado === 'pending' ? 'selected' : '' }}>Pendiente</option>
-                    <option value="received" {{ $cliente->estado === 'received' ? 'selected' : '' }}>Recibido</option>
-                    <option value="propuesta_enviada" {{ $cliente->estado === 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
-                    <option value="activo" {{ $cliente->estado === 'activo' ? 'selected' : '' }}>Activo</option>
-                    <option value="accepted" {{ $cliente->estado === 'accepted' ? 'selected' : '' }}>Aceptado</option>
-                </select>
-                
-                <button onclick="deleteClient()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                    <span class="hidden sm:inline">Eliminar</span>
-                </button>
-            </div>
-            
             <!-- Header Profesional -->
             <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col">
                 <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
@@ -316,16 +291,19 @@
                             </div>
                             
                             <!-- Nombre y estado a la derecha -->
-                    <div class="flex-1 min-w-0">
+                            <div class="flex-1 min-w-0">
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                            </span>
-                        </div>
-                    </div>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
+                                    <select onchange="updateClientStatus(this.value)" class="w-full sm:w-auto px-3 py-1.5 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-600 dark:border-emerald-500/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                        <option value="pending" {{ $cliente->estado === 'pending' ? 'selected' : '' }}>Pendiente</option>
+                                        <option value="received" {{ $cliente->estado === 'received' ? 'selected' : '' }}>Recibido</option>
+                                        <option value="propuesta_enviada" {{ $cliente->estado === 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
+                                        <option value="activo" {{ $cliente->estado === 'activo' ? 'selected' : '' }}>Activo</option>
+                                        <option value="accepted" {{ $cliente->estado === 'accepted' ? 'selected' : '' }}>Aceptado</option>
+                                    </select>
+                                </div>
+                            </div>
                 </div>
                         
                         <!-- Acciones Rápidas Mobile -->
@@ -458,16 +436,19 @@
                         @endif
                                 
                                 <!-- Nombre y estado a la derecha -->
-                                            <div class="flex-1 min-w-0">
+                                <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30">
-                                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                            </span>
-                                        </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
+                                        <select onchange="updateClientStatus(this.value)" class="w-full sm:w-auto px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-600 dark:border-emerald-500/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                            <option value="pending" {{ $cliente->estado === 'pending' ? 'selected' : '' }}>Pendiente</option>
+                                            <option value="received" {{ $cliente->estado === 'received' ? 'selected' : '' }}>Recibido</option>
+                                            <option value="propuesta_enviada" {{ $cliente->estado === 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
+                                            <option value="activo" {{ $cliente->estado === 'activo' ? 'selected' : '' }}>Activo</option>
+                                            <option value="accepted" {{ $cliente->estado === 'accepted' ? 'selected' : '' }}>Aceptado</option>
+                                        </select>
                                     </div>
+                                </div>
                             </div>
                             
                             <!-- Acciones Rápidas Desktop -->

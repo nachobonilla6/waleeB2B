@@ -1284,18 +1284,21 @@
                                 ` : ''}
                             </div>
                             
-                            <!-- Fecha y Hora (solo lectura) -->
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
-                                    ${fechaFormateada}
+                            <!-- Fecha y Estado en la misma línea -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <!-- Fecha y Hora (solo lectura) -->
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                        ${fechaFormateada}
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Estado (badge) -->
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
-                                ${estadoBadge}
+                                
+                                <!-- Estado (badge) -->
+                                <div>
+                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
+                                    ${estadoBadge}
+                                </div>
                             </div>
                         </div>
                     `;

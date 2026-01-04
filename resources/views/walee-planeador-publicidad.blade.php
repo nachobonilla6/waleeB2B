@@ -132,6 +132,23 @@
             color: #1e293b !important;
         }
         
+        /* Asegurar que el modal de detalle de publicación esté encima de todo */
+        .swal2-container {
+            z-index: 99999 !important;
+        }
+        
+        .swal2-backdrop-show {
+            z-index: 99999 !important;
+        }
+        
+        .swal2-popup {
+            z-index: 99999 !important;
+        }
+        
+        .swal2-container.swal2-backdrop-show {
+            z-index: 99999 !important;
+        }
+        
         .dark-swal-title {
             color: #e2e8f0 !important;
         }
@@ -1236,13 +1253,13 @@
                         `;
                     }
                     
-                    let modalWidth = '95%';
+                    let modalWidth = '90%';
                     if (isDesktop) {
-                        modalWidth = '900px';
+                        modalWidth = '500px';
                     } else if (isTablet) {
-                        modalWidth = '600px';
+                        modalWidth = '450px';
                     } else if (isMobile) {
-                        modalWidth = '95%';
+                        modalWidth = '90%';
                     }
                     
                     // Layout horizontal: imagen a la izquierda, contenido a la derecha
@@ -1311,12 +1328,15 @@
                         title: 'Detalle de Publicación',
                         html: html,
                         width: modalWidth,
-                        padding: isMobile ? '1rem' : '1.5rem',
+                        padding: isMobile ? '1rem' : '1.25rem',
                         showConfirmButton: true,
                         confirmButtonText: 'Cerrar',
                         confirmButtonColor: '#8b5cf6',
                         heightAuto: false,
-                        maxHeight: isDesktop ? '80vh' : '90vh',
+                        maxHeight: isDesktop ? '70vh' : '85vh',
+                        allowOutsideClick: true,
+                        allowEscapeKey: true,
+                        backdrop: true,
                         background: isDarkMode ? '#1e293b' : '#ffffff',
                         color: isDarkMode ? '#e2e8f0' : '#1e293b',
                         customClass: {
@@ -1324,6 +1344,17 @@
                             title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
                             htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
                             confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                        },
+                        didOpen: () => {
+                            // Asegurar que esté encima de todo
+                            const container = Swal.getContainer();
+                            if (container) {
+                                container.style.zIndex = '99999';
+                            }
+                            const popup = Swal.getPopup();
+                            if (popup) {
+                                popup.style.zIndex = '99999';
+                            }
                         }
                     });
                 } else {

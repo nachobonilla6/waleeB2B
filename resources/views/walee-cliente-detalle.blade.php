@@ -79,6 +79,61 @@
                 width: 100% !important;
             }
         }
+        
+        /* Asegurar que el modal respete el tema dark/light */
+        .swal2-popup {
+            background-color: var(--swal2-background, #ffffff) !important;
+        }
+        
+        .dark .swal2-popup {
+            background-color: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        
+        .dark .swal2-title {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark .swal2-html-container {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark .swal2-html-container label {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark .swal2-html-container input,
+        .dark .swal2-html-container textarea,
+        .dark .swal2-html-container select {
+            background-color: #1e293b !important;
+            border-color: #475569 !important;
+            color: #e2e8f0 !important;
+        }
+        
+        .dark .swal2-html-container input:focus,
+        .dark .swal2-html-container textarea:focus,
+        .dark .swal2-html-container select:focus {
+            border-color: #D59F3B !important;
+            outline-color: #D59F3B !important;
+        }
+        
+        /* Light mode */
+        .swal2-popup:not(.dark) {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+        }
+        
+        .swal2-html-container:not(.dark) label {
+            color: #334155 !important;
+        }
+        
+        .swal2-html-container:not(.dark) input,
+        .swal2-html-container:not(.dark) textarea,
+        .swal2-html-container:not(.dark) select {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">

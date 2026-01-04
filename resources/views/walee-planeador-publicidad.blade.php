@@ -1000,13 +1000,20 @@
                     const form = document.getElementById('programar-publicacion-form');
                     const formData = new FormData(form);
                     const imagen = formData.get('imagen');
+                    const texto = formData.get('texto') || '';
                     
-                    // Validar que haya imagen o texto
-                    if (!imagen || imagen.size === 0) {
-                        if (!formData.get('texto') || formData.get('texto').trim() === '') {
-                            Swal.showValidationMessage('Por favor, agrega una imagen o un texto para la publicación');
-                            return false;
-                        }
+                    // Validar que haya AMBOS: imagen Y texto
+                    const tieneImagen = imagen && imagen.size > 0;
+                    const tieneTexto = texto.trim() !== '';
+                    
+                    if (!tieneImagen) {
+                        Swal.showValidationMessage('Por favor, agrega una imagen para la publicación');
+                        return false;
+                    }
+                    
+                    if (!tieneTexto) {
+                        Swal.showValidationMessage('Por favor, agrega un texto para la publicación');
+                        return false;
                     }
                     
                     return formData;

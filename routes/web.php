@@ -750,6 +750,25 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
             ], 400);
         }
         
+        // Validar que haya imagen Y texto
+        $tieneImagen = $request->hasFile('imagen') && $request->file('imagen')->isValid();
+        $texto = $request->input('texto', '');
+        $tieneTexto = !empty(trim($texto));
+        
+        if (!$tieneImagen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Por favor, agrega una imagen para la publicación'
+            ], 400);
+        }
+        
+        if (!$tieneTexto) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Por favor, agrega un texto para la publicación'
+            ], 400);
+        }
+        
         // Validar que el cliente tenga webhook configurado ANTES de crear el evento
         $cliente = \App\Models\Cliente::find($clienteId);
         $client = null;

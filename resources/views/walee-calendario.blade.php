@@ -490,8 +490,138 @@
             estado: 'programada'
         };
         
-        function showCitaDetail(citaId) {
-            window.location.href = `/citas/${citaId}/detalle`;
+        async function showCitaDetail(citaId) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const isMobile = window.innerWidth < 640;
+            
+            try {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Cargando...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Obtener detalles de la cita
+                const response = await fetch(`/api/citas/${citaId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Error al cargar la cita');
+                }
+                
+                const cita = data.cita;
+                
+                // Formatear estado
+                let estadoBadge = '';
+                let estadoColor = '';
+                if (cita.estado === 'completada') {
+                    estadoBadge = '<span class="px-2 py-1 rounded-lg text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Completada</span>';
+                    estadoColor = '#10b981';
+                } else if (cita.estado === 'cancelada') {
+                    estadoBadge = '<span class="px-2 py-1 rounded-lg text-xs font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cancelada</span>';
+                    estadoColor = '#ef4444';
+                } else {
+                    estadoBadge = '<span class="px-2 py-1 rounded-lg text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">Programada</span>';
+                    estadoColor = '#3b82f6';
+                }
+                
+                // Construir HTML del modal
+                const html = `
+                    <div class="text-left space-y-3">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-2">
+                                ${estadoBadge}
+                            </div>
+                            ${cita.fecha_inicio_formatted ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${cita.fecha_inicio_formatted}</span>` : ''}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                            <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'} font-semibold">${cita.titulo || 'Sin título'}</p>
+                        </div>
+                        
+                        ${cita.hora_inicio ? `
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora inicio</label>
+                                <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${cita.hora_inicio}</p>
+                            </div>
+                            ${cita.hora_fin ? `
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora fin</label>
+                                <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${cita.hora_fin}</p>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                        
+                        ${cita.ubicacion ? `
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Ubicación</label>
+                            <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${cita.ubicacion}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${cita.descripcion ? `
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
+                            <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap">${cita.descripcion}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${cita.cliente_nombre ? `
+                        <div>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Cliente</label>
+                            <p class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">${cita.cliente_nombre}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Mostrar modal
+                Swal.fire({
+                    title: 'Detalles de la Cita',
+                    html: html,
+                    width: isMobile ? '90%' : '600px',
+                    padding: isMobile ? '0.75rem' : '1rem',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Cerrar',
+                    confirmButtonColor: '#10b981',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    customClass: {
+                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                        htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Error al cargar los detalles de la cita',
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    customClass: {
+                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    }
+                });
+            }
         }
         
         function openCreateCitaModal(fecha) {

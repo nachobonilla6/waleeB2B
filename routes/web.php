@@ -1095,6 +1095,38 @@ Route::get('/citas/{id}/detalle', function ($id) {
     return view('walee-cita-detalle', compact('cita', 'meses', 'clientes'));
 })->middleware(['auth'])->name('walee.cita.detalle');
 
+// API para obtener detalles de cita en JSON
+Route::get('/api/citas/{id}', function ($id) {
+    try {
+        $cita = \App\Models\Cita::with(['cliente', 'client'])->findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'cita' => [
+                'id' => $cita->id,
+                'titulo' => $cita->titulo,
+                'descripcion' => $cita->descripcion,
+                'fecha_inicio' => $cita->fecha_inicio ? $cita->fecha_inicio->format('Y-m-d H:i:s') : null,
+                'fecha_fin' => $cita->fecha_fin ? $cita->fecha_fin->format('Y-m-d H:i:s') : null,
+                'fecha_inicio_formatted' => $cita->fecha_inicio ? $cita->fecha_inicio->format('d/m/Y H:i') : null,
+                'fecha_fin_formatted' => $cita->fecha_fin ? $cita->fecha_fin->format('d/m/Y H:i') : null,
+                'hora_inicio' => $cita->fecha_inicio ? $cita->fecha_inicio->format('H:i') : null,
+                'hora_fin' => $cita->fecha_fin ? $cita->fecha_fin->format('H:i') : null,
+                'ubicacion' => $cita->ubicacion,
+                'estado' => $cita->estado,
+                'color' => $cita->color ?? '#10b981',
+                'recurrencia' => $cita->recurrencia ?? 'none',
+                'cliente_nombre' => $cita->client ? $cita->client->name : ($cita->cliente ? $cita->cliente->nombre_empresa : null),
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth']);
+
 Route::get('/walee-tareas/{id}/detalle', function ($id) {
     $tarea = \App\Models\Tarea::with('lista')->findOrFail($id);
     $meses = [

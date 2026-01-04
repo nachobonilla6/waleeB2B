@@ -3048,6 +3048,64 @@ Route::post('/walee-facturas/generar-pdf', function (\Illuminate\Http\Request $r
     return $pdf->download('factura-' . ($data['numero_factura'] ?? 'temp') . '.pdf');
 })->middleware(['auth'])->name('walee.facturas.generar-pdf');
 
+// Descargar PDF de factura existente
+Route::get('/walee-facturas/{id}/pdf', function ($id) {
+    try {
+        $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->findOrFail($id);
+        
+        // Preparar datos para el PDF
+        $data = [
+            'numero_factura' => $factura->numero_factura,
+            'serie' => $factura->serie ?? 'A',
+            'fecha_emision' => $factura->fecha_emision->format('Y-m-d'),
+            'fecha_vencimiento' => $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : null,
+            'cliente_id' => $factura->cliente_id,
+            'correo' => $factura->correo,
+            'concepto' => $factura->concepto,
+            'subtotal' => $factura->subtotal ?? $factura->total,
+            'descuento_antes_impuestos' => $factura->descuento_antes_impuestos ?? 0,
+            'descuento_despues_impuestos' => $factura->descuento_despues_impuestos ?? 0,
+            'total' => $factura->total,
+            'monto_pagado' => $factura->monto_pagado ?? 0,
+            'estado' => $factura->estado,
+            'metodo_pago' => $factura->metodo_pago,
+            'concepto_pago' => $factura->concepto_pago,
+            'numero_orden' => $factura->numero_orden,
+            'notas' => $factura->notas,
+            'items_json' => json_encode($factura->items->map(function($item) {
+                return [
+                    'descripcion' => $item->descripcion,
+                    'cantidad' => $item->cantidad,
+                    'precio_unitario' => $item->precio_unitario,
+                    'subtotal' => $item->subtotal,
+                    'notas' => $item->notas ?? null,
+                ];
+            })->toArray()),
+            'pagos' => json_encode($factura->pagos->map(function($pago) {
+                return [
+                    'descripcion' => $pago->descripcion,
+                    'fecha' => $pago->fecha->format('Y-m-d'),
+                    'importe' => $pago->importe,
+                    'metodo_pago' => $pago->metodo_pago ?? null,
+                ];
+            })->toArray()),
+        ];
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'Arial',
+        ]);
+        
+        return $pdf->download('factura-' . $factura->numero_factura . '.pdf');
+    } catch (\Exception $e) {
+        \Log::error('Error generando PDF de factura: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Error al generar el PDF de la factura');
+    }
+})->middleware(['auth'])->name('walee.factura.pdf');
+
 // Enviar factura por email
 Route::post('/walee-facturas/{id}/enviar-email', function ($id, \Illuminate\Http\Request $request) {
     $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->findOrFail($id);

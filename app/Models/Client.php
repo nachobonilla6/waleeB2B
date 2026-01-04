@@ -13,6 +13,7 @@ class Client extends Model
         'foto',
         'email',
         'website',
+        'facebook',
         'address',
         'telefono_1',
         'horario',

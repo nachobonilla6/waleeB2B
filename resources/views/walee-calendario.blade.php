@@ -785,6 +785,7 @@
                             body: JSON.stringify({
                                 client_id: clienteId,
                                 titulo: citaModalData.titulo,
+                                tipo_cita: citaModalData.tipoCita || null,
                                 fecha_inicio: fechaInicio,
                                 fecha_fin: fechaFin,
                                 ubicacion: citaModalData.ubicacion || null,

@@ -92,10 +92,11 @@
             }
         }
         
-        /* Asegurar que el modal respete el tema dark/light */
+        /* Asegurar que el modal respete el tema dark/light con gradiente */
         html.dark .swal2-popup {
-            background-color: #1e293b !important;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
             color: #e2e8f0 !important;
+            border: 1px solid rgba(213, 159, 59, 0.2) !important;
         }
         
         html.dark .swal2-title {
@@ -113,7 +114,7 @@
         html.dark .swal2-html-container input,
         html.dark .swal2-html-container textarea,
         html.dark .swal2-html-container select {
-            background-color: #1e293b !important;
+            background-color: rgba(15, 23, 42, 0.6) !important;
             border-color: #475569 !important;
             color: #e2e8f0 !important;
         }
@@ -124,24 +125,34 @@
             border-color: #D59F3B !important;
             outline-color: #D59F3B !important;
             ring-color: #D59F3B !important;
+            background-color: rgba(15, 23, 42, 0.8) !important;
         }
         
-        /* Light mode */
+        /* Light mode con gradiente más oscuro */
         html:not(.dark) .swal2-popup {
-            background-color: #ffffff !important;
-            color: #1e293b !important;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+            color: #e2e8f0 !important;
+            border: 1px solid rgba(213, 159, 59, 0.3) !important;
         }
         
         html:not(.dark) .swal2-html-container label {
-            color: #334155 !important;
+            color: #cbd5e1 !important;
         }
         
         html:not(.dark) .swal2-html-container input,
         html:not(.dark) .swal2-html-container textarea,
         html:not(.dark) .swal2-html-container select {
-            background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #1e293b !important;
+            background-color: rgba(15, 23, 42, 0.5) !important;
+            border-color: #475569 !important;
+            color: #e2e8f0 !important;
+        }
+        
+        html:not(.dark) .swal2-html-container input:focus,
+        html:not(.dark) .swal2-html-container textarea:focus,
+        html:not(.dark) .swal2-html-container select:focus {
+            border-color: #D59F3B !important;
+            outline-color: #D59F3B !important;
+            background-color: rgba(15, 23, 42, 0.7) !important;
         }
     </style>
 </head>
@@ -984,15 +995,16 @@
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 didOpen: () => {
-                    // Aplicar tema dark/light al modal
+                    // Aplicar tema dark/light al modal con gradiente
                     const isDark = document.documentElement.classList.contains('dark');
                     const popup = document.querySelector('.swal2-popup');
                     const container = document.querySelector('.swal2-html-container');
                     
                     if (isDark) {
                         if (popup) {
-                            popup.style.backgroundColor = '#1e293b';
+                            popup.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)';
                             popup.style.color = '#e2e8f0';
+                            popup.style.border = '1px solid rgba(213, 159, 59, 0.2)';
                         }
                         if (container) {
                             container.style.color = '#e2e8f0';
@@ -1000,7 +1012,7 @@
                         // Aplicar estilos a inputs, textareas y selects
                         const inputs = container?.querySelectorAll('input, textarea, select');
                         inputs?.forEach(el => {
-                            el.style.backgroundColor = '#1e293b';
+                            el.style.backgroundColor = 'rgba(15, 23, 42, 0.6)';
                             el.style.borderColor = '#475569';
                             el.style.color = '#e2e8f0';
                         });
@@ -1011,23 +1023,24 @@
                         });
                     } else {
                         if (popup) {
-                            popup.style.backgroundColor = '#ffffff';
-                            popup.style.color = '#1e293b';
+                            popup.style.background = 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)';
+                            popup.style.color = '#e2e8f0';
+                            popup.style.border = '1px solid rgba(213, 159, 59, 0.3)';
                         }
                         if (container) {
-                            container.style.color = '#1e293b';
+                            container.style.color = '#e2e8f0';
                         }
                         // Aplicar estilos a inputs, textareas y selects
                         const inputs = container?.querySelectorAll('input, textarea, select');
                         inputs?.forEach(el => {
-                            el.style.backgroundColor = '#ffffff';
-                            el.style.borderColor = '#cbd5e1';
-                            el.style.color = '#1e293b';
+                            el.style.backgroundColor = 'rgba(15, 23, 42, 0.5)';
+                            el.style.borderColor = '#475569';
+                            el.style.color = '#e2e8f0';
                         });
                         // Aplicar estilos a labels
                         const labels = container?.querySelectorAll('label');
                         labels?.forEach(el => {
-                            el.style.color = '#334155';
+                            el.style.color = '#cbd5e1';
                         });
                     }
                     

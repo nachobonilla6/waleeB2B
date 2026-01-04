@@ -536,13 +536,14 @@
             Swal.fire({
                 title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
                 html: html,
-                width: isMobile ? '95%' : '600px',
+                width: isMobile ? '95%' : '800px',
                 padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#D59F3B',
                 cancelButtonColor: isDark ? '#475569' : '#6b7280',
+                reverseButtons: true,
                 background: isDark ? '#1e293b' : '#ffffff',
                 color: isDark ? '#e2e8f0' : '#1e293b',
                 customClass: {

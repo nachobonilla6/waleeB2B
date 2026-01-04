@@ -886,11 +886,19 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
                 'cliente_email' => $cliente ? ($cliente->correo ?? '') : '',
                 'tipo_publicidad' => $evento->tipo_publicidad ?? null,
                 'color' => $evento->color ?? '#8b5cf6',
-                // Agregar datos de configuración de Facebook del cliente
-                'page_id' => $pageId,
-                'token' => $token,
+                // Datos de configuración de Facebook del cliente (siempre enviar)
+                'page_id' => $pageId ?? null,
+                'token' => $token ?? null,
                 'webhook_url' => $webhookUrl,
             ];
+            
+            // Log para verificar que se están enviando page_id y token
+            \Log::info('Datos de configuración Facebook para webhook', [
+                'page_id' => $pageId ? 'enviado' : 'no configurado',
+                'token' => $token ? 'enviado' : 'no configurado',
+                'page_id_value' => $pageId ? substr($pageId, 0, 10) . '...' : null,
+                'token_value' => $token ? substr($token, 0, 10) . '...' : null,
+            ]);
             
             \Log::info('Enviando webhook de publicación programada', [
                 'webhook_url' => $webhookUrl,

@@ -81,55 +81,52 @@
         }
         
         /* Asegurar que el modal respete el tema dark/light */
-        .swal2-popup {
-            background-color: var(--swal2-background, #ffffff) !important;
-        }
-        
-        .dark .swal2-popup {
+        html.dark .swal2-popup {
             background-color: #1e293b !important;
             color: #e2e8f0 !important;
         }
         
-        .dark .swal2-title {
+        html.dark .swal2-title {
             color: #e2e8f0 !important;
         }
         
-        .dark .swal2-html-container {
+        html.dark .swal2-html-container {
             color: #e2e8f0 !important;
         }
         
-        .dark .swal2-html-container label {
+        html.dark .swal2-html-container label {
             color: #cbd5e1 !important;
         }
         
-        .dark .swal2-html-container input,
-        .dark .swal2-html-container textarea,
-        .dark .swal2-html-container select {
+        html.dark .swal2-html-container input,
+        html.dark .swal2-html-container textarea,
+        html.dark .swal2-html-container select {
             background-color: #1e293b !important;
             border-color: #475569 !important;
             color: #e2e8f0 !important;
         }
         
-        .dark .swal2-html-container input:focus,
-        .dark .swal2-html-container textarea:focus,
-        .dark .swal2-html-container select:focus {
+        html.dark .swal2-html-container input:focus,
+        html.dark .swal2-html-container textarea:focus,
+        html.dark .swal2-html-container select:focus {
             border-color: #D59F3B !important;
             outline-color: #D59F3B !important;
+            ring-color: #D59F3B !important;
         }
         
         /* Light mode */
-        .swal2-popup:not(.dark) {
+        html:not(.dark) .swal2-popup {
             background-color: #ffffff !important;
             color: #1e293b !important;
         }
         
-        .swal2-html-container:not(.dark) label {
+        html:not(.dark) .swal2-html-container label {
             color: #334155 !important;
         }
         
-        .swal2-html-container:not(.dark) input,
-        .swal2-html-container:not(.dark) textarea,
-        .swal2-html-container:not(.dark) select {
+        html:not(.dark) .swal2-html-container input,
+        html:not(.dark) .swal2-html-container textarea,
+        html:not(.dark) .swal2-html-container select {
             background-color: #ffffff !important;
             border-color: #cbd5e1 !important;
             color: #1e293b !important;
@@ -989,6 +986,53 @@
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 didOpen: () => {
+                    // Aplicar tema dark/light al modal
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const popup = document.querySelector('.swal2-popup');
+                    const container = document.querySelector('.swal2-html-container');
+                    
+                    if (isDark) {
+                        if (popup) {
+                            popup.style.backgroundColor = '#1e293b';
+                            popup.style.color = '#e2e8f0';
+                        }
+                        if (container) {
+                            container.style.color = '#e2e8f0';
+                        }
+                        // Aplicar estilos a inputs, textareas y selects
+                        const inputs = container?.querySelectorAll('input, textarea, select');
+                        inputs?.forEach(el => {
+                            el.style.backgroundColor = '#1e293b';
+                            el.style.borderColor = '#475569';
+                            el.style.color = '#e2e8f0';
+                        });
+                        // Aplicar estilos a labels
+                        const labels = container?.querySelectorAll('label');
+                        labels?.forEach(el => {
+                            el.style.color = '#cbd5e1';
+                        });
+                    } else {
+                        if (popup) {
+                            popup.style.backgroundColor = '#ffffff';
+                            popup.style.color = '#1e293b';
+                        }
+                        if (container) {
+                            container.style.color = '#1e293b';
+                        }
+                        // Aplicar estilos a inputs, textareas y selects
+                        const inputs = container?.querySelectorAll('input, textarea, select');
+                        inputs?.forEach(el => {
+                            el.style.backgroundColor = '#ffffff';
+                            el.style.borderColor = '#cbd5e1';
+                            el.style.color = '#1e293b';
+                        });
+                        // Aplicar estilos a labels
+                        const labels = container?.querySelectorAll('label');
+                        labels?.forEach(el => {
+                            el.style.color = '#334155';
+                        });
+                    }
+                    
                     document.getElementById('clientName')?.focus();
                 },
                 preConfirm: () => {

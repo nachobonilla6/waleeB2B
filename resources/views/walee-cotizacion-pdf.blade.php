@@ -182,6 +182,84 @@
             color: #6b7280;
             font-size: 9pt;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table thead {
+            background-color: #2563eb;
+            color: white;
+        }
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 10pt;
+            border: 1px solid #1e40af;
+        }
+        table th.text-center {
+            text-align: center;
+        }
+        table th.text-right {
+            text-align: right;
+        }
+        table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        table td {
+            padding: 10px 12px;
+            font-size: 10pt;
+            color: #374151;
+        }
+        table td.text-center {
+            text-align: center;
+        }
+        table td.text-right {
+            text-align: right;
+        }
+        .item-descripcion {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 3px;
+        }
+        .item-detalle {
+            font-size: 9pt;
+            color: #6b7280;
+            font-style: italic;
+        }
+        .totals-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .totals-table {
+            width: 300px;
+            background-color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 10pt;
+        }
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+        .totals-row.total {
+            font-weight: bold;
+            font-size: 12pt;
+            padding-top: 10px;
+            margin-top: 5px;
+            border-top: 2px solid #2563eb;
+        }
     </style>
 </head>
 <body>
@@ -245,7 +323,7 @@
     
     <!-- Información de la Cotización -->
     <div class="info-section">
-        <div class="info-title">Detalles de la Cotización</div>
+        <div class="info-title">Información General</div>
         <div class="info-row">
             <span class="info-label">Fecha:</span>
             <span class="info-value">{{ \Carbon\Carbon::parse($cotizacion->fecha)->format('d/m/Y') }}</span>
@@ -261,32 +339,58 @@
             </span>
         </div>
         <div class="info-row">
-            <span class="info-label">Tipo de Servicio:</span>
-            <span class="info-value">{{ $cotizacion->tipo_servicio }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">Plan:</span>
-            <span class="info-value">{{ $cotizacion->plan }}</span>
-        </div>
-        <div class="info-row">
             <span class="info-label">Vigencia:</span>
             <span class="info-value">{{ $cotizacion->vigencia }} días</span>
         </div>
     </div>
     
-    <!-- Monto Total -->
-    <div class="monto-total">
-        <div class="monto-label">Monto Total</div>
-        <div class="monto-value">₡{{ number_format($cotizacion->monto, 2) }}</div>
+    <!-- Tabla de Servicios -->
+    <table>
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Plan</th>
+                <th class="text-right">Precio Unitario</th>
+                <th class="text-right">Impuestos (13%)</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="item-descripcion">{{ $cotizacion->tipo_servicio }}</div>
+                    @if($cotizacion->descripcion)
+                        <div class="item-detalle">{{ $cotizacion->descripcion }}</div>
+                    @endif
+                </td>
+                <td>{{ $cotizacion->plan }}</td>
+                <td class="text-right">₡{{ number_format($cotizacion->monto / 1.13, 2, ',', ' ') }}</td>
+                <td class="text-right">₡{{ number_format($cotizacion->monto * 0.13 / 1.13, 2, ',', ' ') }}</td>
+                <td class="text-right">
+                    <strong>₡{{ number_format($cotizacion->monto, 2, ',', ' ') }}</strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- Totales -->
+    <div class="totals-section">
+        <div class="totals-table">
+            <div class="totals-row">
+                <span>Subtotal:</span>
+                <span><strong>₡{{ number_format($cotizacion->monto / 1.13, 2, ',', ' ') }}</strong></span>
+            </div>
+            <div class="totals-row">
+                <span>IVA (13%):</span>
+                <span><strong>₡{{ number_format($cotizacion->monto * 0.13 / 1.13, 2, ',', ' ') }}</strong></span>
+            </div>
+            <div class="totals-row total">
+                <span>Total:</span>
+                <span>₡{{ number_format($cotizacion->monto, 2, ',', ' ') }}</span>
+            </div>
+        </div>
     </div>
     
-    <!-- Descripción -->
-    @if($cotizacion->descripcion)
-    <div class="descripcion-section">
-        <div class="descripcion-title">Descripción</div>
-        <div class="descripcion-text">{{ $cotizacion->descripcion }}</div>
-    </div>
-    @endif
     
     <!-- Footer -->
     <div class="footer">

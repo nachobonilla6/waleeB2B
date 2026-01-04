@@ -234,11 +234,13 @@
             border-bottom: none;
         }
         .totals-row.total {
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 6px;
             font-weight: bold;
-            font-size: 12pt;
-            padding-top: 10px;
-            margin-top: 5px;
-            border-top: 2px solid #2563eb;
+            font-size: 14pt;
+            margin-top: 10px;
         }
     </style>
 </head>

@@ -94,20 +94,24 @@
         use App\Models\PublicidadEvento;
         use Carbon\Carbon;
         
-        // Estadísticas generales
-        $totalClientes = Client::count();
+        // Estadísticas generales (solo clientes activos)
+        $totalClientes = Client::where('estado', 'activo')->count();
         $clientesPending = Client::where('estado', 'pending')->count();
         $clientesPropuestaEnviada = Client::where('estado', 'propuesta_enviada')->count();
         $clientesActivos = Client::where('estado', 'activo')->count();
         
-        // Clientes nuevos
-        $clientesHoy = Client::whereDate('created_at', today())->count();
-        $clientesEsteMes = Client::whereMonth('created_at', now()->month)
+        // Clientes nuevos (solo activos)
+        $clientesHoy = Client::where('estado', 'activo')
+            ->whereDate('created_at', today())
+            ->count();
+        $clientesEsteMes = Client::where('estado', 'activo')
+            ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
         
-        // Clientes recientes (últimos 5)
-        $clientesRecientes = Client::orderBy('updated_at', 'desc')
+        // Clientes recientes (últimos 5, solo activos)
+        $clientesRecientes = Client::where('estado', 'activo')
+            ->orderBy('updated_at', 'desc')
             ->limit(5)
             ->get();
         
@@ -127,12 +131,16 @@
         
         foreach ($publicacionesData as $pubData) {
             $clientePlaneador = Cliente::find($pubData->cliente_id);
-            if ($clientePlaneador) {
-                // Buscar el cliente correspondiente en Client por email
-                $client = Client::where('email', $clientePlaneador->correo)->first();
+                if ($clientePlaneador) {
+                // Buscar el cliente correspondiente en Client por email (solo activos)
+                $client = Client::where('estado', 'activo')
+                    ->where('email', $clientePlaneador->correo)
+                    ->first();
                 if (!$client) {
-                    // Si no se encuentra por email, buscar por nombre
-                    $client = Client::where('name', 'like', '%' . $clientePlaneador->nombre_empresa . '%')->first();
+                    // Si no se encuentra por email, buscar por nombre (solo activos)
+                    $client = Client::where('estado', 'activo')
+                        ->where('name', 'like', '%' . $clientePlaneador->nombre_empresa . '%')
+                        ->first();
                 }
                 
                 if ($client) {
@@ -154,14 +162,16 @@
         // Limitar a los primeros 10
         $clientesConPublicaciones = array_slice($clientesConPublicaciones, 0, 10);
         
-        // Datos para gráfico de últimos 7 días
+        // Datos para gráfico de últimos 7 días (solo activos)
         $ultimos7Dias = [];
         $clientesPorDia = [];
         
         for ($i = 6; $i >= 0; $i--) {
             $fecha = now()->subDays($i);
             $ultimos7Dias[] = $fecha->format('d/m');
-            $clientesPorDia[] = Client::whereDate('created_at', $fecha->format('Y-m-d'))->count();
+            $clientesPorDia[] = Client::where('estado', 'activo')
+                ->whereDate('created_at', $fecha->format('Y-m-d'))
+                ->count();
         }
         
         // Clientes en proceso (pending y received) - Todos los tiempos

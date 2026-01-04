@@ -764,13 +764,13 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const fechaDefault = `${year}-${month}-${day}T${hours}:${minutes}`;
             
-            let modalWidth = '90%';
+            let modalWidth = '85%';
             if (isDesktop) {
-                modalWidth = '750px';
-            } else if (isTablet) {
                 modalWidth = '500px';
+            } else if (isTablet) {
+                modalWidth = '450px';
             } else if (isMobile) {
-                modalWidth = '90%';
+                modalWidth = '85%';
             }
             
             const html = `

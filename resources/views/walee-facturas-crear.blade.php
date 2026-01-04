@@ -1029,7 +1029,7 @@
         };
         
         let currentPhase = 1;
-        const totalPhases = 6;
+        const totalPhases = 9;
         
         // Detectar modo oscuro
         function isDarkMode() {
@@ -1119,7 +1119,7 @@
             });
         }
         
-        // FASE 2: Información de Factura
+        // FASE 2: Información Básica de Factura
         function mostrarFase2() {
             const html = `
                 <div class="text-left space-y-4">
@@ -1162,7 +1162,7 @@
             `;
             
             Swal.fire({
-                title: 'Fase 2: Información de Factura',
+                title: 'Fase 2: Información Básica de Factura',
                 html: html,
                 width: '600px',
                 showCancelButton: true,
@@ -1312,7 +1312,7 @@
             });
         }
         
-        // FASE 4: Resumen y Totales
+        // FASE 4: Descuentos e Impuestos
         function mostrarFase4() {
             calcularTotalesModal();
             
@@ -1324,27 +1324,31 @@
                         </div>
                         <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Orden</label>
-                        <input type="text" id="modal_numero_orden" value="${facturaData.numero_orden}" placeholder="Ej: 1_191125 cliente" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-3">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Subtotal</label>
+                                <p class="text-lg font-bold text-slate-900 dark:text-white">₡${facturaData.subtotal.toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">IVA (13%)</label>
+                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">₡${facturaData.iva.toFixed(2)}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Subtotal</label>
-                            <input type="number" step="0.01" id="modal_subtotal" value="${facturaData.subtotal.toFixed(2)}" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Antes Impuestos</label>
                             <input type="number" step="0.01" id="modal_descuento_antes" value="${facturaData.descuento_antes_impuestos}" oninput="calcularTotalesModal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">IVA (13%)</label>
-                            <input type="number" step="0.01" id="modal_iva" value="${facturaData.iva.toFixed(2)}" readonly class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Descuento aplicado antes de calcular el IVA</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Después Impuestos</label>
                             <input type="number" step="0.01" id="modal_descuento_despues" value="${facturaData.descuento_despues_impuestos}" oninput="calcularTotalesModal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Descuento aplicado después del IVA</p>
                         </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Monto Pagado</label>
                             <input type="number" step="0.01" id="modal_monto_pagado" value="${facturaData.monto_pagado}" oninput="calcularTotalesModal()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
@@ -1354,33 +1358,11 @@
                             <input type="number" step="0.01" id="modal_total" value="${facturaData.total.toFixed(2)}" readonly class="w-full px-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 rounded-lg text-sm font-bold text-emerald-700 dark:text-emerald-400">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Método de Pago</label>
-                            <select id="modal_metodo_pago" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
-                                <option value="">Sin especificar</option>
-                                <option value="transferencia">Transferencia Bancaria</option>
-                                <option value="efectivo">Efectivo</option>
-                                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                                <option value="sinpe">SINPE Móvil</option>
-                                <option value="paypal">PayPal</option>
-                                <option value="otro">Otro</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto de Pago</label>
-                            <input type="text" id="modal_concepto_pago" value="${facturaData.concepto_pago}" placeholder="Ej: Pago inicial..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto General <span class="text-red-500">*</span></label>
-                        <textarea id="modal_concepto" rows="2" placeholder="Descripción general..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">${facturaData.concepto}</textarea>
-                    </div>
                 </div>
             `;
             
             Swal.fire({
-                title: 'Fase 4: Resumen y Totales',
+                title: 'Fase 4: Descuentos e Impuestos',
                 html: html,
                 width: '700px',
                 showCancelButton: true,
@@ -1409,24 +1391,12 @@
                         facturaData.monto_pagado = montoPagado;
                         facturaData.saldo_pendiente = saldoPendiente;
                         
-                        if (document.getElementById('modal_subtotal')) {
-                            document.getElementById('modal_subtotal').value = subtotal.toFixed(2);
-                            document.getElementById('modal_iva').value = iva.toFixed(2);
+                        if (document.getElementById('modal_total')) {
                             document.getElementById('modal_total').value = total.toFixed(2);
                         }
                     };
                 },
                 preConfirm: () => {
-                    const concepto = document.getElementById('modal_concepto').value.trim();
-                    if (!concepto) {
-                        Swal.showValidationMessage('El concepto general es requerido');
-                        return false;
-                    }
-                    
-                    facturaData.numero_orden = document.getElementById('modal_numero_orden').value;
-                    facturaData.metodo_pago = document.getElementById('modal_metodo_pago').value;
-                    facturaData.concepto_pago = document.getElementById('modal_concepto_pago').value;
-                    facturaData.concepto = concepto;
                     calcularTotalesModal();
                     return true;
                 }
@@ -1441,8 +1411,122 @@
             });
         }
         
-        // FASE 5: Pagos Recibidos
+        // FASE 5: Método de Pago y Concepto de Pago
         function mostrarFase5() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Método de Pago</label>
+                            <select id="modal_metodo_pago" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                <option value="">Sin especificar</option>
+                                <option value="transferencia" ${facturaData.metodo_pago === 'transferencia' ? 'selected' : ''}>Transferencia Bancaria</option>
+                                <option value="efectivo" ${facturaData.metodo_pago === 'efectivo' ? 'selected' : ''}>Efectivo</option>
+                                <option value="tarjeta" ${facturaData.metodo_pago === 'tarjeta' ? 'selected' : ''}>Tarjeta de Crédito/Débito</option>
+                                <option value="sinpe" ${facturaData.metodo_pago === 'sinpe' ? 'selected' : ''}>SINPE Móvil</option>
+                                <option value="paypal" ${facturaData.metodo_pago === 'paypal' ? 'selected' : ''}>PayPal</option>
+                                <option value="otro" ${facturaData.metodo_pago === 'otro' ? 'selected' : ''}>Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto de Pago</label>
+                            <input type="text" id="modal_concepto_pago" value="${facturaData.concepto_pago}" placeholder="Ej: Pago inicial, Pago final..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 5: Método de Pago',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    facturaData.metodo_pago = document.getElementById('modal_metodo_pago').value;
+                    facturaData.concepto_pago = document.getElementById('modal_concepto_pago').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 6;
+                    mostrarFase6();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 4;
+                    mostrarFase4();
+                }
+            });
+        }
+        
+        // FASE 6: Concepto General y Número de Orden
+        function mostrarFase6() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto General <span class="text-red-500">*</span></label>
+                        <textarea id="modal_concepto" rows="4" placeholder="Descripción general de la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">${facturaData.concepto}</textarea>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Describe los servicios o productos facturados</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Orden</label>
+                        <input type="text" id="modal_numero_orden" value="${facturaData.numero_orden}" placeholder="Ej: 1_191125 cliente" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Número de orden o referencia opcional</p>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 6: Concepto y Referencias',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const concepto = document.getElementById('modal_concepto').value.trim();
+                    if (!concepto) {
+                        Swal.showValidationMessage('El concepto general es requerido');
+                        return false;
+                    }
+                    
+                    facturaData.concepto = concepto;
+                    facturaData.numero_orden = document.getElementById('modal_numero_orden').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 7;
+                    mostrarFase7();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 5;
+                    mostrarFase5();
+                }
+            });
+        }
+        
+        // FASE 7: Pagos Recibidos
+        function mostrarFase7() {
             let pagosHtml = '';
             if (facturaData.pagos.length === 0) {
                 pagosHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay pagos agregados</p>';
@@ -1496,7 +1580,7 @@
             `;
             
             Swal.fire({
-                title: 'Fase 5: Pagos Recibidos',
+                title: 'Fase 7: Pagos Recibidos',
                 html: html,
                 width: '700px',
                 showCancelButton: true,
@@ -1509,7 +1593,7 @@
                 didOpen: () => {
                     window.eliminarPagoModal = function(index) {
                         facturaData.pagos.splice(index, 1);
-                        mostrarFase5();
+                        mostrarFase7();
                     };
                     window.agregarPagoModal = function() {
                         const descripcion = document.getElementById('modal_pago_descripcion').value.trim();
@@ -1533,22 +1617,22 @@
                         document.getElementById('modal_pago_importe').value = '';
                         document.getElementById('modal_pago_metodo').value = '';
                         
-                        mostrarFase5();
+                        mostrarFase7();
                     };
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    currentPhase = 8;
+                    mostrarFase8();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
                     currentPhase = 6;
                     mostrarFase6();
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    currentPhase = 4;
-                    mostrarFase4();
                 }
             });
         }
         
-        // FASE 6: Notas y Archivos (Final)
-        function mostrarFase6() {
+        // FASE 8: Notas y Archivos
+        function mostrarFase8() {
             const html = `
                 <div class="text-left space-y-4">
                     <div class="flex items-center gap-2 mb-4">
@@ -1566,20 +1650,105 @@
                         <input type="file" id="modal_archivos" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
                         <p class="mt-1 text-xs text-slate-500">Formatos: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
-                        <h3 class="text-sm font-semibold mb-2">Resumen</h3>
-                        <div class="text-xs space-y-1">
-                            <p>Cliente: ${document.querySelector(`#modal_cliente_id option[value="${facturaData.cliente_id}"]`)?.text || 'N/A'}</p>
-                            <p>Total: ₡${facturaData.total.toLocaleString()}</p>
-                            <p>Items: ${facturaData.items.length}</p>
-                            <p>Pagos: ${facturaData.pagos.length}</p>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 8: Notas y Archivos',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    facturaData.notas = document.getElementById('modal_notas').value;
+                    const archivosInput = document.getElementById('modal_archivos');
+                    if (archivosInput.files.length > 0) {
+                        facturaData.archivos = archivosInput.files;
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 9;
+                    mostrarFase9();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 7;
+                    mostrarFase7();
+                }
+            });
+        }
+        
+        // FASE 9: Resumen Final y Confirmación
+        function mostrarFase9() {
+            calcularTotalesModal();
+            const clienteNombre = document.querySelector(`#modal_cliente_id option[value="${facturaData.cliente_id}"]`)?.text || 'N/A';
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
                         </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 rounded-lg p-4">
+                        <h3 class="text-base font-bold text-emerald-700 dark:text-emerald-400 mb-3">Resumen de la Factura</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Cliente:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${clienteNombre}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Número de Factura:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.numero_factura}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Fecha de Emisión:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.fecha_emision}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Items:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.items.length}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Subtotal:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">₡${facturaData.subtotal.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">IVA (13%):</span>
+                                <span class="font-medium text-slate-900 dark:text-white">₡${facturaData.iva.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between border-t border-emerald-300 dark:border-emerald-500/30 pt-2 mt-2">
+                                <span class="text-base font-bold text-slate-900 dark:text-white">Total:</span>
+                                <span class="text-lg font-bold text-emerald-700 dark:text-emerald-400">₡${facturaData.total.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Monto Pagado:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">₡${facturaData.monto_pagado.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Saldo Pendiente:</span>
+                                <span class="font-medium text-red-600 dark:text-red-400">₡${facturaData.saldo_pendiente.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Pagos Registrados:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.pagos.length}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg p-3">
+                        <p class="text-xs text-blue-700 dark:text-blue-300"><strong>Concepto:</strong> ${facturaData.concepto || 'Sin concepto'}</p>
                     </div>
                 </div>
             `;
             
             Swal.fire({
-                title: 'Fase 6: Notas y Archivos',
+                title: 'Fase 9: Resumen Final',
                 html: html,
                 width: '700px',
                 showCancelButton: true,
@@ -1590,12 +1759,6 @@
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 preConfirm: async () => {
-                    facturaData.notas = document.getElementById('modal_notas').value;
-                    const archivosInput = document.getElementById('modal_archivos');
-                    if (archivosInput.files.length > 0) {
-                        facturaData.archivos = archivosInput.files;
-                    }
-                    
                     // Enviar factura
                     Swal.fire({
                         title: 'Creando factura...',
@@ -1687,8 +1850,8 @@
                 }
             }).then((result) => {
                 if (result.dismiss === Swal.DismissReason.cancel) {
-                    currentPhase = 5;
-                    mostrarFase5();
+                    currentPhase = 8;
+                    mostrarFase8();
                 }
             });
         }

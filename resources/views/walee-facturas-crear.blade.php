@@ -2374,6 +2374,58 @@
             }
         }
         
+        // Ver PDF de factura en modal
+        function verPDFFactura(facturaId) {
+            const pdfUrl = `/walee-facturas/${facturaId}/pdf`;
+            
+            Swal.fire({
+                title: 'Factura PDF',
+                html: `
+                    <div style="width: 100%; height: 80vh;">
+                        <iframe src="${pdfUrl}" style="width: 100%; height: 100%; border: none;"></iframe>
+                    </div>
+                `,
+                width: '90%',
+                maxWidth: '1200px',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#7c3aed',
+                showCloseButton: false,
+                allowOutsideClick: true,
+                allowEscapeKey: true,
+                customClass: {
+                    popup: 'z-[9999] relative',
+                    container: 'z-[9999]',
+                },
+                didOpen: () => {
+                    // Asegurar que el modal esté encima de todo
+                    const popup = document.querySelector('.swal2-popup');
+                    if (popup) {
+                        popup.style.zIndex = '9999';
+                        popup.style.position = 'relative';
+                        
+                        // Crear y agregar botón X en la esquina superior derecha del popup
+                        const closeButton = document.createElement('button');
+                        closeButton.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        `;
+                        closeButton.className = 'absolute -top-3 -right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-[10000] transition-all hover:scale-110 cursor-pointer';
+                        closeButton.style.zIndex = '10000';
+                        closeButton.onclick = () => Swal.close();
+                        popup.appendChild(closeButton);
+                    }
+                    const container = document.querySelector('.swal2-container');
+                    if (container) {
+                        container.style.zIndex = '9999';
+                    }
+                },
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+            });
+        }
+        
         // Inicializar
         cargarPaquetes();
     </script>

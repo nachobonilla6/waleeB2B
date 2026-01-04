@@ -191,23 +191,23 @@
             <div class="mb-6 animate-fade-in-up">
                 <!-- Cliente Info Card -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none mb-4">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
-                                <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
+                            <div class="min-w-0 flex-1">
+                                <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white truncate">
                                     {{ $clientInfo->nombre_empresa ?? $clientInfo->name ?? 'Cliente' }}
                                 </h2>
-                                <p class="text-sm text-slate-600 dark:text-slate-400">
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                                     {{ $clientInfo->correo ?? $clientInfo->email ?? '' }}
                                 </p>
                             </div>
                         </div>
-                        <button onclick="abrirModalFactura()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                        <button onclick="abrirModalFactura()" class="w-full sm:w-auto px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
@@ -258,11 +258,11 @@
                     
                     <div id="facturasListContainer" class="space-y-2 max-h-96 overflow-y-auto">
                         @foreach($facturasCliente as $factura)
-                        <div class="factura-item bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 hover:border-violet-400 dark:hover:border-violet-500/30 transition-all" 
+                        <div class="factura-item bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 sm:p-4 hover:border-violet-400 dark:hover:border-violet-500/30 transition-all" 
                              data-search="{{ strtolower($factura->numero_factura ?? '') }} {{ strtolower($factura->concepto ?? '') }}">
-                            <div class="flex items-center justify-between">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2 mb-1">
+                                    <div class="flex flex-wrap items-center gap-2 mb-2">
                                         <span class="text-xs font-mono text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-400/10 px-2 py-0.5 rounded">
                                             #{{ $factura->numero_factura }}
                                         </span>
@@ -271,7 +271,7 @@
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                             </svg>
-                                            Enviada {{ \Carbon\Carbon::parse($factura->enviada_at)->format('d/m/Y') }}
+                                            <span class="hidden sm:inline">Enviada </span>{{ \Carbon\Carbon::parse($factura->enviada_at)->format('d/m/Y') }}
                                         </span>
                                         @else
                                         <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">No enviada</span>
@@ -282,29 +282,33 @@
                                         <span class="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-400/10 px-2 py-0.5 rounded">Vencida</span>
                                         @endif
                                     </div>
-                                    <p class="text-sm text-slate-700 dark:text-slate-300 truncate mb-1">
-                                        {{ Str::limit($factura->concepto, 50) }}
+                                    <p class="text-sm text-slate-700 dark:text-slate-300 mb-2 line-clamp-2">
+                                        {{ $factura->concepto }}
                                     </p>
-                                    <div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs text-slate-500 dark:text-slate-400">
                                         <span>{{ \Carbon\Carbon::parse($factura->fecha_emision)->format('d/m/Y') }}</span>
-                                        <span class="font-semibold text-slate-900 dark:text-white">₡{{ number_format($factura->total, 2) }}</span>
+                                        <span class="font-semibold text-slate-900 dark:text-white text-sm">₡{{ number_format($factura->total, 2) }}</span>
                                     </div>
                                 </div>
-                                <div class="ml-3 flex gap-2">
-                                    <button onclick="verFacturaModal({{ $factura->id }})" class="px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all">
-                                        Ver
+                                <div class="flex flex-wrap gap-2 sm:ml-3 sm:flex-nowrap">
+                                    <button onclick="verFacturaModal({{ $factura->id }})" class="flex-1 sm:flex-none px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 min-w-[80px]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        <span>Ver</span>
                                     </button>
-                                    <button onclick="verPDFFactura({{ $factura->id }})" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button onclick="verPDFFactura({{ $factura->id }})" class="flex-1 sm:flex-none px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 min-w-[80px]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                         </svg>
-                                        PDF
+                                        <span>PDF</span>
                                     </button>
-                                    <button onclick="enviarFacturaEmail({{ $factura->id }}, '{{ $factura->correo }}', {{ $factura->enviada_at ? 'true' : 'false' }})" class="px-3 py-1.5 {{ $factura->enviada_at ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500' }} text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button onclick="enviarFacturaEmail({{ $factura->id }}, '{{ $factura->correo }}', {{ $factura->enviada_at ? 'true' : 'false' }})" class="flex-1 sm:flex-none px-3 py-2 {{ $factura->enviada_at ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500' }} text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 min-w-[100px]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
-                                        {{ $factura->enviada_at ? 'Reenviar' : 'Enviar' }}
+                                        <span>{{ $factura->enviada_at ? 'Reenviar' : 'Enviar' }}</span>
                                     </button>
                                 </div>
                             </div>

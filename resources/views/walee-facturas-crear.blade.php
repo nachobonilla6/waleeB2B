@@ -2382,6 +2382,13 @@
         function verPDFFactura(facturaId) {
             const pdfUrl = `/walee-facturas/${facturaId}/pdf`;
             
+            // En móvil, abrir directamente en la misma pestaña
+            const isMobile = window.innerWidth < 640; // sm breakpoint de Tailwind
+            if (isMobile) {
+                window.location.href = pdfUrl;
+                return;
+            }
+            
             Swal.fire({
                 title: '',
                 html: `

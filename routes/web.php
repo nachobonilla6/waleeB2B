@@ -1034,6 +1034,20 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
             ]);
         }
         
+        // Obtener link de Facebook del cliente
+        $facebookLink = null;
+        if ($evento->cliente) {
+            $cliente = $evento->cliente;
+            // Buscar el Client correspondiente (de clientes_en_proceso)
+            $client = \App\Models\Client::where('email', $cliente->correo)
+                ->orWhere('name', 'like', '%' . $cliente->nombre_empresa . '%')
+                ->first();
+            
+            if ($client && $client->facebook) {
+                $facebookLink = $client->facebook;
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'evento' => [
@@ -1046,6 +1060,8 @@ Route::get('/publicidad-eventos/{id}', function ($id) {
                 'estado' => $evento->estado,
                 'imagen_url' => $imagenUrl ?: $evento->imagen_url, // Usar URL completa si existe, sino la ruta relativa
                 'descripcion' => $evento->descripcion,
+                'prompt_personalizado' => $evento->prompt_personalizado ?? null,
+                'facebook_link' => $facebookLink,
             ]
         ]);
     } catch (\Exception $e) {

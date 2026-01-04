@@ -295,13 +295,10 @@
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
-                                    <select onchange="updateClientStatus(this.value)" class="w-full sm:w-auto px-3 py-1.5 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-600 dark:border-emerald-500/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                                        <option value="pending" {{ $cliente->estado === 'pending' ? 'selected' : '' }}>Pendiente</option>
-                                        <option value="received" {{ $cliente->estado === 'received' ? 'selected' : '' }}>Recibido</option>
-                                        <option value="propuesta_enviada" {{ $cliente->estado === 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
-                                        <option value="activo" {{ $cliente->estado === 'activo' ? 'selected' : '' }}>Activo</option>
-                                        <option value="accepted" {{ $cliente->estado === 'accepted' ? 'selected' : '' }}>Aceptado</option>
-                                    </select>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                        {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                    </span>
                                 </div>
                             </div>
                 </div>
@@ -440,13 +437,10 @@
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
-                                        <select onchange="updateClientStatus(this.value)" class="w-full sm:w-auto px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-600 dark:border-emerald-500/30 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                                            <option value="pending" {{ $cliente->estado === 'pending' ? 'selected' : '' }}>Pendiente</option>
-                                            <option value="received" {{ $cliente->estado === 'received' ? 'selected' : '' }}>Recibido</option>
-                                            <option value="propuesta_enviada" {{ $cliente->estado === 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
-                                            <option value="activo" {{ $cliente->estado === 'activo' ? 'selected' : '' }}>Activo</option>
-                                            <option value="accepted" {{ $cliente->estado === 'accepted' ? 'selected' : '' }}>Aceptado</option>
-                                        </select>
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
+                                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

@@ -280,7 +280,7 @@
                     </div>
                 </div>
                 
-                <!-- Estado Received - Faltan -->
+                <!-- Estado Received - En cola -->
                 <div class="stat-card bg-gradient-to-br from-walee-50 to-walee-100/50 dark:from-walee-500/10 dark:to-walee-600/5 border border-walee-200 dark:border-walee-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
                         <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-walee-500/20 dark:bg-walee-500/10 flex items-center justify-center">
@@ -290,11 +290,8 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Faltan</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">En cola</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesReceived) }}</p>
-                    </div>
-                    <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                        <span class="text-walee-600 dark:text-walee-400 font-medium">{{ $porcentajeEnvio }}% de envío hoy ({{ $clientesPendingHoy }}/{{ $totalMarcadosHoy }})</span>
                     </div>
                 </div>
             </div>

@@ -261,12 +261,13 @@
                     <span class="hidden sm:inline">Editar</span>
                 </button>
                 
-                <button onclick="changeClientStatus()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span class="hidden sm:inline">Cambiar Estado</span>
-                </button>
+                <select onchange="updateClientStatus(this.value)" class="flex-1 sm:flex-initial px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md border-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-walee-400 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M6%209l3%203%203-3H6z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px] bg-[right_0.75rem_center] bg-no-repeat pr-8 sm:pr-10">
+                    <option value="pending" {{ $cliente->estado === 'pending' ? 'selected' : '' }}>Pendiente</option>
+                    <option value="received" {{ $cliente->estado === 'received' ? 'selected' : '' }}>Recibido</option>
+                    <option value="propuesta_enviada" {{ $cliente->estado === 'propuesta_enviada' ? 'selected' : '' }}>Propuesta Enviada</option>
+                    <option value="activo" {{ $cliente->estado === 'activo' ? 'selected' : '' }}>Activo</option>
+                    <option value="accepted" {{ $cliente->estado === 'accepted' ? 'selected' : '' }}>Aceptado</option>
+                </select>
                 
                 <button onclick="deleteClient()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium text-sm sm:text-base transition-all shadow-sm hover:shadow-md">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1292,65 +1293,7 @@
             }
         }
         
-        // Función para cambiar estado del cliente
-        function changeClientStatus() {
-            const isDarkMode = document.documentElement.classList.contains('dark');
-            const currentStatus = @json($cliente->estado ?? 'pending');
-            
-            const statusOptions = [
-                { value: 'pending', label: 'Pendiente' },
-                { value: 'received', label: 'Recibido' },
-                { value: 'propuesta_enviada', label: 'Propuesta Enviada' },
-                { value: 'activo', label: 'Activo' },
-                { value: 'accepted', label: 'Aceptado' }
-            ];
-            
-            const statusHtml = statusOptions.map(status => {
-                const isSelected = status.value === currentStatus;
-                return `
-                    <button type="button" onclick="selectStatus('${status.value}')" 
-                            class="w-full text-left px-4 py-2 rounded-lg transition-all ${isSelected ? 'bg-walee-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700'}">
-                        ${status.label}
-                    </button>
-                `;
-            }).join('');
-            
-            Swal.fire({
-                title: 'Cambiar Estado',
-                html: `<div class="space-y-2" id="statusOptions">${statusHtml}</div>`,
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#D59F3B',
-                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                didOpen: () => {
-                    window.selectedStatus = currentStatus;
-                },
-                preConfirm: () => {
-                    return window.selectedStatus || currentStatus;
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    updateClientStatus(result.value);
-                }
-            });
-        }
-        
-        function selectStatus(status) {
-            window.selectedStatus = status;
-            const buttons = document.querySelectorAll('#statusOptions button');
-            buttons.forEach(btn => {
-                const btnStatus = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-                if (btnStatus === status) {
-                    btn.className = 'w-full text-left px-4 py-2 rounded-lg transition-all bg-walee-500 text-white';
-                } else {
-                    btn.className = 'w-full text-left px-4 py-2 rounded-lg transition-all bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700';
-                }
-            });
-        }
-        
+        // Función para actualizar estado del cliente
         async function updateClientStatus(newStatus) {
             try {
                 const response = await fetch('{{ route("walee.cliente.actualizar", $cliente->id) }}', {

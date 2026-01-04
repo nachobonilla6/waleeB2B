@@ -1266,16 +1266,16 @@
                         modalWidth = '85%';
                     }
                     
-                    // Layout igual que Crear Publicación: Imagen arriba, Prompt y Texto abajo juntos
+                    // Layout igual que Crear Publicación: Estado y Hora arriba, Imagen, Prompt y Texto abajo
                     const html = `
                         <div class="space-y-2.5 text-left">
-                            ${imagenHTML ? imagenHTML : ''}
-                            
-                            <!-- Estado y Hora arriba -->
+                            <!-- Estado y Hora arriba de la imagen -->
                             <div class="flex items-center gap-2">
                                 ${estadoBadge}
                                 ${horaFormateada ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${horaFormateada}</span>` : ''}
                             </div>
+                            
+                            ${imagenHTML ? imagenHTML : ''}
                             
                             <!-- Prompt y Texto en la misma línea -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">

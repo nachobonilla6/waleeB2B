@@ -1936,6 +1936,8 @@
                     Swal.fire({
                         title: 'Creando factura...',
                         allowOutsideClick: false,
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                         didOpen: () => {
                             Swal.showLoading();
                         }
@@ -2009,7 +2011,9 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: data.message || 'Error al crear factura',
-                                confirmButtonColor: '#ef4444'
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                             });
                         }
                     } catch (error) {
@@ -2017,7 +2021,9 @@
                             icon: 'error',
                             title: 'Error de Conexión',
                             text: error.message,
-                            confirmButtonColor: '#ef4444'
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode() ? '#1e293b' : '#ffffff',
+                            color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                         });
                     }
                 }
@@ -2071,6 +2077,8 @@
                 Swal.fire({
                     title: 'Cargando factura...',
                     allowOutsideClick: false,
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                     didOpen: () => {
                         Swal.showLoading();
                     }
@@ -2265,7 +2273,9 @@
                     icon: 'error',
                     title: 'Error',
                     text: 'No se pudo cargar la factura. Por favor, intente nuevamente.',
-                    confirmButtonColor: '#ef4444'
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });
             }
         }
@@ -2277,7 +2287,9 @@
                     icon: 'warning',
                     title: 'Sin correo',
                     text: 'Esta factura no tiene correo electrónico asociado.',
-                    confirmButtonColor: '#7c3aed'
+                    confirmButtonColor: '#7c3aed',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });
                 return;
             }
@@ -2296,6 +2308,8 @@
                 confirmButtonColor: yaEnviada ? '#2563eb' : '#10b981',
                 cancelButtonColor: '#6b7280',
                 reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
             });
             
             if (!result.isConfirmed) return;
@@ -2305,6 +2319,8 @@
                     title: 'Enviando factura...',
                     text: 'Por favor espere',
                     allowOutsideClick: false,
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                     didOpen: () => {
                         Swal.showLoading();
                     }
@@ -2327,7 +2343,9 @@
                         text: data.message || 'La factura ha sido enviada por email correctamente.',
                         confirmButtonColor: '#10b981',
                         timer: 3000,
-                        timerProgressBar: true
+                        timerProgressBar: true,
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                     }).then(() => {
                         // Recargar la página para actualizar el estado
                         window.location.reload();
@@ -2341,7 +2359,9 @@
                     icon: 'error',
                     title: 'Error',
                     text: error.message || 'No se pudo enviar la factura. Por favor, intente nuevamente.',
-                    confirmButtonColor: '#ef4444'
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });
             }
         }

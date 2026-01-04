@@ -633,25 +633,21 @@
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo de Cita</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título <span class="text-red-500">*</span></label>
                         <select id="cita_tipo" 
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                            <option value="">Seleccionar tipo...</option>
-                            <option value="consulta" ${citaModalData.tipoCita === 'consulta' ? 'selected' : ''}>Consulta</option>
-                            <option value="reunion" ${citaModalData.tipoCita === 'reunion' ? 'selected' : ''}>Reunión</option>
-                            <option value="seguimiento" ${citaModalData.tipoCita === 'seguimiento' ? 'selected' : ''}>Seguimiento</option>
-                            <option value="presentacion" ${citaModalData.tipoCita === 'presentacion' ? 'selected' : ''}>Presentación</option>
-                            <option value="llamada" ${citaModalData.tipoCita === 'llamada' ? 'selected' : ''}>Llamada</option>
-                            <option value="visita" ${citaModalData.tipoCita === 'visita' ? 'selected' : ''}>Visita</option>
-                            <option value="capacitacion" ${citaModalData.tipoCita === 'capacitacion' ? 'selected' : ''}>Capacitación</option>
-                            <option value="otro" ${citaModalData.tipoCita === 'otro' ? 'selected' : ''}>Otro</option>
+                            <option value="">Seleccionar título...</option>
+                            <option value="Consulta" ${citaModalData.titulo === 'Consulta' ? 'selected' : ''}>Consulta</option>
+                            <option value="Reunión" ${citaModalData.titulo === 'Reunión' ? 'selected' : ''}>Reunión</option>
+                            <option value="Seguimiento" ${citaModalData.titulo === 'Seguimiento' ? 'selected' : ''}>Seguimiento</option>
+                            <option value="Presentación" ${citaModalData.titulo === 'Presentación' ? 'selected' : ''}>Presentación</option>
+                            <option value="Llamada" ${citaModalData.titulo === 'Llamada' ? 'selected' : ''}>Llamada</option>
+                            <option value="Visita" ${citaModalData.titulo === 'Visita' ? 'selected' : ''}>Visita</option>
+                            <option value="Capacitación" ${citaModalData.titulo === 'Capacitación' ? 'selected' : ''}>Capacitación</option>
+                            <option value="Otro" ${citaModalData.titulo === 'Otro' ? 'selected' : ''}>Otro</option>
                         </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título <span class="text-red-500">*</span></label>
-                        <input type="text" id="cita_titulo" value="${citaModalData.titulo}" required placeholder="Ej: Reunión de seguimiento"
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                        <input type="text" id="cita_titulo" value="${citaModalData.titulo}" required placeholder="O escribir título personalizado..."
+                            class="mt-2 w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
                     </div>
                     
                     <div>
@@ -682,8 +678,18 @@
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
+                didOpen: () => {
+                    // Autocompletar título cuando se selecciona un tipo
+                    const tipoSelect = document.getElementById('cita_tipo');
+                    const tituloInput = document.getElementById('cita_titulo');
+                    
+                    tipoSelect.addEventListener('change', function() {
+                        if (this.value) {
+                            tituloInput.value = this.value;
+                        }
+                    });
+                },
                 preConfirm: () => {
-                    const tipoCita = document.getElementById('cita_tipo').value;
                     const titulo = document.getElementById('cita_titulo').value;
                     const descripcion = document.getElementById('cita_descripcion').value;
                     
@@ -692,7 +698,6 @@
                         return false;
                     }
                     
-                    citaModalData.tipoCita = tipoCita;
                     citaModalData.titulo = titulo;
                     citaModalData.descripcion = descripcion;
                     return true;

@@ -3049,6 +3049,24 @@ Route::post('/walee-facturas/generar-pdf', function (\Illuminate\Http\Request $r
 })->middleware(['auth'])->name('walee.facturas.generar-pdf');
 
 // Descargar PDF de factura existente
+Route::delete('/walee-facturas/{id}/eliminar', function ($id) {
+    try {
+        $factura = \App\Models\Factura::findOrFail($id);
+        $numeroFactura = $factura->numero_factura;
+        $factura->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Factura eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.facturas.eliminar');
+
 Route::get('/walee-facturas/{id}/pdf', function ($id) {
     try {
         $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->findOrFail($id);

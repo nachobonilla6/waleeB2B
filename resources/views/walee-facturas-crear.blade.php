@@ -290,21 +290,27 @@
                                         <span class="font-semibold text-slate-900 dark:text-white text-sm">₡{{ number_format($factura->total, 2) }}</span>
                                     </div>
                                 </div>
-                                <div class="flex flex-wrap gap-2 sm:ml-3 sm:flex-nowrap">
-                                    <button onclick="verFacturaModal({{ $factura->id }})" class="flex-1 sm:flex-none px-2.5 sm:px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1 sm:gap-1.5 min-w-[70px] sm:min-w-[80px]">
+                                <div class="grid grid-cols-4 gap-1.5 sm:flex sm:flex-nowrap sm:gap-2 sm:ml-3">
+                                    <button onclick="eliminarFactura({{ $factura->id }}, '{{ $factura->numero_factura }}')" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
+                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        <span class="hidden xs:inline">Eliminar</span>
+                                    </button>
+                                    <button onclick="verFacturaModal({{ $factura->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
                                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
                                         <span class="hidden xs:inline">Ver</span>
                                     </button>
-                                    <button onclick="verPDFFactura({{ $factura->id }})" class="flex-1 sm:flex-none px-2.5 sm:px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1 sm:gap-1.5 min-w-[70px] sm:min-w-[80px]">
+                                    <button onclick="verPDFFactura({{ $factura->id }})" class="px-2 sm:px-2.5 sm:px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
                                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                         </svg>
                                         <span class="hidden xs:inline">PDF</span>
                                     </button>
-                                    <button onclick="enviarFacturaEmail({{ $factura->id }}, '{{ $factura->correo }}', {{ $factura->enviada_at ? 'true' : 'false' }})" class="flex-1 sm:flex-none px-2.5 sm:px-3 py-2 {{ $factura->enviada_at ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500' }} text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-1 sm:gap-1.5 min-w-[80px] sm:min-w-[100px]">
+                                    <button onclick="enviarFacturaEmail({{ $factura->id }}, '{{ $factura->correo }}', {{ $factura->enviada_at ? 'true' : 'false' }})" class="px-2 sm:px-2.5 sm:px-3 py-2 {{ $factura->enviada_at ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500' }} text-white text-xs font-medium rounded-lg transition-all flex items-center justify-center gap-0.5 sm:gap-1 sm:gap-1.5">
                                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
@@ -2286,6 +2292,76 @@
                     title: 'Error',
                     text: 'No se pudo cargar la factura. Por favor, intente nuevamente.',
                     confirmButtonColor: '#ef4444',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                });
+            }
+        }
+        
+        // Eliminar factura
+        async function eliminarFactura(facturaId, numeroFactura) {
+            const result = await Swal.fire({
+                title: '¿Eliminar factura?',
+                text: `¿Está seguro de que desea eliminar la factura ${numeroFactura}? Esta acción no se puede deshacer.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            try {
+                Swal.fire({
+                    title: 'Eliminando...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const response = await fetch(`/walee-facturas/${facturaId}/eliminar`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Factura eliminada',
+                        text: 'La factura ha sido eliminada correctamente',
+                        confirmButtonColor: '#7c3aed',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al eliminar la factura',
+                        confirmButtonColor: '#7c3aed',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión: ' + error.message,
+                    confirmButtonColor: '#7c3aed',
                     background: isDarkMode() ? '#1e293b' : '#ffffff',
                     color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 });

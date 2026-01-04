@@ -926,7 +926,7 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.reload();
+                        window.location.href = '{{ route("walee.cliente.detalle", $cliente->id) }}';
                     });
                 } else {
                     Swal.fire({

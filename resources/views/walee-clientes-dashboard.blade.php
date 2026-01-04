@@ -85,6 +85,15 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(213, 159, 59, 0.5);
         }
+        
+        /* Estilo para backdrop opaco del modal */
+        .swal2-backdrop-show {
+            background-color: rgba(0, 0, 0, 0.75) !important;
+        }
+        
+        .swal2-container {
+            backdrop-filter: blur(4px);
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -529,6 +538,9 @@
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                allowOutsideClick: false,
+                allowEscapeKey: true,
+                backdrop: true,
                 customClass: {
                     popup: isDarkMode ? 'dark-swal' : 'light-swal',
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
@@ -537,6 +549,11 @@
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 didOpen: () => {
+                    // Hacer el backdrop más opaco
+                    const backdrop = document.querySelector('.swal2-backdrop-show');
+                    if (backdrop) {
+                        backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
+                    }
                     // Focus en el primer campo
                     document.getElementById('clientName')?.focus();
                 },

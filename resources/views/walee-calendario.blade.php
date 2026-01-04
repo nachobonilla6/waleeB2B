@@ -99,12 +99,17 @@
         /* Asegurar que el contenido ocupe casi toda la modal en mobile */
         @media (max-width: 640px) {
             .swal2-popup {
+                width: 98% !important;
+                max-width: 98% !important;
+                margin: 0.5rem auto !important;
                 max-height: 90vh !important;
                 display: flex !important;
                 flex-direction: column !important;
             }
             
             .swal2-html-container {
+                width: 100% !important;
+                max-width: 100% !important;
                 flex: 1 !important;
                 overflow-y: auto !important;
                 padding: 0.5rem !important;
@@ -121,6 +126,14 @@
                 padding: 0.5rem !important;
                 margin: 0 !important;
                 flex-shrink: 0 !important;
+            }
+            
+            /* Forzar ancho completo en inputs y selects dentro de la modal */
+            .swal2-html-container input,
+            .swal2-html-container select,
+            .swal2-html-container textarea {
+                width: 100% !important;
+                max-width: 100% !important;
             }
         }
         
@@ -669,7 +682,7 @@
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
-            let modalWidth = '90%';
+            let modalWidth = '98%';
             if (window.innerWidth >= 1024) {
                 modalWidth = '600px';
             } else if (window.innerWidth >= 640) {
@@ -719,7 +732,7 @@
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span>Nueva Cita - Paso 1</span></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '0.5rem' : '1rem',
                 showCancelButton: true,
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Cancelar',
@@ -729,11 +742,19 @@
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    popup: isMobile ? (isDarkMode ? 'dark-swal !w-[98%] !max-w-[98%] !mx-1' : 'light-swal !w-[98%] !max-w-[98%] !mx-1') : (isDarkMode ? 'dark-swal' : 'light-swal'),
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    htmlContainer: isMobile ? (isDarkMode ? 'dark-swal-html !w-full !max-w-full' : 'light-swal-html !w-full !max-w-full') : (isDarkMode ? 'dark-swal-html' : 'light-swal-html'),
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    if (isMobile) {
+                        const formElements = document.querySelectorAll('.swal2-html-container input, .swal2-html-container select, .swal2-html-container textarea');
+                        formElements.forEach(el => {
+                            el.classList.add('!w-full', '!max-w-full');
+                        });
+                    }
                 },
                 preConfirm: () => {
                     const fecha = document.getElementById('cita_fecha').value;
@@ -761,7 +782,7 @@
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
-            let modalWidth = '90%';
+            let modalWidth = '98%';
             if (window.innerWidth >= 1024) {
                 modalWidth = '600px';
             } else if (window.innerWidth >= 640) {
@@ -806,7 +827,7 @@
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Nueva Cita - Paso 2</span></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '0.5rem' : '1rem',
                 showCancelButton: true,
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Anterior',
@@ -816,13 +837,19 @@
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    popup: isMobile ? (isDarkMode ? 'dark-swal !w-[98%] !max-w-[98%] !mx-1' : 'light-swal !w-[98%] !max-w-[98%] !mx-1') : (isDarkMode ? 'dark-swal' : 'light-swal'),
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    htmlContainer: isMobile ? (isDarkMode ? 'dark-swal-html !w-full !max-w-full' : 'light-swal-html !w-full !max-w-full') : (isDarkMode ? 'dark-swal-html' : 'light-swal-html'),
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 didOpen: () => {
+                    if (isMobile) {
+                        const formElements = document.querySelectorAll('.swal2-html-container input, .swal2-html-container select, .swal2-html-container textarea');
+                        formElements.forEach(el => {
+                            el.classList.add('!w-full', '!max-w-full');
+                        });
+                    }
                     // Autocompletar título cuando se selecciona un tipo
                     const tipoSelect = document.getElementById('cita_tipo');
                     const tituloInput = document.getElementById('cita_titulo');
@@ -859,7 +886,7 @@
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
-            let modalWidth = '90%';
+            let modalWidth = '98%';
             if (window.innerWidth >= 1024) {
                 modalWidth = '600px';
             } else if (window.innerWidth >= 640) {

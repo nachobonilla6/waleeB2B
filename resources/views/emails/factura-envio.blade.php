@@ -16,10 +16,21 @@
         <p style="color: #1f2937; font-size: 16px; margin: 0 0 15px 0;">
             Le enviamos la factura adjunta a este correo.
         </p>
-        <p style="color: #1f2937; font-size: 16px; margin: 0;">
+        <p style="color: #1f2937; font-size: 16px; margin: 20px 0 0 0;">
             Saludos cordiales,<br>
-            <strong>Equipo Web Solutions</strong>
+            <strong>Web Solutions</strong>
         </p>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
+                <strong>Email:</strong> websolutionscrnow@gmail.com
+            </p>
+            <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
+                <strong>WhatsApp:</strong> +506 8806 1829
+            </p>
+            <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
+                <strong>Web:</strong> websolutions.work
+            </p>
+        </div>
     </div>
 </body>
 </html>

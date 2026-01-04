@@ -197,11 +197,24 @@
                                 }
                             @endphp
                             <a href="{{ $urlPlaneador }}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                @php
+                                    // Obtener URL de la foto del cliente
+                                    $fotoUrl = null;
+                                    if ($cliente->foto) {
+                                        $fotoPath = $cliente->foto;
+                                        if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                            $fotoUrl = $fotoPath;
+                                        } else {
+                                            $filename = basename($fotoPath);
+                                            $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                                        }
+                                    }
+                                @endphp
                                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                    @if($cliente->foto)
-                                        <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
+                                    @if($fotoUrl)
+                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
                                     @else
-                                        <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
+                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">

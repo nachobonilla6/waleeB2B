@@ -215,26 +215,28 @@
                     
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden">
-                        <!-- Imagen cuadrada con botón de editar arriba a la derecha -->
-                        <div class="relative w-full aspect-square">
-                            @if($fotoUrl)
-                                <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center">
-                                    <span class="text-6xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                </div>
-                            @endif
-                            <!-- Botón de editar posicionado arriba a la derecha -->
-                            <button onclick="openEditClientModal()" class="absolute top-3 right-3 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg z-10">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <!-- Nombre -->
-                        <div class="p-4 pb-2">
-                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $cliente->name }}</h1>
+                        <div class="flex items-center gap-3 p-4">
+                            <!-- Imagen a la izquierda (mitad de ancho y alto) -->
+                            <div class="relative w-1/2 aspect-square flex-shrink-0">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center rounded-xl">
+                                        <span class="text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
+                                    </div>
+                                @endif
+                                <!-- Botón de editar posicionado arriba a la derecha -->
+                                <button onclick="openEditClientModal()" class="absolute top-2 right-2 inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg z-10">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Nombre a la derecha -->
+                            <div class="flex-1 min-w-0">
+                                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate">{{ $cliente->name }}</h1>
+                            </div>
                         </div>
                         
                         <!-- Acciones Rápidas Mobile -->

@@ -161,7 +161,7 @@
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-4 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
                 <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center">
                     <div class="text-xl font-bold text-slate-900 dark:text-white">{{ $totalContratos }}</div>
                     <div class="text-xs text-slate-600 dark:text-slate-400">Total</div>

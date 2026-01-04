@@ -354,15 +354,26 @@
                                 <div class="min-h-[300px] md:min-h-[400px] flex flex-col border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-700 last:border-b-0">
                                     <!-- Header del día -->
                                     <div class="p-3 md:p-3 border-b border-slate-200 dark:border-slate-700 {{ $esHoy ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-slate-50 dark:bg-slate-800/30' }}">
-                                        <div class="flex md:block items-center justify-between md:text-center">
-                                            <div>
+                                        <div class="flex md:flex-col items-center justify-between md:text-center gap-2">
+                                            <div class="flex-1">
                                                 <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{{ $diaSemana->format('D') }}</p>
                                                 <p class="text-lg md:text-lg font-bold {{ $esHoy ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-white' }} mt-1">
                                                     {{ $diaSemana->day }} {{ $meses[$diaSemana->month] }}
                                                 </p>
                                             </div>
-                                            <div class="md:hidden">
-                                                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $citasOrdenadas->count() }} citas</span>
+                                            <div class="flex items-center gap-2">
+                                                <button 
+                                                    onclick="openCreateCitaModal('{{ $diaSemana->format('Y-m-d') }}')"
+                                                    class="w-7 h-7 md:w-6 md:h-6 flex items-center justify-center rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white transition-all hover:scale-110 active:scale-95 shadow-sm"
+                                                    title="Agregar cita"
+                                                >
+                                                    <svg class="w-4 h-4 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                    </svg>
+                                                </button>
+                                                <div class="md:hidden">
+                                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $citasOrdenadas->count() }} citas</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -427,9 +438,200 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const clienteId = {{ $cliente->id }};
         
         function showCitaDetail(citaId) {
             window.location.href = `/citas/${citaId}/detalle`;
+        }
+        
+        function openCreateCitaModal(fecha) {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            // Formatear fecha para mostrar
+            const fechaObj = new Date(fecha + 'T00:00:00');
+            const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            const modalWidth = isMobile ? '90%' : '500px';
+            
+            Swal.fire({
+                title: 'Nueva Cita',
+                html: `
+                    <form id="citaForm" class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha</label>
+                            <input type="date" id="cita_fecha" value="${fecha}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            <p class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">${fechaFormateada}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora inicio <span class="text-red-500">*</span></label>
+                                <input type="time" id="cita_hora_inicio" required
+                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora fin</label>
+                                <input type="time" id="cita_hora_fin"
+                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título <span class="text-red-500">*</span></label>
+                            <input type="text" id="cita_titulo" required placeholder="Ej: Reunión de seguimiento"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Ubicación</label>
+                            <input type="text" id="cita_ubicacion" placeholder="Ej: Oficina, Zoom, etc."
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
+                            <textarea id="cita_descripcion" rows="3" placeholder="Notas adicionales..."
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
+                            <select id="cita_estado"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                                <option value="programada">Programada</option>
+                                <option value="completada">Completada</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                    </form>
+                `,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1.25rem',
+                showCancelButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Crear Cita',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                allowOutsideClick: false,
+                allowEscapeKey: true,
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Aplicar estilos dinámicos para dark/light mode
+                    const popup = Swal.getPopup();
+                    if (isDarkMode) {
+                        popup.style.backgroundColor = '#1e293b';
+                        popup.style.color = '#e2e8f0';
+                    } else {
+                        popup.style.backgroundColor = '#ffffff';
+                        popup.style.color = '#1e293b';
+                    }
+                },
+                preConfirm: async () => {
+                    const fecha = document.getElementById('cita_fecha').value;
+                    const horaInicio = document.getElementById('cita_hora_inicio').value;
+                    const horaFin = document.getElementById('cita_hora_fin').value;
+                    const titulo = document.getElementById('cita_titulo').value;
+                    const ubicacion = document.getElementById('cita_ubicacion').value;
+                    const descripcion = document.getElementById('cita_descripcion').value;
+                    const estado = document.getElementById('cita_estado').value;
+                    
+                    if (!titulo) {
+                        Swal.showValidationMessage('El título es requerido');
+                        return false;
+                    }
+                    
+                    if (!horaInicio) {
+                        Swal.showValidationMessage('La hora de inicio es requerida');
+                        return false;
+                    }
+                    
+                    // Combinar fecha y hora
+                    const fechaInicio = `${fecha} ${horaInicio}:00`;
+                    const fechaFin = horaFin ? `${fecha} ${horaFin}:00` : null;
+                    
+                    try {
+                        const response = await fetch('/citas', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                client_id: clienteId,
+                                titulo: titulo,
+                                fecha_inicio: fechaInicio,
+                                fecha_fin: fechaFin,
+                                ubicacion: ubicacion || null,
+                                descripcion: descripcion || null,
+                                estado: estado,
+                                color: '#10b981'
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok && data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cita creada',
+                                text: data.message || 'La cita se ha creado correctamente',
+                                confirmButtonColor: '#10b981',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                                }
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al crear la cita',
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                                customClass: {
+                                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: error.message,
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                            customClass: {
+                                popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                                title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                                confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                            }
+                        });
+                    }
+                }
+            });
         }
     </script>
     @include('partials.walee-support-button')

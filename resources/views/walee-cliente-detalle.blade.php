@@ -58,6 +58,7 @@
                 padding: 0.75rem !important;
                 width: calc(100% - 1rem) !important;
                 max-width: calc(100% - 1rem) !important;
+                max-height: 70vh !important;
             }
             .swal2-html-container-mobile {
                 padding: 0 !important;

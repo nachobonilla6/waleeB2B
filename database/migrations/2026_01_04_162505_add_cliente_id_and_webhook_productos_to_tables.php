@@ -12,14 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         // Agregar cliente_id a rproductos
-        Schema::table('rproductos', function (Blueprint $table) {
-            $table->foreignId('cliente_id')->nullable()->after('id')->constrained('clientes_en_proceso')->onDelete('cascade');
-        });
+        if (!Schema::hasColumn('rproductos', 'cliente_id')) {
+            Schema::table('rproductos', function (Blueprint $table) {
+                $table->foreignId('cliente_id')->nullable()->after('id')->constrained('clientes_en_proceso')->onDelete('cascade');
+            });
+        }
         
         // Agregar webhook_productos a clientes_en_proceso
-        Schema::table('clientes_en_proceso', function (Blueprint $table) {
-            $table->string('webhook_productos')->nullable()->after('webhook_url');
-        });
+        if (!Schema::hasColumn('clientes_en_proceso', 'webhook_productos')) {
+            Schema::table('clientes_en_proceso', function (Blueprint $table) {
+                $table->string('webhook_productos')->nullable()->after('webhook_url');
+            });
+        }
     }
 
     /**
@@ -27,13 +31,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('rproductos', function (Blueprint $table) {
-            $table->dropForeign(['cliente_id']);
-            $table->dropColumn('cliente_id');
-        });
+        if (Schema::hasColumn('rproductos', 'cliente_id')) {
+            Schema::table('rproductos', function (Blueprint $table) {
+                $table->dropForeign(['cliente_id']);
+                $table->dropColumn('cliente_id');
+            });
+        }
         
-        Schema::table('clientes_en_proceso', function (Blueprint $table) {
-            $table->dropColumn('webhook_productos');
-        });
+        if (Schema::hasColumn('clientes_en_proceso', 'webhook_productos')) {
+            Schema::table('clientes_en_proceso', function (Blueprint $table) {
+                $table->dropColumn('webhook_productos');
+            });
+        }
     }
 };

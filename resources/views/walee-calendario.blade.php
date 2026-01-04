@@ -923,7 +923,7 @@
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span>Nueva Cita - Paso 3</span></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '0.5rem' : '1rem',
                 showCancelButton: true,
                 confirmButtonText: 'Crear Cita',
                 cancelButtonText: 'Anterior',
@@ -933,11 +933,19 @@
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    popup: isMobile ? (isDarkMode ? 'dark-swal !w-[98%] !max-w-[98%] !mx-1' : 'light-swal !w-[98%] !max-w-[98%] !mx-1') : (isDarkMode ? 'dark-swal' : 'light-swal'),
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    htmlContainer: isMobile ? (isDarkMode ? 'dark-swal-html !w-full !max-w-full' : 'light-swal-html !w-full !max-w-full') : (isDarkMode ? 'dark-swal-html' : 'light-swal-html'),
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    if (isMobile) {
+                        const formElements = document.querySelectorAll('.swal2-html-container input, .swal2-html-container select, .swal2-html-container textarea');
+                        formElements.forEach(el => {
+                            el.classList.add('!w-full', '!max-w-full');
+                        });
+                    }
                 },
                 preConfirm: async () => {
                     const ubicacion = document.getElementById('cita_ubicacion').value;

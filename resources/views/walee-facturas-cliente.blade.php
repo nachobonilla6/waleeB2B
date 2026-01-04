@@ -62,7 +62,27 @@
         // Obtener facturas del cliente (usando clienteFacturas que es el modelo Cliente)
         $facturas = collect();
         if (isset($clienteFacturas) && $clienteFacturas) {
+            // Buscar facturas por cliente_id del modelo Cliente
             $facturas = \App\Models\Factura::where('cliente_id', $clienteFacturas->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            // Si no hay facturas por cliente_id, buscar también por correo del cliente
+            if ($facturas->isEmpty() && isset($cliente) && $cliente->email) {
+                $facturas = \App\Models\Factura::where('correo', $cliente->email)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+            
+            // También buscar facturas que puedan tener el correo del Cliente
+            if ($facturas->isEmpty() && $clienteFacturas->correo) {
+                $facturas = \App\Models\Factura::where('correo', $clienteFacturas->correo)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+        } elseif (isset($cliente) && $cliente->email) {
+            // Si no hay clienteFacturas, buscar directamente por correo del Client
+            $facturas = \App\Models\Factura::where('correo', $cliente->email)
                 ->orderBy('created_at', 'desc')
                 ->get();
         }

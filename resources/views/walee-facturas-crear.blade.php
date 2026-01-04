@@ -148,13 +148,22 @@
             @endif
             
             <!-- Botón para abrir modal -->
-            <div class="flex justify-center items-center min-h-[60vh]">
+            <div class="flex flex-col justify-center items-center min-h-[60vh] gap-4">
                 <button onclick="abrirModalFactura()" class="px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     <span>Crear Nueva Factura</span>
                 </button>
+                
+                @if($clienteSeleccionado)
+                <a href="{{ route('walee.facturas.cliente', $clienteSeleccionado->id) }}" class="px-6 py-3 bg-slate-600 hover:bg-slate-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span>Ver Facturas del Cliente</span>
+                </a>
+                @endif
             </div>
             
             <!-- Form oculto para mantener estructura -->

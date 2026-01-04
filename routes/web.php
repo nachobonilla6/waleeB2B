@@ -3099,7 +3099,7 @@ Route::get('/walee-facturas/{id}/pdf', function ($id) {
             'defaultFont' => 'Arial',
         ]);
         
-        return $pdf->download('factura-' . $factura->numero_factura . '.pdf');
+        return $pdf->stream('factura-' . $factura->numero_factura . '.pdf');
     } catch (\Exception $e) {
         \Log::error('Error generando PDF de factura: ' . $e->getMessage());
         return redirect()->back()->with('error', 'Error al generar el PDF de la factura');

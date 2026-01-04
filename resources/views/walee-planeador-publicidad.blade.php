@@ -1277,28 +1277,25 @@
                             
                             ${imagenHTML ? imagenHTML : ''}
                             
-                            <!-- Prompt y Texto en la misma línea -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <!-- Prompt personalizado (solo lectura) -->
-                                ${evento.prompt_personalizado ? `
-                                <div>
-                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Prompt Personalizado</label>
-                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
-                                        ${evento.prompt_personalizado}
-                                    </div>
+                            <!-- Prompt personalizado (solo lectura) -->
+                            ${evento.prompt_personalizado ? `
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Prompt Personalizado</label>
+                                <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                    ${evento.prompt_personalizado}
                                 </div>
-                                ` : ''}
-                                
-                                <!-- Texto (solo lectura) -->
-                                ${evento.texto ? `
-                                <div>
-                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
-                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-pre-wrap">
-                                        ${evento.texto}
-                                    </div>
-                                </div>
-                                ` : ''}
                             </div>
+                            ` : ''}
+                            
+                            <!-- Texto (solo lectura) - ancho completo -->
+                            ${evento.texto ? `
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
+                                <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-pre-wrap">
+                                    ${evento.texto}
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                     `;
                     

@@ -423,15 +423,15 @@
                                     <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
-                                    <span class="hidden sm:inline">Semana Anterior</span>
-                                    <span class="sm:inline">Anterior</span>
+                                    <span class="hidden sm:inline">Anterior</span>
+                                    <span class="sm:hidden">Anterior</span>
                                 </a>
                                 <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                     <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
-                                    <span class="hidden sm:inline">Semana Siguiente</span>
-                                    <span class="sm:inline">Siguiente</span>
+                                    <span class="hidden sm:inline">Siguiente</span>
+                                    <span class="sm:hidden">Siguiente</span>
                                 </a>
                             @endif
                         </div>

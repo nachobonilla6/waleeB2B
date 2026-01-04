@@ -1269,10 +1269,10 @@
                     // Layout igual que Crear Publicación: Estado y Hora arriba, Imagen, Prompt y Texto abajo
                     const html = `
                         <div class="space-y-2.5 text-left">
-                            <!-- Estado y Hora arriba de la imagen -->
+                            <!-- Estado y Fecha arriba de la imagen -->
                             <div class="flex items-center gap-2">
                                 ${estadoBadge}
-                                ${horaFormateada ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${horaFormateada}</span>` : ''}
+                                ${fechaFormateada ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${fechaFormateada}</span>` : ''}
                             </div>
                             
                             ${imagenHTML ? imagenHTML : ''}

@@ -423,7 +423,7 @@
                     </div>
                 
                     <!-- Desktop: Layout original -->
-                    <div class="hidden sm:block p-4 sm:p-5 lg:p-6">
+                    <div class="hidden sm:block p-4 sm:p-6 lg:p-8">
                         <div class="flex flex-col gap-4 lg:gap-6">
                             <!-- Header con imagen y nombre -->
                             <div class="flex items-start gap-3 sm:gap-4 lg:gap-6">

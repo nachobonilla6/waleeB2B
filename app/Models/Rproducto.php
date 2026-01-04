@@ -14,7 +14,13 @@ class Rproducto extends Model
         'estado',
         'tipo',
         'fotos',
+        'cliente_id',
     ];
+    
+    public function cliente()
+    {
+        return $this->belongsTo(Client::class);
+    }
 
     protected $casts = [
         'fotos' => 'array',

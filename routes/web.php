@@ -3014,6 +3014,23 @@ Route::get('/walee-contratos/cliente/{id}', function ($id) {
     }
 })->middleware(['auth'])->name('walee.contratos.cliente');
 
+// Ruta para productos del cliente
+Route::get('/walee-productos/cliente/{id}', function ($id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        
+        // Obtener productos del cliente
+        $productos = \App\Models\Rproducto::where('cliente_id', $cliente->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('walee-productos-cliente', compact('cliente', 'productos'));
+    } catch (\Exception $e) {
+        \Log::error('Error al cargar productos del cliente: ' . $e->getMessage());
+        return redirect()->route('walee.clientes.activos')->with('error', 'Error al cargar los productos del cliente');
+    }
+})->middleware(['auth'])->name('walee.productos.cliente');
+
 // API: Obtener datos de contrato en JSON
 Route::get('/walee-contratos/{id}/json', function ($id) {
     try {
@@ -4493,7 +4510,12 @@ Route::get('/walee-cliente/{id}', function ($id) {
         $clientePlaneadorId = $cliente->id;
     }
     
-    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId'));
+    // Obtener productos del cliente
+    $productos = \App\Models\Rproducto::where('cliente_id', $cliente->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId'));
 })->middleware(['auth'])->name('walee.cliente.detalle');
 
 // Ruta para editar un cliente
@@ -4730,6 +4752,26 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
         ], 500);
     }
 })->middleware(['auth'])->name('walee.cliente.webhook');
+
+// Ruta para guardar webhook de productos del cliente
+Route::post('/walee-cliente/{id}/webhook-productos', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        
+        $cliente->webhook_productos = $request->input('webhook_productos');
+        $cliente->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Webhook de productos guardado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.webhook.productos');
 
 // Rutas para Tareas (POST, PUT, DELETE)
 Route::post('/walee-tareas', function (\Illuminate\Http\Request $request) {

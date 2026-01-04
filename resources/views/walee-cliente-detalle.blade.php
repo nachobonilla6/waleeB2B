@@ -499,6 +499,17 @@
                             </div>
                                 <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
                             </a>
+                            
+                            <!-- Productos -->
+                            <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex items-center justify-between p-2.5 rounded-lg bg-purple-100 dark:bg-purple-500/10 border border-purple-600 dark:border-purple-500/20 hover:bg-purple-200 dark:hover:bg-purple-500/20 transition-colors cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Productos</span>
+                                </div>
+                                <span class="text-sm font-semibold text-purple-700 dark:text-purple-400">{{ $productos->count() ?? 0 }}</span>
+                            </a>
                         </div>
                     </div>
                 
@@ -670,6 +681,17 @@
                                             </div>
                                     <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
                                             </a>
+                                            
+                                <!-- Productos -->
+                                <a href="{{ route('walee.productos.cliente', $cliente->id) }}" class="flex items-center justify-between p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                        </svg>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Productos</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-purple-700 dark:text-purple-400">{{ $productos->count() ?? 0 }}</span>
+                                </a>
                                         </div>
                                         </div>
                                     </div>

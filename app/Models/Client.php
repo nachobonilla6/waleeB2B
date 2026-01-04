@@ -25,6 +25,7 @@ class Client extends Model
         'propuesta_enviada',
         'estado',
         'webhook_url',
+        'webhook_productos',
         'page_id',
         'token',
     ];

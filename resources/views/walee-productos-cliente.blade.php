@@ -474,7 +474,7 @@
             const isEdit = product !== null;
             const isMobile = window.innerWidth < 640;
             const html = `
-                <form id="productForm" class="space-y-3 sm:space-y-4 text-left">
+                <form id="productForm" class="space-y-3 sm:space-y-4 text-left w-full">
                     <input type="hidden" id="productId" name="id" value="${product?.id || ''}">
                     
                     <div>
@@ -536,8 +536,8 @@
             Swal.fire({
                 title: isEdit ? 'Editar Producto' : 'Nuevo Producto',
                 html: html,
-                width: isMobile ? '90%' : '1000px',
-                padding: isMobile ? '1rem' : '1.5rem',
+                width: isMobile ? '95%' : '1000px',
+                padding: isMobile ? '0.5rem' : '1.5rem',
                 heightAuto: false,
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
@@ -557,12 +557,20 @@
                     // Asegurar que el modal esté encima de todo
                     const popup = document.querySelector('.swal2-popup');
                     const container = document.querySelector('.swal2-container');
+                    const htmlContainer = document.querySelector('.swal2-html-container');
                     if (popup) {
                         popup.style.zIndex = '99999';
                         popup.style.maxHeight = '85vh';
+                        if (isMobile) {
+                            popup.style.padding = '0.5rem';
+                        }
                     }
                     if (container) {
                         container.style.zIndex = '99999';
+                    }
+                    if (htmlContainer && isMobile) {
+                        htmlContainer.style.padding = '0';
+                        htmlContainer.style.margin = '0';
                     }
                     
                     if (isEdit && product.fotos && product.fotos.length > 0) {

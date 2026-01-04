@@ -394,34 +394,34 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Facturas</span>
-                            </div>
+                        </div>
                                 <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
-                            </div>
+                    </div>
                 
                             <!-- Cotizaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 border border-blue-600 dark:border-blue-500/20">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
+                                </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Cotizaciones</span>
-                        </div>
+                            </div>
                                 <span class="text-sm font-semibold text-blue-700 dark:text-blue-400">{{ $cotizaciones->count() }}</span>
-                </div>
+                            </div>
                 
                             <!-- Contratos -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-walee-100 dark:bg-walee-500/10 border border-walee-600 dark:border-walee-500/20">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
+                            </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Contratos</span>
-                                        </div>
+                        </div>
                                 <span class="text-sm font-semibold text-walee-700 dark:text-walee-400">{{ $contratos->count() }}</span>
-                                        </div>
-                                    </div>
-                                        </div>
-                    
+                        </div>
+                    </div>
+                </div>
+                
                     <!-- Desktop: Layout original -->
                     <div class="hidden sm:block p-4 sm:p-5 lg:p-6">
                         <div class="flex flex-col gap-4 lg:gap-6">
@@ -433,7 +433,7 @@
                         @else
                                     <div class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl bg-gradient-to-br from-emerald-500/20 to-walee-500/20 border-3 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-md">
                                         <span class="text-3xl lg:text-4xl font-bold text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                            </div>
+            </div>
                         @endif
                                 
                                 <!-- Nombre y estado a la derecha -->
@@ -446,8 +446,8 @@
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                                             </span>
                                         </div>
+                                        </div>
                                     </div>
-                            </div>
                             
                             <!-- Acciones Rápidas Desktop -->
                             <div class="flex gap-2">
@@ -456,7 +456,7 @@
                                     <a href="{{ $cliente->website }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-blue-600 dark:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                        </svg>
+                                            </svg>
                                         <span class="text-sm font-medium">Website</span>
                                     </a>
                         @else
@@ -472,16 +472,16 @@
                                 <button onclick="openEmailModal()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
+                        </svg>
                                     <span class="text-sm font-medium">Email</span>
-                                </button>
+                        </button>
                                 
                                 <!-- Facebook Button -->
                                 @if($cliente->facebook)
                                     <a href="{{ $cliente->facebook }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
+                                                </svg>
                                         <span class="text-sm font-medium">Facebook</span>
                                     </a>
                         @else
@@ -499,7 +499,7 @@
                                         {{ !$whatsappLink ? 'disabled' : '' }}>
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-emerald-600 dark:text-emerald-700" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                        </svg>
+                                                </svg>
                                     <span class="text-sm font-medium">WhatsApp</span>
                         </button>
                     </div>
@@ -1398,15 +1398,33 @@
             }
         }
         
+        // Variables globales para el flujo de fases
+        let emailModalData = {
+            clienteId: {{ $cliente->id }},
+            clienteEmail: '{{ $cliente->email ?? '' }}',
+            clienteName: '{{ $cliente->name }}',
+            clienteWebsite: '{{ $cliente->website ?? '' }}',
+            email: '',
+            aiPrompt: '',
+            subject: '',
+            body: '',
+            attachments: null
+        };
+        
         function openEmailModal() {
+            // Resetear datos
+            emailModalData.email = emailModalData.clienteEmail;
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            emailModalData.attachments = null;
+            
+            showEmailPhase1();
+        }
+        
+        function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            const clienteId = {{ $cliente->id }};
-            const clienteEmail = '{{ $cliente->email ?? '' }}';
-            const clienteName = '{{ $cliente->name }}';
-            const clienteWebsite = '{{ $cliente->website ?? '' }}';
             
             let modalWidth = '90%';
             if (window.innerWidth >= 1024) {
@@ -1416,20 +1434,22 @@
             }
             
             const html = `
-                <form id="emailForm" class="space-y-2.5 text-left">
-                    <input type="hidden" id="cliente_id" value="${clienteId}">
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
                     
-                    <!-- Email destinatario -->
                     <div>
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Email destinatario <span class="text-red-500">*</span></label>
-                        <input type="email" id="email_destinatario" value="${clienteEmail}" required
+                        <input type="email" id="email_destinatario" value="${emailModalData.email}" required
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                     </div>
                     
-                    <!-- AI Prompt -->
                     <div>
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Instrucciones para AI (opcional)</label>
-                        <textarea id="ai_prompt" rows="2" placeholder="Ej: Genera un email profesional..."
+                        <textarea id="ai_prompt" rows="3" placeholder="Ej: Genera un email profesional..."
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
                         <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
                             class="mt-1.5 w-full px-2.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs">
@@ -1439,39 +1459,16 @@
                             <span>Generar con AI</span>
                         </button>
                     </div>
-                    
-                    <!-- Asunto -->
-                    <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto <span class="text-red-500">*</span></label>
-                        <input type="text" id="email_subject" required placeholder="Asunto del email"
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
-                    </div>
-                    
-                    <!-- Mensaje -->
-                    <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Mensaje <span class="text-red-500">*</span></label>
-                        <textarea id="email_body" rows="5" required placeholder="Escribe o genera el contenido del email..."
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none"></textarea>
-                    </div>
-                    
-                    <!-- Adjuntar archivos -->
-                    <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Adjuntar archivos (opcional)</label>
-                        <input type="file" id="email_attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                        <p class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">PDF o imágenes (máx. 10MB por archivo)</p>
-                        <div id="email_files_list" class="mt-1.5 space-y-1"></div>
-                    </div>
-                </form>
+                </div>
             `;
             
             Swal.fire({
-                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email</span></div>',
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 1</span></div>',
                 html: html,
                 width: modalWidth,
                 padding: isMobile ? '0.75rem' : '1rem',
                 showCancelButton: true,
-                confirmButtonText: 'Enviar Email',
+                confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
@@ -1485,8 +1482,147 @@
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
+                preConfirm: () => {
+                    const email = document.getElementById('email_destinatario').value;
+                    if (!email) {
+                        Swal.showValidationMessage('El email destinatario es requerido');
+                        return false;
+                    }
+                    emailModalData.email = email;
+                    emailModalData.aiPrompt = document.getElementById('ai_prompt').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showEmailPhase2();
+                }
+            });
+        }
+        
+        function showEmailPhase2() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '500px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '450px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto <span class="text-red-500">*</span></label>
+                        <input type="text" id="email_subject" value="${emailModalData.subject}" required placeholder="Asunto del email"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Mensaje <span class="text-red-500">*</span></label>
+                        <textarea id="email_body" rows="6" required placeholder="Escribe o genera el contenido del email..."
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none">${emailModalData.body}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 2</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const subject = document.getElementById('email_subject').value;
+                    const body = document.getElementById('email_body').value;
+                    if (!subject || !body) {
+                        Swal.showValidationMessage('Por favor, completa el asunto y el mensaje');
+                        return false;
+                    }
+                    emailModalData.subject = subject;
+                    emailModalData.body = body;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showEmailPhase3();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    showEmailPhase1();
+                }
+            });
+        }
+        
+        function showEmailPhase3() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '500px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '450px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Adjuntar archivos (opcional)</label>
+                        <input type="file" id="email_attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        <p class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">PDF o imágenes (máx. 10MB por archivo)</p>
+                        <div id="email_files_list" class="mt-1.5 space-y-1"></div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 3</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Enviar Email',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
                 didOpen: () => {
-                    // Mostrar archivos seleccionados
                     const fileInput = document.getElementById('email_attachments');
                     const filesList = document.getElementById('email_files_list');
                     if (fileInput) {
@@ -1495,7 +1631,7 @@
                                 filesList.innerHTML = '';
                                 Array.from(e.target.files).forEach((file, index) => {
                                     const fileItem = document.createElement('div');
-                                    fileItem.className = `flex items-center justify-between p-2 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`;
+                                    fileItem.className = `flex items-center justify-between p-1.5 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`;
                                     fileItem.innerHTML = `
                                         <span class="text-[10px] ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">${file.name}</span>
                                         <span class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
@@ -1507,26 +1643,18 @@
                     }
                 },
                 preConfirm: async () => {
-                    const email = document.getElementById('email_destinatario').value;
-                    const subject = document.getElementById('email_subject').value;
-                    const body = document.getElementById('email_body').value;
-                    
-                    if (!email || !subject || !body) {
-                        Swal.showValidationMessage('Por favor, completa todos los campos requeridos');
-                        return false;
-                    }
+                    const attachments = document.getElementById('email_attachments');
+                    emailModalData.attachments = attachments && attachments.files && attachments.files.length > 0 ? attachments.files : null;
                     
                     const formData = new FormData();
-                    formData.append('cliente_id', clienteId);
-                    formData.append('email', email);
-                    formData.append('subject', subject);
-                    formData.append('body', body);
-                    formData.append('ai_prompt', document.getElementById('ai_prompt').value || '');
+                    formData.append('cliente_id', emailModalData.clienteId);
+                    formData.append('email', emailModalData.email);
+                    formData.append('subject', emailModalData.subject);
+                    formData.append('body', emailModalData.body);
+                    formData.append('ai_prompt', emailModalData.aiPrompt || '');
                     
-                    // Agregar archivos
-                    const attachments = document.getElementById('email_attachments');
-                    if (attachments && attachments.files && attachments.files.length > 0) {
-                        Array.from(attachments.files).forEach((file, index) => {
+                    if (emailModalData.attachments) {
+                        Array.from(emailModalData.attachments).forEach((file, index) => {
                             formData.append(`archivos[${index}]`, file);
                         });
                     }
@@ -1583,7 +1711,11 @@
                         });
                     }
                     
-                    return false; // No cerrar automáticamente
+                    return false;
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    showEmailPhase2();
                 }
             });
         }
@@ -1591,13 +1723,11 @@
         async function generateEmailWithAI() {
             const generateBtn = document.getElementById('generateEmailBtn');
             const aiPrompt = document.getElementById('ai_prompt').value;
-            const subjectInput = document.getElementById('email_subject');
-            const bodyInput = document.getElementById('email_body');
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
-            const clienteId = {{ $cliente->id }};
-            const clienteName = '{{ $cliente->name }}';
-            const clienteWebsite = '{{ $cliente->website ?? '' }}';
+            const clienteId = emailModalData.clienteId;
+            const clienteName = emailModalData.clienteName;
+            const clienteWebsite = emailModalData.clienteWebsite;
             
             generateBtn.disabled = true;
             generateBtn.innerHTML = `
@@ -1626,8 +1756,20 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    subjectInput.value = data.subject;
-                    bodyInput.value = data.body;
+                    emailModalData.subject = data.subject;
+                    emailModalData.body = data.body;
+                    // Mostrar mensaje y avanzar a fase 2
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email generado',
+                        text: 'El contenido ha sido generado con AI',
+                        confirmButtonColor: '#8b5cf6',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        Swal.close();
+                        showEmailPhase2();
+                    });
                 } else {
                     Swal.fire({
                         icon: 'error',

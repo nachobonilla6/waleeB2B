@@ -267,9 +267,14 @@
                                             #{{ $factura->numero_factura }}
                                         </span>
                                         @if($factura->enviada_at)
-                                        <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded">Enviada</span>
+                                        <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            Enviada {{ \Carbon\Carbon::parse($factura->enviada_at)->format('d/m/Y') }}
+                                        </span>
                                         @else
-                                        <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">Pendiente</span>
+                                        <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">No enviada</span>
                                         @endif
                                         @if($factura->estado === 'pagada')
                                         <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded">Pagada</span>
@@ -285,9 +290,17 @@
                                         <span class="font-semibold text-slate-900 dark:text-white">₡{{ number_format($factura->total, 2) }}</span>
                                     </div>
                                 </div>
-                                <button onclick="verFacturaModal({{ $factura->id }})" class="ml-3 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all">
-                                    Ver
-                                </button>
+                                <div class="ml-3 flex gap-2">
+                                    <button onclick="verFacturaModal({{ $factura->id }})" class="px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all">
+                                        Ver
+                                    </button>
+                                    <button onclick="enviarFacturaEmail({{ $factura->id }}, '{{ $factura->correo }}', {{ $factura->enviada_at ? 'true' : 'false' }})" class="px-3 py-1.5 {{ $factura->enviada_at ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500' }} text-white text-xs font-medium rounded-lg transition-all flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        {{ $factura->enviada_at ? 'Reenviar' : 'Enviar' }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         @endforeach

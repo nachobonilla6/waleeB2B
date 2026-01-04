@@ -358,11 +358,12 @@
                                 </div>
                             @endif
                             @if($cliente->horario)
-                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" id="horarioBtn" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <span>Horario</span>
+                                    <span id="horarioEstado" class="ml-1"></span>
                                 </button>
                             @endif
                         </div>
@@ -519,11 +520,12 @@
                             </div>
                             @endif
                             @if($cliente->horario)
-                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" id="horarioBtnDesktop" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <span>Horario</span>
+                                    <span id="horarioEstadoDesktop" class="ml-1"></span>
                                 </button>
                             @endif
                         </div>
@@ -1057,6 +1059,33 @@
                     }
                 }
             @endphp
+            
+            // Actualizar estado del horario al cargar
+            @if($cliente->horario)
+            document.addEventListener('DOMContentLoaded', function() {
+                const horario = @json($cliente->horario);
+                const estado = getEstadoHorario(horario);
+                
+                const estadoMobile = document.getElementById('horarioEstado');
+                const estadoDesktop = document.getElementById('horarioEstadoDesktop');
+                const btnMobile = document.getElementById('horarioBtn');
+                const btnDesktop = document.getElementById('horarioBtnDesktop');
+                
+                if (estado.abierto === true) {
+                    const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Abierto</span>';
+                    if (estadoMobile) estadoMobile.innerHTML = badge;
+                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                    if (btnMobile) btnMobile.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                    if (btnDesktop) btnDesktop.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                } else if (estado.abierto === false) {
+                    const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
+                    if (estadoMobile) estadoMobile.innerHTML = badge;
+                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                    if (btnMobile) btnMobile.classList.add('border-red-300', 'dark:border-red-700');
+                    if (btnDesktop) btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
+                }
+            });
+            @endif
             
             const clienteData = {
                 fotoUrl: @json($fotoUrl),
@@ -1881,24 +1910,67 @@
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
             
-            // Convertir saltos de línea en <br> y formatear el texto
-            const horarioFormateado = horario
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Parsear el horario (puede venir como JSON string o array)
+            let horarios = [];
+            try {
+                if (typeof horario === 'string') {
+                    horarios = JSON.parse(horario);
+                } else {
+                    horarios = horario;
+                }
+            } catch (e) {
+                // Si no es JSON válido, intentar parsear manualmente
+                horarios = horario.split(',').map(h => h.trim().replace(/^\[|\]$/g, ''));
+            }
+            
+            // Mapeo de días en español
+            const diasOrden = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+            
+            // Ordenar por día de la semana
+            const horariosOrdenados = diasOrden.map(dia => {
+                const horarioDia = horarios.find(h => h.toLowerCase().startsWith(dia.toLowerCase()));
+                if (horarioDia) {
+                    const partes = horarioDia.split(':');
+                    const diaNombre = partes[0].trim();
+                    const horas = partes.slice(1).join(':').trim();
+                    return { dia: diaNombre, horas: horas };
+                }
+                return null;
+            }).filter(h => h !== null);
+            
+            // Crear tabla HTML
+            let tablaHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}">
+                        <thead>
+                            <tr class="border-b ${isDarkMode ? 'border-slate-700' : 'border-slate-200'}">
+                                <th class="text-left py-2 px-3 font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">Día</th>
+                                <th class="text-left py-2 px-3 font-semibold ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">Horario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            horariosOrdenados.forEach((item, index) => {
+                const esPar = index % 2 === 0;
+                tablaHTML += `
+                    <tr class="${esPar ? (isDarkMode ? 'bg-slate-800/30' : 'bg-slate-50') : ''}">
+                        <td class="py-2.5 px-3 font-medium">${item.dia.charAt(0).toUpperCase() + item.dia.slice(1)}</td>
+                        <td class="py-2.5 px-3">${item.horas}</td>
+                    </tr>
+                `;
+            });
+            
+            tablaHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
             
             Swal.fire({
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Horario</span></div>',
-                html: `
-                    <div class="text-left space-y-3">
-                        <div class="p-4 rounded-xl bg-gradient-to-br ${isDarkMode ? 'from-emerald-900/20 to-emerald-800/10 border border-emerald-800/30' : 'from-emerald-50 to-emerald-100/50 border border-emerald-200'}">
-                            <div class="text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'} leading-relaxed">
-                                ${horarioFormateado}
-                            </div>
-                        </div>
-                    </div>
-                `,
-                width: isMobile ? '90%' : '500px',
+                html: tablaHTML,
+                width: isMobile ? '90%' : '550px',
                 padding: isMobile ? '1rem' : '1.5rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Cerrar',
@@ -1912,6 +1984,70 @@
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                 }
             });
+        }
+        
+        // Función para determinar si está abierto o cerrado
+        function getEstadoHorario(horario) {
+            try {
+                let horarios = [];
+                if (typeof horario === 'string') {
+                    horarios = JSON.parse(horario);
+                } else {
+                    horarios = horario;
+                }
+                
+                const ahora = new Date();
+                const diaActual = ahora.getDay(); // 0 = domingo, 1 = lunes, etc.
+                const horaActual = ahora.getHours();
+                const minutoActual = ahora.getMinutes();
+                const horaActualDecimal = horaActual + (minutoActual / 60);
+                
+                // Mapeo de días
+                const diasMap = {
+                    0: 'domingo',
+                    1: 'lunes',
+                    2: 'martes',
+                    3: 'miércoles',
+                    4: 'jueves',
+                    5: 'viernes',
+                    6: 'sábado'
+                };
+                
+                const diaNombre = diasMap[diaActual];
+                const horarioDia = horarios.find(h => h.toLowerCase().startsWith(diaNombre.toLowerCase()));
+                
+                if (!horarioDia) return { abierto: false, texto: 'Cerrado' };
+                
+                const partes = horarioDia.split(':');
+                const horas = partes.slice(1).join(':').trim();
+                
+                // Parsear rangos de horas (ej: "19:00–0:30" o "12:00–16:00, 19:00–0:30")
+                const rangos = horas.split(',').map(r => r.trim());
+                
+                for (const rango of rangos) {
+                    const [inicio, fin] = rango.split('–').map(h => h.trim());
+                    if (!inicio || !fin) continue;
+                    
+                    const [horaInicio, minutoInicio] = inicio.split(':').map(Number);
+                    const [horaFin, minutoFin] = fin.split(':').map(Number);
+                    
+                    let horaInicioDecimal = horaInicio + (minutoInicio / 60);
+                    let horaFinDecimal = horaFin + (minutoFin / 60);
+                    
+                    // Si la hora de fin es menor que la de inicio, significa que cruza medianoche
+                    if (horaFinDecimal < horaInicioDecimal) {
+                        horaFinDecimal += 24;
+                    }
+                    
+                    if (horaActualDecimal >= horaInicioDecimal && horaActualDecimal <= horaFinDecimal) {
+                        return { abierto: true, texto: 'Abierto' };
+                    }
+                }
+                
+                return { abierto: false, texto: 'Cerrado' };
+            } catch (e) {
+                return { abierto: null, texto: 'N/A' };
+            }
         }
     </script>
 </body>

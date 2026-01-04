@@ -10,14 +10,9 @@
             </h1>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                 @php
-                    $dayName = now()->locale('es')->dayName;
                     $date = now()->format('d M, Y');
                 @endphp
-                @if(isset($pageTitle))
-                    {{ $pageTitle }} · {{ ucfirst($dayName) }}, {{ $date }}
-                @else
-                    Dashboard · {{ ucfirst($dayName) }}, {{ $date }}
-                @endif
+                {{ $date }}
             </p>
         </div>
     </div>

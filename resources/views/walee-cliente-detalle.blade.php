@@ -291,18 +291,18 @@
                             </div>
                             
                             <!-- Nombre y estado a la derecha -->
-                            <div class="flex-1 min-w-0">
+                    <div class="flex-1 min-w-0">
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
                                         <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                    </span>
-                                </div>
-                            </div>
+                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                            </span>
+                        </div>
                 </div>
-                        
+            </div>
+            
                         <!-- Acciones Rápidas Mobile -->
                         <div class="px-3 pb-3">
                             <div class="grid grid-cols-4 gap-1.5">
@@ -311,37 +311,37 @@
                                     <a href="{{ $cliente->website }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-blue-600 dark:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                        </svg>
+                    </svg>
                                     </a>
                                 @else
                                     <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                        </svg>
-                </div>
+                    </svg>
+            </div>
                                 @endif
                                 
                                 <!-- Email Button -->
-                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
+                                <button onclick="openEmailModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                                </a>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                </button>
                                 
                                 <!-- Facebook Button -->
                                 @if($cliente->facebook)
                                     <a href="{{ $cliente->facebook }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
                                         <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
+                    </svg>
                                     </a>
                                 @else
                                     <div class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
-                                    </div>
-                                @endif
+                                </svg>
+                    </div>
+                @endif
                 
                                 <!-- WhatsApp Button -->
                                 <button onclick="openWhatsAppModal()" 
@@ -370,11 +370,11 @@
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                </svg>
+                            </svg>
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Publicaciones</span>
-                            </div>
+                        </div>
                                 <span class="text-sm font-semibold text-violet-700 dark:text-violet-400">{{ $publicacionesPublicadas }}/{{ $publicacionesProgramadas }}</span>
-                            </a>
+                    </a>
                             
                             <!-- Citas -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-100 dark:bg-walee-500/10 border border-amber-600 dark:border-walee-500/20">
@@ -397,7 +397,7 @@
                             </div>
                                 <span class="text-sm font-semibold text-red-700 dark:text-red-400">{{ $facturas->count() }}</span>
                             </div>
-                            
+                
                             <!-- Cotizaciones -->
                             <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-100 dark:bg-blue-500/10 border border-blue-600 dark:border-blue-500/20">
                                 <div class="flex items-center gap-2">
@@ -437,16 +437,16 @@
                         @endif
                                 
                                 <!-- Nombre y estado a la derecha -->
-                                <div class="flex-1 min-w-0">
+                                            <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                        </span>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
                             </div>
                             
                             <!-- Acciones Rápidas Desktop -->
@@ -467,14 +467,14 @@
                                         <span class="text-sm font-medium text-slate-400">Website</span>
                             </div>
                         @endif
-                                
+                    
                                 <!-- Email Button -->
-                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
+                                <button onclick="openEmailModal()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                                </svg>
+                                    </svg>
                                     <span class="text-sm font-medium">Email</span>
-                                </a>
+                                </button>
                                 
                                 <!-- Facebook Button -->
                                 @if($cliente->facebook)
@@ -484,15 +484,15 @@
                                         </svg>
                                         <span class="text-sm font-medium">Facebook</span>
                                     </a>
-                                @else
+                        @else
                                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                        </svg>
+                                </svg>
                                         <span class="text-sm font-medium text-slate-400">Facebook</span>
-                                    </div>
-                                @endif
-                                
+                            </div>
+                        @endif
+            
                                 <!-- WhatsApp Button -->
                                 <button onclick="openWhatsAppModal()" 
                                         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-100 dark:bg-slate-800 hover:bg-emerald-200 dark:hover:bg-slate-700 text-emerald-600 dark:text-emerald-600 border border-emerald-600 dark:border-slate-700 transition-all group shadow-sm {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}"
@@ -1395,6 +1395,262 @@
                     text: 'Error de conexión. Por favor, intenta de nuevo.',
                     confirmButtonColor: '#ef4444'
                 });
+            }
+        }
+        
+        function openEmailModal() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            const clienteId = {{ $cliente->id }};
+            const clienteEmail = '{{ $cliente->email ?? '' }}';
+            const clienteName = '{{ $cliente->name }}';
+            const clienteWebsite = '{{ $cliente->website ?? '' }}';
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '700px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '600px';
+            }
+            
+            const html = `
+                <form id="emailForm" class="space-y-3 text-left">
+                    <input type="hidden" id="cliente_id" value="${clienteId}">
+                    
+                    <!-- Email destinatario -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Email destinatario <span class="text-red-500">*</span></label>
+                        <input type="email" id="email_destinatario" value="${clienteEmail}" required
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                    </div>
+                    
+                    <!-- AI Prompt -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Instrucciones para AI (opcional)</label>
+                        <textarea id="ai_prompt" rows="2" placeholder="Ej: Genera un email profesional de propuesta..."
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
+                        <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
+                            class="mt-2 w-full px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            <span>Generar con AI</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Asunto -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto <span class="text-red-500">*</span></label>
+                        <input type="text" id="email_subject" required placeholder="Asunto del email"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                    </div>
+                    
+                    <!-- Mensaje -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Mensaje <span class="text-red-500">*</span></label>
+                        <textarea id="email_body" rows="6" required placeholder="Escribe o genera el contenido del email..."
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none"></textarea>
+                    </div>
+                    
+                    <!-- Adjuntar archivos -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Adjuntar archivos (opcional)</label>
+                        <input type="file" id="email_attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        <p class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-1">PDF o imágenes (máx. 10MB por archivo)</p>
+                        <div id="email_files_list" class="mt-2 space-y-1"></div>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: 'Crear Email',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1.25rem',
+                showCancelButton: true,
+                confirmButtonText: 'Enviar Email',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Mostrar archivos seleccionados
+                    const fileInput = document.getElementById('email_attachments');
+                    const filesList = document.getElementById('email_files_list');
+                    if (fileInput) {
+                        fileInput.addEventListener('change', function(e) {
+                            if (filesList) {
+                                filesList.innerHTML = '';
+                                Array.from(e.target.files).forEach((file, index) => {
+                                    const fileItem = document.createElement('div');
+                                    fileItem.className = `flex items-center justify-between p-2 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`;
+                                    fileItem.innerHTML = `
+                                        <span class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">${file.name}</span>
+                                        <span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                    `;
+                                    filesList.appendChild(fileItem);
+                                });
+                            }
+                        });
+                    }
+                },
+                preConfirm: async () => {
+                    const email = document.getElementById('email_destinatario').value;
+                    const subject = document.getElementById('email_subject').value;
+                    const body = document.getElementById('email_body').value;
+                    
+                    if (!email || !subject || !body) {
+                        Swal.showValidationMessage('Por favor, completa todos los campos requeridos');
+                        return false;
+                    }
+                    
+                    const formData = new FormData();
+                    formData.append('cliente_id', clienteId);
+                    formData.append('email', email);
+                    formData.append('subject', subject);
+                    formData.append('body', body);
+                    formData.append('ai_prompt', document.getElementById('ai_prompt').value || '');
+                    
+                    // Agregar archivos
+                    const attachments = document.getElementById('email_attachments');
+                    if (attachments && attachments.files && attachments.files.length > 0) {
+                        Array.from(attachments.files).forEach((file, index) => {
+                            formData.append(`archivos[${index}]`, file);
+                        });
+                    }
+                    
+                    try {
+                        Swal.fire({
+                            title: 'Enviando...',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        });
+                        
+                        const response = await fetch('{{ route("walee.emails.enviar") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Email enviado!',
+                                text: data.message || 'El email se ha enviado correctamente',
+                                confirmButtonColor: '#8b5cf6',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al enviar el email',
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: error.message,
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        });
+                    }
+                    
+                    return false; // No cerrar automáticamente
+                }
+            });
+        }
+        
+        async function generateEmailWithAI() {
+            const generateBtn = document.getElementById('generateEmailBtn');
+            const aiPrompt = document.getElementById('ai_prompt').value;
+            const subjectInput = document.getElementById('email_subject');
+            const bodyInput = document.getElementById('email_body');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            const clienteId = {{ $cliente->id }};
+            const clienteName = '{{ $cliente->name }}';
+            const clienteWebsite = '{{ $cliente->website ?? '' }}';
+            
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.emails.generar") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        cliente_id: clienteId,
+                        ai_prompt: aiPrompt,
+                        client_name: clienteName,
+                        client_website: clienteWebsite,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    subjectInput.value = data.subject;
+                    bodyInput.value = data.body;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al generar email',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: error.message,
+                    confirmButtonColor: '#ef4444'
+                });
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                    </svg>
+                    <span>Generar con AI</span>
+                `;
             }
         }
     </script>

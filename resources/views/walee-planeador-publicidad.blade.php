@@ -85,39 +85,85 @@
         
         /* Mejorar botones en mobile */
         @media (max-width: 640px) {
-            button, a[class*="px-"], a[class*="py-"] {
-                min-height: 44px !important;
-                padding: 0.75rem 1rem !important;
-                font-size: 0.875rem !important;
+            /* Botones principales del header - más grandes y visibles */
+            .header-actions button,
+            .header-actions a {
+                min-height: 48px !important;
+                min-width: 48px !important;
+                padding: 0.75rem 1.25rem !important;
+                font-size: 0.9375rem !important;
                 font-weight: 600 !important;
+                border-radius: 0.875rem !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+                gap: 0.5rem !important;
+            }
+            
+            .header-actions button:active,
+            .header-actions a:active {
+                transform: scale(0.96) !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+            }
+            
+            /* Botones de eventos en el calendario - más grandes y táctiles */
+            button[onclick*="showEventoDetail"] {
+                min-height: 56px !important;
+                padding: 0.875rem 1rem !important;
+                font-size: 0.875rem !important;
                 border-radius: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
             }
             
-            button:active, a[class*="px-"]:active {
-                transform: scale(0.98) !important;
-                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+            button[onclick*="showEventoDetail"]:active {
+                transform: scale(0.97) !important;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
             }
             
-            /* Botones principales del header */
-            .header-actions button,
-            .header-actions a {
-                min-width: 44px !important;
-                padding: 0.625rem 1rem !important;
-            }
-            
-            /* Botones del modal */
+            /* Botones del modal - más grandes */
             #evento-form button[type="submit"],
             #evento-form button[type="button"] {
-                min-height: 48px !important;
-                padding: 0.875rem 1.25rem !important;
+                min-height: 52px !important;
+                padding: 0.875rem 1.5rem !important;
                 font-size: 1rem !important;
+                font-weight: 600 !important;
+                border-radius: 0.875rem !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            #evento-form button[type="submit"]:active,
+            #evento-form button[type="button"]:active {
+                transform: scale(0.96) !important;
             }
             
             /* Botón de generar AI */
             #btnGenerarTexto {
-                min-height: 44px !important;
-                padding: 0.75rem 1rem !important;
+                min-height: 48px !important;
+                padding: 0.75rem 1.25rem !important;
+                font-size: 0.9375rem !important;
+                font-weight: 600 !important;
+                border-radius: 0.875rem !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            #btnGenerarTexto:active {
+                transform: scale(0.96) !important;
+            }
+            
+            /* Mejorar contenedor de botones del header */
+            .header-actions {
+                gap: 0.75rem !important;
+                flex-wrap: wrap !important;
+            }
+            
+            /* Asegurar que los botones tengan buen contraste */
+            .header-actions button,
+            .header-actions a {
+                border: 2px solid transparent !important;
+            }
+            
+            .header-actions button:hover,
+            .header-actions a:hover {
+                border-color: rgba(255, 255, 255, 0.3) !important;
             }
         }
         
@@ -451,7 +497,7 @@
                                 <p class="text-xs md:text-sm text-violet-700 dark:text-violet-400 truncate">Planeador de Publicidad</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 flex-shrink-0 flex-wrap header-actions">
+                        <div class="flex items-center gap-2 sm:gap-2 flex-shrink-0 flex-wrap header-actions">
                             <button onclick="showNuevoEventoModal()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -465,14 +511,14 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                     <span class="hidden sm:inline">Anterior</span>
-                                    <span class="sm:hidden">Anterior</span>
+                                    <span class="sm:hidden">Ant</span>
                                 </a>
                                 <a href="?vista=semanal&semana={{ $semanaSiguienteFormato }}" class="px-3 py-2.5 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                     <svg class="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
                                     <span class="hidden sm:inline">Siguiente</span>
-                                    <span class="sm:hidden">Siguiente</span>
+                                    <span class="sm:hidden">Sig</span>
                                 </a>
                             @endif
                         </div>
@@ -545,7 +591,7 @@
                                                     @endphp
                                                     <button 
                                                         onclick="event.preventDefault(); showEventoDetail({{ $evento->id }});"
-                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 {{ $claseBtn }} shadow-sm md:shadow-none"
+                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 {{ $claseBtn }} shadow-sm md:shadow-none"
                                                         style="border-left: 4px solid {{ $yaPaso ? '#10b981' : '#eab308' }};"
                                                         title="{{ $evento->titulo }}"
                                                     >

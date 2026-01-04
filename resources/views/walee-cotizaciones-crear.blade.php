@@ -117,27 +117,33 @@
         $cotizacionesCliente = collect();
         $clientInfo = null;
         if ($clienteSeleccionado) {
+            // Obtener información del cliente para mostrar
+            $clientInfo = $clienteSeleccionado;
+            
+            // Buscar cotizaciones SOLO por cliente_id (no por correo para evitar cotizaciones de otros clientes)
             $cotizacionesCliente = \App\Models\Cotizacion::where('cliente_id', $clienteSeleccionado->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-            
-            if ($cotizacionesCliente->isEmpty() && $clienteSeleccionado->correo) {
-                $cotizacionesCliente = \App\Models\Cotizacion::where('correo', $clienteSeleccionado->correo)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            }
-            
-            $clientInfo = $clienteSeleccionado;
-            
-            if (!$clientInfo && isset($clienteIdFromUrl) && is_numeric($clienteIdFromUrl)) {
-                $clientEnProceso = \App\Models\Client::find(intval($clienteIdFromUrl));
-                if ($clientEnProceso) {
-                    $clientInfo = $clientEnProceso;
-                    if ($clientEnProceso->email) {
-                        $cotizacionesCliente = \App\Models\Cotizacion::where('correo', $clientEnProceso->email)
-                            ->orderBy('created_at', 'desc')
-                            ->get();
-                    }
+        } elseif (isset($clienteIdFromUrl) && is_numeric($clienteIdFromUrl)) {
+            // Si el cliente_id viene de Client pero no se encontró en Cliente
+            $clientEnProceso = \App\Models\Client::find(intval($clienteIdFromUrl));
+            if ($clientEnProceso) {
+                $clientInfo = $clientEnProceso;
+                
+                // Buscar el Cliente correspondiente por email o nombre
+                $clienteCorrespondiente = \App\Models\Cliente::where('correo', $clientEnProceso->email)->first();
+                if (!$clienteCorrespondiente && $clientEnProceso->name) {
+                    $clienteCorrespondiente = \App\Models\Cliente::where('nombre_empresa', $clientEnProceso->name)->first();
+                }
+                
+                // Si encontramos un Cliente correspondiente, buscar cotizaciones por su ID
+                if ($clienteCorrespondiente) {
+                    $cotizacionesCliente = \App\Models\Cotizacion::where('cliente_id', $clienteCorrespondiente->id)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                } else {
+                    // Si no hay Cliente correspondiente, no mostrar cotizaciones (evitar mostrar cotizaciones de otros)
+                    $cotizacionesCliente = collect();
                 }
             }
         }

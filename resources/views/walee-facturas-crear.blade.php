@@ -119,32 +119,33 @@
         $facturasCliente = collect();
         $clientInfo = null;
         if ($clienteSeleccionado) {
-            // Buscar facturas por cliente_id
-            $facturasCliente = \App\Models\Factura::where('cliente_id', $clienteSeleccionado->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
-            
-            // Si no hay facturas por cliente_id, buscar también por correo
-            if ($facturasCliente->isEmpty() && $clienteSeleccionado->correo) {
-                $facturasCliente = \App\Models\Factura::where('correo', $clienteSeleccionado->correo)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            }
-            
             // Obtener información del cliente para mostrar
             $clientInfo = $clienteSeleccionado;
             
-            // Si el cliente_id viene de Client, obtener también esa información
-            if (!$clientInfo && isset($clienteIdFromUrl) && is_numeric($clienteIdFromUrl)) {
-                $clientEnProceso = \App\Models\Client::find(intval($clienteIdFromUrl));
-                if ($clientEnProceso) {
-                    $clientInfo = $clientEnProceso;
-                    // Buscar facturas por correo del Client
-                    if ($clientEnProceso->email) {
-                        $facturasCliente = \App\Models\Factura::where('correo', $clientEnProceso->email)
-                            ->orderBy('created_at', 'desc')
-                            ->get();
-                    }
+            // Buscar facturas SOLO por cliente_id (no por correo para evitar facturas de otros clientes)
+            $facturasCliente = \App\Models\Factura::where('cliente_id', $clienteSeleccionado->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } elseif (isset($clienteIdFromUrl) && is_numeric($clienteIdFromUrl)) {
+            // Si el cliente_id viene de Client pero no se encontró en Cliente
+            $clientEnProceso = \App\Models\Client::find(intval($clienteIdFromUrl));
+            if ($clientEnProceso) {
+                $clientInfo = $clientEnProceso;
+                
+                // Buscar el Cliente correspondiente por email o nombre
+                $clienteCorrespondiente = \App\Models\Cliente::where('correo', $clientEnProceso->email)->first();
+                if (!$clienteCorrespondiente && $clientEnProceso->name) {
+                    $clienteCorrespondiente = \App\Models\Cliente::where('nombre_empresa', $clientEnProceso->name)->first();
+                }
+                
+                // Si encontramos un Cliente correspondiente, buscar facturas por su ID
+                if ($clienteCorrespondiente) {
+                    $facturasCliente = \App\Models\Factura::where('cliente_id', $clienteCorrespondiente->id)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                } else {
+                    // Si no hay Cliente correspondiente, no mostrar facturas (evitar mostrar facturas de otros)
+                    $facturasCliente = collect();
                 }
             }
         }

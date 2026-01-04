@@ -225,6 +225,11 @@
                                                 {{ $cliente->email }}
                                             </p>
                                         @endif
+                                        @if($cliente->ciudad)
+                                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 truncate mt-0.5">
+                                                📍 {{ $cliente->ciudad }}
+                                            </p>
+                                        @endif
                                         <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
                                             @if($cliente->estado == 'pending' && $cliente->created_at->isToday())
                                                 <span class="inline-block px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">

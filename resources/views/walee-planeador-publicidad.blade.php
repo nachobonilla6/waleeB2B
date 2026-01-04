@@ -1282,11 +1282,15 @@
                     // Layout igual que Crear Publicación: Estado y Fecha arriba, Imagen, Prompt y Texto abajo
                     const html = `
                         <div class="space-y-2.5 text-left">
-                            <!-- Estado, Fecha y Facebook arriba de la imagen -->
-                            <div class="flex items-center gap-2 flex-wrap">
-                                ${estadoBadge}
-                                ${fechaFormateada ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${fechaFormateada}</span>` : ''}
-                                ${facebookHTML}
+                            <!-- Facebook a la izquierda, Estado y Fecha a la derecha -->
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <div class="flex items-center gap-2">
+                                    ${facebookHTML}
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    ${estadoBadge}
+                                    ${fechaFormateada ? `<span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">${fechaFormateada}</span>` : ''}
+                                </div>
                             </div>
                             
                             ${imagenHTML ? imagenHTML : ''}

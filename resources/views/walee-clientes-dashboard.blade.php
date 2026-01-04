@@ -178,7 +178,7 @@
         $clientesEnProceso = Client::whereIn('estado', ['pending', 'received'])->count();
         $clientesPending = Client::where('estado', 'pending')->count();
         $clientesReceived = Client::where('estado', 'received')->count();
-        $totalClientes = Client::count();
+        // $totalClientes ya está definido arriba con solo activos
         $porcentajeClientes = $totalClientes > 0 ? (($clientesEnProceso / $totalClientes) * 100) : 0;
         
         // Datos para gráfico de barras: Clientes en proceso por día (últimos 7 días)

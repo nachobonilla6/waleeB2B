@@ -61,30 +61,47 @@
     @php
         // Obtener facturas del cliente (usando clienteFacturas que es el modelo Cliente)
         $facturas = collect();
+        
+        // Primero intentar buscar por cliente_id del modelo Cliente
         if (isset($clienteFacturas) && $clienteFacturas) {
-            // Buscar facturas por cliente_id del modelo Cliente
             $facturas = \App\Models\Factura::where('cliente_id', $clienteFacturas->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
+        }
+        
+        // Si no hay facturas por cliente_id, buscar también por correo
+        // Esto es importante porque las facturas pueden tener el correo pero no el cliente_id correcto
+        if ($facturas->isEmpty()) {
+            $emails = [];
             
-            // Si no hay facturas por cliente_id, buscar también por correo del cliente
-            if ($facturas->isEmpty() && isset($cliente) && $cliente->email) {
-                $facturas = \App\Models\Factura::where('correo', $cliente->email)
+            // Agregar email del Client si existe
+            if (isset($cliente) && $cliente->email) {
+                $emails[] = $cliente->email;
+            }
+            
+            // Agregar email del Cliente si existe
+            if (isset($clienteFacturas) && $clienteFacturas->correo) {
+                $emails[] = $clienteFacturas->correo;
+            }
+            
+            // Buscar facturas por cualquier email encontrado
+            if (!empty($emails)) {
+                $facturas = \App\Models\Factura::whereIn('correo', array_unique($emails))
                     ->orderBy('created_at', 'desc')
                     ->get();
             }
-            
-            // También buscar facturas que puedan tener el correo del Cliente
-            if ($facturas->isEmpty() && $clienteFacturas->correo) {
-                $facturas = \App\Models\Factura::where('correo', $clienteFacturas->correo)
+        }
+        
+        // Si aún no hay facturas, buscar también por cliente_id si el cliente viene de Client
+        // Esto puede pasar si el cliente_id en la URL es de Client pero las facturas están asociadas a Cliente
+        if ($facturas->isEmpty() && isset($cliente) && $cliente->email) {
+            // Buscar si hay un Cliente con el mismo email
+            $clientePorEmail = \App\Models\Cliente::where('correo', $cliente->email)->first();
+            if ($clientePorEmail) {
+                $facturas = \App\Models\Factura::where('cliente_id', $clientePorEmail->id)
                     ->orderBy('created_at', 'desc')
                     ->get();
             }
-        } elseif (isset($cliente) && $cliente->email) {
-            // Si no hay clienteFacturas, buscar directamente por correo del Client
-            $facturas = \App\Models\Factura::where('correo', $cliente->email)
-                ->orderBy('created_at', 'desc')
-                ->get();
         }
         
         $totalFacturas = $facturas->count();

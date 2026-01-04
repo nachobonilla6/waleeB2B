@@ -236,14 +236,6 @@
                             <!-- Nombre a la derecha -->
                             <div class="flex-1 min-w-0">
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words">{{ $cliente->name }}</h1>
-                                <div class="mt-1 space-y-0.5">
-                                    @if($cliente->telefono_1)
-                                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ $cliente->telefono_1 }}</p>
-                                    @endif
-                                    @if($cliente->email)
-                                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ $cliente->email }}</p>
-                                    @endif
-                                </div>
                             </div>
                         </div>
                         
@@ -384,14 +376,6 @@
                                 @endif
                                 <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
-                                    <div class="mb-2 sm:mb-3 space-y-1">
-                                        @if($cliente->telefono_1)
-                                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{{ $cliente->telefono_1 }}</p>
-                                        @endif
-                                        @if($cliente->email)
-                                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">{{ $cliente->email }}</p>
-                                        @endif
-                                    </div>
                                     <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
                                             <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

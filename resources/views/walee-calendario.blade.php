@@ -332,9 +332,7 @@
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-emerald-500/20 to-walee-500/20 flex items-center justify-center">
-                                        <span class="text-lg md:text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ strtoupper(substr($cliente->name, 0, 1)) }}</span>
-                                    </div>
+                                    <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-full h-full object-cover">
                                 @endif
                             </a>
                             <div class="min-w-0 flex-1">
@@ -480,16 +478,47 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const clienteId = {{ $cliente->id }};
         
+        // Variables globales para el flujo de fases
+        let citaModalData = {
+            fecha: '',
+            horaInicio: '',
+            horaFin: '',
+            titulo: '',
+            descripcion: '',
+            ubicacion: '',
+            estado: 'programada'
+        };
+        
         function showCitaDetail(citaId) {
             window.location.href = `/citas/${citaId}/detalle`;
         }
         
         function openCreateCitaModal(fecha) {
+            // Resetear datos
+            citaModalData.fecha = fecha;
+            citaModalData.horaInicio = '';
+            citaModalData.horaFin = '';
+            citaModalData.titulo = '';
+            citaModalData.descripcion = '';
+            citaModalData.ubicacion = '';
+            citaModalData.estado = 'programada';
+            
+            showCitaPhase1();
+        }
+        
+        function showCitaPhase1() {
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '600px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '550px';
+            }
+            
             // Formatear fecha para mostrar
-            const fechaObj = new Date(fecha + 'T00:00:00');
+            const fechaObj = new Date(citaModalData.fecha + 'T00:00:00');
             const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -497,77 +526,49 @@
                 day: 'numeric' 
             });
             
-            // Modal más ancha que alta
-            const modalWidth = isMobile ? '95%' : '700px';
-            const modalPadding = isMobile ? '0.5rem' : '1rem';
-            const maxHeight = isMobile ? '90vh' : '85vh';
-            
-            Swal.fire({
-                title: 'Nueva Cita',
-                html: `
-                    <form id="citaForm" class="space-y-2 text-left">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Fecha</label>
-                                <input type="date" id="cita_fecha" value="${fecha}" required
-                                    class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                                <p class="text-[9px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">${fechaFormateada}</p>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Hora inicio <span class="text-red-500">*</span></label>
-                                    <input type="time" id="cita_hora_inicio" required
-                                        class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Hora fin</label>
-                                    <input type="time" id="cita_hora_fin"
-                                        class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                                </div>
-                            </div>
-                        </div>
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha</label>
+                        <input type="date" id="cita_fecha" value="${citaModalData.fecha}" required
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                        <p class="text-[9px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">${fechaFormateada}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Título <span class="text-red-500">*</span></label>
-                            <input type="text" id="cita_titulo" required placeholder="Ej: Reunión de seguimiento"
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora inicio <span class="text-red-500">*</span></label>
+                            <input type="time" id="cita_hora_inicio" value="${citaModalData.horaInicio}" required
                                 class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Ubicación</label>
-                                <input type="text" id="cita_ubicacion" placeholder="Ej: Oficina, Zoom, etc."
-                                    class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Estado</label>
-                                <select id="cita_estado"
-                                    class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
-                                    <option value="programada">Programada</option>
-                                    <option value="completada">Completada</option>
-                                    <option value="cancelada">Cancelada</option>
-                                </select>
-                            </div>
-                        </div>
                         <div>
-                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-0.5">Descripción</label>
-                            <textarea id="cita_descripcion" rows="2" placeholder="Notas adicionales..."
-                                class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none"></textarea>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Hora fin</label>
+                            <input type="time" id="cita_hora_fin" value="${citaModalData.horaFin}"
+                                class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
                         </div>
-                    </form>
-                `,
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span>Nueva Cita - Paso 1</span></div>',
+                html: html,
                 width: modalWidth,
-                padding: modalPadding,
-                maxHeight: maxHeight,
+                padding: isMobile ? '0.75rem' : '1rem',
                 showCancelButton: true,
-                showConfirmButton: true,
-                confirmButtonText: 'Crear Cita',
+                confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#10b981',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                allowOutsideClick: false,
-                allowEscapeKey: true,
                 customClass: {
                     popup: isDarkMode ? 'dark-swal' : 'light-swal',
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
@@ -575,39 +576,170 @@
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
-                didOpen: () => {
-                    // Aplicar estilos dinámicos para dark/light mode
-                    const popup = Swal.getPopup();
-                    if (isDarkMode) {
-                        popup.style.backgroundColor = '#1e293b';
-                        popup.style.color = '#e2e8f0';
-                    } else {
-                        popup.style.backgroundColor = '#ffffff';
-                        popup.style.color = '#1e293b';
-                    }
-                },
-                preConfirm: async () => {
+                preConfirm: () => {
                     const fecha = document.getElementById('cita_fecha').value;
                     const horaInicio = document.getElementById('cita_hora_inicio').value;
                     const horaFin = document.getElementById('cita_hora_fin').value;
-                    const titulo = document.getElementById('cita_titulo').value;
-                    const ubicacion = document.getElementById('cita_ubicacion').value;
-                    const descripcion = document.getElementById('cita_descripcion').value;
-                    const estado = document.getElementById('cita_estado').value;
-                    
-                    if (!titulo) {
-                        Swal.showValidationMessage('El título es requerido');
-                        return false;
-                    }
                     
                     if (!horaInicio) {
                         Swal.showValidationMessage('La hora de inicio es requerida');
                         return false;
                     }
                     
+                    citaModalData.fecha = fecha;
+                    citaModalData.horaInicio = horaInicio;
+                    citaModalData.horaFin = horaFin;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showCitaPhase2();
+                }
+            });
+        }
+        
+        function showCitaPhase2() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '600px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '550px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título <span class="text-red-500">*</span></label>
+                        <input type="text" id="cita_titulo" value="${citaModalData.titulo}" required placeholder="Ej: Reunión de seguimiento"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción</label>
+                        <textarea id="cita_descripcion" rows="4" placeholder="Notas adicionales..."
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none">${citaModalData.descripcion}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Nueva Cita - Paso 2</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const titulo = document.getElementById('cita_titulo').value;
+                    const descripcion = document.getElementById('cita_descripcion').value;
+                    
+                    if (!titulo) {
+                        Swal.showValidationMessage('El título es requerido');
+                        return false;
+                    }
+                    
+                    citaModalData.titulo = titulo;
+                    citaModalData.descripcion = descripcion;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showCitaPhase3();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    showCitaPhase1();
+                }
+            });
+        }
+        
+        function showCitaPhase3() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '600px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '550px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Ubicación</label>
+                        <input type="text" id="cita_ubicacion" value="${citaModalData.ubicacion}" placeholder="Ej: Oficina, Zoom, etc."
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
+                        <select id="cita_estado"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none">
+                            <option value="programada" ${citaModalData.estado === 'programada' ? 'selected' : ''}>Programada</option>
+                            <option value="completada" ${citaModalData.estado === 'completada' ? 'selected' : ''}>Completada</option>
+                            <option value="cancelada" ${citaModalData.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span>Nueva Cita - Paso 3</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Crear Cita',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: async () => {
+                    const ubicacion = document.getElementById('cita_ubicacion').value;
+                    const estado = document.getElementById('cita_estado').value;
+                    
+                    citaModalData.ubicacion = ubicacion;
+                    citaModalData.estado = estado;
+                    
                     // Combinar fecha y hora
-                    const fechaInicio = `${fecha} ${horaInicio}:00`;
-                    const fechaFin = horaFin ? `${fecha} ${horaFin}:00` : null;
+                    const fechaInicio = `${citaModalData.fecha} ${citaModalData.horaInicio}:00`;
+                    const fechaFin = citaModalData.horaFin ? `${citaModalData.fecha} ${citaModalData.horaFin}:00` : null;
                     
                     try {
                         const response = await fetch('/citas', {
@@ -619,12 +751,12 @@
                             },
                             body: JSON.stringify({
                                 client_id: clienteId,
-                                titulo: titulo,
+                                titulo: citaModalData.titulo,
                                 fecha_inicio: fechaInicio,
                                 fecha_fin: fechaFin,
-                                ubicacion: ubicacion || null,
-                                descripcion: descripcion || null,
-                                estado: estado,
+                                ubicacion: citaModalData.ubicacion || null,
+                                descripcion: citaModalData.descripcion || null,
+                                estado: citaModalData.estado,
                                 color: '#10b981'
                             })
                         });
@@ -678,6 +810,10 @@
                             }
                         });
                     }
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    showCitaPhase2();
                 }
             });
         }

@@ -36,6 +36,20 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+        
+        /* Asegurar que el modal esté encima de todo */
+        .swal2-container {
+            z-index: 99999 !important;
+        }
+        .swal2-backdrop-show {
+            z-index: 99999 !important;
+        }
+        .swal2-popup {
+            z-index: 99999 !important;
+        }
+        .swal2-container.swal2-backdrop-show {
+            z-index: 99999 !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">

@@ -507,51 +507,51 @@
             };
             
             const html = `
-                <form id="editClientForm" class="space-y-2 sm:space-y-2.5 text-left">
+                <form id="editClientForm" class="space-y-3 sm:space-y-2.5 text-left">
                     <!-- Foto -->
-                    <div class="mb-2 sm:mb-3">
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Foto del Cliente</label>
-                        <div class="flex items-center gap-2 sm:gap-3">
+                    <div class="mb-3 sm:mb-3">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 sm:mb-2">Foto del Cliente</label>
+                        <div class="flex items-start gap-3 sm:gap-3">
                             <div class="flex-shrink-0 relative">
-                                <div id="fotoPreviewContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 border-emerald-500/30">
+                                <div id="fotoPreviewContainer" class="w-20 h-20 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 border-emerald-500/30 shadow-sm">
                                     ${clienteData.fotoUrl ? 
                                         `<img src="${clienteData.fotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
                                         `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
                                     }
                                 </div>
                                 ${clienteData.fotoUrl ? `
-                                    <button type="button" onclick="deleteClientPhoto()" class="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-lg" title="Eliminar foto">
-                                        <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button type="button" onclick="deleteClientPhoto()" class="absolute -top-1 -right-1 w-6 h-6 sm:w-6 sm:h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-lg z-10" title="Eliminar foto">
+                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                     </button>
                                 ` : ''}
                             </div>
-                            <div class="flex-1">
-                                <div class="flex flex-col sm:flex-row gap-1.5 sm:gap-2">
-                                    <label for="foto_file" class="cursor-pointer inline-flex items-center justify-center ${isMobile ? 'gap-0' : 'gap-1.5 sm:gap-2'} ${isMobile ? 'px-2.5 py-2' : 'px-2.5 sm:px-3 py-1.5 sm:py-2'} rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'} font-medium">
+                            <div class="flex-1 flex flex-col gap-2">
+                                <div class="flex gap-2">
+                                    <label for="foto_file" class="cursor-pointer flex-1 inline-flex items-center justify-center ${isMobile ? 'gap-1.5' : 'gap-1.5 sm:gap-2'} ${isMobile ? 'px-3 py-2' : 'px-2.5 sm:px-3 py-1.5 sm:py-2'} rounded-lg bg-walee-400/20 hover:bg-walee-400/30 text-walee-400 border border-walee-400/30 transition-all text-xs sm:text-sm font-medium">
                                         <svg class="${isMobile ? 'w-4 h-4' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        ${isMobile ? '' : '<span>Cambiar foto</span>'}
+                                        <span class="text-xs">Cambiar</span>
                                     </label>
                                     ${clienteData.fotoUrl ? `
-                                        <button type="button" onclick="deleteClientPhoto()" class="inline-flex items-center justify-center ${isMobile ? 'gap-0' : 'gap-1.5 sm:gap-2'} ${isMobile ? 'px-2.5 py-2' : 'px-2.5 sm:px-3 py-1.5 sm:py-2'} rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all ${isMobile ? 'text-xs' : 'text-xs sm:text-sm'} font-medium">
+                                        <button type="button" onclick="deleteClientPhoto()" class="flex-1 inline-flex items-center justify-center ${isMobile ? 'gap-1.5' : 'gap-1.5 sm:gap-2'} ${isMobile ? 'px-3 py-2' : 'px-2.5 sm:px-3 py-1.5 sm:py-2'} rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-all text-xs sm:text-sm font-medium">
                                             <svg class="${isMobile ? 'w-4 h-4' : 'w-3.5 h-3.5 sm:w-4 sm:h-4'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
-                                            ${isMobile ? '' : '<span>Eliminar</span>'}
+                                            <span class="text-xs">Eliminar</span>
                                         </button>
                                     ` : ''}
                                 </div>
                                 <input type="file" name="foto_file" id="foto_file" accept="image/*" class="hidden" onchange="previewClientImage(this)">
                                 <input type="hidden" name="delete_foto" id="delete_foto" value="0">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">JPG, PNG o GIF. Máx 2MB</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400">JPG, PNG o GIF. Máx 2MB</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-3' : 'sm:grid-cols-2'} gap-2 sm:gap-2.5">
+                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3 sm:gap-2.5">
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Nombre *</label>
                             <input type="text" id="clientName" name="name" required value="${clienteData.name}"

@@ -143,18 +143,22 @@
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $totalContratos }}</div>
+            <div class="grid grid-cols-4 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
+                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center">
+                    <div class="text-xl font-bold text-slate-900 dark:text-white">{{ $totalContratos }}</div>
                     <div class="text-xs text-slate-600 dark:text-slate-400">Total</div>
                 </div>
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $contratosEnviados }}</div>
+                <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 text-center">
+                    <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ $contratosEnviados }}</div>
                     <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Enviados</div>
                 </div>
-                <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
-                    <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $contratosPendientes }}</div>
+                <div class="bg-amber-50 dark:bg-amber-500/10 rounded-lg p-3 text-center">
+                    <div class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ $contratosPendientes }}</div>
                     <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Pendientes</div>
+                </div>
+                <div class="bg-blue-50 dark:bg-blue-500/10 rounded-lg p-3 text-center">
+                    <div class="text-xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($totalMonto, 2) }}</div>
+                    <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Total</div>
                 </div>
             </div>
             

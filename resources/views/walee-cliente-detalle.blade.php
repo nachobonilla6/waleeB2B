@@ -251,7 +251,7 @@
             @include('partials.walee-navbar')
             
             <!-- Header Profesional -->
-            <div class="mb-6 sm:mb-8 lg:mb-10">
+            <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col">
                 <div class="relative bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
                     @php
                         $fotoPath = $cliente->foto ?? null;
@@ -444,7 +444,7 @@
             </div>
             
             <!-- Footer -->
-            <footer class="text-center py-3 sm:py-6 md:py-8 mt-3 sm:mt-6">
+            <footer class="text-center py-2 sm:py-3 flex-shrink-0">
                 <p class="text-[10px] sm:text-sm text-slate-600 dark:text-slate-500">
                     <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>

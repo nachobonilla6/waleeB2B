@@ -89,10 +89,16 @@
         /* Estilo para backdrop opaco del modal */
         .swal2-backdrop-show {
             background-color: rgba(0, 0, 0, 0.75) !important;
+            z-index: 99999 !important;
         }
         
         .swal2-container {
             backdrop-filter: blur(4px);
+            z-index: 99999 !important;
+        }
+        
+        .swal2-popup {
+            z-index: 99999 !important;
         }
     </style>
 </head>

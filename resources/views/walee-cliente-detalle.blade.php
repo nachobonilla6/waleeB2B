@@ -50,6 +50,35 @@
         .swal2-container.swal2-backdrop-show {
             z-index: 99999 !important;
         }
+        
+        /* Estilos para mobile - ancho completo con poco espacio */
+        @media (max-width: 640px) {
+            .swal2-popup-mobile {
+                margin: 0.5rem !important;
+                padding: 0.75rem !important;
+                width: calc(100% - 1rem) !important;
+                max-width: calc(100% - 1rem) !important;
+            }
+            .swal2-html-container-mobile {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .swal2-html-container-mobile form {
+                width: 100% !important;
+            }
+            .swal2-html-container-mobile input,
+            .swal2-html-container-mobile textarea,
+            .swal2-html-container-mobile select {
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .swal2-html-container-mobile .grid {
+                gap: 0.75rem !important;
+            }
+            .swal2-html-container-mobile > * {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
@@ -879,34 +908,31 @@
                 </form>
             `;
             
-            let modalWidth = '95%';
+            let modalWidth = '98%';
             if (isDesktop) {
                 modalWidth = '700px';
             } else if (isTablet) {
                 modalWidth = '600px';
             } else if (isMobile) {
-                modalWidth = '95%';
+                modalWidth = '98%';
             }
             
             Swal.fire({
                 title: 'Editar Cliente',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#10b981',
-                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                padding: isMobile ? '0.75rem' : '1.5rem',
                 customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    container: isMobile ? 'swal2-container-mobile' : '',
+                    popup: isMobile ? 'swal2-popup-mobile' : (isDarkMode ? 'dark-swal' : 'light-swal'),
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    htmlContainer: isMobile ? 'swal2-html-container-mobile' : (isDarkMode ? 'dark-swal-html' : 'light-swal-html'),
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
                 didOpen: () => {
                     document.getElementById('clientName')?.focus();
                 },

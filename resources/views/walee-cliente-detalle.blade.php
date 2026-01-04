@@ -80,6 +80,18 @@
             }
         }
         
+        /* Estilos para desktop - modal más ancho y compacto */
+        @media (min-width: 1024px) {
+            .swal2-popup {
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+            }
+            .swal2-html-container {
+                max-height: calc(90vh - 120px) !important;
+                overflow-y: auto !important;
+            }
+        }
+        
         /* Asegurar que el modal respete el tema dark/light */
         html.dark .swal2-popup {
             background-color: #1e293b !important;
@@ -853,10 +865,10 @@
             };
             
             const html = `
-                <form id="editClientForm" class="space-y-2.5 sm:space-y-3 text-left">
+                <form id="editClientForm" class="space-y-2 sm:space-y-2.5 text-left">
                     <!-- Foto -->
-                    <div class="mb-3 sm:mb-4">
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Foto del Cliente</label>
+                    <div class="mb-2 sm:mb-3">
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Foto del Cliente</label>
                         <div class="flex items-center gap-2 sm:gap-3">
                             <div class="flex-shrink-0 relative">
                                 <div id="fotoPreviewContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg sm:rounded-xl overflow-hidden border-2 border-emerald-500/30">
@@ -897,43 +909,21 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 ${isDesktop ? 'sm:grid-cols-2' : ''} gap-2.5 sm:gap-3">
+                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-3' : 'sm:grid-cols-2'} gap-2 sm:gap-2.5">
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Nombre *</label>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Nombre *</label>
                             <input type="text" id="clientName" name="name" required value="${clienteData.name}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                         
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Email</label>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Email</label>
                             <input type="email" id="clientEmail" name="email" value="${clienteData.email}"
                                    class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 1</label>
-                            <input type="tel" id="clientTelefono1" name="telefono_1" value="${clienteData.telefono_1}"
-                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                        </div>
                         
                         <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Teléfono 2</label>
-                            <input type="tel" id="clientTelefono2" name="telefono_2" value="${clienteData.telefono_2}"
-                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 ${isDesktop ? 'sm:grid-cols-2' : ''} gap-2.5 sm:gap-3">
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sitio Web</label>
-                            <input type="url" id="clientWebsite" name="website" value="${clienteData.website}"
-                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Estado</label>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Estado</label>
                             <select id="clientEstado" name="estado"
                                     class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                                 <option value="pending" ${clienteData.estado === 'pending' ? 'selected' : ''}>Pendiente</option>
@@ -946,15 +936,37 @@
                         </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Dirección</label>
-                        <input type="text" id="clientAddress" name="address" value="${clienteData.address}"
-                               class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-2' : 'sm:grid-cols-2'} gap-2 sm:gap-2.5">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Teléfono 1</label>
+                            <input type="tel" id="clientTelefono1" name="telefono_1" value="${clienteData.telefono_1}"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Teléfono 2</label>
+                            <input type="tel" id="clientTelefono2" name="telefono_2" value="${clienteData.telefono_2}"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-2' : ''} gap-2 sm:gap-2.5">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Sitio Web</label>
+                            <input type="url" id="clientWebsite" name="website" value="${clienteData.website}"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Dirección</label>
+                            <input type="text" id="clientAddress" name="address" value="${clienteData.address}"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Feedback / Notas</label>
-                        <textarea id="clientFeedback" name="feedback" rows="3"
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Feedback / Notas</label>
+                        <textarea id="clientFeedback" name="feedback" rows="2"
                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400 resize-none">${clienteData.feedback}</textarea>
                     </div>
                 </form>
@@ -962,9 +974,9 @@
             
             let modalWidth = '98%';
             if (isDesktop) {
-                modalWidth = '700px';
+                modalWidth = '900px';
             } else if (isTablet) {
-                modalWidth = '600px';
+                modalWidth = '700px';
             } else if (isMobile) {
                 modalWidth = '98%';
             }
@@ -973,7 +985,7 @@
                 title: 'Editar Cliente',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1.5rem',
+                padding: isMobile ? '0.75rem' : (isDesktop ? '1.25rem' : '1.5rem'),
                 customClass: {
                     container: isMobile ? 'swal2-container-mobile' : '',
                     popup: isMobile ? 'swal2-popup-mobile' : (isDarkMode ? 'dark-swal' : 'light-swal'),

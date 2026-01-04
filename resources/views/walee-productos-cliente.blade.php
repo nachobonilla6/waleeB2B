@@ -126,22 +126,6 @@
                 </div>
             </div>
             
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-slate-900 dark:text-white">{{ $totalProductos }}</div>
-                    <div class="text-xs text-slate-600 dark:text-slate-400">Total</div>
-                </div>
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ $productosActivos }}</div>
-                    <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Activos</div>
-                </div>
-                <div class="bg-amber-50 dark:bg-amber-500/10 rounded-lg p-3 text-center">
-                    <div class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ $productosInactivos }}</div>
-                    <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Inactivos</div>
-                </div>
-            </div>
-            
             <!-- Filters -->
             <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-4 animate-fade-in-up">
                 <select id="filterEstado" onchange="filterProducts()" class="flex-1 sm:flex-none px-3 py-2 sm:px-4 text-sm sm:text-base rounded-lg sm:rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white">

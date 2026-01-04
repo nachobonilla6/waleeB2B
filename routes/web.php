@@ -3756,16 +3756,33 @@ Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\
     try {
         $cliente = \App\Models\Client::findOrFail($id);
         
-        $data = [
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'telefono_1' => $request->input('telefono_1'),
-            'telefono_2' => $request->input('telefono_2'),
-            'website' => $request->input('website'),
-            'address' => $request->input('address'),
-            'estado' => $request->input('estado'),
-            'feedback' => $request->input('feedback'),
-        ];
+        // Solo incluir campos que están presentes en la request
+        $data = [];
+        
+        if ($request->has('name')) {
+            $data['name'] = $request->input('name');
+        }
+        if ($request->has('email')) {
+            $data['email'] = $request->input('email');
+        }
+        if ($request->has('telefono_1')) {
+            $data['telefono_1'] = $request->input('telefono_1');
+        }
+        if ($request->has('telefono_2')) {
+            $data['telefono_2'] = $request->input('telefono_2');
+        }
+        if ($request->has('website')) {
+            $data['website'] = $request->input('website');
+        }
+        if ($request->has('address')) {
+            $data['address'] = $request->input('address');
+        }
+        if ($request->has('estado')) {
+            $data['estado'] = $request->input('estado');
+        }
+        if ($request->has('feedback')) {
+            $data['feedback'] = $request->input('feedback');
+        }
         
         // Procesar eliminación de foto
         if ($request->input('delete_foto') == '1') {

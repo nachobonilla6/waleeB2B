@@ -1284,18 +1284,18 @@
                                 ` : ''}
                             </div>
                             
-                            <!-- Fecha y Estado en la misma línea -->
-                            <div class="grid grid-cols-2 gap-2">
+                            <!-- Fecha y Estado en la misma línea, alineados a la derecha -->
+                            <div class="flex justify-end items-end gap-2">
                                 <!-- Fecha y Hora (solo lectura) -->
-                                <div>
+                                <div class="text-right">
                                     <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                    <div class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg">
+                                    <div class="px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg whitespace-nowrap">
                                         ${fechaFormateada}
                                     </div>
                                 </div>
                                 
                                 <!-- Estado (badge) -->
-                                <div>
+                                <div class="text-right">
                                     <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Estado</label>
                                     ${estadoBadge}
                                 </div>

@@ -2248,14 +2248,14 @@
                             popup.style.zIndex = '9999';
                             popup.style.position = 'relative';
                             
-                            // Crear y agregar botón X en la esquina superior izquierda del popup
+                            // Crear y agregar botón X en la esquina superior derecha del popup
                             const closeButton = document.createElement('button');
                             closeButton.innerHTML = `
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             `;
-                            closeButton.className = 'absolute -top-3 -left-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-[10000] transition-all hover:scale-110 cursor-pointer';
+                            closeButton.className = 'absolute -top-3 -right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg z-[10000] transition-all hover:scale-110 cursor-pointer';
                             closeButton.style.zIndex = '10000';
                             closeButton.onclick = () => Swal.close();
                             popup.appendChild(closeButton);

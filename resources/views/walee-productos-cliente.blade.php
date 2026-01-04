@@ -538,6 +538,7 @@
                 html: html,
                 width: isMobile ? '90%' : '1000px',
                 padding: isMobile ? '1rem' : '1.5rem',
+                heightAuto: false,
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
@@ -547,9 +548,10 @@
                 background: isDark ? '#1e293b' : '#ffffff',
                 color: isDark ? '#e2e8f0' : '#1e293b',
                 customClass: {
-                    popup: 'z-[99999]',
+                    popup: 'z-[99999] max-h-[85vh] overflow-y-auto',
                     container: 'z-[99999]',
-                    backdrop: 'z-[99998]'
+                    backdrop: 'z-[99998]',
+                    htmlContainer: 'max-h-[60vh] overflow-y-auto'
                 },
                 didOpen: () => {
                     // Asegurar que el modal esté encima de todo
@@ -557,6 +559,7 @@
                     const container = document.querySelector('.swal2-container');
                     if (popup) {
                         popup.style.zIndex = '99999';
+                        popup.style.maxHeight = '85vh';
                     }
                     if (container) {
                         container.style.zIndex = '99999';

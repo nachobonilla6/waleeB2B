@@ -764,33 +764,27 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const fechaDefault = `${year}-${month}-${day}T${hours}:${minutes}`;
             
-            let modalWidth = '95%';
+            let modalWidth = '90%';
             if (isDesktop) {
-                modalWidth = '900px';
+                modalWidth = '550px';
             } else if (isTablet) {
-                modalWidth = '600px';
+                modalWidth = '500px';
             } else if (isMobile) {
-                modalWidth = '95%';
+                modalWidth = '90%';
             }
             
             const html = `
-                <form id="programar-publicacion-form" class="space-y-3 text-left">
+                <form id="programar-publicacion-form" class="space-y-2.5 text-left">
                     <input type="hidden" name="cliente_id" value="{{ $cliente->id }}">
                     
-                    <!-- Prompt personalizado (arriba) -->
-                    <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Prompt Personalizado (opcional)</label>
-                        <textarea name="prompt_personalizado" id="prompt_personalizado" rows="1" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-2 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                    </div>
-                    
-                    <!-- Layout horizontal: Imagen y Texto lado a lado -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <!-- Imagen -->
+                    <!-- Layout: Imagen arriba, Prompt y Texto abajo juntos -->
+                    <div class="space-y-2.5">
+                        <!-- Imagen (más alta) -->
                         <div>
-                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Imagen</label>
+                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Imagen</label>
                             <div class="relative">
                                 <input type="file" name="imagen" id="imagen_publicacion" accept="image/*" class="hidden" onchange="previewImage(event)">
-                                <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed ${isDarkMode ? 'border-slate-700 bg-slate-800/50 hover:border-violet-500' : 'border-slate-300 bg-slate-50 hover:border-violet-500'} rounded-lg cursor-pointer transition-colors">
+                                <label for="imagen_publicacion" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed ${isDarkMode ? 'border-slate-700 bg-slate-800/50 hover:border-violet-500' : 'border-slate-300 bg-slate-50 hover:border-violet-500'} rounded-lg cursor-pointer transition-colors">
                                     <div id="imagePreview" class="hidden w-full h-full rounded-lg overflow-hidden">
                                         <img id="previewImg" src="" alt="Preview" class="w-full h-full object-cover">
                                     </div>
@@ -801,37 +795,46 @@
                                         <p class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}">Subir imagen</p>
                                     </div>
                                 </label>
-                                <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-1.5 px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-all">
+                                <button type="button" id="removeImageBtn" onclick="removeImage()" class="hidden mt-1 px-2 py-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-medium transition-all">
                                     Eliminar
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Texto con AI -->
-                        <div>
-                            <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Texto</label>
-                            <div class="flex gap-2">
-                                <textarea name="texto" id="texto_publicacion" rows="5" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
-                                <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-4 py-2.5 sm:px-3 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap h-fit shadow-md hover:shadow-lg active:scale-95">
-                                    <svg class="w-5 h-5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                                    </svg>
-                                    <span class="hidden sm:inline text-xs">AI</span>
-                                    <span class="sm:hidden">AI</span>
-                                </button>
+                        <!-- Prompt y Texto juntos -->
+                        <div class="space-y-2">
+                            <!-- Prompt personalizado -->
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Prompt Personalizado (opcional)</label>
+                                <textarea name="prompt_personalizado" id="prompt_personalizado" rows="1" placeholder="Describe el tipo de publicación que quieres generar con AI..." class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
                             </div>
-                            <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">
-                                <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Generando...
+                            
+                            <!-- Texto con AI -->
+                            <div>
+                                <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Texto</label>
+                                <div class="flex gap-2">
+                                    <textarea name="texto" id="texto_publicacion" rows="4" placeholder="Escribe el texto o genera con AI..." class="flex-1 px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"></textarea>
+                                    <button type="button" onclick="generarTextoAI()" id="btnGenerarTexto" class="px-3 py-1.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1 whitespace-nowrap h-fit shadow-md hover:shadow-lg active:scale-95">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                        </svg>
+                                        <span class="hidden sm:inline text-xs">AI</span>
+                                        <span class="sm:hidden">AI</span>
+                                    </button>
+                                </div>
+                                <div id="aiLoading" class="hidden text-xs text-violet-600 dark:text-violet-400 flex items-center gap-2 mt-1">
+                                    <svg class="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Generando...
+                                </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Plataforma con iconos y Fecha -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         <div>
                             <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5">Plataforma</label>
                             <div class="grid grid-cols-4 gap-2">
@@ -877,7 +880,7 @@
                 title: 'Crear Publicación',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
+                padding: isMobile ? '0.75rem' : '1rem',
                 showCancelButton: true,
                 confirmButtonText: 'Crear Publicación',
                 cancelButtonText: 'Cancelar',

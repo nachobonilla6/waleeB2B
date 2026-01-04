@@ -592,6 +592,16 @@
                                                     <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $eventosOrdenados->count() }} eventos</span>
                                                 </div>
                                             </div>
+                                            <!-- Botón para crear publicación en este día -->
+                                            <button 
+                                                onclick="showProgramarPublicacionModalConFecha('{{ $diaSemana->format('Y-m-d') }}', '09:00')"
+                                                class="mt-2 w-full px-2 py-1.5 text-xs font-medium rounded-lg bg-violet-500 hover:bg-violet-600 text-white transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md active:scale-95"
+                                                title="Crear publicación a las 9 AM">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                </svg>
+                                                <span>9 AM</span>
+                                            </button>
                                         </div>
                                         
                                         <!-- Eventos del día -->
@@ -861,20 +871,27 @@
             return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
         }
         
-        function showProgramarPublicacionModal() {
+        function showProgramarPublicacionModal(fecha = null, hora = null) {
             const isMobile = window.innerWidth < 640;
             const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
             const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
-            // Establecer fecha por defecto: hora actual
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const fechaDefault = `${year}-${month}-${day}T${hours}:${minutes}`;
+            // Establecer fecha por defecto: usar parámetros o hora actual
+            let fechaDefault;
+            if (fecha && hora) {
+                // Usar fecha y hora proporcionadas
+                fechaDefault = `${fecha}T${hora}`;
+            } else {
+                // Usar hora actual
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                fechaDefault = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
             
             let modalWidth = '98%';
             if (isDesktop) {
@@ -1205,6 +1222,11 @@
         function showNuevoEventoModal() {
             // Usar la función de SweetAlert2 que permite adjuntar foto y envía al webhook
             showProgramarPublicacionModal();
+        }
+        
+        function showProgramarPublicacionModalConFecha(fecha, hora) {
+            // Función helper para abrir el modal con fecha y hora específicas
+            showProgramarPublicacionModal(fecha, hora);
         }
         
         function closeEventoModal() {

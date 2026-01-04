@@ -285,9 +285,9 @@
                                         <span class="font-semibold text-slate-900 dark:text-white">₡{{ number_format($factura->total, 2) }}</span>
                                     </div>
                                 </div>
-                                <a href="{{ route('walee.factura.ver', $factura->id) }}" class="ml-3 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all">
+                                <button onclick="verFacturaModal({{ $factura->id }})" class="ml-3 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all">
                                     Ver
-                                </a>
+                                </button>
                             </div>
                         </div>
                         @endforeach
@@ -2050,6 +2050,199 @@
                     }
                 });
             });
+        }
+        
+        // Ver factura en modal compacto
+        async function verFacturaModal(facturaId) {
+            try {
+                Swal.fire({
+                    title: 'Cargando factura...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const response = await fetch(`/walee-facturas/${facturaId}`);
+                if (!response.ok) throw new Error('Error al cargar la factura');
+                
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Extraer datos de la factura del HTML
+                const numeroFactura = doc.querySelector('.text-3xl.font-bold')?.textContent?.trim() || 'N/A';
+                const serie = doc.querySelector('.text-sm.text-slate-400')?.textContent?.trim() || '';
+                const clienteNombre = doc.querySelector('.text-lg.font-semibold.text-white')?.textContent?.trim() || 'Sin cliente';
+                const correo = doc.querySelector('.text-sm.text-slate-400')?.textContent?.trim() || '';
+                const fechaEmision = doc.querySelector('.grid.grid-cols-2 .text-white.font-medium')?.textContent?.trim() || 'N/A';
+                const fechaVencimiento = doc.querySelectorAll('.grid.grid-cols-2 .text-white.font-medium')[1]?.textContent?.trim() || 'N/A';
+                const concepto = doc.querySelector('.bg-slate-900\\/50 p')?.textContent?.trim() || 'Sin concepto';
+                const subtotal = doc.querySelectorAll('.flex.justify-between .text-white.font-medium')[0]?.textContent?.trim() || '₡0';
+                const total = doc.querySelector('.text-2xl.font-bold')?.textContent?.trim() || '₡0';
+                const montoPagado = doc.querySelectorAll('.flex.justify-between .text-emerald-400')[0]?.textContent?.trim() || null;
+                const saldoPendiente = doc.querySelector('.text-amber-400')?.textContent?.trim() || null;
+                const metodoPago = doc.querySelectorAll('.text-white.font-medium')[2]?.textContent?.trim() || 'No especificado';
+                const estado = doc.querySelector('.inline-flex')?.textContent?.trim() || 'Pendiente';
+                const notas = doc.querySelector('.text-slate-300')?.textContent?.trim() || null;
+                const enviadaAt = doc.querySelector('.text-xs.text-slate-400')?.textContent?.trim() || null;
+                
+                // Obtener items de la factura (si están en el HTML)
+                const itemsRows = doc.querySelectorAll('table tbody tr');
+                let itemsHtml = '';
+                if (itemsRows.length > 0) {
+                    itemsRows.forEach(row => {
+                        const descripcion = row.querySelector('td')?.textContent?.trim() || '';
+                        const cantidad = row.querySelectorAll('td')[1]?.textContent?.trim() || '0';
+                        const precio = row.querySelectorAll('td')[2]?.textContent?.trim() || '₡0';
+                        const totalItem = row.querySelectorAll('td')[4]?.textContent?.trim() || '₡0';
+                        if (descripcion && descripcion !== 'No hay items en esta factura') {
+                            itemsHtml += `
+                                <div class="flex justify-between items-start py-2 border-b border-slate-200 dark:border-slate-700 last:border-0">
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-slate-900 dark:text-white">${descripcion}</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Cantidad: ${cantidad} · ${precio}</p>
+                                    </div>
+                                    <span class="text-sm font-semibold text-slate-900 dark:text-white ml-4">${totalItem}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                const modalHtml = `
+                    <div class="text-left space-y-4 max-h-[70vh] overflow-y-auto">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-violet-500/10 to-violet-600/5 rounded-lg p-4 border border-violet-200 dark:border-violet-500/20">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-bold text-violet-600 dark:text-violet-400">Factura ${numeroFactura}</h3>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${serie}</p>
+                                </div>
+                                <div class="text-right">
+                                    ${enviadaAt ? '<span class="text-xs bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded">Enviada</span>' : '<span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-1 rounded">Pendiente</span>'}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cliente -->
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Cliente</p>
+                            <p class="text-sm font-semibold text-slate-900 dark:text-white">${clienteNombre}</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-400">${correo}</p>
+                        </div>
+                        
+                        <!-- Fechas -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Emisión</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${fechaEmision}</p>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Vencimiento</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${fechaVencimiento}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Concepto -->
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Concepto</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">${concepto}</p>
+                        </div>
+                        
+                        ${itemsHtml ? `
+                        <!-- Items -->
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Items</p>
+                            <div class="space-y-1">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Totales -->
+                        <div class="bg-violet-50 dark:bg-violet-500/10 rounded-lg p-3 border border-violet-200 dark:border-violet-500/20">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-600 dark:text-slate-400">Subtotal:</span>
+                                    <span class="font-medium text-slate-900 dark:text-white">${subtotal}</span>
+                                </div>
+                                <div class="flex justify-between text-base font-bold border-t border-violet-200 dark:border-violet-500/20 pt-2">
+                                    <span class="text-slate-900 dark:text-white">Total:</span>
+                                    <span class="text-violet-600 dark:text-violet-400">${total}</span>
+                                </div>
+                                ${montoPagado ? `
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-600 dark:text-slate-400">Pagado:</span>
+                                    <span class="font-medium text-emerald-600 dark:text-emerald-400">${montoPagado}</span>
+                                </div>
+                                ` : ''}
+                                ${saldoPendiente ? `
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-600 dark:text-slate-400">Pendiente:</span>
+                                    <span class="font-medium text-amber-600 dark:text-amber-400">${saldoPendiente}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Estado y Método -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Estado</p>
+                                <span class="text-xs font-medium px-2 py-1 rounded ${estado.toLowerCase() === 'pagada' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : estado.toLowerCase() === 'vencida' ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' : 'bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400'}">${estado}</span>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Método de Pago</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${metodoPago}</p>
+                            </div>
+                        </div>
+                        
+                        ${notas ? `
+                        <!-- Notas -->
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Notas</p>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">${notas}</p>
+                        </div>
+                        ` : ''}
+                        
+                        ${enviadaAt ? `
+                        <!-- Info de Envío -->
+                        <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 border border-emerald-200 dark:border-emerald-500/20">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <div>
+                                    <p class="text-xs font-medium text-emerald-600 dark:text-emerald-400">Factura enviada</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">${enviadaAt}</p>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                Swal.fire({
+                    title: `Factura ${numeroFactura}`,
+                    html: modalHtml,
+                    width: '700px',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Cerrar',
+                    confirmButtonColor: '#7c3aed',
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo cargar la factura. Por favor, intente nuevamente.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
         
         // Inicializar

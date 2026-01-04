@@ -4081,6 +4081,24 @@ Route::post('/walee-cotizaciones/{id}/enviar-email', function ($id, \Illuminate\
     }
 })->middleware(['auth'])->name('walee.cotizaciones.enviar-email');
 
+Route::delete('/walee-cotizaciones/{id}/eliminar', function ($id) {
+    try {
+        $cotizacion = \App\Models\Cotizacion::findOrFail($id);
+        $numeroCotizacion = $cotizacion->numero_cotizacion;
+        $cotizacion->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cotización eliminada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cotizaciones.eliminar');
+
 // Ruta para ver detalle de un cliente
 Route::get('/walee-cliente/{id}', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

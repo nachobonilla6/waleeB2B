@@ -277,8 +277,8 @@
                     </button>
                     
                     <!-- Mobile: Layout reorganizado -->
-                    <div class="block sm:hidden">
-                        <div class="flex items-start gap-3 p-3">
+                    <div class="block sm:hidden w-full">
+                        <div class="flex items-start gap-3 p-3 w-full">
                             <!-- Imagen a la izquierda -->
                             <div class="relative w-1/2 aspect-square flex-shrink-0">
                     @if($fotoUrl)

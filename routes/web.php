@@ -760,7 +760,7 @@ Route::post('/publicidad-eventos/programar', function (\Illuminate\Http\Request 
         }
         
         // Webhook por defecto para todos los clientes
-        $webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/allaccounts';
+        $webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook/allaccounts';
         
         // Si no hay client, crear uno temporal o usar valores por defecto
         if (!$client) {
@@ -4687,7 +4687,7 @@ Route::post('/walee-cliente/{id}/webhook', function (\Illuminate\Http\Request $r
         $cliente = \App\Models\Client::findOrFail($id);
         
         // Webhook por defecto
-        $webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/allaccounts';
+        $webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook/allaccounts';
         
         // Si el webhook está vacío, usar el webhook por defecto
         $webhookUrl = $request->input('webhook_url');

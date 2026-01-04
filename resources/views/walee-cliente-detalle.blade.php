@@ -2107,7 +2107,7 @@
             const clienteId = {{ $cliente->id }};
             const pageId = '{{ $cliente->page_id ?? "" }}';
             const token = '{{ $cliente->token ?? "" }}';
-            const webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/allaccounts';
+            const webhookDefault = 'https://n8n.srv1137974.hstgr.cloud/webhook/allaccounts';
             const webhookUrl = '{{ $cliente->webhook_url ?? "" }}' || webhookDefault;
             
             const html = `

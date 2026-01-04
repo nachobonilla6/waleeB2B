@@ -335,7 +335,7 @@
                     @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
                     @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl opacity-80">
+                                    <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl opacity-80">
                     @endif
                             </div>
                             
@@ -489,7 +489,7 @@
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md">
                         @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md opacity-80">
+                                    <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-20 h-20 lg:w-24 lg:h-24 rounded-xl lg:rounded-2xl object-cover border-3 border-emerald-500/30 flex-shrink-0 shadow-md opacity-80">
                         @endif
                                 
                                 <!-- Nombre y estado a la derecha -->
@@ -1065,7 +1065,7 @@
                                 <div id="fotoPreviewContainer" class="w-20 h-20 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 border-emerald-500/30 shadow-sm">
                                     ${clienteData.fotoUrl ? 
                                         `<img src="${clienteData.fotoUrl}" alt="Foto" id="fotoPreview" class="w-full h-full object-cover">` :
-                                        `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
+                                        `<img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`
                                     }
                                 </div>
                                 ${clienteData.fotoUrl ? `
@@ -1288,7 +1288,7 @@
             const fotoFileInput = document.getElementById('foto_file');
             
             // Mostrar imagen genérica
-            container.innerHTML = `<img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`;
+            container.innerHTML = `<img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="Foto" id="fotoPreview" class="w-full h-full object-cover opacity-80">`;
             
             // Marcar para eliminar
             if (deleteFotoInput) {

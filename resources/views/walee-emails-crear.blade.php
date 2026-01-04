@@ -204,7 +204,7 @@
                                                 <div class="flex items-center gap-2 sm:gap-3">
                                                     <!-- Avatar -->
                                                     <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden flex-shrink-0">
-                                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover opacity-80">
+                                                        <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-full h-full object-cover opacity-80">
                                                     </div>
                                                     
                                                     <!-- Info -->

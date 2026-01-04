@@ -201,7 +201,7 @@
                                     @if($cliente->foto)
                                         <img src="/storage/{{ $cliente->foto }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
                                     @else
-                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
+                                        <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">

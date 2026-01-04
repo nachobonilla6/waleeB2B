@@ -172,7 +172,7 @@
                                         @if($fotoUrl)
                                             <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/50 transition-all">
                                         @else
-                                            <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/40 transition-all opacity-80">
+                                            <img src="https://img.icons8.com/color/1200/my-bussiness.jpg" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl object-cover border-2 border-emerald-500/30 group-hover:border-emerald-400/40 transition-all opacity-80">
                                         @endif
                                     </div>
                                     

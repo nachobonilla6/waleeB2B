@@ -2270,6 +2270,82 @@
             }
         }
         
+        // Enviar factura por email
+        async function enviarFacturaEmail(facturaId, correo, yaEnviada) {
+            if (!correo) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin correo',
+                    text: 'Esta factura no tiene correo electrónico asociado.',
+                    confirmButtonColor: '#7c3aed'
+                });
+                return;
+            }
+            
+            const confirmText = yaEnviada 
+                ? `¿Desea reenviar la factura a ${correo}?` 
+                : `¿Desea enviar la factura a ${correo}?`;
+            
+            const result = await Swal.fire({
+                title: yaEnviada ? 'Reenviar Factura' : 'Enviar Factura',
+                text: confirmText,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: yaEnviada ? 'Sí, Reenviar' : 'Sí, Enviar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: yaEnviada ? '#2563eb' : '#10b981',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            try {
+                Swal.fire({
+                    title: 'Enviando factura...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const response = await fetch(`/walee-facturas/${facturaId}/enviar-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Factura enviada!',
+                        text: data.message || 'La factura ha sido enviada por email correctamente.',
+                        confirmButtonColor: '#10b981',
+                        timer: 3000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        // Recargar la página para actualizar el estado
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || 'Error al enviar la factura');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'No se pudo enviar la factura. Por favor, intente nuevamente.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+        
         // Inicializar
         cargarPaquetes();
     </script>

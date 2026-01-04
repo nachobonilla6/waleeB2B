@@ -335,51 +335,9 @@
                 </div>
             </div>
             
-            <!-- Grid: Clientes Entrantes (izquierda) y Clientes con Publicaciones (derecha) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
-                <!-- Clientes Entrantes - Izquierda -->
+            <!-- Clientes con Publicaciones -->
+            <div class="mb-4 sm:mb-6 md:mb-8">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
-                    <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes Entrantes</h2>
-                        <a href="{{ route('walee.clientes.proceso') }}" class="text-xs sm:text-sm text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
-                    </div>
-                    <div class="space-y-2 sm:space-y-3">
-                        @forelse($clientesEnProcesoRecientes as $cliente)
-                            @php
-                                $fotoPath = $cliente->foto ?? null;
-                                $fotoUrl = null;
-                                
-                                if ($fotoPath) {
-                                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                        $fotoUrl = $fotoPath;
-                                    } else {
-                                        $filename = basename($fotoPath);
-                                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                                    }
-                                }
-                            @endphp
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all cursor-pointer group">
-                                <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg overflow-hidden flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    @if($fotoUrl)
-                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover border-2 border-violet-500/30">
-                                    @else
-                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover border-2 border-violet-500/30 opacity-80">
-                                    @endif
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->updated_at->diffForHumans() }}</p>
-                                </div>
-                            </a>
-                        @empty
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes en proceso</p>
-                        @endforelse
-                    </div>
-                </div>
-                
-                <!-- Clientes con Publicaciones - Derecha -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.8s">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
                         <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes con Publicaciones</h2>
                     </div>

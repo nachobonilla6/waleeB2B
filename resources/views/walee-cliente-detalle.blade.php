@@ -695,7 +695,9 @@
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
                     const message = encodeURIComponent(result.value);
-                    const whatsappUrl = `${whatsappLink}&text=${message}`;
+                    // Construir URL correctamente: usar ? si no tiene parámetros, & si ya tiene
+                    const separator = whatsappLink.includes('?') ? '&' : '?';
+                    const whatsappUrl = `${whatsappLink}${separator}text=${message}`;
                     window.open(whatsappUrl, '_blank');
                 }
             });

@@ -174,11 +174,11 @@
         // Limitar a los primeros 10
         $clientesConPublicaciones = array_slice($clientesConPublicaciones, 0, 10);
         
-        // Datos para gráfico de últimos 7 días (solo activos)
+        // Datos para gráfico de últimos 15 días (solo activos)
         $ultimos7Dias = [];
         $clientesPorDia = [];
         
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = 14; $i >= 0; $i--) {
             $fecha = now()->subDays($i);
             $ultimos7Dias[] = $fecha->format('d/m');
             $clientesPorDia[] = Client::where('estado', 'activo')
@@ -326,7 +326,7 @@
             <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
                 <!-- Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes Nuevos - Últimos 7 Días</h2>
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes Nuevos - Últimos 15 Días</h2>
                     <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
                         <canvas id="clientesChart"></canvas>
                     </div>

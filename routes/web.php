@@ -4366,9 +4366,9 @@ Route::post('/walee/whatsapp/generar-mensaje', function (\Illuminate\Http\Reques
         }
         
         // Construir el prompt para WhatsApp
-        $systemPrompt = 'Eres un asistente experto en comunicación profesional por WhatsApp. Genera mensajes concisos, profesionales y amigables. Los mensajes deben ser apropiados para WhatsApp, usar un tono profesional pero cercano, y ser directos. Responde en español.';
+        $systemPrompt = 'Eres un asistente que redacta mensajes de WhatsApp profesionales y directos. IMPORTANTE: NO debes responder como un bot ni incluir saludos genéricos como "Hola, soy un asistente" o "Te escribo para". Simplemente redacta el mensaje como si fuera una persona escribiendo directamente al cliente. El mensaje debe ser natural, profesional, conciso y directo. Responde SOLO con el mensaje, sin explicaciones adicionales.';
         
-        $userPrompt = "Genera un mensaje de WhatsApp profesional basado en el siguiente prompt: {$prompt}. El mensaje debe ser conciso, profesional y apropiado para WhatsApp.";
+        $userPrompt = "Redacta un mensaje de WhatsApp profesional y directo basado en lo siguiente: {$prompt}. El mensaje debe ser natural, como si lo escribiera una persona directamente, sin sonar como bot. Responde SOLO con el mensaje, sin agregar explicaciones ni comentarios adicionales.";
         
         $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
             ->acceptJson()

@@ -120,7 +120,20 @@
         if ($clienteSeleccionado) {
             // Obtener información del cliente para mostrar
             $clientInfo = $clienteSeleccionado;
-            $clienteIdParaPerfil = $clienteSeleccionado->id;
+            
+            // Buscar el Client correspondiente para obtener el ID del perfil
+            // La ruta walee.cliente.detalle espera el ID de Client, no de Cliente
+            $clientEnProceso = null;
+            if ($clienteSeleccionado->correo) {
+                $clientEnProceso = \App\Models\Client::where('email', $clienteSeleccionado->correo)->first();
+            }
+            if (!$clientEnProceso && $clienteSeleccionado->nombre_empresa) {
+                $clientEnProceso = \App\Models\Client::where('name', $clienteSeleccionado->nombre_empresa)->first();
+            }
+            
+            if ($clientEnProceso) {
+                $clienteIdParaPerfil = $clientEnProceso->id;
+            }
             
             // Buscar cotizaciones SOLO por cliente_id (no por correo para evitar cotizaciones de otros clientes)
             $cotizacionesCliente = \App\Models\Cotizacion::where('cliente_id', $clienteSeleccionado->id)

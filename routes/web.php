@@ -3741,15 +3741,20 @@ Route::get('/walee-cliente/{id}', function ($id) {
         
         // Si aún no existe, crear uno nuevo basado en el Client
         if (!$clientePrincipal) {
-            $clientePrincipal = \App\Models\Cliente::create([
-                'nombre_empresa' => $cliente->name,
-                'correo' => $cliente->email ?: '',
-                'telefono' => $cliente->telefono_1,
-                'telefono_alternativo' => $cliente->telefono_2,
-                'direccion' => $cliente->address,
-                'url_sitio' => $cliente->website,
-                'fecha_registro' => $cliente->created_at ? $cliente->created_at->toDateString() : now()->toDateString(),
-            ]);
+            try {
+                $clientePrincipal = \App\Models\Cliente::create([
+                    'nombre_empresa' => $cliente->name,
+                    'correo' => $cliente->email ?: '',
+                    'telefono' => $cliente->telefono_1,
+                    'telefono_alternativo' => $cliente->telefono_2,
+                    'direccion' => $cliente->address,
+                    'url_sitio' => $cliente->website,
+                    'fecha_registro' => $cliente->created_at ? $cliente->created_at->toDateString() : now()->toDateString(),
+                ]);
+            } catch (\Exception $e) {
+                // Si falla la creación, continuar sin clientePrincipal
+                \Log::warning('No se pudo crear Cliente para Client ID: ' . $cliente->id . ' - ' . $e->getMessage());
+            }
         }
     }
     
@@ -3768,6 +3773,9 @@ Route::get('/walee-cliente/{id}', function ($id) {
             ->count();
         
         $clientePlaneadorId = $clientePrincipal->id;
+    } else {
+        // Asegurar que clientePlaneadorId tenga un valor por defecto (usar el ID del Client)
+        $clientePlaneadorId = $cliente->id;
     }
     
     return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId'));

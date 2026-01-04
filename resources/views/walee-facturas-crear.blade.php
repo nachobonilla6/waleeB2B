@@ -2379,23 +2379,23 @@
             const pdfUrl = `/walee-facturas/${facturaId}/pdf`;
             
             Swal.fire({
-                title: 'Factura PDF',
+                title: '',
                 html: `
-                    <div style="width: 100%; height: 80vh;">
-                        <iframe src="${pdfUrl}" style="width: 100%; height: 100%; border: none;"></iframe>
+                    <div style="width: 100%; height: calc(100vh - 120px); max-height: 800px; overflow: hidden;">
+                        <iframe src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
                     </div>
                 `,
-                width: '90%',
-                maxWidth: '1200px',
-                showConfirmButton: true,
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#7c3aed',
+                width: '95%',
+                maxWidth: '900px',
+                padding: '0',
+                showConfirmButton: false,
                 showCloseButton: false,
                 allowOutsideClick: true,
                 allowEscapeKey: true,
                 customClass: {
-                    popup: 'z-[9999] relative',
+                    popup: 'z-[9999] relative p-0',
                     container: 'z-[9999]',
+                    htmlContainer: 'p-0 m-0',
                 },
                 didOpen: () => {
                     // Asegurar que el modal esté encima de todo
@@ -2403,6 +2403,8 @@
                     if (popup) {
                         popup.style.zIndex = '9999';
                         popup.style.position = 'relative';
+                        popup.style.padding = '0';
+                        popup.style.maxHeight = 'calc(100vh - 40px)';
                         
                         // Crear y agregar botón X en la esquina superior derecha del popup
                         const closeButton = document.createElement('button');
@@ -2419,6 +2421,12 @@
                     const container = document.querySelector('.swal2-container');
                     if (container) {
                         container.style.zIndex = '9999';
+                        container.style.padding = '20px';
+                    }
+                    const htmlContainer = popup?.querySelector('.swal2-html-container');
+                    if (htmlContainer) {
+                        htmlContainer.style.padding = '0';
+                        htmlContainer.style.margin = '0';
                     }
                 },
                 background: isDarkMode() ? '#1e293b' : '#ffffff',

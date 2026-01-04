@@ -114,6 +114,45 @@
                 }
             }
         }
+        
+        // Cargar facturas del cliente si está seleccionado
+        $facturasCliente = collect();
+        $clientInfo = null;
+        if ($clienteSeleccionado) {
+            // Buscar facturas por cliente_id
+            $facturasCliente = \App\Models\Factura::where('cliente_id', $clienteSeleccionado->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            // Si no hay facturas por cliente_id, buscar también por correo
+            if ($facturasCliente->isEmpty() && $clienteSeleccionado->correo) {
+                $facturasCliente = \App\Models\Factura::where('correo', $clienteSeleccionado->correo)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+            
+            // Obtener información del cliente para mostrar
+            $clientInfo = $clienteSeleccionado;
+            
+            // Si el cliente_id viene de Client, obtener también esa información
+            if (!$clientInfo && isset($clienteIdFromUrl) && is_numeric($clienteIdFromUrl)) {
+                $clientEnProceso = \App\Models\Client::find(intval($clienteIdFromUrl));
+                if ($clientEnProceso) {
+                    $clientInfo = $clientEnProceso;
+                    // Buscar facturas por correo del Client
+                    if ($clientEnProceso->email) {
+                        $facturasCliente = \App\Models\Factura::where('correo', $clientEnProceso->email)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                    }
+                }
+            }
+        }
+        
+        $totalFacturas = $facturasCliente->count();
+        $facturasEnviadas = $facturasCliente->whereNotNull('enviada_at')->count();
+        $facturasPendientes = $facturasCliente->whereNull('enviada_at')->count();
+        $totalMonto = $facturasCliente->sum('total');
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -147,24 +186,136 @@
             </div>
             @endif
             
-            <!-- Botón para abrir modal -->
-            <div class="flex flex-col justify-center items-center min-h-[60vh] gap-4">
+            @if($clienteSeleccionado && $clientInfo)
+            <!-- Información del Cliente y Facturas -->
+            <div class="mb-6 animate-fade-in-up">
+                <!-- Cliente Info Card -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none mb-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">
+                                    {{ $clientInfo->nombre_empresa ?? $clientInfo->name ?? 'Cliente' }}
+                                </h2>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">
+                                    {{ $clientInfo->correo ?? $clientInfo->email ?? '' }}
+                                </p>
+                            </div>
+                        </div>
+                        <button onclick="abrirModalFactura()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span>Crear Factura</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-3 text-center">
+                            <div class="text-xl font-bold text-slate-900 dark:text-white">{{ $totalFacturas }}</div>
+                            <div class="text-xs text-slate-600 dark:text-slate-400">Total</div>
+                        </div>
+                        <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-lg p-3 text-center">
+                            <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ $facturasEnviadas }}</div>
+                            <div class="text-xs text-emerald-600/80 dark:text-emerald-400/70">Enviadas</div>
+                        </div>
+                        <div class="bg-amber-50 dark:bg-amber-500/10 rounded-lg p-3 text-center">
+                            <div class="text-xl font-bold text-amber-600 dark:text-amber-400">{{ $facturasPendientes }}</div>
+                            <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Pendientes</div>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-500/10 rounded-lg p-3 text-center">
+                            <div class="text-xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($totalMonto, 2) }}</div>
+                            <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Total</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de Facturas -->
+                @if($facturasCliente->count() > 0)
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 shadow-sm dark:shadow-none">
+                    <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Facturas del Cliente
+                    </h3>
+                    
+                    <!-- Search -->
+                    <div class="mb-4">
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <input type="text" id="searchFacturasInput" placeholder="Buscar por número o concepto..." class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    
+                    <div id="facturasListContainer" class="space-y-2 max-h-96 overflow-y-auto">
+                        @foreach($facturasCliente as $factura)
+                        <div class="factura-item bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 hover:border-violet-400 dark:hover:border-violet-500/30 transition-all" 
+                             data-search="{{ strtolower($factura->numero_factura ?? '') }} {{ strtolower($factura->concepto ?? '') }}">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-xs font-mono text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-400/10 px-2 py-0.5 rounded">
+                                            #{{ $factura->numero_factura }}
+                                        </span>
+                                        @if($factura->enviada_at)
+                                        <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded">Enviada</span>
+                                        @else
+                                        <span class="text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 px-2 py-0.5 rounded">Pendiente</span>
+                                        @endif
+                                        @if($factura->estado === 'pagada')
+                                        <span class="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 px-2 py-0.5 rounded">Pagada</span>
+                                        @elseif($factura->estado === 'vencida')
+                                        <span class="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-400/10 px-2 py-0.5 rounded">Vencida</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-sm text-slate-700 dark:text-slate-300 truncate mb-1">
+                                        {{ Str::limit($factura->concepto, 50) }}
+                                    </p>
+                                    <div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                                        <span>{{ \Carbon\Carbon::parse($factura->fecha_emision)->format('d/m/Y') }}</span>
+                                        <span class="font-semibold text-slate-900 dark:text-white">₡{{ number_format($factura->total, 2) }}</span>
+                                    </div>
+                                </div>
+                                <a href="{{ route('walee.factura.ver', $factura->id) }}" class="ml-3 px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-medium rounded-lg transition-all">
+                                    Ver
+                                </a>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @else
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm dark:shadow-none text-center">
+                    <svg class="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">No hay facturas para este cliente</p>
+                    <button onclick="abrirModalFactura()" class="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all">
+                        Crear Primera Factura
+                    </button>
+                </div>
+                @endif
+            </div>
+            @else
+            <!-- Botón para abrir modal cuando no hay cliente seleccionado -->
+            <div class="flex justify-center items-center min-h-[60vh]">
                 <button onclick="abrirModalFactura()" class="px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     <span>Crear Nueva Factura</span>
                 </button>
-                
-                @if($clienteSeleccionado)
-                <a href="{{ route('walee.facturas.cliente', $clienteSeleccionado->id) }}" class="px-6 py-3 bg-slate-600 hover:bg-slate-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <span>Ver Facturas del Cliente</span>
-                </a>
-                @endif
             </div>
+            @endif
             
             <!-- Form oculto para mantener estructura -->
             <form id="facturaForm" class="hidden" enctype="multipart/form-data">
@@ -1881,6 +2032,24 @@
             facturaData.iva = iva;
             facturaData.total = total;
             facturaData.saldo_pendiente = saldoPendiente;
+        }
+        
+        // Búsqueda de facturas
+        const searchFacturasInput = document.getElementById('searchFacturasInput');
+        if (searchFacturasInput) {
+            searchFacturasInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                const facturasItems = document.querySelectorAll('.factura-item');
+                
+                facturasItems.forEach(item => {
+                    const searchData = item.getAttribute('data-search') || '';
+                    if (searchData.includes(searchTerm) || searchTerm === '') {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
         }
         
         // Inicializar

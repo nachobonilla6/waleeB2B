@@ -253,118 +253,6 @@
                 </div>
             </header>
             
-            <!-- Controles del Bot -->
-            <div class="mb-4">
-                <!-- Desktop: Grid de 2 columnas -->
-                <div class="hidden lg:grid lg:grid-cols-2 gap-3">
-                    <!-- Extracción de Clientes -->
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                        <div class="flex flex-col gap-2">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
-                                    <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
-                                    <span class="slider"></span>
-                                    <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                </label>
-                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Emails Automáticos -->
-                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                        <div class="flex flex-col gap-2">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
-                                    <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
-                                    <span class="slider"></span>
-                                    <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </label>
-                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Mobile: Toggles en una línea con iconos mejorados -->
-                <div class="lg:hidden bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex flex-col gap-4">
-                        <!-- Toggle Extracción -->
-                        <div class="flex flex-col gap-2">
-                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
-                                    <input type="checkbox" id="botToggleMobile" onchange="toggleBot(this.checked); document.getElementById('botToggle').checked = this.checked;">
-                                    <span class="slider"></span>
-                                    <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                </label>
-                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtnMobile" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span id="recurrenciaTextMobile" class="sm:hidden text-xs font-medium">-</span>
-                                    <span class="hidden sm:inline">Recurrencia</span>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Toggle Emails -->
-                        <div class="flex flex-col gap-2">
-                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
-                                    <input type="checkbox" id="emailsToggleMobile" onchange="toggleEmails(this.checked); document.getElementById('emailsToggle').checked = this.checked;">
-                                    <span class="slider"></span>
-                                    <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </label>
-                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtnMobile" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span id="recurrenciaEmailsTextMobile" class="sm:hidden text-xs font-medium">-</span>
-                                    <span class="hidden sm:inline">Recurrencia</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Search Bar y Filtros -->
             <div class="mb-4">
@@ -554,27 +442,15 @@
         function toggleBot(enabled) {
             console.log('Extracción de Clientes:', enabled ? 'Activado' : 'Desactivado');
             
-            // Cambiar estilo del botón de recurrencia según el estado del bot (desktop)
-            const recurrenciaBtn = document.getElementById('recurrenciaBtn');
-            if (recurrenciaBtn) {
+            // Cambiar estilo del botón de recurrencia en la modal de config
+            const configRecurrenciaBtn = document.getElementById('configRecurrenciaBtn');
+            if (configRecurrenciaBtn) {
                 if (enabled) {
-                    recurrenciaBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
-                    recurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    configRecurrenciaBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                    configRecurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
                 } else {
-                    recurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-                    recurrenciaBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
-                }
-            }
-            
-            // Cambiar estilo del botón de recurrencia en mobile
-            const recurrenciaBtnMobile = document.getElementById('recurrenciaBtnMobile');
-            if (recurrenciaBtnMobile) {
-                if (enabled) {
-                    recurrenciaBtnMobile.classList.remove('bg-slate-400', 'hover:bg-slate-500');
-                    recurrenciaBtnMobile.classList.add('bg-blue-500', 'hover:bg-blue-600');
-                } else {
-                    recurrenciaBtnMobile.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-                    recurrenciaBtnMobile.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                    configRecurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    configRecurrenciaBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
                 }
             }
             
@@ -585,27 +461,15 @@
         function toggleEmails(enabled) {
             console.log('Emails Automáticos:', enabled ? 'Activado' : 'Desactivado');
             
-            // Cambiar estilo del botón de recurrencia según el estado (desktop)
-            const recurrenciaEmailsBtn = document.getElementById('recurrenciaEmailsBtn');
-            if (recurrenciaEmailsBtn) {
+            // Cambiar estilo del botón de recurrencia en la modal de config
+            const configRecurrenciaEmailsBtn = document.getElementById('configRecurrenciaEmailsBtn');
+            if (configRecurrenciaEmailsBtn) {
                 if (enabled) {
-                    recurrenciaEmailsBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
-                    recurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                    configRecurrenciaEmailsBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                    configRecurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
                 } else {
-                    recurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-                    recurrenciaEmailsBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
-                }
-            }
-            
-            // Cambiar estilo del botón de recurrencia en mobile
-            const recurrenciaEmailsBtnMobile = document.getElementById('recurrenciaEmailsBtnMobile');
-            if (recurrenciaEmailsBtnMobile) {
-                if (enabled) {
-                    recurrenciaEmailsBtnMobile.classList.remove('bg-slate-400', 'hover:bg-slate-500');
-                    recurrenciaEmailsBtnMobile.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-                } else {
-                    recurrenciaEmailsBtnMobile.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-                    recurrenciaEmailsBtnMobile.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                    configRecurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+                    configRecurrenciaEmailsBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
                 }
             }
             
@@ -669,23 +533,13 @@
                     const valor = result.value;
                     recurrenciaSeleccionada = valor ? parseInt(valor) : null;
                     
-                    // Actualizar el texto del botón (desktop)
-                    const recurrenciaText = document.getElementById('recurrenciaText');
-                    if (recurrenciaText) {
+                    // Actualizar el texto del botón en la modal de config
+                    const configRecurrenciaText = document.getElementById('configRecurrenciaText');
+                    if (configRecurrenciaText) {
                         if (recurrenciaSeleccionada) {
-                            recurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
+                            configRecurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
                         } else {
-                            recurrenciaText.textContent = 'Elegir recurrencia';
-                        }
-                    }
-                    
-                    // Actualizar el texto del botón (mobile)
-                    const recurrenciaTextMobile = document.getElementById('recurrenciaTextMobile');
-                    if (recurrenciaTextMobile) {
-                        if (recurrenciaSeleccionada) {
-                            recurrenciaTextMobile.textContent = `${recurrenciaSeleccionada}h`;
-                        } else {
-                            recurrenciaTextMobile.textContent = '-';
+                            configRecurrenciaText.textContent = 'Recurrencia';
                         }
                     }
                     
@@ -764,31 +618,14 @@
                     const valor = result.value;
                     recurrenciaEmailsSeleccionada = valor ? parseFloat(valor) : null;
                     
-                    // Actualizar el texto del botón (desktop)
-                    const recurrenciaEmailsText = document.getElementById('recurrenciaEmailsText');
-                    if (recurrenciaEmailsText) {
+                    // Actualizar el texto del botón en la modal de config
+                    const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');
+                    if (configRecurrenciaEmailsText) {
                         if (recurrenciaEmailsSeleccionada) {
                             const label = recurrencias.find(r => r.value == recurrenciaEmailsSeleccionada)?.label || `Cada ${recurrenciaEmailsSeleccionada} horas`;
-                            recurrenciaEmailsText.textContent = label;
+                            configRecurrenciaEmailsText.textContent = label;
                         } else {
-                            recurrenciaEmailsText.textContent = 'Elegir recurrencia';
-                        }
-                    }
-                    
-                    // Actualizar el texto del botón (mobile)
-                    const recurrenciaEmailsTextMobile = document.getElementById('recurrenciaEmailsTextMobile');
-                    if (recurrenciaEmailsTextMobile) {
-                        if (recurrenciaEmailsSeleccionada) {
-                            // Formato corto para mobile
-                            if (recurrenciaEmailsSeleccionada === 0.5) {
-                                recurrenciaEmailsTextMobile.textContent = '30m';
-                            } else if (recurrenciaEmailsSeleccionada < 1) {
-                                recurrenciaEmailsTextMobile.textContent = `${Math.round(recurrenciaEmailsSeleccionada * 60)}m`;
-                            } else {
-                                recurrenciaEmailsTextMobile.textContent = `${recurrenciaEmailsSeleccionada}h`;
-                            }
-                        } else {
-                            recurrenciaEmailsTextMobile.textContent = '-';
+                            configRecurrenciaEmailsText.textContent = 'Recurrencia';
                         }
                     }
                     
@@ -855,18 +692,23 @@
                 }
             }
             
-            let modalWidth = '90%';
+            let modalWidth = '95%';
             if (window.innerWidth >= 1024) {
-                modalWidth = '500px';
+                modalWidth = '600px';
             } else if (window.innerWidth >= 640) {
-                modalWidth = '450px';
+                modalWidth = '550px';
             }
             
+            // Obtener estado actual de los toggles
+            const botToggleChecked = document.getElementById('botToggle')?.checked || false;
+            const emailsToggleChecked = document.getElementById('emailsToggle')?.checked || false;
+            
             Swal.fire({
-                title: 'Configuración Webhook',
+                title: 'Configuración',
                 html: `
-                    <form id="webhookForm" class="text-left">
-                        <div class="mb-4">
+                    <form id="configForm" class="text-left space-y-4">
+                        <!-- Webhook -->
+                        <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                 URL del Webhook
                             </label>
@@ -882,6 +724,60 @@
                                 Ingresa la URL del webhook para recibir notificaciones
                             </p>
                         </div>
+                        
+                        <!-- Extracción de Clientes -->
+                        <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
+                                </div>
+                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                    <input type="checkbox" id="configBotToggle" ${botToggleChecked ? 'checked' : ''} onchange="toggleBot(this.checked); if(document.getElementById('botToggle')) document.getElementById('botToggle').checked = this.checked; if(document.getElementById('botToggleMobile')) document.getElementById('botToggleMobile').checked = this.checked;">
+                                    <span class="slider"></span>
+                                    <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: ${botToggleChecked ? '1' : '0'};" id="configBotToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                </label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openRecurrenciaModal()" id="configRecurrenciaBtn" class="px-2.5 py-1.5 ${botToggleChecked ? 'bg-blue-500 hover:bg-blue-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span id="configRecurrenciaText">Recurrencia</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Emails Automáticos -->
+                        <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
+                                </div>
+                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                    <input type="checkbox" id="configEmailsToggle" ${emailsToggleChecked ? 'checked' : ''} onchange="toggleEmails(this.checked); if(document.getElementById('emailsToggle')) document.getElementById('emailsToggle').checked = this.checked; if(document.getElementById('emailsToggleMobile')) document.getElementById('emailsToggleMobile').checked = this.checked;">
+                                    <span class="slider"></span>
+                                    <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: ${emailsToggleChecked ? '1' : '0'};" id="configEmailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openRecurrenciaEmailsModal()" id="configRecurrenciaEmailsBtn" class="px-2.5 py-1.5 ${emailsToggleChecked ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span id="configRecurrenciaEmailsText">Recurrencia</span>
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 `,
                 width: modalWidth,
@@ -892,7 +788,63 @@
                 confirmButtonColor: '#D59F3B',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 buttonsStyling: true,
-                reverseButtons: false,
+                reverseButtons: true,
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Sincronizar iconos de los toggles
+                    const configBotToggle = document.getElementById('configBotToggle');
+                    const configEmailsToggle = document.getElementById('configEmailsToggle');
+                    
+                    if (configBotToggle) {
+                        const updateBotIcon = () => {
+                            const icon = document.getElementById('configBotToggleIcon');
+                            if (icon) {
+                                icon.style.opacity = configBotToggle.checked ? '1' : '0';
+                            }
+                            // Actualizar color del botón de recurrencia
+                            const recurrenciaBtn = document.getElementById('configRecurrenciaBtn');
+                            if (recurrenciaBtn) {
+                                if (configBotToggle.checked) {
+                                    recurrenciaBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                                    recurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                                } else {
+                                    recurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                                    recurrenciaBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                                }
+                            }
+                        };
+                        configBotToggle.addEventListener('change', updateBotIcon);
+                        updateBotIcon();
+                    }
+                    
+                    if (configEmailsToggle) {
+                        const updateEmailsIcon = () => {
+                            const icon = document.getElementById('configEmailsToggleIcon');
+                            if (icon) {
+                                icon.style.opacity = configEmailsToggle.checked ? '1' : '0';
+                            }
+                            // Actualizar color del botón de recurrencia
+                            const recurrenciaEmailsBtn = document.getElementById('configRecurrenciaEmailsBtn');
+                            if (recurrenciaEmailsBtn) {
+                                if (configEmailsToggle.checked) {
+                                    recurrenciaEmailsBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                                    recurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                                } else {
+                                    recurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+                                    recurrenciaEmailsBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                                }
+                            }
+                        };
+                        configEmailsToggle.addEventListener('change', updateEmailsIcon);
+                        updateEmailsIcon();
+                    }
+                },
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 allowOutsideClick: true,
@@ -906,6 +858,31 @@
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 didOpen: () => {
+                    // Actualizar textos de recurrencia si hay valores
+                    const configRecurrenciaText = document.getElementById('configRecurrenciaText');
+                    if (configRecurrenciaText && recurrenciaSeleccionada) {
+                        configRecurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
+                    }
+                    
+                    const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');
+                    if (configRecurrenciaEmailsText && recurrenciaEmailsSeleccionada) {
+                        const recurrencias = [
+                            { value: 0.5, label: 'Cada media hora' },
+                            { value: 1, label: 'Cada 1 hora' },
+                            { value: 2, label: 'Cada 2 horas' },
+                            { value: 3, label: 'Cada 3 horas' },
+                            { value: 4, label: 'Cada 4 horas' },
+                            { value: 5, label: 'Cada 5 horas' },
+                            { value: 6, label: 'Cada 6 horas' },
+                            { value: 8, label: 'Cada 8 horas' },
+                            { value: 12, label: 'Cada 12 horas' },
+                            { value: 48, label: 'Cada 48 horas' },
+                            { value: 72, label: 'Cada 72 horas' }
+                        ];
+                        const label = recurrencias.find(r => r.value == recurrenciaEmailsSeleccionada)?.label || `Cada ${recurrenciaEmailsSeleccionada} horas`;
+                        configRecurrenciaEmailsText.textContent = label;
+                    }
+                    
                     // Focus en el input
                     document.getElementById('webhookUrl')?.focus();
                 },

@@ -204,12 +204,12 @@
                             </a>
                         @endif
                     </form>
-                    <a href="{{ route('walee.facturas.crear') }}" class="px-3 py-1.5 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow flex-shrink-0">
+                    <button onclick="abrirModalCrearFactura()" class="px-3 py-1.5 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow flex-shrink-0">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         <span>Crear Factura</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             
@@ -289,11 +289,11 @@
                                     </svg>
                                 </button>
                             @endif
-                            <a href="{{ route('walee.facturas.crear') }}?factura_id={{ $factura->id }}" class="p-1.5 rounded-md bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:border-blue-400/50 transition-all" title="Editar">
+                            <button onclick="abrirModalEditarFactura({{ $factura->id }}, {{ $factura->cliente_id ?? 'null' }}, '{{ $factura->correo ?? '' }}')" class="p-1.5 rounded-md bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:border-blue-400/50 transition-all" title="Editar">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
-                            </a>
+                            </button>
                             <a href="{{ route('walee.factura.pdf', $factura->id) }}" target="_blank" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Ver PDF">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -533,6 +533,182 @@
                     color: isDarkMode ? '#e2e8f0' : '#1e293b'
                 });
             }
+        }
+        
+        // Datos para modal
+        const clientes = @json($clientes ?? []);
+        const siguienteNumero = {{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }};
+        
+        // Generar opciones de clientes para el select
+        const clientesOptions = clientes.map(cliente => 
+            `<option value="${cliente.id}">${cliente.nombre_empresa}</option>`
+        ).join('');
+        
+        // Abrir modal para crear factura (Fase 1)
+        function abrirModalCrearFactura() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: 11%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase 1/9</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente <span class="text-red-500">*</span></label>
+                        <select id="modal_cliente_id" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                            <option value="">Seleccionar cliente...</option>
+                            ${clientesOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo <span class="text-red-500">*</span></label>
+                        <input type="email" id="modal_correo" value="" placeholder="correo@ejemplo.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 1: Información del Cliente',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    const clienteSelect = document.getElementById('modal_cliente_id');
+                    const correoInput = document.getElementById('modal_correo');
+                    
+                    // Auto-completar correo cuando se selecciona cliente
+                    if (clienteSelect) {
+                        clienteSelect.addEventListener('change', function() {
+                            const clienteId = this.value;
+                            const cliente = clientes.find(c => c.id == clienteId);
+                            if (cliente && correoInput) {
+                                correoInput.value = cliente.correo || '';
+                            }
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    const clienteId = document.getElementById('modal_cliente_id').value;
+                    const correo = document.getElementById('modal_correo').value;
+                    
+                    if (!clienteId) {
+                        Swal.showValidationMessage('Por favor selecciona un cliente');
+                        return false;
+                    }
+                    
+                    if (!correo || !correo.includes('@')) {
+                        Swal.showValidationMessage('Por favor ingresa un correo válido');
+                        return false;
+                    }
+                    
+                    return { clienteId, correo };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la página de crear con el cliente seleccionado
+                    window.location.href = `{{ route('walee.facturas.crear') }}?cliente_id=${result.value.clienteId}`;
+                }
+            });
+        }
+        
+        // Abrir modal para editar factura (Fase 1 con datos precargados)
+        async function abrirModalEditarFactura(facturaId, clienteId, correo) {
+            // Cargar datos de la factura si es necesario
+            let facturaData = {
+                cliente_id: clienteId,
+                correo: correo || ''
+            };
+            
+            // Si no tenemos el correo, intentar obtenerlo del cliente
+            if (!facturaData.correo && facturaData.cliente_id) {
+                const cliente = clientes.find(c => c.id == facturaData.cliente_id);
+                if (cliente) {
+                    facturaData.correo = cliente.correo || '';
+                }
+            }
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: 11%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase 1/9</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente <span class="text-red-500">*</span></label>
+                        <select id="modal_cliente_id_edit" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                            <option value="">Seleccionar cliente...</option>
+                            ${clientesOptions}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo <span class="text-red-500">*</span></label>
+                        <input type="email" id="modal_correo_edit" value="${facturaData.correo}" placeholder="correo@ejemplo.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 1: Información del Cliente',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    const clienteSelect = document.getElementById('modal_cliente_id_edit');
+                    const correoInput = document.getElementById('modal_correo_edit');
+                    
+                    // Pre-seleccionar cliente si existe
+                    if (clienteSelect && facturaData.cliente_id) {
+                        clienteSelect.value = facturaData.cliente_id;
+                    }
+                    
+                    // Auto-completar correo cuando se selecciona cliente
+                    if (clienteSelect) {
+                        clienteSelect.addEventListener('change', function() {
+                            const clienteId = this.value;
+                            const cliente = clientes.find(c => c.id == clienteId);
+                            if (cliente && correoInput) {
+                                correoInput.value = cliente.correo || '';
+                            }
+                        });
+                    }
+                },
+                preConfirm: () => {
+                    const clienteId = document.getElementById('modal_cliente_id_edit').value;
+                    const correo = document.getElementById('modal_correo_edit').value;
+                    
+                    if (!clienteId) {
+                        Swal.showValidationMessage('Por favor selecciona un cliente');
+                        return false;
+                    }
+                    
+                    if (!correo || !correo.includes('@')) {
+                        Swal.showValidationMessage('Por favor ingresa un correo válido');
+                        return false;
+                    }
+                    
+                    return { clienteId, correo };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la página de crear/editar con el factura_id y cliente_id
+                    window.location.href = `{{ route('walee.facturas.crear') }}?factura_id=${facturaId}&cliente_id=${result.value.clienteId}`;
+                }
+            });
         }
     </script>
     @include('partials.walee-support-button')

@@ -3146,7 +3146,12 @@ Route::get('/walee-facturas/lista', function (\Illuminate\Http\Request $request)
         ->whereYear('created_at', now()->year)
         ->count();
     
-    return view('walee-facturas-lista', compact('facturas', 'searchQuery', 'totalFacturas', 'facturasHoy', 'facturasEstaSemana', 'facturasEsteMes'));
+    // Datos para modal de crear/editar
+    $clientes = \App\Models\Cliente::orderBy('nombre_empresa')->get();
+    $ultimaFactura = \App\Models\Factura::orderBy('id', 'desc')->first();
+    $siguienteNumero = $ultimaFactura ? intval($ultimaFactura->numero_factura) + 1 : 1;
+    
+    return view('walee-facturas-lista', compact('facturas', 'searchQuery', 'totalFacturas', 'facturasHoy', 'facturasEstaSemana', 'facturasEsteMes', 'clientes', 'siguienteNumero'));
 })->middleware(['auth'])->name('walee.facturas.lista');
 
 // Lista de facturas por cliente

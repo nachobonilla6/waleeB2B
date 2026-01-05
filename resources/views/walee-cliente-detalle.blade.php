@@ -326,11 +326,10 @@
         }
         $whatsappLink = $cleanPhone ? "https://wa.me/{$cleanPhone}" : null;
         
-        // Obtener contador de emails enviados
-        $emailsEnviados = PropuestaPersonalizada::where('cliente_id', $cliente->id)->count();
-        $emailsColor = $emailsEnviados >= 3 ? 'text-red-400' : ($emailsEnviados >= 1 ? 'text-amber-400' : 'text-slate-500');
-        $emailsBg = $emailsEnviados >= 3 ? 'bg-red-500/20' : ($emailsEnviados >= 1 ? 'bg-amber-500/20' : 'bg-slate-800/50');
-        $emailsBorder = $emailsEnviados >= 3 ? 'border-red-500/30' : ($emailsEnviados >= 1 ? 'border-amber-500/30' : 'border-slate-700');
+        // Variables de emails ya están disponibles desde la ruta
+        $emailsColor = ($emailsEnviados ?? 0) >= 3 ? 'text-red-400' : (($emailsEnviados ?? 0) >= 1 ? 'text-amber-400' : 'text-slate-500');
+        $emailsBg = ($emailsEnviados ?? 0) >= 3 ? 'bg-red-500/20' : (($emailsEnviados ?? 0) >= 1 ? 'bg-amber-500/20' : 'bg-slate-800/50');
+        $emailsBorder = ($emailsEnviados ?? 0) >= 3 ? 'border-red-500/30' : (($emailsEnviados ?? 0) >= 1 ? 'border-amber-500/30' : 'border-slate-700');
     @endphp
 
     <div class="h-screen overflow-hidden relative flex flex-col">
@@ -575,6 +574,17 @@
                                 </div>
                                 <span class="text-sm font-semibold text-purple-700 dark:text-purple-400">{{ $productos->count() ?? 0 }}</span>
                             </a>
+                            
+                            <!-- Emails Enviados -->
+                            <a href="{{ route('walee.emails.enviados') }}?search={{ urlencode($cliente->email ?? '') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-600 dark:border-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/20 transition-colors cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
+                                </div>
+                                <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
+                            </a>
                         </div>
                     </div>
                 
@@ -702,7 +712,7 @@
             </div>
             
                             <!-- Alertas Desktop -->
-                            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                            <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
                                 @php
                                     $totalPublicaciones = $publicacionesProgramadas + $publicacionesPublicadas;
                                     $totalCitas = $citasPendientes->count() + $citasPasadas->count();
@@ -776,6 +786,17 @@
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Productos</span>
                                     </div>
                                     <span class="text-sm font-semibold text-purple-700 dark:text-purple-400">{{ $productos->count() ?? 0 }}</span>
+                                </a>
+                                
+                                <!-- Emails Enviados -->
+                                <a href="{{ route('walee.emails.enviados') }}?search={{ urlencode($cliente->email ?? '') }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
                                 </a>
                                         </div>
                                         </div>

@@ -224,6 +224,11 @@
                                             {{ $estadoTexto }}
                                         </span>
                                     @endif
+                                    @if($email->tipo === 'extractor')
+                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border-cyan-500/30 whitespace-nowrap">
+                                            Enviado con alpha
+                                        </span>
+                                    @endif
                                 </div>
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
                             </div>

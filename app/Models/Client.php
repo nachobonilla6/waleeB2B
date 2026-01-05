@@ -45,4 +45,9 @@ class Client extends Model
     {
         return $this->hasMany(Post::class, 'cliente_id');
     }
+
+    public function emails()
+    {
+        return $this->hasMany(\App\Models\PropuestaPersonalizada::class, 'cliente_id');
+    }
 }

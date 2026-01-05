@@ -171,7 +171,16 @@
         }
         
         // Aplicar paginación con los query parameters - ordenar por más recientes primero
-        $clientes = $query->orderBy('created_at', 'desc')
+        // Incluir conteo de emails enviados (excluyendo extractor)
+        $clientes = $query->withCount([
+                'emails' => function($q) {
+                    $q->where(function($query) {
+                        $query->where('tipo', '!=', 'extractor')
+                              ->orWhereNull('tipo');
+                    });
+                }
+            ])
+            ->orderBy('created_at', 'desc')
             ->orderBy('updated_at', 'desc')
             ->paginate(25)
             ->appends(request()->query());
@@ -477,7 +486,7 @@
                                             @endif
                                             <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
                                         </p>
-                                        @if($cliente->estado === 'pending')
+                                        @if($cliente->emails_count > 0)
                                             <span class="px-2 py-0.5 text-xs font-semibold rounded-lg border bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0">
                                                 Email Enviado
                                             </span>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PropuestaPersonalizada extends Model
 {
-    protected $table = 'propuestas_personalizadas';
+    protected $table = 'emails';
 
     protected $fillable = [
         'cliente_id',
@@ -20,6 +20,7 @@ class PropuestaPersonalizada extends Model
         'enlace',
         'attachment',
         'user_id',
+        'tipo',
     ];
 
     protected $casts = [

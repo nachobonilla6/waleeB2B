@@ -2449,6 +2449,7 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
             'enlace' => $enlace ?: null,
             'attachment' => $attachmentValue,
             'user_id' => auth()->id(),
+            'tipo' => 'propuesta_personalizada',
         ]);
         
         // Marcar el contacto según el origen del envío

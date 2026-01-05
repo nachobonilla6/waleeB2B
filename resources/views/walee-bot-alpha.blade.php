@@ -480,7 +480,7 @@
                                     </p>
                                 </div>
                             </a>
-                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-600 hover:border-emerald-700 transition-all flex-shrink-0 shadow-sm hover:shadow flex items-center justify-center" title="Enviar email">
+                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-slate-900 border border-yellow-600 hover:border-yellow-700 transition-all flex-shrink-0 shadow-sm hover:shadow flex items-center justify-center" title="Enviar email">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>

@@ -2143,8 +2143,26 @@ Route::get('/walee-emails/sitios', function (\Illuminate\Http\Request $request) 
     ]);
 })->middleware(['auth'])->name('walee.emails.sitios');
 
-Route::get('/walee-emails/enviados', function () {
-    return view('walee-emails-enviados');
+Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request) {
+    $searchQuery = $request->get('search', '');
+    
+    $query = \App\Models\PropuestaPersonalizada::with('cliente');
+    
+    // Aplicar búsqueda si existe
+    if ($searchQuery) {
+        $query->where(function($q) use ($searchQuery) {
+            $q->where('subject', 'like', '%' . $searchQuery . '%')
+              ->orWhere('email', 'like', '%' . $searchQuery . '%')
+              ->orWhere('cliente_nombre', 'like', '%' . $searchQuery . '%')
+              ->orWhere('body', 'like', '%' . $searchQuery . '%');
+        });
+    }
+    
+    $emails = $query->orderBy('created_at', 'desc')
+        ->paginate(5)
+        ->appends(request()->query());
+    
+    return view('walee-emails-enviados', compact('emails', 'searchQuery'));
 })->middleware(['auth'])->name('walee.emails.enviados');
 
 Route::get('/walee-emails/templates', function () {

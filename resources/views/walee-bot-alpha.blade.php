@@ -1595,6 +1595,7 @@
                     formData.append('subject', emailModalData.subject);
                     formData.append('body', emailModalData.body);
                     formData.append('ai_prompt', emailModalData.aiPrompt || '');
+                    formData.append('from_bot_alpha', 'true'); // Marcar que viene de bot-alpha
                     
                     if (emailModalData.attachments) {
                         Array.from(emailModalData.attachments).forEach((file, index) => {

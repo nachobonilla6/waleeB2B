@@ -2334,6 +2334,7 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
         $aiPrompt = $request->input('ai_prompt');
         $sitioId = $request->input('sitio_id');
         $enlace = $request->input('enlace');
+        $fromBotAlpha = $request->input('from_bot_alpha', false); // Identificar si viene de bot-alpha
         
         $client = $clienteId ? \App\Models\Client::find($clienteId) : null;
         
@@ -2409,12 +2410,21 @@ Route::post('/walee-emails/enviar', function (\Illuminate\Http\Request $request)
             'user_id' => auth()->id(),
         ]);
         
-        // Marcar el contacto como propuesta personalizada enviada
+        // Marcar el contacto según el origen del envío
         if ($client) {
-            $client->update([
-                'propuesta_enviada' => true,
-                'estado' => 'propuesta_personalizada_enviada'
-            ]);
+            if ($fromBotAlpha) {
+                // Si viene de bot-alpha, marcar como enviado-manual
+                $client->update([
+                    'propuesta_enviada' => true,
+                    'estado' => 'enviado-manual'
+                ]);
+            } else {
+                // Si viene de otro lugar, mantener el comportamiento anterior
+                $client->update([
+                    'propuesta_enviada' => true,
+                    'estado' => 'propuesta_personalizada_enviada'
+                ]);
+            }
         }
         
         return response()->json([

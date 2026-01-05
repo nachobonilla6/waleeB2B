@@ -1301,6 +1301,17 @@
         
         // ========== SISTEMA DE MODAL POR FASES ==========
         @if(isset($factura) && $factura)
+            @php
+                $pagosData = $factura->pagos->map(function($pago) {
+                    return [
+                        'descripcion' => $pago->descripcion,
+                        'fecha' => $pago->fecha ? $pago->fecha->format('Y-m-d') : now()->format('Y-m-d'),
+                        'importe' => $pago->importe,
+                        'metodo_pago' => $pago->metodo_pago ?? '',
+                        'notas' => $pago->notas ?? ''
+                    ];
+                })->toArray();
+            @endphp
             // Cargar datos de factura existente para edición
             let facturaData = {
                 factura_id: {{ $factura->id }},
@@ -1330,15 +1341,7 @@
                 concepto_pago: '{{ $factura->concepto_pago ?? '' }}',
                 concepto: '{{ addslashes($factura->concepto ?? '') }}',
                 numero_orden: '{{ $factura->numero_orden ?? '' }}',
-                pagos: @json($factura->pagos->map(function($pago) {
-                    return [
-                        'descripcion' => $pago->descripcion,
-                        'fecha' => $pago->fecha ? $pago->fecha->format('Y-m-d') : now()->format('Y-m-d'),
-                        'importe' => $pago->importe,
-                        'metodo_pago' => $pago->metodo_pago ?? '',
-                        'notas' => $pago->notas ?? ''
-                    ];
-                })->toArray()),
+                pagos: @json($pagosData),
                 notas: '{{ addslashes($factura->notas ?? '') }}',
                 archivos: null
             };

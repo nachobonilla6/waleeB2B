@@ -194,6 +194,7 @@ class ListClientPropuestaEnviadas extends ListRecords
                             'body' => $data['body'],
                             'ai_prompt' => $data['ai_prompt'] ?? null,
                             'user_id' => auth()->id(),
+                            'tipo' => 'propuesta_personalizada',
                         ]);
                         
                         // Marcar el contacto como propuesta personalizada enviada

@@ -159,7 +159,7 @@
         // Aplicar paginación con los query parameters - ordenar por más recientes primero
         $clientes = $query->orderBy('created_at', 'desc')
             ->orderBy('updated_at', 'desc')
-            ->paginate(5)
+            ->paginate(25)
             ->appends(request()->query());
         
         // Obtener lista de idiomas únicos de clientes en proceso
@@ -200,31 +200,31 @@
                         Bot Alpha
                     </h1>
                 </div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('walee.emails.enviados') }}" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="{{ route('walee.emails.enviados') }}" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        <span>Emails Enviados</span>
+                        <span class="font-semibold">Enviados</span>
                     </a>
-                    <button onclick="openExtraerModal()" class="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="openExtraerModal()" class="px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
-                        <span>Extraer</span>
+                        <span class="font-semibold">Extraer</span>
                     </button>
-                    <button onclick="openConfigModal()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="openConfigModal()" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span>Config</span>
+                        <span class="font-semibold">Config</span>
                     </button>
-                    <a href="{{ route('walee.emails.dashboard') }}" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.emails.dashboard') }}" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        <span class="hidden sm:inline">Volver</span>
+                        <span class="hidden sm:inline font-semibold">Volver</span>
                     </a>
                 </div>
             </header>
@@ -247,9 +247,12 @@
                                 </svg>
                                 <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
                             </button>
-                            <label class="switch" style="width: 50px; height: 28px;">
+                            <label class="switch relative" style="width: 56px; height: 32px;">
                                 <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
                                 <span class="slider"></span>
+                                <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
                             </label>
                         </div>
                     </div>
@@ -271,9 +274,12 @@
                                 </svg>
                                 <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
                             </button>
-                            <label class="switch" style="width: 50px; height: 28px;">
+                            <label class="switch relative" style="width: 56px; height: 32px;">
                                 <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
                                 <span class="slider"></span>
+                                <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
                             </label>
                         </div>
                     </div>
@@ -290,11 +296,11 @@
                                 type="text" 
                                 id="searchInput"
                                 value="{{ $searchQuery }}"
-                                placeholder="Buscar cliente..."
-                                class="w-full px-3 py-2 pl-9 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
+                                placeholder="Buscar por nombre, email o teléfono..."
+                                class="w-full px-4 py-2.5 pl-10 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm shadow-sm"
                                 onkeyup="handleSearch()"
                             >
-                            <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4.5 h-4.5 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
@@ -352,7 +358,25 @@
                                 @endif
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
-                                        <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                        <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
+                                            @if($cliente->idioma)
+                                                @php
+                                                    $banderas = [
+                                                        'es' => '🇪🇸',
+                                                        'en' => '🇬🇧',
+                                                        'fr' => '🇫🇷',
+                                                        'de' => '🇩🇪',
+                                                        'it' => '🇮🇹',
+                                                        'pt' => '🇵🇹'
+                                                    ];
+                                                    $bandera = $banderas[$cliente->idioma] ?? '';
+                                                @endphp
+                                                @if($bandera)
+                                                    <span class="text-base">{{ $bandera }}</span>
+                                                @endif
+                                            @endif
+                                            <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
+                                        </p>
                                         @if($cliente->estado)
                                             @php
                                                 $estadoConfig = [
@@ -369,11 +393,6 @@
                                         @endif
                                     </div>
                                     <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                    @if($cliente->idioma)
-                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
-                                            {{ $idiomasNombres[$cliente->idioma] ?? strtoupper($cliente->idioma) }}
-                                        </p>
-                                    @endif
                                 </div>
                             </a>
                             <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all flex-shrink-0" title="Crear email">

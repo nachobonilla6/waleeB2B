@@ -899,6 +899,9 @@
             const template = emailTemplates.find(t => t.id == templateId);
             if (!template) return;
             
+            // Guardar referencia a la modal actual antes de cargar el template
+            const currentModal = Swal.getContainer();
+            
             // Cargar el template en los datos del modal
             emailModalData.aiPrompt = template.ai_prompt || '';
             emailModalData.subject = template.asunto || '';
@@ -920,38 +923,31 @@
                 bodyField.value = emailModalData.body;
             }
             
-            // Si estamos en fase 1 y el template tiene asunto y contenido, mostrar mensaje
-            if (aiPromptField && !subjectField && !bodyField) {
-                if (template.asunto && template.contenido) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Template cargado',
-                        text: 'El template se ha cargado. Continúa al siguiente paso para ver el asunto y contenido.',
-                        confirmButtonColor: '#8b5cf6',
-                        timer: 2500,
-                        showConfirmButton: false
-                    });
-                } else if (template.ai_prompt) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Template cargado',
-                        text: 'El prompt de AI se ha cargado. Puedes generar con AI o continuar.',
-                        confirmButtonColor: '#8b5cf6',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
+            // Mostrar notificación toast sin cerrar la modal principal
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            // Usar un toast que no interfiera con la modal principal
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
                 }
-            } else if (subjectField && bodyField) {
-                // Si ya estamos en fase 2, solo mostrar confirmación
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Template cargado',
-                    text: 'El template se ha cargado correctamente.',
-                    confirmButtonColor: '#8b5cf6',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
+            });
+            
+            Toast.fire({
+                icon: 'success',
+                title: 'Template cargado correctamente',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal'
+                }
+            });
         }
         
         function showEmailPhase1() {

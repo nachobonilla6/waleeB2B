@@ -190,6 +190,11 @@
                                             Enviado con alpha
                                         </span>
                                     @endif
+                                    @if($email->cliente_estado === 'propuesta_personalizada_enviada')
+                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 whitespace-nowrap">
+                                            Extraídos manual
+                                        </span>
+                                    @endif
                                 </div>
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2 mb-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
                                 <button onclick="showEmailDetail({{ $email->id }})" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-lg transition-colors">

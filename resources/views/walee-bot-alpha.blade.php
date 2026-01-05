@@ -1007,8 +1007,8 @@
             Swal.fire({
                 title: 'Extraer Clientes',
                 html: `
-                    <form id="extraerForm" class="text-left ${isMobile ? 'space-y-3' : 'space-y-4'}" style="${isMobile ? 'max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 4px;' : ''}">
-                        <div>
+                    <form id="extraerForm" class="text-left ${isMobile ? 'space-y-3' : 'space-y-4'}" style="${isMobile ? 'max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 4px; width: 100%;' : 'width: 100%;'}">
+                        <div style="width: 100%;">
                             <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 Idioma
                             </label>
@@ -1017,12 +1017,13 @@
                                 name="idioma"
                                 onchange="updatePaises()"
                                 class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                style="width: 100%; box-sizing: border-box;"
                             >
                                 ${idiomasOptions}
                             </select>
                         </div>
                         
-                        <div>
+                        <div style="width: 100%;">
                             <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 País
                             </label>
@@ -1030,12 +1031,13 @@
                                 id="extraerPais" 
                                 name="pais"
                                 class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                style="width: 100%; box-sizing: border-box;"
                             >
                                 <option value="">Todos los países</option>
                             </select>
                         </div>
                         
-                        <div>
+                        <div style="width: 100%;">
                             <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 Ciudad
                             </label>
@@ -1045,13 +1047,14 @@
                                 name="ciudad"
                                 placeholder="Ej: Madrid, Barcelona, Ciudad de México..."
                                 class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                style="width: 100%; box-sizing: border-box;"
                             >
                             <p class="${isMobile ? 'text-sm' : 'text-xs'} text-slate-500 dark:text-slate-400 mt-1.5">
                                 Deja vacío para todas las ciudades
                             </p>
                         </div>
                         
-                        <div>
+                        <div style="width: 100%;">
                             <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 Industria
                             </label>
@@ -1059,6 +1062,7 @@
                                 id="extraerIndustria" 
                                 name="industria"
                                 class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                style="width: 100%; box-sizing: border-box;"
                             >
                                 ${industriasOptions}
                             </select>

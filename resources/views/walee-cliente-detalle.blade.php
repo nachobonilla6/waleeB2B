@@ -40,7 +40,7 @@
         /* Asegurar que el card de perfil use todo el ancho en mobile */
         @media (max-width: 640px) {
             /* Contenedor principal de la página - usar selector de atributo */
-            div[class*="max-w-[90rem]"] {
+            div[class*="max-w-[100rem]"] {
                 width: 100% !important;
                 max-width: 100% !important;
             }
@@ -81,6 +81,14 @@
             .header-profesional-card > div.block > div {
                 width: 100% !important;
                 max-width: 100% !important;
+            }
+        }
+        
+        /* Mejorar scroll en mobile */
+        @media (max-width: 640px) {
+            body {
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch;
             }
         }
         
@@ -312,7 +320,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white h-screen overflow-hidden transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
     @php
         use App\Models\PropuestaPersonalizada;
         
@@ -332,7 +340,7 @@
         $emailsBorder = ($emailsEnviados ?? 0) >= 3 ? 'border-red-500/30' : (($emailsEnviados ?? 0) >= 1 ? 'border-amber-500/30' : 'border-slate-700');
     @endphp
 
-    <div class="h-screen overflow-hidden relative flex flex-col">
+    <div class="min-h-screen relative flex flex-col">
         <!-- Background -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl"></div>
@@ -340,15 +348,15 @@
         </div>
         
         <!-- Navbar con ancho independiente -->
-        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
+        <div class="relative w-full max-w-[100rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 xl:px-12">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
         </div>
             
         <!-- Contenido principal con ancho más amplio -->
-        <div class="relative max-w-full mx-auto px-3 py-0 sm:px-4 sm:py-0 lg:px-12 xl:px-16 h-full overflow-hidden flex flex-col">
+        <div class="relative w-full max-w-[100rem] mx-auto px-3 py-0 sm:px-4 sm:py-0 lg:px-12 xl:px-16 pb-6 flex flex-col">
             <!-- Header Profesional -->
-            <div class="mb-3 sm:mb-4 lg:mb-6 flex-1 overflow-hidden flex flex-col w-full header-profesional-wrapper">
+            <div class="mb-3 sm:mb-4 lg:mb-6 flex flex-col w-full header-profesional-wrapper">
                 <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">
                     @php
                         $fotoPath = $cliente->foto ?? null;
@@ -805,7 +813,7 @@
             </div>
             
             <!-- Footer -->
-            <footer class="text-center py-2 sm:py-3 flex-shrink-0">
+            <footer class="text-center py-4 sm:py-6 mt-4 sm:mt-6">
                 <p class="text-[10px] sm:text-sm text-slate-600 dark:text-slate-500">
                     <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
                 </p>

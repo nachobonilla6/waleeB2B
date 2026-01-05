@@ -2175,7 +2175,8 @@ Route::get('/walee-emails/pending', function (\Illuminate\Http\Request $request)
         });
     }
     
-    $clientesPending = $query->orderBy('created_at', 'desc')
+    $clientesPending = $query->withCount('emails')
+        ->orderBy('created_at', 'desc')
         ->orderBy('updated_at', 'desc')
         ->orderBy('id', 'desc')
         ->paginate(5)

@@ -1125,20 +1125,24 @@
             // Enviar al webhook si está configurado
             if (currentWebhookUrl && textoWebhook) {
                 try {
+                    // Agregar el sufijo de idioma al texto
+                    const idiomaSufijo = filtros.idioma || '';
+                    const textoCompleto = textoWebhook + (idiomaSufijo ? ' ' + idiomaSufijo : '');
+                    
                     await fetch(currentWebhookUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            pais_ciudad_industria: textoWebhook,
+                            pais_ciudad_industria: textoCompleto,
                             pais: paisNombre || '',
                             ciudad: ciudadNombre || '',
                             industria: industriaNombre || '',
-                            idioma: filtros.idioma || ''
+                            idioma: idiomaSufijo || ''
                         })
                     });
-                    console.log('Datos enviados al webhook:', textoWebhook);
+                    console.log('Datos enviados al webhook:', textoCompleto);
                 } catch (error) {
                     console.error('Error al enviar al webhook:', error);
                 }

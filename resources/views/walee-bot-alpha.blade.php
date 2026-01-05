@@ -477,6 +477,11 @@
                                             @endif
                                             <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
                                         </p>
+                                        @if($cliente->estado === 'pending')
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-lg border bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0">
+                                                Email Enviado
+                                            </span>
+                                        @endif
                                     </div>
                                     <p class="text-xs text-slate-600 dark:text-slate-400 truncate flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

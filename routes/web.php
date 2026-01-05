@@ -4623,7 +4623,12 @@ Route::get('/walee-cliente/{id}', function ($id) {
         ->orderBy('created_at', 'desc')
         ->get();
     
-    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId'));
+    // Obtener templates de email del usuario
+    $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId', 'templates'));
 })->middleware(['auth'])->name('walee.cliente.detalle');
 
 // Ruta para editar un cliente

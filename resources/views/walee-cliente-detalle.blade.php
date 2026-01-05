@@ -1698,6 +1698,9 @@
             }
         }
         
+        // Templates de email disponibles
+        const emailTemplates = @json($templates ?? []);
+        
         // Variables globales para el flujo de fases
         let emailModalData = {
             clienteId: {{ $cliente->id }},
@@ -1726,38 +1729,64 @@
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
-            let modalWidth = '90%';
+            let modalWidth = '95%';
             if (window.innerWidth >= 1024) {
-                modalWidth = '500px';
+                modalWidth = '700px';
             } else if (window.innerWidth >= 640) {
-                modalWidth = '450px';
+                modalWidth = '600px';
+            }
+            
+            // Generar opciones de templates
+            let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
+            if (emailTemplates && emailTemplates.length > 0) {
+                emailTemplates.forEach(template => {
+                    templatesOptions += `<option value="${template.id}">${template.nombre}</option>`;
+                });
             }
             
             const html = `
-                <div class="space-y-2.5 text-left">
-                    <div class="flex items-center justify-center gap-1 mb-2">
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-3">
                         <div class="w-2 h-2 rounded-full bg-violet-600"></div>
                         <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
                         <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
                     </div>
                     
+                    ${emailTemplates && emailTemplates.length > 0 ? `
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Email destinatario <span class="text-red-500">*</span></label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">Template guardado (opcional)</label>
+                            <button type="button" onclick="showAIGenerateButton()" id="show_ai_btn" style="display: none;"
+                                class="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 underline">
+                                Usar AI en su lugar
+                            </button>
+                        </div>
+                        <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            ${templatesOptions}
+                        </select>
+                    </div>
+                    ` : ''}
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Email destinatario <span class="text-red-500">*</span></label>
                         <input type="email" id="email_destinatario" value="${emailModalData.email}" required
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Instrucciones para AI (opcional)</label>
-                        <textarea id="ai_prompt" rows="3" placeholder="Ej: Genera un email profesional..."
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
-                        <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
-                            class="mt-1.5 w-full px-2.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                            </svg>
-                            <span>Generar con AI</span>
-                        </button>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Instrucciones para AI (opcional)</label>
+                        <textarea id="ai_prompt" rows="5" placeholder="Ej: Genera un email profesional..."
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none">${emailModalData.aiPrompt}</textarea>
+                        <div id="ai_generate_container">
+                            <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
+                                class="mt-2 w-full px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                </svg>
+                                <span>Generar con AI</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1789,7 +1818,10 @@
                         return false;
                     }
                     emailModalData.email = email;
-                    emailModalData.aiPrompt = document.getElementById('ai_prompt').value;
+                    const aiPromptField = document.getElementById('ai_prompt');
+                    if (aiPromptField) {
+                        emailModalData.aiPrompt = aiPromptField.value;
+                    }
                     return true;
                 }
             }).then((result) => {
@@ -1803,31 +1835,31 @@
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
-            let modalWidth = '90%';
+            let modalWidth = '95%';
             if (window.innerWidth >= 1024) {
-                modalWidth = '500px';
+                modalWidth = '700px';
             } else if (window.innerWidth >= 640) {
-                modalWidth = '450px';
+                modalWidth = '600px';
             }
             
             const html = `
-                <div class="space-y-2.5 text-left">
-                    <div class="flex items-center justify-center gap-1 mb-2">
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-3">
                         <div class="w-2 h-2 rounded-full bg-violet-600"></div>
                         <div class="w-2 h-2 rounded-full bg-violet-600"></div>
                         <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Asunto <span class="text-red-500">*</span></label>
                         <input type="text" id="email_subject" value="${emailModalData.subject}" required placeholder="Asunto del email"
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Mensaje <span class="text-red-500">*</span></label>
-                        <textarea id="email_body" rows="6" required placeholder="Escribe o genera el contenido del email..."
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none">${emailModalData.body}</textarea>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Mensaje <span class="text-red-500">*</span></label>
+                        <textarea id="email_body" rows="10" required placeholder="Escribe o genera el contenido del email..."
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none">${emailModalData.body}</textarea>
                     </div>
                 </div>
             `;
@@ -1836,7 +1868,7 @@
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 2</span></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Anterior',
@@ -1877,27 +1909,27 @@
             const isDarkMode = document.documentElement.classList.contains('dark');
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
-            let modalWidth = '90%';
+            let modalWidth = '95%';
             if (window.innerWidth >= 1024) {
-                modalWidth = '500px';
+                modalWidth = '700px';
             } else if (window.innerWidth >= 640) {
-                modalWidth = '450px';
+                modalWidth = '600px';
             }
             
             const html = `
-                <div class="space-y-2.5 text-left">
-                    <div class="flex items-center justify-center gap-1 mb-2">
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-3">
                         <div class="w-2 h-2 rounded-full bg-violet-600"></div>
                         <div class="w-2 h-2 rounded-full bg-violet-600"></div>
                         <div class="w-2 h-2 rounded-full bg-violet-600"></div>
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Adjuntar archivos (opcional)</label>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Adjuntar archivos (opcional)</label>
                         <input type="file" id="email_attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                        <p class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">PDF o imágenes (máx. 10MB por archivo)</p>
-                        <div id="email_files_list" class="mt-1.5 space-y-1"></div>
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        <p class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-1">PDF o imágenes (máx. 10MB por archivo)</p>
+                        <div id="email_files_list" class="mt-2 space-y-1.5"></div>
                     </div>
                 </div>
             `;
@@ -1906,7 +1938,7 @@
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 3</span></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Enviar Email',
                 cancelButtonText: 'Anterior',
@@ -1933,8 +1965,8 @@
                                     const fileItem = document.createElement('div');
                                     fileItem.className = `flex items-center justify-between p-1.5 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`;
                                     fileItem.innerHTML = `
-                                        <span class="text-[10px] ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">${file.name}</span>
-                                        <span class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                        <span class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">${file.name}</span>
+                                        <span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
                                     `;
                                     filesList.appendChild(fileItem);
                                 });
@@ -2093,6 +2125,88 @@
                     </svg>
                     <span>Generar con AI</span>
                 `;
+            }
+        }
+        
+        function loadEmailTemplate(templateId) {
+            const aiGenerateContainer = document.getElementById('ai_generate_container');
+            
+            if (!templateId || !emailTemplates) {
+                // Si no hay template seleccionado, mostrar el botón de AI
+                if (aiGenerateContainer) {
+                    aiGenerateContainer.style.display = 'block';
+                }
+                return;
+            }
+            
+            const template = emailTemplates.find(t => t.id == templateId);
+            if (!template) {
+                if (aiGenerateContainer) {
+                    aiGenerateContainer.style.display = 'block';
+                }
+                return;
+            }
+            
+            // Cargar el template en los datos del modal
+            emailModalData.aiPrompt = template.ai_prompt || '';
+            emailModalData.subject = template.asunto || '';
+            emailModalData.body = template.contenido || '';
+            
+            // Actualizar los campos visibles si existen
+            const aiPromptField = document.getElementById('ai_prompt');
+            if (aiPromptField) {
+                aiPromptField.value = emailModalData.aiPrompt;
+            }
+            
+            // Si estamos en fase 2, actualizar también esos campos
+            const subjectField = document.getElementById('email_subject');
+            const bodyField = document.getElementById('email_body');
+            if (subjectField) {
+                subjectField.value = emailModalData.subject;
+            }
+            if (bodyField) {
+                bodyField.value = emailModalData.body;
+            }
+            
+            // Ocultar el botón de generar con AI cuando hay template seleccionado
+            if (aiGenerateContainer) {
+                aiGenerateContainer.style.display = 'none';
+            }
+            
+            // Mostrar el botón "Usar AI en su lugar"
+            const showAiBtn = document.getElementById('show_ai_btn');
+            if (showAiBtn) {
+                showAiBtn.style.display = 'block';
+            }
+        }
+        
+        function showAIGenerateButton() {
+            const aiGenerateContainer = document.getElementById('ai_generate_container');
+            if (aiGenerateContainer) {
+                aiGenerateContainer.style.display = 'block';
+            }
+            
+            // Ocultar el botón "Usar AI en su lugar"
+            const showAiBtn = document.getElementById('show_ai_btn');
+            if (showAiBtn) {
+                showAiBtn.style.display = 'none';
+            }
+            
+            // Limpiar el template seleccionado
+            const templateSelect = document.getElementById('email_template_select');
+            if (templateSelect) {
+                templateSelect.value = '';
+            }
+            
+            // Limpiar los datos del template
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            
+            // Limpiar los campos
+            const aiPromptField = document.getElementById('ai_prompt');
+            if (aiPromptField) {
+                aiPromptField.value = '';
             }
         }
         

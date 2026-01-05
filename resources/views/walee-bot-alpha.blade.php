@@ -802,6 +802,16 @@
         // Estilos para SweetAlert dark/light mode
         const style = document.createElement('style');
         style.textContent = `
+            .swal2-container {
+                z-index: 999999 !important;
+            }
+            .swal2-backdrop-show {
+                z-index: 999998 !important;
+                background-color: rgba(0, 0, 0, 0.75) !important;
+            }
+            .swal2-popup {
+                z-index: 999999 !important;
+            }
             .dark-swal {
                 background: #1e293b !important;
                 color: #e2e8f0 !important;

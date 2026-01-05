@@ -899,9 +899,6 @@
             const template = emailTemplates.find(t => t.id == templateId);
             if (!template) return;
             
-            // Guardar referencia a la modal actual antes de cargar el template
-            const currentModal = Swal.getContainer();
-            
             // Cargar el template en los datos del modal
             emailModalData.aiPrompt = template.ai_prompt || '';
             emailModalData.subject = template.asunto || '';
@@ -922,32 +919,6 @@
             if (bodyField) {
                 bodyField.value = emailModalData.body;
             }
-            
-            // Mostrar notificación toast sin cerrar la modal principal
-            const isDarkMode = document.documentElement.classList.contains('dark');
-            
-            // Usar un toast que no interfiera con la modal principal
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
-                }
-            });
-            
-            Toast.fire({
-                icon: 'success',
-                title: 'Template cargado correctamente',
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal'
-                }
-            });
         }
         
         function showEmailPhase1() {

@@ -185,45 +185,6 @@
                                             <span class="text-slate-500 dark:text-slate-500"> · {{ $email->cliente_nombre }}</span>
                                         @endif
                                     </p>
-                                    @if($email->cliente_estado)
-                                        @php
-                                            $estadoClass = '';
-                                            $estadoTexto = '';
-                                            switch ($email->cliente_estado) {
-                                                case 'pending':
-                                                    $estadoClass = 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30';
-                                                    $estadoTexto = ucfirst(str_replace('-', ' ', $email->cliente_estado));
-                                                    break;
-                                                case 'received':
-                                                    $estadoClass = 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30';
-                                                    $estadoTexto = ucfirst(str_replace('-', ' ', $email->cliente_estado));
-                                                    break;
-                                                case 'active':
-                                                    $estadoClass = 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
-                                                    $estadoTexto = ucfirst(str_replace('-', ' ', $email->cliente_estado));
-                                                    break;
-                                                case 'inactive':
-                                                    $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';
-                                                    $estadoTexto = ucfirst(str_replace('-', ' ', $email->cliente_estado));
-                                                    break;
-                                                case 'enviado-manual':
-                                                    $estadoClass = 'bg-violet-500/20 text-violet-600 dark:text-violet-400 border-violet-500/30';
-                                                    $estadoTexto = 'Enviado manual';
-                                                    break;
-                                                case 'extractor':
-                                                    $estadoClass = 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border-cyan-500/30';
-                                                    $estadoTexto = 'Enviado con alpha';
-                                                    break;
-                                                default:
-                                                    $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';
-                                                    $estadoTexto = ucfirst(str_replace('-', ' ', $email->cliente_estado));
-                                                    break;
-                                            }
-                                        @endphp
-                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border {{ $estadoClass }} whitespace-nowrap">
-                                            {{ $estadoTexto }}
-                                        </span>
-                                    @endif
                                     @if($email->tipo === 'extractor')
                                         <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border-cyan-500/30 whitespace-nowrap">
                                             Enviado con alpha

@@ -223,16 +223,16 @@
                 </div>
             </header>
             
-            <!-- Switch de Encendido/Apagado y Recurrencia -->
+            <!-- Switch de Encendido/Apagado y Recurrencia para Extracción de Clientes -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm dark:shadow-none">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">
-                                Estado del Bot
+                                Extracción de Clientes
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                                Activa o desactiva el Bot Alpha
+                                Activa o desactiva la extracción automática de clientes
                             </p>
                         </div>
                         <div class="flex items-center gap-3 sm:gap-4">
@@ -244,6 +244,34 @@
                             </button>
                             <label class="switch">
                                 <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Emails Automáticos -->
+            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm dark:shadow-none">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">
+                                Emails Automáticos
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                                Configura el envío automático de emails a clientes
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-3 py-2 sm:px-4 sm:py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-2 text-xs sm:text-sm shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <span id="recurrenciaEmailsText">Elegir recurrencia</span>
+                            </button>
+                            <label class="switch">
+                                <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -381,12 +409,13 @@
     </div>
     
     <script>
-        // Variable para almacenar la recurrencia seleccionada
-        let recurrenciaSeleccionada = null;
+        // Variables para almacenar las recurrencias seleccionadas
+        let recurrenciaSeleccionada = null; // Para extracción de clientes
+        let recurrenciaEmailsSeleccionada = null; // Para emails automáticos
         
-        // Toggle Bot (solo diseño por ahora)
+        // Toggle Bot - Extracción de Clientes (solo diseño por ahora)
         function toggleBot(enabled) {
-            console.log('Bot Alpha:', enabled ? 'Activado' : 'Desactivado');
+            console.log('Extracción de Clientes:', enabled ? 'Activado' : 'Desactivado');
             
             // Habilitar/deshabilitar botón de recurrencia según el estado del bot
             const recurrenciaBtn = document.getElementById('recurrenciaBtn');
@@ -405,7 +434,28 @@
             // Aquí se implementará la lógica real más adelante
         }
         
-        // Abrir modal de recurrencia
+        // Toggle Emails Automáticos (solo diseño por ahora)
+        function toggleEmails(enabled) {
+            console.log('Emails Automáticos:', enabled ? 'Activado' : 'Desactivado');
+            
+            // Habilitar/deshabilitar botón de recurrencia según el estado
+            const recurrenciaEmailsBtn = document.getElementById('recurrenciaEmailsBtn');
+            if (recurrenciaEmailsBtn) {
+                if (enabled) {
+                    recurrenciaEmailsBtn.disabled = false;
+                    recurrenciaEmailsBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                } else {
+                    recurrenciaEmailsBtn.disabled = true;
+                    recurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+                    recurrenciaEmailsBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                }
+            }
+            
+            // Aquí se implementará la lógica real más adelante
+        }
+        
+        // Abrir modal de recurrencia para Extracción de Clientes
         function openRecurrenciaModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             const recurrencias = [2, 4, 6, 8, 12, 24, 48, 76];
@@ -420,7 +470,7 @@
                 <div class="space-y-3 text-left">
                     <div>
                         <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">
-                            Seleccionar recurrencia
+                            Seleccionar recurrencia de extracción
                         </label>
                         <select 
                             id="recurrenciaSelect" 
@@ -434,7 +484,7 @@
             `;
             
             Swal.fire({
-                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Configurar Recurrencia</span></div>',
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Configurar Recurrencia - Extracción</span></div>',
                 html: html,
                 width: window.innerWidth >= 640 ? '450px' : '90%',
                 padding: window.innerWidth < 640 ? '1rem' : '1.5rem',
@@ -472,7 +522,93 @@
                         }
                     }
                     
-                    console.log('Recurrencia seleccionada:', recurrenciaSeleccionada ? `${recurrenciaSeleccionada} horas` : 'Sin recurrencia');
+                    console.log('Recurrencia de extracción seleccionada:', recurrenciaSeleccionada ? `${recurrenciaSeleccionada} horas` : 'Sin recurrencia');
+                    // Aquí se implementará la lógica real más adelante
+                }
+            });
+        }
+        
+        // Abrir modal de recurrencia para Emails Automáticos
+        function openRecurrenciaEmailsModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const recurrencias = [
+                { value: 0.5, label: 'Cada media hora' },
+                { value: 1, label: 'Cada 1 hora' },
+                { value: 2, label: 'Cada 2 horas' },
+                { value: 3, label: 'Cada 3 horas' },
+                { value: 4, label: 'Cada 4 horas' },
+                { value: 5, label: 'Cada 5 horas' },
+                { value: 6, label: 'Cada 6 horas' },
+                { value: 8, label: 'Cada 8 horas' },
+                { value: 12, label: 'Cada 12 horas' },
+                { value: 48, label: 'Cada 48 horas' },
+                { value: 72, label: 'Cada 72 horas' }
+            ];
+            
+            let recurrenciasOptions = '';
+            recurrencias.forEach(rec => {
+                const selected = recurrenciaEmailsSeleccionada === rec.value ? 'selected' : '';
+                recurrenciasOptions += `<option value="${rec.value}" ${selected}>${rec.label}</option>`;
+            });
+            
+            const html = `
+                <div class="space-y-3 text-left">
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">
+                            Seleccionar recurrencia de envío de emails
+                        </label>
+                        <select 
+                            id="recurrenciaEmailsSelect" 
+                            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                        >
+                            <option value="">Sin recurrencia</option>
+                            ${recurrenciasOptions}
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><span>Configurar Recurrencia - Emails</span></div>',
+                html: html,
+                width: window.innerWidth >= 640 ? '450px' : '90%',
+                padding: window.innerWidth < 640 ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: false,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const select = document.getElementById('recurrenciaEmailsSelect');
+                    return select ? select.value : null;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const valor = result.value;
+                    recurrenciaEmailsSeleccionada = valor ? parseFloat(valor) : null;
+                    
+                    // Actualizar el texto del botón
+                    const recurrenciaEmailsText = document.getElementById('recurrenciaEmailsText');
+                    if (recurrenciaEmailsText) {
+                        if (recurrenciaEmailsSeleccionada) {
+                            const label = recurrencias.find(r => r.value == recurrenciaEmailsSeleccionada)?.label || `Cada ${recurrenciaEmailsSeleccionada} horas`;
+                            recurrenciaEmailsText.textContent = label;
+                        } else {
+                            recurrenciaEmailsText.textContent = 'Elegir recurrencia';
+                        }
+                    }
+                    
+                    console.log('Recurrencia de emails seleccionada:', recurrenciaEmailsSeleccionada ? `${recurrenciaEmailsSeleccionada} horas` : 'Sin recurrencia');
                     // Aquí se implementará la lógica real más adelante
                 }
             });

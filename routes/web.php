@@ -2160,6 +2160,46 @@ Route::get('/walee-emails/sitios', function (\Illuminate\Http\Request $request) 
     ]);
 })->middleware(['auth'])->name('walee.emails.sitios');
 
+Route::get('/walee-emails/pending', function (\Illuminate\Http\Request $request) {
+    $searchQuery = $request->get('search', '');
+    
+    // Obtener clientes pending con búsqueda
+    $query = \App\Models\Client::where('estado', 'pending');
+    
+    // Aplicar búsqueda si existe
+    if ($searchQuery) {
+        $query->where(function($q) use ($searchQuery) {
+            $q->where('name', 'like', '%' . $searchQuery . '%')
+              ->orWhere('email', 'like', '%' . $searchQuery . '%')
+              ->orWhere('website', 'like', '%' . $searchQuery . '%');
+        });
+    }
+    
+    $clientesPending = $query->orderBy('created_at', 'desc')
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('id', 'desc')
+        ->paginate(5)
+        ->appends(request()->query());
+    
+    // Estadísticas de emails
+    $totalPropuestaPersonalizada = \App\Models\PropuestaPersonalizada::where('tipo', 'propuesta_personalizada')->count();
+    $totalExtractor = \App\Models\PropuestaPersonalizada::where('tipo', 'extractor')->count();
+    $totalEmails = $totalPropuestaPersonalizada + $totalExtractor;
+    
+    // Obtener templates de email del usuario
+    $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    // Obtener clientes en proceso con email
+    $clientesEnProceso = \App\Models\Client::whereNotNull('email')
+        ->where('email', '!=', '')
+        ->orderBy('name', 'asc')
+        ->get(['id', 'name', 'email']);
+    
+    return view('walee-emails-pending', compact('clientesPending', 'searchQuery', 'templates', 'clientesEnProceso', 'totalPropuestaPersonalizada', 'totalExtractor', 'totalEmails'));
+})->middleware(['auth'])->name('walee.emails.pending');
+
 Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request) {
     $searchQuery = $request->get('search', '');
     

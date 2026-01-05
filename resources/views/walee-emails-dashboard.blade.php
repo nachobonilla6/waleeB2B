@@ -351,7 +351,10 @@
                     <!-- Clientes Pending -->
                     @if(isset($clientesPending) && $clientesPending->count() > 0)
                         <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            <h3 class="text-xs font-semibold text-slate-900 dark:text-white mb-2">Clientes Pending</h3>
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-xs font-semibold text-slate-900 dark:text-white">Clientes Pending</h3>
+                                <a href="{{ route('walee.emails.pending') }}" class="text-xs text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
+                            </div>
                             <div class="space-y-1.5 max-h-48 overflow-y-auto">
                                 @foreach($clientesPending as $cliente)
                                     @php

@@ -865,11 +865,14 @@
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
             
-            let modalWidth = '90%';
+            let modalWidth = '95%';
+            let maxHeight = '90vh';
             if (window.innerWidth >= 1024) {
                 modalWidth = '550px';
+                maxHeight = 'auto';
             } else if (window.innerWidth >= 640) {
                 modalWidth = '500px';
+                maxHeight = 'auto';
             }
             
             const idiomas = {
@@ -992,36 +995,36 @@
             Swal.fire({
                 title: 'Extraer Clientes',
                 html: `
-                    <form id="extraerForm" class="text-left space-y-4">
+                    <form id="extraerForm" class="text-left ${isMobile ? 'space-y-3' : 'space-y-4'}" style="${isMobile ? 'max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 4px;' : ''}">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 Idioma
                             </label>
                             <select 
                                 id="extraerIdioma" 
                                 name="idioma"
                                 onchange="updatePaises()"
-                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                                class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                             >
                                 ${idiomasOptions}
                             </select>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 País
                             </label>
                             <select 
                                 id="extraerPais" 
                                 name="pais"
-                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                                class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                             >
                                 <option value="">Todos los países</option>
                             </select>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 Ciudad
                             </label>
                             <input 
@@ -1029,21 +1032,21 @@
                                 id="extraerCiudad" 
                                 name="ciudad"
                                 placeholder="Ej: Madrid, Barcelona, Ciudad de México..."
-                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                                class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                             >
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            <p class="${isMobile ? 'text-sm' : 'text-xs'} text-slate-500 dark:text-slate-400 mt-1.5">
                                 Deja vacío para todas las ciudades
                             </p>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
                                 Industria
                             </label>
                             <select 
                                 id="extraerIndustria" 
                                 name="industria"
-                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                                class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                             >
                                 ${industriasOptions}
                             </select>
@@ -1051,7 +1054,12 @@
                     </form>
                 `,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
+                padding: isMobile ? '1.25rem' : '1.5rem',
+                heightAuto: !isMobile,
+                customClass: {
+                    container: 'swal2-container-z-index-9999',
+                    popup: isMobile ? 'swal2-popup-mobile' : '',
+                },
                 showCancelButton: true,
                 confirmButtonText: 'Extraer',
                 cancelButtonText: 'Cancelar',

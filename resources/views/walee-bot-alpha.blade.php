@@ -302,17 +302,19 @@
                     <div class="flex flex-col sm:flex-row gap-2">
                         <!-- Search Bar -->
                         <div class="relative flex-1">
-                            <svg class="w-4.5 h-4.5 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
                             <input 
                                 type="text" 
                                 id="searchInput"
                                 value="{{ $searchQuery }}"
                                 placeholder="Buscar por nombre, email o teléfono..."
-                                class="w-full px-4 py-2.5 pl-10 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm shadow-sm relative z-0"
+                                class="w-full px-4 py-2.5 pl-10 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm shadow-sm"
                                 onkeyup="handleSearch()"
                             >
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
                         </div>
                         
                         <!-- Filtro por Idioma -->

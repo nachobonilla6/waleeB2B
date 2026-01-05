@@ -157,7 +157,7 @@
         
         // Aplicar paginación con los query parameters
         $clientes = $query->orderBy('updated_at', 'desc')
-            ->paginate(20)
+            ->paginate(5)
             ->appends(request()->query());
         
         // Obtener lista de idiomas únicos de clientes en proceso

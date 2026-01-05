@@ -1060,8 +1060,28 @@
             };
         }
         
-        // Extraer clientes (solo diseño por ahora)
-        function extraerClientes(filtros) {
+        // Extraer clientes
+        async function extraerClientes(filtros) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // Obtener nombres completos
+            let paisNombre = '';
+            if (filtros.pais) {
+                const paisSelect = document.getElementById('extraerPais');
+                if (paisSelect) {
+                    paisNombre = paisSelect.options[paisSelect.selectedIndex].text;
+                }
+            }
+            
+            const ciudadNombre = filtros.ciudad ? filtros.ciudad.trim() : '';
+            const industriaNombre = filtros.industria || '';
+            
+            // Crear texto con los 3 valores separados por un espacio
+            const textoWebhook = [paisNombre, ciudadNombre, industriaNombre]
+                .filter(val => val && val !== '') // Filtrar valores vacíos
+                .join(' '); // Unir con un solo espacio
+            
             const idiomaNombre = filtros.idioma ? {
                 'es': 'Español',
                 'en': 'English',
@@ -1072,26 +1092,48 @@
             }[filtros.idioma] || filtros.idioma : 'todos los idiomas';
             
             let mensaje = `Extrayendo clientes para ${idiomaNombre}`;
-            if (filtros.pais) {
-                const paisSelect = document.getElementById('extraerPais');
-                const paisNombre = paisSelect.options[paisSelect.selectedIndex].text;
+            if (paisNombre) {
                 mensaje += ` en ${paisNombre}`;
             }
-            if (filtros.ciudad) {
-                mensaje += `, ciudad: ${filtros.ciudad}`;
+            if (ciudadNombre) {
+                mensaje += `, ciudad: ${ciudadNombre}`;
             }
-            if (filtros.industria) {
-                mensaje += `, industria: ${filtros.industria}`;
+            if (industriaNombre) {
+                mensaje += `, industria: ${industriaNombre}`;
             }
             
             console.log('Extrayendo clientes con filtros:', filtros);
-            // Aquí se implementará la lógica real para extraer clientes más adelante
+            console.log('Texto para webhook:', textoWebhook);
+            
+            // Enviar al webhook si está configurado
+            if (currentWebhookUrl && textoWebhook) {
+                try {
+                    await fetch(currentWebhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            pais_ciudad_industria: textoWebhook,
+                            pais: paisNombre || '',
+                            ciudad: ciudadNombre || '',
+                            industria: industriaNombre || '',
+                            idioma: filtros.idioma || ''
+                        })
+                    });
+                    console.log('Datos enviados al webhook:', textoWebhook);
+                } catch (error) {
+                    console.error('Error al enviar al webhook:', error);
+                }
+            }
             
             Swal.fire({
                 icon: 'success',
                 title: '¡Extracción iniciada!',
                 text: mensaje,
                 confirmButtonColor: '#D59F3B',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 timer: 3000,
                 showConfirmButton: false
             });

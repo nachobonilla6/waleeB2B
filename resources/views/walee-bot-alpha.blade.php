@@ -105,12 +105,16 @@
         }
         
         input:checked ~ #botToggleIcon,
-        input:checked ~ #emailsToggleIcon {
+        input:checked ~ #emailsToggleIcon,
+        input:checked ~ #botToggleIconMobile,
+        input:checked ~ #emailsToggleIconMobile {
             opacity: 1 !important;
         }
         
         input:not(:checked) ~ #botToggleIcon,
-        input:not(:checked) ~ #emailsToggleIcon {
+        input:not(:checked) ~ #emailsToggleIcon,
+        input:not(:checked) ~ #botToggleIconMobile,
+        input:not(:checked) ~ #emailsToggleIconMobile {
             opacity: 0 !important;
         }
         
@@ -211,83 +215,139 @@
                     </h1>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <a href="{{ route('walee.emails.dashboard') }}" class="order-first sm:order-last px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm active:scale-95">
+                    <!-- Desktop: Botones con texto -->
+                    <a href="{{ route('walee.emails.dashboard') }}" class="order-first sm:order-last hidden sm:flex px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all items-center gap-2 text-sm active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                         <span class="font-semibold">Volver</span>
                     </a>
-                    <a href="{{ route('walee.emails.enviados') }}" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
+                    <a href="{{ route('walee.emails.enviados') }}" class="hidden sm:flex px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all items-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
                         <span class="font-semibold">Enviados</span>
                     </a>
-                    <button onclick="openExtraerModal()" class="px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
+                    <button onclick="openExtraerModal()" class="hidden sm:flex px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg transition-all items-center gap-2 text-sm shadow-sm hover:shadow active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
                         <span class="font-semibold">Extraer</span>
                     </button>
-                    <button onclick="openConfigModal()" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-2 text-sm active:scale-95">
+                    <button onclick="openConfigModal()" class="hidden sm:flex px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all items-center gap-2 text-sm active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         <span class="font-semibold">Config</span>
                     </button>
+                    
+                    <!-- Mobile: Solo iconos en una línea -->
+                    <div class="flex sm:hidden items-center gap-2">
+                        <a href="{{ route('walee.emails.dashboard') }}" class="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg transition-all active:scale-95" title="Volver">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                        </a>
+                        <a href="{{ route('walee.emails.enviados') }}" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all shadow-sm hover:shadow active:scale-95" title="Enviados">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </a>
+                        <button onclick="openExtraerModal()" class="p-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all shadow-sm hover:shadow active:scale-95" title="Extraer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                        </button>
+                        <button onclick="openConfigModal()" class="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg transition-all active:scale-95" title="Config">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </header>
             
             <!-- Controles del Bot -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
-                <!-- Extracción de Clientes -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
+            <div class="mb-4">
+                <!-- Desktop: Grid de 2 columnas -->
+                <div class="hidden lg:grid lg:grid-cols-2 gap-3">
+                    <!-- Extracción de Clientes -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Extracción automática de clientes</p>
                             </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Extracción automática de clientes</p>
+                            <div class="flex items-center gap-2 ml-3">
+                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
+                                </button>
+                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                    <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
+                                    <span class="slider"></span>
+                                    <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                </label>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2 ml-3">
-                            <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
-                            </button>
-                            <label class="switch relative" style="width: 56px; height: 32px;">
-                                <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
-                                <span class="slider"></span>
-                                <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                            </label>
+                    </div>
+                    
+                    <!-- Emails Automáticos -->
+                    <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Envío automático de emails</p>
+                            </div>
+                            <div class="flex items-center gap-2 ml-3">
+                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
+                                </button>
+                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                    <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
+                                    <span class="slider"></span>
+                                    <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Emails Automáticos -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
-                            </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Envío automático de emails</p>
-                        </div>
-                        <div class="flex items-center gap-2 ml-3">
-                            <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                                <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
-                            </button>
+                <!-- Mobile: Toggles en una línea con solo iconos -->
+                <div class="lg:hidden bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                    <div class="flex items-center justify-center gap-4">
+                        <!-- Toggle Extracción -->
+                        <div class="flex flex-col items-center gap-1.5">
                             <label class="switch relative" style="width: 56px; height: 32px;">
-                                <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
+                                <input type="checkbox" id="botToggleMobile" onchange="toggleBot(this.checked); document.getElementById('botToggle').checked = this.checked;">
                                 <span class="slider"></span>
-                                <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </label>
+                        </div>
+                        
+                        <!-- Toggle Emails -->
+                        <div class="flex flex-col items-center gap-1.5">
+                            <label class="switch relative" style="width: 56px; height: 32px;">
+                                <input type="checkbox" id="emailsToggleMobile" onchange="toggleEmails(this.checked); document.getElementById('emailsToggle').checked = this.checked;">
+                                <span class="slider"></span>
+                                <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                             </label>

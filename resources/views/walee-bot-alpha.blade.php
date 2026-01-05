@@ -1056,10 +1056,6 @@
                 width: modalWidth,
                 padding: isMobile ? '1.25rem' : '1.5rem',
                 heightAuto: !isMobile,
-                customClass: {
-                    container: 'swal2-container-z-index-9999',
-                    popup: isMobile ? 'swal2-popup-mobile' : '',
-                },
                 showCancelButton: true,
                 confirmButtonText: 'Extraer',
                 cancelButtonText: 'Cancelar',
@@ -1073,13 +1069,26 @@
                 allowEscapeKey: true,
                 backdrop: true,
                 customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    container: 'swal2-container-z-index-9999',
+                    popup: isMobile ? 'swal2-popup-mobile ' + (isDarkMode ? 'dark-swal' : 'light-swal') : (isDarkMode ? 'dark-swal' : 'light-swal'),
                     title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
                     htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 didOpen: () => {
+                    if (isMobile) {
+                        const popup = document.querySelector('.swal2-popup');
+                        if (popup) {
+                            popup.style.maxHeight = maxHeight;
+                            popup.style.overflowY = 'auto';
+                        }
+                        const htmlContainer = document.querySelector('.swal2-html-container');
+                        if (htmlContainer) {
+                            htmlContainer.style.maxHeight = 'calc(90vh - 140px)';
+                            htmlContainer.style.overflowY = 'auto';
+                        }
+                    }
                     // Inicializar países según idioma por defecto
                     updatePaises();
                     // Focus en el select de idioma

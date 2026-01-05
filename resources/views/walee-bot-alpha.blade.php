@@ -480,9 +480,10 @@
                                     </p>
                                 </div>
                             </a>
-                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-600 hover:border-emerald-700 transition-all flex-shrink-0 shadow-sm hover:shadow" title="Enviar email">
-                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-600 hover:border-emerald-700 transition-all flex-shrink-0 shadow-sm hover:shadow flex items-center justify-center" title="Enviar email">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
                                 </svg>
                             </button>
                         </div>

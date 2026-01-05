@@ -188,34 +188,33 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
+        <div class="relative max-w-[90rem] mx-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
             @php $pageTitle = 'Bot Alpha'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                 <div>
-                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                         Bot Alpha
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Administración y configuración del Bot Alpha</p>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <button onclick="openExtraerModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shadow-md hover:shadow-lg">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2">
+                    <button onclick="openExtraerModal()" class="px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                         </svg>
-                        <span>Extraer ahora</span>
+                        <span>Extraer</span>
                     </button>
-                    <button onclick="openConfigModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="openConfigModal()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
                         <span>Config</span>
                     </button>
-                    <a href="{{ route('walee.emails.dashboard') }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('walee.emails.dashboard') }}" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                         <span class="hidden sm:inline">Volver</span>
@@ -223,54 +222,49 @@
                 </div>
             </header>
             
-            <!-- Switch de Encendido/Apagado y Recurrencia para Extracción de Clientes -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm dark:shadow-none">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">
-                                Extracción de Clientes
-                            </h2>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                                Activa o desactiva la extracción automática de clientes
-                            </p>
+            <!-- Controles del Bot -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
+                <!-- Extracción de Clientes -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Extracción automática de clientes</p>
                         </div>
-                        <div class="flex items-center gap-3 sm:gap-4">
-                            <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-3 py-2 sm:px-4 sm:py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-2 text-xs sm:text-sm shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-2 ml-3">
+                            <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <span id="recurrenciaText">Elegir recurrencia</span>
+                                <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
                             </button>
-                            <label class="switch">
+                            <label class="switch" style="width: 50px; height: 28px;">
                                 <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
                                 <span class="slider"></span>
                             </label>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Emails Automáticos -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm dark:shadow-none">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">
-                                Emails Automáticos
-                            </h2>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                                Configura el envío automático de emails a clientes
-                            </p>
+                
+                <!-- Emails Automáticos -->
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Envío automático de emails</p>
                         </div>
-                        <div class="flex items-center gap-3 sm:gap-4">
-                            <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-3 py-2 sm:px-4 sm:py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-2 text-xs sm:text-sm shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-2 ml-3">
+                            <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                                <span id="recurrenciaEmailsText">Elegir recurrencia</span>
+                                <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
                             </button>
-                            <label class="switch">
+                            <label class="switch" style="width: 50px; height: 28px;">
                                 <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
                                 <span class="slider"></span>
                             </label>
@@ -280,30 +274,30 @@
             </div>
             
             <!-- Search Bar y Filtros -->
-            <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 shadow-sm dark:shadow-none">
-                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div class="mb-4">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                    <div class="flex flex-col sm:flex-row gap-2">
                         <!-- Search Bar -->
                         <div class="relative flex-1">
                             <input 
                                 type="text" 
                                 id="searchInput"
                                 value="{{ $searchQuery }}"
-                                placeholder="Buscar cliente por nombre, email o teléfono..."
-                                class="w-full px-3 sm:px-4 py-2 sm:py-3 pl-10 sm:pl-12 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-xs sm:text-sm"
+                                placeholder="Buscar cliente..."
+                                class="w-full px-3 py-2 pl-9 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
                                 onkeyup="handleSearch()"
                             >
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 dark:text-slate-500 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
                         
                         <!-- Filtro por Idioma -->
-                        <div class="sm:w-64">
+                        <div class="sm:w-48">
                             <select 
                                 id="idiomaFilter"
                                 onchange="handleFilter()"
-                                class="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-xs sm:text-sm"
+                                class="w-full px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
                             >
                                 <option value="">Todos los idiomas</option>
                                 @foreach($idiomasDisponibles as $idioma)
@@ -318,85 +312,80 @@
             </div>
             
             <!-- Lista de Clientes -->
-            <div class="animate-fade-in-up" style="animation-delay: 0.3s;">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 shadow-sm dark:shadow-none">
-                    <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-4">
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
                         Clientes en Proceso
-                        <span class="text-xs sm:text-sm font-normal text-slate-500 dark:text-slate-400">
-                            ({{ $clientes->total() }} {{ $clientes->total() == 1 ? 'cliente' : 'clientes' }})
+                        <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
+                            ({{ $clientes->total() }})
                         </span>
                     </h2>
-                    
-                    <div class="space-y-2 sm:space-y-3" id="clientsList">
-                        @forelse($clientes as $cliente)
-                            @php
-                                $fotoPath = $cliente->foto ?? null;
-                                $fotoUrl = null;
-                                if ($fotoPath) {
-                                    if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                        $fotoUrl = $fotoPath;
-                                    } else {
-                                        $filename = basename($fotoPath);
-                                        $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                                    }
-                                }
-                            @endphp
-                            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
-                                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
-                                    @if($fotoUrl)
-                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border-2 border-blue-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
-                                    @else
-                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border-2 border-blue-500/30 flex-shrink-0 group-hover:scale-110 transition-transform opacity-80">
-                                    @endif
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                        @if($cliente->idioma)
-                                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
-                                                {{ $idiomasNombres[$cliente->idioma] ?? strtoupper($cliente->idioma) }}
-                                            </p>
-                                        @endif
-                                    </div>
-                                </a>
-                                <div class="flex items-center gap-2 flex-shrink-0">
-                                    <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Crear email">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                    </button>
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="text-center py-12">
-                                <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes</p>
-                            </div>
-                        @endforelse
-                    </div>
-                    
-                    <!-- Pagination -->
-                    @if($clientes->hasPages())
-                        <div class="mt-6 flex justify-center gap-2">
-                            @if($clientes->onFirstPage())
-                                <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg cursor-not-allowed text-sm">Anterior</span>
-                            @else
-                                <a href="{{ $clientes->previousPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg transition-colors border border-slate-200 dark:border-slate-700 shadow-sm text-sm">Anterior</a>
-                            @endif
-                            
-                            <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-lg border border-slate-200 dark:border-slate-700 text-sm">
-                                Página {{ $clientes->currentPage() }} de {{ $clientes->lastPage() }}
-                            </span>
-                            
-                            @if($clientes->hasMorePages())
-                                <a href="{{ $clientes->nextPageUrl() }}" class="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg transition-colors border border-slate-200 dark:border-slate-700 shadow-sm text-sm">Siguiente</a>
-                            @else
-                                <span class="px-4 py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg cursor-not-allowed text-sm">Siguiente</span>
-                            @endif
-                        </div>
-                    @endif
                 </div>
+                
+                <div class="space-y-2" id="clientsList">
+                    @forelse($clientes as $cliente)
+                        @php
+                            $fotoPath = $cliente->foto ?? null;
+                            $fotoUrl = null;
+                            if ($fotoPath) {
+                                if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
+                                    $fotoUrl = $fotoPath;
+                                } else {
+                                    $filename = basename($fotoPath);
+                                    $fotoUrl = route('storage.clientes', ['filename' => $filename]);
+                                }
+                            }
+                        @endphp
+                        <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2.5 flex-1 min-w-0">
+                                @if($fotoUrl)
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-9 h-9 rounded-lg object-cover border border-blue-500/30 flex-shrink-0">
+                                @else
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-9 h-9 rounded-lg object-cover border border-blue-500/30 flex-shrink-0 opacity-80">
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                    @if($cliente->idioma)
+                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                            {{ $idiomasNombres[$cliente->idioma] ?? strtoupper($cliente->idioma) }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </a>
+                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all flex-shrink-0" title="Crear email">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    @empty
+                        <div class="text-center py-8">
+                            <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes</p>
+                        </div>
+                    @endforelse
+                </div>
+                
+                <!-- Pagination -->
+                @if($clientes->hasPages())
+                    <div class="mt-4 flex justify-center gap-2">
+                        @if($clientes->onFirstPage())
+                            <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-md cursor-not-allowed text-xs">Anterior</span>
+                        @else
+                            <a href="{{ $clientes->previousPageUrl() }}" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-md transition-colors border border-slate-200 dark:border-slate-700 text-xs">Anterior</a>
+                        @endif
+                        
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-md border border-slate-200 dark:border-slate-700 text-xs">
+                            {{ $clientes->currentPage() }} / {{ $clientes->lastPage() }}
+                        </span>
+                        
+                        @if($clientes->hasMorePages())
+                            <a href="{{ $clientes->nextPageUrl() }}" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-md transition-colors border border-slate-200 dark:border-slate-700 text-xs">Siguiente</a>
+                        @else
+                            <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-md cursor-not-allowed text-xs">Siguiente</span>
+                        @endif
+                    </div>
+                @endif
             </div>
             
             <!-- Footer -->

@@ -289,12 +289,22 @@
                                     </svg>
                                 </button>
                             @endif
+                            <a href="{{ route('walee.facturas.crear') }}?factura_id={{ $factura->id }}" class="p-1.5 rounded-md bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 border border-blue-500/30 hover:border-blue-400/50 transition-all" title="Editar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </a>
                             <a href="{{ route('walee.factura.pdf', $factura->id) }}" target="_blank" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Ver PDF">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
                             </a>
+                            <button onclick="eliminarFactura({{ $factura->id }}, '{{ $factura->numero_factura }}')" class="p-1.5 rounded-md bg-red-500/20 hover:bg-red-500/30 text-red-600 dark:text-red-400 border border-red-500/30 hover:border-red-400/50 transition-all" title="Eliminar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 @empty
@@ -445,6 +455,69 @@
                         icon: 'error',
                         title: 'Error',
                         text: data.message || 'Error al reenviar factura',
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión: ' + error.message,
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                });
+            }
+        }
+        
+        // Eliminar factura
+        async function eliminarFactura(id, numeroFactura) {
+            const result = await Swal.fire({
+                title: '¿Eliminar factura?',
+                html: `¿Estás seguro de que deseas eliminar la factura <strong>#${numeroFactura}</strong>?<br><br>Esta acción no se puede deshacer.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                reverseButtons: true
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            try {
+                const response = await fetch(`/walee-facturas/${id}/eliminar`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Factura eliminada',
+                        text: 'La factura ha sido eliminada correctamente',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                    });
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al eliminar factura',
                         confirmButtonColor: '#ef4444',
                         background: isDarkMode ? '#1e293b' : '#ffffff',
                         color: isDarkMode ? '#e2e8f0' : '#1e293b'

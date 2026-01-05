@@ -860,6 +860,9 @@
         `;
         document.head.appendChild(style);
         
+        // Templates de email disponibles
+        const emailTemplates = @json($templates ?? []);
+        
         // Variables globales para el flujo de fases del modal de email
         let emailModalData = {
             clienteId: null,
@@ -890,6 +893,67 @@
             showEmailPhase1();
         }
         
+        function loadEmailTemplate(templateId) {
+            if (!templateId || !emailTemplates) return;
+            
+            const template = emailTemplates.find(t => t.id == templateId);
+            if (!template) return;
+            
+            // Cargar el template en los datos del modal
+            emailModalData.aiPrompt = template.ai_prompt || '';
+            emailModalData.subject = template.asunto || '';
+            emailModalData.body = template.contenido || '';
+            
+            // Actualizar los campos visibles si existen
+            const aiPromptField = document.getElementById('ai_prompt');
+            if (aiPromptField) {
+                aiPromptField.value = emailModalData.aiPrompt;
+            }
+            
+            // Si estamos en fase 2, actualizar también esos campos
+            const subjectField = document.getElementById('email_subject');
+            const bodyField = document.getElementById('email_body');
+            if (subjectField) {
+                subjectField.value = emailModalData.subject;
+            }
+            if (bodyField) {
+                bodyField.value = emailModalData.body;
+            }
+            
+            // Si estamos en fase 1 y el template tiene asunto y contenido, mostrar mensaje
+            if (aiPromptField && !subjectField && !bodyField) {
+                if (template.asunto && template.contenido) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Template cargado',
+                        text: 'El template se ha cargado. Continúa al siguiente paso para ver el asunto y contenido.',
+                        confirmButtonColor: '#8b5cf6',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                } else if (template.ai_prompt) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Template cargado',
+                        text: 'El prompt de AI se ha cargado. Puedes generar con AI o continuar.',
+                        confirmButtonColor: '#8b5cf6',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } else if (subjectField && bodyField) {
+                // Si ya estamos en fase 2, solo mostrar confirmación
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Template cargado',
+                    text: 'El template se ha cargado correctamente.',
+                    confirmButtonColor: '#8b5cf6',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        }
+        
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
             const isDarkMode = document.documentElement.classList.contains('dark');
@@ -901,6 +965,14 @@
                 modalWidth = '600px';
             }
             
+            // Generar opciones de templates
+            let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
+            if (emailTemplates && emailTemplates.length > 0) {
+                emailTemplates.forEach(template => {
+                    templatesOptions += `<option value="${template.id}">${template.nombre}</option>`;
+                });
+            }
+            
             const html = `
                 <div class="space-y-3 text-left">
                     <div class="flex items-center justify-center gap-1 mb-3">
@@ -908,6 +980,16 @@
                         <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
                         <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
                     </div>
+                    
+                    ${emailTemplates && emailTemplates.length > 0 ? `
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Template guardado (opcional)</label>
+                        <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            ${templatesOptions}
+                        </select>
+                    </div>
+                    ` : ''}
                     
                     <div>
                         <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Email destinatario <span class="text-red-500">*</span></label>
@@ -918,7 +1000,7 @@
                     <div>
                         <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Instrucciones para AI (opcional)</label>
                         <textarea id="ai_prompt" rows="5" placeholder="Ej: Genera un email profesional..."
-                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none">${emailModalData.aiPrompt}</textarea>
                         <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
                             class="mt-2 w-full px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -957,7 +1039,10 @@
                         return false;
                     }
                     emailModalData.email = email;
-                    emailModalData.aiPrompt = document.getElementById('ai_prompt').value;
+                    const aiPromptField = document.getElementById('ai_prompt');
+                    if (aiPromptField) {
+                        emailModalData.aiPrompt = aiPromptField.value;
+                    }
                     return true;
                 }
             }).then((result) => {

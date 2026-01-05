@@ -2042,7 +2042,10 @@ Route::get('/walee-emails/dashboard', function () {
 
 // Ruta para Bot Alpha
 Route::get('/walee-bot-alpha', function () {
-    return view('walee-bot-alpha');
+    $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    return view('walee-bot-alpha', compact('templates'));
 })->middleware(['auth'])->name('walee.bot.alpha');
 
 // Ruta para análisis de emails vs clientes

@@ -472,7 +472,7 @@
         
         // Ver PDF de factura en modal
         function verPDFFactura(facturaId, numeroFactura) {
-            const pdfUrl = `{{ route('walee.factura.pdf', '') }}/${facturaId}`;
+            const pdfUrl = `/walee-facturas/${facturaId}/pdf`;
             
             Swal.fire({
                 title: `Factura #${numeroFactura}`,

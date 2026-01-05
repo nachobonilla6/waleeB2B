@@ -223,10 +223,10 @@
                 </div>
             </header>
             
-            <!-- Switch de Encendido/Apagado -->
+            <!-- Switch de Encendido/Apagado y Recurrencia -->
             <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm dark:shadow-none">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h2 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1">
                                 Estado del Bot
@@ -235,10 +235,18 @@
                                 Activa o desactiva el Bot Alpha
                             </p>
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
-                            <span class="slider"></span>
-                        </label>
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-3 py-2 sm:px-4 sm:py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-2 text-xs sm:text-sm shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span id="recurrenciaText">Elegir recurrencia</span>
+                            </button>
+                            <label class="switch">
+                                <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -373,10 +381,101 @@
     </div>
     
     <script>
+        // Variable para almacenar la recurrencia seleccionada
+        let recurrenciaSeleccionada = null;
+        
         // Toggle Bot (solo diseño por ahora)
         function toggleBot(enabled) {
             console.log('Bot Alpha:', enabled ? 'Activado' : 'Desactivado');
+            
+            // Habilitar/deshabilitar botón de recurrencia según el estado del bot
+            const recurrenciaBtn = document.getElementById('recurrenciaBtn');
+            if (recurrenciaBtn) {
+                if (enabled) {
+                    recurrenciaBtn.disabled = false;
+                    recurrenciaBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                } else {
+                    recurrenciaBtn.disabled = true;
+                    recurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    recurrenciaBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                }
+            }
+            
             // Aquí se implementará la lógica real más adelante
+        }
+        
+        // Abrir modal de recurrencia
+        function openRecurrenciaModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const recurrencias = [2, 4, 6, 8, 12, 24, 48, 76];
+            
+            let recurrenciasOptions = '';
+            recurrencias.forEach(horas => {
+                const selected = recurrenciaSeleccionada === horas ? 'selected' : '';
+                recurrenciasOptions += `<option value="${horas}" ${selected}>Cada ${horas} horas</option>`;
+            });
+            
+            const html = `
+                <div class="space-y-3 text-left">
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">
+                            Seleccionar recurrencia
+                        </label>
+                        <select 
+                            id="recurrenciaSelect" 
+                            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        >
+                            <option value="">Sin recurrencia</option>
+                            ${recurrenciasOptions}
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Configurar Recurrencia</span></div>',
+                html: html,
+                width: window.innerWidth >= 640 ? '450px' : '90%',
+                padding: window.innerWidth < 640 ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: false,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const select = document.getElementById('recurrenciaSelect');
+                    return select ? select.value : null;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const valor = result.value;
+                    recurrenciaSeleccionada = valor ? parseInt(valor) : null;
+                    
+                    // Actualizar el texto del botón
+                    const recurrenciaText = document.getElementById('recurrenciaText');
+                    if (recurrenciaText) {
+                        if (recurrenciaSeleccionada) {
+                            recurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
+                        } else {
+                            recurrenciaText.textContent = 'Elegir recurrencia';
+                        }
+                    }
+                    
+                    console.log('Recurrencia seleccionada:', recurrenciaSeleccionada ? `${recurrenciaSeleccionada} horas` : 'Sin recurrencia');
+                    // Aquí se implementará la lógica real más adelante
+                }
+            });
         }
         
         // Manejar búsqueda y filtros

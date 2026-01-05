@@ -413,23 +413,26 @@
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-xs text-slate-900 dark:text-white truncate">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                    @if($cliente->idioma)
-                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                    <p class="font-medium text-xs text-slate-900 dark:text-white truncate flex items-center gap-1.5">
+                                        @if($cliente->idioma)
                                             @php
-                                                $idiomas = [
-                                                    'es' => '🇪🇸 Español',
-                                                    'en' => '🇬🇧 English',
-                                                    'fr' => '🇫🇷 Français',
-                                                    'de' => '🇩🇪 Deutsch',
-                                                    'it' => '🇮🇹 Italiano',
-                                                    'pt' => '🇵🇹 Português'
+                                                $banderas = [
+                                                    'es' => '🇪🇸',
+                                                    'en' => '🇬🇧',
+                                                    'fr' => '🇫🇷',
+                                                    'de' => '🇩🇪',
+                                                    'it' => '🇮🇹',
+                                                    'pt' => '🇵🇹'
                                                 ];
-                                                echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                                $bandera = $banderas[$cliente->idioma] ?? '';
                                             @endphp
-                                        </p>
-                                    @endif
+                                            @if($bandera)
+                                                <span class="text-sm">{{ $bandera }}</span>
+                                            @endif
+                                        @endif
+                                        <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
+                                    </p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
                                     <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
                                 </div>
                             </a>

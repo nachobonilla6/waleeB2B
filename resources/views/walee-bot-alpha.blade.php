@@ -427,14 +427,34 @@
                         @endphp
                         <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group">
                             <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
+                                <!-- Desktop: Foto -->
                                 @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-11 h-11 rounded-xl object-cover border-2 border-emerald-500/30 flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="hidden sm:block w-11 h-11 rounded-xl object-cover border-2 border-emerald-500/30 flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
                                 @else
-                                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-500/20 dark:to-emerald-600/10 border-2 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
+                                    <div class="hidden sm:flex w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-500/20 dark:to-emerald-600/10 border-2 border-emerald-500/30 items-center justify-center flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
                                         <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                         </svg>
                                     </div>
+                                @endif
+                                <!-- Mobile: Bandera -->
+                                @if($cliente->idioma)
+                                    @php
+                                        $banderas = [
+                                            'es' => '🇪🇸',
+                                            'en' => '🇬🇧',
+                                            'fr' => '🇫🇷',
+                                            'de' => '🇩🇪',
+                                            'it' => '🇮🇹',
+                                            'pt' => '🇵🇹'
+                                        ];
+                                        $bandera = $banderas[$cliente->idioma] ?? '';
+                                    @endphp
+                                    @if($bandera)
+                                        <div class="sm:hidden w-11 h-11 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
+                                            <span class="text-2xl">{{ $bandera }}</span>
+                                        </div>
+                                    @endif
                                 @endif
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1">
@@ -452,7 +472,7 @@
                                                     $bandera = $banderas[$cliente->idioma] ?? '';
                                                 @endphp
                                                 @if($bandera)
-                                                    <span class="text-lg">{{ $bandera }}</span>
+                                                    <span class="hidden sm:inline text-lg">{{ $bandera }}</span>
                                                 @endif
                                             @endif
                                             <span>{{ $cliente->name ?: 'Sin nombre' }}</span>

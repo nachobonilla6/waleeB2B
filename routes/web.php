@@ -2164,6 +2164,16 @@ Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request
         ->paginate(5)
         ->appends(request()->query());
     
+    // Obtener estados de los clientes para cada email
+    foreach ($emails as $email) {
+        if ($email->cliente_id) {
+            $client = \App\Models\Client::find($email->cliente_id);
+            $email->cliente_estado = $client ? $client->estado : null;
+        } else {
+            $email->cliente_estado = null;
+        }
+    }
+    
     // Obtener templates de email del usuario
     $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
         ->orderBy('created_at', 'desc')

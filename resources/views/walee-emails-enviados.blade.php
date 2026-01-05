@@ -178,12 +178,42 @@
                                     <h3 class="font-semibold text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $email->subject }}</h3>
                                     <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0 whitespace-nowrap">{{ $email->created_at->diffForHumans() }}</span>
                                 </div>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1 sm:mb-2 truncate">
-                                    <span class="text-blue-600 dark:text-blue-400">{{ $email->email }}</span>
-                                    @if($email->cliente_nombre)
-                                        <span class="text-slate-500 dark:text-slate-500"> · {{ $email->cliente_nombre }}</span>
+                                <div class="flex items-center gap-2 mb-1 sm:mb-2 flex-wrap">
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
+                                        <span class="text-blue-600 dark:text-blue-400">{{ $email->email }}</span>
+                                        @if($email->cliente_nombre)
+                                            <span class="text-slate-500 dark:text-slate-500"> · {{ $email->cliente_nombre }}</span>
+                                        @endif
+                                    </p>
+                                    @if($email->cliente_estado)
+                                        @php
+                                            $estadoClass = '';
+                                            switch ($email->cliente_estado) {
+                                                case 'pending':
+                                                    $estadoClass = 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30';
+                                                    break;
+                                                case 'received':
+                                                    $estadoClass = 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30';
+                                                    break;
+                                                case 'active':
+                                                    $estadoClass = 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
+                                                    break;
+                                                case 'inactive':
+                                                    $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';
+                                                    break;
+                                                case 'enviado-manual':
+                                                    $estadoClass = 'bg-violet-500/20 text-violet-600 dark:text-violet-400 border-violet-500/30';
+                                                    break;
+                                                default:
+                                                    $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';
+                                                    break;
+                                            }
+                                        @endphp
+                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border {{ $estadoClass }} whitespace-nowrap">
+                                            {{ ucfirst(str_replace('-', ' ', $email->cliente_estado)) }}
+                                        </span>
                                     @endif
-                                </p>
+                                </div>
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
                             </div>
                         </div>

@@ -323,11 +323,11 @@
                                     </div>
                                 </a>
                                 <div class="flex items-center gap-2 flex-shrink-0">
-                                    <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="p-2 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Crear email">
+                                    <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Crear email">
                                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
-                                    </a>
+                                    </button>
                                     <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -859,6 +859,410 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Variables globales para el flujo de fases del modal de email
+        let emailModalData = {
+            clienteId: null,
+            clienteEmail: '',
+            clienteName: '',
+            clienteWebsite: '',
+            email: '',
+            aiPrompt: '',
+            subject: '',
+            body: '',
+            attachments: null
+        };
+        
+        function openEmailModalForClient(clienteId, clienteEmail, clienteName, clienteWebsite) {
+            // Configurar datos del cliente
+            emailModalData.clienteId = clienteId;
+            emailModalData.clienteEmail = clienteEmail || '';
+            emailModalData.clienteName = clienteName || '';
+            emailModalData.clienteWebsite = clienteWebsite || '';
+            
+            // Resetear datos
+            emailModalData.email = emailModalData.clienteEmail;
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            emailModalData.attachments = null;
+            
+            showEmailPhase1();
+        }
+        
+        function showEmailPhase1() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '500px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '450px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Email destinatario <span class="text-red-500">*</span></label>
+                        <input type="email" id="email_destinatario" value="${emailModalData.email}" required
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Instrucciones para AI (opcional)</label>
+                        <textarea id="ai_prompt" rows="3" placeholder="Ej: Genera un email profesional..."
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
+                        <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
+                            class="mt-1.5 w-full px-2.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                            <span>Generar con AI</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 1</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const email = document.getElementById('email_destinatario').value;
+                    if (!email) {
+                        Swal.showValidationMessage('El email destinatario es requerido');
+                        return false;
+                    }
+                    emailModalData.email = email;
+                    emailModalData.aiPrompt = document.getElementById('ai_prompt').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showEmailPhase2();
+                }
+            });
+        }
+        
+        function showEmailPhase2() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '500px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '450px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto <span class="text-red-500">*</span></label>
+                        <input type="text" id="email_subject" value="${emailModalData.subject}" required placeholder="Asunto del email"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Mensaje <span class="text-red-500">*</span></label>
+                        <textarea id="email_body" rows="6" required placeholder="Escribe o genera el contenido del email..."
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none">${emailModalData.body}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 2</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const subject = document.getElementById('email_subject').value;
+                    const body = document.getElementById('email_body').value;
+                    if (!subject || !body) {
+                        Swal.showValidationMessage('Por favor, completa el asunto y el mensaje');
+                        return false;
+                    }
+                    emailModalData.subject = subject;
+                    emailModalData.body = body;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showEmailPhase3();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    showEmailPhase1();
+                }
+            });
+        }
+        
+        function showEmailPhase3() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '500px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '450px';
+            }
+            
+            const html = `
+                <div class="space-y-2.5 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Adjuntar archivos (opcional)</label>
+                        <input type="file" id="email_attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        <p class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5">PDF o imágenes (máx. 10MB por archivo)</p>
+                        <div id="email_files_list" class="mt-1.5 space-y-1"></div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 3</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : '1rem',
+                showCancelButton: true,
+                confirmButtonText: 'Enviar Email',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    const fileInput = document.getElementById('email_attachments');
+                    const filesList = document.getElementById('email_files_list');
+                    if (fileInput) {
+                        fileInput.addEventListener('change', function(e) {
+                            if (filesList) {
+                                filesList.innerHTML = '';
+                                Array.from(e.target.files).forEach((file, index) => {
+                                    const fileItem = document.createElement('div');
+                                    fileItem.className = `flex items-center justify-between p-1.5 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`;
+                                    fileItem.innerHTML = `
+                                        <span class="text-[10px] ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">${file.name}</span>
+                                        <span class="text-[10px] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                    `;
+                                    filesList.appendChild(fileItem);
+                                });
+                            }
+                        });
+                    }
+                },
+                preConfirm: async () => {
+                    const attachments = document.getElementById('email_attachments');
+                    emailModalData.attachments = attachments && attachments.files && attachments.files.length > 0 ? attachments.files : null;
+                    
+                    const formData = new FormData();
+                    formData.append('cliente_id', emailModalData.clienteId);
+                    formData.append('email', emailModalData.email);
+                    formData.append('subject', emailModalData.subject);
+                    formData.append('body', emailModalData.body);
+                    formData.append('ai_prompt', emailModalData.aiPrompt || '');
+                    
+                    if (emailModalData.attachments) {
+                        Array.from(emailModalData.attachments).forEach((file, index) => {
+                            formData.append(`archivos[${index}]`, file);
+                        });
+                    }
+                    
+                    try {
+                        Swal.fire({
+                            title: 'Enviando...',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        });
+                        
+                        const response = await fetch('{{ route("walee.emails.enviar") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Email enviado!',
+                                text: data.message || 'El email se ha enviado correctamente',
+                                confirmButtonColor: '#8b5cf6',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al enviar el email',
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: error.message,
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        });
+                    }
+                    
+                    return false;
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    showEmailPhase2();
+                }
+            });
+        }
+        
+        async function generateEmailWithAI() {
+            const generateBtn = document.getElementById('generateEmailBtn');
+            const aiPrompt = document.getElementById('ai_prompt').value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            const clienteId = emailModalData.clienteId;
+            const clienteName = emailModalData.clienteName;
+            const clienteWebsite = emailModalData.clienteWebsite;
+            
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.emails.generar") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        cliente_id: clienteId,
+                        ai_prompt: aiPrompt,
+                        client_name: clienteName,
+                        client_website: clienteWebsite,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    emailModalData.subject = data.subject;
+                    emailModalData.body = data.body;
+                    // Mostrar mensaje y avanzar a fase 2
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email generado',
+                        text: 'El contenido ha sido generado con AI',
+                        confirmButtonColor: '#8b5cf6',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        Swal.close();
+                        showEmailPhase2();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al generar email',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: error.message,
+                    confirmButtonColor: '#ef4444'
+                });
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                    </svg>
+                    <span>Generar con AI</span>
+                `;
+            }
+        }
     </script>
     @include('partials.walee-support-button')
 </body>

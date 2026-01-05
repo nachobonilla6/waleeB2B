@@ -2037,7 +2037,18 @@ Route::get('/walee-emails', function () {
 })->middleware(['auth'])->name('walee.emails');
 
 Route::get('/walee-emails/dashboard', function () {
-    return view('walee-emails-dashboard');
+    // Obtener templates de email del usuario
+    $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    // Obtener clientes en proceso con email
+    $clientesEnProceso = \App\Models\Client::whereNotNull('email')
+        ->where('email', '!=', '')
+        ->orderBy('name', 'asc')
+        ->get(['id', 'name', 'email']);
+    
+    return view('walee-emails-dashboard', compact('templates', 'clientesEnProceso'));
 })->middleware(['auth'])->name('walee.emails.dashboard');
 
 // Ruta para Bot Alpha
@@ -2768,7 +2779,67 @@ Route::get('/walee-configuraciones/logs', function () {
 
 // Ruta para Facturas & Cotizaciones
 Route::get('/walee-facturas', function () {
-    return view('walee-facturas');
+    // Estadísticas de facturas
+    $totalFacturas = \App\Models\Factura::count();
+    $facturasEsteMes = \App\Models\Factura::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+    $facturasHoy = \App\Models\Factura::whereDate('created_at', today())->count();
+    $facturasEstaSemana = \App\Models\Factura::where('created_at', '>=', now()->startOfWeek())
+        ->count();
+    
+    // Facturas por estado
+    $facturasPendientes = \App\Models\Factura::where('estado', 'pendiente')->count();
+    $facturasPagadas = \App\Models\Factura::where('estado', 'pagada')->count();
+    $facturasVencidas = \App\Models\Factura::where('estado', 'vencida')->count();
+    
+    // Montos
+    $totalFacturado = \App\Models\Factura::sum('total');
+    $totalPagado = \App\Models\Factura::sum('monto_pagado');
+    $totalPendiente = $totalFacturado - $totalPagado;
+    
+    // Montos del mes
+    $totalFacturadoEsteMes = \App\Models\Factura::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->sum('total');
+    $totalPagadoEsteMes = \App\Models\Factura::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->sum('monto_pagado');
+    
+    // Facturas recientes
+    $facturasRecientes = \App\Models\Factura::with('cliente')
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
+    
+    // Cotizaciones
+    try {
+        $totalCotizaciones = \App\Models\Cotizacion::count();
+        $cotizacionesEsteMes = \App\Models\Cotizacion::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+    } catch (\Exception $e) {
+        $totalCotizaciones = 0;
+        $cotizacionesEsteMes = 0;
+    }
+    
+    return view('walee-facturas', compact(
+        'totalFacturas',
+        'facturasEsteMes',
+        'facturasHoy',
+        'facturasEstaSemana',
+        'facturasPendientes',
+        'facturasPagadas',
+        'facturasVencidas',
+        'totalFacturado',
+        'totalPagado',
+        'totalPendiente',
+        'totalFacturadoEsteMes',
+        'totalPagadoEsteMes',
+        'facturasRecientes',
+        'totalCotizaciones',
+        'cotizacionesEsteMes'
+    ));
 })->middleware(['auth'])->name('walee.facturas');
 
 Route::get('/walee-facturas/crear', function () {

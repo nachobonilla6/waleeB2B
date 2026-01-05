@@ -2169,7 +2169,13 @@ Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request
         ->orderBy('created_at', 'desc')
         ->get();
     
-    return view('walee-emails-enviados', compact('emails', 'searchQuery', 'templates'));
+    // Obtener clientes en proceso con email
+    $clientesEnProceso = \App\Models\Client::whereNotNull('email')
+        ->where('email', '!=', '')
+        ->orderBy('name', 'asc')
+        ->get(['id', 'name', 'email']);
+    
+    return view('walee-emails-enviados', compact('emails', 'searchQuery', 'templates', 'clientesEnProceso'));
 })->middleware(['auth'])->name('walee.emails.enviados');
 
 Route::get('/walee-emails/templates', function () {

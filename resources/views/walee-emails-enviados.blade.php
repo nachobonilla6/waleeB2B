@@ -245,6 +245,9 @@
         // Templates de email disponibles
         const emailTemplates = @json($templates ?? []);
         
+        // Clientes en proceso disponibles
+        const clientesEnProceso = @json($clientesEnProceso ?? []);
+        
         // Variables globales para el flujo de fases del modal de email
         let emailModalData = {
             clienteId: null,
@@ -367,6 +370,32 @@
             }
         }
         
+        function selectClienteProceso(clienteId) {
+            if (!clienteId) {
+                return;
+            }
+            
+            const select = document.getElementById('cliente_proceso_select');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption) {
+                const email = selectedOption.getAttribute('data-email') || '';
+                const name = selectedOption.getAttribute('data-name') || '';
+                
+                // Actualizar datos del modal
+                emailModalData.clienteId = clienteId;
+                emailModalData.clienteEmail = email;
+                emailModalData.clienteName = name;
+                emailModalData.email = email;
+                
+                // Actualizar el campo de email
+                const emailField = document.getElementById('email_destinatario');
+                if (emailField) {
+                    emailField.value = email;
+                }
+            }
+        }
+        
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
             const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
@@ -409,6 +438,19 @@
                         <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                             ${templatesOptions}
+                        </select>
+                    </div>
+                    ` : ''}
+                    
+                    ${clientesEnProceso && clientesEnProceso.length > 0 ? `
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Seleccionar cliente en proceso (opcional)</label>
+                        <select id="cliente_proceso_select" onchange="selectClienteProceso(this.value)"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            <option value="">Seleccionar cliente...</option>
+                            ${clientesEnProceso.map(cliente => 
+                                `<option value="${cliente.id}" data-email="${cliente.email || ''}" data-name="${cliente.name || ''}">${cliente.name || 'Sin nombre'} - ${cliente.email || 'Sin email'}</option>`
+                            ).join('')}
                         </select>
                     </div>
                     ` : ''}

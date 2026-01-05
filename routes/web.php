@@ -2842,8 +2842,15 @@ Route::get('/walee-facturas', function () {
     ));
 })->middleware(['auth'])->name('walee.facturas');
 
-Route::get('/walee-facturas/crear', function () {
-    return view('walee-facturas-crear');
+Route::get('/walee-facturas/crear', function (\Illuminate\Http\Request $request) {
+    $facturaId = $request->get('factura_id');
+    $factura = null;
+    
+    if ($facturaId) {
+        $factura = \App\Models\Factura::with(['cliente', 'items', 'pagos'])->find($facturaId);
+    }
+    
+    return view('walee-facturas-crear', compact('factura'));
 })->middleware(['auth'])->name('walee.facturas.crear');
 
 Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $request) {
@@ -2958,23 +2965,62 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             $clienteIdFinal = ($clienteIdInput !== '' && is_numeric($clienteIdInput)) ? intval($clienteIdInput) : null;
         }
         
-        $factura = \App\Models\Factura::create([
-            'cliente_id' => $clienteIdFinal,
-            'correo' => $request->input('correo'),
-            'numero_factura' => $request->input('numero_factura'),
-            'serie' => $request->input('serie'),
-            'fecha_emision' => $request->input('fecha_emision'),
-            'concepto' => (string) $concepto, // Forzar conversión a string
-            'concepto_pago' => $request->input('concepto_pago') ?: null,
-            'subtotal' => $request->input('subtotal') ?: 0,
-            'total' => $request->input('total') ?: 0,
-            'monto_pagado' => $request->input('monto_pagado') ?: 0,
-            'metodo_pago' => $request->input('metodo_pago') ?: null,
-            'estado' => $request->input('estado', 'pendiente'),
-            'fecha_vencimiento' => $request->input('fecha_vencimiento'),
-            'notas' => $request->input('notas') ?: null,
-            'archivos_adjuntos' => $archivosAdjuntosValue,
-        ]);
+        // Verificar si es edición o creación
+        $facturaId = $request->input('factura_id');
+        $esEdicion = !empty($facturaId);
+        
+        if ($esEdicion) {
+            // Actualizar factura existente
+            $factura = \App\Models\Factura::findOrFail($facturaId);
+            
+            // Eliminar items y pagos antiguos
+            \App\Models\FacturaItem::where('factura_id', $factura->id)->delete();
+            \App\Models\FacturaPago::where('factura_id', $factura->id)->delete();
+            
+            // Actualizar factura
+            $factura->update([
+                'cliente_id' => $clienteIdFinal,
+                'correo' => $request->input('correo'),
+                'numero_factura' => $request->input('numero_factura'),
+                'serie' => $request->input('serie'),
+                'fecha_emision' => $request->input('fecha_emision'),
+                'concepto' => (string) $concepto,
+                'concepto_pago' => $request->input('concepto_pago') ?: null,
+                'subtotal' => $request->input('subtotal') ?: 0,
+                'total' => $request->input('total') ?: 0,
+                'monto_pagado' => $request->input('monto_pagado') ?: 0,
+                'metodo_pago' => $request->input('metodo_pago') ?: null,
+                'estado' => $request->input('estado', 'pendiente'),
+                'fecha_vencimiento' => $request->input('fecha_vencimiento'),
+                'notas' => $request->input('notas') ?: null,
+                'archivos_adjuntos' => $archivosAdjuntosValue,
+                'descuento_antes_impuestos' => $request->input('descuento_antes_impuestos', 0),
+                'descuento_despues_impuestos' => $request->input('descuento_despues_impuestos', 0),
+                'numero_orden' => $request->input('numero_orden'),
+            ]);
+        } else {
+            // Crear nueva factura
+            $factura = \App\Models\Factura::create([
+                'cliente_id' => $clienteIdFinal,
+                'correo' => $request->input('correo'),
+                'numero_factura' => $request->input('numero_factura'),
+                'serie' => $request->input('serie'),
+                'fecha_emision' => $request->input('fecha_emision'),
+                'concepto' => (string) $concepto,
+                'concepto_pago' => $request->input('concepto_pago') ?: null,
+                'subtotal' => $request->input('subtotal') ?: 0,
+                'total' => $request->input('total') ?: 0,
+                'monto_pagado' => $request->input('monto_pagado') ?: 0,
+                'metodo_pago' => $request->input('metodo_pago') ?: null,
+                'estado' => $request->input('estado', 'pendiente'),
+                'fecha_vencimiento' => $request->input('fecha_vencimiento'),
+                'notas' => $request->input('notas') ?: null,
+                'archivos_adjuntos' => $archivosAdjuntosValue,
+                'descuento_antes_impuestos' => $request->input('descuento_antes_impuestos', 0),
+                'descuento_despues_impuestos' => $request->input('descuento_despues_impuestos', 0),
+                'numero_orden' => $request->input('numero_orden'),
+            ]);
+        }
         
         // Guardar items de la factura
         foreach ($items as $index => $item) {
@@ -3005,18 +3051,11 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             }
         }
         
-        // Actualizar campos de descuentos
-        $factura->update([
-            'descuento_antes_impuestos' => $request->input('descuento_antes_impuestos', 0),
-            'descuento_despues_impuestos' => $request->input('descuento_despues_impuestos', 0),
-            'numero_orden' => $request->input('numero_orden'),
-        ]);
-        
         \DB::commit();
         
         return response()->json([
             'success' => true,
-            'message' => 'Factura creada correctamente',
+            'message' => $esEdicion ? 'Factura actualizada correctamente' : 'Factura creada correctamente',
             'factura_id' => $factura->id,
         ]);
     } catch (\Exception $e) {

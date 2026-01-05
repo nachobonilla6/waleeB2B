@@ -64,12 +64,38 @@
         $ultimaFactura = \App\Models\Factura::orderBy('id', 'desc')->first();
         $siguienteNumero = $ultimaFactura ? intval($ultimaFactura->numero_factura) + 1 : 1;
         
-        // Validar cliente_id desde URL
-        $clienteIdFromUrl = request()->get('cliente_id');
+        // Si hay factura para editar, usar su cliente
         $clienteSeleccionado = null;
         $errorCliente = null;
+        $clientInfo = null;
+        $clienteIdParaPerfil = null;
+        $facturasCliente = collect();
         
-        if ($clienteIdFromUrl !== null) {
+        if (isset($factura) && $factura && $factura->cliente_id) {
+            $clienteSeleccionado = $factura->cliente;
+            $clientInfo = $clienteSeleccionado;
+            
+            // Buscar el Client correspondiente para obtener el ID del perfil
+            $clientEnProceso = null;
+            if ($clienteSeleccionado->correo) {
+                $clientEnProceso = \App\Models\Client::where('email', $clienteSeleccionado->correo)->first();
+            }
+            if (!$clientEnProceso && $clienteSeleccionado->nombre_empresa) {
+                $clientEnProceso = \App\Models\Client::where('name', $clienteSeleccionado->nombre_empresa)->first();
+            }
+            
+            if ($clientEnProceso) {
+                $clienteIdParaPerfil = $clientEnProceso->id;
+            }
+            
+            $facturasCliente = \App\Models\Factura::where('cliente_id', $factura->cliente_id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            // Validar cliente_id desde URL
+            $clienteIdFromUrl = request()->get('cliente_id');
+        
+            if ($clienteIdFromUrl !== null) {
             // Limpiar espacios en blanco
             $clienteIdFromUrl = trim($clienteIdFromUrl);
             
@@ -113,6 +139,11 @@
                     $errorCliente = 'El cliente especificado (ID: ' . $clienteIdInt . ') no existe en la base de datos. Por favor, seleccione un cliente válido.';
                 }
             }
+        }
+        
+        // Si hay factura para editar, cargar su cliente
+        if (isset($factura) && $factura && $factura->cliente_id && !$clienteSeleccionado) {
+            $clienteSeleccionado = $factura->cliente;
         }
         
         // Cargar facturas del cliente si está seleccionado
@@ -1132,6 +1163,11 @@
             // Asegurar que cliente_id esté limpio (sin espacios)
             formData.set('cliente_id', clienteId);
             
+            // Agregar factura_id si es edición
+            if (facturaData.factura_id) {
+                formData.append('factura_id', facturaData.factura_id);
+            }
+            
             // Agregar items al formData
             items.forEach((item, index) => {
                 formData.append(`items[${index}][descripcion]`, item.descripcion);
@@ -1152,12 +1188,13 @@
             });
             
             submitBtn.disabled = true;
+            const esEdicion = facturaData.factura_id !== null;
             submitBtn.innerHTML = `
                 <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Creando...</span>
+                <span>${esEdicion ? 'Guardando...' : 'Creando...'}</span>
             `;
             
             try {
@@ -1172,9 +1209,14 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showNotification('Factura creada', 'La factura ha sido creada correctamente', 'success');
+                    const esEdicion = facturaData.factura_id !== null;
+                    showNotification(
+                        esEdicion ? 'Factura actualizada' : 'Factura creada',
+                        esEdicion ? 'La factura ha sido actualizada correctamente' : 'La factura ha sido creada correctamente',
+                        'success'
+                    );
                     setTimeout(() => {
-                        window.location.href = '{{ route("walee.facturas") }}';
+                        window.location.href = '{{ route("walee.facturas.lista") }}';
                     }, 1500);
                 } else {
                     showNotification('Error', data.message || 'Error al crear factura', 'error');
@@ -1258,30 +1300,76 @@
         }
         
         // ========== SISTEMA DE MODAL POR FASES ==========
-        let facturaData = {
-            cliente_id: '',
-            correo: '',
-            numero_factura: '{{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }}',
-            serie: 'A',
-            fecha_emision: '{{ date("Y-m-d") }}',
-            fecha_vencimiento: '{{ date("Y-m-d", strtotime("+30 days")) }}',
-            estado: 'pendiente',
-            items: [],
-            subtotal: 0,
-            descuento_antes_impuestos: 0,
-            iva: 0,
-            descuento_despues_impuestos: 0,
-            total: 0,
-            monto_pagado: 0,
-            saldo_pendiente: 0,
-            metodo_pago: '',
-            concepto_pago: '',
-            concepto: '',
-            numero_orden: '',
-            pagos: [],
-            notas: '',
-            archivos: null
-        };
+        @if(isset($factura) && $factura)
+            // Cargar datos de factura existente para edición
+            let facturaData = {
+                factura_id: {{ $factura->id }},
+                cliente_id: '{{ $factura->cliente_id ?? '' }}',
+                correo: '{{ $factura->correo ?? '' }}',
+                numero_factura: '{{ $factura->numero_factura }}',
+                serie: '{{ $factura->serie ?? 'A' }}',
+                fecha_emision: '{{ $factura->fecha_emision ? $factura->fecha_emision->format('Y-m-d') : date('Y-m-d') }}',
+                fecha_vencimiento: '{{ $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : date('Y-m-d', strtotime('+30 days')) }}',
+                estado: '{{ $factura->estado ?? 'pendiente' }}',
+                items: @json($factura->items->map(function($item) {
+                    return [
+                        'descripcion' => $item->descripcion,
+                        'cantidad' => $item->cantidad,
+                        'precio_unitario' => $item->precio_unitario,
+                        'subtotal' => $item->subtotal
+                    ];
+                })->toArray()),
+                subtotal: {{ $factura->subtotal ?? 0 }},
+                descuento_antes_impuestos: {{ $factura->descuento_antes_impuestos ?? 0 }},
+                iva: {{ ($factura->subtotal ?? $factura->total) * 0.13 }},
+                descuento_despues_impuestos: {{ $factura->descuento_despues_impuestos ?? 0 }},
+                total: {{ $factura->total ?? 0 }},
+                monto_pagado: {{ $factura->monto_pagado ?? 0 }},
+                saldo_pendiente: {{ ($factura->total ?? 0) - ($factura->monto_pagado ?? 0) }},
+                metodo_pago: '{{ $factura->metodo_pago ?? '' }}',
+                concepto_pago: '{{ $factura->concepto_pago ?? '' }}',
+                concepto: '{{ addslashes($factura->concepto ?? '') }}',
+                numero_orden: '{{ $factura->numero_orden ?? '' }}',
+                pagos: @json($factura->pagos->map(function($pago) {
+                    return [
+                        'descripcion' => $pago->descripcion,
+                        'fecha' => $pago->fecha ? $pago->fecha->format('Y-m-d') : now()->format('Y-m-d'),
+                        'importe' => $pago->importe,
+                        'metodo_pago' => $pago->metodo_pago ?? '',
+                        'notas' => $pago->notas ?? ''
+                    ];
+                })->toArray()),
+                notas: '{{ addslashes($factura->notas ?? '') }}',
+                archivos: null
+            };
+        @else
+            // Datos iniciales para nueva factura
+            let facturaData = {
+                factura_id: null,
+                cliente_id: '',
+                correo: '',
+                numero_factura: '{{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }}',
+                serie: 'A',
+                fecha_emision: '{{ date("Y-m-d") }}',
+                fecha_vencimiento: '{{ date("Y-m-d", strtotime("+30 days")) }}',
+                estado: 'pendiente',
+                items: [],
+                subtotal: 0,
+                descuento_antes_impuestos: 0,
+                iva: 0,
+                descuento_despues_impuestos: 0,
+                total: 0,
+                monto_pagado: 0,
+                saldo_pendiente: 0,
+                metodo_pago: '',
+                concepto_pago: '',
+                concepto: '',
+                numero_orden: '',
+                pagos: [],
+                notas: '',
+                archivos: null
+            };
+        @endif
         
         let currentPhase = 1;
         const totalPhases = 9;
@@ -1301,6 +1389,42 @@
             @endif
             mostrarFase1();
         }
+        
+        // Cargar datos de factura en campos del formulario si existe
+        @if(isset($factura) && $factura)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos en campos del formulario oculto
+            if (document.getElementById('cliente_id')) {
+                document.getElementById('cliente_id').value = facturaData.cliente_id || '';
+            }
+            if (document.getElementById('correo')) {
+                document.getElementById('correo').value = facturaData.correo || '';
+            }
+            if (document.getElementById('numero_factura')) {
+                document.getElementById('numero_factura').value = facturaData.numero_factura || '';
+            }
+            if (document.getElementById('serie')) {
+                document.getElementById('serie').value = facturaData.serie || 'A';
+            }
+            
+            // Cargar items y pagos
+            if (facturaData.items && facturaData.items.length > 0) {
+                items = facturaData.items;
+                actualizarItemsLista();
+                calcularTotales();
+            }
+            
+            if (facturaData.pagos && facturaData.pagos.length > 0) {
+                pagos = facturaData.pagos;
+                actualizarPagosLista();
+            }
+            
+            // Abrir modal automáticamente para editar
+            setTimeout(() => {
+                abrirModalFactura();
+            }, 500);
+        });
+        @endif
         
         // FASE 1: Cliente y Correo
         function mostrarFase1() {

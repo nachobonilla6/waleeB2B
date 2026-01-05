@@ -431,8 +431,10 @@
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#3b82f6',
+                confirmButtonColor: '#D59F3B',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                buttonsStyling: true,
+                reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 allowOutsideClick: true,
@@ -485,7 +487,7 @@
                 icon: 'success',
                 title: '¡Webhook guardado!',
                 text: 'La configuración se ha guardado correctamente',
-                confirmButtonColor: '#3b82f6',
+                confirmButtonColor: '#D59F3B',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -513,6 +515,18 @@
             }
             .light-swal-html {
                 color: #334155 !important;
+            }
+            .swal2-actions {
+                flex-direction: row-reverse !important;
+            }
+            .swal2-confirm {
+                background-color: #D59F3B !important;
+                border-color: #D59F3B !important;
+                color: white !important;
+            }
+            .swal2-confirm:hover {
+                background-color: #C78F2E !important;
+                border-color: #C78F2E !important;
             }
             @media (max-width: 640px) {
                 .swal2-popup {

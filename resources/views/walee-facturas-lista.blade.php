@@ -577,6 +577,7 @@
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#6366f1',
                 cancelButtonColor: '#6b7280',
+                reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
@@ -665,6 +666,7 @@
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#6366f1',
                 cancelButtonColor: '#6b7280',
+                reverseButtons: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {

@@ -1283,10 +1283,54 @@
             }
             @media (max-width: 640px) {
                 .swal2-popup {
-                    width: 90% !important;
+                    width: 95% !important;
                     margin: 0.5rem !important;
-                    padding: 1rem !important;
+                    padding: 1.25rem !important;
+                    max-height: 90vh !important;
+                    display: flex !important;
+                    flex-direction: column !important;
                 }
+                .swal2-popup .swal2-html-container {
+                    flex: 1;
+                    overflow-y: auto;
+                    max-height: calc(90vh - 140px);
+                    padding: 0 !important;
+                    width: 100% !important;
+                }
+                .swal2-popup .swal2-html-container form {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+                .swal2-popup .swal2-html-container form > div {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+                .swal2-popup .swal2-html-container select,
+                .swal2-popup .swal2-html-container input[type="text"] {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                .swal2-popup .swal2-title {
+                    font-size: 1.25rem !important;
+                    margin-bottom: 1rem !important;
+                }
+            }
+            
+            /* Asegurar ancho completo en todos los tamaños */
+            .swal2-html-container form {
+                width: 100% !important;
+            }
+            
+            .swal2-html-container form > div {
+                width: 100% !important;
+            }
+            
+            .swal2-html-container select,
+            .swal2-html-container input[type="text"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
             }
         `;
         document.head.appendChild(style);

@@ -139,6 +139,7 @@
                     $errorCliente = 'El cliente especificado (ID: ' . $clienteIdInt . ') no existe en la base de datos. Por favor, seleccione un cliente válido.';
                 }
             }
+            }
         }
         
         // Si hay factura para editar, cargar su cliente

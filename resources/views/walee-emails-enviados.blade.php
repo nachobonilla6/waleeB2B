@@ -114,12 +114,12 @@
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Historial de propuestas y emails enviados</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <a href="{{ route('walee.emails.crear') }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                    <button onclick="openNewEmailModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         <span class="hidden sm:inline">Nuevo</span>
-                    </a>
+                    </button>
                     <button onclick="window.open('https://mail.google.com', '_blank')" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -257,6 +257,22 @@
             body: '',
             attachments: null
         };
+        
+        function openNewEmailModal() {
+            // Resetear datos para un nuevo email
+            emailModalData.clienteId = null;
+            emailModalData.clienteEmail = '';
+            emailModalData.clienteName = '';
+            emailModalData.clienteWebsite = '';
+            emailModalData.email = '';
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            emailModalData.attachments = null;
+            
+            // Abrir desde la fase 1
+            showEmailPhase1();
+        }
         
         function openEmailModalFromSent(emailId, email, clienteNombre, subject, body, aiPrompt, clienteId) {
             const emailData = emailsData.find(e => e.id === emailId);

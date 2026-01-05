@@ -2164,7 +2164,12 @@ Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request
         ->paginate(5)
         ->appends(request()->query());
     
-    return view('walee-emails-enviados', compact('emails', 'searchQuery'));
+    // Obtener templates de email del usuario
+    $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    return view('walee-emails-enviados', compact('emails', 'searchQuery', 'templates'));
 })->middleware(['auth'])->name('walee.emails.enviados');
 
 Route::get('/walee-emails/templates', function () {

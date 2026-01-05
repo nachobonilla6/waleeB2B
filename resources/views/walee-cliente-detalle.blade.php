@@ -86,45 +86,90 @@
         
         /* Asegurar que el modal esté encima de todo */
         .swal2-container {
-            z-index: 99999 !important;
+            z-index: 999999 !important;
         }
         .swal2-backdrop-show {
-            z-index: 99999 !important;
+            z-index: 999998 !important;
+            background-color: rgba(0, 0, 0, 0.75) !important;
         }
         .swal2-popup {
-            z-index: 99999 !important;
+            z-index: 999999 !important;
         }
-        .swal2-container.swal2-backdrop-show {
-            z-index: 99999 !important;
+        .dark-swal {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        .light-swal {
+            background: #ffffff !important;
+            color: #1e293b !important;
+        }
+        .dark-swal-title {
+            color: #f1f5f9 !important;
+        }
+        .light-swal-title {
+            color: #0f172a !important;
+        }
+        .dark-swal-html {
+            color: #cbd5e1 !important;
+        }
+        .light-swal-html {
+            color: #334155 !important;
+        }
+        .swal2-actions {
+            flex-direction: row !important;
+            justify-content: flex-end !important;
+        }
+        .swal2-confirm {
+            background-color: #8b5cf6 !important;
+            border-color: #8b5cf6 !important;
+            color: white !important;
+            order: 2 !important;
+            margin-left: 10px !important;
+        }
+        .swal2-cancel {
+            order: 1 !important;
+        }
+        .swal2-confirm:hover {
+            background-color: #7c3aed !important;
+            border-color: #7c3aed !important;
         }
         
         /* Estilos para mobile - ancho completo con poco espacio */
         @media (max-width: 640px) {
-            .swal2-popup-mobile {
+            .swal2-popup {
+                width: 95% !important;
                 margin: 0.5rem !important;
-                padding: 0 !important;
-                width: calc(100% - 1rem) !important;
-                max-width: calc(100% - 1rem) !important;
+                padding: 1.25rem !important;
                 max-height: 90vh !important;
                 display: flex !important;
                 flex-direction: column !important;
-                overflow: hidden !important;
             }
-            .swal2-html-container-mobile {
-                padding: 0.75rem !important;
-                margin: 0 !important;
-                flex: 1 !important;
-                overflow: visible !important;
-                max-height: none !important;
-            }
-            .swal2-html-container-mobile form {
+            .swal2-popup .swal2-html-container {
+                flex: 1;
+                overflow-y: auto;
+                max-height: calc(90vh - 140px);
+                padding: 0 !important;
                 width: 100% !important;
             }
-            .swal2-html-container-mobile input,
-            .swal2-html-container-mobile textarea,
-            .swal2-html-container-mobile select {
+            .swal2-popup .swal2-html-container form {
                 width: 100% !important;
+                max-width: 100% !important;
+            }
+            .swal2-popup .swal2-html-container form > div {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .swal2-popup .swal2-html-container select,
+            .swal2-popup .swal2-html-container input[type="text"],
+            .swal2-popup .swal2-html-container input[type="email"],
+            .swal2-popup .swal2-html-container textarea {
+                width: 100% !important;
+                max-width: 100% !important;
                 box-sizing: border-box !important;
+            }
+            .swal2-popup .swal2-title {
+                font-size: 1.25rem !important;
+                margin-bottom: 1rem !important;
             }
             .swal2-html-container-mobile .grid {
                 gap: 0.75rem !important;
@@ -1795,7 +1840,7 @@
                 title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 1</span></div>',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Cancelar',

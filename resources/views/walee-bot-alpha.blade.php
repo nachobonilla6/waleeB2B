@@ -201,6 +201,12 @@
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Administración y configuración del Bot Alpha</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="openExtraerModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shadow-md hover:shadow-lg">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>Extraer ahora</span>
+                    </button>
                     <button onclick="openConfigModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -299,25 +305,34 @@
                                     }
                                 }
                             @endphp
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all cursor-pointer group">
-                                @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border-2 border-blue-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
-                                @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border-2 border-blue-500/30 flex-shrink-0 group-hover:scale-110 transition-transform opacity-80">
-                                @endif
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
-                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                    @if($cliente->idioma)
-                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
-                                            {{ $idiomasNombres[$cliente->idioma] ?? strtoupper($cliente->idioma) }}
-                                        </p>
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
+                                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
+                                    @if($fotoUrl)
+                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border-2 border-blue-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    @else
+                                        <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border-2 border-blue-500/30 flex-shrink-0 group-hover:scale-110 transition-transform opacity-80">
                                     @endif
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                        @if($cliente->idioma)
+                                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                                {{ $idiomasNombres[$cliente->idioma] ?? strtoupper($cliente->idioma) }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                </a>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="p-2 rounded-lg bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Crear email">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </a>
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
                                 </div>
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
+                            </div>
                         @empty
                             <div class="text-center py-12">
                                 <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes</p>
@@ -487,6 +502,113 @@
                 icon: 'success',
                 title: '¡Webhook guardado!',
                 text: 'La configuración se ha guardado correctamente',
+                confirmButtonColor: '#D59F3B',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        
+        // Abrir modal de Extraer ahora con selector de idioma
+        function openExtraerModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const isMobile = window.innerWidth < 640;
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '450px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '400px';
+            }
+            
+            const idiomas = {
+                'es': '🇪🇸 Español',
+                'en': '🇬🇧 English',
+                'fr': '🇫🇷 Français',
+                'de': '🇩🇪 Deutsch',
+                'it': '🇮🇹 Italiano',
+                'pt': '🇵🇹 Português'
+            };
+            
+            let idiomasOptions = '<option value="">Todos los idiomas</option>';
+            for (const [code, name] of Object.entries(idiomas)) {
+                idiomasOptions += `<option value="${code}">${name}</option>`;
+            }
+            
+            Swal.fire({
+                title: 'Extraer Clientes',
+                html: `
+                    <form id="extraerForm" class="text-left">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                Seleccionar Idioma
+                            </label>
+                            <select 
+                                id="extraerIdioma" 
+                                name="idioma"
+                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                            >
+                                ${idiomasOptions}
+                            </select>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                Selecciona el idioma para extraer clientes
+                            </p>
+                        </div>
+                    </form>
+                `,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Extraer',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                buttonsStyling: true,
+                reverseButtons: false,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                allowOutsideClick: true,
+                allowEscapeKey: true,
+                backdrop: true,
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Focus en el select
+                    document.getElementById('extraerIdioma')?.focus();
+                },
+                preConfirm: () => {
+                    const idioma = document.getElementById('extraerIdioma').value;
+                    return { idioma: idioma || null };
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    extraerClientes(result.value.idioma);
+                }
+            });
+        }
+        
+        // Extraer clientes (solo diseño por ahora)
+        function extraerClientes(idioma) {
+            const idiomaNombre = idioma ? {
+                'es': 'Español',
+                'en': 'English',
+                'fr': 'Français',
+                'de': 'Deutsch',
+                'it': 'Italiano',
+                'pt': 'Português'
+            }[idioma] || idioma : 'todos los idiomas';
+            
+            console.log('Extrayendo clientes para idioma:', idioma || 'todos');
+            // Aquí se implementará la lógica real para extraer clientes más adelante
+            
+            Swal.fire({
+                icon: 'success',
+                title: '¡Extracción iniciada!',
+                text: `Extrayendo clientes para ${idiomaNombre}`,
                 confirmButtonColor: '#D59F3B',
                 timer: 2000,
                 showConfirmButton: false

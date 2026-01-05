@@ -318,7 +318,23 @@
                         <select name="client_id" id="client_id" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             <option value="">Sin cliente</option>
                             @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->name }} @if($cliente->email)({{ $cliente->email }})@endif</option>
+                                <option value="{{ $cliente->id }}">
+                                    {{ $cliente->name }} 
+                                    @if($cliente->email)({{ $cliente->email }})@endif
+                                    @if($cliente->idioma)
+                                        @php
+                                            $idiomas = [
+                                                'es' => '🇪🇸',
+                                                'en' => '🇬🇧',
+                                                'fr' => '🇫🇷',
+                                                'de' => '🇩🇪',
+                                                'it' => '🇮🇹',
+                                                'pt' => '🇵🇹'
+                                            ];
+                                            echo ' ' . ($idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma));
+                                        @endphp
+                                    @endif
+                                </option>
                             @endforeach
                         </select>
                     </div>

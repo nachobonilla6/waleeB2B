@@ -122,6 +122,19 @@
                                 @foreach($clientes as $cliente)
                                     <option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
                                         {{ $cliente->name }}
+                                        @if($cliente->idioma)
+                                            @php
+                                                $idiomas = [
+                                                    'es' => '🇪🇸',
+                                                    'en' => '🇬🇧',
+                                                    'fr' => '🇫🇷',
+                                                    'de' => '🇩🇪',
+                                                    'it' => '🇮🇹',
+                                                    'pt' => '🇵🇹'
+                                                ];
+                                                echo ' ' . ($idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma));
+                                            @endphp
+                                        @endif
                                     </option>
                                 @endforeach
                             </select>

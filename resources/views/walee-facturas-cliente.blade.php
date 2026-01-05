@@ -149,6 +149,21 @@
                         <div class="flex-1 min-w-0">
                             <h2 class="text-lg font-semibold text-walee-900 dark:text-walee-300 truncate">{{ $cliente->name }}</h2>
                             <p class="text-sm text-walee-700 dark:text-walee-400 truncate">Facturas del Cliente</p>
+                            @if($cliente->idioma)
+                                <p class="text-xs text-walee-600 dark:text-walee-500 mt-0.5">
+                                    @php
+                                        $idiomas = [
+                                            'es' => '🇪🇸 Español',
+                                            'en' => '🇬🇧 English',
+                                            'fr' => '🇫🇷 Français',
+                                            'de' => '🇩🇪 Deutsch',
+                                            'it' => '🇮🇹 Italiano',
+                                            'pt' => '🇵🇹 Português'
+                                        ];
+                                        echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                    @endphp
+                                </p>
+                            @endif
                         </div>
                         <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="w-10 h-10 rounded-xl bg-walee-500 hover:bg-walee-400 flex items-center justify-center transition-all shadow-sm">
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -220,6 +220,21 @@
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs md:text-sm font-medium text-slate-900 dark:text-white truncate">{{ $cliente->name }}</p>
                                     <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">{{ $cliente->posts_count }} publicaciones</p>
+                                    @if($cliente->idioma)
+                                        <p class="text-[10px] md:text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                            @php
+                                                $idiomas = [
+                                                    'es' => '🇪🇸 Español',
+                                                    'en' => '🇬🇧 English',
+                                                    'fr' => '🇫🇷 Français',
+                                                    'de' => '🇩🇪 Deutsch',
+                                                    'it' => '🇮🇹 Italiano',
+                                                    'pt' => '🇵🇹 Português'
+                                                ];
+                                                echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                            @endphp
+                                        </p>
+                                    @endif
                                 </div>
                                 <span class="text-xs md:text-sm font-bold text-walee-500">#{{ $index + 1 }}</span>
                             </a>

@@ -215,8 +215,23 @@
                                                                 <span class="px-1 sm:px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold {{ $propuestasColor }} text-white rounded">{{ $propuestasCount }}</span>
                                                             @endif
                                                         </div>
-                                                        <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+                                                        <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 flex-wrap">
                                                             <span class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</span>
+                                                            @if($cliente->idioma)
+                                                                <span class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-500">
+                                                                    @php
+                                                                        $idiomas = [
+                                                                            'es' => '🇪🇸 Español',
+                                                                            'en' => '🇬🇧 English',
+                                                                            'fr' => '🇫🇷 Français',
+                                                                            'de' => '🇩🇪 Deutsch',
+                                                                            'it' => '🇮🇹 Italiano',
+                                                                            'pt' => '🇵🇹 Português'
+                                                                        ];
+                                                                        echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                                                    @endphp
+                                                                </span>
+                                                            @endif
                                                             <span class="text-slate-400 dark:text-slate-600 hidden sm:inline">·</span>
                                                             <span class="text-[10px] sm:text-xs {{ $estadoConfig['text'] }}">{{ $estadoConfig['label'] }}</span>
                                                         </div>

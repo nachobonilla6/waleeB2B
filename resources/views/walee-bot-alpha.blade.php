@@ -894,10 +894,23 @@
         }
         
         function loadEmailTemplate(templateId) {
-            if (!templateId || !emailTemplates) return;
+            const aiGenerateContainer = document.getElementById('ai_generate_container');
+            
+            if (!templateId || !emailTemplates) {
+                // Si no hay template seleccionado, mostrar el botón de AI
+                if (aiGenerateContainer) {
+                    aiGenerateContainer.style.display = 'block';
+                }
+                return;
+            }
             
             const template = emailTemplates.find(t => t.id == templateId);
-            if (!template) return;
+            if (!template) {
+                if (aiGenerateContainer) {
+                    aiGenerateContainer.style.display = 'block';
+                }
+                return;
+            }
             
             // Cargar el template en los datos del modal
             emailModalData.aiPrompt = template.ai_prompt || '';
@@ -918,6 +931,47 @@
             }
             if (bodyField) {
                 bodyField.value = emailModalData.body;
+            }
+            
+            // Ocultar el botón de generar con AI cuando hay template seleccionado
+            if (aiGenerateContainer) {
+                aiGenerateContainer.style.display = 'none';
+            }
+            
+            // Mostrar el botón para volver a usar AI
+            const showAiBtn = document.getElementById('show_ai_btn');
+            if (showAiBtn) {
+                showAiBtn.style.display = 'block';
+            }
+        }
+        
+        function showAIGenerateButton() {
+            const aiGenerateContainer = document.getElementById('ai_generate_container');
+            if (aiGenerateContainer) {
+                aiGenerateContainer.style.display = 'block';
+            }
+            
+            // Ocultar el botón "Usar AI en su lugar"
+            const showAiBtn = document.getElementById('show_ai_btn');
+            if (showAiBtn) {
+                showAiBtn.style.display = 'none';
+            }
+            
+            // Limpiar el template seleccionado
+            const templateSelect = document.getElementById('email_template_select');
+            if (templateSelect) {
+                templateSelect.value = '';
+            }
+            
+            // Limpiar los datos del template
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            
+            // Limpiar los campos
+            const aiPromptField = document.getElementById('ai_prompt');
+            if (aiPromptField) {
+                aiPromptField.value = '';
             }
         }
         
@@ -950,7 +1004,13 @@
                     
                     ${emailTemplates && emailTemplates.length > 0 ? `
                     <div>
-                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Template guardado (opcional)</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">Template guardado (opcional)</label>
+                            <button type="button" onclick="showAIGenerateButton()" id="show_ai_btn" style="display: none;"
+                                class="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 underline">
+                                Usar AI en su lugar
+                            </button>
+                        </div>
                         <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                             ${templatesOptions}
@@ -968,13 +1028,15 @@
                         <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Instrucciones para AI (opcional)</label>
                         <textarea id="ai_prompt" rows="5" placeholder="Ej: Genera un email profesional..."
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none">${emailModalData.aiPrompt}</textarea>
-                        <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
-                            class="mt-2 w-full px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
-                            </svg>
-                            <span>Generar con AI</span>
-                        </button>
+                        <div id="ai_generate_container">
+                            <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
+                                class="mt-2 w-full px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                </svg>
+                                <span>Generar con AI</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;

@@ -2159,6 +2159,8 @@ Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request
     }
     
     $emails = $query->orderBy('created_at', 'desc')
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('id', 'desc')
         ->paginate(5)
         ->appends(request()->query());
     

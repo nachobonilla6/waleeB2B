@@ -106,31 +106,30 @@
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                 <div>
-                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                         Emails Enviados
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Historial de propuestas y emails enviados</p>
                 </div>
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <button onclick="openNewEmailModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2">
+                    <button onclick="openNewEmailModal()" class="px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span class="hidden sm:inline">Nuevo</span>
+                        <span>Nuevo</span>
                     </button>
-                    <button onclick="window.open('https://mail.google.com', '_blank')" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="window.open('https://mail.google.com', '_blank')" class="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                         </svg>
-                        <span class="hidden sm:inline">Ir a Gmail</span>
+                        <span>Gmail</span>
                     </button>
                 </div>
             </header>
             
             <!-- Search Bar -->
-            <div class="mb-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="mb-3">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                     <form method="GET" action="{{ route('walee.emails.enviados') }}" class="flex gap-2">
                         <div class="relative flex-1">
@@ -145,15 +144,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
-                        <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="submit" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                             <span>Buscar</span>
                         </button>
                         @if($searchQuery ?? '')
-                            <a href="{{ route('walee.emails.enviados') }}" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('walee.emails.enviados') }}" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                                 <span>Limpiar</span>
@@ -164,87 +163,78 @@
             </div>
             
             <!-- Email List -->
-            <div class="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-up">
-                @forelse($emails as $index => $email)
-                    <div class="email-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all shadow-sm dark:shadow-none" style="animation-delay: {{ $index * 0.05 }}s">
-                        <div class="flex items-start gap-2 sm:gap-3 md:gap-4">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between gap-2 mb-1">
-                                    <h3 class="font-semibold text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate flex-1 min-w-0">{{ $email->subject }}</h3>
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 flex-shrink-0 whitespace-nowrap">{{ $email->created_at->diffForHumans() }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 mb-1 sm:mb-2 flex-wrap">
-                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
-                                        <span class="text-blue-600 dark:text-blue-400">{{ $email->email }}</span>
-                                        @if($email->cliente_nombre)
-                                            <span class="text-slate-500 dark:text-slate-500"> · {{ $email->cliente_nombre }}</span>
-                                        @endif
-                                    </p>
-                                    @if($email->tipo === 'extractor')
-                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border-cyan-500/30 whitespace-nowrap">
-                                            Enviado con alpha
-                                        </span>
-                                    @elseif($email->tipo === 'propuesta_personalizada' || $email->cliente_estado === 'propuesta_personalizada_enviada')
-                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 whitespace-nowrap">
-                                            Enviado manual
-                                        </span>
-                                    @endif
-                                </div>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2 mb-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
-                                <button onclick="showEmailDetail({{ $email->id }})" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-lg transition-colors">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                    Ver email
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="text-center py-12 sm:py-16">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 sm:mb-4">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
+                        Emails Enviados
+                        <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
+                            ({{ $emails->total() }})
+                        </span>
+                    </h2>
+                </div>
+                
+                <div class="space-y-2">
+                @forelse($emails as $email)
+                    <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
+                        <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center border border-blue-500/30">
+                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
                             </svg>
                         </div>
-                        <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-2">No hay emails enviados</h3>
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-500 mb-3 sm:mb-4">Aún no has enviado ninguna propuesta personalizada</p>
-                        <a href="{{ route('walee.emails.crear') }}" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all text-xs sm:text-sm">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $email->subject }}</p>
+                                @if($email->tipo === 'extractor')
+                                    <span class="px-1.5 py-0.5 text-[10px] font-medium rounded border bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300 border-cyan-300 dark:border-cyan-700 flex-shrink-0">
+                                        Enviado con alpha
+                                    </span>
+                                @elseif($email->tipo === 'propuesta_personalizada' || $email->cliente_estado === 'propuesta_personalizada_enviada')
+                                    <span class="px-1.5 py-0.5 text-[10px] font-medium rounded border bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 border-orange-300 dark:border-orange-700 flex-shrink-0">
+                                        Enviado manual
+                                    </span>
+                                @endif
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $email->email }}</p>
+                            @if($email->cliente_nombre)
+                                <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $email->cliente_nombre }}</p>
+                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $email->created_at->diffForHumans() }}</p>
+                        </div>
+                        <button onclick="showEmailDetail({{ $email->id }})" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all flex-shrink-0" title="Ver email">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            Crear primer email
-                        </a>
+                        </button>
+                    </div>
+                @empty
+                    <div class="text-center py-8">
+                        <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron emails</p>
                     </div>
                 @endforelse
-            </div>
-            
-            <!-- Pagination -->
-            @if($emails->hasPages())
-                <div class="mt-4 sm:mt-6 md:mt-8 flex flex-wrap justify-center gap-2">
-                    @if($emails->onFirstPage())
-                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg sm:rounded-xl cursor-not-allowed text-xs sm:text-sm">Anterior</span>
-                    @else
-                        <a href="{{ $emails->previousPageUrl() }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg sm:rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs sm:text-sm">Anterior</a>
-                    @endif
-                    
-                    <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
-                        Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
-                    </span>
-                    
-                    @if($emails->hasMorePages())
-                        <a href="{{ $emails->nextPageUrl() }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg sm:rounded-xl transition-colors border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none text-xs sm:text-sm">Siguiente</a>
-                    @else
-                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-lg sm:rounded-xl cursor-not-allowed text-xs sm:text-sm">Siguiente</span>
-                    @endif
                 </div>
-            @endif
+                
+                <!-- Pagination -->
+                @if($emails->hasPages())
+                    <div class="mt-4 flex justify-center gap-2">
+                        @if($emails->onFirstPage())
+                            <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-md cursor-not-allowed text-xs">Anterior</span>
+                        @else
+                            <a href="{{ $emails->previousPageUrl() }}" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-md transition-colors border border-slate-200 dark:border-slate-700 text-xs">Anterior</a>
+                        @endif
+                        
+                        <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 rounded-md border border-slate-200 dark:border-slate-700 text-xs">
+                            Página {{ $emails->currentPage() }} de {{ $emails->lastPage() }}
+                        </span>
+                        
+                        @if($emails->hasMorePages())
+                            <a href="{{ $emails->nextPageUrl() }}" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-md transition-colors border border-slate-200 dark:border-slate-700 text-xs">Siguiente</a>
+                        @else
+                            <span class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 rounded-md cursor-not-allowed text-xs">Siguiente</span>
+                        @endif
+                    </div>
+                @endif
+            </div>
             
             <!-- Footer -->
             <footer class="text-center py-4 sm:py-6 md:py-8 mt-4 sm:mt-6 md:mt-8">

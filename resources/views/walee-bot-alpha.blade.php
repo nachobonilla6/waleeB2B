@@ -632,10 +632,33 @@
             window.location.href = newURL;
         }
         
+        // Variable para almacenar el webhook actual
+        let currentWebhookUrl = '{{ $webhookUrl ?? '' }}';
+        
         // Abrir modal de configuración para webhook
-        function openConfigModal() {
+        async function openConfigModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // Cargar webhook guardado si no lo tenemos
+            if (!currentWebhookUrl) {
+                try {
+                    const response = await fetch('{{ route("walee.bot.alpha.webhook.get") }}', {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        currentWebhookUrl = data.webhook_url || '';
+                    }
+                } catch (error) {
+                    console.error('Error al cargar webhook:', error);
+                }
+            }
             
             let modalWidth = '90%';
             if (window.innerWidth >= 1024) {
@@ -656,6 +679,7 @@
                                 type="url" 
                                 id="webhookUrl" 
                                 name="webhook_url"
+                                value="${currentWebhookUrl || ''}"
                                 placeholder="https://ejemplo.com/webhook"
                                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                             >
@@ -717,19 +741,69 @@
             }
         }
         
-        // Guardar webhook (solo diseño por ahora)
-        function saveWebhook(webhookUrl) {
-            console.log('Webhook guardado:', webhookUrl);
-            // Aquí se implementará la lógica real para guardar el webhook más adelante
+        // Guardar webhook
+        async function saveWebhook(webhookUrl) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const isDarkMode = document.documentElement.classList.contains('dark');
             
-            Swal.fire({
-                icon: 'success',
-                title: '¡Webhook guardado!',
-                text: 'La configuración se ha guardado correctamente',
-                confirmButtonColor: '#D59F3B',
-                timer: 2000,
-                showConfirmButton: false
-            });
+            try {
+                Swal.fire({
+                    title: 'Guardando...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                });
+                
+                const response = await fetch('{{ route("walee.bot.alpha.webhook.save") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        webhook_url: webhookUrl
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentWebhookUrl = webhookUrl;
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Webhook guardado!',
+                        text: 'La configuración se ha guardado correctamente',
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al guardar el webhook',
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: error.message,
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                });
+            }
         }
         
         // Abrir modal de Extraer ahora con selector de idioma, país, ciudad e industria

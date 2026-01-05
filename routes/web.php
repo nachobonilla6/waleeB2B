@@ -2045,8 +2045,50 @@ Route::get('/walee-bot-alpha', function () {
     $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
         ->orderBy('created_at', 'desc')
         ->get();
-    return view('walee-bot-alpha', compact('templates'));
+    
+    // Obtener webhook guardado
+    $webhookUrl = \Illuminate\Support\Facades\Cache::get('bot_alpha_webhook_' . auth()->id(), '');
+    
+    return view('walee-bot-alpha', compact('templates', 'webhookUrl'));
 })->middleware(['auth'])->name('walee.bot.alpha');
+
+// Ruta para guardar webhook del Bot Alpha
+Route::post('/walee-bot-alpha/webhook', function (\Illuminate\Http\Request $request) {
+    try {
+        $webhookUrl = $request->input('webhook_url', '');
+        
+        // Guardar en cache (puedes cambiar esto a base de datos si prefieres)
+        \Illuminate\Support\Facades\Cache::put('bot_alpha_webhook_' . auth()->id(), $webhookUrl, now()->addYears(10));
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Webhook guardado correctamente',
+            'webhook_url' => $webhookUrl
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.bot.alpha.webhook.save');
+
+// Ruta para obtener webhook del Bot Alpha
+Route::get('/walee-bot-alpha/webhook', function () {
+    try {
+        $webhookUrl = \Illuminate\Support\Facades\Cache::get('bot_alpha_webhook_' . auth()->id(), '');
+        
+        return response()->json([
+            'success' => true,
+            'webhook_url' => $webhookUrl
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.bot.alpha.webhook.get');
 
 // Ruta para análisis de emails vs clientes
 Route::get('/walee-analisis-emails-clientes', function () {

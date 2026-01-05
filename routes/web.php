@@ -2040,6 +2040,11 @@ Route::get('/walee-emails/dashboard', function () {
     return view('walee-emails-dashboard');
 })->middleware(['auth'])->name('walee.emails.dashboard');
 
+// Ruta para Bot Alpha
+Route::get('/walee-bot-alpha', function () {
+    return view('walee-bot-alpha');
+})->middleware(['auth'])->name('walee.bot.alpha');
+
 // Ruta para análisis de emails vs clientes
 Route::get('/walee-analisis-emails-clientes', function () {
     return view('walee-analisis-emails-clientes');

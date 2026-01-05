@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -200,6 +201,13 @@
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Administración y configuración del Bot Alpha</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="openConfigModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Config</span>
+                    </button>
                     <a href="{{ route('walee.emails.dashboard') }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -384,6 +392,137 @@
             // Recargar la página para aplicar filtros
             window.location.href = newURL;
         }
+        
+        // Abrir modal de configuración para webhook
+        function openConfigModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const isMobile = window.innerWidth < 640;
+            
+            let modalWidth = '90%';
+            if (window.innerWidth >= 1024) {
+                modalWidth = '500px';
+            } else if (window.innerWidth >= 640) {
+                modalWidth = '450px';
+            }
+            
+            Swal.fire({
+                title: 'Configuración Webhook',
+                html: `
+                    <form id="webhookForm" class="text-left">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                URL del Webhook
+                            </label>
+                            <input 
+                                type="url" 
+                                id="webhookUrl" 
+                                name="webhook_url"
+                                placeholder="https://ejemplo.com/webhook"
+                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            >
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                Ingresa la URL del webhook para recibir notificaciones
+                            </p>
+                        </div>
+                    </form>
+                `,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                allowOutsideClick: true,
+                allowEscapeKey: true,
+                backdrop: true,
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    // Focus en el input
+                    document.getElementById('webhookUrl')?.focus();
+                },
+                preConfirm: () => {
+                    const webhookUrl = document.getElementById('webhookUrl').value.trim();
+                    
+                    if (webhookUrl && !isValidUrl(webhookUrl)) {
+                        Swal.showValidationMessage('Por favor ingresa una URL válida');
+                        return false;
+                    }
+                    
+                    return { webhook_url: webhookUrl };
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    saveWebhook(result.value.webhook_url);
+                }
+            });
+        }
+        
+        // Validar URL
+        function isValidUrl(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // Guardar webhook (solo diseño por ahora)
+        function saveWebhook(webhookUrl) {
+            console.log('Webhook guardado:', webhookUrl);
+            // Aquí se implementará la lógica real para guardar el webhook más adelante
+            
+            Swal.fire({
+                icon: 'success',
+                title: '¡Webhook guardado!',
+                text: 'La configuración se ha guardado correctamente',
+                confirmButtonColor: '#3b82f6',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        
+        // Estilos para SweetAlert dark/light mode
+        const style = document.createElement('style');
+        style.textContent = `
+            .dark-swal {
+                background: #1e293b !important;
+                color: #e2e8f0 !important;
+            }
+            .light-swal {
+                background: #ffffff !important;
+                color: #1e293b !important;
+            }
+            .dark-swal-title {
+                color: #f1f5f9 !important;
+            }
+            .light-swal-title {
+                color: #0f172a !important;
+            }
+            .dark-swal-html {
+                color: #cbd5e1 !important;
+            }
+            .light-swal-html {
+                color: #334155 !important;
+            }
+            @media (max-width: 640px) {
+                .swal2-popup {
+                    width: 90% !important;
+                    margin: 0.5rem !important;
+                    padding: 1rem !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
     @include('partials.walee-support-button')
 </body>

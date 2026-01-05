@@ -477,20 +477,6 @@
                                             @endif
                                             <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
                                         </p>
-                                        @if($cliente->estado)
-                                            @php
-                                                $estadoConfig = [
-                                                    'pending' => ['label' => 'Pendiente', 'color' => 'bg-yellow-500/20 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/30 dark:border-yellow-500/20'],
-                                                    'received' => ['label' => 'Recibido', 'color' => 'bg-blue-500/20 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30 dark:border-blue-500/20'],
-                                                    'active' => ['label' => 'Activo', 'color' => 'bg-green-500/20 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/30 dark:border-green-500/20'],
-                                                    'inactive' => ['label' => 'Inactivo', 'color' => 'bg-slate-500/20 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/30 dark:border-slate-500/20']
-                                                ];
-                                                $estadoInfo = $estadoConfig[$cliente->estado] ?? ['label' => ucfirst($cliente->estado), 'color' => 'bg-slate-500/20 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/30 dark:border-slate-500/20'];
-                                            @endphp
-                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-lg border {{ $estadoInfo['color'] }} flex-shrink-0">
-                                                {{ $estadoInfo['label'] }}
-                                            </span>
-                                        @endif
                                     </div>
                                     <p class="text-xs text-slate-600 dark:text-slate-400 truncate flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

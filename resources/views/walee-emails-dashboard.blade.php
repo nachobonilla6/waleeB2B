@@ -105,8 +105,8 @@
             ->whereDate('updated_at', today())
             ->count();
         
-        // Clientes con estado pending
-        $clientesPending = \App\Models\Client::where('estado', 'pending')->count();
+        // Clientes con estado pending (total)
+        $totalClientesPending = \App\Models\Client::where('estado', 'pending')->count();
         
         // Clientes marcados como pending hoy
         $clientesPendingHoy = \App\Models\Client::where('estado', 'pending')
@@ -276,7 +276,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-slate-600 dark:text-slate-400 mb-0.5">Enviados</p>
-                        <p class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesPending) }}</p>
+                        <p class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">{{ number_format($totalClientesPending) }}</p>
                         <p class="text-xs text-violet-600 dark:text-violet-400 font-medium mt-0.5">{{ $clientesPendingHoy }} hoy</p>
                     </div>
                 </div>

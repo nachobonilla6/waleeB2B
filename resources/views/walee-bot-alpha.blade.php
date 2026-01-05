@@ -508,16 +508,16 @@
             });
         }
         
-        // Abrir modal de Extraer ahora con selector de idioma
+        // Abrir modal de Extraer ahora con selector de idioma, país, ciudad e industria
         function openExtraerModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
             
             let modalWidth = '90%';
             if (window.innerWidth >= 1024) {
-                modalWidth = '450px';
+                modalWidth = '550px';
             } else if (window.innerWidth >= 640) {
-                modalWidth = '400px';
+                modalWidth = '500px';
             }
             
             const idiomas = {
@@ -529,29 +529,172 @@
                 'pt': '🇵🇹 Português'
             };
             
+            // Países por idioma
+            const paisesPorIdioma = {
+                'es': [
+                    { code: 'ES', name: 'España' },
+                    { code: 'MX', name: 'México' },
+                    { code: 'AR', name: 'Argentina' },
+                    { code: 'CO', name: 'Colombia' },
+                    { code: 'CL', name: 'Chile' },
+                    { code: 'PE', name: 'Perú' },
+                    { code: 'VE', name: 'Venezuela' },
+                    { code: 'EC', name: 'Ecuador' },
+                    { code: 'GT', name: 'Guatemala' },
+                    { code: 'CU', name: 'Cuba' },
+                    { code: 'BO', name: 'Bolivia' },
+                    { code: 'DO', name: 'República Dominicana' },
+                    { code: 'HN', name: 'Honduras' },
+                    { code: 'PY', name: 'Paraguay' },
+                    { code: 'SV', name: 'El Salvador' },
+                    { code: 'NI', name: 'Nicaragua' },
+                    { code: 'CR', name: 'Costa Rica' },
+                    { code: 'PA', name: 'Panamá' },
+                    { code: 'UY', name: 'Uruguay' },
+                    { code: 'US', name: 'Estados Unidos (Español)' }
+                ],
+                'en': [
+                    { code: 'US', name: 'United States' },
+                    { code: 'GB', name: 'United Kingdom' },
+                    { code: 'CA', name: 'Canada' },
+                    { code: 'AU', name: 'Australia' },
+                    { code: 'NZ', name: 'New Zealand' },
+                    { code: 'IE', name: 'Ireland' },
+                    { code: 'ZA', name: 'South Africa' },
+                    { code: 'SG', name: 'Singapore' },
+                    { code: 'MY', name: 'Malaysia' },
+                    { code: 'PH', name: 'Philippines' }
+                ],
+                'fr': [
+                    { code: 'FR', name: 'France' },
+                    { code: 'BE', name: 'Belgium' },
+                    { code: 'CH', name: 'Switzerland' },
+                    { code: 'CA', name: 'Canada (French)' },
+                    { code: 'LU', name: 'Luxembourg' },
+                    { code: 'MC', name: 'Monaco' },
+                    { code: 'SN', name: 'Senegal' },
+                    { code: 'CI', name: 'Ivory Coast' },
+                    { code: 'CM', name: 'Cameroon' },
+                    { code: 'MG', name: 'Madagascar' }
+                ],
+                'de': [
+                    { code: 'DE', name: 'Germany' },
+                    { code: 'AT', name: 'Austria' },
+                    { code: 'CH', name: 'Switzerland' },
+                    { code: 'LI', name: 'Liechtenstein' },
+                    { code: 'LU', name: 'Luxembourg' },
+                    { code: 'BE', name: 'Belgium (German)' }
+                ],
+                'it': [
+                    { code: 'IT', name: 'Italy' },
+                    { code: 'CH', name: 'Switzerland (Italian)' },
+                    { code: 'SM', name: 'San Marino' },
+                    { code: 'VA', name: 'Vatican City' }
+                ],
+                'pt': [
+                    { code: 'BR', name: 'Brazil' },
+                    { code: 'PT', name: 'Portugal' },
+                    { code: 'AO', name: 'Angola' },
+                    { code: 'MZ', name: 'Mozambique' },
+                    { code: 'CV', name: 'Cape Verde' },
+                    { code: 'GW', name: 'Guinea-Bissau' },
+                    { code: 'ST', name: 'São Tomé and Príncipe' },
+                    { code: 'TL', name: 'East Timor' }
+                ]
+            };
+            
+            // Industrias comunes
+            const industrias = [
+                'Turismo',
+                'Gastronomía',
+                'Retail',
+                'Salud',
+                'Educación',
+                'Tecnología',
+                'Servicios',
+                'Comercio',
+                'Manufactura',
+                'Inmobiliaria',
+                'Automotriz',
+                'Belleza y Estética',
+                'Fitness y Deportes',
+                'Arte y Cultura',
+                'Legal',
+                'Finanzas',
+                'Marketing',
+                'Construcción',
+                'Agricultura',
+                'Otro'
+            ];
+            
             let idiomasOptions = '<option value="">Todos los idiomas</option>';
             for (const [code, name] of Object.entries(idiomas)) {
                 idiomasOptions += `<option value="${code}">${name}</option>`;
             }
             
+            let industriasOptions = '<option value="">Todas las industrias</option>';
+            industrias.forEach(industria => {
+                industriasOptions += `<option value="${industria}">${industria}</option>`;
+            });
+            
             Swal.fire({
                 title: 'Extraer Clientes',
                 html: `
-                    <form id="extraerForm" class="text-left">
-                        <div class="mb-4">
+                    <form id="extraerForm" class="text-left space-y-4">
+                        <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                Seleccionar Idioma
+                                Idioma
                             </label>
                             <select 
                                 id="extraerIdioma" 
                                 name="idioma"
+                                onchange="updatePaises()"
                                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
                             >
                                 ${idiomasOptions}
                             </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                País
+                            </label>
+                            <select 
+                                id="extraerPais" 
+                                name="pais"
+                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                            >
+                                <option value="">Todos los países</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                Ciudad
+                            </label>
+                            <input 
+                                type="text" 
+                                id="extraerCiudad" 
+                                name="ciudad"
+                                placeholder="Ej: Madrid, Barcelona, Ciudad de México..."
+                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                            >
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                Selecciona el idioma para extraer clientes
+                                Deja vacío para todas las ciudades
                             </p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                Industria
+                            </label>
+                            <select 
+                                id="extraerIndustria" 
+                                name="industria"
+                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                            >
+                                ${industriasOptions}
+                            </select>
                         </div>
                     </form>
                 `,
@@ -577,40 +720,81 @@
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                 },
                 didOpen: () => {
-                    // Focus en el select
+                    // Inicializar países según idioma por defecto
+                    updatePaises();
+                    // Focus en el select de idioma
                     document.getElementById('extraerIdioma')?.focus();
                 },
                 preConfirm: () => {
                     const idioma = document.getElementById('extraerIdioma').value;
-                    return { idioma: idioma || null };
+                    const pais = document.getElementById('extraerPais').value;
+                    const ciudad = document.getElementById('extraerCiudad').value.trim();
+                    const industria = document.getElementById('extraerIndustria').value;
+                    return { 
+                        idioma: idioma || null,
+                        pais: pais || null,
+                        ciudad: ciudad || null,
+                        industria: industria || null
+                    };
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
-                    extraerClientes(result.value.idioma);
+                    extraerClientes(result.value);
                 }
             });
+            
+            // Función para actualizar países según idioma seleccionado
+            window.updatePaises = function() {
+                const idioma = document.getElementById('extraerIdioma').value;
+                const paisSelect = document.getElementById('extraerPais');
+                const paises = paisesPorIdioma[idioma] || [];
+                
+                // Limpiar opciones actuales
+                paisSelect.innerHTML = '<option value="">Todos los países</option>';
+                
+                // Agregar países según idioma
+                paises.forEach(pais => {
+                    const option = document.createElement('option');
+                    option.value = pais.code;
+                    option.textContent = pais.name;
+                    paisSelect.appendChild(option);
+                });
+            };
         }
         
         // Extraer clientes (solo diseño por ahora)
-        function extraerClientes(idioma) {
-            const idiomaNombre = idioma ? {
+        function extraerClientes(filtros) {
+            const idiomaNombre = filtros.idioma ? {
                 'es': 'Español',
                 'en': 'English',
                 'fr': 'Français',
                 'de': 'Deutsch',
                 'it': 'Italiano',
                 'pt': 'Português'
-            }[idioma] || idioma : 'todos los idiomas';
+            }[filtros.idioma] || filtros.idioma : 'todos los idiomas';
             
-            console.log('Extrayendo clientes para idioma:', idioma || 'todos');
+            let mensaje = `Extrayendo clientes para ${idiomaNombre}`;
+            if (filtros.pais) {
+                const paisSelect = document.getElementById('extraerPais');
+                const paisNombre = paisSelect.options[paisSelect.selectedIndex].text;
+                mensaje += ` en ${paisNombre}`;
+            }
+            if (filtros.ciudad) {
+                mensaje += `, ciudad: ${filtros.ciudad}`;
+            }
+            if (filtros.industria) {
+                mensaje += `, industria: ${filtros.industria}`;
+            }
+            
+            console.log('Extrayendo clientes con filtros:', filtros);
             // Aquí se implementará la lógica real para extraer clientes más adelante
             
             Swal.fire({
                 icon: 'success',
                 title: '¡Extracción iniciada!',
-                text: `Extrayendo clientes para ${idiomaNombre}`,
+                text: mensaje,
                 confirmButtonColor: '#D59F3B',
-                timer: 2000,
+                timer: 3000,
                 showConfirmButton: false
             });
         }

@@ -3115,8 +3115,38 @@ Route::post('/walee-facturas/generar-ai', function (\Illuminate\Http\Request $re
 })->middleware(['auth'])->name('walee.facturas.generar-ai');
 
 // Lista de facturas
-Route::get('/walee-facturas/lista', function () {
-    return view('walee-facturas-lista');
+Route::get('/walee-facturas/lista', function (\Illuminate\Http\Request $request) {
+    $searchQuery = $request->get('search', '');
+    
+    $query = \App\Models\Factura::with('cliente');
+    
+    // Aplicar búsqueda si existe
+    if ($searchQuery) {
+        $query->where(function($q) use ($searchQuery) {
+            $q->where('numero_factura', 'like', '%' . $searchQuery . '%')
+              ->orWhere('concepto', 'like', '%' . $searchQuery . '%')
+              ->orWhere('correo', 'like', '%' . $searchQuery . '%')
+              ->orWhereHas('cliente', function($clienteQuery) use ($searchQuery) {
+                  $clienteQuery->where('nombre_empresa', 'like', '%' . $searchQuery . '%');
+              });
+        });
+    }
+    
+    $facturas = $query->orderBy('created_at', 'desc')
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('id', 'desc')
+        ->paginate(5)
+        ->appends(request()->query());
+    
+    // Estadísticas
+    $totalFacturas = \App\Models\Factura::count();
+    $facturasHoy = \App\Models\Factura::whereDate('created_at', today())->count();
+    $facturasEstaSemana = \App\Models\Factura::where('created_at', '>=', now()->startOfWeek())->count();
+    $facturasEsteMes = \App\Models\Factura::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+    
+    return view('walee-facturas-lista', compact('facturas', 'searchQuery', 'totalFacturas', 'facturasHoy', 'facturasEstaSemana', 'facturasEsteMes'));
 })->middleware(['auth'])->name('walee.facturas.lista');
 
 // Lista de facturas por cliente

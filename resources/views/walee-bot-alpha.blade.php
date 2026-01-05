@@ -434,7 +434,7 @@
                 confirmButtonColor: '#D59F3B',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 buttonsStyling: true,
-                reverseButtons: true,
+                reverseButtons: false,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 allowOutsideClick: true,

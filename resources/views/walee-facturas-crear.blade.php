@@ -489,12 +489,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Número de Factura <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <input type="text" id="numero_factura" name="numero_factura" required value="{{ str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT) }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <input type="text" id="numero_factura" name="numero_factura" required value="{{ isset($factura) && $factura ? $factura->numero_factura : str_pad($siguienteNumero, 4, '0', STR_PAD_LEFT) }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                         
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Serie</label>
-                            <input type="text" id="serie" name="serie" value="A" placeholder="A, B, C..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <input type="text" id="serie" name="serie" value="{{ isset($factura) && $factura ? ($factura->serie ?? 'A') : 'A' }}" placeholder="A, B, C..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                         
                         <div>

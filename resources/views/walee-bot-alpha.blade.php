@@ -250,54 +250,54 @@
                 <div class="hidden lg:grid lg:grid-cols-2 gap-3">
                     <!-- Extracción de Clientes -->
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
-                                </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Extracción automática de clientes</p>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
                             </div>
-                            <div class="flex items-center gap-2 ml-3">
-                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
-                                </button>
-                                <label class="switch relative" style="width: 56px; height: 32px;">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
                                     <input type="checkbox" id="botToggle" onchange="toggleBot(this.checked)">
                                     <span class="slider"></span>
                                     <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
                                 </label>
+                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span id="recurrenciaText" class="hidden sm:inline">Recurrencia</span>
+                                </button>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Emails Automáticos -->
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
-                                </div>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Envío automático de emails</p>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
                             </div>
-                            <div class="flex items-center gap-2 ml-3">
-                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
-                                </button>
-                                <label class="switch relative" style="width: 56px; height: 32px;">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
                                     <input type="checkbox" id="emailsToggle" onchange="toggleEmails(this.checked)">
                                     <span class="slider"></span>
                                     <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                 </label>
+                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span id="recurrenciaEmailsText" class="hidden sm:inline">Recurrencia</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -305,47 +305,51 @@
                 
                 <!-- Mobile: Toggles en una línea con iconos mejorados -->
                 <div class="lg:hidden bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-center gap-4 sm:gap-6">
+                    <div class="flex flex-col gap-4">
                         <!-- Toggle Extracción -->
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                 </svg>
-                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
                                     <input type="checkbox" id="botToggleMobile" onchange="toggleBot(this.checked); document.getElementById('botToggle').checked = this.checked;">
                                     <span class="slider"></span>
                                     <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
                                 </label>
+                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtnMobile" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Recurrencia</span>
+                                </button>
                             </div>
-                            <button onclick="openRecurrenciaModal()" id="recurrenciaBtnMobile" class="px-2 py-1 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1 text-xs shadow-sm">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </button>
                         </div>
                         
                         <!-- Toggle Emails -->
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                <label class="switch relative flex-shrink-0" style="width: 56px; height: 32px;">
                                     <input type="checkbox" id="emailsToggleMobile" onchange="toggleEmails(this.checked); document.getElementById('emailsToggle').checked = this.checked;">
                                     <span class="slider"></span>
                                     <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                 </label>
+                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtnMobile" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Recurrencia</span>
+                                </button>
                             </div>
-                            <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtnMobile" class="px-2 py-1 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1 text-xs shadow-sm">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -101,7 +101,17 @@
         }
         
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(24px);
+        }
+        
+        input:checked ~ #botToggleIcon,
+        input:checked ~ #emailsToggleIcon {
+            opacity: 1 !important;
+        }
+        
+        input:not(:checked) ~ #botToggleIcon,
+        input:not(:checked) ~ #emailsToggleIcon {
+            opacity: 0 !important;
         }
         
         .dark .slider {

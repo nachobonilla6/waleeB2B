@@ -517,12 +517,18 @@
                 color: #334155 !important;
             }
             .swal2-actions {
-                flex-direction: row-reverse !important;
+                flex-direction: row !important;
+                justify-content: flex-end !important;
             }
             .swal2-confirm {
                 background-color: #D59F3B !important;
                 border-color: #D59F3B !important;
                 color: white !important;
+                order: 2 !important;
+                margin-left: 10px !important;
+            }
+            .swal2-cancel {
+                order: 1 !important;
             }
             .swal2-confirm:hover {
                 background-color: #C78F2E !important;

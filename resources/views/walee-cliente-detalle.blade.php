@@ -370,6 +370,26 @@
                                     <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->ciudad) }}&zoom=6" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer">{{ $cliente->ciudad }}</a>
                                 </div>
                             @endif
+                            @if($cliente->idioma)
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                                    </svg>
+                                    <span class="text-xs text-slate-600 dark:text-slate-400">
+                                        @php
+                                            $idiomas = [
+                                                'es' => 'Español',
+                                                'en' => 'English',
+                                                'fr' => 'Français',
+                                                'de' => 'Deutsch',
+                                                'it' => 'Italiano',
+                                                'pt' => 'Português'
+                                            ];
+                                            echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                        @endphp
+                                    </span>
+                                </div>
+                            @endif
                             @if($cliente->horario)
                                 <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" id="horarioBtn" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -547,6 +567,26 @@
                                     </svg>
                                     <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->ciudad) }}&zoom=6" target="_blank" rel="noopener noreferrer" class="text-sm text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer">{{ $cliente->ciudad }}</a>
                             </div>
+                            @endif
+                            @if($cliente->idioma)
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                                    </svg>
+                                    <span class="text-sm text-slate-600 dark:text-slate-400">
+                                        @php
+                                            $idiomas = [
+                                                'es' => 'Español',
+                                                'en' => 'English',
+                                                'fr' => 'Français',
+                                                'de' => 'Deutsch',
+                                                'it' => 'Italiano',
+                                                'pt' => 'Português'
+                                            ];
+                                            echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                        @endphp
+                                    </span>
+                                </div>
                             @endif
                             @if($cliente->horario)
                                 <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" id="horarioBtnDesktop" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
@@ -1231,6 +1271,7 @@
                 facebook: @json($cliente->facebook ?? ''),
                 estado: @json($cliente->estado ?? 'pending'),
                 ciudad: @json($cliente->ciudad ?? ''),
+                idioma: @json($cliente->idioma ?? ''),
                 feedback: @json($cliente->feedback ?? ''),
                 inicial: @json(strtoupper(substr($cliente->name, 0, 1)))
             };
@@ -1330,6 +1371,20 @@
                             <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-1.5">Ciudad</label>
                             <input type="text" id="clientCiudad" name="ciudad" value="${clienteData.ciudad || ''}"
                                    class="w-full px-3 sm:px-3 py-2 sm:py-2 text-sm sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-1.5">Idioma</label>
+                            <select id="clientIdioma" name="idioma"
+                                    class="w-full px-3 sm:px-3 py-2 sm:py-2 text-sm sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
+                                <option value="">Seleccionar idioma</option>
+                                <option value="es" ${clienteData.idioma === 'es' ? 'selected' : ''}>Español</option>
+                                <option value="en" ${clienteData.idioma === 'en' ? 'selected' : ''}>English</option>
+                                <option value="fr" ${clienteData.idioma === 'fr' ? 'selected' : ''}>Français</option>
+                                <option value="de" ${clienteData.idioma === 'de' ? 'selected' : ''}>Deutsch</option>
+                                <option value="it" ${clienteData.idioma === 'it' ? 'selected' : ''}>Italiano</option>
+                                <option value="pt" ${clienteData.idioma === 'pt' ? 'selected' : ''}>Português</option>
+                            </select>
                         </div>
                     </div>
                 </form>

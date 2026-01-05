@@ -254,6 +254,21 @@
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                                     {{ $clientInfo->correo ?? $clientInfo->email ?? '' }}
                                 </p>
+                                @if(isset($clientInfo->idioma) && $clientInfo->idioma)
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                        @php
+                                            $idiomas = [
+                                                'es' => '🇪🇸 Español',
+                                                'en' => '🇬🇧 English',
+                                                'fr' => '🇫🇷 Français',
+                                                'de' => '🇩🇪 Deutsch',
+                                                'it' => '🇮🇹 Italiano',
+                                                'pt' => '🇵🇹 Português'
+                                            ];
+                                            echo $idiomas[$clientInfo->idioma] ?? strtoupper($clientInfo->idioma);
+                                        @endphp
+                                    </p>
+                                @endif
                             </div>
                         </a>
                         <button onclick="abrirModalCotizacion()" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">

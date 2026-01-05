@@ -148,6 +148,21 @@
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                                     {{ $cliente->email ?? '' }}
                                 </p>
+                                @if($cliente->idioma)
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                        @php
+                                            $idiomas = [
+                                                'es' => '🇪🇸 Español',
+                                                'en' => '🇬🇧 English',
+                                                'fr' => '🇫🇷 Français',
+                                                'de' => '🇩🇪 Deutsch',
+                                                'it' => '🇮🇹 Italiano',
+                                                'pt' => '🇵🇹 Português'
+                                            ];
+                                            echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                        @endphp
+                                    </p>
+                                @endif
                             </div>
                         </a>
                         <button onclick="abrirModalContrato()" class="w-full sm:w-auto px-4 py-2 bg-walee-500 hover:bg-walee-400 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg">

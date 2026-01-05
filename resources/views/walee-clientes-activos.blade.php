@@ -197,6 +197,21 @@
                                                 @endif
                                             </p>
                                         @endif
+                                        @if($cliente->idioma)
+                                            <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                                @php
+                                                    $idiomas = [
+                                                        'es' => '🇪🇸 Español',
+                                                        'en' => '🇬🇧 English',
+                                                        'fr' => '🇫🇷 Français',
+                                                        'de' => '🇩🇪 Deutsch',
+                                                        'it' => '🇮🇹 Italiano',
+                                                        'pt' => '🇵🇹 Português'
+                                                    ];
+                                                    echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                                @endphp
+                                            </p>
+                                        @endif
                                     </div>
                                 </a>
                                 

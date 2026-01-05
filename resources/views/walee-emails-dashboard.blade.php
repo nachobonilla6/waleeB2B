@@ -456,6 +456,21 @@
                                 <div class="flex-1 min-w-0">
                                     <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate">{{ $cliente->name ?: 'Sin nombre' }}</p>
                                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                    @if($cliente->idioma)
+                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                            @php
+                                                $idiomas = [
+                                                    'es' => '🇪🇸 Español',
+                                                    'en' => '🇬🇧 English',
+                                                    'fr' => '🇫🇷 Français',
+                                                    'de' => '🇩🇪 Deutsch',
+                                                    'it' => '🇮🇹 Italiano',
+                                                    'pt' => '🇵🇹 Português'
+                                                ];
+                                                echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                            @endphp
+                                        </p>
+                                    @endif
                                     <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5 sm:mt-1">{{ $cliente->created_at->diffForHumans() }}</p>
                                 </div>
                                 <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -150,6 +150,8 @@
         
         // Clientes con publicaciones
         $clientesConPublicaciones = [];
+        $clientesMap = []; // Mapa para evitar duplicados usando client_id como clave
+        $emailsProcesados = []; // Para evitar procesar el mismo email múltiples veces
         $publicacionesData = PublicidadEvento::select('cliente_id')
             ->selectRaw('COUNT(*) as total_publicaciones')
             ->selectRaw('SUM(CASE WHEN estado = "programado" THEN 1 ELSE 0 END) as programadas')
@@ -158,28 +160,83 @@
         
         foreach ($publicacionesData as $pubData) {
             $clientePlaneador = Cliente::find($pubData->cliente_id);
-                if ($clientePlaneador) {
+            if ($clientePlaneador) {
+                // Normalizar email para comparación
+                $emailNormalizado = strtolower(trim($clientePlaneador->correo ?? ''));
+                
+                // Si ya procesamos este email, saltar para evitar duplicados
+                if (!empty($emailNormalizado) && isset($emailsProcesados[$emailNormalizado])) {
+                    // Si ya existe este email, agregar las publicaciones al cliente existente
+                    $clientIdExistente = $emailsProcesados[$emailNormalizado];
+                    if (isset($clientesMap[$clientIdExistente])) {
+                        $clientesMap[$clientIdExistente]['total_publicaciones'] += $pubData->total_publicaciones;
+                        $clientesMap[$clientIdExistente]['programadas'] += $pubData->programadas;
+                    }
+                    continue;
+                }
+                
                 // Buscar el cliente correspondiente en Client por email (solo activos)
-                $client = Client::where('estado', 'activo')
-                    ->where('email', $clientePlaneador->correo)
-                    ->first();
-                if (!$client) {
-                    // Si no se encuentra por email, buscar por nombre (solo activos)
+                $client = null;
+                if (!empty($emailNormalizado)) {
+                    $client = Client::where('estado', 'activo')
+                        ->whereRaw('LOWER(TRIM(email)) = ?', [$emailNormalizado])
+                        ->first();
+                }
+                
+                // Si no se encuentra por email, buscar por nombre exacto primero
+                if (!$client && !empty($clientePlaneador->nombre_empresa)) {
+                    $nombreNormalizado = trim($clientePlaneador->nombre_empresa);
+                    $client = Client::where('estado', 'activo')
+                        ->where('name', $nombreNormalizado)
+                        ->first();
+                }
+                
+                // Si aún no se encuentra, buscar por nombre parcial (último recurso)
+                if (!$client && !empty($clientePlaneador->nombre_empresa)) {
                     $client = Client::where('estado', 'activo')
                         ->where('name', 'like', '%' . $clientePlaneador->nombre_empresa . '%')
                         ->first();
                 }
                 
                 if ($client) {
-                    $clientesConPublicaciones[] = [
-                        'client' => $client,
-                        'cliente_planeador' => $clientePlaneador,
-                        'total_publicaciones' => $pubData->total_publicaciones,
-                        'programadas' => $pubData->programadas,
-                    ];
+                    $clientId = $client->id;
+                    
+                    // Si el cliente ya existe en el mapa, agregar las publicaciones al total existente
+                    if (isset($clientesMap[$clientId])) {
+                        $clientesMap[$clientId]['total_publicaciones'] += $pubData->total_publicaciones;
+                        $clientesMap[$clientId]['programadas'] += $pubData->programadas;
+                    } else {
+                        // Si es un cliente nuevo, agregarlo al mapa
+                        $clientesMap[$clientId] = [
+                            'client' => $client,
+                            'cliente_planeador' => $clientePlaneador,
+                            'total_publicaciones' => $pubData->total_publicaciones,
+                            'programadas' => $pubData->programadas,
+                        ];
+                        
+                        // Registrar el email procesado para evitar duplicados
+                        if (!empty($emailNormalizado)) {
+                            $emailsProcesados[$emailNormalizado] = $clientId;
+                        }
+                    }
                 }
             }
         }
+        
+        // Convertir el mapa a array y eliminar cualquier duplicado residual
+        $clientesConPublicaciones = array_values($clientesMap);
+        
+        // Verificación adicional: eliminar duplicados por ID de cliente (por si acaso)
+        $idsUnicos = [];
+        $clientesConPublicacionesUnicos = [];
+        foreach ($clientesConPublicaciones as $item) {
+            $clientId = $item['client']->id;
+            if (!isset($idsUnicos[$clientId])) {
+                $idsUnicos[$clientId] = true;
+                $clientesConPublicacionesUnicos[] = $item;
+            }
+        }
+        $clientesConPublicaciones = $clientesConPublicacionesUnicos;
         
         // Ordenar por total de publicaciones descendente
         usort($clientesConPublicaciones, function($a, $b) {
@@ -395,6 +452,21 @@
                                 <div class="flex-1 min-w-0">
                                     <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $item['client']->name ?: 'Sin nombre' }}</p>
                                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $item['client']->email ?: 'Sin email' }}</p>
+                                    @if($item['client']->idioma)
+                                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                            @php
+                                                $idiomas = [
+                                                    'es' => '🇪🇸 Español',
+                                                    'en' => '🇬🇧 English',
+                                                    'fr' => '🇫🇷 Français',
+                                                    'de' => '🇩🇪 Deutsch',
+                                                    'it' => '🇮🇹 Italiano',
+                                                    'pt' => '🇵🇹 Português'
+                                                ];
+                                                echo $idiomas[$item['client']->idioma] ?? strtoupper($item['client']->idioma);
+                                            @endphp
+                                        </p>
+                                    @endif
                                 </div>
                                 <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                                     <div class="text-right">

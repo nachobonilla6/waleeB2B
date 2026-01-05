@@ -4581,6 +4581,9 @@ Route::match(['put', 'post'], '/walee-cliente/{id}', function (\Illuminate\Http\
         if ($request->has('ciudad')) {
             $data['ciudad'] = $request->input('ciudad');
         }
+        if ($request->has('idioma')) {
+            $data['idioma'] = $request->input('idioma');
+        }
         if ($request->has('address')) {
             $data['address'] = $request->input('address');
         }

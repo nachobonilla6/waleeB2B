@@ -242,24 +242,24 @@
                         <span class="font-semibold">Config</span>
                     </button>
                     
-                    <!-- Mobile: Solo iconos en una línea -->
-                    <div class="flex sm:hidden items-center gap-2">
-                        <a href="{{ route('walee.emails.dashboard') }}" class="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg transition-all active:scale-95" title="Volver">
+                    <!-- Mobile: Solo iconos en una línea, ancho completo -->
+                    <div class="grid grid-cols-4 gap-2 sm:hidden">
+                        <a href="{{ route('walee.emails.dashboard') }}" class="flex items-center justify-center p-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg transition-all active:scale-95" title="Volver">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
                         </a>
-                        <a href="{{ route('walee.emails.enviados') }}" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all shadow-sm hover:shadow active:scale-95" title="Enviados">
+                        <a href="{{ route('walee.emails.enviados') }}" class="flex items-center justify-center p-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all shadow-sm hover:shadow active:scale-95" title="Enviados">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
                         </a>
-                        <button onclick="openExtraerModal()" class="p-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all shadow-sm hover:shadow active:scale-95" title="Extraer">
+                        <button onclick="openExtraerModal()" class="flex items-center justify-center p-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all shadow-sm hover:shadow active:scale-95" title="Extraer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                             </svg>
                         </button>
-                        <button onclick="openConfigModal()" class="p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg transition-all active:scale-95" title="Config">
+                        <button onclick="openConfigModal()" class="flex items-center justify-center p-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg transition-all active:scale-95" title="Config">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -328,29 +328,39 @@
                     </div>
                 </div>
                 
-                <!-- Mobile: Toggles en una línea con solo iconos -->
+                <!-- Mobile: Toggles en una línea con iconos mejorados -->
                 <div class="lg:hidden bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-center gap-4">
+                    <div class="flex items-center justify-center gap-6">
                         <!-- Toggle Extracción -->
-                        <div class="flex flex-col items-center gap-1.5">
-                            <label class="switch relative" style="width: 56px; height: 32px;">
-                                <input type="checkbox" id="botToggleMobile" onchange="toggleBot(this.checked); document.getElementById('botToggle').checked = this.checked;">
-                                <span class="slider"></span>
-                                <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                 </svg>
-                            </label>
+                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                    <input type="checkbox" id="botToggleMobile" onchange="toggleBot(this.checked); document.getElementById('botToggle').checked = this.checked;">
+                                    <span class="slider"></span>
+                                    <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="botToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                </label>
+                            </div>
                         </div>
                         
                         <!-- Toggle Emails -->
-                        <div class="flex flex-col items-center gap-1.5">
-                            <label class="switch relative" style="width: 56px; height: 32px;">
-                                <input type="checkbox" id="emailsToggleMobile" onchange="toggleEmails(this.checked); document.getElementById('emailsToggle').checked = this.checked;">
-                                <span class="slider"></span>
-                                <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                            </label>
+                                <label class="switch relative" style="width: 56px; height: 32px;">
+                                    <input type="checkbox" id="emailsToggleMobile" onchange="toggleEmails(this.checked); document.getElementById('emailsToggle').checked = this.checked;">
+                                    <span class="slider"></span>
+                                    <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: 0;" id="emailsToggleIconMobile" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

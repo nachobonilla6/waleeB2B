@@ -283,7 +283,7 @@
                                 <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Extracción automática de clientes</p>
                             </div>
                             <div class="flex items-center gap-2 ml-3">
-                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <button onclick="openRecurrenciaModal()" id="recurrenciaBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -310,7 +310,7 @@
                                 <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Envío automático de emails</p>
                             </div>
                             <div class="flex items-center gap-2 ml-3">
-                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtn" class="px-2.5 py-1.5 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
@@ -330,7 +330,7 @@
                 
                 <!-- Mobile: Toggles en una línea con iconos mejorados -->
                 <div class="lg:hidden bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-center gap-6">
+                    <div class="flex items-center justify-center gap-4 sm:gap-6">
                         <!-- Toggle Extracción -->
                         <div class="flex flex-col items-center gap-2">
                             <div class="flex items-center gap-2">
@@ -345,6 +345,11 @@
                                     </svg>
                                 </label>
                             </div>
+                            <button onclick="openRecurrenciaModal()" id="recurrenciaBtnMobile" class="px-2 py-1 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1 text-xs shadow-sm">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </button>
                         </div>
                         
                         <!-- Toggle Emails -->
@@ -361,6 +366,11 @@
                                     </svg>
                                 </label>
                             </div>
+                            <button onclick="openRecurrenciaEmailsModal()" id="recurrenciaEmailsBtnMobile" class="px-2 py-1 bg-slate-400 hover:bg-slate-500 text-white font-medium rounded-md transition-all flex items-center gap-1 text-xs shadow-sm">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -542,17 +552,27 @@
         function toggleBot(enabled) {
             console.log('Extracción de Clientes:', enabled ? 'Activado' : 'Desactivado');
             
-            // Habilitar/deshabilitar botón de recurrencia según el estado del bot
+            // Cambiar estilo del botón de recurrencia según el estado del bot (desktop)
             const recurrenciaBtn = document.getElementById('recurrenciaBtn');
             if (recurrenciaBtn) {
                 if (enabled) {
-                    recurrenciaBtn.disabled = false;
-                    recurrenciaBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
                     recurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
                 } else {
-                    recurrenciaBtn.disabled = true;
                     recurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-                    recurrenciaBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                }
+            }
+            
+            // Cambiar estilo del botón de recurrencia en mobile
+            const recurrenciaBtnMobile = document.getElementById('recurrenciaBtnMobile');
+            if (recurrenciaBtnMobile) {
+                if (enabled) {
+                    recurrenciaBtnMobile.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaBtnMobile.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                } else {
+                    recurrenciaBtnMobile.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    recurrenciaBtnMobile.classList.add('bg-slate-400', 'hover:bg-slate-500');
                 }
             }
             
@@ -563,17 +583,27 @@
         function toggleEmails(enabled) {
             console.log('Emails Automáticos:', enabled ? 'Activado' : 'Desactivado');
             
-            // Habilitar/deshabilitar botón de recurrencia según el estado
+            // Cambiar estilo del botón de recurrencia según el estado (desktop)
             const recurrenciaEmailsBtn = document.getElementById('recurrenciaEmailsBtn');
             if (recurrenciaEmailsBtn) {
                 if (enabled) {
-                    recurrenciaEmailsBtn.disabled = false;
-                    recurrenciaEmailsBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaEmailsBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
                     recurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
                 } else {
-                    recurrenciaEmailsBtn.disabled = true;
                     recurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-                    recurrenciaEmailsBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaEmailsBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                }
+            }
+            
+            // Cambiar estilo del botón de recurrencia en mobile
+            const recurrenciaEmailsBtnMobile = document.getElementById('recurrenciaEmailsBtnMobile');
+            if (recurrenciaEmailsBtnMobile) {
+                if (enabled) {
+                    recurrenciaEmailsBtnMobile.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                    recurrenciaEmailsBtnMobile.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                } else {
+                    recurrenciaEmailsBtnMobile.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+                    recurrenciaEmailsBtnMobile.classList.add('bg-slate-400', 'hover:bg-slate-500');
                 }
             }
             

@@ -166,7 +166,7 @@
             <!-- Email List -->
             <div class="space-y-2 sm:space-y-3 md:space-y-4 animate-fade-in-up">
                 @forelse($emails as $index => $email)
-                    <div class="email-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all cursor-pointer shadow-sm dark:shadow-none" style="animation-delay: {{ $index * 0.05 }}s" onclick="openEmailModalFromSent({{ $email->id }}, '{{ addslashes($email->email ?? '') }}', '{{ addslashes($email->cliente_nombre ?? '') }}', '{{ addslashes($email->subject ?? '') }}', '{{ addslashes($email->body ?? '') }}', '{{ addslashes($email->ai_prompt ?? '') }}', {{ $email->cliente_id ?? 'null' }})">
+                    <div class="email-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:border-blue-400 dark:hover:border-blue-500/30 transition-all shadow-sm dark:shadow-none" style="animation-delay: {{ $index * 0.05 }}s">
                         <div class="flex items-start gap-2 sm:gap-3 md:gap-4">
                             <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +191,14 @@
                                         </span>
                                     @endif
                                 </div>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-500 line-clamp-2 mb-2">{{ Str::limit(strip_tags($email->body), 100) }}</p>
+                                <button onclick="showEmailDetail({{ $email->id }})" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-lg transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    Ver email
+                                </button>
                             </div>
                         </div>
                     </div>

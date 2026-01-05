@@ -2048,7 +2048,13 @@ Route::get('/walee-emails/dashboard', function () {
         ->orderBy('name', 'asc')
         ->get(['id', 'name', 'email']);
     
-    return view('walee-emails-dashboard', compact('templates', 'clientesEnProceso'));
+    // Obtener clientes pending (últimos 5)
+    $clientesPending = \App\Models\Client::where('estado', 'pending')
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
+    
+    return view('walee-emails-dashboard', compact('templates', 'clientesEnProceso', 'clientesPending'));
 })->middleware(['auth'])->name('walee.emails.dashboard');
 
 // Ruta para Bot Alpha

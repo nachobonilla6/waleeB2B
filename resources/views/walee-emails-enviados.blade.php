@@ -369,13 +369,17 @@
         
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
                 modalWidth = '700px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
             }
             
             let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
@@ -474,13 +478,17 @@
         
         function showEmailPhase2() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
                 modalWidth = '700px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
             }
             
             const html = `
@@ -547,14 +555,18 @@
         
         function showEmailPhase3() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
             let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
                 modalWidth = '700px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
             }
             
             const html = `
@@ -852,6 +864,15 @@
         // Estilos para SweetAlert dark/light mode
         const style = document.createElement('style');
         style.textContent = `
+            .swal2-container {
+                z-index: 99999 !important;
+            }
+            .swal2-popup {
+                z-index: 99999 !important;
+            }
+            .swal2-backdrop-show {
+                z-index: 99998 !important;
+            }
             .dark-swal {
                 background: #1e293b !important;
                 color: #e2e8f0 !important;

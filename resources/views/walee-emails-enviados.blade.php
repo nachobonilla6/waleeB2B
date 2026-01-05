@@ -887,7 +887,10 @@
                     ` : ''}
                     <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
                         <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Mensaje</h4>
-                        <div class="text-slate-900 dark:text-white whitespace-pre-wrap text-xs sm:text-sm">${email.body}</div>
+                        ${email.tipo === 'extractor' || email.cliente_estado === 'extractor' ? 
+                            `<div class="text-slate-900 dark:text-white text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none">${email.body}</div>` : 
+                            `<div class="text-slate-900 dark:text-white whitespace-pre-wrap text-xs sm:text-sm">${email.body}</div>`
+                        }
                     </div>
                 </div>
             `;

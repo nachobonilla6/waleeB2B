@@ -324,6 +324,7 @@
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
+                                    <span id="recurrenciaTextMobile" class="sm:hidden text-xs font-medium">-</span>
                                     <span class="hidden sm:inline">Recurrencia</span>
                                 </button>
                             </div>
@@ -347,6 +348,7 @@
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
+                                    <span id="recurrenciaEmailsTextMobile" class="sm:hidden text-xs font-medium">-</span>
                                     <span class="hidden sm:inline">Recurrencia</span>
                                 </button>
                             </div>
@@ -646,13 +648,23 @@
                     const valor = result.value;
                     recurrenciaSeleccionada = valor ? parseInt(valor) : null;
                     
-                    // Actualizar el texto del botón
+                    // Actualizar el texto del botón (desktop)
                     const recurrenciaText = document.getElementById('recurrenciaText');
                     if (recurrenciaText) {
                         if (recurrenciaSeleccionada) {
                             recurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
                         } else {
                             recurrenciaText.textContent = 'Elegir recurrencia';
+                        }
+                    }
+                    
+                    // Actualizar el texto del botón (mobile)
+                    const recurrenciaTextMobile = document.getElementById('recurrenciaTextMobile');
+                    if (recurrenciaTextMobile) {
+                        if (recurrenciaSeleccionada) {
+                            recurrenciaTextMobile.textContent = `${recurrenciaSeleccionada}h`;
+                        } else {
+                            recurrenciaTextMobile.textContent = '-';
                         }
                     }
                     
@@ -731,7 +743,7 @@
                     const valor = result.value;
                     recurrenciaEmailsSeleccionada = valor ? parseFloat(valor) : null;
                     
-                    // Actualizar el texto del botón
+                    // Actualizar el texto del botón (desktop)
                     const recurrenciaEmailsText = document.getElementById('recurrenciaEmailsText');
                     if (recurrenciaEmailsText) {
                         if (recurrenciaEmailsSeleccionada) {
@@ -739,6 +751,23 @@
                             recurrenciaEmailsText.textContent = label;
                         } else {
                             recurrenciaEmailsText.textContent = 'Elegir recurrencia';
+                        }
+                    }
+                    
+                    // Actualizar el texto del botón (mobile)
+                    const recurrenciaEmailsTextMobile = document.getElementById('recurrenciaEmailsTextMobile');
+                    if (recurrenciaEmailsTextMobile) {
+                        if (recurrenciaEmailsSeleccionada) {
+                            // Formato corto para mobile
+                            if (recurrenciaEmailsSeleccionada === 0.5) {
+                                recurrenciaEmailsTextMobile.textContent = '30m';
+                            } else if (recurrenciaEmailsSeleccionada < 1) {
+                                recurrenciaEmailsTextMobile.textContent = `${Math.round(recurrenciaEmailsSeleccionada * 60)}m`;
+                            } else {
+                                recurrenciaEmailsTextMobile.textContent = `${recurrenciaEmailsSeleccionada}h`;
+                            }
+                        } else {
+                            recurrenciaEmailsTextMobile.textContent = '-';
                         }
                     }
                     

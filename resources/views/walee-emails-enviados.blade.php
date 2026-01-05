@@ -190,6 +190,11 @@
                                             Enviado con alpha
                                         </span>
                                     @endif
+                                    @if($email->tipo === 'propuesta_personalizada')
+                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 whitespace-nowrap">
+                                            Enviado manual
+                                        </span>
+                                    @endif
                                     @if($email->cliente_estado === 'propuesta_personalizada_enviada')
                                         <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/30 whitespace-nowrap">
                                             Enviado manual

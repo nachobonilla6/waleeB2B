@@ -1302,6 +1302,15 @@
         // ========== SISTEMA DE MODAL POR FASES ==========
         @if(isset($factura) && $factura)
             @php
+                $itemsData = $factura->items->map(function($item) {
+                    return [
+                        'descripcion' => $item->descripcion,
+                        'cantidad' => $item->cantidad,
+                        'precio_unitario' => $item->precio_unitario,
+                        'subtotal' => $item->subtotal
+                    ];
+                })->toArray();
+                
                 $pagosData = $factura->pagos->map(function($pago) {
                     return [
                         'descripcion' => $pago->descripcion,
@@ -1322,14 +1331,7 @@
                 fecha_emision: '{{ $factura->fecha_emision ? $factura->fecha_emision->format('Y-m-d') : date('Y-m-d') }}',
                 fecha_vencimiento: '{{ $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : date('Y-m-d', strtotime('+30 days')) }}',
                 estado: '{{ $factura->estado ?? 'pendiente' }}',
-                items: @json($factura->items->map(function($item) {
-                    return [
-                        'descripcion' => $item->descripcion,
-                        'cantidad' => $item->cantidad,
-                        'precio_unitario' => $item->precio_unitario,
-                        'subtotal' => $item->subtotal
-                    ];
-                })->toArray()),
+                items: @json($itemsData),
                 subtotal: {{ $factura->subtotal ?? 0 }},
                 descuento_antes_impuestos: {{ $factura->descuento_antes_impuestos ?? 0 }},
                 iva: {{ ($factura->subtotal ?? $factura->total) * 0.13 }},

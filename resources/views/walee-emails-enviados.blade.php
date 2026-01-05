@@ -212,7 +212,7 @@
                                                     break;
                                                 case 'extractor':
                                                     $estadoClass = 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border-cyan-500/30';
-                                                    $estadoTexto = 'Enviado con extractor';
+                                                    $estadoTexto = 'Enviado con alpha';
                                                     break;
                                                 default:
                                                     $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';

@@ -339,15 +339,18 @@
             <!-- Lista de Clientes -->
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
-                        Clientes en Proceso
-                        <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
-                            ({{ $clientes->total() }})
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span>Clientes Extraídos</span>
+                        <span class="text-xs font-normal text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full">
+                            {{ $clientes->total() }}
                         </span>
                     </h2>
                 </div>
                 
-                <div class="space-y-2" id="clientsList">
+                <div class="space-y-2.5" id="clientsList">
                     @forelse($clientes as $cliente)
                         @php
                             $fotoPath = $cliente->foto ?? null;
@@ -361,16 +364,20 @@
                                 }
                             }
                         @endphp
-                        <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2.5 flex-1 min-w-0">
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group">
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
                                 @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-9 h-9 rounded-lg object-cover border border-blue-500/30 flex-shrink-0">
+                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-11 h-11 rounded-xl object-cover border-2 border-emerald-500/30 flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
                                 @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-9 h-9 rounded-lg object-cover border border-blue-500/30 flex-shrink-0 opacity-80">
+                                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-500/20 dark:to-emerald-600/10 border-2 border-emerald-500/30 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
+                                        <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                    </div>
                                 @endif
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2">
-                                        <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="font-semibold text-sm text-slate-900 dark:text-white truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
                                             @if($cliente->idioma)
                                                 @php
                                                     $banderas = [
@@ -384,7 +391,7 @@
                                                     $bandera = $banderas[$cliente->idioma] ?? '';
                                                 @endphp
                                                 @if($bandera)
-                                                    <span class="text-base">{{ $bandera }}</span>
+                                                    <span class="text-lg">{{ $bandera }}</span>
                                                 @endif
                                             @endif
                                             <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
@@ -392,23 +399,28 @@
                                         @if($cliente->estado)
                                             @php
                                                 $estadoConfig = [
-                                                    'pending' => ['label' => 'Pendiente', 'color' => 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700'],
-                                                    'received' => ['label' => 'Recibido', 'color' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-700'],
-                                                    'active' => ['label' => 'Activo', 'color' => 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700'],
-                                                    'inactive' => ['label' => 'Inactivo', 'color' => 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700']
+                                                    'pending' => ['label' => 'Pendiente', 'color' => 'bg-yellow-500/20 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/30 dark:border-yellow-500/20'],
+                                                    'received' => ['label' => 'Recibido', 'color' => 'bg-blue-500/20 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/30 dark:border-blue-500/20'],
+                                                    'active' => ['label' => 'Activo', 'color' => 'bg-green-500/20 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/30 dark:border-green-500/20'],
+                                                    'inactive' => ['label' => 'Inactivo', 'color' => 'bg-slate-500/20 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/30 dark:border-slate-500/20']
                                                 ];
-                                                $estadoInfo = $estadoConfig[$cliente->estado] ?? ['label' => ucfirst($cliente->estado), 'color' => 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700'];
+                                                $estadoInfo = $estadoConfig[$cliente->estado] ?? ['label' => ucfirst($cliente->estado), 'color' => 'bg-slate-500/20 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400 border-slate-500/30 dark:border-slate-500/20'];
                                             @endphp
-                                            <span class="px-1.5 py-0.5 text-[10px] font-medium rounded border {{ $estadoInfo['color'] }} flex-shrink-0">
+                                            <span class="px-2 py-0.5 text-xs font-semibold rounded-lg border {{ $estadoInfo['color'] }} flex-shrink-0">
                                                 {{ $estadoInfo['label'] }}
                                             </span>
                                         @endif
                                     </div>
-                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span>{{ $cliente->email ?: 'Sin email' }}</span>
+                                    </p>
                                 </div>
                             </a>
-                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all flex-shrink-0" title="Crear email">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button onclick="openEmailModalForClient({{ $cliente->id }}, '{{ addslashes($cliente->email ?? '') }}', '{{ addslashes($cliente->name) }}', '{{ addslashes($cliente->website ?? '') }}')" class="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-600 hover:border-emerald-700 transition-all flex-shrink-0 shadow-sm hover:shadow" title="Crear email">
+                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                             </button>

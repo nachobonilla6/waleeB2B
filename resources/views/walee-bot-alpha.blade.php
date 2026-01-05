@@ -156,8 +156,9 @@
             });
         }
         
-        // Aplicar paginación con los query parameters
-        $clientes = $query->orderBy('updated_at', 'desc')
+        // Aplicar paginación con los query parameters - ordenar por más recientes primero
+        $clientes = $query->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->paginate(5)
             ->appends(request()->query());
         
@@ -344,7 +345,23 @@
                                     <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-9 h-9 rounded-lg object-cover border border-blue-500/30 flex-shrink-0 opacity-80">
                                 @endif
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                        @if($cliente->estado)
+                                            @php
+                                                $estadoConfig = [
+                                                    'pending' => ['label' => 'Pendiente', 'color' => 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700'],
+                                                    'received' => ['label' => 'Recibido', 'color' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-700'],
+                                                    'active' => ['label' => 'Activo', 'color' => 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-300 dark:border-green-700'],
+                                                    'inactive' => ['label' => 'Inactivo', 'color' => 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700']
+                                                ];
+                                                $estadoInfo = $estadoConfig[$cliente->estado] ?? ['label' => ucfirst($cliente->estado), 'color' => 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700'];
+                                            @endphp
+                                            <span class="px-1.5 py-0.5 text-[10px] font-medium rounded border {{ $estadoInfo['color'] }} flex-shrink-0">
+                                                {{ $estadoInfo['label'] }}
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
                                     @if($cliente->idioma)
                                         <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">

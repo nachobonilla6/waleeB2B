@@ -453,6 +453,20 @@
             emailsToggleChecked
         });
         
+        // Placeholder para openConfigModal - se definirá más adelante
+        // Esta función temporal evita errores si se llama antes de que se defina la función completa
+        window.openConfigModal = function() {
+            console.warn('openConfigModal: función temporal llamada. Esperando carga completa...');
+            setTimeout(() => {
+                if (typeof window.openConfigModal === 'function' && window.openConfigModal.toString().includes('async')) {
+                    console.log('Reintentando abrir modal...');
+                    window.openConfigModal();
+                } else {
+                    console.error('openConfigModal aún no está completamente cargada');
+                }
+            }, 100);
+        };
+        
         // Función para guardar orden programada en la base de datos
         async function guardarOrdenProgramada(tipo, activo, recurrenciaHoras) {
             try {

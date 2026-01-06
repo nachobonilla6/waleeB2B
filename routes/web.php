@@ -2098,6 +2098,15 @@ Route::get('/walee-bot-alpha', function () {
     return view('walee-bot-alpha', compact('templates', 'webhookUrl', 'ordenExtraccion', 'ordenEmails'));
 })->middleware(['auth'])->name('walee.bot.alpha');
 
+// Página de configuración simple para Bot Alpha (toggle de extracción de clientes)
+Route::get('/walee-bot-alpha/config', function () {
+    $ordenExtraccion = \App\Models\OrdenProgramada::where('tipo', 'extraccion_clientes')
+        ->where('user_id', auth()->id())
+        ->first();
+    
+    return view('walee-bot-alpha-config', compact('ordenExtraccion'));
+})->middleware(['auth'])->name('walee.bot.alpha.config');
+
 // Ruta para guardar webhook del Bot Alpha
 Route::post('/walee-bot-alpha/webhook', function (\Illuminate\Http\Request $request) {
     try {

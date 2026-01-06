@@ -248,8 +248,8 @@
                         Bot Alpha
                     </h1>
                 </div>
-                <!-- Botones: 4 columnas ocupando todo el ancho -->
-                <div class="grid grid-cols-4 gap-2">
+                <!-- Botones: 5 columnas ocupando todo el ancho -->
+                <div class="grid grid-cols-5 gap-2">
                     <a href="{{ route('walee.emails.dashboard') }}" class="flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all active:scale-95">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -275,6 +275,12 @@
                         </svg>
                         <span class="hidden sm:inline ml-2 font-semibold">Config</span>
                     </button>
+                    <a href="{{ route('walee.bot.alpha.config') }}" class="flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-all shadow-sm hover:shadow active:scale-95">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M5 8h14M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="hidden sm:inline ml-2 font-semibold">Config Page</span>
+                    </a>
                 </div>
             </header>
             

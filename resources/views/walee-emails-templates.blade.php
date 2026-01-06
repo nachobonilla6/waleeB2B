@@ -353,7 +353,8 @@
                 showConfirmButton: true,
                 confirmButtonText: 'Crear',
                 confirmButtonColor: '#D59F3B',
-                reverseButtons: false, // Cancelar izquierda, Crear derecha
+                reverseButtons: false, // Cancelar primero (izquierda), Crear segundo (derecha)
+                buttonsStyling: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
@@ -527,7 +528,8 @@
                 showConfirmButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#D59F3B',
-                reverseButtons: false, // Cancelar izquierda, Guardar derecha
+                reverseButtons: false, // Cancelar primero (izquierda), Guardar segundo (derecha)
+                buttonsStyling: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {

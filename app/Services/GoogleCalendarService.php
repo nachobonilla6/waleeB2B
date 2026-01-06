@@ -108,7 +108,7 @@ class GoogleCalendarService
     /**
      * Obtener URL de autorización
      */
-    public function getAuthUrl(): ?string
+    public function getAuthUrl(?string $state = null): ?string
     {
         try {
             $client = new Google_Client();
@@ -135,6 +135,11 @@ class GoogleCalendarService
             $client->setAccessType('offline');
             $client->setPrompt('select_account consent');
             $client->setRedirectUri(route('google-calendar.callback'));
+            
+            // Agregar state para saber a dónde redirigir después
+            if ($state) {
+                $client->setState($state);
+            }
             
             return $client->createAuthUrl();
         } catch (\Exception $e) {

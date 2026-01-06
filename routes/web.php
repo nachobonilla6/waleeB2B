@@ -1290,6 +1290,61 @@ Route::get('/walee-calendario-aplicaciones', function () {
     return view('walee-calendario-aplicaciones');
 })->middleware(['auth'])->name('walee.calendario.aplicaciones');
 
+// Ruta para autenticar Google Calendar desde calendario de aplicaciones
+Route::get('/google-calendar/auth', function () {
+    $service = new \App\Services\GoogleCalendarService();
+    $authUrl = $service->getAuthUrl('aplicaciones');
+    
+    if ($authUrl) {
+        return redirect($authUrl);
+    }
+    
+    return redirect()->route('walee.calendario.aplicaciones')
+        ->with('error', 'No se pudo generar la URL de autorización. Verifica la configuración de Google Calendar.');
+})->middleware(['auth'])->name('google-calendar.auth');
+
+// Ruta para crear evento en calendario de aplicaciones (sincroniza con Google Calendar)
+Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\Request $request) {
+    try {
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'fecha_inicio' => 'required|date',
+            'descripcion' => 'nullable|string',
+        ]);
+        
+        // Crear una cita temporal para usar con GoogleCalendarService
+        $cita = new \App\Models\Cita();
+        $cita->titulo = $validated['titulo'];
+        $cita->fecha_inicio = \Carbon\Carbon::parse($validated['fecha_inicio']);
+        $cita->fecha_fin = $cita->fecha_inicio->copy()->addHour();
+        $cita->descripcion = $validated['descripcion'] ?? null;
+        $cita->estado = 'programada';
+        
+        // Sincronizar con Google Calendar
+        $googleService = new \App\Services\GoogleCalendarService();
+        $eventId = $googleService->createEvent($cita);
+        
+        if ($eventId) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Evento creado y sincronizado con Google Calendar',
+                'event_id' => $eventId
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'El evento se creó pero no se pudo sincronizar con Google Calendar'
+            ], 500);
+        }
+    } catch (\Exception $e) {
+        \Log::error('Error creando evento: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al crear el evento: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.calendario.aplicaciones.crear');
+
 // Rutas para Citas
 Route::post('/citas', function (\Illuminate\Http\Request $request) {
     try {
@@ -6069,8 +6124,14 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/google-calendar/callback', function (\Illuminate\Http\Request $request) {
         $code = $request->get('code');
+        $state = $request->get('state', 'filament'); // 'filament' o 'aplicaciones'
         
         if (!$code) {
+            if ($state === 'aplicaciones') {
+                return redirect()->route('walee.calendario.aplicaciones')
+                    ->with('error', 'No se recibió el código de autorización de Google.');
+            }
+            
             \Filament\Notifications\Notification::make()
                 ->title('Error de autorización')
                 ->body('No se recibió el código de autorización de Google.')
@@ -6084,12 +6145,22 @@ Route::middleware(['auth'])->group(function () {
         $success = $service->handleCallback($code);
         
         if ($success) {
+            if ($state === 'aplicaciones') {
+                return redirect()->route('walee.calendario.aplicaciones')
+                    ->with('success', 'Google Calendar ha sido autorizado correctamente.');
+            }
+            
             \Filament\Notifications\Notification::make()
                 ->title('Autorización exitosa')
                 ->body('Google Calendar ha sido autorizado correctamente.')
                 ->success()
                 ->send();
         } else {
+            if ($state === 'aplicaciones') {
+                return redirect()->route('walee.calendario.aplicaciones')
+                    ->with('error', 'No se pudo completar la autorización. Intenta nuevamente.');
+            }
+            
             \Filament\Notifications\Notification::make()
                 ->title('Error de autorización')
                 ->body('No se pudo completar la autorización. Intenta nuevamente.')

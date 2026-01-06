@@ -131,8 +131,51 @@
             9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
         ];
         
-        // Por ahora, eventos vacíos - se pueden agregar después
+        // Obtener eventos de Google Calendar
         $eventos = collect();
+        try {
+            $googleService = new \App\Services\GoogleCalendarService();
+            
+            // Obtener eventos de la semana
+            $fechaInicio = $inicioSemana->copy()->startOfDay();
+            $fechaFin = $finSemana->copy()->endOfDay();
+            
+            $googleEvents = $googleService->getEvents($fechaInicio, $fechaFin);
+            
+            foreach ($googleEvents as $googleEvent) {
+                $eventoData = $googleService->convertGoogleEventToCita($googleEvent);
+                if ($eventoData) {
+                    // Convertir a objeto para facilitar el uso en la vista
+                    $evento = (object) [
+                        'id' => $eventoData['google_event_id'] ?? null,
+                        'titulo' => $eventoData['titulo'] ?? 'Sin título',
+                        'descripcion' => $eventoData['descripcion'] ?? null,
+                        'fecha_inicio' => $eventoData['fecha_inicio'],
+                        'fecha_fin' => $eventoData['fecha_fin'] ?? null,
+                        'ubicacion' => $eventoData['ubicacion'] ?? null,
+                        'google_event_id' => $eventoData['google_event_id'] ?? null,
+                        'from_google' => true,
+                    ];
+                    
+                    $fechaKey = $eventoData['fecha_inicio']->format('Y-m-d');
+                    if (!$eventos->has($fechaKey)) {
+                        $eventos->put($fechaKey, collect());
+                    }
+                    $eventos->get($fechaKey)->push($evento);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error obteniendo eventos de Google Calendar: ' . $e->getMessage());
+        }
+        
+        // Verificar si está autorizado
+        $isAuthorized = false;
+        try {
+            $googleService = new \App\Services\GoogleCalendarService();
+            $isAuthorized = $googleService->isAuthorized();
+        } catch (\Exception $e) {
+            \Log::error('Error verificando autorización: ' . $e->getMessage());
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -163,6 +206,23 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 sm:gap-2 flex-shrink-0 flex-wrap header-actions">
+                            @if(!$isAuthorized)
+                                <a href="{{ route('google-calendar.auth') }}" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Conectar Google Calendar</span>
+                                    <span class="sm:hidden">Conectar</span>
+                                </a>
+                            @else
+                                <button onclick="sincronizarGoogleCalendar()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    <span class="hidden sm:inline">Sincronizar</span>
+                                    <span class="sm:hidden">Sync</span>
+                                </button>
+                            @endif
                             <button onclick="showNuevoEventoModal()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -244,19 +304,28 @@
                                     <div class="flex-1 p-3 md:p-2 space-y-2 md:space-y-1.5 overflow-y-auto">
                                         @if($eventosOrdenados->count() > 0)
                                             @foreach($eventosOrdenados as $evento)
+                                                @php
+                                                    $fechaInicio = $evento->fecha_inicio instanceof \DateTime 
+                                                        ? $evento->fecha_inicio 
+                                                        : \Carbon\Carbon::parse($evento->fecha_inicio);
+                                                    $hora = $fechaInicio->format('H:i');
+                                                    $titulo = $evento->titulo ?? 'Sin título';
+                                                @endphp
                                                 <button 
-                                                    onclick="event.preventDefault(); showEventoDetail({{ $evento->id ?? 0 }});"
+                                                    onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}');"
                                                     class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 shadow-sm md:shadow-none"
                                                     style="border-left: 4px solid #8b5cf6;"
+                                                    title="{{ $titulo }}"
                                                 >
                                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
                                                         <div class="flex items-center justify-between md:justify-start gap-2">
-                                                            <span class="text-xs md:text-[10px] font-semibold">{{ $evento->fecha_inicio->format('H:i') ?? '09:00' }}</span>
+                                                            <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
+                                                            @if(isset($evento->from_google) && $evento->from_google)
+                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
+                                                            @endif
                                                         </div>
                                                     </div>
-                                                    @if(isset($evento->titulo) && strlen($evento->titulo) > 0)
-                                                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 md:hidden line-clamp-2">{{ $evento->titulo }}</p>
-                                                    @endif
+                                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2">{{ $titulo }}</p>
                                                 </button>
                                             @endforeach
                                         @else
@@ -276,33 +345,217 @@
     </div>
     
     <script>
-        function showNuevoEventoModal() {
-            // Placeholder para modal de nuevo evento
+        function sincronizarGoogleCalendar() {
             Swal.fire({
-                icon: 'info',
+                title: 'Sincronizando...',
+                text: 'Obteniendo eventos de Google Calendar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Recargar la página para obtener los eventos actualizados
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+        
+        function showNuevoEventoModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            Swal.fire({
                 title: 'Nuevo Evento',
-                text: 'Funcionalidad de crear evento próximamente',
-                confirmButtonColor: '#8b5cf6'
+                html: `
+                    <form id="nuevoEventoForm" class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                            <input type="text" id="evento_titulo" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                            <input type="datetime-local" id="evento_fecha" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción (opcional)</label>
+                            <textarea id="evento_descripcion" rows="3"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Crear',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                preConfirm: async () => {
+                    const titulo = document.getElementById('evento_titulo').value;
+                    const fecha = document.getElementById('evento_fecha').value;
+                    const descripcion = document.getElementById('evento_descripcion').value;
+                    
+                    if (!titulo || !fecha) {
+                        Swal.showValidationMessage('Título y fecha son requeridos');
+                        return false;
+                    }
+                    
+                    try {
+                        const response = await fetch('{{ route("walee.calendario.aplicaciones.crear") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({
+                                titulo: titulo,
+                                fecha_inicio: fecha,
+                                descripcion: descripcion,
+                            }),
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Evento creado',
+                                text: 'El evento se ha creado y sincronizado con Google Calendar',
+                                confirmButtonColor: '#8b5cf6'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al crear el evento',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error de conexión: ' + error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                    
+                    return false;
+                }
             });
         }
         
         function showNuevoEventoModalConFecha(fecha, hora) {
-            // Placeholder para modal de nuevo evento con fecha
+            const fechaHora = fecha + 'T' + hora;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
             Swal.fire({
-                icon: 'info',
                 title: 'Nuevo Evento',
-                text: `Crear evento el ${fecha} a las ${hora}`,
-                confirmButtonColor: '#8b5cf6'
+                html: `
+                    <form id="nuevoEventoForm" class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                            <input type="text" id="evento_titulo" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                            <input type="datetime-local" id="evento_fecha" value="${fechaHora}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción (opcional)</label>
+                            <textarea id="evento_descripcion" rows="3"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Crear',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                preConfirm: async () => {
+                    const titulo = document.getElementById('evento_titulo').value;
+                    const fecha = document.getElementById('evento_fecha').value;
+                    const descripcion = document.getElementById('evento_descripcion').value;
+                    
+                    if (!titulo || !fecha) {
+                        Swal.showValidationMessage('Título y fecha son requeridos');
+                        return false;
+                    }
+                    
+                    try {
+                        const response = await fetch('{{ route("walee.calendario.aplicaciones.crear") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({
+                                titulo: titulo,
+                                fecha_inicio: fecha,
+                                descripcion: descripcion,
+                            }),
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Evento creado',
+                                text: 'El evento se ha creado y sincronizado con Google Calendar',
+                                confirmButtonColor: '#8b5cf6'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al crear el evento',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error de conexión: ' + error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                    
+                    return false;
+                }
             });
         }
         
-        function showEventoDetail(eventoId) {
-            // Placeholder para ver detalle de evento
+        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
             Swal.fire({
-                icon: 'info',
-                title: 'Detalle del Evento',
-                text: 'Funcionalidad de detalle próximamente',
-                confirmButtonColor: '#8b5cf6'
+                title: titulo || 'Evento',
+                html: `
+                    <div class="text-left space-y-2">
+                        ${fecha ? `<p class="text-sm"><strong>Fecha:</strong> ${fecha}</p>` : ''}
+                        ${ubicacion ? `<p class="text-sm"><strong>Ubicación:</strong> ${ubicacion}</p>` : ''}
+                        ${descripcion ? `<p class="text-sm"><strong>Descripción:</strong> ${descripcion}</p>` : ''}
+                        ${eventoId ? `<a href="https://calendar.google.com/calendar/event?eid=${encodeURIComponent(eventoId)}" target="_blank" class="text-sm text-violet-600 dark:text-violet-400 hover:underline">Abrir en Google Calendar</a>` : ''}
+                    </div>
+                `,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#8b5cf6',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b'
             });
         }
     </script>

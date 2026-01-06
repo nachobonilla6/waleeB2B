@@ -1836,43 +1836,11 @@
             attachments: null
         };
         
-        // Toggle is_active
-        async function toggleIsActive(clientId, currentValue) {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const newValue = !currentValue;
-            
-            try {
-                const response = await fetch(`/walee-clientes-en-proceso/${clientId}/toggle-active`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: JSON.stringify({
-                        is_active: newValue
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Recargar la página para reflejar el cambio
-                    location.reload();
-                } else {
-                    alert('Error al actualizar el estado: ' + (data.message || 'Error desconocido'));
-                }
-            } catch (error) {
-                alert('Error de conexión: ' + error.message);
-            }
-        }
+        // DEFINIR openEmailModal INMEDIATAMENTE después de emailModalData
+        // Esto asegura que esté disponible desde el inicio
+        console.log('=== DEBUG: Definiendo openEmailModal INMEDIATAMENTE ===');
+        console.log('emailModalData:', typeof emailModalData, emailModalData);
         
-        // DEBUG: Verificar estado antes de definir la función
-        console.log('=== DEBUG: Antes de definir openEmailModal ===');
-        console.log('emailModalData existe:', typeof emailModalData);
-        console.log('showEmailPhase1 existe:', typeof showEmailPhase1);
-        console.log('window.openEmailModal existe:', typeof window.openEmailModal);
-        
-        // Definir openEmailModal directamente en window para disponibilidad inmediata
         window.openEmailModal = function() {
             console.log('=== DEBUG: openEmailModal EJECUTADO ===');
             console.log('emailModalData:', typeof emailModalData, emailModalData);

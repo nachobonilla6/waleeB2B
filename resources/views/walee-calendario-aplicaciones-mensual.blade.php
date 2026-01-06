@@ -529,35 +529,40 @@
             Swal.fire({
                 title: 'Nueva Cita',
                 html: `
-                    <form id="editarEventoForm" class="space-y-3 text-left">
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
-                            <input type="text" id="editar_titulo" value="${tituloActual.replace(/"/g, '&quot;')}" required
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado (Elegir un email de cliente)</label>
-                            <select id="editar_cliente_email" 
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                                ${clientesOptions}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                            <input type="datetime-local" id="editar_fecha" value="${fechaActual}" required
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                        </div>
-                    </form>
+                    <div class="relative">
+                        <button onclick="Swal.close()" class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-10" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                        <form id="editarEventoForm" class="space-y-3 text-left">
+                            <div>
+                                <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                                <input type="text" id="editar_titulo" value="${tituloActual.replace(/"/g, '&quot;')}" required
+                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado (Elegir un email de cliente)</label>
+                                <select id="editar_cliente_email" 
+                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                                    ${clientesOptions}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                                <input type="datetime-local" id="editar_fecha" value="${fechaActual}" required
+                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            </div>
+                        </form>
+                    </div>
                 `,
-                showCancelButton: true,
+                showCancelButton: false,
+                showConfirmButton: true,
                 confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#8b5cf6',
-                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 buttonsStyling: true,
-                reverseButtons: true,
                 didOpen: () => {
                     if (emailClienteSeleccionado) {
                         const select = document.getElementById('editar_cliente_email');

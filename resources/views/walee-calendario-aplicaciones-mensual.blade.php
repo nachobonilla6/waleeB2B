@@ -595,7 +595,7 @@
             }
             
             Swal.fire({
-                title: (titulo ? titulo + ' - Evento' : 'Evento'),
+                title: titulo || 'Evento',
                 html: `
                     <div class="text-left space-y-2">
                         ${fecha ? `<p class="text-sm"><strong>Fecha:</strong> ${fecha}</p>` : ''}

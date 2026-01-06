@@ -672,16 +672,6 @@
                             </div>
                         ` : ''}
                         ${responseBadge}
-                        ${eventoId ? `
-                            <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
-                                <a href="https://calendar.google.com/calendar/event?eid=${encodeURIComponent(eventoId)}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-50 dark:bg-violet-900/20 hover:bg-violet-100 dark:hover:bg-violet-900/30 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-700 transition-all text-sm font-medium">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                                    </svg>
-                                    Abrir en Google Calendar
-                                </a>
-                            </div>
-                        ` : ''}
                         ${buttonsHtml}
                     </div>
                 `,

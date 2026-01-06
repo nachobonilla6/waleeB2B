@@ -291,15 +291,15 @@
                                         @endif
                                     @endif
                                     <span class="truncate">{{ $cliente->name ?: 'Sin nombre' }}</span>
+                                    @if($cliente->emails_count > 0)
+                                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" onclick="event.stopPropagation();" class="flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0 hover:bg-emerald-500/30 dark:hover:bg-emerald-500/20 transition-colors ml-1" title="Ver emails enviados">
+                                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                            <span>{{ $cliente->emails_count }}</span>
+                                        </a>
+                                    @endif
                                 </p>
-                                @if($cliente->emails_count > 0)
-                                    <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0 hover:bg-emerald-500/30 dark:hover:bg-emerald-500/20 transition-colors" title="Ver emails enviados">
-                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span>{{ $cliente->emails_count }}</span>
-                                    </a>
-                                @endif
                             </div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
                             @if($cliente->website)

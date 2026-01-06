@@ -246,18 +246,22 @@
                 modalWidth = '800px'; // Ancho más amplio
             }
             
-            // Restaurar datos guardados
+            // Restaurar datos guardados (excepto contenido que siempre debe estar vacío en nuevo)
             const savedData = localStorage.getItem('templateFormData');
             let formData = {
                 nombre: '',
                 asunto: '',
-                contenido: '',
+                contenido: '', // Siempre vacío en nuevo template
                 ai_prompt: ''
             };
             
             if (savedData) {
                 try {
-                    formData = JSON.parse(savedData);
+                    const parsed = JSON.parse(savedData);
+                    formData.nombre = parsed.nombre || '';
+                    formData.asunto = parsed.asunto || '';
+                    formData.ai_prompt = parsed.ai_prompt || '';
+                    // contenido siempre vacío para nuevo template
                 } catch (e) {
                     console.error('Error restaurando datos:', e);
                 }
@@ -343,13 +347,13 @@
                 html: html,
                 width: modalWidth,
                 padding: '1rem',
-                showConfirmButton: true,
-                confirmButtonText: 'Crear',
-                confirmButtonColor: '#D59F3B',
                 showCancelButton: true,
                 cancelButtonText: 'Cancelar',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                reverseButtons: false,
+                showConfirmButton: true,
+                confirmButtonText: 'Crear',
+                confirmButtonColor: '#D59F3B',
+                reverseButtons: false, // Cancelar izquierda, Crear derecha
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
@@ -523,7 +527,7 @@
                 showConfirmButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#D59F3B',
-                reverseButtons: false,
+                reverseButtons: false, // Cancelar izquierda, Guardar derecha
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {

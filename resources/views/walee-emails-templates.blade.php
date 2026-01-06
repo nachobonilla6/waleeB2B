@@ -544,18 +544,21 @@
                             <option value="agricultura" ${template.tipo === 'agricultura' ? 'selected' : ''}>Agricultura</option>
                             <option value="b2b" ${template.tipo === 'b2b' ? 'selected' : ''}>B2B</option>
                             <option value="b2c" ${template.tipo === 'b2c' ? 'selected' : ''}>B2C</option>
-                            <option value="otro" ${template.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(template.tipo) ? 'selected' : ''}>Otro</option>
+                            ${tiposDisponibles.filter(t => !['business', 'agricultura', 'b2b', 'b2c'].includes(t)).map(t => 
+                                `<option value="${t}" ${template.tipo === t ? 'selected' : ''}>${t.charAt(0).toUpperCase() + t.slice(1)}</option>`
+                            ).join('')}
+                            <option value="otro" ${template.tipo && !['business', 'agricultura', 'b2b', 'b2c', ...tiposDisponibles].includes(template.tipo) ? 'selected' : ''}>Otro (nuevo tipo)</option>
                         </select>
                     </div>
                     
-                    <div id="tipo_personalizado_container" style="display: ${template.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(template.tipo) ? 'block' : 'none'};">
+                    <div id="tipo_personalizado_container" style="display: ${template.tipo && !['business', 'agricultura', 'b2b', 'b2c', ...tiposDisponibles].includes(template.tipo) ? 'block' : 'none'};">
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo personalizado</label>
                         <input 
                             type="text" 
                             name="tipo_personalizado" 
                             id="template_tipo_personalizado"
-                            placeholder="Escribe el tipo personalizado"
-                            value="${template.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(template.tipo) ? template.tipo : ''}"
+                            placeholder="Escribe el nuevo tipo"
+                            value="${template.tipo && !['business', 'agricultura', 'b2b', 'b2c', ...tiposDisponibles].includes(template.tipo) ? template.tipo : ''}"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
@@ -1125,6 +1128,36 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Función para mostrar/ocultar campo de tipo personalizado
+        function toggleTipoPersonalizado() {
+            const tipoSelect = document.getElementById('template_tipo');
+            const tipoPersonalizadoContainer = document.getElementById('tipo_personalizado_container');
+            const tipoPersonalizadoInput = document.getElementById('template_tipo_personalizado');
+            
+            if (tipoSelect && tipoPersonalizadoContainer) {
+                const tiposPredefinidos = ['business', 'agricultura', 'b2b', 'b2c'];
+                const tipoSeleccionado = tipoSelect.value;
+                
+                if (tipoSeleccionado === 'otro') {
+                    tipoPersonalizadoContainer.style.display = 'block';
+                    if (tipoPersonalizadoInput) {
+                        tipoPersonalizadoInput.focus();
+                    }
+                } else if (tipoSeleccionado && !tiposPredefinidos.includes(tipoSeleccionado) && !tiposDisponibles.includes(tipoSeleccionado)) {
+                    // Si el tipo seleccionado no está en ninguna lista, mostrar el campo
+                    tipoPersonalizadoContainer.style.display = 'block';
+                    if (tipoPersonalizadoInput) {
+                        tipoPersonalizadoInput.value = tipoSeleccionado;
+                    }
+                } else {
+                    tipoPersonalizadoContainer.style.display = 'none';
+                    if (tipoPersonalizadoInput) {
+                        tipoPersonalizadoInput.value = '';
+                    }
+                }
+            }
+        }
         
         // Template search functionality
         function filterTemplates() {

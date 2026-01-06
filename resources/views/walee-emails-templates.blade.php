@@ -344,11 +344,12 @@
                 width: modalWidth,
                 padding: '1rem',
                 showConfirmButton: true,
-                confirmButtonText: 'Guardar',
+                confirmButtonText: 'Crear',
                 confirmButtonColor: '#D59F3B',
                 showCancelButton: true,
                 cancelButtonText: 'Cancelar',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: false,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
@@ -525,6 +526,7 @@
                 showDenyButton: true,
                 denyButtonText: 'Eliminar',
                 denyButtonColor: '#ef4444',
+                reverseButtons: false,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 customClass: {
@@ -923,6 +925,17 @@
         // Estilos para SweetAlert dark/light mode
         const style = document.createElement('style');
         style.textContent = `
+            .swal2-container {
+                z-index: 99999 !important;
+            }
+            .swal2-backdrop {
+                z-index: 99998 !important;
+            }
+            .swal2-popup {
+                z-index: 99999 !important;
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+            }
             .dark-swal {
                 background: #1e293b !important;
                 color: #e2e8f0 !important;
@@ -960,10 +973,6 @@
             }
             .light-swal-deny {
                 background: #ef4444 !important;
-            }
-            .swal2-popup {
-                max-height: 90vh !important;
-                overflow-y: auto !important;
             }
             .swal2-html-container {
                 max-height: calc(90vh - 150px) !important;

@@ -195,13 +195,22 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                             </div>
+                            <select name="idioma" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm">
+                                <option value="">Todos los idiomas</option>
+                                <option value="es" {{ ($idiomaFilter ?? '') == 'es' ? 'selected' : '' }}>🇪🇸 Español</option>
+                                <option value="en" {{ ($idiomaFilter ?? '') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
+                                <option value="fr" {{ ($idiomaFilter ?? '') == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
+                                <option value="de" {{ ($idiomaFilter ?? '') == 'de' ? 'selected' : '' }}>🇩🇪 Deutsch</option>
+                                <option value="it" {{ ($idiomaFilter ?? '') == 'it' ? 'selected' : '' }}>🇮🇹 Italiano</option>
+                                <option value="pt" {{ ($idiomaFilter ?? '') == 'pt' ? 'selected' : '' }}>🇵🇹 Português</option>
+                            </select>
                             <button type="submit" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                                 <span>Buscar</span>
                             </button>
-                            @if($searchQuery ?? '')
+                            @if(($searchQuery ?? '') || ($idiomaFilter ?? ''))
                                 <a href="{{ route('walee.emails.pending') }}" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -227,11 +236,27 @@
                 
                 <div class="space-y-2">
                 @forelse($clientesPending as $cliente)
+                    @php
+                        // Bandera del idioma
+                        $banderas = [
+                            'es' => '🇪🇸',
+                            'en' => '🇬🇧',
+                            'fr' => '🇫🇷',
+                            'de' => '🇩🇪',
+                            'it' => '🇮🇹',
+                            'pt' => '🇵🇹'
+                        ];
+                        $bandera = ($cliente->idioma) ? ($banderas[$cliente->idioma] ?? '') : '';
+                    @endphp
                     <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
                         <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center border border-blue-500/30">
-                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
+                            @if($bandera)
+                                <span class="text-lg">{{ $bandera }}</span>
+                            @else
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            @endif
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-0.5">

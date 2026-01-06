@@ -2162,9 +2162,15 @@ Route::get('/walee-emails/sitios', function (\Illuminate\Http\Request $request) 
 
 Route::get('/walee-emails/pending', function (\Illuminate\Http\Request $request) {
     $searchQuery = $request->get('search', '');
+    $idiomaFilter = $request->get('idioma', '');
     
     // Obtener clientes pending con búsqueda
     $query = \App\Models\Client::where('estado', 'pending');
+    
+    // Aplicar filtro por idioma si existe
+    if ($idiomaFilter) {
+        $query->where('idioma', $idiomaFilter);
+    }
     
     // Aplicar búsqueda si existe
     if ($searchQuery) {
@@ -2198,7 +2204,7 @@ Route::get('/walee-emails/pending', function (\Illuminate\Http\Request $request)
         ->orderBy('name', 'asc')
         ->get(['id', 'name', 'email']);
     
-    return view('walee-emails-pending', compact('clientesPending', 'searchQuery', 'templates', 'clientesEnProceso', 'totalPropuestaPersonalizada', 'totalExtractor', 'totalEmails'));
+    return view('walee-emails-pending', compact('clientesPending', 'searchQuery', 'idiomaFilter', 'templates', 'clientesEnProceso', 'totalPropuestaPersonalizada', 'totalExtractor', 'totalEmails'));
 })->middleware(['auth'])->name('walee.emails.pending');
 
 Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request) {

@@ -40,8 +40,18 @@
         
         // Definir openConfigModal inmediatamente en el head para que esté disponible cuando se renderiza el HTML
         window.openConfigModal = function() {
-            console.log('openConfigModal: función placeholder llamada. La función completa se cargará en breve...');
+            console.log('openConfigModal: función placeholder llamada. Esperando carga completa del script...');
             // Esta función será reemplazada por la función completa más adelante
+            // Si se llama antes de que se cargue la función completa, esperar un momento y reintentar
+            setTimeout(() => {
+                if (window.openConfigModal && window.openConfigModal.toString().includes('async')) {
+                    console.log('Reintentando con función completa...');
+                    window.openConfigModal();
+                } else {
+                    console.error('openConfigModal aún no está completamente cargada');
+                    alert('Por favor, espera un momento y vuelve a intentar.');
+                }
+            }, 500);
         };
     </script>
     <style>

@@ -1399,6 +1399,155 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
     }
 })->middleware(['auth'])->name('walee.calendario.aplicaciones.crear');
 
+// Actualizar evento del calendario de aplicaciones
+Route::put('/walee-calendario-aplicaciones/actualizar', function (\Illuminate\Http\Request $request) {
+    \Log::info('PUT /walee-calendario-aplicaciones/actualizar - Inicio');
+    \Log::info('Request data: ' . json_encode($request->all()));
+    
+    try {
+        $validated = $request->validate([
+            'evento_id' => 'required|string',
+            'titulo' => 'required|string|max:255',
+            'fecha_inicio' => 'required|date',
+            'descripcion' => 'nullable|string',
+            'invitado_email' => 'nullable|email',
+        ]);
+        
+        // Crear una cita temporal para usar con GoogleCalendarService
+        $cita = new \App\Models\Cita();
+        $cita->google_event_id = $validated['evento_id'];
+        $cita->titulo = $validated['titulo'];
+        $cita->fecha_inicio = \Carbon\Carbon::parse($validated['fecha_inicio']);
+        $cita->fecha_fin = $cita->fecha_inicio->copy()->addHour();
+        $cita->descripcion = $validated['descripcion'] ?? null;
+        
+        // Si hay un email de invitado, agregarlo a invitados_emails
+        if (!empty($validated['invitado_email'])) {
+            $cita->invitados_emails = $validated['invitado_email'];
+        }
+        
+        // Verificar si está autorizado
+        $googleService = new \App\Services\GoogleCalendarService();
+        
+        if (!$googleService->isAuthorized()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No estás autorizado con Google Calendar. Por favor, conecta tu cuenta primero.',
+                'needs_auth' => true
+            ], 401);
+        }
+        
+        // Actualizar en Google Calendar
+        try {
+            $success = $googleService->updateEvent($cita);
+            
+            if ($success) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evento actualizado y sincronizado con Google Calendar',
+                ]);
+            } else {
+                \Log::error('updateEvent retornó false sin lanzar excepción');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se pudo actualizar el evento en Google Calendar. Verifica los logs para más detalles.'
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error actualizando evento en Google Calendar: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar en Google Calendar: ' . $e->getMessage(),
+            ], 500);
+        }
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error de validación: ' . implode(', ', array_map(function($errors) {
+                return implode(', ', $errors);
+            }, $e->errors())),
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Error general al actualizar evento: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar el evento: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.calendario.aplicaciones.actualizar');
+
+// Eliminar evento del calendario de aplicaciones
+Route::delete('/walee-calendario-aplicaciones/eliminar', function (\Illuminate\Http\Request $request) {
+    \Log::info('DELETE /walee-calendario-aplicaciones/eliminar - Inicio');
+    \Log::info('Request data: ' . json_encode($request->all()));
+    
+    try {
+        $validated = $request->validate([
+            'evento_id' => 'required|string',
+        ]);
+        
+        // Crear una cita temporal para usar con GoogleCalendarService
+        $cita = new \App\Models\Cita();
+        $cita->google_event_id = $validated['evento_id'];
+        
+        // Verificar si está autorizado
+        $googleService = new \App\Services\GoogleCalendarService();
+        
+        if (!$googleService->isAuthorized()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No estás autorizado con Google Calendar. Por favor, conecta tu cuenta primero.',
+                'needs_auth' => true
+            ], 401);
+        }
+        
+        // Eliminar de Google Calendar
+        try {
+            $success = $googleService->deleteEvent($cita);
+            
+            if ($success) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evento eliminado y sincronizado con Google Calendar',
+                ]);
+            } else {
+                \Log::error('deleteEvent retornó false sin lanzar excepción');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se pudo eliminar el evento en Google Calendar. Verifica los logs para más detalles.'
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error eliminando evento en Google Calendar: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar en Google Calendar: ' . $e->getMessage(),
+            ], 500);
+        }
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error de validación: ' . implode(', ', array_map(function($errors) {
+                return implode(', ', $errors);
+            }, $e->errors())),
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Error general al eliminar evento: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al eliminar el evento: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.calendario.aplicaciones.eliminar');
+
 // Rutas para Citas
 Route::post('/citas', function (\Illuminate\Http\Request $request) {
     try {

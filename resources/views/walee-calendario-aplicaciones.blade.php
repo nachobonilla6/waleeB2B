@@ -414,22 +414,44 @@
                                                     $hora = $fechaInicio->format('H:i');
                                                     $titulo = $evento->titulo ?? 'Sin título';
                                                 @endphp
-                                                <button 
-                                                    onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}');"
-                                                    class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 shadow-sm md:shadow-none"
-                                                    style="border-left: 4px solid #8b5cf6;"
-                                                    title="{{ $titulo }}"
-                                                >
-                                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
-                                                        <div class="flex items-center justify-between md:justify-start gap-2">
-                                                            <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
-                                                            @if(isset($evento->from_google) && $evento->from_google)
-                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
-                                                            @endif
+                                                <div class="group relative">
+                                                    <button 
+                                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}');"
+                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 shadow-sm md:shadow-none"
+                                                        style="border-left: 4px solid #8b5cf6;"
+                                                        title="{{ $titulo }}"
+                                                    >
+                                                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
+                                                            <div class="flex items-center justify-between md:justify-start gap-2">
+                                                                <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
+                                                                @if(isset($evento->from_google) && $evento->from_google)
+                                                                    <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
+                                                                @endif
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2">{{ $titulo }}</p>
-                                                </button>
+                                                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2">{{ $titulo }}</p>
+                                                    </button>
+                                                    @if(isset($evento->google_event_id) && $evento->google_event_id)
+                                                        <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <button 
+                                                                onclick="event.stopPropagation(); showEditarEventoModal('{{ $evento->google_event_id }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}');"
+                                                                class="p-1 rounded bg-blue-500 hover:bg-blue-600 text-white transition-all"
+                                                                title="Editar">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                                </svg>
+                                                            </button>
+                                                            <button 
+                                                                onclick="event.stopPropagation(); eliminarEvento('{{ $evento->google_event_id }}');"
+                                                                class="p-1 rounded bg-red-500 hover:bg-red-600 text-white transition-all"
+                                                                title="Eliminar">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             @endforeach
                                         @else
                                             <div class="text-center py-4 md:py-2">
@@ -777,8 +799,22 @@
             });
         }
         
-        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion) {
+        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput) {
             const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let buttonsHtml = '';
+            if (eventoId) {
+                buttonsHtml = `
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="Swal.close(); showEditarEventoModal('${eventoId}', '${titulo.replace(/'/g, "\\'")}', '${(descripcion || '').replace(/'/g, "\\'")}', '${fechaInput}');" class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all">
+                            Editar
+                        </button>
+                        <button onclick="Swal.close(); eliminarEvento('${eventoId}');" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+            }
             
             Swal.fire({
                 title: titulo || 'Evento',
@@ -787,13 +823,248 @@
                         ${fecha ? `<p class="text-sm"><strong>Fecha:</strong> ${fecha}</p>` : ''}
                         ${ubicacion ? `<p class="text-sm"><strong>Ubicación:</strong> ${ubicacion}</p>` : ''}
                         ${descripcion ? `<p class="text-sm"><strong>Descripción:</strong> ${descripcion}</p>` : ''}
-                        ${eventoId ? `<a href="https://calendar.google.com/calendar/event?eid=${encodeURIComponent(eventoId)}" target="_blank" class="text-sm text-violet-600 dark:text-violet-400 hover:underline">Abrir en Google Calendar</a>` : ''}
+                        ${eventoId ? `<a href="https://calendar.google.com/calendar/event?eid=${encodeURIComponent(eventoId)}" target="_blank" class="text-sm text-violet-600 dark:text-violet-400 hover:underline block mt-2">Abrir en Google Calendar</a>` : ''}
+                        ${buttonsHtml}
                     </div>
                 `,
+                showCancelButton: true,
                 confirmButtonText: 'Cerrar',
+                cancelButtonText: eventoId ? 'Editar' : '',
+                cancelButtonColor: eventoId ? '#3b82f6' : undefined,
                 confirmButtonColor: '#8b5cf6',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                reverseButtons: true,
+                didOpen: () => {
+                    if (eventoId) {
+                        const cancelBtn = document.querySelector('.swal2-cancel');
+                        if (cancelBtn) {
+                            cancelBtn.onclick = () => {
+                                Swal.close();
+                                showEditarEventoModal(eventoId, titulo, descripcion || '', fechaInput);
+                            };
+                        }
+                    }
+                }
+            });
+        }
+        
+        function showEditarEventoModal(eventoId, tituloActual, descripcionActual, fechaActual) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            // Generar opciones del select de clientes
+            const clientesOptions = `
+                <option value="">Seleccionar cliente...</option>
+                @foreach($clientesConEmail as $cliente)
+                <option value="{{ $cliente->email }}">{{ $cliente->name }} ({{ $cliente->email }})</option>
+                @endforeach
+            `;
+            
+            // Extraer email del cliente de la descripción si existe
+            let emailClienteSeleccionado = '';
+            if (descripcionActual && descripcionActual.includes('Cliente/Invitado:')) {
+                const match = descripcionActual.match(/Cliente\/Invitado:\s*([^\s]+)/);
+                if (match && match[1]) {
+                    emailClienteSeleccionado = match[1].trim();
+                }
+            }
+            
+            Swal.fire({
+                title: 'Editar Cita',
+                html: `
+                    <form id="editarEventoForm" class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                            <input type="text" id="editar_titulo" value="${tituloActual.replace(/"/g, '&quot;')}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado (Elegir un email de cliente)</label>
+                            <select id="editar_cliente_email" 
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                                ${clientesOptions}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                            <input type="datetime-local" id="editar_fecha" value="${fechaActual}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                buttonsStyling: true,
+                reverseButtons: true,
+                didOpen: () => {
+                    // Seleccionar el cliente si existe en la descripción
+                    if (emailClienteSeleccionado) {
+                        const select = document.getElementById('editar_cliente_email');
+                        if (select) {
+                            select.value = emailClienteSeleccionado;
+                        }
+                    }
+                },
+                preConfirm: async () => {
+                    const titulo = document.getElementById('editar_titulo').value;
+                    const fecha = document.getElementById('editar_fecha').value;
+                    const clienteEmail = document.getElementById('editar_cliente_email').value;
+                    
+                    if (!titulo || !fecha) {
+                        Swal.showValidationMessage('Título y fecha son requeridos');
+                        return false;
+                    }
+                    
+                    // Construir descripción con información del cliente
+                    const descripcion = clienteEmail ? `Cliente/Invitado: ${clienteEmail}` : '';
+                    
+                    try {
+                        const response = await fetch('{{ route("walee.calendario.aplicaciones.actualizar") }}', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({
+                                evento_id: eventoId,
+                                titulo: titulo,
+                                fecha_inicio: fecha,
+                                descripcion: descripcion,
+                                invitado_email: clienteEmail,
+                            }),
+                        });
+                        
+                        // Verificar si la respuesta es JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            const text = await response.text();
+                            console.error('Respuesta no es JSON:', text);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error del servidor',
+                                html: `
+                                    <p>El servidor devolvió una respuesta inesperada (${response.status}).</p>
+                                    <p class="text-xs mt-2">Por favor, revisa los logs del servidor o contacta al administrador.</p>
+                                `,
+                                confirmButtonColor: '#ef4444'
+                            });
+                            return false;
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cita actualizada',
+                                text: 'La cita se ha actualizado y sincronizado con Google Calendar',
+                                confirmButtonColor: '#8b5cf6'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al actualizar la cita',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error de conexión: ' + error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                    
+                    return false;
+                }
+            });
+        }
+        
+        function eliminarEvento(eventoId) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            Swal.fire({
+                title: '¿Eliminar cita?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                reverseButtons: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch('{{ route("walee.calendario.aplicaciones.eliminar") }}', {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({
+                                evento_id: eventoId,
+                            }),
+                        });
+                        
+                        // Verificar si la respuesta es JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            const text = await response.text();
+                            console.error('Respuesta no es JSON:', text);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error del servidor',
+                                html: `
+                                    <p>El servidor devolvió una respuesta inesperada (${response.status}).</p>
+                                    <p class="text-xs mt-2">Por favor, revisa los logs del servidor o contacta al administrador.</p>
+                                `,
+                                confirmButtonColor: '#ef4444'
+                            });
+                            return;
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Cita eliminada',
+                                text: 'La cita se ha eliminado y se ha sincronizado con Google Calendar',
+                                confirmButtonColor: '#8b5cf6'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al eliminar la cita',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error de conexión: ' + error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
             });
         }
     </script>

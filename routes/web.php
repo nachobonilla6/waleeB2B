@@ -1860,6 +1860,26 @@ Route::post('/walee-clientes-en-proceso/delete', function (\Illuminate\Http\Requ
     }
 })->middleware(['auth'])->name('walee.clientes.en-proceso.delete');
 
+// Ruta para toggle is_active
+Route::post('/walee-clientes-en-proceso/{id}/toggle-active', function ($id, \Illuminate\Http\Request $request) {
+    try {
+        $client = \App\Models\Client::findOrFail($id);
+        $client->is_active = $request->input('is_active', false);
+        $client->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado correctamente',
+            'is_active' => $client->is_active
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al actualizar el estado: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.clientes.en-proceso.toggle-active');
+
 // Rutas para WALEE Extraer Clientes
 Route::get('/walee-extraer-clientes', function () {
     return view('walee-extraer-clientes');

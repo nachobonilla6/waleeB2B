@@ -283,6 +283,20 @@
                                 </div>
                             </div>
                             
+                            <!-- Is Active Toggle -->
+                            <div class="flex-shrink-0 flex items-center gap-1.5">
+                                <button 
+                                    onclick="toggleIsActive({{ $cliente->id }}, {{ $cliente->is_active ? 'true' : 'false' }})"
+                                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ ($cliente->is_active ?? false) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
+                                    title="{{ ($cliente->is_active ?? false) ? 'Activo' : 'Inactivo' }}"
+                                >
+                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ ($cliente->is_active ?? false) ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                                </button>
+                                <span class="text-xs font-medium {{ ($cliente->is_active ?? false) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
+                                    {{ ($cliente->is_active ?? false) ? 'Sí' : 'No' }}
+                                </span>
+                            </div>
+                            
                             <!-- Action Buttons -->
                             <div class="flex-shrink-0 flex items-center gap-1.5">
                                 <!-- Email with AI Button -->
@@ -419,6 +433,35 @@
                 }
             });
             updateDeleteButton();
+        }
+        
+        // Toggle is_active
+        async function toggleIsActive(clientId, currentValue) {
+            const newValue = !currentValue;
+            
+            try {
+                const response = await fetch(`/walee-clientes-en-proceso/${clientId}/toggle-active`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        is_active: newValue
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Recargar la página para reflejar el cambio
+                    location.reload();
+                } else {
+                    alert('Error al actualizar el estado: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
         }
         
         // Update delete button visibility and count

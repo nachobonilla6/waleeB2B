@@ -25,6 +25,7 @@ class Client extends Model
         'proposed_site',
         'propuesta_enviada',
         'estado',
+        'is_active',
         'webhook_url',
         'webhook_productos',
         'page_id',
@@ -34,6 +35,7 @@ class Client extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     public function notes()

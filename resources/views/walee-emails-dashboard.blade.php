@@ -369,81 +369,28 @@
                         </a>
                     </div>
                     
-                    <!-- Clientes Pending -->
-                    @if(isset($clientesPending) && $clientesPending->count() > 0)
-                        <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-2">
-                                <h3 class="text-xs font-semibold text-slate-900 dark:text-white">Clientes Pending</h3>
-                                <a href="{{ route('walee.emails.pending') }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Ver todos</a>
+                    <!-- Clientes Pending - Contador -->
+                    <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                        <a href="{{ route('walee.emails.pending') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all group">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-xs text-slate-900 dark:text-white">Clientes Pendientes</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">Ver lista completa</p>
+                                </div>
                             </div>
-                            <div class="space-y-1.5 max-h-48 overflow-y-auto">
-                                @foreach($clientesPending as $cliente)
-                                    @php
-                                        // Obtener URL de la foto del cliente
-                                        $fotoUrl = null;
-                                        if ($cliente->foto) {
-                                            $fotoPath = $cliente->foto;
-                                            if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                                $fotoUrl = $fotoPath;
-                                            } else {
-                                                $filename = basename($fotoPath);
-                                                $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                                            }
-                                        }
-                                    @endphp
-                                    <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:shadow transition-all cursor-pointer group">
-                                        <div class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
-                                            @if($fotoUrl)
-                                                <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
-                                            @elseif($cliente->idioma)
-                                                @php
-                                                    $banderas = [
-                                                        'es' => '🇪🇸',
-                                                        'en' => '🇬🇧',
-                                                        'fr' => '🇫🇷',
-                                                        'de' => '🇩🇪',
-                                                        'it' => '🇮🇹',
-                                                        'pt' => '🇵🇹'
-                                                    ];
-                                                    $bandera = $banderas[$cliente->idioma] ?? '';
-                                                @endphp
-                                                @if($bandera)
-                                                    <span class="text-sm">{{ $bandera }}</span>
-                                                @else
-                                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
-                                                @endif
-                                            @else
-                                                <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
-                                            @endif
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="font-medium text-xs text-slate-900 dark:text-white truncate flex items-center gap-1.5">
-                                                @if($cliente->idioma)
-                                                    @php
-                                                        $banderas = [
-                                                            'es' => '🇪🇸',
-                                                            'en' => '🇬🇧',
-                                                            'fr' => '🇫🇷',
-                                                            'de' => '🇩🇪',
-                                                            'it' => '🇮🇹',
-                                                            'pt' => '🇵🇹'
-                                                        ];
-                                                        $bandera = $banderas[$cliente->idioma] ?? '';
-                                                    @endphp
-                                                    @if($bandera)
-                                                        <span class="text-sm">{{ $bandera }}</span>
-                                                    @endif
-                                                @endif
-                                                <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
-                                            </p>
-                                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
-                                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </a>
-                                @endforeach
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg sm:text-xl font-bold text-violet-600 dark:text-violet-400">{{ number_format($totalClientesPending) }}</span>
+                                <svg class="w-4 h-4 text-violet-600 dark:text-violet-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
                             </div>
-                        </div>
-                    @endif
+                        </a>
+                    </div>
                 </div>
             </div>
             

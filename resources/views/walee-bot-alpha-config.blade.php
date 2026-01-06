@@ -33,7 +33,7 @@
                 </label>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700">
                 <div>
                     <label for="recurrenciaExtraccion" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                         Recurrencia de extracción
@@ -56,6 +56,26 @@
                     </select>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                         Define cada cuánto tiempo se ejecutará automáticamente la extracción de clientes.
+                    </p>
+                </div>
+                <div>
+                    <label for="idiomaExtraccion" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                        Idioma para extracción
+                    </label>
+                    <select
+                        id="idiomaExtraccion"
+                        class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1.5"
+                    >
+                        <option value="">Todos</option>
+                        <option value="es">🇪🇸 Español</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="fr">🇫🇷 Français</option>
+                        <option value="de">🇩🇪 Deutsch</option>
+                        <option value="it">🇮🇹 Italiano</option>
+                        <option value="pt">🇵🇹 Português</option>
+                    </select>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        Filtra la extracción según el idioma principal del contenido.
                     </p>
                 </div>
                 <div>
@@ -149,6 +169,7 @@
         const recurrenciaSelect = document.getElementById('recurrenciaExtraccion');
         const industriaExtraccionSelect = document.getElementById('industriaExtraccion');
         const industriaExtraccionInput = document.getElementById('industriaExtraccionPersonalizada');
+        const idiomaExtraccionSelect = document.getElementById('idiomaExtraccion');
         const toggleEmails = document.getElementById('toggleEmails');
         const recurrenciaEmailsSelect = document.getElementById('recurrenciaEmails');
 
@@ -159,6 +180,8 @@
         let recurrenciaActual = @json($ordenExtraccion->recurrencia_horas ?? null);
         // Industria inicial de extracción
         let industriaExtraccionActual = configuracionExtraccion?.industria || '';
+        // Idioma inicial de extracción
+        let idiomaExtraccionActual = configuracionExtraccion?.idioma || '';
 
         if (recurrenciaSelect && recurrenciaActual !== null && recurrenciaActual !== undefined) {
             const normalizada = parseFloat(recurrenciaActual);
@@ -215,6 +238,10 @@
             }
         }
 
+        if (idiomaExtraccionSelect) {
+            idiomaExtraccionSelect.value = idiomaExtraccionActual || '';
+        }
+
         // Recurrencia inicial de emails desde la BD (normalizada)
         let recurrenciaEmailsActual = @json($ordenEmails->recurrencia_horas ?? null);
 
@@ -246,6 +273,7 @@
                         recurrencia_horas: recurrenciaActual ?? null,
                         configuracion: {
                             industria: industriaExtraccionActual || null,
+                            idioma: idiomaExtraccionActual || null,
                         },
                     })
                 });
@@ -294,6 +322,7 @@
                         recurrencia_horas: nuevaRecurrencia,
                         configuracion: {
                             industria: industriaExtraccionActual || null,
+                            idioma: idiomaExtraccionActual || null,
                         },
                     })
                 });
@@ -451,6 +480,10 @@
 
         industriaExtraccionInput?.addEventListener('input', (e) => {
             industriaExtraccionActual = e.target.value || '';
+        });
+
+        idiomaExtraccionSelect?.addEventListener('change', (e) => {
+            idiomaExtraccionActual = e.target.value || '';
         });
 
         toggleEmails?.addEventListener('change', (e) => {

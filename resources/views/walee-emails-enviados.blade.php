@@ -324,10 +324,19 @@
         
         function loadEmailTemplate(templateId) {
             const aiGenerateContainer = document.getElementById('ai_generate_container');
+            const tipoDisplay = document.getElementById('template_tipo_display');
+            const tipoBadgeInline = document.getElementById('template_tipo_badge_inline');
+            const tipoBadgeValue = document.getElementById('template_tipo_badge_value');
             
             if (!templateId || !emailTemplates) {
                 if (aiGenerateContainer) {
                     aiGenerateContainer.style.display = 'block';
+                }
+                if (tipoDisplay) {
+                    tipoDisplay.style.display = 'none';
+                }
+                if (tipoBadgeInline) {
+                    tipoBadgeInline.style.display = 'none';
                 }
                 return;
             }
@@ -336,6 +345,12 @@
             if (!template) {
                 if (aiGenerateContainer) {
                     aiGenerateContainer.style.display = 'block';
+                }
+                if (tipoDisplay) {
+                    tipoDisplay.style.display = 'none';
+                }
+                if (tipoBadgeInline) {
+                    tipoBadgeInline.style.display = 'none';
                 }
                 return;
             }
@@ -357,6 +372,68 @@
             if (bodyField) {
                 bodyField.value = emailModalData.body;
             }
+            
+            // Mostrar el tipo del template como badge
+            setTimeout(() => {
+                const tipoValue = document.getElementById('template_tipo_value');
+                
+                // Función para obtener colores del badge según el tipo
+                const getTipoColors = (tipo) => {
+                    const tipoColors = {
+                        'business': {
+                            class: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
+                            style: 'background-color: rgb(219 234 254); color: rgb(29 78 216); border: 1px solid rgb(147 197 253);'
+                        },
+                        'agricultura': {
+                            class: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
+                            style: 'background-color: rgb(220 252 231); color: rgb(21 128 61); border: 1px solid rgb(134 239 172);'
+                        },
+                        'b2b': {
+                            class: 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
+                            style: 'background-color: rgb(243 232 255); color: rgb(126 34 206); border: 1px solid rgb(196 181 253);'
+                        },
+                        'b2c': {
+                            class: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30',
+                            style: 'background-color: rgb(255 237 213); color: rgb(194 65 12); border: 1px solid rgb(254 215 170);'
+                        }
+                    };
+                    const defaultColors = {
+                        class: 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30',
+                        style: 'background-color: rgb(237 233 254); color: rgb(109 40 217); border: 1px solid rgb(196 181 253);'
+                    };
+                    return tipoColors[tipo] || defaultColors;
+                };
+                
+                if (template.tipo) {
+                    const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
+                    const tipoColors = getTipoColors(template.tipo);
+                    
+                    // Badge debajo del select
+                    if (tipoDisplay && tipoValue) {
+                        tipoValue.textContent = tipoText;
+                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + tipoColors.class;
+                        tipoValue.style.cssText = tipoColors.style + ' display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;';
+                        tipoDisplay.style.display = 'block';
+                        tipoDisplay.style.visibility = 'visible';
+                    }
+                    
+                    // Badge inline en el select
+                    if (tipoBadgeInline && tipoBadgeValue) {
+                        tipoBadgeValue.textContent = tipoText;
+                        tipoBadgeValue.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ' + tipoColors.class;
+                        tipoBadgeValue.style.cssText = tipoColors.style + ' display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 600;';
+                        tipoBadgeInline.style.display = 'block';
+                        tipoBadgeInline.style.visibility = 'visible';
+                    }
+                } else {
+                    if (tipoDisplay) {
+                        tipoDisplay.style.display = 'none';
+                    }
+                    if (tipoBadgeInline) {
+                        tipoBadgeInline.style.display = 'none';
+                    }
+                }
+            }, 100);
             
             if (aiGenerateContainer) {
                 aiGenerateContainer.style.display = 'none';
@@ -382,6 +459,16 @@
             const templateSelect = document.getElementById('email_template_select');
             if (templateSelect) {
                 templateSelect.value = '';
+            }
+            
+            // Ocultar badges de tipo
+            const tipoDisplay = document.getElementById('template_tipo_display');
+            const tipoBadgeInline = document.getElementById('template_tipo_badge_inline');
+            if (tipoDisplay) {
+                tipoDisplay.style.display = 'none';
+            }
+            if (tipoBadgeInline) {
+                tipoBadgeInline.style.display = 'none';
             }
             
             emailModalData.aiPrompt = '';
@@ -435,10 +522,22 @@
                 modalWidth = '95%';
             }
             
+            // Generar opciones de templates - ORDENAR: PRIMERO LOS QUE TIENEN TIPO
             let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
             if (emailTemplates && emailTemplates.length > 0) {
-                emailTemplates.forEach(template => {
-                    templatesOptions += `<option value="${template.id}">${template.nombre}</option>`;
+                // Ordenar: primero los que tienen tipo, luego los que no tienen
+                const sortedTemplates = [...emailTemplates].sort((a, b) => {
+                    const aHasTipo = a.tipo && a.tipo.trim() !== '';
+                    const bHasTipo = b.tipo && b.tipo.trim() !== '';
+                    if (aHasTipo && !bHasTipo) return -1; // a primero
+                    if (!aHasTipo && bHasTipo) return 1;  // b primero
+                    return 0; // mantener orden original si ambos tienen o no tienen tipo
+                });
+                
+                sortedTemplates.forEach(template => {
+                    // Mostrar el template siempre, con o sin tipo
+                    const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
+                    templatesOptions += `<option value="${template.id}" data-tipo="${template.tipo || ''}">${template.nombre}${tipoLabel}</option>`;
                 });
             }
             
@@ -459,10 +558,18 @@
                                 Usar AI en su lugar
                             </button>
                         </div>
-                        <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
-                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                            ${templatesOptions}
-                        </select>
+                        <div class="relative">
+                            <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
+                                class="w-full px-3 py-2 pr-20 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none appearance-none">
+                                ${templatesOptions}
+                            </select>
+                            <div id="template_tipo_badge_inline" class="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none z-10" style="display: none;">
+                                <span id="template_tipo_badge_value" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"></span>
+                            </div>
+                        </div>
+                        <div id="template_tipo_display" class="mt-2" style="display: none;">
+                            <span id="template_tipo_value" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"></span>
+                        </div>
                     </div>
                     ` : ''}
                     

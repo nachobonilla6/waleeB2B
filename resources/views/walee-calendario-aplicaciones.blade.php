@@ -474,20 +474,20 @@
                                                         <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2">{{ $titulo }}</p>
                                                     </button>
                                                     @if(isset($evento->google_event_id) && $evento->google_event_id)
-                                                        <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <div class="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <button 
                                                                 onclick="event.stopPropagation(); showEditarEventoModal('{{ $evento->google_event_id }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}');"
-                                                                class="p-1 rounded bg-blue-500 hover:bg-blue-600 text-white transition-all"
+                                                                class="p-0.5 rounded bg-blue-500/20 hover:bg-blue-500/40 dark:bg-blue-400/20 dark:hover:bg-blue-400/40 text-blue-600 dark:text-blue-400 border border-blue-500/30 dark:border-blue-400/30 transition-all backdrop-blur-sm"
                                                                 title="Editar">
-                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                                 </svg>
                                                             </button>
                                                             <button 
                                                                 onclick="event.stopPropagation(); eliminarEvento('{{ $evento->google_event_id }}');"
-                                                                class="p-1 rounded bg-red-500 hover:bg-red-600 text-white transition-all"
+                                                                class="p-0.5 rounded bg-red-500/20 hover:bg-red-500/40 dark:bg-red-400/20 dark:hover:bg-red-400/40 text-red-600 dark:text-red-400 border border-red-500/30 dark:border-red-400/30 transition-all backdrop-blur-sm"
                                                                 title="Eliminar">
-                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                                 </svg>
                                                             </button>
@@ -943,7 +943,7 @@
             }
             
             Swal.fire({
-                title: 'Editar Cita',
+                title: 'Nueva Cita',
                 html: `
                     <form id="editarEventoForm" class="space-y-3 text-left">
                         <div>

@@ -284,6 +284,56 @@
                 </div>
             </header>
             
+            @if(isset($ordenExtraccion))
+                @php
+                    $config = $ordenExtraccion->configuracion ?? [];
+                    $recurrenciaConfig = $config['recurrencia'] ?? $ordenExtraccion->recurrencia_horas ?? null;
+                    $idiomaConfig = $config['idioma'] ?? null;
+                    $industriaConfig = $config['industria'] ?? null;
+
+                    $idiomasLabels = [
+                        'es' => 'Español',
+                        'en' => 'Inglés',
+                        'fr' => 'Francés',
+                        'de' => 'Alemán',
+                        'it' => 'Italiano',
+                        'pt' => 'Portugués',
+                    ];
+
+                    // Texto de recurrencia
+                    $txtRecurrencia = 'sin recurrencia';
+                    if (!is_null($recurrenciaConfig)) {
+                        if ((float)$recurrenciaConfig === 0.5) {
+                            $txtRecurrencia = 'cada media hora';
+                        } elseif ((float)$recurrenciaConfig === 1.0) {
+                            $txtRecurrencia = 'cada 1 hora';
+                        } else {
+                            $txtRecurrencia = 'cada ' . (float)$recurrenciaConfig . ' horas';
+                        }
+                    }
+
+                    // Texto de idioma
+                    $txtIdioma = $idiomaConfig
+                        ? ($idiomasLabels[$idiomaConfig] ?? $idiomaConfig)
+                        : 'todos los idiomas';
+
+                    // Texto de industria
+                    $txtIndustria = $industriaConfig ?: 'todas las industrias';
+                @endphp
+                <div class="mb-3 sm:mb-4">
+                    <div class="inline-flex items-start gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] sm:text-xs text-slate-700 dark:text-slate-300">
+                        <span class="mt-0.5">
+                            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13h2l3 7 4-14 3 7h6" />
+                            </svg>
+                        </span>
+                        <span>
+                            <span class="font-semibold">Extractor configurado:</span>
+                            <span> {{ $txtRecurrencia }}, idioma: {{ $txtIdioma }}, industria: {{ $txtIndustria }}.</span>
+                        </span>
+                    </div>
+                </div>
+            @endif
             
             <!-- Search Bar y Filtros -->
             <div class="mb-4">

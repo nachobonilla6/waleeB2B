@@ -159,6 +159,7 @@
                                     @elseif($template->tipo === 'agricultura') bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400
                                     @elseif($template->tipo === 'b2b') bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400
                                     @elseif($template->tipo === 'b2c') bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400
+                                    @else bg-slate-100 dark:bg-slate-500/20 text-slate-700 dark:text-slate-400
                                     @endif">
                                     {{ ucfirst($template->tipo) }}
                                 </span>
@@ -302,6 +303,7 @@
                         <select 
                             name="tipo" 
                             id="template_tipo"
+                            onchange="toggleTipoPersonalizado()"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                             <option value="">Seleccionar tipo (opcional)</option>
@@ -309,7 +311,20 @@
                             <option value="agricultura" ${formData.tipo === 'agricultura' ? 'selected' : ''}>Agricultura</option>
                             <option value="b2b" ${formData.tipo === 'b2b' ? 'selected' : ''}>B2B</option>
                             <option value="b2c" ${formData.tipo === 'b2c' ? 'selected' : ''}>B2C</option>
+                            <option value="otro" ${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(formData.tipo) ? 'selected' : ''}>Otro</option>
                         </select>
+                    </div>
+                    
+                    <div id="tipo_personalizado_container" style="display: ${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(formData.tipo) ? 'block' : 'none'};">
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo personalizado</label>
+                        <input 
+                            type="text" 
+                            name="tipo_personalizado" 
+                            id="template_tipo_personalizado"
+                            placeholder="Escribe el tipo personalizado"
+                            value="${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(formData.tipo) ? formData.tipo : ''}"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
                     </div>
                     
                     <div>
@@ -408,9 +423,18 @@
                     if (!form) return false;
                     
                     const nombre = form.querySelector('[name="nombre"]')?.value;
-                    const tipo = form.querySelector('[name="tipo"]')?.value;
+                    const tipoSelect = form.querySelector('[name="tipo"]')?.value;
+                    const tipoPersonalizado = form.querySelector('[name="tipo_personalizado"]')?.value;
                     const asunto = form.querySelector('[name="asunto"]')?.value;
                     const contenido = form.querySelector('[name="contenido"]')?.value;
+                    
+                    // Determinar el tipo final: si es "otro", usar el valor personalizado
+                    let tipoFinal = null;
+                    if (tipoSelect === 'otro' && tipoPersonalizado && tipoPersonalizado.trim()) {
+                        tipoFinal = tipoPersonalizado.trim();
+                    } else if (tipoSelect && tipoSelect !== 'otro') {
+                        tipoFinal = tipoSelect;
+                    }
                     
                     if (!nombre || nombre.trim() === '') {
                         Swal.showValidationMessage('El nombre es requerido');
@@ -427,7 +451,7 @@
                     
                     return {
                         nombre: nombre.trim(),
-                        tipo: tipo || null,
+                        tipo: tipoFinal,
                         asunto: asunto.trim(),
                         contenido: contenido.trim(),
                         ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || null,
@@ -448,9 +472,20 @@
             const form = document.getElementById('template-form');
             if (!form) return;
             
+            const tipoSelect = form.querySelector('[name="tipo"]')?.value || '';
+            const tipoPersonalizado = form.querySelector('[name="tipo_personalizado"]')?.value || '';
+            
+            // Determinar el tipo final para guardar
+            let tipoFinal = '';
+            if (tipoSelect === 'otro' && tipoPersonalizado) {
+                tipoFinal = tipoPersonalizado;
+            } else if (tipoSelect && tipoSelect !== 'otro') {
+                tipoFinal = tipoSelect;
+            }
+            
             const formData = {
                 nombre: form.querySelector('[name="nombre"]')?.value || '',
-                tipo: form.querySelector('[name="tipo"]')?.value || '',
+                tipo: tipoFinal,
                 asunto: form.querySelector('[name="asunto"]')?.value || '',
                 contenido: form.querySelector('[name="contenido"]')?.value || '',
                 ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || ''
@@ -497,6 +532,7 @@
                         <select 
                             name="tipo" 
                             id="template_tipo"
+                            onchange="toggleTipoPersonalizado()"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                             <option value="">Seleccionar tipo (opcional)</option>
@@ -504,7 +540,20 @@
                             <option value="agricultura" ${template.tipo === 'agricultura' ? 'selected' : ''}>Agricultura</option>
                             <option value="b2b" ${template.tipo === 'b2b' ? 'selected' : ''}>B2B</option>
                             <option value="b2c" ${template.tipo === 'b2c' ? 'selected' : ''}>B2C</option>
+                            <option value="otro" ${template.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(template.tipo) ? 'selected' : ''}>Otro</option>
                         </select>
+                    </div>
+                    
+                    <div id="tipo_personalizado_container" style="display: ${template.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(template.tipo) ? 'block' : 'none'};">
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo personalizado</label>
+                        <input 
+                            type="text" 
+                            name="tipo_personalizado" 
+                            id="template_tipo_personalizado"
+                            placeholder="Escribe el tipo personalizado"
+                            value="${template.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(template.tipo) ? template.tipo : ''}"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
                     </div>
                     
                     <div>

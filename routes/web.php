@@ -2287,7 +2287,7 @@ Route::get('/walee-emails/templates', function () {
 Route::post('/email-templates', function (\Illuminate\Http\Request $request) {
     $validated = $request->validate([
         'nombre' => 'required|string|max:255',
-        'tipo' => 'nullable|string|in:business,agricultura,b2b,b2c',
+        'tipo' => 'nullable|string|max:50',
         'asunto' => 'required|string|max:255',
         'contenido' => 'required|string',
         'ai_prompt' => 'nullable|string',
@@ -2316,7 +2316,7 @@ Route::put('/email-templates/{id}', function (\Illuminate\Http\Request $request,
     
     $validated = $request->validate([
         'nombre' => 'required|string|max:255',
-        'tipo' => 'nullable|string|in:business,agricultura,b2b,b2c',
+        'tipo' => 'nullable|string|max:50',
         'asunto' => 'required|string|max:255',
         'contenido' => 'required|string',
         'ai_prompt' => 'nullable|string',

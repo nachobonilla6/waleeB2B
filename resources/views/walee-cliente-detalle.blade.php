@@ -1866,7 +1866,8 @@
             }
         }
         
-        function openEmailModal() {
+        // Definir openEmailModal inmediatamente y hacerla global
+        window.openEmailModal = function openEmailModal() {
             console.log('openEmailModal llamado');
             try {
                 // Verificar que SweetAlert2 esté disponible
@@ -1897,15 +1898,19 @@
                 console.error('Stack trace:', error.stack);
                 alert('Error al abrir el modal de email: ' + error.message + '. Por favor, recarga la página.');
             }
-        }
+        };
         
-        // Asegurar que la función esté disponible globalmente
-        window.openEmailModal = openEmailModal;
+        // También definirla localmente para compatibilidad
+        const openEmailModal = window.openEmailModal;
         
         // Verificar que la función esté disponible después de cargar
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM cargado, openEmailModal disponible:', typeof window.openEmailModal);
-        });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM cargado, openEmailModal disponible:', typeof window.openEmailModal);
+            });
+        } else {
+            console.log('DOM ya cargado, openEmailModal disponible:', typeof window.openEmailModal);
+        }
         
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;

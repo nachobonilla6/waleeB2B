@@ -99,7 +99,8 @@
         
         $idiomaFilter = request()->get('idioma', '');
         
-        $query = Client::where('estado', 'activo');
+        $query = Client::where('estado', 'activo')
+            ->where('is_active', true);
         
         // Aplicar filtro por idioma si existe
         if ($idiomaFilter) {

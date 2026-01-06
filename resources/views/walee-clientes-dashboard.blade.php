@@ -109,35 +109,40 @@
         use App\Models\PublicidadEvento;
         use Carbon\Carbon;
         
-        // Estadísticas generales (solo clientes activos)
-        $totalClientes = Client::where('estado', 'activo')->count();
+        // Estadísticas generales (solo clientes activos con is_active = true)
+        $totalClientes = Client::where('estado', 'activo')->where('is_active', true)->count();
         $clientesPending = Client::where('estado', 'pending')->count();
         $clientesPropuestaEnviada = Client::where('estado', 'propuesta_enviada')->count();
-        $clientesActivos = Client::where('estado', 'activo')->count();
+        $clientesActivos = Client::where('estado', 'activo')->where('is_active', true)->count();
         
-        // Clientes nuevos (solo activos)
+        // Clientes nuevos (solo activos con is_active = true)
         $clientesHoy = Client::where('estado', 'activo')
+            ->where('is_active', true)
             ->whereDate('created_at', today())
             ->count();
         $clientesEsteMes = Client::where('estado', 'activo')
+            ->where('is_active', true)
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
         
-        // Clientes de esta semana (solo activos)
+        // Clientes de esta semana (solo activos con is_active = true)
         $inicioSemana = now()->startOfWeek();
         $finSemana = now()->endOfWeek();
         $clientesEstaSemana = Client::where('estado', 'activo')
+            ->where('is_active', true)
             ->whereBetween('created_at', [$inicioSemana, $finSemana])
             ->count();
         
-        // Clientes de este año (solo activos)
+        // Clientes de este año (solo activos con is_active = true)
         $clientesEsteAno = Client::where('estado', 'activo')
+            ->where('is_active', true)
             ->whereYear('created_at', now()->year)
             ->count();
         
-        // Clientes recientes (últimos 5, solo activos)
+        // Clientes recientes (últimos 5, solo activos con is_active = true)
         $clientesRecientes = Client::where('estado', 'activo')
+            ->where('is_active', true)
             ->orderBy('updated_at', 'desc')
             ->limit(5)
             ->get();
@@ -175,10 +180,11 @@
                     continue;
                 }
                 
-                // Buscar el cliente correspondiente en Client por email (solo activos)
+                // Buscar el cliente correspondiente en Client por email (solo activos con is_active = true)
                 $client = null;
                 if (!empty($emailNormalizado)) {
                     $client = Client::where('estado', 'activo')
+                        ->where('is_active', true)
                         ->whereRaw('LOWER(TRIM(email)) = ?', [$emailNormalizado])
                         ->first();
                 }
@@ -187,6 +193,7 @@
                 if (!$client && !empty($clientePlaneador->nombre_empresa)) {
                     $nombreNormalizado = trim($clientePlaneador->nombre_empresa);
                     $client = Client::where('estado', 'activo')
+                        ->where('is_active', true)
                         ->where('name', $nombreNormalizado)
                         ->first();
                 }
@@ -194,6 +201,7 @@
                 // Si aún no se encuentra, buscar por nombre parcial (último recurso)
                 if (!$client && !empty($clientePlaneador->nombre_empresa)) {
                     $client = Client::where('estado', 'activo')
+                        ->where('is_active', true)
                         ->where('name', 'like', '%' . $clientePlaneador->nombre_empresa . '%')
                         ->first();
                 }
@@ -254,6 +262,7 @@
             $fecha = now()->subDays($i);
             $ultimos7Dias[] = $fecha->format('d/m');
             $clientesPorDia[] = Client::where('estado', 'activo')
+                ->where('is_active', true)
                 ->whereDate('created_at', $fecha->format('Y-m-d'))
                 ->count();
         }

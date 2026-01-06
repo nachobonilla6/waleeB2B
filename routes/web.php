@@ -1489,6 +1489,7 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'nullable|date|after:fecha_inicio',
             'descripcion' => 'nullable|string',
             'invitado_email' => 'nullable|email',
         ]);
@@ -1497,7 +1498,10 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
         $cita = new \App\Models\Cita();
         $cita->titulo = $validated['titulo'];
         $cita->fecha_inicio = \Carbon\Carbon::parse($validated['fecha_inicio']);
-        $cita->fecha_fin = $cita->fecha_inicio->copy()->addHour();
+        // Si viene fecha_fin, usarla; si no, calcular 2 horas después
+        $cita->fecha_fin = !empty($validated['fecha_fin']) 
+            ? \Carbon\Carbon::parse($validated['fecha_fin'])
+            : $cita->fecha_inicio->copy()->addHours(2);
         $cita->descripcion = $validated['descripcion'] ?? null;
         $cita->estado = 'programada';
         

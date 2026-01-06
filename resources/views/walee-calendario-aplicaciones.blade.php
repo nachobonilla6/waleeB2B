@@ -707,6 +707,11 @@
         function showNuevoEventoModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             
+            // Calcular fecha y hora por defecto (hora actual y 2 horas después)
+            const now = new Date();
+            const fechaInicio = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            const fechaFin = new Date(now.getTime() + (2 * 60 * 60 * 1000) - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            
             // Generar opciones del select de clientes
             const clientesOptions = `
                 <option value="">Seleccionar cliente...</option>
@@ -716,7 +721,7 @@
             `;
             
             Swal.fire({
-                title: 'Nueva Cita',
+                title: 'Nuevo Evento',
                 html: `
                     <form id="nuevoEventoForm" class="space-y-3 text-left">
                         <div>
@@ -732,8 +737,13 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                            <input type="datetime-local" id="evento_fecha" required
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora de Inicio</label>
+                            <input type="datetime-local" id="evento_fecha_inicio" value="${fechaInicio}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora de Fin</label>
+                            <input type="datetime-local" id="evento_fecha_fin" value="${fechaFin}" required
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                     </form>
@@ -747,13 +757,30 @@
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 buttonsStyling: true,
                 reverseButtons: true, // Cancelar a la izquierda, Guardar a la derecha
+                didOpen: () => {
+                    // Actualizar fecha de fin cuando cambie la fecha de inicio
+                    const fechaInicioInput = document.getElementById('evento_fecha_inicio');
+                    const fechaFinInput = document.getElementById('evento_fecha_fin');
+                    
+                    fechaInicioInput.addEventListener('change', function() {
+                        const inicio = new Date(this.value);
+                        const fin = new Date(inicio.getTime() + (2 * 60 * 60 * 1000));
+                        fechaFinInput.value = new Date(fin.getTime() - (fin.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    });
+                },
                 preConfirm: async () => {
                     const titulo = document.getElementById('evento_titulo').value;
-                    const fecha = document.getElementById('evento_fecha').value;
+                    const fechaInicio = document.getElementById('evento_fecha_inicio').value;
+                    const fechaFin = document.getElementById('evento_fecha_fin').value;
                     const clienteEmail = document.getElementById('evento_cliente_email').value;
                     
-                    if (!titulo || !fecha) {
-                        Swal.showValidationMessage('Título y fecha son requeridos');
+                    if (!titulo || !fechaInicio || !fechaFin) {
+                        Swal.showValidationMessage('Título, fecha de inicio y fecha de fin son requeridos');
+                        return false;
+                    }
+                    
+                    if (new Date(fechaFin) <= new Date(fechaInicio)) {
+                        Swal.showValidationMessage('La fecha de fin debe ser posterior a la fecha de inicio');
                         return false;
                     }
                     
@@ -778,7 +805,8 @@
                             },
                             body: JSON.stringify({
                                 titulo: titulo,
-                                fecha_inicio: fecha,
+                                fecha_inicio: fechaInicio,
+                                fecha_fin: fechaFin,
                                 descripcion: descripcion,
                                 invitado_email: emailFinal,
                             }),
@@ -861,7 +889,12 @@
         }
         
         function showNuevoEventoModalConFecha(fecha, hora) {
-            const fechaHora = fecha + 'T' + hora;
+            const fechaHoraInicio = fecha + 'T' + hora;
+            // Calcular fecha de fin (2 horas después)
+            const fechaInicioObj = new Date(fechaHoraInicio);
+            const fechaFinObj = new Date(fechaInicioObj.getTime() + (2 * 60 * 60 * 1000));
+            const fechaHoraFin = new Date(fechaFinObj.getTime() - (fechaFinObj.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             // Generar opciones del select de clientes
@@ -889,8 +922,13 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                            <input type="datetime-local" id="evento_fecha" value="${fechaHora}" required
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora de Inicio</label>
+                            <input type="datetime-local" id="evento_fecha_inicio" value="${fechaHoraInicio}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora de Fin</label>
+                            <input type="datetime-local" id="evento_fecha_fin" value="${fechaHoraFin}" required
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                     </form>
@@ -903,13 +941,30 @@
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    // Actualizar fecha de fin cuando cambie la fecha de inicio
+                    const fechaInicioInput = document.getElementById('evento_fecha_inicio');
+                    const fechaFinInput = document.getElementById('evento_fecha_fin');
+                    
+                    fechaInicioInput.addEventListener('change', function() {
+                        const inicio = new Date(this.value);
+                        const fin = new Date(inicio.getTime() + (2 * 60 * 60 * 1000));
+                        fechaFinInput.value = new Date(fin.getTime() - (fin.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    });
+                },
                 preConfirm: async () => {
                     const titulo = document.getElementById('evento_titulo').value;
-                    const fecha = document.getElementById('evento_fecha').value;
+                    const fechaInicio = document.getElementById('evento_fecha_inicio').value;
+                    const fechaFin = document.getElementById('evento_fecha_fin').value;
                     const clienteEmail = document.getElementById('evento_cliente_email').value;
                     
-                    if (!titulo || !fecha) {
-                        Swal.showValidationMessage('Título y fecha son requeridos');
+                    if (!titulo || !fechaInicio || !fechaFin) {
+                        Swal.showValidationMessage('Título, fecha de inicio y fecha de fin son requeridos');
+                        return false;
+                    }
+                    
+                    if (new Date(fechaFin) <= new Date(fechaInicio)) {
+                        Swal.showValidationMessage('La fecha de fin debe ser posterior a la fecha de inicio');
                         return false;
                     }
                     
@@ -934,7 +989,8 @@
                             },
                             body: JSON.stringify({
                                 titulo: titulo,
-                                fecha_inicio: fecha,
+                                fecha_inicio: fechaInicio,
+                                fecha_fin: fechaFin,
                                 descripcion: descripcion,
                                 invitado_email: emailFinal,
                             }),

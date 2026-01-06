@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Clientes Pending</title>
-    <meta name="description" content="Walee - Clientes Pending">
+    <title>Walee - Esperando Respuesta</title>
+    <meta name="description" content="Walee - Esperando Respuesta">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -93,14 +93,14 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Clientes Pending'; @endphp
+            @php $pageTitle = 'Esperando Respuesta'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                 <div>
                     <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                        Clientes Pending
+                        Esperando Respuesta
                     </h1>
                 </div>
                 <div class="flex items-center gap-2">
@@ -168,7 +168,7 @@
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
-                        Clientes Pending
+                        Esperando Respuesta
                         <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
                             ({{ $clientesPending->total() }})
                         </span>
@@ -231,7 +231,7 @@
                     </a>
                 @empty
                     <div class="text-center py-8">
-                        <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes pending</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes esperando respuesta</p>
                     </div>
                 @endforelse
                 </div>

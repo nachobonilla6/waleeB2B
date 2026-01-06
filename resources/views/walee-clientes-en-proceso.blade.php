@@ -85,6 +85,7 @@
         use App\Models\PropuestaPersonalizada;
         
         $clientes = Client::whereIn('estado', ['pending', 'received'])
+            ->withCount('emails')
             ->orderBy('updated_at', 'desc')
             ->paginate(5);
         
@@ -271,6 +272,16 @@
                                         </div>
                                     </div>
                                 </a>
+                                
+                                <!-- Email Counter -->
+                                <div class="flex-shrink-0 flex items-center gap-1.5 sm:gap-2 mr-1 sm:mr-2">
+                                    <div class="bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-lg sm:rounded-xl px-2 sm:px-2.5 py-1 sm:py-1.5 flex items-center gap-1 sm:gap-1.5">
+                                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span class="text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cliente->emails_count ?? 0 }}</span>
+                                    </div>
+                                </div>
                                 
                                 <!-- Action Buttons -->
                                 <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">

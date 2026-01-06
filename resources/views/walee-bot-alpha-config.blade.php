@@ -476,14 +476,20 @@
                 }
                 industriaExtraccionActual = value || '';
             }
+            // Guardar cambios de configuración (industria predefinida) inmediatamente
+            guardarEstadoExtraccion(toggleExtraccion?.checked ?? false);
         });
 
         industriaExtraccionInput?.addEventListener('input', (e) => {
             industriaExtraccionActual = e.target.value || '';
+            // Guardar cambios de configuración (industria personalizada) inmediatamente
+            guardarEstadoExtraccion(toggleExtraccion?.checked ?? false);
         });
 
         idiomaExtraccionSelect?.addEventListener('change', (e) => {
             idiomaExtraccionActual = e.target.value || '';
+            // Guardar cambios de configuración (idioma) inmediatamente
+            guardarEstadoExtraccion(toggleExtraccion?.checked ?? false);
         });
 
         toggleEmails?.addEventListener('change', (e) => {

@@ -550,6 +550,19 @@
         function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput, hasAccepted = false, hasDeclined = false, hasTentative = false) {
             const isDarkMode = document.documentElement.classList.contains('dark');
             
+            // Extraer información del invitado de la descripción
+            let invitadoEmail = '';
+            let descripcionLimpia = descripcion || '';
+            
+            if (descripcion && descripcion.includes('Cliente/Invitado:')) {
+                const match = descripcion.match(/Cliente\/Invitado:\s*([^\n\r]+)/);
+                if (match && match[1]) {
+                    invitadoEmail = match[1].trim();
+                    // Remover la línea del invitado de la descripción
+                    descripcionLimpia = descripcion.replace(/Cliente\/Invitado:\s*[^\n\r]+/g, '').trim();
+                }
+            }
+            
             let buttonsHtml = '';
             if (eventoId) {
                 buttonsHtml = `
@@ -567,8 +580,8 @@
             let responseBadge = '';
             if (hasAccepted) {
                 responseBadge = `
-                    <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
-                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="flex items-center gap-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
                         <span class="text-sm font-medium text-emerald-700 dark:text-emerald-300">El invitado ha aceptado la invitación</span>
@@ -576,8 +589,8 @@
                 `;
             } else if (hasDeclined) {
                 responseBadge = `
-                    <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                        <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                        <svg class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                         </svg>
                         <span class="text-sm font-medium text-red-700 dark:text-red-300">El invitado ha rechazado la invitación</span>
@@ -585,8 +598,8 @@
                 `;
             } else if (hasTentative) {
                 responseBadge = `
-                    <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="flex items-center gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                         </svg>
                         <span class="text-sm font-medium text-amber-700 dark:text-amber-300">El invitado respondió "Tal vez"</span>
@@ -611,6 +624,26 @@
                                 </div>
                             </div>
                         ` : ''}
+                        ${invitadoEmail ? `
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-700">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide mb-1">Invitado</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-100">${invitadoEmail}</p>
+                                        <a href="mailto:${invitadoEmail}" class="p-1 rounded-md bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 transition-all" title="Enviar email">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
                         ${ubicacion ? `
                             <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                 <div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
@@ -625,7 +658,7 @@
                                 </div>
                             </div>
                         ` : ''}
-                        ${descripcion ? `
+                        ${descripcionLimpia ? `
                             <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                 <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -634,7 +667,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">Descripción</p>
-                                    <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">${descripcion}</p>
+                                    <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">${descripcionLimpia}</p>
                                 </div>
                             </div>
                         ` : ''}

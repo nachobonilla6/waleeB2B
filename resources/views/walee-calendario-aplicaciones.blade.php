@@ -376,12 +376,12 @@
                                     <span class="hidden sm:inline">Sincronizar</span>
                                     <span class="sm:hidden">Sync</span>
                                 </button>
-                                <button onclick="sincronizarCitasBD()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95" title="Sincronizar citas de la base de datos con Google Calendar">
+                                <button onclick="sincronizarCitasBD()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95" title="Sincronizar citas y tareas bidireccionalmente con Google Calendar">
                                     <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                                     </svg>
-                                    <span class="hidden sm:inline">Sincronizar Citas BD</span>
-                                    <span class="sm:hidden">Citas</span>
+                                    <span class="hidden sm:inline">Sincronizar Todo</span>
+                                    <span class="sm:hidden">Sync</span>
                                 </button>
                                 <form action="{{ route('google-calendar.disconnect') }}" method="POST" class="inline">
                                     @csrf

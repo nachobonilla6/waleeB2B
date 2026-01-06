@@ -162,7 +162,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <button 
                                     onclick="verTemplate({{ $template->id }})"
-                                    class="px-2 py-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-medium transition-all text-xs flex items-center justify-center gap-1"
+                                    class="px-2 py-1.5 rounded-md bg-slate-700 dark:bg-slate-600 hover:bg-slate-800 dark:hover:bg-slate-500 text-white font-medium transition-all text-xs flex items-center justify-center gap-1"
                                     title="Ver"
                                 >
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +173,7 @@
                                 </button>
                                 <button 
                                     onclick="editTemplate({{ $template->id }})"
-                                    class="px-2 py-1.5 rounded-md bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 font-medium transition-all text-xs flex items-center justify-center gap-1"
+                                    class="px-2 py-1.5 rounded-md bg-blue-700 dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-500 text-white font-medium transition-all text-xs flex items-center justify-center gap-1"
                                     title="Editar"
                                 >
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@
                                 </button>
                                 <button 
                                     onclick="enviarTemplate({{ $template->id }})"
-                                    class="px-2 py-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 font-medium transition-all text-xs flex items-center justify-center gap-1"
+                                    class="px-2 py-1.5 rounded-md bg-walee-600 dark:bg-walee-500 hover:bg-walee-700 dark:hover:bg-walee-400 text-white font-medium transition-all text-xs flex items-center justify-center gap-1"
                                     title="Enviar"
                                 >
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,7 +193,7 @@
                                 </button>
                                 <button 
                                     onclick="deleteTemplate({{ $template->id }})"
-                                    class="px-2 py-1.5 rounded-md bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 font-medium transition-all text-xs flex items-center justify-center gap-1"
+                                    class="px-2 py-1.5 rounded-md bg-red-700 dark:bg-red-600 hover:bg-red-800 dark:hover:bg-red-500 text-white font-medium transition-all text-xs flex items-center justify-center gap-1"
                                     title="Eliminar"
                                 >
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

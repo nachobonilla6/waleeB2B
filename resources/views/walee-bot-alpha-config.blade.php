@@ -21,7 +21,7 @@
             </a>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</p>
@@ -32,12 +32,47 @@
                     <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 dark:peer-focus:ring-blue-400 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-blue-500"></div>
                 </label>
             </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div>
+                    <label for="recurrenciaExtraccion" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                        Recurrencia de extracción
+                    </label>
+                    <select
+                        id="recurrenciaExtraccion"
+                        class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Sin recurrencia</option>
+                        <option value="0.5">Cada media hora</option>
+                        <option value="1">Cada una hora</option>
+                        <option value="2">Cada 2 horas</option>
+                        <option value="4">Cada 4 horas</option>
+                        <option value="6">Cada 6 horas</option>
+                        <option value="8">Cada 8 horas</option>
+                        <option value="12">Cada 12 horas</option>
+                        <option value="24">Cada 24 horas</option>
+                        <option value="48">Cada 48 horas</option>
+                        <option value="76">Cada 76 horas</option>
+                    </select>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        Define cada cuánto tiempo se ejecutará automáticamente la extracción de clientes.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const toggleExtraccion = document.getElementById('toggleExtraccion');
+        const recurrenciaSelect = document.getElementById('recurrenciaExtraccion');
+
+        // Recurrencia inicial desde la BD
+        let recurrenciaActual = @json($ordenExtraccion->recurrencia_horas ?? null);
+
+        if (recurrenciaSelect && recurrenciaActual) {
+            recurrenciaSelect.value = String(recurrenciaActual);
+        }
 
         async function guardarEstadoExtraccion(activo) {
             const isDark = document.documentElement.classList.contains('dark');
@@ -53,7 +88,7 @@
                     body: JSON.stringify({
                         tipo: 'extraccion_clientes',
                         activo: activo,
-                        recurrencia_horas: null,
+                        recurrencia_horas: recurrenciaActual ?? null,
                         configuracion: null,
                     })
                 });
@@ -85,8 +120,62 @@
             }
         }
 
+        async function guardarRecurrenciaExtraccion(nuevaRecurrencia) {
+            const isDark = document.documentElement.classList.contains('dark');
+            try {
+                const response = await fetch('/api/ordenes-programadas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({
+                        tipo: 'extraccion_clientes',
+                        activo: toggleExtraccion?.checked ?? false,
+                        recurrencia_horas: nuevaRecurrencia,
+                        configuracion: null,
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Guardado',
+                        text: 'Recurrencia de extracción actualizada',
+                        timer: 1800,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e293b' : '#ffffff',
+                        color: isDark ? '#e2e8f0' : '#1e293b'
+                    });
+                } else {
+                    throw new Error(data.message || 'Error al guardar');
+                }
+            } catch (error) {
+                console.error('Error al guardar recurrencia:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message,
+                    background: isDark ? '#1e293b' : '#ffffff',
+                    color: isDark ? '#e2e8f0' : '#1e293b'
+                });
+                // Revertir select al valor anterior
+                if (recurrenciaSelect) {
+                    recurrenciaSelect.value = recurrenciaActual ? String(recurrenciaActual) : '';
+                }
+            }
+        }
+
         toggleExtraccion?.addEventListener('change', (e) => {
             guardarEstadoExtraccion(e.target.checked);
+        });
+
+        recurrenciaSelect?.addEventListener('change', (e) => {
+            const value = e.target.value;
+            recurrenciaActual = value ? parseFloat(value) : null;
+            guardarRecurrenciaExtraccion(recurrenciaActual);
         });
     </script>
 </body>

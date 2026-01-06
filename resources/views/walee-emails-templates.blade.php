@@ -106,16 +106,16 @@
             
             <!-- Search Bar -->
             <div class="mb-3">
-                <div class="bg-white dark:bg-slate-800/50 border-2 border-slate-900 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                <div class="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border-2 border-violet-300 dark:border-violet-600 rounded-lg p-3 shadow-sm">
                     <div class="relative">
                         <input 
                             type="text" 
                             id="templateSearchInput"
                             placeholder="Buscar templates..."
-                            class="w-full px-3 py-2 pl-9 rounded-lg bg-slate-100 dark:bg-slate-900/80 border-2 border-slate-900 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
+                            class="w-full px-3 py-2 pl-9 rounded-lg bg-white dark:bg-slate-800/80 border-2 border-violet-400 dark:border-violet-600 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30 dark:focus:ring-violet-400/30 transition-all text-sm"
                             oninput="filterTemplates()"
                         >
-                        <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-violet-500 dark:text-violet-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                         <button 

@@ -493,21 +493,31 @@ class GoogleCalendarService
             $service = $this->getService();
             if (!$service) {
                 Log::warning('No se pudo obtener el servicio de Google Calendar');
-                // Limpiar el ID localmente
-        $cita->google_event_id = null;
-        return $cita->save();
+                // Si la cita existe en la BD, limpiar el ID localmente
+                if ($cita->exists) {
+                    $cita->google_event_id = null;
+                    return $cita->save();
+                }
+                return false;
             }
 
             $service->events->delete($this->calendarId, $cita->google_event_id);
             
-            // Limpiar el ID localmente
-            $cita->google_event_id = null;
-            return $cita->save();
+            // Si la cita existe en la BD, limpiar el ID localmente
+            if ($cita->exists) {
+                $cita->google_event_id = null;
+                $cita->save();
+            }
+            
+            return true;
         } catch (\Exception $e) {
             Log::error('Error al eliminar evento de Google Calendar: ' . $e->getMessage());
-            // Limpiar el ID localmente aunque falle
-            $cita->google_event_id = null;
-            return $cita->save();
+            // Si la cita existe en la BD, limpiar el ID localmente aunque falle
+            if ($cita->exists) {
+                $cita->google_event_id = null;
+                $cita->save();
+            }
+            return false;
         }
     }
 

@@ -170,7 +170,7 @@ class GoogleCalendarService
     /**
      * Buscar el archivo de credenciales en diferentes ubicaciones
      */
-    protected function findCredentialsFile(): ?string
+    public function findCredentialsFile(): ?string
     {
         // 1. Intentar con la ruta configurada
         $configuredPath = config('services.google.credentials_path');

@@ -430,7 +430,7 @@
                 <!-- Recent Sent -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 sm:p-3 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.8s">
                     <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">Clientes Recientes</h2>
+                        <h2 class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">Clientes Extraídos</h2>
                         <a href="{{ route('walee.clientes.proceso') }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Ver todos</a>
                     </div>
                     <div class="space-y-1.5">

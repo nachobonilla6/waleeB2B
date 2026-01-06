@@ -486,16 +486,11 @@
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Elegir un email de cliente</label>
-                            <select id="evento_cliente_email" 
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado (Elegir un email de cliente)</label>
+                            <select id="evento_cliente_email" required
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                                 ${clientesOptions}
                             </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado</label>
-                            <input type="email" id="evento_invitado" placeholder="email@ejemplo.com"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
@@ -517,24 +512,22 @@
                     const titulo = document.getElementById('evento_titulo').value;
                     const fecha = document.getElementById('evento_fecha').value;
                     const clienteEmail = document.getElementById('evento_cliente_email').value;
-                    const invitado = document.getElementById('evento_invitado').value;
-                    
-                    // Usar el email del cliente seleccionado o el invitado manual
-                    const emailFinal = clienteEmail || invitado;
                     
                     if (!titulo || !fecha) {
                         Swal.showValidationMessage('Título y fecha son requeridos');
                         return false;
                     }
                     
-                    // Construir descripción con información del cliente/invitado
-                    let descripcion = '';
-                    if (clienteEmail) {
-                        descripcion = `Cliente: ${clienteEmail}`;
+                    if (!clienteEmail) {
+                        Swal.showValidationMessage('Debes seleccionar un cliente como invitado');
+                        return false;
                     }
-                    if (invitado) {
-                        descripcion += (descripcion ? '\n' : '') + `Invitado: ${invitado}`;
-                    }
+                    
+                    // El cliente seleccionado es el invitado
+                    const emailFinal = clienteEmail;
+                    
+                    // Construir descripción con información del cliente
+                    const descripcion = `Cliente/Invitado: ${clienteEmail}`;
                     
                     try {
                         const response = await fetch('{{ route("walee.calendario.aplicaciones.crear") }}', {
@@ -628,16 +621,11 @@
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Elegir un email de cliente</label>
-                            <select id="evento_cliente_email" 
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado (Elegir un email de cliente)</label>
+                            <select id="evento_cliente_email" required
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                                 ${clientesOptions}
                             </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado</label>
-                            <input type="email" id="evento_invitado" placeholder="email@ejemplo.com"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
@@ -658,24 +646,22 @@
                     const titulo = document.getElementById('evento_titulo').value;
                     const fecha = document.getElementById('evento_fecha').value;
                     const clienteEmail = document.getElementById('evento_cliente_email').value;
-                    const invitado = document.getElementById('evento_invitado').value;
-                    
-                    // Usar el email del cliente seleccionado o el invitado manual
-                    const emailFinal = clienteEmail || invitado;
                     
                     if (!titulo || !fecha) {
                         Swal.showValidationMessage('Título y fecha son requeridos');
                         return false;
                     }
                     
-                    // Construir descripción con información del cliente/invitado
-                    let descripcion = '';
-                    if (clienteEmail) {
-                        descripcion = `Cliente: ${clienteEmail}`;
+                    if (!clienteEmail) {
+                        Swal.showValidationMessage('Debes seleccionar un cliente como invitado');
+                        return false;
                     }
-                    if (invitado) {
-                        descripcion += (descripcion ? '\n' : '') + `Invitado: ${invitado}`;
-                    }
+                    
+                    // El cliente seleccionado es el invitado
+                    const emailFinal = clienteEmail;
+                    
+                    // Construir descripción con información del cliente
+                    const descripcion = `Cliente/Invitado: ${clienteEmail}`;
                     
                     try {
                         const response = await fetch('{{ route("walee.calendario.aplicaciones.crear") }}', {

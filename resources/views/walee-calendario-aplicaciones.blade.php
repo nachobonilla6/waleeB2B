@@ -945,13 +945,7 @@
             Swal.fire({
                 title: 'Editar Evento',
                 html: `
-                    <div class="relative">
-                        <button onclick="Swal.close()" class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-10" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                        <form id="editarEventoForm" class="space-y-3 text-left">
+                    <form id="editarEventoForm" class="space-y-3 text-left">
                             <div>
                                 <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
                                 <input type="text" id="editar_titulo" value="${tituloActual.replace(/"/g, '&quot;')}" required
@@ -983,6 +977,22 @@
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 buttonsStyling: false,
                 didOpen: () => {
+                    // Agregar X roja en la esquina superior derecha de la modal (afuera)
+                    const swalContainer = document.querySelector('.swal2-popup');
+                    if (swalContainer) {
+                        const closeBtn = document.createElement('button');
+                        closeBtn.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        `;
+                        closeBtn.className = 'absolute -top-3 -right-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-50 cursor-pointer';
+                        closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                        closeBtn.onclick = () => Swal.close();
+                        swalContainer.style.position = 'relative';
+                        swalContainer.appendChild(closeBtn);
+                    }
+                    
                     // Seleccionar el cliente si existe en la descripción
                     if (emailClienteSeleccionado) {
                         const select = document.getElementById('editar_cliente_email');

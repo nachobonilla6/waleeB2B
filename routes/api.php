@@ -480,8 +480,8 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Webhooks para órdenes programadas (Bot Alpha)
-// Crear o actualizar orden programada
-Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request) {
+// Crear o actualizar orden programada (requiere usuario autenticado para asociar correctamente la orden)
+Route::middleware(['auth'])->post('/ordenes-programadas', function (\Illuminate\Http\Request $request) {
     try {
         \Log::info('Webhook ordenes-programadas recibido', [
             'data' => $request->all(),
@@ -493,20 +493,14 @@ Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request)
             'activo' => 'boolean',
             'recurrencia_horas' => 'nullable|numeric|min:0.5',
             'configuracion' => 'nullable|array',
-            'user_id' => 'nullable|exists:users,id',
         ]);
 
-        // Usar el usuario autenticado si está disponible, o el user_id del request
-        $userId = auth()->id() ?? $validated['user_id'] ?? null;
+        // Siempre usar el usuario autenticado
+        $userId = auth()->id();
 
-        // Buscar si ya existe una orden del mismo tipo para el usuario
+        // Buscar si ya existe una orden del mismo tipo para el usuario autenticado
         $orden = \App\Models\OrdenProgramada::where('tipo', $validated['tipo'])
-            ->when($userId, function ($query) use ($userId) {
-                return $query->where('user_id', $userId);
-            })
-            ->when(!$userId, function ($query) {
-                return $query->whereNull('user_id');
-            })
+            ->where('user_id', $userId)
             ->first();
 
         if ($orden) {
@@ -515,7 +509,7 @@ Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request)
                 'activo' => $validated['activo'] ?? $orden->activo,
                 'recurrencia_horas' => $validated['recurrencia_horas'] ?? $orden->recurrencia_horas,
                 'configuracion' => $validated['configuracion'] ?? $orden->configuracion,
-                'user_id' => $userId ?? $orden->user_id,
+                'user_id' => $userId,
             ]);
             
             \Log::info('Orden actualizada', ['orden_id' => $orden->id, 'data' => $orden->toArray()]);

@@ -353,7 +353,7 @@
                         <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
                             <div class="flex items-center justify-between mb-2">
                                 <h3 class="text-xs font-semibold text-slate-900 dark:text-white">Clientes Pending</h3>
-                                <a href="{{ route('walee.emails.pending') }}" class="text-xs text-violet-600 dark:text-violet-400 hover:underline">Ver todos</a>
+                                <a href="{{ route('walee.emails.pending') }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Ver todos</a>
                             </div>
                             <div class="space-y-1.5 max-h-48 overflow-y-auto">
                                 @foreach($clientesPending as $cliente)
@@ -370,8 +370,8 @@
                                             }
                                         }
                                     @endphp
-                                    <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2 p-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:shadow transition-all group">
-                                        <div class="w-6 h-6 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
+                                    <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:shadow transition-all cursor-pointer group">
+                                        <div class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform overflow-hidden">
                                             @if($fotoUrl)
                                                 <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
                                             @elseif($cliente->idioma)
@@ -389,19 +389,15 @@
                                                 @if($bandera)
                                                     <span class="text-sm">{{ $bandera }}</span>
                                                 @else
-                                                    <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                    </svg>
+                                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
                                                 @endif
                                             @else
-                                                <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                </svg>
+                                                <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg opacity-80">
                                             @endif
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <p class="font-medium text-xs text-slate-900 dark:text-white truncate flex items-center gap-1.5">
-                                                @if($cliente->idioma && !$fotoUrl)
+                                                @if($cliente->idioma)
                                                     @php
                                                         $banderas = [
                                                             'es' => '🇪🇸',
@@ -414,12 +410,13 @@
                                                         $bandera = $banderas[$cliente->idioma] ?? '';
                                                     @endphp
                                                     @if($bandera)
-                                                        <span class="text-xs">{{ $bandera }}</span>
+                                                        <span class="text-sm">{{ $bandera }}</span>
                                                     @endif
                                                 @endif
                                                 <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
                                             </p>
                                             <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email ?: 'Sin email' }}</p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
                                         </div>
                                     </a>
                                 @endforeach

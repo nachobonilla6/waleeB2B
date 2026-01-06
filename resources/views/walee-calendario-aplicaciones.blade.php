@@ -190,6 +190,18 @@
             @php $pageTitle = 'Calendario de Aplicaciones'; @endphp
             @include('partials.walee-navbar')
             
+            @if(session('success'))
+                <div class="mb-4 p-3 bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-300 dark:border-emerald-700 rounded-lg text-emerald-700 dark:text-emerald-300 text-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            @if(session('error'))
+                <div class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+            
             <!-- Header -->
             <div class="mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 p-3 md:p-4">

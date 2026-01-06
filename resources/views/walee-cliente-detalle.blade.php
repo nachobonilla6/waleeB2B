@@ -1907,6 +1907,11 @@
             }
         };
         
+        // Reemplazar el placeholder con la función real
+        console.log('=== DEBUG: Reemplazando placeholder con función real ===');
+        window.openEmailModal = window._realOpenEmailModal;
+        console.log('window.openEmailModal después de reemplazar:', typeof window.openEmailModal);
+        
         // También definirla localmente para compatibilidad
         const openEmailModal = window.openEmailModal;
         

@@ -383,13 +383,13 @@
                                 @endphp
                                 <button 
                                     onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
-                                    class="w-full text-left px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 truncate"
+                                    class="w-full text-left px-1.5 py-0.5 rounded text-xs sm:text-sm font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 truncate"
                                     style="border-left: 2px solid #8b5cf6;"
                                     title="{{ $titulo }}"
                                 >
                                     <div class="flex items-center gap-1">
-                                        <span class="text-[8px]">{{ $hora }}</span>
-                                        <span class="truncate">{{ $titulo }}</span>
+                                        <span class="text-[9px] sm:text-[10px]">{{ $hora }}</span>
+                                        <span class="truncate font-semibold">{{ $titulo }}</span>
                                     </div>
                                 </button>
                             @endforeach

@@ -471,7 +471,7 @@
                                                             @endif
                                                         </div>
                                                     </div>
-                                                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2">{{ $titulo }}</p>
+                                                        <p class="text-sm md:text-sm font-medium text-slate-700 dark:text-slate-300 mt-1.5 line-clamp-2">{{ $titulo }}</p>
                                                     </button>
                                                     @if(isset($evento->google_event_id) && $evento->google_event_id)
                                                         <div class="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">

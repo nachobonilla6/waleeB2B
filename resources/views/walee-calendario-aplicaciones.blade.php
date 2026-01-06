@@ -622,6 +622,83 @@
             }, 1000);
         }
         
+        function sincronizarCitasBD() {
+            Swal.fire({
+                title: 'Sincronizando citas...',
+                text: 'Enviando citas de la base de datos a Google Calendar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            fetch('{{ route("google-calendar.sync-citas") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sincronización completada',
+                        html: `
+                            <p>${data.message}</p>
+                            ${data.total > 0 ? `
+                                <div class="mt-3 text-left">
+                                    <p class="text-sm"><strong>Total:</strong> ${data.total} citas</p>
+                                    <p class="text-sm text-emerald-600"><strong>Exitosas:</strong> ${data.synced}</p>
+                                    ${data.errors > 0 ? `<p class="text-sm text-red-600"><strong>Fallidas:</strong> ${data.errors}</p>` : ''}
+                                </div>
+                            ` : ''}
+                        `,
+                        confirmButtonColor: '#8b5cf6'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    if (data.needs_auth) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Autorización requerida',
+                            html: `
+                                <p>${data.message}</p>
+                                <p class="mt-2 text-sm">Necesitas conectar tu cuenta de Google Calendar primero.</p>
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Conectar Google Calendar',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonColor: '#8b5cf6',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '{{ route("google-calendar.auth") }}';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Error al sincronizar citas',
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'Error al sincronizar citas: ' + error.message,
+                    confirmButtonColor: '#ef4444'
+                });
+            });
+        }
+        
         function showNuevoEventoModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             

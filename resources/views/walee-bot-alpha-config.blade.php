@@ -67,11 +67,18 @@
         const toggleExtraccion = document.getElementById('toggleExtraccion');
         const recurrenciaSelect = document.getElementById('recurrenciaExtraccion');
 
-        // Recurrencia inicial desde la BD
+        // Recurrencia inicial desde la BD (normalizada a número para que coincida con los <option>)
         let recurrenciaActual = @json($ordenExtraccion->recurrencia_horas ?? null);
 
-        if (recurrenciaSelect && recurrenciaActual) {
-            recurrenciaSelect.value = String(recurrenciaActual);
+        if (recurrenciaSelect && recurrenciaActual !== null && recurrenciaActual !== undefined) {
+            const normalizada = parseFloat(recurrenciaActual);
+            if (!isNaN(normalizada)) {
+                recurrenciaActual = normalizada;
+                recurrenciaSelect.value = String(normalizada);
+            } else {
+                recurrenciaSelect.value = '';
+                recurrenciaActual = null;
+            }
         }
 
         async function guardarEstadoExtraccion(activo) {

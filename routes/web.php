@@ -1307,6 +1307,20 @@ Route::get('/google-calendar/auth', function () {
         ->with('error', 'No se pudo generar la URL de autorización. Verifica la configuración de Google Calendar.');
 })->middleware(['auth'])->name('google-calendar.auth');
 
+// Ruta para desconectar Google Calendar
+Route::post('/google-calendar/disconnect', function () {
+    $service = new \App\Services\GoogleCalendarService();
+    $success = $service->disconnect();
+    
+    if ($success) {
+        return redirect()->route('walee.calendario.aplicaciones')
+            ->with('success', 'Google Calendar ha sido desconectado. Puedes conectarlo nuevamente con otra cuenta.');
+    }
+    
+    return redirect()->route('walee.calendario.aplicaciones')
+        ->with('error', 'No se pudo desconectar Google Calendar.');
+})->middleware(['auth'])->name('google-calendar.disconnect');
+
 // Ruta para crear evento en calendario de aplicaciones (sincroniza con Google Calendar)
 Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\Request $request) {
     // Log para debug

@@ -342,6 +342,50 @@ class GoogleCalendarService
     }
 
     /**
+     * Desconectar/eliminar el token de acceso
+     */
+    public function disconnect(): bool
+    {
+        try {
+            $tokenPath = storage_path('app/google-calendar-token.json');
+            
+            // Si existe el token, intentar revocarlo primero
+            if (file_exists($tokenPath)) {
+                $token = json_decode(file_get_contents($tokenPath), true);
+                
+                if (isset($token['access_token'])) {
+                    try {
+                        $client = new Google_Client();
+                        $credentialsPath = $this->findCredentialsFile();
+                        
+                        if ($credentialsPath) {
+                            $client->setAuthConfig($credentialsPath);
+                            // Revocar el token
+                            $client->revokeToken($token['access_token']);
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning('No se pudo revocar el token, pero se eliminará el archivo: ' . $e->getMessage());
+                    }
+                }
+                
+                // Eliminar el archivo del token
+                if (file_exists($tokenPath)) {
+                    unlink($tokenPath);
+                }
+            }
+            
+            // Limpiar las instancias en memoria
+            $this->client = null;
+            $this->service = null;
+            
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Error desconectando Google Calendar: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Obtener servicio de Google Calendar
      */
     protected function getService(): ?Google_Service_Calendar

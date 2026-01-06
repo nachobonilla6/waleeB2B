@@ -2628,6 +2628,21 @@
                 }
             });
         }
+        
+        // Verificar que todas las funciones estén disponibles después de cargar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM cargado - Verificando funciones:');
+                console.log('  window.openEmailModal:', typeof window.openEmailModal);
+                console.log('  showEmailPhase1:', typeof showEmailPhase1);
+                console.log('  emailModalData:', typeof emailModalData);
+            });
+        } else {
+            console.log('DOM ya cargado - Verificando funciones:');
+            console.log('  window.openEmailModal:', typeof window.openEmailModal);
+            console.log('  showEmailPhase1:', typeof showEmailPhase1);
+            console.log('  emailModalData:', typeof emailModalData);
+        }
     </script>
 </body>
 </html>

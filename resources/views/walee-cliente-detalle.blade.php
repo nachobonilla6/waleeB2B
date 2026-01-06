@@ -1983,9 +1983,8 @@
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                             ${templatesOptions}
                         </select>
-                        <div id="template_tipo_display" class="mt-2 text-xs font-medium" style="display: none;">
-                            <span class="text-slate-600 dark:text-slate-400">Tipo: </span>
-                            <span id="template_tipo_value" class="font-semibold"></span>
+                        <div id="template_tipo_display" class="mt-2" style="display: none;">
+                            <span id="template_tipo_value" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"></span>
                         </div>
                     </div>
                     ` : ''}

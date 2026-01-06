@@ -2409,33 +2409,41 @@
             }
             
             // Mostrar el tipo del template como badge (reutilizar tipoDisplay ya declarado arriba)
-            const tipoValue = document.getElementById('template_tipo_value');
-            console.log('loadEmailTemplate - template:', template);
-            console.log('loadEmailTemplate - tipoDisplay:', tipoDisplay);
-            console.log('loadEmailTemplate - tipoValue:', tipoValue);
-            
-            if (tipoDisplay && tipoValue) {
-                if (template.tipo) {
-                    console.log('Mostrando badge para tipo:', template.tipo);
-                    const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
-                    tipoValue.textContent = tipoText;
-                    // Aplicar color según el tipo con estilo badge
-                    const tipoColors = {
-                        'business': 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
-                        'agricultura': 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
-                        'b2b': 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
-                        'b2c': 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30'
-                    };
-                    tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + (tipoColors[template.tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30');
-                    tipoDisplay.style.display = 'block';
-                    console.log('Badge mostrado con className:', tipoValue.className);
+            // Esperar un momento para asegurar que el DOM esté listo
+            setTimeout(() => {
+                const tipoValue = document.getElementById('template_tipo_value');
+                console.log('loadEmailTemplate - template:', template);
+                console.log('loadEmailTemplate - tipoDisplay:', tipoDisplay);
+                console.log('loadEmailTemplate - tipoValue:', tipoValue);
+                
+                if (tipoDisplay && tipoValue) {
+                    if (template.tipo) {
+                        console.log('Mostrando badge para tipo:', template.tipo);
+                        const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
+                        tipoValue.textContent = tipoText;
+                        // Aplicar color según el tipo con estilo badge
+                        const tipoColors = {
+                            'business': 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
+                            'agricultura': 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
+                            'b2b': 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
+                            'b2c': 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30'
+                        };
+                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + (tipoColors[template.tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30');
+                        tipoDisplay.style.display = 'block';
+                        tipoDisplay.style.visibility = 'visible';
+                        console.log('Badge mostrado con className:', tipoValue.className);
+                        console.log('Badge display:', tipoDisplay.style.display);
+                        console.log('Badge visibility:', tipoDisplay.style.visibility);
+                    } else {
+                        console.log('Template sin tipo, ocultando badge');
+                        tipoDisplay.style.display = 'none';
+                    }
                 } else {
-                    console.log('Template sin tipo, ocultando badge');
-                    tipoDisplay.style.display = 'none';
+                    console.error('tipoDisplay o tipoValue no encontrados');
+                    console.error('tipoDisplay:', tipoDisplay);
+                    console.error('tipoValue:', tipoValue);
                 }
-            } else {
-                console.error('tipoDisplay o tipoValue no encontrados');
-            }
+            }, 100);
             
             // Ocultar el botón de generar con AI cuando hay template seleccionado
             if (aiGenerateContainer) {

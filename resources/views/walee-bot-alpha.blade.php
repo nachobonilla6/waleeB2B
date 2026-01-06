@@ -1009,20 +1009,7 @@
                         configEmailsToggle.addEventListener('change', updateEmailsIcon);
                         updateEmailsIcon();
                     }
-                },
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                allowOutsideClick: true,
-                allowEscapeKey: true,
-                backdrop: true,
-                customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
-                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
-                },
-                didOpen: () => {
+                    
                     // Actualizar textos de recurrencia si hay valores
                     const configRecurrenciaText = document.getElementById('configRecurrenciaText');
                     if (configRecurrenciaText && recurrenciaSeleccionada) {
@@ -1060,6 +1047,11 @@
                     // Focus en el input
                     document.getElementById('webhookUrl')?.focus();
                 },
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                allowOutsideClick: true,
+                allowEscapeKey: true,
+                backdrop: true,
                 preConfirm: () => {
                     const webhookUrl = document.getElementById('webhookUrl').value.trim();
                     

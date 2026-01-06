@@ -311,46 +311,53 @@
                 </div>
                 <div class="space-y-2 sm:space-y-3">
                     @forelse($facturasRecientes as $factura)
-                        <a href="{{ route('walee.factura.ver', $factura->id) }}" class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:shadow-md dark:hover:shadow-lg transition-all cursor-pointer group">
-                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <h3 class="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                        {{ $factura->numero_factura }}
-                                    </h3>
-                                    @php
-                                        $estadoClass = '';
-                                        switch ($factura->estado) {
-                                            case 'pagada':
-                                                $estadoClass = 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
-                                                break;
-                                            case 'pendiente':
-                                                $estadoClass = 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30';
-                                                break;
-                                            case 'vencida':
-                                                $estadoClass = 'bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/30';
-                                                break;
-                                            default:
-                                                $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';
-                                                break;
-                                        }
-                                    @endphp
-                                    <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border {{ $estadoClass }} whitespace-nowrap">
-                                        {{ ucfirst($factura->estado) }}
-                                    </span>
+                        <div class="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:shadow-md dark:hover:shadow-lg transition-all group">
+                            <a href="{{ route('walee.factura.ver', $factura->id) }}" class="flex items-start gap-2 sm:gap-3 flex-1 min-w-0 cursor-pointer">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
                                 </div>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
-                                    {{ $factura->cliente?->nombre_empresa ?? 'Sin cliente' }}
-                                </p>
-                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
-                                    ₡{{ number_format($factura->total, 2, '.', ',') }} · {{ $factura->created_at->diffForHumans() }}
-                                </p>
-                            </div>
-                        </a>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <h3 class="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            {{ $factura->numero_factura }}
+                                        </h3>
+                                        @php
+                                            $estadoClass = '';
+                                            switch ($factura->estado) {
+                                                case 'pagada':
+                                                    $estadoClass = 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
+                                                    break;
+                                                case 'pendiente':
+                                                    $estadoClass = 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30';
+                                                    break;
+                                                case 'vencida':
+                                                    $estadoClass = 'bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/30';
+                                                    break;
+                                                default:
+                                                    $estadoClass = 'bg-slate-500/20 text-slate-600 dark:text-slate-400 border-slate-500/30';
+                                                    break;
+                                            }
+                                        @endphp
+                                        <span class="inline-block px-1.5 py-0.5 text-[10px] font-medium rounded-full border {{ $estadoClass }} whitespace-nowrap">
+                                            {{ ucfirst($factura->estado) }}
+                                        </span>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
+                                        {{ $factura->cliente?->nombre_empresa ?? 'Sin cliente' }}
+                                    </p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                                        ₡{{ number_format($factura->total, 2, '.', ',') }} · {{ $factura->created_at->diffForHumans() }}
+                                    </p>
+                                </div>
+                            </a>
+                            <a href="{{ route('walee.factura.pdf', $factura->id) }}" target="_blank" class="flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 flex items-center justify-center transition-all group/pdf" title="Ver PDF">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400 group-hover/pdf:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                            </a>
+                        </div>
                     @empty
                         <div class="text-center py-8">
                             <p class="text-sm text-slate-500 dark:text-slate-400">No hay facturas recientes</p>

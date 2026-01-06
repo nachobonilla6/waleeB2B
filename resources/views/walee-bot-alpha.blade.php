@@ -470,12 +470,18 @@
         let recurrenciaEmailsSeleccionada = @json($ordenEmails->recurrencia_horas ?? null); // Para emails automáticos
         let botToggleChecked = @json($ordenExtraccion->activo ?? false); // Estado del toggle de bot
         let emailsToggleChecked = @json($ordenEmails->activo ?? false); // Estado del toggle de emails
+
+        // Configuración extra para extracción (idioma e industria) desde la BD
+        let configExtraccion = @json($ordenExtraccion->configuracion ?? []);
+        let configIdiomaExtraccion = configExtraccion?.idioma || '';
+        let configIndustriaExtraccion = configExtraccion?.industria || '';
         
         console.log('Configuración cargada desde BD:', {
             recurrenciaSeleccionada,
             recurrenciaEmailsSeleccionada,
             botToggleChecked,
-            emailsToggleChecked
+            emailsToggleChecked,
+            configExtraccion
         });
         
         // Variable para almacenar el webhook actual
@@ -568,13 +574,64 @@
                                         </svg>
                                     </label>
                                 </div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 mb-3">
                                     <button type="button" onclick="openRecurrenciaModal()" id="configRecurrenciaBtn" class="px-2.5 py-1.5 ${botToggleChecked ? 'bg-blue-500 hover:bg-blue-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                         <span id="configRecurrenciaText">Recurrencia</span>
                                     </button>
+                                </div>
+                                <!-- Filtros de idioma e industria para extracción -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Idioma para extracción
+                                        </label>
+                                        <select 
+                                            id="configIdiomaExtraccion"
+                                            class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="" ${!configIdiomaExtraccion ? 'selected' : ''}>Todos</option>
+                                            <option value="es" ${configIdiomaExtraccion === 'es' ? 'selected' : ''}>🇪🇸 Español</option>
+                                            <option value="en" ${configIdiomaExtraccion === 'en' ? 'selected' : ''}>🇬🇧 English</option>
+                                            <option value="fr" ${configIdiomaExtraccion === 'fr' ? 'selected' : ''}>🇫🇷 Français</option>
+                                            <option value="de" ${configIdiomaExtraccion === 'de' ? 'selected' : ''}>🇩🇪 Deutsch</option>
+                                            <option value="it" ${configIdiomaExtraccion === 'it' ? 'selected' : ''}>🇮🇹 Italiano</option>
+                                            <option value="pt" ${configIdiomaExtraccion === 'pt' ? 'selected' : ''}>🇵🇹 Português</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                                            Industria para extracción
+                                        </label>
+                                        <select 
+                                            id="configIndustriaExtraccion"
+                                            class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="" ${!configIndustriaExtraccion ? 'selected' : ''}>Todas</option>
+                                            <option value="Turismo" ${configIndustriaExtraccion === 'Turismo' ? 'selected' : ''}>Turismo</option>
+                                            <option value="Gastronomía" ${configIndustriaExtraccion === 'Gastronomía' ? 'selected' : ''}>Gastronomía</option>
+                                            <option value="Retail" ${configIndustriaExtraccion === 'Retail' ? 'selected' : ''}>Retail</option>
+                                            <option value="Salud" ${configIndustriaExtraccion === 'Salud' ? 'selected' : ''}>Salud</option>
+                                            <option value="Educación" ${configIndustriaExtraccion === 'Educación' ? 'selected' : ''}>Educación</option>
+                                            <option value="Tecnología" ${configIndustriaExtraccion === 'Tecnología' ? 'selected' : ''}>Tecnología</option>
+                                            <option value="Servicios" ${configIndustriaExtraccion === 'Servicios' ? 'selected' : ''}>Servicios</option>
+                                            <option value="Comercio" ${configIndustriaExtraccion === 'Comercio' ? 'selected' : ''}>Comercio</option>
+                                            <option value="Manufactura" ${configIndustriaExtraccion === 'Manufactura' ? 'selected' : ''}>Manufactura</option>
+                                            <option value="Inmobiliaria" ${configIndustriaExtraccion === 'Inmobiliaria' ? 'selected' : ''}>Inmobiliaria</option>
+                                            <option value="Automotriz" ${configIndustriaExtraccion === 'Automotriz' ? 'selected' : ''}>Automotriz</option>
+                                            <option value="Belleza y Estética" ${configIndustriaExtraccion === 'Belleza y Estética' ? 'selected' : ''}>Belleza y Estética</option>
+                                            <option value="Fitness y Deportes" ${configIndustriaExtraccion === 'Fitness y Deportes' ? 'selected' : ''}>Fitness y Deportes</option>
+                                            <option value="Arte y Cultura" ${configIndustriaExtraccion === 'Arte y Cultura' ? 'selected' : ''}>Arte y Cultura</option>
+                                            <option value="Legal" ${configIndustriaExtraccion === 'Legal' ? 'selected' : ''}>Legal</option>
+                                            <option value="Finanzas" ${configIndustriaExtraccion === 'Finanzas' ? 'selected' : ''}>Finanzas</option>
+                                            <option value="Marketing" ${configIndustriaExtraccion === 'Marketing' ? 'selected' : ''}>Marketing</option>
+                                            <option value="Construcción" ${configIndustriaExtraccion === 'Construcción' ? 'selected' : ''}>Construcción</option>
+                                            <option value="Agricultura" ${configIndustriaExtraccion === 'Agricultura' ? 'selected' : ''}>Agricultura</option>
+                                            <option value="Otro" ${configIndustriaExtraccion === 'Otro' ? 'selected' : ''}>Otro</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -623,6 +680,22 @@
                         cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                     },
                     didOpen: () => {
+                        // Selects de idioma e industria para extracción
+                        const idiomaSelect = document.getElementById('configIdiomaExtraccion');
+                        const industriaSelect = document.getElementById('configIndustriaExtraccion');
+                        if (idiomaSelect) {
+                            idiomaSelect.addEventListener('change', (e) => {
+                                configIdiomaExtraccion = e.target.value || '';
+                                console.log('Idioma extracción (config):', configIdiomaExtraccion);
+                            });
+                        }
+                        if (industriaSelect) {
+                            industriaSelect.addEventListener('change', (e) => {
+                                configIndustriaExtraccion = e.target.value || '';
+                                console.log('Industria extracción (config):', configIndustriaExtraccion);
+                            });
+                        }
+                        
                         // Sincronizar iconos de los toggles
                         const configBotToggle = document.getElementById('configBotToggle');
                         const configEmailsToggle = document.getElementById('configEmailsToggle');
@@ -710,17 +783,38 @@
                     },
                     preConfirm: () => {
                         const webhookUrl = document.getElementById('webhookUrl').value.trim();
+                        const idioma = document.getElementById('configIdiomaExtraccion')?.value || '';
+                        const industria = document.getElementById('configIndustriaExtraccion')?.value || '';
                         
                         if (webhookUrl && !isValidUrl(webhookUrl)) {
                             Swal.showValidationMessage('Por favor ingresa una URL válida');
                             return false;
                         }
                         
-                        return { webhook_url: webhookUrl };
+                        return { 
+                            webhook_url: webhookUrl,
+                            idioma_extraccion: idioma || null,
+                            industria_extraccion: industria || null
+                        };
                     }
                 }).then((result) => {
                     if (result.isConfirmed && result.value) {
-                        saveWebhook(result.value.webhook_url);
+                        const { webhook_url, idioma_extraccion, industria_extraccion } = result.value;
+                        
+                        // Guardar webhook si se proporcionó
+                        if (typeof webhook_url !== 'undefined') {
+                            saveWebhook(webhook_url);
+                        }
+                        
+                        // Actualizar variables globales de configuración de extracción
+                        configIdiomaExtraccion = idioma_extraccion || '';
+                        configIndustriaExtraccion = industria_extraccion || '';
+                        
+                        // Guardar configuración de orden programada de extracción (incluye idioma/industria)
+                        guardarOrdenProgramada('extraccion_clientes', botToggleChecked, recurrenciaSeleccionada, {
+                            idioma: configIdiomaExtraccion || null,
+                            industria: configIndustriaExtraccion || null,
+                        });
                     }
                 }).catch((error) => {
                     console.error('Error al abrir modal de configuración:', error);
@@ -741,9 +835,9 @@
         };
         
         // Función para guardar orden programada en la base de datos
-        async function guardarOrdenProgramada(tipo, activo, recurrenciaHoras) {
+        async function guardarOrdenProgramada(tipo, activo, recurrenciaHoras, configuracion = null) {
             try {
-                console.log('Guardando orden programada:', { tipo, activo, recurrenciaHoras });
+                console.log('Guardando orden programada:', { tipo, activo, recurrenciaHoras, configuracion });
                 
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 if (!csrfToken) {
@@ -763,6 +857,7 @@
                         tipo: tipo,
                         activo: activo,
                         recurrencia_horas: recurrenciaHoras,
+                        configuracion: configuracion,
                         user_id: null // El backend usará auth()->id() si está disponible
                     })
                 });
@@ -830,7 +925,10 @@
             }
             
             // SIEMPRE guardar orden programada en la base de datos (activo/inactivo, con o sin recurrencia)
-            await guardarOrdenProgramada('extraccion_clientes', enabled, recurrenciaSeleccionada);
+            await guardarOrdenProgramada('extraccion_clientes', enabled, recurrenciaSeleccionada, {
+                idioma: configIdiomaExtraccion || null,
+                industria: configIndustriaExtraccion || null,
+            });
         }
         
         // Toggle Emails Automáticos
@@ -851,7 +949,7 @@
             }
             
             // SIEMPRE guardar orden programada en la base de datos (activo/inactivo, con o sin recurrencia)
-            await guardarOrdenProgramada('emails_automaticos', enabled, recurrenciaEmailsSeleccionada);
+            await guardarOrdenProgramada('emails_automaticos', enabled, recurrenciaEmailsSeleccionada, null);
         }
         
         // Abrir modal de recurrencia para Extracción de Clientes
@@ -944,7 +1042,10 @@
                     console.log('Recurrencia de extracción seleccionada:', recurrenciaSeleccionada ? `${recurrenciaSeleccionada} horas` : 'Sin recurrencia');
                     
                     // SIEMPRE guardar orden programada en la base de datos (con o sin bot activo)
-                    await guardarOrdenProgramada('extraccion_clientes', botToggleChecked, recurrenciaSeleccionada);
+                    await guardarOrdenProgramada('extraccion_clientes', botToggleChecked, recurrenciaSeleccionada, {
+                        idioma: configIdiomaExtraccion || null,
+                        industria: configIndustriaExtraccion || null,
+                    });
                 }
             });
         }
@@ -1032,7 +1133,7 @@
                     console.log('Recurrencia de emails seleccionada:', recurrenciaEmailsSeleccionada ? `${recurrenciaEmailsSeleccionada} horas` : 'Sin recurrencia');
                     
                     // SIEMPRE guardar orden programada en la base de datos (con o sin emails activos)
-                    await guardarOrdenProgramada('emails_automaticos', emailsToggleChecked, recurrenciaEmailsSeleccionada);
+                    await guardarOrdenProgramada('emails_automaticos', emailsToggleChecked, recurrenciaEmailsSeleccionada, null);
                 }
             });
         }

@@ -269,13 +269,20 @@
                             <!-- Content -->
                             <div class="flex-1 min-w-0">
                                 <!-- Header: Name -->
-                                <div class="flex items-center gap-2 mb-2">
-                                    @if($bandera)
-                                        <span class="text-base flex-shrink-0">{{ $bandera }}</span>
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                                        @if($bandera)
+                                            <span class="text-base flex-shrink-0">{{ $bandera }}</span>
+                                        @endif
+                                        <h3 class="font-semibold text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                                            {{ $cliente->name ?: 'Sin nombre' }}
+                                        </h3>
+                                    </div>
+                                    @if($cliente->emails_count > 0)
+                                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" onclick="event.stopPropagation();" class="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0 hover:bg-emerald-500/30 dark:hover:bg-emerald-500/20 transition-colors" title="Ver emails enviados">
+                                            <span class="text-xs font-semibold">{{ $cliente->emails_count }}</span>
+                                        </a>
                                     @endif
-                                    <h3 class="font-semibold text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-                                        {{ $cliente->name ?: 'Sin nombre' }}
-                                    </h3>
                                 </div>
                                 
                                 <!-- Details Grid -->

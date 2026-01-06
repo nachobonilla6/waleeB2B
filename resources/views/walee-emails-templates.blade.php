@@ -786,28 +786,92 @@
             }
         }
         
-        function deleteTemplate(templateId) {
-            if (!confirm('¿Estás seguro de eliminar este template?')) return;
+        async function deleteTemplate(templateId) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const template = templatesData.find(t => t.id === templateId);
+            const templateName = template ? template.nombre : 'este template';
             
-            fetch(`/email-templates/${templateId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Content-Type': 'application/json'
+            const result = await Swal.fire({
+                title: '¿Eliminar Template?',
+                html: `¿Estás seguro de que quieres eliminar <strong>${templateName}</strong>?<br><br>Esta acción no se puede deshacer.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
+            });
+            
+            if (!result.isConfirmed) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/email-templates/${templateId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
                 if (data.success) {
+                    await Swal.fire({
+                        title: '¡Eliminado!',
+                        text: 'El template ha sido eliminado correctamente.',
+                        icon: 'success',
+                        confirmButtonColor: '#D59F3B',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                        customClass: {
+                            popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                            title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                            confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                        }
+                    });
                     location.reload();
                 } else {
-                    alert('Error al eliminar el template');
+                    await Swal.fire({
+                        title: 'Error',
+                        text: data.message || 'Error al eliminar el template',
+                        icon: 'error',
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                        customClass: {
+                            popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                            title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                            confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                        }
+                    });
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
-                alert('Error al eliminar el template');
-            });
+                await Swal.fire({
+                    title: 'Error',
+                    text: 'Error de conexión al eliminar el template',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    customClass: {
+                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    }
+                });
+            }
         }
         
         async function enviarTemplate(templateId) {

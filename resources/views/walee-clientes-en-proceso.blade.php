@@ -209,7 +209,7 @@
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
-                        Clientes en Proceso
+                        Clientes Extraídos
                         <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
                             ({{ $clientes->total() }})
                         </span>

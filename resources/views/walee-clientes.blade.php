@@ -179,7 +179,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2 flex-wrap">
-                                <h2 class="text-base sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">Clientes en Proceso</h2>
+                                <h2 class="text-base sm:text-xl lg:text-2xl font-bold text-slate-800 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors">Clientes Extraídos</h2>
                                 <span class="px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-bold bg-amber-500/30 text-amber-600 dark:text-amber-300 rounded-full border border-amber-500/40 whitespace-nowrap">{{ $clientesEnProceso }}</span>
                             </div>
                             <p class="text-xs sm:text-sm lg:text-base text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Clientes con propuesta enviada en seguimiento</p>

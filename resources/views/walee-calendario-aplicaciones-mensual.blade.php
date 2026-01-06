@@ -143,6 +143,45 @@
             \Log::error('Error obteniendo eventos de Google Calendar: ' . $e->getMessage());
         }
         
+        // Obtener tareas con fecha_hora en el rango del mes
+        try {
+            $tareas = \App\Models\Tarea::whereNotNull('fecha_hora')
+                ->whereBetween('fecha_hora', [$inicioCalendario->copy()->startOfDay(), $finCalendario->copy()->endOfDay()])
+                ->where('estado', 'pending') // Solo tareas pendientes
+                ->get();
+            
+            foreach ($tareas as $tarea) {
+                $fechaKey = $tarea->fecha_hora->format('Y-m-d');
+                if (!$eventos->has($fechaKey)) {
+                    $eventos->put($fechaKey, collect());
+                }
+                
+                // Convertir tarea a formato de evento
+                $evento = (object) [
+                    'id' => 'tarea_' . $tarea->id,
+                    'titulo' => $tarea->texto,
+                    'descripcion' => null,
+                    'fecha_inicio' => $tarea->fecha_hora,
+                    'fecha_fin' => $tarea->fecha_hora->copy()->addHour(),
+                    'ubicacion' => null,
+                    'google_event_id' => null,
+                    'from_google' => false,
+                    'is_tarea' => true,
+                    'tarea_id' => $tarea->id,
+                    'tarea_estado' => $tarea->estado,
+                    'tarea_color' => $tarea->color ?? '#f59e0b',
+                    'has_accepted' => false,
+                    'has_declined' => false,
+                    'has_tentative' => false,
+                    'attendees' => [],
+                ];
+                
+                $eventos->get($fechaKey)->push($evento);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error obteniendo tareas: ' . $e->getMessage());
+        }
+        
         // Verificar si está autorizado y obtener información del calendario
         $isAuthorized = false;
         $calendarInfo = null;

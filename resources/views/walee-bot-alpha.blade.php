@@ -779,9 +779,9 @@
                 modalWidth = '550px';
             }
             
-            // Obtener estado actual de los toggles
-            const botToggleChecked = document.getElementById('botToggle')?.checked || false;
-            const emailsToggleChecked = document.getElementById('emailsToggle')?.checked || false;
+            // Obtener estado actual de los toggles (usar variables globales)
+            botToggleChecked = document.getElementById('botToggle')?.checked || false;
+            emailsToggleChecked = document.getElementById('emailsToggle')?.checked || false;
             
             Swal.fire({
                 title: 'Configuración',

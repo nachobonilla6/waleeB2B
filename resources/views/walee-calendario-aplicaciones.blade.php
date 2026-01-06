@@ -900,23 +900,26 @@
                         ${buttonsHtml}
                     </div>
                 `,
-                showCancelButton: true,
-                confirmButtonText: 'Cerrar',
-                cancelButtonText: eventoId ? 'Editar' : '',
-                cancelButtonColor: eventoId ? '#3b82f6' : undefined,
-                confirmButtonColor: '#8b5cf6',
+                showCancelButton: false,
+                showConfirmButton: false,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                reverseButtons: true,
+                buttonsStyling: false,
                 didOpen: () => {
-                    if (eventoId) {
-                        const cancelBtn = document.querySelector('.swal2-cancel');
-                        if (cancelBtn) {
-                            cancelBtn.onclick = () => {
-                                Swal.close();
-                                showEditarEventoModal(eventoId, titulo, descripcion || '', fechaInput);
-                            };
-                        }
+                    // Agregar X roja en la esquina superior izquierda de la modal (afuera)
+                    const swalContainer = document.querySelector('.swal2-popup');
+                    if (swalContainer) {
+                        const closeBtn = document.createElement('button');
+                        closeBtn.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        `;
+                        closeBtn.className = 'absolute -top-3 -left-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-50 cursor-pointer';
+                        closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                        closeBtn.onclick = () => Swal.close();
+                        swalContainer.style.position = 'relative';
+                        swalContainer.appendChild(closeBtn);
                     }
                 }
             });

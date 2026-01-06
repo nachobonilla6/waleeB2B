@@ -80,7 +80,7 @@ class GoogleCalendarService
             $client->setPrompt('select_account consent');
             
             // Configurar redirect URI
-            $redirectUri = route('google-calendar.callback');
+            $redirectUri = route('auth.google.callback');
             $client->setRedirectUri($redirectUri);
 
             // Si hay un token de acceso guardado, usarlo
@@ -144,7 +144,7 @@ class GoogleCalendarService
             $client->setPrompt('select_account consent');
             
             // Obtener la URL de redirección
-            $redirectUri = route('google-calendar.callback');
+            $redirectUri = route('auth.google.callback');
             $client->setRedirectUri($redirectUri);
             
             // Log para depuración
@@ -232,7 +232,7 @@ class GoogleCalendarService
             }
             
             $client->setAuthConfig($credentialsPath);
-            $client->setRedirectUri(route('google-calendar.callback'));
+            $client->setRedirectUri(route('auth.google.callback'));
             
             $token = $client->fetchAccessTokenWithAuthCode($code);
             

@@ -24,8 +24,53 @@ class GoogleLoginController extends Controller
     /**
      * Manejar el callback de Google
      */
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
+        $code = $request->get('code');
+        $state = $request->get('state');
+        
+        // Si hay un código pero no viene de Socialite (es decir, es un callback de OAuth directo)
+        // Verificar si es un callback de Google Calendar
+        if ($code && !$request->has('scope')) {
+            // Intentar manejar como callback de Google Calendar
+            try {
+                $googleService = new \App\Services\GoogleCalendarService();
+                $success = $googleService->handleCallback($code);
+                
+                if ($success) {
+                    if ($state === 'aplicaciones') {
+                        return redirect()->route('walee.calendario.aplicaciones')
+                            ->with('success', 'Google Calendar ha sido autorizado correctamente.');
+                    }
+                    
+                    \Filament\Notifications\Notification::make()
+                        ->title('Autorización exitosa')
+                        ->body('Google Calendar ha sido autorizado correctamente.')
+                        ->success()
+                        ->send();
+                    
+                    return redirect()->route('filament.admin.pages.google-calendar-auth');
+                } else {
+                    if ($state === 'aplicaciones') {
+                        return redirect()->route('walee.calendario.aplicaciones')
+                            ->with('error', 'No se pudo completar la autorización. Intenta nuevamente.');
+                    }
+                    
+                    \Filament\Notifications\Notification::make()
+                        ->title('Error de autorización')
+                        ->body('No se pudo completar la autorización. Intenta nuevamente.')
+                        ->danger()
+                        ->send();
+                    
+                    return redirect()->route('filament.admin.pages.google-calendar-auth');
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error en callback de Google Calendar: ' . $e->getMessage());
+                // Continuar con el flujo normal de autenticación si falla
+            }
+        }
+        
+        // Flujo normal de autenticación con Socialite
         try {
             $googleUser = Socialite::driver('google')->user();
 

@@ -798,16 +798,6 @@
         }
     </script>
     
-    <script>
-        // Abrir el modal automáticamente al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
-            // Esperar un momento para que la página cargue completamente
-            setTimeout(() => {
-                showNuevoEventoModal();
-            }, 500);
-        });
-    </script>
-    
     @include('partials.walee-support-button')
 </body>
 </html>

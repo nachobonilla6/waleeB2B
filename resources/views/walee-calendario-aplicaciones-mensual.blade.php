@@ -430,24 +430,46 @@
                                     $hora = $fechaInicio->format('H:i');
                                     $titulo = $evento->titulo ?? 'Sin título';
                                 @endphp
-                                <button 
-                                    @if(isset($evento->is_tarea) && $evento->is_tarea)
-                                        onclick="event.preventDefault(); window.location.href='{{ route('walee.tarea.detalle', $evento->tarea_id) }}';"
-                                    @else
-                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
-                                    @endif
-                                    class="w-full text-left px-1.5 py-0.5 rounded text-xs sm:text-sm font-medium transition-all hover:opacity-80 active:scale-95 truncate {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
-                                    style="border-left: 2px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
-                                    title="{{ $titulo }}"
-                                >
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-[9px] sm:text-[10px]">{{ $hora }}</span>
+                                <div class="group relative">
+                                    <button 
                                         @if(isset($evento->is_tarea) && $evento->is_tarea)
-                                            <span class="text-[8px] px-1 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300 mr-0.5">T</span>
+                                            onclick="event.preventDefault(); showTareaDetail('{{ $evento->tarea_id }}', '{{ addslashes($titulo) }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $evento->tarea_color ?? '#f59e0b' }}');"
+                                        @else
+                                            onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
                                         @endif
-                                        <span class="truncate font-semibold">{{ $titulo }}</span>
-                                    </div>
-                                </button>
+                                        class="w-full text-left px-1.5 py-0.5 rounded text-xs sm:text-sm font-medium transition-all hover:opacity-80 active:scale-95 truncate {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
+                                        style="border-left: 2px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
+                                        title="{{ $titulo }}"
+                                    >
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-[9px] sm:text-[10px]">{{ $hora }}</span>
+                                            @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                                <span class="text-[8px] px-1 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300 mr-0.5">T</span>
+                                            @endif
+                                            <span class="truncate font-semibold">{{ $titulo }}</span>
+                                        </div>
+                                    </button>
+                                    @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                        <div class="absolute top-0 right-0 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button 
+                                                onclick="event.stopPropagation(); showEditarTareaModal('{{ $evento->tarea_id }}', '{{ addslashes($titulo) }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $evento->tarea_color ?? '#f59e0b' }}');"
+                                                class="p-0.5 rounded bg-blue-500/20 hover:bg-blue-500/40 dark:bg-blue-400/20 dark:hover:bg-blue-400/40 text-blue-600 dark:text-blue-400 border border-blue-500/30 dark:border-blue-400/30 transition-all backdrop-blur-sm"
+                                                title="Editar">
+                                                <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </button>
+                                            <button 
+                                                onclick="event.stopPropagation(); eliminarTarea('{{ $evento->tarea_id }}');"
+                                                class="p-0.5 rounded bg-red-500/20 hover:bg-red-500/40 dark:bg-red-400/20 dark:hover:bg-red-400/40 text-red-600 dark:text-red-400 border border-red-500/30 dark:border-red-400/30 transition-all backdrop-blur-sm"
+                                                title="Eliminar">
+                                                <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    @endif
+                                </div>
                             @endforeach
                             @if($eventosOrdenados->count() > 3)
                                 <div class="text-[9px] text-slate-500 dark:text-slate-400 px-1.5">
@@ -972,6 +994,336 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: data.message || 'Error al eliminar la cita',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error de conexión: ' + error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
+            });
+        }
+        
+        // Funciones para Tareas (mismas que en la vista semanal)
+        function showNuevaTareaModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            Swal.fire({
+                title: 'Nueva Tarea',
+                html: `
+                    <form id="nuevaTareaForm" class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                            <input type="text" id="tarea_texto" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                            <input type="datetime-local" id="tarea_fecha" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Color</label>
+                            <input type="color" id="tarea_color" value="#f59e0b"
+                                class="w-full h-10 px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none">
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                buttonsStyling: true,
+                reverseButtons: true,
+                preConfirm: async () => {
+                    const texto = document.getElementById('tarea_texto').value;
+                    const fecha = document.getElementById('tarea_fecha').value;
+                    const color = document.getElementById('tarea_color').value;
+                    
+                    if (!texto || !fecha) {
+                        Swal.showValidationMessage('Título y fecha son requeridos');
+                        return false;
+                    }
+                    
+                    try {
+                        const response = await fetch('{{ route("tareas.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({
+                                texto: texto,
+                                fecha_hora: fecha,
+                                color: color,
+                            }),
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Tarea creada',
+                                text: 'La tarea se ha creado correctamente',
+                                confirmButtonColor: '#f59e0b'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al crear la tarea',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error de conexión: ' + error.message,
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
+            });
+        }
+        
+        function showTareaDetail(tareaId, titulo, fechaHora, fechaHoraISO, color) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const fecha = new Date(fechaHora);
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const horaFormateada = fecha.toLocaleTimeString('es-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            Swal.fire({
+                title: titulo,
+                html: `
+                    <div class="space-y-3 text-left">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">Fecha y Hora</p>
+                                <p class="text-sm font-medium text-slate-900 dark:text-white">${fechaFormateada}</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-300">${horaFormateada}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button type="button" id="editar_tarea_btn" class="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-all">
+                                Editar
+                            </button>
+                            <button type="button" id="eliminar_tarea_btn" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-all">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: false,
+                showConfirmButton: false,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                buttonsStyling: false,
+                didOpen: () => {
+                    // Agregar X roja en la esquina superior izquierda
+                    const swalContainer = document.querySelector('.swal2-popup');
+                    if (swalContainer) {
+                        const closeBtn = document.createElement('button');
+                        closeBtn.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        `;
+                        closeBtn.className = 'absolute -top-3 -left-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-50 cursor-pointer';
+                        closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                        closeBtn.onclick = () => Swal.close();
+                        swalContainer.style.position = 'relative';
+                        swalContainer.appendChild(closeBtn);
+                    }
+                    
+                    // Botón editar
+                    document.getElementById('editar_tarea_btn').onclick = () => {
+                        Swal.close();
+                        showEditarTareaModal(tareaId, titulo, fechaHoraISO, color);
+                    };
+                    
+                    // Botón eliminar
+                    document.getElementById('eliminar_tarea_btn').onclick = () => {
+                        Swal.close();
+                        eliminarTarea(tareaId);
+                    };
+                }
+            });
+        }
+        
+        function showEditarTareaModal(tareaId, tituloActual, fechaActual, colorActual) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            Swal.fire({
+                title: 'Editar Tarea',
+                html: `
+                    <form id="editarTareaForm" class="space-y-3 text-left">
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Título</label>
+                            <input type="text" id="editar_tarea_texto" value="${tituloActual.replace(/"/g, '&quot;')}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
+                            <input type="datetime-local" id="editar_tarea_fecha" value="${fechaActual}" required
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Color</label>
+                            <input type="color" id="editar_tarea_color" value="${colorActual}"
+                                class="w-full h-10 px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none">
+                        </div>
+                        <div class="pt-2">
+                            <button type="button" id="editar_tarea_guardar_btn" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-all">
+                                Guardar
+                            </button>
+                        </div>
+                    </form>
+                `,
+                showCancelButton: false,
+                showConfirmButton: false,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                buttonsStyling: false,
+                didOpen: () => {
+                    // Agregar X roja en la esquina superior izquierda
+                    const swalContainer = document.querySelector('.swal2-popup');
+                    if (swalContainer) {
+                        const closeBtn = document.createElement('button');
+                        closeBtn.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        `;
+                        closeBtn.className = 'absolute -top-3 -left-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-50 cursor-pointer';
+                        closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                        closeBtn.onclick = () => Swal.close();
+                        swalContainer.style.position = 'relative';
+                        swalContainer.appendChild(closeBtn);
+                    }
+                    
+                    // Botón guardar
+                    document.getElementById('editar_tarea_guardar_btn').onclick = async () => {
+                        const texto = document.getElementById('editar_tarea_texto').value;
+                        const fecha = document.getElementById('editar_tarea_fecha').value;
+                        const color = document.getElementById('editar_tarea_color').value;
+                        
+                        if (!texto || !fecha) {
+                            Swal.showValidationMessage('Título y fecha son requeridos');
+                            return;
+                        }
+                        
+                        try {
+                            const response = await fetch(`/walee-tareas/${tareaId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                },
+                                body: JSON.stringify({
+                                    texto: texto,
+                                    fecha_hora: fecha,
+                                    color: color,
+                                }),
+                            });
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Tarea actualizada',
+                                    text: 'La tarea se ha actualizado correctamente',
+                                    confirmButtonColor: '#f59e0b'
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message || 'Error al actualizar la tarea',
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión: ' + error.message,
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    };
+                }
+            });
+        }
+        
+        function eliminarTarea(tareaId) {
+            Swal.fire({
+                title: '¿Eliminar tarea?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/walee-tareas/${tareaId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Tarea eliminada',
+                                text: 'La tarea se ha eliminado correctamente',
+                                confirmButtonColor: '#f59e0b'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al eliminar la tarea',
                                 confirmButtonColor: '#ef4444'
                             });
                         }

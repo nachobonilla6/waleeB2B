@@ -618,17 +618,24 @@ class GoogleCalendarService
                 // Obtener información de attendees
                 $attendees = [];
                 $hasAccepted = false;
+                $hasDeclined = false;
+                $hasTentative = false;
                 if ($event->getAttendees()) {
                     foreach ($event->getAttendees() as $attendee) {
+                        $responseStatus = $attendee->getResponseStatus();
                         $attendeeData = [
                             'email' => $attendee->getEmail(),
-                            'responseStatus' => $attendee->getResponseStatus(),
+                            'responseStatus' => $responseStatus,
                         ];
                         $attendees[] = $attendeeData;
                         
-                        // Verificar si algún invitado ha aceptado
-                        if ($attendee->getResponseStatus() === 'accepted') {
+                        // Verificar estados de respuesta
+                        if ($responseStatus === 'accepted') {
                             $hasAccepted = true;
+                        } elseif ($responseStatus === 'declined') {
+                            $hasDeclined = true;
+                        } elseif ($responseStatus === 'tentative') {
+                            $hasTentative = true;
                         }
                     }
                 }
@@ -648,6 +655,8 @@ class GoogleCalendarService
                     ],
                     'attendees' => $attendees,
                     'has_accepted' => $hasAccepted,
+                    'has_declined' => $hasDeclined,
+                    'has_tentative' => $hasTentative,
                 ];
             }
 
@@ -730,6 +739,8 @@ class GoogleCalendarService
                 'from_google' => true, // Marca para identificar que viene de Google
                 'attendees' => $googleEvent['attendees'] ?? [],
                 'has_accepted' => $googleEvent['has_accepted'] ?? false,
+                'has_declined' => $googleEvent['has_declined'] ?? false,
+                'has_tentative' => $googleEvent['has_tentative'] ?? false,
             ];
         } catch (\Exception $e) {
             Log::error('Error convirtiendo evento de Google Calendar: ' . $e->getMessage());

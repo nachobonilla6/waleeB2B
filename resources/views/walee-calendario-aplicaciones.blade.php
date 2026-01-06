@@ -162,6 +162,8 @@
                         'google_event_id' => $eventoData['google_event_id'] ?? null,
                         'from_google' => true,
                         'has_accepted' => $eventoData['has_accepted'] ?? false,
+                        'has_declined' => $eventoData['has_declined'] ?? false,
+                        'has_tentative' => $eventoData['has_tentative'] ?? false,
                         'attendees' => $eventoData['attendees'] ?? [],
                     ];
                     
@@ -418,7 +420,7 @@
                                                 @endphp
                                                 <div class="group relative">
                                                     <button 
-                                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }});"
+                                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
                                                         class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 shadow-sm md:shadow-none"
                                                         style="border-left: 4px solid #8b5cf6;"
                                                         title="{{ $titulo }}"
@@ -435,6 +437,22 @@
                                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                                     </svg>
                                                                     Aceptado
+                                                                </span>
+                                                            @endif
+                                                            @if(isset($evento->has_declined) && $evento->has_declined)
+                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-red-200 dark:bg-red-800/50 text-red-700 dark:text-red-300 flex items-center gap-0.5" title="Invitado rechazó">
+                                                                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                    Rechazado
+                                                                </span>
+                                                            @endif
+                                                            @if(isset($evento->has_tentative) && $evento->has_tentative)
+                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300 flex items-center gap-0.5" title="Invitado respondió tal vez">
+                                                                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                    Tal vez
                                                                 </span>
                                                             @endif
                                                         </div>
@@ -809,7 +827,7 @@
             });
         }
         
-        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput, hasAccepted = false) {
+        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput, hasAccepted = false, hasDeclined = false, hasTentative = false) {
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let buttonsHtml = '';
@@ -826,14 +844,32 @@
                 `;
             }
             
-            let acceptedBadge = '';
+            let responseBadge = '';
             if (hasAccepted) {
-                acceptedBadge = `
+                responseBadge = `
                     <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
                         <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                         </svg>
                         <span class="text-sm font-medium text-emerald-700 dark:text-emerald-300">El invitado ha aceptado la invitación</span>
+                    </div>
+                `;
+            } else if (hasDeclined) {
+                responseBadge = `
+                    <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                        <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium text-red-700 dark:text-red-300">El invitado ha rechazado la invitación</span>
+                    </div>
+                `;
+            } else if (hasTentative) {
+                responseBadge = `
+                    <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium text-amber-700 dark:text-amber-300">El invitado respondió "Tal vez"</span>
                     </div>
                 `;
             }
@@ -845,7 +881,7 @@
                         ${fecha ? `<p class="text-sm"><strong>Fecha:</strong> ${fecha}</p>` : ''}
                         ${ubicacion ? `<p class="text-sm"><strong>Ubicación:</strong> ${ubicacion}</p>` : ''}
                         ${descripcion ? `<p class="text-sm"><strong>Descripción:</strong> ${descripcion}</p>` : ''}
-                        ${acceptedBadge}
+                        ${responseBadge}
                         ${eventoId ? `<a href="https://calendar.google.com/calendar/event?eid=${encodeURIComponent(eventoId)}" target="_blank" class="text-sm text-violet-600 dark:text-violet-400 hover:underline block mt-2">Abrir en Google Calendar</a>` : ''}
                         ${buttonsHtml}
                     </div>

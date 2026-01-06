@@ -106,7 +106,7 @@
             
             <!-- Search Bar -->
             <div class="mb-3">
-                <div class="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border-2 border-violet-300 dark:border-violet-600 rounded-lg p-3 shadow-sm">
+                <div class="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 rounded-lg p-3 shadow-sm">
                     <div class="relative">
                         <input 
                             type="text" 

@@ -453,18 +453,266 @@
             emailsToggleChecked
         });
         
-        // Placeholder para openConfigModal - se definirá más adelante
-        // Esta función temporal evita errores si se llama antes de que se defina la función completa
-        window.openConfigModal = function() {
-            console.warn('openConfigModal: función temporal llamada. Esperando carga completa...');
-            setTimeout(() => {
-                if (typeof window.openConfigModal === 'function' && window.openConfigModal.toString().includes('async')) {
-                    console.log('Reintentando abrir modal...');
-                    window.openConfigModal();
-                } else {
-                    console.error('openConfigModal aún no está completamente cargada');
+        // Variable para almacenar el webhook actual
+        let currentWebhookUrl = '{{ $webhookUrl ?? '' }}';
+        
+        // Definir openConfigModal inmediatamente para que esté disponible cuando se renderiza el HTML
+        window.openConfigModal = async function openConfigModal() {
+            try {
+                console.log('openConfigModal llamado');
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const isMobile = window.innerWidth < 640;
+                const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+                if (!csrfTokenElement) {
+                    console.error('CSRF token no encontrado');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo encontrar el token de seguridad. Por favor, recarga la página.',
+                    });
+                    return;
                 }
-            }, 100);
+                const csrfToken = csrfTokenElement.getAttribute('content');
+                
+                // Cargar webhook guardado si no lo tenemos
+                if (!currentWebhookUrl) {
+                    try {
+                        const response = await fetch('{{ route("walee.bot.alpha.webhook.get") }}', {
+                            method: 'GET',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            currentWebhookUrl = data.webhook_url || '';
+                        }
+                    } catch (error) {
+                        console.error('Error al cargar webhook:', error);
+                    }
+                }
+                
+                let modalWidth = '95%';
+                if (window.innerWidth >= 1024) {
+                    modalWidth = '600px';
+                } else if (window.innerWidth >= 640) {
+                    modalWidth = '550px';
+                }
+                
+                // Obtener estado actual de los toggles (usar variables globales)
+                botToggleChecked = document.getElementById('botToggle')?.checked || botToggleChecked || false;
+                emailsToggleChecked = document.getElementById('emailsToggle')?.checked || emailsToggleChecked || false;
+                
+                Swal.fire({
+                    title: 'Configuración',
+                    html: `
+                        <form id="configForm" class="text-left space-y-4">
+                            <!-- Webhook -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                    URL del Webhook
+                                </label>
+                                <input 
+                                    type="url" 
+                                    id="webhookUrl" 
+                                    name="webhook_url"
+                                    value="${currentWebhookUrl || ''}"
+                                    placeholder="https://ejemplo.com/webhook"
+                                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                >
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    Ingresa la URL del webhook para recibir notificaciones
+                                </p>
+                            </div>
+                            
+                            <!-- Extracción de Clientes -->
+                            <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
+                                    </div>
+                                    <label class="switch relative" style="width: 56px; height: 32px;">
+                                        <input type="checkbox" id="configBotToggle" ${botToggleChecked ? 'checked' : ''} onchange="toggleBot(this.checked); if(document.getElementById('botToggle')) document.getElementById('botToggle').checked = this.checked; if(document.getElementById('botToggleMobile')) document.getElementById('botToggleMobile').checked = this.checked;">
+                                        <span class="slider"></span>
+                                        <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: ${botToggleChecked ? '1' : '0'};" id="configBotToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                    </label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="openRecurrenciaModal()" id="configRecurrenciaBtn" class="px-2.5 py-1.5 ${botToggleChecked ? 'bg-blue-500 hover:bg-blue-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span id="configRecurrenciaText">Recurrencia</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Emails Automáticos -->
+                            <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
+                                    </div>
+                                    <label class="switch relative" style="width: 56px; height: 32px;">
+                                        <input type="checkbox" id="configEmailsToggle" ${emailsToggleChecked ? 'checked' : ''} onchange="toggleEmails(this.checked); if(document.getElementById('emailsToggle')) document.getElementById('emailsToggle').checked = this.checked; if(document.getElementById('emailsToggleMobile')) document.getElementById('emailsToggleMobile').checked = this.checked;">
+                                        <span class="slider"></span>
+                                        <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: ${emailsToggleChecked ? '1' : '0'};" id="configEmailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="openRecurrenciaEmailsModal()" id="configRecurrenciaEmailsBtn" class="px-2.5 py-1.5 ${emailsToggleChecked ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span id="configRecurrenciaEmailsText">Recurrencia</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    `,
+                    width: modalWidth,
+                    padding: isMobile ? '1rem' : '1.5rem',
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#D59F3B',
+                    cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                    buttonsStyling: true,
+                    reverseButtons: true,
+                    customClass: {
+                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                        htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                        cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                    },
+                    didOpen: () => {
+                        // Sincronizar iconos de los toggles
+                        const configBotToggle = document.getElementById('configBotToggle');
+                        const configEmailsToggle = document.getElementById('configEmailsToggle');
+                        
+                        if (configBotToggle) {
+                            const updateBotIcon = () => {
+                                const icon = document.getElementById('configBotToggleIcon');
+                                if (icon) {
+                                    icon.style.opacity = configBotToggle.checked ? '1' : '0';
+                                }
+                                // Actualizar color del botón de recurrencia
+                                const recurrenciaBtn = document.getElementById('configRecurrenciaBtn');
+                                if (recurrenciaBtn) {
+                                    if (configBotToggle.checked) {
+                                        recurrenciaBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                                        recurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                                    } else {
+                                        recurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                                        recurrenciaBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                                    }
+                                }
+                            };
+                            configBotToggle.addEventListener('change', updateBotIcon);
+                            updateBotIcon();
+                        }
+                        
+                        if (configEmailsToggle) {
+                            const updateEmailsIcon = () => {
+                                const icon = document.getElementById('configEmailsToggleIcon');
+                                if (icon) {
+                                    icon.style.opacity = configEmailsToggle.checked ? '1' : '0';
+                                }
+                                // Actualizar color del botón de recurrencia
+                                const recurrenciaEmailsBtn = document.getElementById('configRecurrenciaEmailsBtn');
+                                if (recurrenciaEmailsBtn) {
+                                    if (configEmailsToggle.checked) {
+                                        recurrenciaEmailsBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                                        recurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                                    } else {
+                                        recurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+                                        recurrenciaEmailsBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
+                                    }
+                                }
+                            };
+                            configEmailsToggle.addEventListener('change', updateEmailsIcon);
+                            updateEmailsIcon();
+                        }
+                        
+                        // Actualizar textos de recurrencia si hay valores
+                        const configRecurrenciaText = document.getElementById('configRecurrenciaText');
+                        if (configRecurrenciaText && recurrenciaSeleccionada) {
+                            // Formatear el texto según el valor
+                            let texto = '';
+                            if (recurrenciaSeleccionada === 0.5) {
+                                texto = 'Cada media hora';
+                            } else if (recurrenciaSeleccionada === 1) {
+                                texto = 'Cada una hora';
+                            } else {
+                                texto = `Cada ${recurrenciaSeleccionada} horas`;
+                            }
+                            configRecurrenciaText.textContent = texto;
+                        }
+                        
+                        const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');
+                        if (configRecurrenciaEmailsText && recurrenciaEmailsSeleccionada) {
+                            const recurrencias = [
+                                { value: 0.5, label: 'Cada media hora' },
+                                { value: 1, label: 'Cada 1 hora' },
+                                { value: 2, label: 'Cada 2 horas' },
+                                { value: 3, label: 'Cada 3 horas' },
+                                { value: 4, label: 'Cada 4 horas' },
+                                { value: 5, label: 'Cada 5 horas' },
+                                { value: 6, label: 'Cada 6 horas' },
+                                { value: 8, label: 'Cada 8 horas' },
+                                { value: 12, label: 'Cada 12 horas' },
+                                { value: 48, label: 'Cada 48 horas' },
+                                { value: 72, label: 'Cada 72 horas' }
+                            ];
+                            const label = recurrencias.find(r => r.value == recurrenciaEmailsSeleccionada)?.label || `Cada ${recurrenciaEmailsSeleccionada} horas`;
+                            configRecurrenciaEmailsText.textContent = label;
+                        }
+                        
+                        // Focus en el input
+                        document.getElementById('webhookUrl')?.focus();
+                    },
+                    preConfirm: () => {
+                        const webhookUrl = document.getElementById('webhookUrl').value.trim();
+                        
+                        if (webhookUrl && !isValidUrl(webhookUrl)) {
+                            Swal.showValidationMessage('Por favor ingresa una URL válida');
+                            return false;
+                        }
+                        
+                        return { webhook_url: webhookUrl };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed && result.value) {
+                        saveWebhook(result.value.webhook_url);
+                    }
+                }).catch((error) => {
+                    console.error('Error al abrir modal de configuración:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo abrir el modal de configuración. Por favor, recarga la página.',
+                    });
+                });
+            } catch (error) {
+                console.error('Error en openConfigModal:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al abrir el modal: ' + error.message,
+                });
+            }
         };
         
         // Función para guardar orden programada en la base de datos
@@ -830,274 +1078,6 @@
             // Recargar la página para aplicar filtros
             window.location.href = newURL;
         }
-        
-        // Variable para almacenar el webhook actual
-        let currentWebhookUrl = '{{ $webhookUrl ?? '' }}';
-        
-        // Abrir modal de configuración para webhook
-        // Definir la función y asignarla inmediatamente a window
-        window.openConfigModal = async function openConfigModal() {
-            try {
-                console.log('openConfigModal llamado');
-                const isDarkMode = document.documentElement.classList.contains('dark');
-                const isMobile = window.innerWidth < 640;
-                const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
-                if (!csrfTokenElement) {
-                    console.error('CSRF token no encontrado');
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo encontrar el token de seguridad. Por favor, recarga la página.',
-                    });
-                    return;
-                }
-                const csrfToken = csrfTokenElement.getAttribute('content');
-            
-            // Cargar webhook guardado si no lo tenemos
-            if (!currentWebhookUrl) {
-                try {
-                    const response = await fetch('{{ route("walee.bot.alpha.webhook.get") }}', {
-                        method: 'GET',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json'
-                        }
-                    });
-                    const data = await response.json();
-                    if (data.success) {
-                        currentWebhookUrl = data.webhook_url || '';
-                    }
-                } catch (error) {
-                    console.error('Error al cargar webhook:', error);
-                }
-            }
-            
-            let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
-                modalWidth = '600px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '550px';
-            }
-            
-            // Obtener estado actual de los toggles (usar variables globales)
-            botToggleChecked = document.getElementById('botToggle')?.checked || false;
-            emailsToggleChecked = document.getElementById('emailsToggle')?.checked || false;
-            
-            Swal.fire({
-                title: 'Configuración',
-                html: `
-                    <form id="configForm" class="text-left space-y-4">
-                        <!-- Webhook -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                URL del Webhook
-                            </label>
-                            <input 
-                                type="url" 
-                                id="webhookUrl" 
-                                name="webhook_url"
-                                value="${currentWebhookUrl || ''}"
-                                placeholder="https://ejemplo.com/webhook"
-                                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                            >
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                Ingresa la URL del webhook para recibir notificaciones
-                            </p>
-                        </div>
-                        
-                        <!-- Extracción de Clientes -->
-                        <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</h3>
-                                </div>
-                                <label class="switch relative" style="width: 56px; height: 32px;">
-                                    <input type="checkbox" id="configBotToggle" ${botToggleChecked ? 'checked' : ''} onchange="toggleBot(this.checked); if(document.getElementById('botToggle')) document.getElementById('botToggle').checked = this.checked; if(document.getElementById('botToggleMobile')) document.getElementById('botToggleMobile').checked = this.checked;">
-                                    <span class="slider"></span>
-                                    <svg class="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: ${botToggleChecked ? '1' : '0'};" id="configBotToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                </label>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="openRecurrenciaModal()" id="configRecurrenciaBtn" class="px-2.5 py-1.5 ${botToggleChecked ? 'bg-blue-500 hover:bg-blue-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span id="configRecurrenciaText">Recurrencia</span>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Emails Automáticos -->
-                        <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</h3>
-                                </div>
-                                <label class="switch relative" style="width: 56px; height: 32px;">
-                                    <input type="checkbox" id="configEmailsToggle" ${emailsToggleChecked ? 'checked' : ''} onchange="toggleEmails(this.checked); if(document.getElementById('emailsToggle')) document.getElementById('emailsToggle').checked = this.checked; if(document.getElementById('emailsToggleMobile')) document.getElementById('emailsToggleMobile').checked = this.checked;">
-                                    <span class="slider"></span>
-                                    <svg class="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white z-10 pointer-events-none transition-opacity" style="opacity: ${emailsToggleChecked ? '1' : '0'};" id="configEmailsToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </label>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button type="button" onclick="openRecurrenciaEmailsModal()" id="configRecurrenciaEmailsBtn" class="px-2.5 py-1.5 ${emailsToggleChecked ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span id="configRecurrenciaEmailsText">Recurrencia</span>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                `,
-                width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#D59F3B',
-                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                buttonsStyling: true,
-                reverseButtons: true,
-                customClass: {
-                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
-                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
-                },
-                didOpen: () => {
-                    // Sincronizar iconos de los toggles
-                    const configBotToggle = document.getElementById('configBotToggle');
-                    const configEmailsToggle = document.getElementById('configEmailsToggle');
-                    
-                    if (configBotToggle) {
-                        const updateBotIcon = () => {
-                            const icon = document.getElementById('configBotToggleIcon');
-                            if (icon) {
-                                icon.style.opacity = configBotToggle.checked ? '1' : '0';
-                            }
-                            // Actualizar color del botón de recurrencia
-                            const recurrenciaBtn = document.getElementById('configRecurrenciaBtn');
-                            if (recurrenciaBtn) {
-                                if (configBotToggle.checked) {
-                                    recurrenciaBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
-                                    recurrenciaBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
-                                } else {
-                                    recurrenciaBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-                                    recurrenciaBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
-                                }
-                            }
-                        };
-                        configBotToggle.addEventListener('change', updateBotIcon);
-                        updateBotIcon();
-                    }
-                    
-                    if (configEmailsToggle) {
-                        const updateEmailsIcon = () => {
-                            const icon = document.getElementById('configEmailsToggleIcon');
-                            if (icon) {
-                                icon.style.opacity = configEmailsToggle.checked ? '1' : '0';
-                            }
-                            // Actualizar color del botón de recurrencia
-                            const recurrenciaEmailsBtn = document.getElementById('configRecurrenciaEmailsBtn');
-                            if (recurrenciaEmailsBtn) {
-                                if (configEmailsToggle.checked) {
-                                    recurrenciaEmailsBtn.classList.remove('bg-slate-400', 'hover:bg-slate-500');
-                                    recurrenciaEmailsBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-                                } else {
-                                    recurrenciaEmailsBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-                                    recurrenciaEmailsBtn.classList.add('bg-slate-400', 'hover:bg-slate-500');
-                                }
-                            }
-                        };
-                        configEmailsToggle.addEventListener('change', updateEmailsIcon);
-                        updateEmailsIcon();
-                    }
-                    
-                    // Actualizar textos de recurrencia si hay valores
-                    const configRecurrenciaText = document.getElementById('configRecurrenciaText');
-                    if (configRecurrenciaText && recurrenciaSeleccionada) {
-                        // Formatear el texto según el valor
-                        let texto = '';
-                        if (recurrenciaSeleccionada === 0.5) {
-                            texto = 'Cada media hora';
-                        } else if (recurrenciaSeleccionada === 1) {
-                            texto = 'Cada una hora';
-                        } else {
-                            texto = `Cada ${recurrenciaSeleccionada} horas`;
-                        }
-                        configRecurrenciaText.textContent = texto;
-                    }
-                    
-                    const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');
-                    if (configRecurrenciaEmailsText && recurrenciaEmailsSeleccionada) {
-                        const recurrencias = [
-                            { value: 0.5, label: 'Cada media hora' },
-                            { value: 1, label: 'Cada 1 hora' },
-                            { value: 2, label: 'Cada 2 horas' },
-                            { value: 3, label: 'Cada 3 horas' },
-                            { value: 4, label: 'Cada 4 horas' },
-                            { value: 5, label: 'Cada 5 horas' },
-                            { value: 6, label: 'Cada 6 horas' },
-                            { value: 8, label: 'Cada 8 horas' },
-                            { value: 12, label: 'Cada 12 horas' },
-                            { value: 48, label: 'Cada 48 horas' },
-                            { value: 72, label: 'Cada 72 horas' }
-                        ];
-                        const label = recurrencias.find(r => r.value == recurrenciaEmailsSeleccionada)?.label || `Cada ${recurrenciaEmailsSeleccionada} horas`;
-                        configRecurrenciaEmailsText.textContent = label;
-                    }
-                    
-                    // Focus en el input
-                    document.getElementById('webhookUrl')?.focus();
-                },
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                allowOutsideClick: true,
-                allowEscapeKey: true,
-                backdrop: true,
-                preConfirm: () => {
-                    const webhookUrl = document.getElementById('webhookUrl').value.trim();
-                    
-                    if (webhookUrl && !isValidUrl(webhookUrl)) {
-                        Swal.showValidationMessage('Por favor ingresa una URL válida');
-                        return false;
-                    }
-                    
-                    return { webhook_url: webhookUrl };
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    saveWebhook(result.value.webhook_url);
-                }
-            }).catch((error) => {
-                console.error('Error al abrir modal de configuración:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo abrir el modal de configuración. Por favor, recarga la página.',
-                });
-            });
-            } catch (error) {
-                console.error('Error en openConfigModal:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al abrir el modal: ' + error.message,
-                });
-            }
-        };
         
         // Validar URL
         function isValidUrl(string) {

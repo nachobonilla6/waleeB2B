@@ -482,11 +482,12 @@
                                         @if($eventosOrdenados->count() > 0)
                                             @foreach($eventosOrdenados as $evento)
                                                 @php
-                                                    $fechaInicio = $evento->fecha_inicio instanceof \DateTime 
+                                                    // Asegurar que ambas fechas sean instancias de Carbon
+                                                    $fechaInicio = $evento->fecha_inicio instanceof \Carbon\Carbon 
                                                         ? $evento->fecha_inicio 
                                                         : \Carbon\Carbon::parse($evento->fecha_inicio);
                                                     $fechaFin = isset($evento->fecha_fin) 
-                                                        ? ($evento->fecha_fin instanceof \DateTime ? $evento->fecha_fin : \Carbon\Carbon::parse($evento->fecha_fin))
+                                                        ? ($evento->fecha_fin instanceof \Carbon\Carbon ? $evento->fecha_fin : \Carbon\Carbon::parse($evento->fecha_fin))
                                                         : $fechaInicio->copy()->addHour();
                                                     
                                                     // Calcular posición y altura basada en la duración

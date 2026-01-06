@@ -479,3 +479,115 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/whatsapp/conversations/{id}/send', [WhatsappController::class, 'sendMessage'])->name('api.whatsapp.send');
 });
 
+// Webhooks para órdenes programadas (Bot Alpha)
+// Crear o actualizar orden programada
+Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request) {
+    try {
+        $validated = $request->validate([
+            'tipo' => 'required|in:extraccion_clientes,emails_automaticos',
+            'activo' => 'boolean',
+            'recurrencia_horas' => 'nullable|numeric|min:0.5',
+            'configuracion' => 'nullable|array',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        // Buscar si ya existe una orden del mismo tipo para el usuario
+        $orden = \App\Models\OrdenProgramada::where('tipo', $validated['tipo'])
+            ->when(isset($validated['user_id']), function ($query) use ($validated) {
+                return $query->where('user_id', $validated['user_id']);
+            })
+            ->first();
+
+        if ($orden) {
+            // Actualizar orden existente
+            $orden->update([
+                'activo' => $validated['activo'] ?? $orden->activo,
+                'recurrencia_horas' => $validated['recurrencia_horas'] ?? $orden->recurrencia_horas,
+                'configuracion' => $validated['configuracion'] ?? $orden->configuracion,
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Orden actualizada correctamente',
+                'data' => $orden->fresh(),
+            ]);
+        } else {
+            // Crear nueva orden
+            $orden = \App\Models\OrdenProgramada::create([
+                'tipo' => $validated['tipo'],
+                'activo' => $validated['activo'] ?? true,
+                'recurrencia_horas' => $validated['recurrencia_horas'] ?? null,
+                'configuracion' => $validated['configuracion'] ?? null,
+                'user_id' => $validated['user_id'] ?? null,
+                'last_run' => null,
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Orden creada correctamente',
+                'data' => $orden,
+            ], 201);
+        }
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error de validación',
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Error en webhook de órdenes programadas: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->name('api.ordenes-programadas.create');
+
+// Obtener órdenes programadas pendientes (para n8n Schedule Trigger)
+Route::get('/ordenes-programadas/pendientes', function (\Illuminate\Http\Request $request) {
+    try {
+        $minutos = $request->input('minutos', 30);
+        $tipo = $request->input('tipo'); // opcional: filtrar por tipo
+        
+        $query = \App\Models\OrdenProgramada::pendientes($minutos);
+        
+        if ($tipo) {
+            $query->porTipo($tipo);
+        }
+        
+        $ordenes = $query->get();
+        
+        return response()->json([
+            'success' => true,
+            'count' => $ordenes->count(),
+            'data' => $ordenes,
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error al obtener órdenes pendientes: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->name('api.ordenes-programadas.pendientes');
+
+// Marcar orden como ejecutada (actualizar last_run)
+Route::post('/ordenes-programadas/{id}/ejecutar', function ($id) {
+    try {
+        $orden = \App\Models\OrdenProgramada::findOrFail($id);
+        $orden->update(['last_run' => now()]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Orden marcada como ejecutada',
+            'data' => $orden->fresh(),
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error al marcar orden como ejecutada: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->name('api.ordenes-programadas.ejecutar');
+

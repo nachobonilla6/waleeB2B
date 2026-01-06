@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Clientes Pendientes</title>
-    <meta name="description" content="Walee - Clientes Pendientes">
+    <title>Walee - Clientes Extraídos</title>
+    <meta name="description" content="Walee - Clientes Extraídos">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -116,14 +116,14 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Clientes en Proceso'; @endphp
+            @php $pageTitle = 'Clientes Extraídos'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                 <div>
                     <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                        Clientes en Proceso
+                        Clientes Extraídos
                     </h1>
                 </div>
                 <div class="flex items-center gap-2">

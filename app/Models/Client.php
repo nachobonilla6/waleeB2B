@@ -19,6 +19,7 @@ class Client extends Model
         'horario',
         'ciudad',
         'idioma',
+        'industria',
         'telefono_2',
         'feedback',
         'propuesta',

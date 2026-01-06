@@ -816,10 +816,11 @@
                         configIdiomaExtraccion = idioma_extraccion || '';
                         configIndustriaExtraccion = industria_extraccion || '';
                         
-                        // Guardar configuración de orden programada de extracción (incluye idioma/industria)
+                        // Guardar configuración de orden programada de extracción (incluye idioma, industria y recurrencia)
                         guardarOrdenProgramada('extraccion_clientes', botToggleChecked, recurrenciaSeleccionada, {
                             idioma: configIdiomaExtraccion || null,
                             industria: configIndustriaExtraccion || null,
+                            recurrencia: recurrenciaSeleccionada || null,
                         });
                     }
                 }).catch((error) => {
@@ -934,6 +935,7 @@
             await guardarOrdenProgramada('extraccion_clientes', enabled, recurrenciaSeleccionada, {
                 idioma: configIdiomaExtraccion || null,
                 industria: configIndustriaExtraccion || null,
+                recurrencia: recurrenciaSeleccionada || null,
             });
         }
         
@@ -1051,6 +1053,7 @@
                     await guardarOrdenProgramada('extraccion_clientes', botToggleChecked, recurrenciaSeleccionada, {
                         idioma: configIdiomaExtraccion || null,
                         industria: configIndustriaExtraccion || null,
+                        recurrencia: recurrenciaSeleccionada || null,
                     });
                 }
             });

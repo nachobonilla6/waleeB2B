@@ -269,17 +269,13 @@
                             <!-- Content -->
                             <div class="flex-1 min-w-0">
                                 <!-- Header: Name and Badge -->
-                                <div class="flex items-start justify-between gap-3 mb-2">
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            @if($bandera)
-                                                <span class="text-base flex-shrink-0">{{ $bandera }}</span>
-                                            @endif
-                                            <h3 class="font-semibold text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-                                                {{ $cliente->name ?: 'Sin nombre' }}
-                                            </h3>
-                                        </div>
-                                    </div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    @if($bandera)
+                                        <span class="text-base flex-shrink-0">{{ $bandera }}</span>
+                                    @endif
+                                    <h3 class="font-semibold text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors flex-1 min-w-0">
+                                        {{ $cliente->name ?: 'Sin nombre' }}
+                                    </h3>
                                     @if($cliente->emails_count > 0)
                                         <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" onclick="event.stopPropagation();" class="flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0 hover:bg-emerald-500/30 dark:hover:bg-emerald-500/20 transition-colors" title="Ver emails enviados">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

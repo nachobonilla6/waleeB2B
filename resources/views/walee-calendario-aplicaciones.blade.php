@@ -275,7 +275,7 @@
             @include('partials.walee-navbar')
             
             @if(session('success'))
-                <div class="mb-4 p-3 bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-300 dark:border-emerald-700 rounded-lg text-emerald-700 dark:text-emerald-300 text-sm">
+                <div class="mb-4 p-3 bg-violet-100 dark:bg-violet-900/30 border border-violet-300 dark:border-violet-700 rounded-lg text-violet-700 dark:text-violet-300 text-sm">
                     {{ session('success') }}
                 </div>
             @endif
@@ -287,32 +287,32 @@
             @endif
             
             @if($credentialsError)
-                <div class="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-lg">
+                <div class="mb-4 p-4 bg-violet-50 dark:bg-violet-900/20 border border-violet-300 dark:border-violet-700 rounded-lg">
                     <div class="flex items-start gap-3">
-                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-violet-600 dark:text-violet-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                         </svg>
                         <div class="flex-1">
-                            <h4 class="font-semibold text-amber-900 dark:text-amber-200 mb-1">Archivo de credenciales no encontrado</h4>
-                            <p class="text-sm text-amber-800 dark:text-amber-300 mb-2">
+                            <h4 class="font-semibold text-violet-900 dark:text-violet-200 mb-1">Archivo de credenciales no encontrado</h4>
+                            <p class="text-sm text-violet-800 dark:text-violet-300 mb-2">
                                 El archivo de credenciales de Google no se encuentra en la ruta esperada.
                             </p>
-                            <div class="bg-amber-100 dark:bg-amber-900/30 rounded p-2 mb-2">
-                                <p class="text-xs font-semibold text-amber-900 dark:text-amber-200 mb-1">Rutas verificadas:</p>
+                            <div class="bg-violet-100 dark:bg-violet-900/30 rounded p-2 mb-2">
+                                <p class="text-xs font-semibold text-violet-900 dark:text-violet-200 mb-1">Rutas verificadas:</p>
                                 @if(isset($calendarInfo['possible_paths']))
                                     @foreach($calendarInfo['possible_paths'] as $path)
-                                        <p class="text-xs font-mono text-amber-800 dark:text-amber-300 break-all {{ file_exists($path) ? 'text-emerald-700 dark:text-emerald-300' : '' }}">
+                                        <p class="text-xs font-mono text-violet-800 dark:text-violet-300 break-all {{ file_exists($path) ? 'text-emerald-700 dark:text-emerald-300' : '' }}">
                                             {{ file_exists($path) ? '✓ ' : '✗ ' }}{{ $path }}
                                         </p>
                                     @endforeach
                                 @else
-                                    <p class="text-xs font-mono text-amber-900 dark:text-amber-200 break-all">
+                                    <p class="text-xs font-mono text-violet-900 dark:text-violet-200 break-all">
                                         {{ $calendarInfo['credentials_path'] ?? $credentialsError }}
                                     </p>
                                 @endif
                             </div>
-                            <p class="text-xs text-amber-700 dark:text-amber-400">
-                                <strong>Instrucciones:</strong> Sube el archivo <code class="bg-amber-200 dark:bg-amber-800 px-1 rounded">google-credentials.json</code> a esa ubicación en el servidor. 
+                            <p class="text-xs text-violet-700 dark:text-violet-400">
+                                <strong>Instrucciones:</strong> Sube el archivo <code class="bg-violet-200 dark:bg-violet-800 px-1 rounded">google-credentials.json</code> a esa ubicación en el servidor. 
                                 Puedes obtener este archivo desde <a href="https://console.cloud.google.com/" target="_blank" class="underline">Google Cloud Console</a> en la sección de credenciales OAuth2.
                             </p>
                         </div>
@@ -321,7 +321,7 @@
             @endif
             
             @if($calendarInfo && $calendarInfo['credentials_exists'] && $isAuthorized)
-                <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg text-blue-800 dark:text-blue-200 text-sm">
+                <div class="mb-4 p-3 bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700 rounded-lg text-violet-800 dark:text-violet-200 text-sm">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>

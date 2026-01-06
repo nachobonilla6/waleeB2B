@@ -424,15 +424,92 @@
                 <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
                     <div class="p-4 sm:p-6">
                         <!-- World Map Widget -->
-                        <div class="mb-6 bg-slate-50 dark:bg-slate-800 rounded-xl p-4 overflow-hidden" style="height: 400px; position: relative;">
-                            <iframe
-                                width="100%"
-                                height="100%"
-                                style="border:0"
-                                loading="lazy"
-                                allowfullscreen
-                                src="https://www.timeanddate.com/clock/fullscreen.html?mode=html5&n=0&theme=1&size=2&lang=es&p1=179&p2=136&p3=248&p4=195&p5=37&p6=240&p7=166&p8=224&p9=33">
-                            </iframe>
+                        <div class="mb-6 bg-slate-50 dark:bg-slate-800 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative;">
+                            <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden;">
+                                <!-- Mapa mundial SVG simplificado -->
+                                <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%;" class="world-map-svg">
+                                    <!-- Continentes simplificados -->
+                                    <path d="M100,200 Q150,180 200,200 T300,200 Q350,200 400,220 T500,230 Q550,240 600,250 T700,260 Q750,270 800,280 T900,290" 
+                                          fill="#4a5568" stroke="#2d3748" stroke-width="2" class="continent"/>
+                                    <path d="M150,300 Q200,280 250,300 T350,310 Q400,320 450,330 T550,340 Q600,350 650,360 T750,370 Q800,380 850,390" 
+                                          fill="#4a5568" stroke="#2d3748" stroke-width="2" class="continent"/>
+                                    <path d="M200,100 Q250,90 300,100 T400,110 Q450,120 500,130 T600,140 Q650,150 700,160" 
+                                          fill="#4a5568" stroke="#2d3748" stroke-width="2" class="continent"/>
+                                    
+                                    <!-- Marcadores de ciudades con relojes -->
+                                    <!-- New York -->
+                                    <g class="city-marker" data-city="ny" data-timezone="America/New_York">
+                                        <circle cx="250" cy="200" r="8" fill="#ef4444" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="250" y="195" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">NY</text>
+                                        <foreignObject x="230" y="215" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-ny">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- London -->
+                                    <g class="city-marker" data-city="london" data-timezone="Europe/London">
+                                        <circle cx="480" cy="180" r="8" fill="#3b82f6" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="480" y="175" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">LDN</text>
+                                        <foreignObject x="460" y="195" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-london">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- Tokyo -->
+                                    <g class="city-marker" data-city="tokyo" data-timezone="Asia/Tokyo">
+                                        <circle cx="850" cy="200" r="8" fill="#10b981" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="850" y="195" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">TKY</text>
+                                        <foreignObject x="830" y="215" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-tokyo">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- Sydney -->
+                                    <g class="city-marker" data-city="sydney" data-timezone="Australia/Sydney">
+                                        <circle cx="850" cy="350" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="850" y="345" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">SYD</text>
+                                        <foreignObject x="830" y="365" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-sydney">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- Dubai -->
+                                    <g class="city-marker" data-city="dubai" data-timezone="Asia/Dubai">
+                                        <circle cx="550" cy="240" r="8" fill="#8b5cf6" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="550" y="235" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">DXB</text>
+                                        <foreignObject x="530" y="255" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-dubai">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- São Paulo -->
+                                    <g class="city-marker" data-city="saopaulo" data-timezone="America/Sao_Paulo">
+                                        <circle cx="350" cy="320" r="8" fill="#ec4899" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="350" y="315" text-anchor="middle" fill="#ec4899" font-size="10" font-weight="bold">SP</text>
+                                        <foreignObject x="330" y="335" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-saopaulo">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- Los Angeles -->
+                                    <g class="city-marker" data-city="la" data-timezone="America/Los_Angeles">
+                                        <circle cx="180" cy="210" r="8" fill="#06b6d4" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="180" y="205" text-anchor="middle" fill="#06b6d4" font-size="10" font-weight="bold">LA</text>
+                                        <foreignObject x="160" y="225" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-la">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                    
+                                    <!-- Madrid -->
+                                    <g class="city-marker" data-city="madrid" data-timezone="Europe/Madrid">
+                                        <circle cx="460" cy="200" r="8" fill="#14b8a6" stroke="#fff" stroke-width="2" class="city-dot"/>
+                                        <text x="460" y="195" text-anchor="middle" fill="#14b8a6" font-size="10" font-weight="bold">MAD</text>
+                                        <foreignObject x="440" y="215" width="40" height="30">
+                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-madrid">--:--</div>
+                                        </foreignObject>
+                                    </g>
+                                </svg>
+                            </div>
                         </div>
                         
                         <!-- World Clocks Grid -->
@@ -679,6 +756,7 @@
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
                     
+                    // Actualizar relojes en las tarjetas
                     const clockElement = document.getElementById(`clock-${city}`);
                     const dateElement = document.getElementById(`date-${city}`);
                     
@@ -689,6 +767,12 @@
                     if (dateElement) {
                         const options = { month: 'short', day: 'numeric' };
                         dateElement.textContent = now.toLocaleDateString('en-US', options);
+                    }
+                    
+                    // Actualizar relojes en el mapa
+                    const mapClockElement = document.getElementById(`map-clock-${city}`);
+                    if (mapClockElement) {
+                        mapClockElement.textContent = `${hours}:${minutes}`;
                     }
                 } catch (error) {
                     console.error(`Error updating clock for ${city}:`, error);

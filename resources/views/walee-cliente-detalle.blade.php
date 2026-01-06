@@ -1959,8 +1959,8 @@
                 
                 sortedTemplates.forEach(template => {
                     // Mostrar el template siempre, con o sin tipo
-                    const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
-                    templatesOptions += `<option value="${template.id}">${template.nombre}${tipoLabel}</option>`;
+                    // En el select no podemos usar colores, pero guardamos el tipo en data-attribute
+                    templatesOptions += `<option value="${template.id}" data-tipo="${template.tipo || ''}">${template.nombre}${template.tipo ? ' [' + template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1) + ']' : ''}</option>`;
                 });
             }
             
@@ -1981,10 +1981,15 @@
                                 Usar AI en su lugar
                             </button>
                         </div>
-                        <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
-                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
-                            ${templatesOptions}
-                        </select>
+                        <div class="relative">
+                            <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none appearance-none">
+                                ${templatesOptions}
+                            </select>
+                            <div id="template_tipo_badge_inline" class="absolute right-10 top-1/2 -translate-y-1/2 pointer-events-none" style="display: none;">
+                                <span id="template_tipo_badge_value" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"></span>
+                            </div>
+                        </div>
                         <div id="template_tipo_display" class="mt-2" style="display: none;">
                             <span id="template_tipo_value" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"></span>
                         </div>
@@ -2372,6 +2377,9 @@
                 if (tipoDisplay) {
                     tipoDisplay.style.display = 'none';
                 }
+                if (tipoBadgeInline) {
+                    tipoBadgeInline.style.display = 'none';
+                }
                 return;
             }
             
@@ -2383,6 +2391,9 @@
                 // Ocultar el tipo
                 if (tipoDisplay) {
                     tipoDisplay.style.display = 'none';
+                }
+                if (tipoBadgeInline) {
+                    tipoBadgeInline.style.display = 'none';
                 }
                 return;
             }
@@ -2416,32 +2427,44 @@
                 console.log('loadEmailTemplate - tipoDisplay:', tipoDisplay);
                 console.log('loadEmailTemplate - tipoValue:', tipoValue);
                 
-                if (tipoDisplay && tipoValue) {
-                    if (template.tipo) {
-                        console.log('Mostrando badge para tipo:', template.tipo);
-                        const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
+                // Función para obtener colores del badge según el tipo
+                const getTipoColors = (tipo) => {
+                    const tipoColors = {
+                        'business': 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
+                        'agricultura': 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
+                        'b2b': 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
+                        'b2c': 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30'
+                    };
+                    return tipoColors[tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30';
+                };
+                
+                if (template.tipo) {
+                    console.log('Mostrando badge para tipo:', template.tipo);
+                    const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
+                    const tipoColors = getTipoColors(template.tipo);
+                    
+                    // Badge debajo del select
+                    if (tipoDisplay && tipoValue) {
                         tipoValue.textContent = tipoText;
-                        // Aplicar color según el tipo con estilo badge
-                        const tipoColors = {
-                            'business': 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
-                            'agricultura': 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
-                            'b2b': 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
-                            'b2c': 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30'
-                        };
-                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + (tipoColors[template.tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30');
+                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + tipoColors;
                         tipoDisplay.style.display = 'block';
                         tipoDisplay.style.visibility = 'visible';
-                        console.log('Badge mostrado con className:', tipoValue.className);
-                        console.log('Badge display:', tipoDisplay.style.display);
-                        console.log('Badge visibility:', tipoDisplay.style.visibility);
-                    } else {
-                        console.log('Template sin tipo, ocultando badge');
-                        tipoDisplay.style.display = 'none';
+                    }
+                    
+                    // Badge inline en el select
+                    if (tipoBadgeInline && tipoBadgeValue) {
+                        tipoBadgeValue.textContent = tipoText;
+                        tipoBadgeValue.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ' + tipoColors;
+                        tipoBadgeInline.style.display = 'block';
                     }
                 } else {
-                    console.error('tipoDisplay o tipoValue no encontrados');
-                    console.error('tipoDisplay:', tipoDisplay);
-                    console.error('tipoValue:', tipoValue);
+                    console.log('Template sin tipo, ocultando badge');
+                    if (tipoDisplay) {
+                        tipoDisplay.style.display = 'none';
+                    }
+                    if (tipoBadgeInline) {
+                        tipoBadgeInline.style.display = 'none';
+                    }
                 }
             }, 100);
             

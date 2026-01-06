@@ -379,7 +379,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="font-medium text-xs text-slate-900 dark:text-white">Clientes Pendientes</p>
+                                    <p class="font-medium text-xs text-slate-900 dark:text-white">Esperando Respuesta</p>
                                     <p class="text-xs text-slate-600 dark:text-slate-400">Ver lista completa</p>
                                 </div>
                             </div>

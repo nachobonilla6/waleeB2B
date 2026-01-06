@@ -89,6 +89,9 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
     @php
+        // Total de templates del usuario
+        $totalTemplates = \App\Models\EmailTemplate::where('user_id', auth()->id())->count();
+        
         // Total de clientes en proceso (excluyendo activos) - Negocios Extraídos
         $totalClientesEnProceso = \App\Models\Client::where('estado', '!=', 'activo')->count();
         
@@ -355,7 +358,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="font-medium text-xs text-slate-900 dark:text-white truncate">Templates</p>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">Gestionar templates</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $totalTemplates }} total</p>
                             </div>
                         </a>
                     </div>

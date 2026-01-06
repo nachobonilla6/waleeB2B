@@ -146,9 +146,13 @@
                         'attendees' => $eventoData['attendees'] ?? [],
                     ];
                     
-                    // Si es una tarea, cambiar from_google a false
+                    // Si es una tarea, cambiar from_google a false y asegurar fecha_fin (2 horas después)
                     if ($tareaCorrespondiente) {
                         $evento->from_google = false;
+                        // Si no tiene fecha_fin o es null, establecerla a 2 horas después del inicio
+                        if (!$evento->fecha_fin || !($evento->fecha_fin instanceof \DateTime)) {
+                            $evento->fecha_fin = $evento->fecha_inicio->copy()->addHours(2);
+                        }
                     }
                     
                     $fechaKey = $eventoData['fecha_inicio']->format('Y-m-d');
@@ -183,7 +187,7 @@
                     'titulo' => $tarea->texto,
                     'descripcion' => null,
                     'fecha_inicio' => $tarea->fecha_hora,
-                    'fecha_fin' => $tarea->fecha_hora->copy()->addHour(),
+                    'fecha_fin' => $tarea->fecha_hora->copy()->addHours(2), // 2 horas después del inicio
                     'ubicacion' => null,
                     'google_event_id' => null,
                     'from_google' => false,

@@ -106,13 +106,13 @@
             
             <!-- Search Bar -->
             <div class="mb-3">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                <div class="bg-white dark:bg-slate-800/50 border-2 border-slate-900 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                     <div class="relative">
                         <input 
                             type="text" 
                             id="templateSearchInput"
                             placeholder="Buscar templates..."
-                            class="w-full px-3 py-2 pl-9 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
+                            class="w-full px-3 py-2 pl-9 rounded-lg bg-slate-100 dark:bg-slate-900/80 border-2 border-slate-900 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
                             oninput="filterTemplates()"
                         >
                         <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

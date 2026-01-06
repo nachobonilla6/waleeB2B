@@ -1,4 +1,4 @@
-<!-- Botón Flotante Principal -->
+EN<!-- Botón Flotante Principal -->
 <div id="floating-buttons-container" class="fixed bottom-6 right-6 z-50" x-data="{ open: false }">
     <!-- Botones secundarios (se muestran cuando open es true) -->
     <div 

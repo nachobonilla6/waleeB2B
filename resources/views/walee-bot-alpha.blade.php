@@ -448,32 +448,71 @@
         // Función para guardar orden programada en la base de datos
         async function guardarOrdenProgramada(tipo, activo, recurrenciaHoras) {
             try {
+                console.log('Guardando orden programada:', { tipo, activo, recurrenciaHoras });
+                
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                if (!csrfToken) {
+                    console.error('CSRF token no encontrado');
+                }
+                
                 const response = await fetch('/api/ordenes-programadas', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrfToken || '',
+                        'X-Requested-With': 'XMLHttpRequest',
                     },
+                    credentials: 'same-origin',
                     body: JSON.stringify({
                         tipo: tipo,
                         activo: activo,
                         recurrencia_horas: recurrenciaHoras,
-                        user_id: null // Se puede obtener del backend si es necesario
+                        user_id: null // El backend usará auth()->id() si está disponible
                     })
                 });
                 
+                console.log('Response status:', response.status);
                 const data = await response.json();
+                console.log('Response data:', data);
+                
                 if (data.success) {
-                    console.log(`Orden programada ${tipo} guardada:`, data.data);
+                    console.log(`✅ Orden programada ${tipo} guardada correctamente:`, data.data);
+                    // Mostrar notificación de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Guardado',
+                        text: `Orden ${tipo === 'extraccion_clientes' ? 'de extracción' : 'de emails'} guardada correctamente`,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
                     return true;
                 } else {
-                    console.error('Error al guardar orden programada:', data.message);
+                    console.error('❌ Error al guardar orden programada:', data.message, data.errors);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al guardar la orden programada',
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
                     return false;
                 }
             } catch (error) {
-                console.error('Error de conexión al guardar orden programada:', error);
+                console.error('❌ Error de conexión al guardar orden programada:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'No se pudo conectar con el servidor. Verifica tu conexión.',
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
                 return false;
             }
         }

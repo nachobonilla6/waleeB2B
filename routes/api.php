@@ -483,6 +483,11 @@ Route::middleware(['auth'])->group(function () {
 // Crear o actualizar orden programada
 Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request) {
     try {
+        \Log::info('Webhook ordenes-programadas recibido', [
+            'data' => $request->all(),
+            'user_id' => auth()->id(),
+        ]);
+
         $validated = $request->validate([
             'tipo' => 'required|in:extraccion_clientes,emails_automaticos',
             'activo' => 'boolean',
@@ -491,10 +496,16 @@ Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request)
             'user_id' => 'nullable|exists:users,id',
         ]);
 
+        // Usar el usuario autenticado si está disponible, o el user_id del request
+        $userId = auth()->id() ?? $validated['user_id'] ?? null;
+
         // Buscar si ya existe una orden del mismo tipo para el usuario
         $orden = \App\Models\OrdenProgramada::where('tipo', $validated['tipo'])
-            ->when(isset($validated['user_id']), function ($query) use ($validated) {
-                return $query->where('user_id', $validated['user_id']);
+            ->when($userId, function ($query) use ($userId) {
+                return $query->where('user_id', $userId);
+            })
+            ->when(!$userId, function ($query) {
+                return $query->whereNull('user_id');
             })
             ->first();
 
@@ -504,7 +515,10 @@ Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request)
                 'activo' => $validated['activo'] ?? $orden->activo,
                 'recurrencia_horas' => $validated['recurrencia_horas'] ?? $orden->recurrencia_horas,
                 'configuracion' => $validated['configuracion'] ?? $orden->configuracion,
+                'user_id' => $userId ?? $orden->user_id,
             ]);
+            
+            \Log::info('Orden actualizada', ['orden_id' => $orden->id, 'data' => $orden->toArray()]);
             
             return response()->json([
                 'success' => true,
@@ -518,9 +532,11 @@ Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request)
                 'activo' => $validated['activo'] ?? true,
                 'recurrencia_horas' => $validated['recurrencia_horas'] ?? null,
                 'configuracion' => $validated['configuracion'] ?? null,
-                'user_id' => $validated['user_id'] ?? null,
+                'user_id' => $userId,
                 'last_run' => null,
             ]);
+            
+            \Log::info('Orden creada', ['orden_id' => $orden->id, 'data' => $orden->toArray()]);
             
             return response()->json([
                 'success' => true,

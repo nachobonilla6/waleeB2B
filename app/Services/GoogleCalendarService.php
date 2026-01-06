@@ -143,12 +143,20 @@ class GoogleCalendarService
             $client->setAccessType('offline');
             $client->setPrompt('select_account consent');
             
-            // Obtener la URL de redirección
-            $redirectUri = route('auth.google.callback');
+            // Obtener la URL de redirección según el state
+            // Si es 'aplicaciones' o 'filament', usar el callback específico de Google Calendar
+            if ($state === 'aplicaciones' || $state === 'filament') {
+                $redirectUri = route('google-calendar.callback');
+            } else {
+                // Por defecto usar el callback de Google Calendar
+                $redirectUri = route('google-calendar.callback');
+            }
+            
             $client->setRedirectUri($redirectUri);
             
             // Log para depuración
             Log::info('Google Calendar OAuth - Redirect URI generado: ' . $redirectUri);
+            Log::info('Google Calendar OAuth - State: ' . ($state ?? 'null'));
             Log::info('Google Calendar OAuth - APP_URL: ' . config('app.url'));
             
             // Agregar state para saber a dónde redirigir después
@@ -232,7 +240,14 @@ class GoogleCalendarService
             }
             
             $client->setAuthConfig($credentialsPath);
-            $client->setRedirectUri(route('auth.google.callback'));
+            
+            // Usar el mismo redirect_uri que se usó en la solicitud de autorización
+            // Por defecto usar el callback de Google Calendar
+            $redirectUri = route('google-calendar.callback');
+            $client->setRedirectUri($redirectUri);
+            
+            Log::info('Google Calendar Callback - Redirect URI usado: ' . $redirectUri);
+            Log::info('Google Calendar Callback - Código recibido: ' . (empty($code) ? 'vacío' : 'presente'));
             
             $token = $client->fetchAccessTokenWithAuthCode($code);
             

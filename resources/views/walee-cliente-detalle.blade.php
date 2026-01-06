@@ -1892,7 +1892,8 @@
             let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
             if (emailTemplates && emailTemplates.length > 0) {
                 emailTemplates.forEach(template => {
-                    templatesOptions += `<option value="${template.id}">${template.nombre}</option>`;
+                    const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
+                    templatesOptions += `<option value="${template.id}">${template.nombre}${tipoLabel}</option>`;
                 });
             }
             

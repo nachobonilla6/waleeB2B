@@ -511,9 +511,9 @@
                                                                 <span class="text-[9px] text-slate-500 dark:text-slate-400">- {{ $horaFinStr }}</span>
                                                             @endif
                                                             @if(isset($evento->is_tarea) && $evento->is_tarea)
-                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300">Tarea</span>
+                                                                <span class="text-[9px] font-semibold px-2 py-0.5 rounded-md bg-amber-500 dark:bg-amber-600 text-white shadow-sm">Tarea</span>
                                                             @elseif(isset($evento->from_google) && $evento->from_google)
-                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
+                                                                <span class="text-[9px] font-semibold px-2 py-0.5 rounded-md bg-blue-500 dark:bg-blue-600 text-white shadow-sm">Google</span>
                                                             @endif
                                                             @if(isset($evento->has_accepted) && $evento->has_accepted)
                                                                 <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-emerald-200 dark:bg-emerald-800/50 text-emerald-700 dark:text-emerald-300 flex items-center gap-0.5" title="Invitado aceptó">

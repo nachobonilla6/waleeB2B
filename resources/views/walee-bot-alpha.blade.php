@@ -484,12 +484,23 @@
         // Abrir modal de recurrencia para Extracción de Clientes
         function openRecurrenciaModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
-            const recurrencias = [2, 4, 6, 8, 12, 24, 48, 76];
+            const recurrencias = [
+                { value: 0.5, label: 'Cada media hora' },
+                { value: 1, label: 'Cada una hora' },
+                { value: 2, label: 'Cada 2 horas' },
+                { value: 4, label: 'Cada 4 horas' },
+                { value: 6, label: 'Cada 6 horas' },
+                { value: 8, label: 'Cada 8 horas' },
+                { value: 12, label: 'Cada 12 horas' },
+                { value: 24, label: 'Cada 24 horas' },
+                { value: 48, label: 'Cada 48 horas' },
+                { value: 76, label: 'Cada 76 horas' }
+            ];
             
             let recurrenciasOptions = '';
-            recurrencias.forEach(horas => {
-                const selected = recurrenciaSeleccionada === horas ? 'selected' : '';
-                recurrenciasOptions += `<option value="${horas}" ${selected}>Cada ${horas} horas</option>`;
+            recurrencias.forEach(rec => {
+                const selected = recurrenciaSeleccionada === rec.value ? 'selected' : '';
+                recurrenciasOptions += `<option value="${rec.value}" ${selected}>${rec.label}</option>`;
             });
             
             const html = `
@@ -536,13 +547,22 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     const valor = result.value;
-                    recurrenciaSeleccionada = valor ? parseInt(valor) : null;
+                    recurrenciaSeleccionada = valor ? parseFloat(valor) : null;
                     
                     // Actualizar el texto del botón en la modal de config
                     const configRecurrenciaText = document.getElementById('configRecurrenciaText');
                     if (configRecurrenciaText) {
                         if (recurrenciaSeleccionada) {
-                            configRecurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
+                            // Formatear el texto según el valor
+                            let texto = '';
+                            if (recurrenciaSeleccionada === 0.5) {
+                                texto = 'Cada media hora';
+                            } else if (recurrenciaSeleccionada === 1) {
+                                texto = 'Cada una hora';
+                            } else {
+                                texto = `Cada ${recurrenciaSeleccionada} horas`;
+                            }
+                            configRecurrenciaText.textContent = texto;
                         } else {
                             configRecurrenciaText.textContent = 'Recurrencia';
                         }
@@ -866,7 +886,16 @@
                     // Actualizar textos de recurrencia si hay valores
                     const configRecurrenciaText = document.getElementById('configRecurrenciaText');
                     if (configRecurrenciaText && recurrenciaSeleccionada) {
-                        configRecurrenciaText.textContent = `Cada ${recurrenciaSeleccionada} horas`;
+                        // Formatear el texto según el valor
+                        let texto = '';
+                        if (recurrenciaSeleccionada === 0.5) {
+                            texto = 'Cada media hora';
+                        } else if (recurrenciaSeleccionada === 1) {
+                            texto = 'Cada una hora';
+                        } else {
+                            texto = `Cada ${recurrenciaSeleccionada} horas`;
+                        }
+                        configRecurrenciaText.textContent = texto;
                     }
                     
                     const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');

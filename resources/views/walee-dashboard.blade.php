@@ -242,6 +242,39 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(213, 159, 59, 0.5);
         }
+        
+        /* World Map Styles */
+        .world-map-svg {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+        
+        .city-dot {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .city-dot:hover {
+            transform: scale(1.2);
+        }
+        
+        .city-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.3);
+            }
+        }
+        
+        .dark .world-map-svg {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+        }
     </style>
 </head>
 <body class="bg-violet-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">

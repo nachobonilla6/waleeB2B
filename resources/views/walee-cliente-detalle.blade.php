@@ -1866,61 +1866,34 @@
             }
         }
         
-        // Definir openEmailModal inmediatamente y hacerla global
-        window.openEmailModal = function openEmailModal() {
-            console.log('openEmailModal llamado');
-            try {
-                // Verificar que SweetAlert2 esté disponible
-                if (typeof Swal === 'undefined') {
-                    console.error('SweetAlert2 no está cargado');
-                    alert('Error: SweetAlert2 no está disponible. Por favor, recarga la página.');
-                    return;
-                }
-                
-                // Verificar que emailModalData esté disponible
-                if (typeof emailModalData === 'undefined') {
-                    console.error('emailModalData no está definido');
-                    alert('Error: Datos del modal no están disponibles. Por favor, recarga la página.');
-                    return;
-                }
-                
-                // Resetear datos
-                emailModalData.email = emailModalData.clienteEmail;
-                emailModalData.aiPrompt = '';
-                emailModalData.subject = '';
-                emailModalData.body = '';
-                emailModalData.attachments = null;
-                
-                console.log('Llamando a showEmailPhase1');
-                showEmailPhase1();
-            } catch (error) {
-                console.error('Error al abrir modal de email:', error);
-                console.error('Stack trace:', error.stack);
-                alert('Error al abrir el modal de email: ' + error.message + '. Por favor, recarga la página.');
-            }
-        };
-        
-        // También definirla localmente para compatibilidad
-        const openEmailModal = window.openEmailModal;
-        
-        // Verificar que la función esté disponible después de cargar
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOM cargado, openEmailModal disponible:', typeof window.openEmailModal);
-            });
-        } else {
-            console.log('DOM ya cargado, openEmailModal disponible:', typeof window.openEmailModal);
+        function openEmailModal() {
+            // Resetear datos para un nuevo email
+            emailModalData.email = emailModalData.clienteEmail;
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            emailModalData.attachments = null;
+            
+            // Abrir desde la fase 1
+            showEmailPhase1();
         }
+        
+        // Asegurar que la función esté disponible globalmente
+        window.openEmailModal = openEmailModal;
         
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
                 modalWidth = '700px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
             }
             
             // Generar opciones de templates
@@ -2025,13 +1998,17 @@
         
         function showEmailPhase2() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
                 modalWidth = '700px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
             }
             
             const html = `
@@ -2098,14 +2075,18 @@
         
         function showEmailPhase3() {
             const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
             let modalWidth = '95%';
-            if (window.innerWidth >= 1024) {
+            if (isDesktop) {
+                modalWidth = '900px'; // Ancho en vistas grandes
+            } else if (isTablet) {
                 modalWidth = '700px';
-            } else if (window.innerWidth >= 640) {
-                modalWidth = '600px';
+            } else if (isMobile) {
+                modalWidth = '95%';
             }
             
             const html = `

@@ -423,15 +423,15 @@
                 
                 <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
                     <div class="p-4 sm:p-6">
-                        <!-- World Map SVG -->
-                        <div class="mb-6 bg-slate-50 dark:bg-slate-800 rounded-xl p-4 overflow-hidden" style="height: 300px;">
+                        <!-- World Map Widget -->
+                        <div class="mb-6 bg-slate-50 dark:bg-slate-800 rounded-xl p-4 overflow-hidden" style="height: 400px; position: relative;">
                             <iframe
                                 width="100%"
                                 height="100%"
                                 style="border:0"
                                 loading="lazy"
                                 allowfullscreen
-                                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3022.184132189616!2d-73.98811768459418!3d40.75889597932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus&z=2">
+                                src="https://www.timeanddate.com/clock/fullscreen.html?mode=html5&n=0&theme=1&size=2&lang=es&p1=179&p2=136&p3=248&p4=195&p5=37&p6=240&p7=166&p8=224&p9=33">
                             </iframe>
                         </div>
                         

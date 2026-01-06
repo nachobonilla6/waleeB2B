@@ -17,7 +17,7 @@
         </div>
     </div>
     
-    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
         @include('partials.walee-dark-mode-toggle')
         
         <!-- Menu Toggle Button (Mobile & Desktop) -->
@@ -33,14 +33,13 @@
             <span class="block w-5 h-0.5 bg-slate-700 dark:bg-slate-300 rounded transition-all duration-300" id="menuLine2"></span>
             <span class="block w-5 h-0.5 bg-slate-700 dark:bg-slate-300 rounded transition-all duration-300" id="menuLine3"></span>
         </button>
-    </div>
-    
-    <!-- Menu Dropdown (Mobile & Desktop) -->
-    <div 
-        id="mobileMenu" 
-        class="absolute top-full right-0 mt-2 w-64 sm:w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden z-50"
-        style="display: none;"
-    >
+        
+        <!-- Menu Dropdown (Mobile & Desktop) -->
+        <div 
+            id="mobileMenu" 
+            class="absolute top-full right-0 mt-2 w-64 sm:w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-2xl overflow-hidden hidden z-50"
+            style="display: none; position: absolute;"
+        >
         <div class="py-2">
             <a 
                 href="{{ route('walee') }}" 
@@ -116,7 +115,15 @@
 
 <style>
     #mobileMenu {
-        position: relative !important;
+        position: absolute !important;
+    }
+    
+    @media (max-width: 640px) {
+        #mobileMenu {
+            width: calc(100vw - 2rem) !important;
+            right: 0 !important;
+            left: auto !important;
+        }
     }
 </style>
 

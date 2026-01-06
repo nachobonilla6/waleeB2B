@@ -1161,7 +1161,7 @@
         }
         
         // Abrir modal de Extraer ahora con selector de idioma, país, ciudad e industria
-        function openExtraerModal() {
+        async function openExtraerModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
             

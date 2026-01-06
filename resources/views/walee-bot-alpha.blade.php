@@ -1167,11 +1167,26 @@
                             <select 
                                 id="extraerIndustria" 
                                 name="industria"
+                                onchange="toggleIndustriaPersonalizada()"
                                 class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                                 style="width: 100%; box-sizing: border-box;"
                             >
                                 ${industriasOptions}
                             </select>
+                        </div>
+                        
+                        <div id="industriaPersonalizadaContainer" style="width: 100%; display: none;">
+                            <label class="block ${isMobile ? 'text-base' : 'text-sm'} font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                Industria Personalizada
+                            </label>
+                            <input 
+                                type="text" 
+                                id="extraerIndustriaPersonalizada" 
+                                name="industria_personalizada"
+                                placeholder="Escribe la industria personalizada..."
+                                class="w-full ${isMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm'} rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                style="width: 100%; box-sizing: border-box;"
+                            >
                         </div>
                     </form>
                 `,
@@ -1221,11 +1236,13 @@
                     const pais = document.getElementById('extraerPais').value;
                     const ciudad = document.getElementById('extraerCiudad').value.trim();
                     const industria = document.getElementById('extraerIndustria').value;
+                    const industriaPersonalizada = document.getElementById('extraerIndustriaPersonalizada')?.value?.trim() || '';
+                    const industriaFinal = industria === 'Otro' && industriaPersonalizada ? industriaPersonalizada : industria;
                     return { 
                         idioma: idioma || null,
                         pais: pais || null,
                         ciudad: ciudad || null,
-                        industria: industria || null
+                        industria: industriaFinal || null
                     };
                 }
             }).then((result) => {
@@ -1235,6 +1252,26 @@
             });
             
             // Función para actualizar países según idioma seleccionado
+            window.toggleIndustriaPersonalizada = function() {
+                const industriaSelect = document.getElementById('extraerIndustria');
+                const industriaPersonalizadaContainer = document.getElementById('industriaPersonalizadaContainer');
+                const industriaPersonalizadaInput = document.getElementById('extraerIndustriaPersonalizada');
+                
+                if (industriaSelect && industriaPersonalizadaContainer) {
+                    if (industriaSelect.value === 'Otro') {
+                        industriaPersonalizadaContainer.style.display = 'block';
+                        if (industriaPersonalizadaInput) {
+                            industriaPersonalizadaInput.focus();
+                        }
+                    } else {
+                        industriaPersonalizadaContainer.style.display = 'none';
+                        if (industriaPersonalizadaInput) {
+                            industriaPersonalizadaInput.value = '';
+                        }
+                    }
+                }
+            };
+            
             window.updatePaises = function() {
                 const idioma = document.getElementById('extraerIdioma').value;
                 const paisSelect = document.getElementById('extraerPais');

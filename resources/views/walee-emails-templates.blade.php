@@ -330,7 +330,7 @@
                             name="contenido" 
                             id="template_contenido"
                             required
-                            rows="5"
+                            rows="10"
                             placeholder="Contenido del email..."
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${formData.contenido || ''}</textarea>
@@ -504,7 +504,7 @@
                             name="contenido" 
                             id="template_contenido"
                             required
-                            rows="5"
+                            rows="10"
                             placeholder="Contenido del email..."
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${template.contenido || ''}</textarea>
@@ -523,9 +523,6 @@
                 showConfirmButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#D59F3B',
-                showDenyButton: true,
-                denyButtonText: 'Eliminar',
-                denyButtonColor: '#ef4444',
                 reverseButtons: false,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
@@ -535,7 +532,6 @@
                     htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
                     confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
                     cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
-                    denyButton: isDarkMode ? 'dark-swal-deny' : 'light-swal-deny',
                 },
                 didOpen: () => {
                     // Agregar event listeners para guardar datos mientras se escribe
@@ -580,9 +576,6 @@
             
             if (result.isConfirmed && result.value) {
                 await saveTemplate(result.value);
-            } else if (result.isDenied) {
-                // Eliminar template
-                deleteTemplate(templateId);
             } else {
                 // Guardar datos antes de cerrar
                 saveTemplateFormDataFromModal();
@@ -657,7 +650,7 @@
                             name="contenido" 
                             id="enviar_contenido"
                             required
-                            rows="5"
+                            rows="10"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${template.contenido || ''}</textarea>
                     </div>

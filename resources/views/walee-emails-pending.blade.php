@@ -225,101 +225,38 @@
                     </h2>
                 </div>
                 
-                <div class="grid grid-cols-1 gap-3">
+                <div class="space-y-2">
                 @forelse($clientesPending as $cliente)
-                    @php
-                        // Obtener URL de la foto del cliente
-                        $fotoUrl = null;
-                        if ($cliente->foto) {
-                            $fotoPath = $cliente->foto;
-                            if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                $fotoUrl = $fotoPath;
-                            } else {
-                                $filename = basename($fotoPath);
-                                $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                            }
-                        }
-                        
-                        // Bandera del idioma
-                        $banderas = [
-                            'es' => '🇪🇸',
-                            'en' => '🇬🇧',
-                            'fr' => '🇫🇷',
-                            'de' => '🇩🇪',
-                            'it' => '🇮🇹',
-                            'pt' => '🇵🇹'
-                        ];
-                        $bandera = ($cliente->idioma && !$fotoUrl) ? ($banderas[$cliente->idioma] ?? '') : '';
-                    @endphp
-                    <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="block bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:border-violet-400 dark:hover:border-violet-500/30 hover:shadow-md dark:hover:shadow-lg transition-all group">
-                        <div class="flex items-start gap-4">
-                            <!-- Avatar/Icon -->
-                            <div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex-shrink-0 flex items-center justify-center border border-violet-500/30 overflow-hidden">
-                                @if($fotoUrl)
-                                    <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
-                                @elseif($bandera)
-                                    <span class="text-xl">{{ $bandera }}</span>
-                                @else
-                                    <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                @endif
+                    <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all group">
+                        <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center border border-blue-500/30">
+                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
                             </div>
-                            
-                            <!-- Content -->
-                            <div class="flex-1 min-w-0">
-                                <!-- Header: Name -->
-                                <div class="flex items-center gap-2 mb-2">
-                                    @if($bandera)
-                                        <span class="text-base flex-shrink-0">{{ $bandera }}</span>
-                                    @endif
-                                    <h3 class="font-semibold text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-                                        {{ $cliente->name ?: 'Sin nombre' }}
-                                    </h3>
-                                </div>
-                                
-                                <!-- Details Grid -->
-                                <div class="space-y-1.5">
-                                    @if($cliente->email)
-                                        <div class="flex items-center gap-2">
-                                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                            </svg>
-                                            <span class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</span>
-                                        </div>
-                                    @endif
-                                    
-                                    @if($cliente->website)
-                                        <div class="flex items-center gap-2">
-                                            <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                            </svg>
-                                            <span class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $cliente->website }}</span>
-                                        </div>
-                                    @endif
-                                    
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        <span class="text-xs text-slate-500 dark:text-slate-500">{{ $cliente->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Email Counter -->
-                            <div class="flex-shrink-0 flex items-center gap-1.5">
-                                <div class="bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cliente->emails_count ?? 0 }}</span>
-                                </div>
+                            @if($cliente->email)
+                                <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</p>
+                            @endif
+                            @if($cliente->website)
+                                <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $cliente->website }}</p>
+                            @endif
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
+                        </div>
+                        <!-- Email Counter -->
+                        <div class="flex-shrink-0 flex items-center gap-1.5">
+                            <div class="bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-lg px-2 py-1 flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">{{ $cliente->emails_count ?? 0 }}</span>
                             </div>
                         </div>
                     </a>
                 @empty
-                    <div class="text-center py-12 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <div class="text-center py-8">
                         <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes pending</p>
                     </div>
                 @endforelse

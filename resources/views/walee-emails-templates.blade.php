@@ -664,7 +664,8 @@
                     
                     const nombre = form.querySelector('[name="nombre"]')?.value;
                     const tipoSelect = form.querySelector('[name="tipo"]')?.value;
-                    const tipoPersonalizado = form.querySelector('[name="tipo_personalizado"]')?.value;
+                    const tipoPersonalizadoInput = document.getElementById('template_tipo_personalizado');
+                    const tipoPersonalizado = tipoPersonalizadoInput ? tipoPersonalizadoInput.value : '';
                     const asunto = form.querySelector('[name="asunto"]')?.value;
                     const contenido = form.querySelector('[name="contenido"]')?.value;
                     
@@ -672,9 +673,13 @@
                     let tipoFinal = null;
                     if (tipoSelect === 'otro' && tipoPersonalizado && tipoPersonalizado.trim()) {
                         tipoFinal = tipoPersonalizado.trim();
-                    } else if (tipoSelect && tipoSelect !== 'otro') {
+                    } else if (tipoSelect && tipoSelect !== 'otro' && tipoSelect !== '') {
                         tipoFinal = tipoSelect;
                     }
+                    
+                    console.log('Editar - Tipo select:', tipoSelect);
+                    console.log('Editar - Tipo personalizado:', tipoPersonalizado);
+                    console.log('Editar - Tipo final:', tipoFinal);
                     
                     if (!nombre || nombre.trim() === '') {
                         Swal.showValidationMessage('El nombre es requerido');

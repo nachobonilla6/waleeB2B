@@ -665,59 +665,59 @@
                 </div>
                 
                             <!-- Acciones Rápidas Desktop -->
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2.5">
                                 <!-- Website Button -->
                                 @if($cliente->website)
-                                    <a href="{{ $cliente->website }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
-                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-blue-600 dark:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ $cliente->website }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 hover:from-blue-100 hover:to-blue-200/50 dark:hover:from-blue-500/20 dark:hover:to-blue-600/10 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-500/20 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
+                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                        </svg>
-                                        <span class="text-sm font-medium">Website</span>
-                                </a>
-                        @else
-                                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed">
+                                        </svg>
+                                        <span class="text-sm font-semibold">Website</span>
+                                    </a>
+                                @else
+                                    <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 opacity-50 cursor-not-allowed">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                </svg>
-                                        <span class="text-sm font-medium text-slate-400">Website</span>
-                            </div>
-                        @endif
+                                        </svg>
+                                        <span class="text-sm font-semibold text-slate-400">Website</span>
+                                    </div>
+                                @endif
             
                                 <!-- Email Button -->
-                                <button onclick="openEmailModal()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button onclick="openEmailModal()" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                                    <span class="text-sm font-medium">Email</span>
-                        </button>
+                                    </svg>
+                                    <span class="text-sm font-semibold">Email</span>
+                                </button>
                                 
                                 <!-- Facebook Button -->
                                 @if($cliente->facebook)
-                                    <a href="{{ $cliente->facebook }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-100 dark:bg-slate-800 hover:bg-violet-200 dark:hover:bg-slate-700 text-violet-600 dark:text-violet-600 border border-violet-600 dark:border-slate-700 transition-all group shadow-sm">
-                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-violet-600 dark:text-violet-700" fill="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ $cliente->facebook }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 hover:from-violet-100 hover:to-violet-200/50 dark:hover:from-violet-500/20 dark:hover:to-violet-600/10 text-violet-700 dark:text-violet-400 border border-violet-200/50 dark:border-violet-500/20 hover:border-violet-300 dark:hover:border-violet-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
+                                        <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                                </svg>
-                                        <span class="text-sm font-medium">Facebook</span>
+                                        </svg>
+                                        <span class="text-sm font-semibold">Facebook</span>
                                     </a>
-                        @else
-                                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed" title="Agregue un link de Facebook para activar">
+                                @else
+                                    <div class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 opacity-50 cursor-not-allowed" title="Agregue un link de Facebook para activar">
                                         <svg class="w-5 h-5 flex-shrink-0 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                         </svg>
-                                        <span class="text-sm font-medium text-slate-400">Facebook</span>
-                            </div>
-                        @endif
+                                        <span class="text-sm font-semibold text-slate-400">Facebook</span>
+                                    </div>
+                                @endif
                     
                                 <!-- WhatsApp Button -->
                                 <button onclick="openWhatsAppModal()" 
-                                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-100 dark:bg-slate-800 hover:bg-emerald-200 dark:hover:bg-slate-700 text-emerald-600 dark:text-emerald-600 border border-emerald-600 dark:border-slate-700 transition-all group shadow-sm {{ !$whatsappLink ? 'opacity-60 cursor-not-allowed' : '' }}"
+                                        class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 hover:from-emerald-100 hover:to-emerald-200/50 dark:hover:from-emerald-500/20 dark:hover:to-emerald-600/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-500/20 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98] {{ !$whatsappLink ? 'opacity-50 cursor-not-allowed' : '' }}"
                                         {{ !$whatsappLink ? 'disabled' : '' }}>
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-emerald-600 dark:text-emerald-700" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                                                </svg>
-                                    <span class="text-sm font-medium">WhatsApp</span>
-                        </button>
-            </div>
+                                    </svg>
+                                    <span class="text-sm font-semibold">WhatsApp</span>
+                                </button>
+                            </div>
             
                             <!-- Alertas Desktop -->
                             <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">

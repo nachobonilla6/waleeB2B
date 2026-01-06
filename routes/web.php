@@ -1321,6 +1321,163 @@ Route::post('/google-calendar/disconnect', function () {
         ->with('error', 'No se pudo desconectar Google Calendar.');
 })->middleware(['auth'])->name('google-calendar.disconnect');
 
+// Ruta para sincronizar citas y tareas de la BD con Google Calendar (y viceversa)
+Route::post('/google-calendar/sync-all', function () {
+    try {
+        $googleService = new \App\Services\GoogleCalendarService();
+        
+        if (!$googleService->isAuthorized()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No estás autorizado con Google Calendar. Por favor, conecta tu cuenta primero.',
+                'needs_auth' => true
+            ], 401);
+        }
+        
+        $results = [
+            'citas' => ['synced' => 0, 'errors' => 0, 'total' => 0],
+            'tareas' => ['synced' => 0, 'errors' => 0, 'total' => 0],
+            'from_google' => ['created' => 0, 'errors' => 0]
+        ];
+        
+        // 1. Sincronizar CITAS de BD a Google Calendar
+        $citas = \App\Models\Cita::whereNull('google_event_id')
+            ->where('estado', 'programada')
+            ->get();
+        
+        $results['citas']['total'] = $citas->count();
+        
+        foreach ($citas as $cita) {
+            try {
+                $eventId = $googleService->createEvent($cita);
+                if ($eventId) {
+                    $cita->google_event_id = $eventId;
+                    $cita->save();
+                    $results['citas']['synced']++;
+                } else {
+                    $results['citas']['errors']++;
+                }
+            } catch (\Exception $e) {
+                $results['citas']['errors']++;
+                \Log::error("Error sincronizando cita ID {$cita->id}: " . $e->getMessage());
+            }
+        }
+        
+        // 2. Sincronizar TAREAS de BD a Google Calendar
+        $tareas = \App\Models\Tarea::whereNotNull('fecha_hora')
+            ->whereNull('google_event_id')
+            ->where('estado', 'pending')
+            ->get();
+        
+        $results['tareas']['total'] = $tareas->count();
+        
+        foreach ($tareas as $tarea) {
+            try {
+                // Convertir tarea a formato de Cita para usar con GoogleCalendarService
+                $citaTemporal = new \App\Models\Cita();
+                $citaTemporal->titulo = $tarea->texto;
+                $citaTemporal->fecha_inicio = $tarea->fecha_hora;
+                $citaTemporal->fecha_fin = $tarea->fecha_hora->copy()->addHour();
+                $citaTemporal->descripcion = "Tarea: {$tarea->texto}";
+                $citaTemporal->estado = 'programada';
+                
+                $eventId = $googleService->createEvent($citaTemporal);
+                if ($eventId) {
+                    // Guardar el google_event_id en la tarea (necesitamos agregar este campo)
+                    // Por ahora, lo guardamos en un campo JSON o agregamos el campo a la tabla
+                    // Por simplicidad, usaremos un campo JSON si existe, o agregaremos el campo
+                    $tarea->google_event_id = $eventId;
+                    $tarea->save();
+                    $results['tareas']['synced']++;
+                } else {
+                    $results['tareas']['errors']++;
+                }
+            } catch (\Exception $e) {
+                $results['tareas']['errors']++;
+                \Log::error("Error sincronizando tarea ID {$tarea->id}: " . $e->getMessage());
+            }
+        }
+        
+        // 3. Sincronizar eventos de Google Calendar a BD (crear citas/tareas que no existen)
+        try {
+            $fechaInicio = now()->subMonths(1)->startOfDay();
+            $fechaFin = now()->addMonths(3)->endOfDay();
+            
+            $googleEvents = $googleService->getEvents($fechaInicio, $fechaFin);
+            
+            foreach ($googleEvents as $googleEvent) {
+                try {
+                    $eventData = $googleService->convertGoogleEventToCita($googleEvent);
+                    if (!$eventData || !isset($eventData['google_event_id'])) {
+                        continue;
+                    }
+                    
+                    $googleEventId = $eventData['google_event_id'];
+                    
+                    // Verificar si ya existe una cita con este google_event_id
+                    $citaExistente = \App\Models\Cita::where('google_event_id', $googleEventId)->first();
+                    if ($citaExistente) {
+                        continue; // Ya existe, no crear duplicado
+                    }
+                    
+                    // Verificar si ya existe una tarea con este google_event_id
+                    $tareaExistente = \App\Models\Tarea::where('google_event_id', $googleEventId)->first();
+                    if ($tareaExistente) {
+                        continue; // Ya existe, no crear duplicado
+                    }
+                    
+                    // Crear nueva cita desde Google Calendar
+                    $nuevaCita = new \App\Models\Cita();
+                    $nuevaCita->titulo = $eventData['titulo'] ?? 'Sin título';
+                    $nuevaCita->descripcion = $eventData['descripcion'] ?? null;
+                    $nuevaCita->fecha_inicio = $eventData['fecha_inicio'];
+                    $nuevaCita->fecha_fin = $eventData['fecha_fin'] ?? $eventData['fecha_inicio']->copy()->addHour();
+                    $nuevaCita->ubicacion = $eventData['ubicacion'] ?? null;
+                    $nuevaCita->google_event_id = $googleEventId;
+                    $nuevaCita->estado = 'programada';
+                    $nuevaCita->save();
+                    
+                    $results['from_google']['created']++;
+                } catch (\Exception $e) {
+                    $results['from_google']['errors']++;
+                    \Log::error("Error creando cita desde Google Calendar: " . $e->getMessage());
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error("Error obteniendo eventos de Google Calendar: " . $e->getMessage());
+            $results['from_google']['errors']++;
+        }
+        
+        // Construir mensaje de resumen
+        $message = "Sincronización completada:\n";
+        $message .= "- Citas: {$results['citas']['synced']}/{$results['citas']['total']} sincronizadas";
+        if ($results['citas']['errors'] > 0) {
+            $message .= " ({$results['citas']['errors']} errores)";
+        }
+        $message .= "\n- Tareas: {$results['tareas']['synced']}/{$results['tareas']['total']} sincronizadas";
+        if ($results['tareas']['errors'] > 0) {
+            $message .= " ({$results['tareas']['errors']} errores)";
+        }
+        $message .= "\n- Desde Google Calendar: {$results['from_google']['created']} citas creadas";
+        if ($results['from_google']['errors'] > 0) {
+            $message .= " ({$results['from_google']['errors']} errores)";
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'results' => $results
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('Error en sincronización completa: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al sincronizar: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware(['auth'])->name('google-calendar.sync-all');
+
 // Ruta para crear evento en calendario de aplicaciones (sincroniza con Google Calendar)
 Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\Request $request) {
     // Log para debug

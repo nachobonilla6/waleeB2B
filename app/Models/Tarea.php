@@ -14,6 +14,7 @@ class Tarea extends Model
         'tipo',
         'favorito',
         'estado',
+        'google_event_id',
         'recurrencia',
         'recurrencia_fin',
         'color',

@@ -624,8 +624,8 @@
         
         function sincronizarCitasBD() {
             Swal.fire({
-                title: 'Sincronizando citas...',
-                text: 'Enviando citas de la base de datos a Google Calendar',
+                title: 'Sincronizando...',
+                text: 'Sincronizando citas y tareas con Google Calendar (bidireccional)',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 didOpen: () => {
@@ -633,7 +633,7 @@
                 }
             });
             
-            fetch('{{ route("google-calendar.sync-citas") }}', {
+            fetch('{{ route("google-calendar.sync-all") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -644,18 +644,23 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    const results = data.results || {};
+                    const citas = results.citas || {};
+                    const tareas = results.tareas || {};
+                    const fromGoogle = results.from_google || {};
+                    
                     Swal.fire({
                         icon: 'success',
                         title: 'Sincronización completada',
                         html: `
-                            <p>${data.message}</p>
-                            ${data.total > 0 ? `
-                                <div class="mt-3 text-left">
-                                    <p class="text-sm"><strong>Total:</strong> ${data.total} citas</p>
-                                    <p class="text-sm text-emerald-600"><strong>Exitosas:</strong> ${data.synced}</p>
-                                    ${data.errors > 0 ? `<p class="text-sm text-red-600"><strong>Fallidas:</strong> ${data.errors}</p>` : ''}
+                            <div class="text-left space-y-2">
+                                <p class="font-semibold">${data.message.replace(/\n/g, '<br>')}</p>
+                                <div class="mt-3 space-y-1 text-sm">
+                                    <p><strong>Citas:</strong> <span class="text-emerald-600">${citas.synced || 0}</span>/${citas.total || 0} sincronizadas${citas.errors > 0 ? ` <span class="text-red-600">(${citas.errors} errores)</span>` : ''}</p>
+                                    <p><strong>Tareas:</strong> <span class="text-emerald-600">${tareas.synced || 0}</span>/${tareas.total || 0} sincronizadas${tareas.errors > 0 ? ` <span class="text-red-600">(${tareas.errors} errores)</span>` : ''}</p>
+                                    <p><strong>Desde Google:</strong> <span class="text-blue-600">${fromGoogle.created || 0}</span> creadas${fromGoogle.errors > 0 ? ` <span class="text-red-600">(${fromGoogle.errors} errores)</span>` : ''}</p>
                                 </div>
-                            ` : ''}
+                            </div>
                         `,
                         confirmButtonColor: '#8b5cf6'
                     }).then(() => {

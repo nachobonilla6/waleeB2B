@@ -478,11 +478,10 @@
                                     </div>
                                     
                                     <!-- Eventos del día -->
-                                    <div class="flex-1 p-3 md:p-2 relative overflow-y-auto" style="min-height: 300px;">
+                                    <div class="flex-1 p-3 md:p-2 space-y-2 md:space-y-1.5 overflow-y-auto">
                                         @if($eventosOrdenados->count() > 0)
                                             @foreach($eventosOrdenados as $evento)
                                                 @php
-                                                    // Asegurar que ambas fechas sean instancias de Carbon
                                                     $fechaInicio = $evento->fecha_inicio instanceof \Carbon\Carbon 
                                                         ? $evento->fecha_inicio 
                                                         : \Carbon\Carbon::parse($evento->fecha_inicio);
@@ -490,37 +489,24 @@
                                                         ? ($evento->fecha_fin instanceof \Carbon\Carbon ? $evento->fecha_fin : \Carbon\Carbon::parse($evento->fecha_fin))
                                                         : $fechaInicio->copy()->addHour();
                                                     
-                                                    // Calcular posición y altura basada en la duración
-                                                    $horaInicio = $fechaInicio->hour + ($fechaInicio->minute / 60);
-                                                    $horaFin = $fechaFin->hour + ($fechaFin->minute / 60);
-                                                    $duracionHoras = $horaFin - $horaInicio;
-                                                    
-                                                    // El día va de 0:00 a 24:00 (24 horas)
-                                                    // Cada hora = 100% / 24 = 4.1667%
-                                                    $topPorcentaje = ($horaInicio / 24) * 100;
-                                                    $alturaPorcentaje = ($duracionHoras / 24) * 100;
-                                                    
-                                                    // Altura mínima de 30px o 2% del contenedor
-                                                    $alturaMinima = max(30, ($alturaPorcentaje / 100) * 300);
-                                                    
                                                     $hora = $fechaInicio->format('H:i');
                                                     $horaFinStr = $fechaFin->format('H:i');
                                                     $titulo = $evento->titulo ?? 'Sin título';
                                                 @endphp
-                                                <div class="group absolute left-2 right-2" style="top: {{ $topPorcentaje }}%; height: {{ $alturaPorcentaje }}%; min-height: {{ $alturaMinima }}px;">
+                                                <div class="group relative">
                                                     <button 
                                                         @if(isset($evento->is_tarea) && $evento->is_tarea)
                                                             onclick="event.preventDefault(); showTareaDetail('{{ $evento->tarea_id }}', '{{ addslashes($titulo) }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $evento->tarea_color ?? '#f59e0b' }}');"
                                                         @else
                                                             onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $fechaFin->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
                                                         @endif
-                                                        class="w-full h-full text-left px-2 py-1.5 rounded-lg text-xs font-medium transition-all hover:opacity-80 active:scale-95 shadow-sm {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
+                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 shadow-sm md:shadow-none {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
                                                         style="border-left: 4px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
                                                         title="{{ $titulo }} ({{ $hora }} - {{ $horaFinStr }})"
                                                     >
-                                                    <div class="flex flex-col h-full justify-between">
-                                                        <div class="flex items-center justify-between gap-1">
-                                                            <span class="text-[10px] font-semibold">{{ $hora }}</span>
+                                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
+                                                        <div class="flex items-center justify-between md:justify-start gap-2">
+                                                            <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
                                                             @if($horaFinStr !== $hora)
                                                                 <span class="text-[9px] text-slate-500 dark:text-slate-400">- {{ $horaFinStr }}</span>
                                                             @endif
@@ -554,8 +540,8 @@
                                                                 </span>
                                                             @endif
                                                         </div>
-                                                        <p class="text-xs font-medium text-slate-700 dark:text-slate-300 line-clamp-2 flex-1">{{ $titulo }}</p>
                                                     </div>
+                                                        <p class="text-sm md:text-sm font-medium text-slate-700 dark:text-slate-300 mt-1.5 line-clamp-2">{{ $titulo }}</p>
                                                     </button>
                                                     @if(isset($evento->is_tarea) && $evento->is_tarea)
                                                         <div class="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -599,7 +585,7 @@
                                                 </div>
                                             @endforeach
                                         @else
-                                            <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center py-4 md:py-2">
                                                 <p class="text-xs text-slate-400 dark:text-slate-500">Sin eventos</p>
                                             </div>
                                         @endif

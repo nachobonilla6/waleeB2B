@@ -58,6 +58,46 @@
                         Define cada cuánto tiempo se ejecutará automáticamente la extracción de clientes.
                     </p>
                 </div>
+                <div>
+                    <label for="industriaExtraccion" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                        Industria para extracción
+                    </label>
+                    <select
+                        id="industriaExtraccion"
+                        class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1.5"
+                    >
+                        <option value="">Todas</option>
+                        <option value="Turismo">Turismo</option>
+                        <option value="Gastronomía">Gastronomía</option>
+                        <option value="Retail">Retail</option>
+                        <option value="Salud">Salud</option>
+                        <option value="Educación">Educación</option>
+                        <option value="Tecnología">Tecnología</option>
+                        <option value="Servicios">Servicios</option>
+                        <option value="Comercio">Comercio</option>
+                        <option value="Manufactura">Manufactura</option>
+                        <option value="Inmobiliaria">Inmobiliaria</option>
+                        <option value="Automotriz">Automotriz</option>
+                        <option value="Belleza y Estética">Belleza y Estética</option>
+                        <option value="Fitness y Deportes">Fitness y Deportes</option>
+                        <option value="Arte y Cultura">Arte y Cultura</option>
+                        <option value="Legal">Legal</option>
+                        <option value="Finanzas">Finanzas</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Construcción">Construcción</option>
+                        <option value="Agricultura">Agricultura</option>
+                        <option value="Otro">Otro / Personalizada</option>
+                    </select>
+                    <input
+                        type="text"
+                        id="industriaExtraccionPersonalizada"
+                        class="hidden w-full px-2.5 py-1.5 rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Escribe la industria personalizada"
+                    />
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        Elige una industria o escribe una personalizada si no aparece en la lista.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -107,11 +147,18 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const toggleExtraccion = document.getElementById('toggleExtraccion');
         const recurrenciaSelect = document.getElementById('recurrenciaExtraccion');
+        const industriaExtraccionSelect = document.getElementById('industriaExtraccion');
+        const industriaExtraccionInput = document.getElementById('industriaExtraccionPersonalizada');
         const toggleEmails = document.getElementById('toggleEmails');
         const recurrenciaEmailsSelect = document.getElementById('recurrenciaEmails');
 
+        // Configuración inicial de extracción desde la BD
+        const configuracionExtraccion = @json($ordenExtraccion->configuracion ?? []);
+
         // Recurrencia inicial de extracción desde la BD (normalizada a número para que coincida con los <option>)
         let recurrenciaActual = @json($ordenExtraccion->recurrencia_horas ?? null);
+        // Industria inicial de extracción
+        let industriaExtraccionActual = configuracionExtraccion?.industria || '';
 
         if (recurrenciaSelect && recurrenciaActual !== null && recurrenciaActual !== undefined) {
             const normalizada = parseFloat(recurrenciaActual);
@@ -121,6 +168,50 @@
             } else {
                 recurrenciaSelect.value = '';
                 recurrenciaActual = null;
+            }
+        }
+
+        if (industriaExtraccionSelect) {
+            const industriasPredefinidas = [
+                '',
+                'Turismo',
+                'Gastronomía',
+                'Retail',
+                'Salud',
+                'Educación',
+                'Tecnología',
+                'Servicios',
+                'Comercio',
+                'Manufactura',
+                'Inmobiliaria',
+                'Automotriz',
+                'Belleza y Estética',
+                'Fitness y Deportes',
+                'Arte y Cultura',
+                'Legal',
+                'Finanzas',
+                'Marketing',
+                'Construcción',
+                'Agricultura',
+            ];
+
+            if (industriaExtraccionActual && industriasPredefinidas.includes(industriaExtraccionActual)) {
+                industriaExtraccionSelect.value = industriaExtraccionActual;
+                if (industriaExtraccionInput) {
+                    industriaExtraccionInput.classList.add('hidden');
+                }
+            } else if (industriaExtraccionActual) {
+                industriaExtraccionSelect.value = 'Otro';
+                if (industriaExtraccionInput) {
+                    industriaExtraccionInput.classList.remove('hidden');
+                    industriaExtraccionInput.value = industriaExtraccionActual;
+                }
+            } else {
+                industriaExtraccionSelect.value = '';
+                if (industriaExtraccionInput) {
+                    industriaExtraccionInput.classList.add('hidden');
+                    industriaExtraccionInput.value = '';
+                }
             }
         }
 
@@ -153,7 +244,9 @@
                         tipo: 'extraccion_clientes',
                         activo: activo,
                         recurrencia_horas: recurrenciaActual ?? null,
-                        configuracion: null,
+                        configuracion: {
+                            industria: industriaExtraccionActual || null,
+                        },
                     })
                 });
                 const data = await response.json();
@@ -199,7 +292,9 @@
                         tipo: 'extraccion_clientes',
                         activo: toggleExtraccion?.checked ?? false,
                         recurrencia_horas: nuevaRecurrencia,
-                        configuracion: null,
+                        configuracion: {
+                            industria: industriaExtraccionActual || null,
+                        },
                     })
                 });
                 const data = await response.json();
@@ -336,6 +431,26 @@
             const value = e.target.value;
             recurrenciaActual = value ? parseFloat(value) : null;
             guardarRecurrenciaExtraccion(recurrenciaActual);
+        });
+
+        industriaExtraccionSelect?.addEventListener('change', (e) => {
+            const value = e.target.value;
+            if (value === 'Otro') {
+                if (industriaExtraccionInput) {
+                    industriaExtraccionInput.classList.remove('hidden');
+                    industriaExtraccionInput.focus();
+                }
+                // No pisamos todavía industriaExtraccionActual hasta que escriba
+            } else {
+                if (industriaExtraccionInput) {
+                    industriaExtraccionInput.classList.add('hidden');
+                }
+                industriaExtraccionActual = value || '';
+            }
+        });
+
+        industriaExtraccionInput?.addEventListener('input', (e) => {
+            industriaExtraccionActual = e.target.value || '';
         });
 
         toggleEmails?.addEventListener('change', (e) => {

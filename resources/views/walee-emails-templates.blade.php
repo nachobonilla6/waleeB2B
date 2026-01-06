@@ -87,133 +87,134 @@
             @include('partials.walee-navbar')
             
             <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 md:mb-8 gap-3 sm:gap-4 animate-fade-in-up">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                 <div>
-                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                         Templates de Emails
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden sm:block">
-                        Crea, guarda y envía templates de emails con AI
-                    </p>
                 </div>
                 <button 
                     onclick="showNuevoTemplateModal()"
-                    class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg w-full sm:w-auto text-xs sm:text-sm"
+                    class="px-3 py-1.5 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow flex-shrink-0"
                 >
-                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                     <span>Nuevo Template</span>
                 </button>
-            </div>
+            </header>
             
             <!-- Search Bar -->
-            <div class="mb-4 sm:mb-6 animate-fade-in-up" style="animation-delay: 0.05s;">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        id="templateSearchInput"
-                        placeholder="Buscar templates..."
-                        class="w-full px-3 py-2 sm:px-4 sm:py-3 pl-10 sm:pl-12 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg sm:rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-xs sm:text-sm"
-                        oninput="filterTemplates()"
-                    >
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <button 
-                        id="clearSearchBtn"
-                        onclick="clearTemplateSearch()"
-                        class="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hidden"
-                        style="display: none;"
-                    >
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            <div class="mb-3">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="templateSearchInput"
+                            placeholder="Buscar templates..."
+                            class="w-full px-3 py-2 pl-9 rounded-lg bg-slate-100 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
+                            oninput="filterTemplates()"
+                        >
+                        <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
-                    </button>
+                        <button 
+                            id="clearSearchBtn"
+                            onclick="clearTemplateSearch()"
+                            class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hidden"
+                            style="display: none;"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             
-            <!-- Templates Grid -->
-            <div id="templatesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <!-- Templates List -->
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm font-semibold text-slate-900 dark:text-white">
+                        Templates
+                        <span class="text-xs font-normal text-slate-500 dark:text-slate-400">
+                            ({{ $templates->count() }})
+                        </span>
+                    </h2>
+                </div>
+                
+                <div id="templatesContainer" class="space-y-2">
                 @forelse($templates as $template)
-                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 hover:shadow-lg dark:hover:shadow-none transition-all group w-full flex flex-col" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="text-base sm:text-lg md:text-xl font-semibold text-slate-900 dark:text-white mb-1 sm:mb-2">{{ $template->nombre }}</h3>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-2 sm:mb-3">{{ $template->asunto }}</p>
-                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-3 sm:line-clamp-4">{{ \Illuminate\Support\Str::limit($template->contenido, 150) }}</p>
+                    <div class="template-card group flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
+                        <!-- Icon -->
+                        <div class="w-9 h-9 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex-shrink-0 flex items-center justify-center border border-violet-500/30">
+                            <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                            </svg>
                         </div>
                         
-                        <div class="mt-auto pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-700">
-                            <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                                <button 
-                                    onclick="deleteTemplate({{ $template->id }})"
-                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-400 font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
-                                >
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                    <span>Eliminar</span>
-                                </button>
-                                <button 
-                                    onclick="editTemplate({{ $template->id }})"
-                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-700 dark:text-blue-400 font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
-                                >
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    <span>Editar</span>
-                                </button>
-                                <button 
-                                    onclick="verTemplate({{ $template->id }})"
-                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
-                                >
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                    <span>Ver</span>
-                                </button>
-                                <button 
-                                    onclick="enviarTemplate({{ $template->id }})"
-                                    class="px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg bg-walee-500 hover:bg-walee-600 text-white font-medium transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2"
-                                >
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                    </svg>
-                                    <span>Enviar</span>
-                                </button>
+                        <!-- Content -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $template->nombre }}</p>
                             </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $template->asunto }}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ \Illuminate\Support\Str::limit($template->contenido, 60) }}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $template->created_at->diffForHumans() }}</p>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex-shrink-0 flex items-center gap-1.5">
+                            <button 
+                                onclick="verTemplate({{ $template->id }})"
+                                class="p-1.5 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 transition-all" 
+                                title="Ver"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                            <button 
+                                onclick="editTemplate({{ $template->id }})"
+                                class="p-1.5 rounded-md bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 hover:border-blue-300 dark:hover:border-blue-500/40 transition-all" 
+                                title="Editar"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </button>
+                            <button 
+                                onclick="enviarTemplate({{ $template->id }})"
+                                class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" 
+                                title="Enviar"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </button>
+                            <button 
+                                onclick="deleteTemplate({{ $template->id }})"
+                                class="p-1.5 rounded-md bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 hover:border-red-300 dark:hover:border-red-500/40 transition-all" 
+                                title="Eliminar"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-full text-center py-8 sm:py-12">
-                        <svg class="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 dark:text-slate-700 mx-auto mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
-                        </svg>
-                        <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1 sm:mb-2">No hay templates guardados</h3>
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 sm:mb-4">
-                            Crea tu primer template usando inteligencia artificial
-                        </p>
-                        <button 
-                            onclick="showNuevoTemplateModal()"
-                            class="px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl walee-gradient text-white font-medium hover:opacity-90 transition-all text-xs sm:text-sm"
-                        >
-                            Crear Template
-                        </button>
+                    <div class="text-center py-8">
+                        <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron templates</p>
                     </div>
                 @endforelse
+                </div>
             </div>
             
             <!-- No Results Message -->
-            <div id="noResultsMessage" class="hidden text-center py-8 sm:py-12">
-                <svg class="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 dark:text-slate-700 mx-auto mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-1 sm:mb-2">No se encontraron templates</h3>
-                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                    Intenta con otros términos de búsqueda
-                </p>
-            </div>
+            <div id="noResultsMessage" class="hidden text-center py-8">
+                <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron templates</p>
             </div>
         </div>
     </div>
@@ -1056,7 +1057,7 @@
                 templatesContainer.style.display = 'none';
                 noResultsMessage.classList.remove('hidden');
             } else {
-                templatesContainer.style.display = 'grid';
+                templatesContainer.style.display = '';
                 noResultsMessage.classList.add('hidden');
             }
             

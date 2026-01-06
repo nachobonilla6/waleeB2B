@@ -59,6 +59,18 @@
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
+    <div class="min-h-screen relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-violet-400/20 dark:bg-violet-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-blue-400/10 dark:bg-blue-400/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-[90rem] mx-auto px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+            @php $pageTitle = 'Calendario de Aplicaciones'; @endphp
+            @include('partials.walee-navbar')
+            
     @php
         // Obtener mes y año de la URL o usar el actual
         $mesParam = request()->get('mes');
@@ -153,8 +165,21 @@
         }
     @endphp
 
-    <div class="min-h-screen p-3 md:p-6 lg:p-8">
-        <!-- Header -->
+            <!-- Header -->
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4 animate-fade-in-up">
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                        Calendario de Aplicaciones - Vista Mensual
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $meses[$mesActual] }} {{ $anoActual }}</p>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <a href="{{ route('walee.dashboard') }}" class="px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-slate-300 hover:to-slate-400 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white font-semibold rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm transform hover:scale-105 active:scale-95">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        <span class="hidden sm:inline">Volver</span>
+                    </a>
         <div class="mb-4 md:mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
             <div class="rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 p-3 md:p-4">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
@@ -290,6 +315,7 @@
                     @endphp
                 @endfor
             </div>
+        </div>
         </div>
     </div>
 

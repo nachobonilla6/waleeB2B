@@ -161,6 +161,8 @@
                         'ubicacion' => $eventoData['ubicacion'] ?? null,
                         'google_event_id' => $eventoData['google_event_id'] ?? null,
                         'from_google' => true,
+                        'has_accepted' => $eventoData['has_accepted'] ?? false,
+                        'attendees' => $eventoData['attendees'] ?? [],
                     ];
                     
                     $fechaKey = $eventoData['fecha_inicio']->format('Y-m-d');
@@ -416,19 +418,27 @@
                                                 @endphp
                                                 <div class="group relative">
                                                     <button 
-                                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}');"
+                                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }});"
                                                         class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 shadow-sm md:shadow-none"
                                                         style="border-left: 4px solid #8b5cf6;"
                                                         title="{{ $titulo }}"
                                                     >
-                                                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
-                                                            <div class="flex items-center justify-between md:justify-start gap-2">
-                                                                <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
-                                                                @if(isset($evento->from_google) && $evento->from_google)
-                                                                    <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
-                                                                @endif
-                                                            </div>
+                                                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
+                                                        <div class="flex items-center justify-between md:justify-start gap-2">
+                                                            <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
+                                                            @if(isset($evento->from_google) && $evento->from_google)
+                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
+                                                            @endif
+                                                            @if(isset($evento->has_accepted) && $evento->has_accepted)
+                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-emerald-200 dark:bg-emerald-800/50 text-emerald-700 dark:text-emerald-300 flex items-center gap-0.5" title="Invitado aceptó">
+                                                                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                                    </svg>
+                                                                    Aceptado
+                                                                </span>
+                                                            @endif
                                                         </div>
+                                                    </div>
                                                         <p class="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2">{{ $titulo }}</p>
                                                     </button>
                                                     @if(isset($evento->google_event_id) && $evento->google_event_id)
@@ -799,7 +809,7 @@
             });
         }
         
-        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput) {
+        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput, hasAccepted = false) {
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let buttonsHtml = '';
@@ -816,6 +826,18 @@
                 `;
             }
             
+            let acceptedBadge = '';
+            if (hasAccepted) {
+                acceptedBadge = `
+                    <div class="flex items-center gap-2 mt-2 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                        <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium text-emerald-700 dark:text-emerald-300">El invitado ha aceptado la invitación</span>
+                    </div>
+                `;
+            }
+            
             Swal.fire({
                 title: titulo || 'Evento',
                 html: `
@@ -823,6 +845,7 @@
                         ${fecha ? `<p class="text-sm"><strong>Fecha:</strong> ${fecha}</p>` : ''}
                         ${ubicacion ? `<p class="text-sm"><strong>Ubicación:</strong> ${ubicacion}</p>` : ''}
                         ${descripcion ? `<p class="text-sm"><strong>Descripción:</strong> ${descripcion}</p>` : ''}
+                        ${acceptedBadge}
                         ${eventoId ? `<a href="https://calendar.google.com/calendar/event?eid=${encodeURIComponent(eventoId)}" target="_blank" class="text-sm text-violet-600 dark:text-violet-400 hover:underline block mt-2">Abrir en Google Calendar</a>` : ''}
                         ${buttonsHtml}
                     </div>

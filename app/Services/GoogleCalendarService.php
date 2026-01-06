@@ -615,6 +615,24 @@ class GoogleCalendarService
 
             $eventsArray = [];
             foreach ($events as $event) {
+                // Obtener información de attendees
+                $attendees = [];
+                $hasAccepted = false;
+                if ($event->getAttendees()) {
+                    foreach ($event->getAttendees() as $attendee) {
+                        $attendeeData = [
+                            'email' => $attendee->getEmail(),
+                            'responseStatus' => $attendee->getResponseStatus(),
+                        ];
+                        $attendees[] = $attendeeData;
+                        
+                        // Verificar si algún invitado ha aceptado
+                        if ($attendee->getResponseStatus() === 'accepted') {
+                            $hasAccepted = true;
+                        }
+                    }
+                }
+                
                 $eventsArray[] = [
                     'id' => $event->getId(),
                     'summary' => $event->getSummary(),
@@ -628,6 +646,8 @@ class GoogleCalendarService
                         'dateTime' => $event->getEnd()->getDateTime(),
                         'date' => $event->getEnd()->getDate(),
                     ],
+                    'attendees' => $attendees,
+                    'has_accepted' => $hasAccepted,
                 ];
             }
 
@@ -708,6 +728,8 @@ class GoogleCalendarService
                 'google_event_id' => $googleEvent['id'] ?? null,
                 'estado' => 'programada',
                 'from_google' => true, // Marca para identificar que viene de Google
+                'attendees' => $googleEvent['attendees'] ?? [],
+                'has_accepted' => $googleEvent['has_accepted'] ?? false,
             ];
         } catch (\Exception $e) {
             Log::error('Error convirtiendo evento de Google Calendar: ' . $e->getMessage());

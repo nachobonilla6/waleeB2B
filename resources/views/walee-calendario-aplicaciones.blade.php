@@ -698,7 +698,7 @@
             `;
             
             Swal.fire({
-                title: 'Nueva Cita',
+                title: 'Nuevo Evento',
                 html: `
                     <form id="nuevoEventoForm" class="space-y-3 text-left">
                         <div>

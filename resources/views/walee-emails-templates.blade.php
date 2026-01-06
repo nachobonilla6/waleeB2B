@@ -658,8 +658,18 @@
                     if (!form) return false;
                     
                     const nombre = form.querySelector('[name="nombre"]')?.value;
+                    const tipoSelect = form.querySelector('[name="tipo"]')?.value;
+                    const tipoPersonalizado = form.querySelector('[name="tipo_personalizado"]')?.value;
                     const asunto = form.querySelector('[name="asunto"]')?.value;
                     const contenido = form.querySelector('[name="contenido"]')?.value;
+                    
+                    // Determinar el tipo final: si es "otro", usar el valor personalizado
+                    let tipoFinal = null;
+                    if (tipoSelect === 'otro' && tipoPersonalizado && tipoPersonalizado.trim()) {
+                        tipoFinal = tipoPersonalizado.trim();
+                    } else if (tipoSelect && tipoSelect !== 'otro') {
+                        tipoFinal = tipoSelect;
+                    }
                     
                     if (!nombre || nombre.trim() === '') {
                         Swal.showValidationMessage('El nombre es requerido');
@@ -676,6 +686,7 @@
                     
                     return {
                         nombre: nombre.trim(),
+                        tipo: tipoFinal,
                         asunto: asunto.trim(),
                         contenido: contenido.trim(),
                         ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || null,
@@ -896,6 +907,7 @@
                     },
                     body: JSON.stringify({
                         nombre: formData.nombre,
+                        tipo: formData.tipo || null,
                         asunto: formData.asunto,
                         contenido: formData.contenido,
                         ai_prompt: formData.ai_prompt || null,

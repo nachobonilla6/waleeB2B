@@ -553,16 +553,19 @@
                                 <input type="datetime-local" id="editar_fecha" value="${fechaActual}" required
                                     class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                             </div>
+                            <div class="pt-2">
+                                <button type="button" id="editar_guardar_btn" class="w-full px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-lg transition-all">
+                                    Guardar
+                                </button>
+                            </div>
                         </form>
                     </div>
                 `,
                 showCancelButton: false,
-                showConfirmButton: true,
-                confirmButtonText: 'Guardar',
-                confirmButtonColor: '#8b5cf6',
+                showConfirmButton: false,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                buttonsStyling: true,
+                buttonsStyling: false,
                 didOpen: () => {
                     if (emailClienteSeleccionado) {
                         const select = document.getElementById('editar_cliente_email');
@@ -570,77 +573,85 @@
                             select.value = emailClienteSeleccionado;
                         }
                     }
-                },
-                preConfirm: async () => {
-                    const titulo = document.getElementById('editar_titulo').value;
-                    const fecha = document.getElementById('editar_fecha').value;
-                    const clienteEmail = document.getElementById('editar_cliente_email').value;
                     
-                    if (!titulo || !fecha) {
-                        Swal.showValidationMessage('Título y fecha son requeridos');
-                        return false;
+                    // Agregar evento al botón Guardar
+                    const guardarBtn = document.getElementById('editar_guardar_btn');
+                    if (guardarBtn) {
+                        guardarBtn.onclick = async () => {
+                            const titulo = document.getElementById('editar_titulo').value;
+                            const fecha = document.getElementById('editar_fecha').value;
+                            const clienteEmail = document.getElementById('editar_cliente_email').value;
+                            
+                            if (!titulo || !fecha) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Campos requeridos',
+                                    text: 'Título y fecha son requeridos',
+                                    confirmButtonColor: '#8b5cf6'
+                                });
+                                return;
+                            }
+                            
+                            const descripcion = clienteEmail ? `Cliente/Invitado: ${clienteEmail}` : '';
+                            
+                            try {
+                                const response = await fetch('{{ route("walee.calendario.aplicaciones.actualizar") }}', {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                    },
+                                    body: JSON.stringify({
+                                        evento_id: eventoId,
+                                        titulo: titulo,
+                                        fecha_inicio: fecha,
+                                        descripcion: descripcion,
+                                        invitado_email: clienteEmail,
+                                    }),
+                                });
+                                
+                                const contentType = response.headers.get('content-type');
+                                if (!contentType || !contentType.includes('application/json')) {
+                                    const text = await response.text();
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error del servidor',
+                                        html: `<p>El servidor devolvió una respuesta inesperada (${response.status}).</p>`,
+                                        confirmButtonColor: '#ef4444'
+                                    });
+                                    return;
+                                }
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Cita actualizada',
+                                        text: 'La cita se ha actualizado y sincronizado con Google Calendar',
+                                        confirmButtonColor: '#8b5cf6'
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: data.message || 'Error al actualizar la cita',
+                                        confirmButtonColor: '#ef4444'
+                                    });
+                                }
+                            } catch (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error de conexión: ' + error.message,
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            }
+                        };
                     }
-                    
-                    const descripcion = clienteEmail ? `Cliente/Invitado: ${clienteEmail}` : '';
-                    
-                    try {
-                        const response = await fetch('{{ route("walee.calendario.aplicaciones.actualizar") }}', {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            },
-                            body: JSON.stringify({
-                                evento_id: eventoId,
-                                titulo: titulo,
-                                fecha_inicio: fecha,
-                                descripcion: descripcion,
-                                invitado_email: clienteEmail,
-                            }),
-                        });
-                        
-                        const contentType = response.headers.get('content-type');
-                        if (!contentType || !contentType.includes('application/json')) {
-                            const text = await response.text();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error del servidor',
-                                html: `<p>El servidor devolvió una respuesta inesperada (${response.status}).</p>`,
-                                confirmButtonColor: '#ef4444'
-                            });
-                            return false;
-                        }
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Cita actualizada',
-                                text: 'La cita se ha actualizado y sincronizado con Google Calendar',
-                                confirmButtonColor: '#8b5cf6'
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message || 'Error al actualizar la cita',
-                                confirmButtonColor: '#ef4444'
-                            });
-                        }
-                    } catch (error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error de conexión: ' + error.message,
-                            confirmButtonColor: '#ef4444'
-                        });
-                    }
-                    
-                    return false;
                 }
             });
         }

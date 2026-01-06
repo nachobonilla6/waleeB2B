@@ -168,13 +168,32 @@
             \Log::error('Error obteniendo eventos de Google Calendar: ' . $e->getMessage());
         }
         
-        // Verificar si está autorizado
+        // Verificar si está autorizado y obtener información del calendario
         $isAuthorized = false;
+        $calendarInfo = null;
+        $credentialsError = null;
+        
         try {
             $googleService = new \App\Services\GoogleCalendarService();
             $isAuthorized = $googleService->isAuthorized();
+            
+            // Obtener información del calendario en uso
+            $configuredCalendarId = config('services.google.calendar_id', 'primary');
+            $credentialsPath = config('services.google.credentials_path', storage_path('app/google-credentials.json'));
+            
+            // Verificar si existe el archivo de credenciales
+            if (!file_exists($credentialsPath)) {
+                $credentialsError = $credentialsPath;
+            }
+            
+            $calendarInfo = [
+                'configured_id' => $configuredCalendarId,
+                'credentials_path' => $credentialsPath,
+                'credentials_exists' => file_exists($credentialsPath),
+            ];
         } catch (\Exception $e) {
             \Log::error('Error verificando autorización: ' . $e->getMessage());
+            $credentialsError = $e->getMessage();
         }
     @endphp
 
@@ -199,6 +218,48 @@
             @if(session('error'))
                 <div class="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300 text-sm">
                     {{ session('error') }}
+                </div>
+            @endif
+            
+            @if($credentialsError)
+                <div class="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-lg">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-amber-900 dark:text-amber-200 mb-1">Archivo de credenciales no encontrado</h4>
+                            <p class="text-sm text-amber-800 dark:text-amber-300 mb-2">
+                                El archivo de credenciales de Google no se encuentra en la ruta esperada.
+                            </p>
+                            <div class="bg-amber-100 dark:bg-amber-900/30 rounded p-2 mb-2">
+                                <p class="text-xs font-mono text-amber-900 dark:text-amber-200 break-all">
+                                    {{ $calendarInfo['credentials_path'] ?? $credentialsError }}
+                                </p>
+                            </div>
+                            <p class="text-xs text-amber-700 dark:text-amber-400">
+                                <strong>Instrucciones:</strong> Sube el archivo <code class="bg-amber-200 dark:bg-amber-800 px-1 rounded">google-credentials.json</code> a esa ubicación en el servidor. 
+                                Puedes obtener este archivo desde <a href="https://console.cloud.google.com/" target="_blank" class="underline">Google Cloud Console</a> en la sección de credenciales OAuth2.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            
+            @if($calendarInfo && $calendarInfo['credentials_exists'] && $isAuthorized)
+                <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg text-blue-800 dark:text-blue-200 text-sm">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>
+                            <strong>Calendario en uso:</strong> 
+                            {{ $calendarInfo['configured_id'] === 'primary' ? 'Calendario Principal (primary)' : $calendarInfo['configured_id'] }}
+                            @if($calendarInfo['configured_id'] === 'primary')
+                                <span class="text-xs opacity-75">(o WEBSOLUTIONS-TEST si existe)</span>
+                            @endif
+                        </span>
+                    </div>
                 </div>
             @endif
             

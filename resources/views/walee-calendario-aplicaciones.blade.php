@@ -526,12 +526,34 @@
                                 window.location.reload();
                             });
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message || 'Error al crear el evento',
-                                confirmButtonColor: '#ef4444'
-                            });
+                            let errorMessage = data.message || 'Error al crear el evento';
+                            
+                            // Si necesita autorización, mostrar botón para conectar
+                            if (data.needs_auth) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Autorización requerida',
+                                    html: `
+                                        <p>${errorMessage}</p>
+                                        <p class="mt-2 text-sm">Necesitas conectar tu cuenta de Google Calendar primero.</p>
+                                    `,
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Conectar Google Calendar',
+                                    cancelButtonText: 'Cancelar',
+                                    confirmButtonColor: '#8b5cf6',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '{{ route("google-calendar.auth") }}';
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: errorMessage,
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            }
                         }
                     } catch (error) {
                         Swal.fire({
@@ -615,12 +637,34 @@
                                 window.location.reload();
                             });
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message || 'Error al crear el evento',
-                                confirmButtonColor: '#ef4444'
-                            });
+                            let errorMessage = data.message || 'Error al crear el evento';
+                            
+                            // Si necesita autorización, mostrar botón para conectar
+                            if (data.needs_auth) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Autorización requerida',
+                                    html: `
+                                        <p>${errorMessage}</p>
+                                        <p class="mt-2 text-sm">Necesitas conectar tu cuenta de Google Calendar primero.</p>
+                                    `,
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Conectar Google Calendar',
+                                    cancelButtonText: 'Cancelar',
+                                    confirmButtonColor: '#8b5cf6',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '{{ route("google-calendar.auth") }}';
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: errorMessage,
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            }
                         }
                     } catch (error) {
                         Swal.fire({

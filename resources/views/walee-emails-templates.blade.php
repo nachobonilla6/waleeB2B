@@ -899,22 +899,31 @@
                 const url = templateId ? `/email-templates/${templateId}` : '/email-templates';
                 const method = templateId ? 'PUT' : 'POST';
                 
+                const requestBody = {
+                    nombre: formData.nombre,
+                    asunto: formData.asunto,
+                    contenido: formData.contenido,
+                    ai_prompt: formData.ai_prompt || null,
+                };
+                
+                // Agregar tipo solo si tiene valor
+                if (formData.tipo) {
+                    requestBody.tipo = formData.tipo;
+                }
+                
+                console.log('Enviando datos:', requestBody);
+                
                 const response = await fetch(url, {
                     method: method,
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        nombre: formData.nombre,
-                        tipo: formData.tipo || null,
-                        asunto: formData.asunto,
-                        contenido: formData.contenido,
-                        ai_prompt: formData.ai_prompt || null,
-                    })
+                    body: JSON.stringify(requestBody)
                 });
                 
                 const data = await response.json();
+                console.log('Respuesta del servidor:', data);
                 if (data.success) {
                     // Limpiar datos guardados después de enviar exitosamente
                     clearTemplateFormData();

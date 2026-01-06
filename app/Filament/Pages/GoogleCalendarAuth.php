@@ -31,21 +31,27 @@ class GoogleCalendarAuth extends Page
     {
         try {
             $service = new GoogleCalendarService();
-            $credentialsPath = config('services.google.credentials_path');
+            $credentialsPath = $service->findCredentialsFile();
             
             // Verificar si el archivo existe
-            if (!$credentialsPath || !file_exists($credentialsPath)) {
-                $expectedPath = storage_path('app/google-credentials.json');
+            if (!$credentialsPath) {
+                $possiblePaths = [
+                    config('services.google.credentials_path'),
+                    storage_path('app/google-credentials.json'),
+                    base_path('storage/app/google-credentials.json'),
+                ];
+                $pathsList = implode(', ', array_filter($possiblePaths));
+                
                 Notification::make()
                     ->title('Error de configuración')
-                    ->body('El archivo de credenciales no se encuentra en: ' . $expectedPath . '. Por favor, sube el archivo google-credentials.json a esa ubicación en el servidor.')
+                    ->body('El archivo de credenciales no se encuentra en ninguna de estas ubicaciones: ' . $pathsList . '. Por favor, sube el archivo google-credentials.json a una de esas ubicaciones en el servidor.')
                     ->danger()
                     ->persistent()
                     ->send();
                 return;
             }
             
-            $authUrl = $service->getAuthUrl();
+            $authUrl = $service->getAuthUrl('filament');
             
             if (!$authUrl) {
                 Notification::make()
@@ -73,5 +79,54 @@ class GoogleCalendarAuth extends Page
     {
         $service = new GoogleCalendarService();
         return $service->isAuthorized();
+    }
+
+    public function disconnectGoogleCalendar()
+    {
+        try {
+            $service = new GoogleCalendarService();
+            $success = $service->disconnect();
+            
+            if ($success) {
+                Notification::make()
+                    ->title('Desconectado')
+                    ->body('Google Calendar ha sido desconectado. Puedes conectarlo nuevamente con otra cuenta.')
+                    ->success()
+                    ->send();
+            } else {
+                Notification::make()
+                    ->title('Error')
+                    ->body('No se pudo desconectar Google Calendar.')
+                    ->danger()
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            Log::error('Error desconectando Google Calendar: ' . $e->getMessage());
+            Notification::make()
+                ->title('Error')
+                ->body('Error al desconectar: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    public function getAuthorizedEmail(): ?string
+    {
+        try {
+            $service = new GoogleCalendarService();
+            return $service->getAuthorizedEmail();
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getCalendarId(): string
+    {
+        try {
+            $service = new GoogleCalendarService();
+            return $service->getCalendarId();
+        } catch (\Exception $e) {
+            return 'primary';
+        }
     }
 }

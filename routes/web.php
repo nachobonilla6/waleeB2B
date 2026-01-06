@@ -6344,10 +6344,39 @@ Route::middleware(['auth'])->group(function () {
     })->name('gmail.callback');
     
     Route::get('/google-calendar/callback', function (\Illuminate\Http\Request $request) {
+        \Log::info('Google Calendar Callback - Inicio');
+        \Log::info('Google Calendar Callback - Request all: ' . json_encode($request->all()));
+        \Log::info('Google Calendar Callback - Query string: ' . $request->getQueryString());
+        
         $code = $request->get('code');
         $state = $request->get('state', 'filament'); // 'filament' o 'aplicaciones'
+        $error = $request->get('error');
+        
+        \Log::info('Google Calendar Callback - Code: ' . ($code ? 'presente' : 'ausente'));
+        \Log::info('Google Calendar Callback - State: ' . $state);
+        \Log::info('Google Calendar Callback - Error: ' . ($error ?? 'ninguno'));
+        
+        if ($error) {
+            \Log::error('Google Calendar Callback - Error de Google: ' . $error);
+            $errorDescription = $request->get('error_description', 'Error desconocido');
+            
+            if ($state === 'aplicaciones') {
+                return redirect()->route('walee.calendario.aplicaciones')
+                    ->with('error', 'Error de autorización: ' . $errorDescription);
+            }
+            
+            \Filament\Notifications\Notification::make()
+                ->title('Error de autorización')
+                ->body('Error: ' . $errorDescription)
+                ->danger()
+                ->send();
+            
+            return redirect()->route('filament.admin.pages.google-calendar-auth');
+        }
         
         if (!$code) {
+            \Log::warning('Google Calendar Callback - No se recibió código de autorización');
+            
             if ($state === 'aplicaciones') {
                 return redirect()->route('walee.calendario.aplicaciones')
                     ->with('error', 'No se recibió el código de autorización de Google.');
@@ -6362,29 +6391,51 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('filament.admin.pages.google-calendar-auth');
         }
         
-        $service = new \App\Services\GoogleCalendarService();
-        $success = $service->handleCallback($code);
+        \Log::info('Google Calendar Callback - Procesando código de autorización');
         
-        if ($success) {
-            if ($state === 'aplicaciones') {
-                return redirect()->route('walee.calendario.aplicaciones')
-                    ->with('success', 'Google Calendar ha sido autorizado correctamente.');
-            }
+        try {
+            $service = new \App\Services\GoogleCalendarService();
+            $success = $service->handleCallback($code);
             
-            \Filament\Notifications\Notification::make()
-                ->title('Autorización exitosa')
-                ->body('Google Calendar ha sido autorizado correctamente.')
-                ->success()
-                ->send();
-        } else {
+            \Log::info('Google Calendar Callback - Resultado: ' . ($success ? 'éxito' : 'fallo'));
+            
+            if ($success) {
+                if ($state === 'aplicaciones') {
+                    return redirect()->route('walee.calendario.aplicaciones')
+                        ->with('success', 'Google Calendar ha sido autorizado correctamente.');
+                }
+                
+                \Filament\Notifications\Notification::make()
+                    ->title('Autorización exitosa')
+                    ->body('Google Calendar ha sido autorizado correctamente.')
+                    ->success()
+                    ->send();
+            } else {
+                \Log::error('Google Calendar Callback - handleCallback retornó false');
+                
+                if ($state === 'aplicaciones') {
+                    return redirect()->route('walee.calendario.aplicaciones')
+                        ->with('error', 'No se pudo completar la autorización. Intenta nuevamente.');
+                }
+                
+                \Filament\Notifications\Notification::make()
+                    ->title('Error de autorización')
+                    ->body('No se pudo completar la autorización. Intenta nuevamente.')
+                    ->danger()
+                    ->send();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Google Calendar Callback - Excepción: ' . $e->getMessage());
+            \Log::error('Google Calendar Callback - Stack trace: ' . $e->getTraceAsString());
+            
             if ($state === 'aplicaciones') {
                 return redirect()->route('walee.calendario.aplicaciones')
-                    ->with('error', 'No se pudo completar la autorización. Intenta nuevamente.');
+                    ->with('error', 'Error al procesar la autorización: ' . $e->getMessage());
             }
             
             \Filament\Notifications\Notification::make()
                 ->title('Error de autorización')
-                ->body('No se pudo completar la autorización. Intenta nuevamente.')
+                ->body('Error al procesar la autorización: ' . $e->getMessage())
                 ->danger()
                 ->send();
         }

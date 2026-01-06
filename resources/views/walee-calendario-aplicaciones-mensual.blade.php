@@ -329,7 +329,7 @@
             `;
             
             Swal.fire({
-                title: 'Nueva Cita',
+                title: 'Nuevo Evento',
                 html: `
                     <form id="nuevoEventoForm" class="space-y-3 text-left">
                         <div>
@@ -527,7 +527,7 @@
             }
             
             Swal.fire({
-                title: 'Nueva Cita',
+                title: 'Editar Evento',
                 html: `
                     <div class="relative">
                         <button onclick="Swal.close()" class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-10" style="box-shadow: 0 2px 4px rgba(0,0,0,0.2);">

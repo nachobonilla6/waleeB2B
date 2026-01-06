@@ -901,7 +901,7 @@
                     <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl ${isMobile ? 'p-2 w-full' : 'p-2.5 sm:p-3 md:p-4'} border border-slate-200 dark:border-slate-700">
                         <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Mensaje</h4>
                         ${email.tipo === 'extractor' || email.cliente_estado === 'extractor' ? 
-                            `<div class="text-slate-900 dark:text-white text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none w-full break-words">${email.body}</div>` : 
+                            `<div class="text-slate-900 dark:text-white text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none w-full break-words overflow-x-auto email-html-content">${email.body}</div>` : 
                             `<div class="text-slate-900 dark:text-white whitespace-pre-wrap text-xs sm:text-sm w-full break-words">${email.body}</div>`
                         }
                     </div>
@@ -970,6 +970,47 @@
                 }
             }
             
+            /* Estilos para contenido HTML en emails */
+            .email-html-content {
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+                max-width: 100% !important;
+            }
+            .email-html-content img {
+                max-width: 100% !important;
+                height: auto !important;
+                display: block !important;
+            }
+            .email-html-content table {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-collapse: collapse !important;
+                table-layout: auto !important;
+            }
+            .email-html-content table td,
+            .email-html-content table th {
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+            }
+            .email-html-content pre,
+            .email-html-content code {
+                white-space: pre-wrap !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                max-width: 100% !important;
+            }
+            .email-html-content iframe,
+            .email-html-content video,
+            .email-html-content embed,
+            .email-html-content object {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            .email-html-content * {
+                max-width: 100% !important;
+            }
+            
             @media (max-width: 640px) {
                 .swal2-popup {
                     width: 95% !important;
@@ -996,6 +1037,27 @@
                 .swal2-confirm {
                     font-size: 0.875rem !important;
                     padding: 0.5rem 1rem !important;
+                }
+                .email-html-content {
+                    word-wrap: break-word !important;
+                    overflow-wrap: break-word !important;
+                    word-break: break-word !important;
+                }
+                .email-html-content img {
+                    max-width: 100% !important;
+                    height: auto !important;
+                }
+                .email-html-content table {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    display: block !important;
+                    overflow-x: auto !important;
+                }
+                .email-html-content pre,
+                .email-html-content code {
+                    white-space: pre-wrap !important;
+                    word-wrap: break-word !important;
+                    max-width: 100% !important;
                 }
             }
         `;

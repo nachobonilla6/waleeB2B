@@ -457,11 +457,11 @@
                 <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
                     <div class="p-4 sm:p-6">
                         <!-- World Map Widget -->
-                        <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjMWUyOTNiIi8+PHBhdGggZD0iTTIwMCwxMDAgUTMwMCw5MCA0MDAsMTAwIFQ2MDAsMTIwIFQ4MDAsMTMwIiBmaWxsPSIjMzM0MTU1IiBzdHJva2U9IiM0NzU1NjkiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0xNTAsMjAwIFEyNTAsMTgwIDM1MCwyMDAgVDU1MCwyMTAgVDc1MCwyMjAiIGZpbGw9IiMzMzQxNTUiIHN0cm9rZT0iIzQ3NTU2OSIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTTEwMCwzMDAgUTIwMCwyODAgMzAwLDMwMCBUNTAwLDMyMCBUNzAwLDM0MCIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjNDc1NTY5IiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4='); background-size: cover; background-position: center;">
-                            <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden;">
+                        <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative;">
+                            <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: 8px;">
                                 <!-- Mapa mundial con marcadores mejorados -->
-                                <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%;" class="world-map-svg">
-                                    <!-- Fondo del mapa -->
+                                <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" class="world-map-svg" preserveAspectRatio="xMidYMid meet">
+                                    <!-- Fondo transparente para que se vea la imagen de fondo -->
                                     <rect width="1000" height="500" fill="transparent"/>
                                     
                                     <!-- Marcadores de ciudades con relojes mejorados -->

@@ -486,7 +486,7 @@
             }
             
             Swal.fire({
-                title: titulo || 'Evento',
+                title: (titulo ? titulo + ' - Evento' : 'Evento'),
                 html: `
                     <div class="text-left space-y-2">
                         ${fecha ? `<p class="text-sm"><strong>Fecha:</strong> ${fecha}</p>` : ''}
@@ -575,7 +575,7 @@
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 buttonsStyling: false,
                 didOpen: () => {
-                    // Agregar X roja en la esquina superior derecha de la modal (afuera)
+                    // Agregar X roja en la esquina superior izquierda de la modal (afuera)
                     const swalContainer = document.querySelector('.swal2-popup');
                     if (swalContainer) {
                         const closeBtn = document.createElement('button');
@@ -584,7 +584,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         `;
-                        closeBtn.className = 'absolute -top-3 -right-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-50 cursor-pointer';
+                        closeBtn.className = 'absolute -top-3 -left-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all z-50 cursor-pointer';
                         closeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
                         closeBtn.onclick = () => Swal.close();
                         swalContainer.style.position = 'relative';

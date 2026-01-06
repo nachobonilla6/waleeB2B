@@ -498,7 +498,7 @@
                                 @endif
             
                                 <!-- Email Button -->
-                                <button type="button" onclick="(function(){ try { if(typeof window.openEmailModal === 'function') { window.openEmailModal(); } else { console.error('openEmailModal no disponible:', typeof window.openEmailModal, 'window keys:', Object.keys(window).filter(k => k.includes('Email'))); alert('Error: La función de email no está disponible. Por favor, recarga la página.'); } } catch(e) { console.error('Error al ejecutar openEmailModal:', e); alert('Error: ' + e.message); } })();" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
+                                <button type="button" onclick="(function(){ console.log('=== DEBUG: Click en botón de email (mobile) ==='); console.log('window.openEmailModal:', typeof window.openEmailModal); console.log('window keys con Email:', Object.keys(window).filter(k => k.toLowerCase().includes('email'))); console.log('window keys con Modal:', Object.keys(window).filter(k => k.toLowerCase().includes('modal'))); console.log('window keys con Phase:', Object.keys(window).filter(k => k.toLowerCase().includes('phase'))); try { if(typeof window.openEmailModal === 'function') { console.log('✓ Llamando a window.openEmailModal()'); window.openEmailModal(); } else { console.error('✗ ERROR: window.openEmailModal no es una función'); console.error('Tipo:', typeof window.openEmailModal); console.error('Valor:', window.openEmailModal); console.error('Todas las keys de window:', Object.keys(window).slice(0, 50)); alert('Error: La función de email no está disponible.\n\nTipo: ' + typeof window.openEmailModal + '\n\nRevisa la consola para más detalles.'); } } catch(e) { console.error('✗ EXCEPCIÓN al ejecutar:', e); console.error('Stack:', e.stack); alert('Error: ' + e.message + '\n\nRevisa la consola para más detalles.'); } })();" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
@@ -732,7 +732,7 @@
                                 @endif
             
                                 <!-- Email Button -->
-                                <button type="button" onclick="(function(){ try { if(typeof window.openEmailModal === 'function') { window.openEmailModal(); } else { console.error('openEmailModal no disponible:', typeof window.openEmailModal, 'window keys:', Object.keys(window).filter(k => k.includes('Email'))); alert('Error: La función de email no está disponible. Por favor, recarga la página.'); } } catch(e) { console.error('Error al ejecutar openEmailModal:', e); alert('Error: ' + e.message); } })();" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
+                                <button type="button" onclick="(function(){ console.log('=== DEBUG: Click en botón de email (desktop) ==='); console.log('window.openEmailModal:', typeof window.openEmailModal); console.log('window keys con Email:', Object.keys(window).filter(k => k.toLowerCase().includes('email'))); console.log('window keys con Modal:', Object.keys(window).filter(k => k.toLowerCase().includes('modal'))); console.log('window keys con Phase:', Object.keys(window).filter(k => k.toLowerCase().includes('phase'))); try { if(typeof window.openEmailModal === 'function') { console.log('✓ Llamando a window.openEmailModal()'); window.openEmailModal(); } else { console.error('✗ ERROR: window.openEmailModal no es una función'); console.error('Tipo:', typeof window.openEmailModal); console.error('Valor:', window.openEmailModal); console.error('Todas las keys de window:', Object.keys(window).slice(0, 50)); alert('Error: La función de email no está disponible.\n\nTipo: ' + typeof window.openEmailModal + '\n\nRevisa la consola para más detalles.'); } } catch(e) { console.error('✗ EXCEPCIÓN al ejecutar:', e); console.error('Stack:', e.stack); alert('Error: ' + e.message + '\n\nRevisa la consola para más detalles.'); } })();" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
@@ -1866,21 +1866,39 @@
             }
         }
         
+        // DEBUG: Verificar estado antes de definir la función
+        console.log('=== DEBUG: Antes de definir openEmailModal ===');
+        console.log('emailModalData existe:', typeof emailModalData);
+        console.log('showEmailPhase1 existe:', typeof showEmailPhase1);
+        console.log('window.openEmailModal existe:', typeof window.openEmailModal);
+        
         // Definir openEmailModal directamente en window para disponibilidad inmediata
         window.openEmailModal = function() {
-            console.log('openEmailModal ejecutado');
+            console.log('=== DEBUG: openEmailModal EJECUTADO ===');
+            console.log('emailModalData:', typeof emailModalData, emailModalData);
+            console.log('showEmailPhase1:', typeof showEmailPhase1);
+            console.log('Swal:', typeof Swal);
+            
             try {
                 // Verificar que emailModalData esté disponible
                 if (typeof emailModalData === 'undefined') {
-                    console.error('emailModalData no está definido');
+                    console.error('ERROR: emailModalData no está definido');
                     alert('Error: Datos del modal no están disponibles. Por favor, recarga la página.');
                     return;
                 }
                 
                 // Verificar que showEmailPhase1 esté disponible
                 if (typeof showEmailPhase1 === 'undefined') {
-                    console.error('showEmailPhase1 no está definido');
+                    console.error('ERROR: showEmailPhase1 no está definido');
+                    console.error('Funciones disponibles en window:', Object.keys(window).filter(k => k.includes('Email') || k.includes('Phase')));
                     alert('Error: La función showEmailPhase1 no está disponible. Por favor, recarga la página.');
+                    return;
+                }
+                
+                // Verificar que Swal esté disponible
+                if (typeof Swal === 'undefined') {
+                    console.error('ERROR: Swal (SweetAlert2) no está definido');
+                    alert('Error: SweetAlert2 no está disponible. Por favor, recarga la página.');
                     return;
                 }
                 
@@ -1891,20 +1909,34 @@
                 emailModalData.body = '';
                 emailModalData.attachments = null;
                 
-                console.log('Llamando a showEmailPhase1');
+                console.log('DEBUG: Llamando a showEmailPhase1');
                 // Abrir desde la fase 1
                 showEmailPhase1();
             } catch (error) {
-                console.error('Error en openEmailModal:', error);
-                alert('Error al abrir el modal: ' + error.message);
+                console.error('=== ERROR EN openEmailModal ===');
+                console.error('Error:', error);
+                console.error('Stack:', error.stack);
+                console.error('Message:', error.message);
+                alert('Error al abrir el modal: ' + error.message + '\n\nRevisa la consola para más detalles.');
             }
         };
         
         // También definirla localmente para compatibilidad
         const openEmailModal = window.openEmailModal;
         
-        // Verificar inmediatamente que esté disponible
-        console.log('openEmailModal definido:', typeof window.openEmailModal);
+        // DEBUG: Verificar inmediatamente que esté disponible
+        console.log('=== DEBUG: Después de definir openEmailModal ===');
+        console.log('window.openEmailModal:', typeof window.openEmailModal);
+        console.log('openEmailModal local:', typeof openEmailModal);
+        console.log('Verificando que esté en window:', 'openEmailModal' in window);
+        
+        // DEBUG: Intentar llamar la función para verificar que funciona
+        if (typeof window.openEmailModal === 'function') {
+            console.log('✓ window.openEmailModal está definido correctamente');
+        } else {
+            console.error('✗ ERROR: window.openEmailModal NO está definido correctamente');
+            console.error('Tipo actual:', typeof window.openEmailModal);
+        }
         
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
@@ -2629,20 +2661,64 @@
             });
         }
         
-        // Verificar que todas las funciones estén disponibles después de cargar
+        // DEBUG: Verificar que todas las funciones estén disponibles después de cargar
+        console.log('=== DEBUG: Verificando estado del DOM ===');
+        console.log('document.readyState:', document.readyState);
+        
+        function verificarFunciones() {
+            console.log('=== DEBUG: Verificación completa de funciones ===');
+            console.log('window.openEmailModal:', typeof window.openEmailModal);
+            console.log('showEmailPhase1:', typeof showEmailPhase1);
+            console.log('emailModalData:', typeof emailModalData);
+            console.log('Swal:', typeof Swal);
+            console.log('emailTemplates:', typeof emailTemplates);
+            
+            // Verificar todas las propiedades de window relacionadas con email
+            const emailKeys = Object.keys(window).filter(k => 
+                k.toLowerCase().includes('email') || 
+                k.toLowerCase().includes('modal') ||
+                k.toLowerCase().includes('phase')
+            );
+            console.log('Propiedades relacionadas con email en window:', emailKeys);
+            
+            // Verificar si hay errores de sintaxis
+            try {
+                if (typeof window.openEmailModal === 'function') {
+                    console.log('✓ window.openEmailModal está disponible y es una función');
+                } else {
+                    console.error('✗ ERROR: window.openEmailModal NO está disponible o no es una función');
+                    console.error('Tipo:', typeof window.openEmailModal);
+                    console.error('Valor:', window.openEmailModal);
+                }
+            } catch (e) {
+                console.error('✗ ERROR al verificar window.openEmailModal:', e);
+            }
+        }
+        
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('DOM cargado - Verificando funciones:');
-                console.log('  window.openEmailModal:', typeof window.openEmailModal);
-                console.log('  showEmailPhase1:', typeof showEmailPhase1);
-                console.log('  emailModalData:', typeof emailModalData);
+                console.log('=== DEBUG: DOM cargado (DOMContentLoaded) ===');
+                verificarFunciones();
             });
         } else {
-            console.log('DOM ya cargado - Verificando funciones:');
-            console.log('  window.openEmailModal:', typeof window.openEmailModal);
-            console.log('  showEmailPhase1:', typeof showEmailPhase1);
-            console.log('  emailModalData:', typeof emailModalData);
+            console.log('=== DEBUG: DOM ya cargado ===');
+            verificarFunciones();
         }
+        
+        // También verificar después de un pequeño delay para asegurar que todo esté cargado
+        setTimeout(function() {
+            console.log('=== DEBUG: Verificación después de 500ms ===');
+            verificarFunciones();
+        }, 500);
+        
+        // Verificar cuando se hace clic en cualquier parte de la página
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('button[onclick*="openEmailModal"]')) {
+                console.log('=== DEBUG: Click detectado en botón de email ===');
+                console.log('window.openEmailModal en momento del click:', typeof window.openEmailModal);
+                verificarFunciones();
+            }
+        }, true);
     </script>
 </body>
 </html>

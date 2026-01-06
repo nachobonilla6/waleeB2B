@@ -1955,6 +1955,8 @@
                     return 0; // mantener orden original si ambos tienen o no tienen tipo
                 });
                 
+                console.log('Templates ordenados:', sortedTemplates.map(t => ({ nombre: t.nombre, tipo: t.tipo })));
+                
                 sortedTemplates.forEach(template => {
                     // Mostrar el template siempre, con o sin tipo
                     const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
@@ -2408,8 +2410,13 @@
             
             // Mostrar el tipo del template como badge (reutilizar tipoDisplay ya declarado arriba)
             const tipoValue = document.getElementById('template_tipo_value');
+            console.log('loadEmailTemplate - template:', template);
+            console.log('loadEmailTemplate - tipoDisplay:', tipoDisplay);
+            console.log('loadEmailTemplate - tipoValue:', tipoValue);
+            
             if (tipoDisplay && tipoValue) {
                 if (template.tipo) {
+                    console.log('Mostrando badge para tipo:', template.tipo);
                     const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
                     tipoValue.textContent = tipoText;
                     // Aplicar color según el tipo con estilo badge
@@ -2421,9 +2428,13 @@
                     };
                     tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + (tipoColors[template.tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30');
                     tipoDisplay.style.display = 'block';
+                    console.log('Badge mostrado con className:', tipoValue.className);
                 } else {
+                    console.log('Template sin tipo, ocultando badge');
                     tipoDisplay.style.display = 'none';
                 }
+            } else {
+                console.error('tipoDisplay o tipoValue no encontrados');
             }
             
             // Ocultar el botón de generar con AI cuando hay template seleccionado

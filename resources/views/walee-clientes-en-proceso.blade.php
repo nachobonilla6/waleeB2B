@@ -186,155 +186,86 @@
                     </h2>
                 </div>
                 
-                <div class="grid grid-cols-1 gap-3" id="clientsList">
+                <div class="space-y-2" id="clientsList">
                 @forelse($clientes as $cliente)
                     @php
                         $phone = $cliente->telefono_1 ?: $cliente->telefono_2;
                         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
                         $whatsappLink = $cleanPhone ? "https://wa.me/{$cleanPhone}" : null;
-                        
-                        // Obtener URL de la foto del cliente
-                        $fotoUrl = null;
-                        if ($cliente->foto) {
-                            $fotoPath = $cliente->foto;
-                            if (\Illuminate\Support\Str::startsWith($fotoPath, ['http://', 'https://'])) {
-                                $fotoUrl = $fotoPath;
-                            } else {
-                                $filename = basename($fotoPath);
-                                $fotoUrl = route('storage.clientes', ['filename' => $filename]);
-                            }
-                        }
-                        
-                        // Bandera del idioma
-                        $banderas = [
-                            'es' => '🇪🇸',
-                            'en' => '🇬🇧',
-                            'fr' => '🇫🇷',
-                            'de' => '🇩🇪',
-                            'it' => '🇮🇹',
-                            'pt' => '🇵🇹'
-                        ];
-                        $bandera = ($cliente->idioma && !$fotoUrl) ? ($banderas[$cliente->idioma] ?? '') : '';
                     @endphp
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . ($phone ?? '') . ' ' . ($cliente->email ?? '')) }}" data-client-id="{{ $cliente->id }}">
-                        <div class="relative bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:border-violet-400 dark:hover:border-violet-500/30 hover:shadow-md dark:hover:shadow-lg transition-all">
-                            <div class="flex items-start gap-4">
-                                <!-- Checkbox -->
-                                <input 
-                                    type="checkbox" 
-                                    class="client-checkbox w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer hidden mt-1"
-                                    data-client-id="{{ $cliente->id }}"
-                                    data-client-name="{{ $cliente->name }}"
-                                    onchange="updateDeleteButton()"
-                                >
-                                
-                                <!-- Avatar/Icon -->
-                                <div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex-shrink-0 flex items-center justify-center border border-violet-500/30 overflow-hidden">
-                                    @if($fotoUrl)
-                                        <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-xl">
-                                    @elseif($bandera)
-                                        <span class="text-xl">{{ $bandera }}</span>
-                                    @else
-                                        <svg class="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                    @endif
+                        <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all">
+                            <!-- Checkbox -->
+                            <input 
+                                type="checkbox" 
+                                class="client-checkbox w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer hidden"
+                                data-client-id="{{ $cliente->id }}"
+                                data-client-name="{{ $cliente->name }}"
+                                onchange="updateDeleteButton()"
+                            >
+                            
+                            <!-- Icon -->
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex-shrink-0 flex items-center justify-center border border-blue-500/30">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            
+                            <!-- Content -->
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
                                 </div>
-                                
-                                <!-- Content -->
-                                <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex-1 min-w-0">
-                                    <div class="flex-1 min-w-0">
-                                        <!-- Header: Name -->
-                                        <div class="flex items-center gap-2 mb-2">
-                                            @if($bandera)
-                                                <span class="text-base flex-shrink-0">{{ $bandera }}</span>
-                                            @endif
-                                            <h3 class="font-semibold text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-                                                {{ $cliente->name ?: 'Sin nombre' }}
-                                            </h3>
-                                        </div>
-                                        
-                                        <!-- Details Grid -->
-                                        <div class="space-y-1.5">
-                                            @if($cliente->email)
-                                                <div class="flex items-center gap-2">
-                                                    <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                                    </svg>
-                                                    <span class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</span>
-                                                </div>
-                                            @endif
-                                            
-                                            @if($phone)
-                                                <div class="flex items-center gap-2">
-                                                    <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                                    </svg>
-                                                    <span class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $phone }}</span>
-                                                </div>
-                                            @endif
-                                            
-                                            @if($cliente->website)
-                                                <div class="flex items-center gap-2">
-                                                    <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                                    </svg>
-                                                    <span class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $cliente->website }}</span>
-                                                </div>
-                                            @endif
-                                            
-                                            <div class="flex items-center gap-2">
-                                                <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                                <span class="text-xs text-slate-500 dark:text-slate-500">{{ $cliente->created_at->diffForHumans() }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                                
-                                <!-- Email Counter -->
-                                <div class="flex-shrink-0 flex items-center gap-1.5">
-                                    <div class="bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">{{ $cliente->emails_count ?? 0 }}</span>
-                                    </div>
+                                @if($cliente->email)
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</p>
+                                @endif
+                                @if($phone)
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $phone }}</p>
+                                @endif
+                                @if($cliente->website)
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $cliente->website }}</p>
+                                @endif
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
+                            </a>
+                            
+                            <!-- Email Counter -->
+                            <div class="flex-shrink-0 flex items-center gap-1.5">
+                                <div class="bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-lg px-2 py-1 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">{{ $cliente->emails_count ?? 0 }}</span>
                                 </div>
                             </div>
                             
-                            <!-- Action Buttons Row -->
-                            <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <!-- Action Buttons -->
+                            <div class="flex-shrink-0 flex items-center gap-1.5">
                                 <!-- Email with AI Button -->
-                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="flex-1 px-3 py-1.5 bg-walee-500/20 hover:bg-walee-500/30 text-walee-400 hover:text-walee-300 border border-walee-500/30 hover:border-walee-400/50 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Email AI">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                     </svg>
-                                    <span>Email AI</span>
                                 </a>
                                 
                                 <!-- WhatsApp Button -->
                                 @if($whatsappLink)
-                                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="flex-1 px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 hover:border-emerald-400/50 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs">
-                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:border-emerald-400/50 transition-all" title="WhatsApp">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                                         </svg>
-                                        <span>WhatsApp</span>
                                     </a>
                                 @else
-                                    <div class="flex-1 px-3 py-1.5 bg-slate-800/50 text-slate-500 border border-slate-700 rounded-lg flex items-center justify-center gap-1.5 text-xs">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="p-1.5 rounded-md bg-slate-800/50 text-slate-500 border border-slate-700" title="Sin teléfono">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                                         </svg>
-                                        <span>Sin teléfono</span>
                                     </div>
                                 @endif
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-12 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <div class="text-center py-8">
                         <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes en proceso</p>
                     </div>
                 @endforelse

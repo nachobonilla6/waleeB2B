@@ -878,6 +878,34 @@
                 </div>
             </div>
             
+            <!-- Google Maps -->
+            @if($cliente->ciudad)
+            <div class="mb-4 sm:mb-6 mt-4 sm:mt-6">
+                <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                    <div class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
+                        <h3 class="text-sm sm:text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Ubicación - {{ $cliente->ciudad }}
+                        </h3>
+                    </div>
+                    <div class="w-full" style="height: 300px;">
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            style="border:0"
+                            loading="lazy"
+                            allowfullscreen
+                            referrerpolicy="no-referrer-when-downgrade"
+                            src="https://www.google.com/maps?q={{ urlencode($cliente->ciudad) }}&output=embed&zoom=13">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            @endif
+            
             <!-- Footer -->
             <footer class="text-center py-4 sm:py-6 mt-4 sm:mt-6">
                 <p class="text-[10px] sm:text-sm text-slate-600 dark:text-slate-500">

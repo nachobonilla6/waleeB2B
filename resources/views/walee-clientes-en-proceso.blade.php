@@ -307,11 +307,11 @@
                                 
                                 <!-- WhatsApp Button -->
                                 @if($whatsappLink)
-                                    <a href="{{ $whatsappLink }}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:border-emerald-400/50 transition-all" title="WhatsApp">
+                                    <button onclick="openWhatsAppModalForCliente('{{ addslashes($cliente->name ?? 'Cliente') }}', '{{ $whatsappLink }}')" class="p-1.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:border-emerald-400/50 transition-all" title="WhatsApp">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                                         </svg>
-                                    </a>
+                                    </button>
                                 @else
                                     <div class="p-1.5 rounded-md bg-slate-800/50 text-slate-500 border border-slate-700" title="Sin teléfono">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1025,6 +1025,173 @@
                     </svg>
                     <span>Generar con AI</span>
                 `;
+            }
+        }
+        
+        function openWhatsAppModalForCliente(clienteName, whatsappLink) {
+            if (!whatsappLink) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin teléfono',
+                    text: 'Este cliente no tiene un número de teléfono registrado.',
+                    confirmButtonColor: '#D59F3B'
+                });
+                return;
+            }
+            
+            const isMobile = window.innerWidth < 640;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '600px';
+            if (isMobile) {
+                modalWidth = '98%';
+            }
+            
+            const html = `
+                <form id="whatsappForm" class="space-y-4 text-left">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Redactar mensaje para ${clienteName}</label>
+                        <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Prompt</label>
+                        <textarea id="whatsappPrompt" rows="4" placeholder="Describe el mensaje que quieres enviar (ej: saludar y preguntar sobre disponibilidad para una reunión)"
+                                  class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                    </div>
+                    <div>
+                        <button type="button" onclick="generateWhatsAppMessage()" 
+                                class="w-full px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Generar con AI
+                        </button>
+                    </div>
+                    <div id="generatedMessageContainer" class="hidden">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Mensaje generado:</label>
+                        <textarea id="generatedMessage" rows="4" readonly
+                                  class="w-full px-3 py-2 text-sm rounded-lg border border-emerald-300 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 text-slate-900 dark:text-white"></textarea>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: '',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '0.75rem' : (isDesktop ? '1.5rem' : '1.5rem'),
+                heightAuto: true,
+                customClass: {
+                    container: isMobile ? 'swal2-container-mobile' : '',
+                    popup: isMobile ? 'swal2-popup-mobile' : (isDarkMode ? 'dark-swal' : 'light-swal'),
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isMobile ? 'swal2-html-container-mobile' : (isDarkMode ? 'dark-swal-html' : 'light-swal-html'),
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Abrir WhatsApp',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#25D366',
+                reverseButtons: true,
+                didOpen: () => {
+                    // Aplicar tema dark/light al modal
+                    const popup = Swal.getPopup();
+                    if (isDarkMode) {
+                        popup.style.backgroundColor = '#0f172a';
+                        popup.style.color = '#e2e8f0';
+                        popup.style.borderColor = 'rgba(213, 159, 59, 0.2)';
+                    } else {
+                        popup.style.backgroundColor = '#ffffff';
+                        popup.style.color = '#1e293b';
+                        popup.style.borderColor = 'rgba(203, 213, 225, 0.5)';
+                    }
+                    // Hacer el modal más alto
+                    popup.style.minHeight = isMobile ? 'auto' : '500px';
+                    popup.style.maxHeight = isMobile ? '90vh' : '80vh';
+                },
+                preConfirm: () => {
+                    const generatedMessage = document.getElementById('generatedMessage')?.value;
+                    if (!generatedMessage || generatedMessage.trim() === '') {
+                        Swal.showValidationMessage('Primero debes generar un mensaje con AI');
+                        return false;
+                    }
+                    return generatedMessage;
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    const message = encodeURIComponent(result.value);
+                    // Construir URL correctamente: usar ? si no tiene parámetros, & si ya tiene
+                    const separator = whatsappLink.includes('?') ? '&' : '?';
+                    const whatsappUrl = `${whatsappLink}${separator}text=${message}`;
+                    window.open(whatsappUrl, '_blank');
+                }
+            });
+        }
+        
+        async function generateWhatsAppMessage() {
+            const prompt = document.getElementById('whatsappPrompt')?.value;
+            if (!prompt || prompt.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo vacío',
+                    text: 'Por favor, describe el mensaje que quieres enviar.',
+                    confirmButtonColor: '#D59F3B'
+                });
+                return;
+            }
+            
+            // Deshabilitar botón y mostrar loading
+            const generateButton = event.target;
+            const originalText = generateButton.innerHTML;
+            generateButton.disabled = true;
+            generateButton.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Generando...';
+            
+            try {
+                const response = await fetch('{{ route("walee.whatsapp.generar-mensaje") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                const result = await response.json();
+                
+                // Restaurar botón
+                generateButton.disabled = false;
+                generateButton.innerHTML = originalText;
+                
+                if (result.success) {
+                    // Mostrar mensaje generado
+                    const container = document.getElementById('generatedMessageContainer');
+                    const textarea = document.getElementById('generatedMessage');
+                    if (container && textarea) {
+                        container.classList.remove('hidden');
+                        textarea.value = result.message;
+                        // Scroll al mensaje generado
+                        container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Error al generar el mensaje',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                // Restaurar botón
+                generateButton.disabled = false;
+                generateButton.innerHTML = originalText;
+                
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión. Por favor, intenta nuevamente.',
+                    confirmButtonColor: '#ef4444'
+                });
             }
         }
         

@@ -400,7 +400,8 @@
                 showConfirmButton: true,
                 confirmButtonText: 'Crear',
                 confirmButtonColor: '#D59F3B',
-                reverseButtons: false, // Cancelar primero (izquierda), Crear segundo (derecha)
+                reverseButtons: false, // Cancelar (izquierda), Crear (derecha)
+                confirmButtonClass: 'swal2-confirm-right',
                 buttonsStyling: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
@@ -636,7 +637,8 @@
                 showConfirmButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#D59F3B',
-                reverseButtons: false, // Cancelar primero (izquierda), Guardar segundo (derecha)
+                reverseButtons: false, // Cancelar (izquierda), Guardar (derecha)
+                confirmButtonClass: 'swal2-confirm-right',
                 buttonsStyling: true,
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
@@ -1142,12 +1144,19 @@
             .swal2-actions {
                 margin-top: 0.75rem !important;
                 gap: 0.5rem !important;
+                flex-direction: row-reverse !important;
             }
             .swal2-confirm,
             .swal2-cancel,
             .swal2-deny {
                 font-size: 0.75rem !important;
                 padding: 0.5rem 1rem !important;
+            }
+            .swal2-confirm {
+                order: 2 !important;
+            }
+            .swal2-cancel {
+                order: 1 !important;
             }
             
             @media (max-width: 640px) {

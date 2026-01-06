@@ -1320,20 +1320,52 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
         $cita->descripcion = $validated['descripcion'] ?? null;
         $cita->estado = 'programada';
         
-        // Sincronizar con Google Calendar
+        // Verificar si está autorizado antes de intentar sincronizar
         $googleService = new \App\Services\GoogleCalendarService();
-        $eventId = $googleService->createEvent($cita);
         
-        if ($eventId) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Evento creado y sincronizado con Google Calendar',
-                'event_id' => $eventId
-            ]);
-        } else {
+        if (!$googleService->isAuthorized()) {
             return response()->json([
                 'success' => false,
-                'message' => 'El evento se creó pero no se pudo sincronizar con Google Calendar'
+                'message' => 'No estás autorizado con Google Calendar. Por favor, conecta tu cuenta primero.',
+                'needs_auth' => true
+            ], 401);
+        }
+        
+        // Verificar que el archivo de credenciales existe
+        $credentialsPath = $googleService->findCredentialsFile();
+        if (!$credentialsPath) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontró el archivo de credenciales de Google Calendar. Verifica la configuración.',
+                'needs_credentials' => true
+            ], 500);
+        }
+        
+        // Sincronizar con Google Calendar
+        try {
+            $eventId = $googleService->createEvent($cita);
+            
+            if ($eventId) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evento creado y sincronizado con Google Calendar',
+                    'event_id' => $eventId
+                ]);
+            } else {
+                \Log::error('createEvent retornó null sin lanzar excepción');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El evento se creó pero no se pudo sincronizar con Google Calendar. Verifica los logs para más detalles.'
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error sincronizando evento con Google Calendar: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al sincronizar con Google Calendar: ' . $e->getMessage(),
+                'error_details' => config('app.debug') ? $e->getTraceAsString() : null
             ], 500);
         }
     } catch (\Exception $e) {

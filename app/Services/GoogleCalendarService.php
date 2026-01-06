@@ -91,10 +91,24 @@ class GoogleCalendarService
                 if ($client->isAccessTokenExpired()) {
                     $refreshToken = $client->getRefreshToken();
                     if ($refreshToken) {
-                        $client->fetchAccessTokenWithRefreshToken($refreshToken);
-                        $this->saveAccessToken($client->getAccessToken());
+                        try {
+                            $newToken = $client->fetchAccessTokenWithRefreshToken($refreshToken);
+                            $this->saveAccessToken($newToken);
+                            Log::info('Token de acceso refrescado exitosamente');
+                        } catch (\Exception $e) {
+                            Log::error('Error refrescando token: ' . $e->getMessage());
+                            // Si falla el refresh, el token puede estar inválido
+                            // El usuario necesitará reautorizar
+                            return null;
+                        }
+                    } else {
+                        Log::warning('Token expirado y no hay refresh token disponible');
+                        return null;
                     }
                 }
+            } else {
+                Log::warning('No hay token de acceso guardado. El usuario necesita autorizar primero.');
+                return null;
             }
 
             $this->client = $client;
@@ -285,9 +299,12 @@ class GoogleCalendarService
         try {
             $service = $this->getService();
             if (!$service) {
-                Log::warning('No se pudo obtener el servicio de Google Calendar');
-            return null;
-        }
+                Log::error('No se pudo obtener el servicio de Google Calendar');
+                Log::error('Verificando autorización: ' . ($this->isAuthorized() ? 'Sí' : 'No'));
+                $credentialsPath = $this->findCredentialsFile();
+                Log::error('Archivo de credenciales encontrado: ' . ($credentialsPath ? $credentialsPath : 'No'));
+                return null;
+            }
 
             $event = new \Google_Service_Calendar_Event();
             $event->setSummary($cita->titulo);
@@ -320,13 +337,27 @@ class GoogleCalendarService
                 $event->setGuestsCanModify(false);
             }
 
+            Log::info('Intentando crear evento en calendario: ' . $this->calendarId);
+            Log::info('Título del evento: ' . $cita->titulo);
+            Log::info('Fecha inicio: ' . $cita->fecha_inicio->format('Y-m-d H:i:s'));
+            
             $createdEvent = $service->events->insert($this->calendarId, $event, [
                 'sendUpdates' => 'all', // Enviar invitaciones automáticamente
             ]);
             
-            return $createdEvent->getId();
+            $eventId = $createdEvent->getId();
+            Log::info('Evento creado exitosamente con ID: ' . $eventId);
+            
+            return $eventId;
+        } catch (\Google_Service_Exception $e) {
+            Log::error('Error de Google Service al crear evento: ' . $e->getMessage());
+            Log::error('Código de error: ' . $e->getCode());
+            Log::error('Detalles: ' . json_encode($e->getErrors()));
+            return null;
         } catch (\Exception $e) {
             Log::error('Error al crear evento en Google Calendar: ' . $e->getMessage());
+            Log::error('Tipo de excepción: ' . get_class($e));
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             return null;
         }
     }

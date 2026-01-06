@@ -424,89 +424,84 @@
                 <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
                     <div class="p-4 sm:p-6">
                         <!-- World Map Widget -->
-                        <div class="mb-6 bg-slate-50 dark:bg-slate-800 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative;">
+                        <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjMWUyOTNiIi8+PHBhdGggZD0iTTIwMCwxMDAgUTMwMCw5MCA0MDAsMTAwIFQ2MDAsMTIwIFQ4MDAsMTMwIiBmaWxsPSIjMzM0MTU1IiBzdHJva2U9IiM0NzU1NjkiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0xNTAsMjAwIFEyNTAsMTgwIDM1MCwyMDAgVDU1MCwyMTAgVDc1MCwyMjAiIGZpbGw9IiMzMzQxNTUiIHN0cm9rZT0iIzQ3NTU2OSIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTTEwMCwzMDAgUTIwMCwyODAgMzAwLDMwMCBUNTAwLDMyMCBUNzAwLDM0MCIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjNDc1NTY5IiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4='); background-size: cover; background-position: center;">
                             <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden;">
-                                <!-- Mapa mundial SVG simplificado -->
+                                <!-- Mapa mundial con marcadores mejorados -->
                                 <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%;" class="world-map-svg">
-                                    <!-- Continentes simplificados -->
-                                    <path d="M100,200 Q150,180 200,200 T300,200 Q350,200 400,220 T500,230 Q550,240 600,250 T700,260 Q750,270 800,280 T900,290" 
-                                          fill="#4a5568" stroke="#2d3748" stroke-width="2" class="continent"/>
-                                    <path d="M150,300 Q200,280 250,300 T350,310 Q400,320 450,330 T550,340 Q600,350 650,360 T750,370 Q800,380 850,390" 
-                                          fill="#4a5568" stroke="#2d3748" stroke-width="2" class="continent"/>
-                                    <path d="M200,100 Q250,90 300,100 T400,110 Q450,120 500,130 T600,140 Q650,150 700,160" 
-                                          fill="#4a5568" stroke="#2d3748" stroke-width="2" class="continent"/>
+                                    <!-- Fondo del mapa -->
+                                    <rect width="1000" height="500" fill="transparent"/>
                                     
-                                    <!-- Marcadores de ciudades con relojes -->
+                                    <!-- Marcadores de ciudades con relojes mejorados -->
                                     <!-- New York -->
                                     <g class="city-marker" data-city="ny" data-timezone="America/New_York">
-                                        <circle cx="250" cy="200" r="8" fill="#ef4444" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="250" y="195" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">NY</text>
-                                        <foreignObject x="230" y="215" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-ny">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="250" cy="200" r="12" fill="#ef4444" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="250" cy="200" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="250" y="185" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">NY</text>
+                                        <rect x="220" y="220" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="250" y="237" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-ny">--:--</text>
                                     </g>
                                     
                                     <!-- London -->
                                     <g class="city-marker" data-city="london" data-timezone="Europe/London">
-                                        <circle cx="480" cy="180" r="8" fill="#3b82f6" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="480" y="175" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">LDN</text>
-                                        <foreignObject x="460" y="195" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-london">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="480" cy="180" r="12" fill="#3b82f6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="480" cy="180" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="480" y="165" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">LDN</text>
+                                        <rect x="450" y="200" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#3b82f6" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="480" y="217" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-london">--:--</text>
                                     </g>
                                     
                                     <!-- Tokyo -->
                                     <g class="city-marker" data-city="tokyo" data-timezone="Asia/Tokyo">
-                                        <circle cx="850" cy="200" r="8" fill="#10b981" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="850" y="195" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">TKY</text>
-                                        <foreignObject x="830" y="215" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-tokyo">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="850" cy="200" r="12" fill="#10b981" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="850" cy="200" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="850" y="185" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">TKY</text>
+                                        <rect x="820" y="220" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#10b981" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="850" y="237" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-tokyo">--:--</text>
                                     </g>
                                     
                                     <!-- Sydney -->
                                     <g class="city-marker" data-city="sydney" data-timezone="Australia/Sydney">
-                                        <circle cx="850" cy="350" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="850" y="345" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">SYD</text>
-                                        <foreignObject x="830" y="365" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-sydney">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="850" cy="350" r="12" fill="#f59e0b" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="850" cy="350" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="850" y="335" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SYD</text>
+                                        <rect x="820" y="370" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#f59e0b" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="850" y="387" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-sydney">--:--</text>
                                     </g>
                                     
                                     <!-- Dubai -->
                                     <g class="city-marker" data-city="dubai" data-timezone="Asia/Dubai">
-                                        <circle cx="550" cy="240" r="8" fill="#8b5cf6" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="550" y="235" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">DXB</text>
-                                        <foreignObject x="530" y="255" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-dubai">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="550" cy="240" r="12" fill="#8b5cf6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="550" cy="240" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="550" y="225" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">DXB</text>
+                                        <rect x="520" y="260" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="550" y="277" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-dubai">--:--</text>
                                     </g>
                                     
                                     <!-- São Paulo -->
                                     <g class="city-marker" data-city="saopaulo" data-timezone="America/Sao_Paulo">
-                                        <circle cx="350" cy="320" r="8" fill="#ec4899" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="350" y="315" text-anchor="middle" fill="#ec4899" font-size="10" font-weight="bold">SP</text>
-                                        <foreignObject x="330" y="335" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-saopaulo">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="350" cy="320" r="12" fill="#ec4899" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="350" cy="320" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="350" y="305" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SP</text>
+                                        <rect x="320" y="340" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ec4899" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="350" y="357" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-saopaulo">--:--</text>
                                     </g>
                                     
                                     <!-- Los Angeles -->
                                     <g class="city-marker" data-city="la" data-timezone="America/Los_Angeles">
-                                        <circle cx="180" cy="210" r="8" fill="#06b6d4" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="180" y="205" text-anchor="middle" fill="#06b6d4" font-size="10" font-weight="bold">LA</text>
-                                        <foreignObject x="160" y="225" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-la">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="180" cy="210" r="12" fill="#06b6d4" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="180" cy="210" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="180" y="195" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">LA</text>
+                                        <rect x="150" y="230" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="180" y="247" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-la">--:--</text>
                                     </g>
                                     
                                     <!-- Madrid -->
                                     <g class="city-marker" data-city="madrid" data-timezone="Europe/Madrid">
-                                        <circle cx="460" cy="200" r="8" fill="#14b8a6" stroke="#fff" stroke-width="2" class="city-dot"/>
-                                        <text x="460" y="195" text-anchor="middle" fill="#14b8a6" font-size="10" font-weight="bold">MAD</text>
-                                        <foreignObject x="440" y="215" width="40" height="30">
-                                            <div class="city-clock" style="background: rgba(255,255,255,0.9); border-radius: 4px; padding: 2px; text-align: center; font-size: 8px; font-weight: bold;" id="map-clock-madrid">--:--</div>
-                                        </foreignObject>
+                                        <circle cx="460" cy="200" r="12" fill="#14b8a6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="460" cy="200" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="460" y="185" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">MAD</text>
+                                        <rect x="430" y="220" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#14b8a6" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="460" y="237" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-madrid">--:--</text>
                                     </g>
                                 </svg>
                             </div>

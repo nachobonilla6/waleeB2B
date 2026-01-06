@@ -1144,7 +1144,9 @@
             .swal2-actions {
                 margin-top: 0.75rem !important;
                 gap: 0.5rem !important;
-                flex-direction: row-reverse !important;
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: flex-end !important;
             }
             .swal2-confirm,
             .swal2-cancel,
@@ -1152,11 +1154,12 @@
                 font-size: 0.75rem !important;
                 padding: 0.5rem 1rem !important;
             }
-            .swal2-confirm {
-                order: 2 !important;
-            }
-            .swal2-cancel {
+            /* Asegurar que Cancelar esté antes de Confirmar (izquierda) y Confirmar a la derecha */
+            .swal2-actions button.swal2-cancel {
                 order: 1 !important;
+            }
+            .swal2-actions button.swal2-confirm {
+                order: 2 !important;
             }
             
             @media (max-width: 640px) {

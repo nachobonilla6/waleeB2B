@@ -2287,6 +2287,7 @@ Route::get('/walee-emails/templates', function () {
 Route::post('/email-templates', function (\Illuminate\Http\Request $request) {
     $validated = $request->validate([
         'nombre' => 'required|string|max:255',
+        'tipo' => 'nullable|string|in:business,agricultura,b2b,b2c',
         'asunto' => 'required|string|max:255',
         'contenido' => 'required|string',
         'ai_prompt' => 'nullable|string',
@@ -2294,6 +2295,7 @@ Route::post('/email-templates', function (\Illuminate\Http\Request $request) {
     
     $template = \App\Models\EmailTemplate::create([
         'nombre' => $validated['nombre'],
+        'tipo' => $validated['tipo'] ?? null,
         'asunto' => $validated['asunto'],
         'contenido' => $validated['contenido'],
         'ai_prompt' => $validated['ai_prompt'] ?? null,
@@ -2314,6 +2316,7 @@ Route::put('/email-templates/{id}', function (\Illuminate\Http\Request $request,
     
     $validated = $request->validate([
         'nombre' => 'required|string|max:255',
+        'tipo' => 'nullable|string|in:business,agricultura,b2b,b2c',
         'asunto' => 'required|string|max:255',
         'contenido' => 'required|string',
         'ai_prompt' => 'nullable|string',
@@ -2321,6 +2324,7 @@ Route::put('/email-templates/{id}', function (\Illuminate\Http\Request $request,
     
     $template->update([
         'nombre' => $validated['nombre'],
+        'tipo' => $validated['tipo'] ?? null,
         'asunto' => $validated['asunto'],
         'contenido' => $validated['contenido'],
         'ai_prompt' => $validated['ai_prompt'] ?? null,

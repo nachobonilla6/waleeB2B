@@ -153,6 +153,16 @@
                                 </svg>
                             </div>
                             <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-1 line-clamp-1">{{ $template->nombre }}</h3>
+                            @if($template->tipo)
+                                <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md mb-2 
+                                    @if($template->tipo === 'business') bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400
+                                    @elseif($template->tipo === 'agricultura') bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400
+                                    @elseif($template->tipo === 'b2b') bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400
+                                    @elseif($template->tipo === 'b2c') bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400
+                                    @endif">
+                                    {{ ucfirst($template->tipo) }}
+                                </span>
+                            @endif
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-2 line-clamp-1">{{ $template->asunto }}</p>
                             <p class="text-xs text-slate-500 dark:text-slate-500 line-clamp-2 mb-2">{{ \Illuminate\Support\Str::limit($template->contenido, 100) }}</p>
                             <p class="text-xs text-slate-400 dark:text-slate-500">{{ $template->created_at->diffForHumans() }}</p>
@@ -226,6 +236,7 @@
             return [
                 'id' => $template->id,
                 'nombre' => $template->nombre,
+                'tipo' => $template->tipo,
                 'asunto' => $template->asunto,
                 'contenido' => $template->contenido,
             ];
@@ -250,6 +261,7 @@
             const savedData = localStorage.getItem('templateFormData');
             let formData = {
                 nombre: '',
+                tipo: '',
                 asunto: '',
                 contenido: '', // Siempre vacío en nuevo template
                 ai_prompt: ''
@@ -259,6 +271,7 @@
                 try {
                     const parsed = JSON.parse(savedData);
                     formData.nombre = parsed.nombre || '';
+                    formData.tipo = parsed.tipo || '';
                     formData.asunto = parsed.asunto || '';
                     formData.ai_prompt = parsed.ai_prompt || '';
                     // contenido siempre vacío para nuevo template
@@ -282,6 +295,21 @@
                             value="${formData.nombre || ''}"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo</label>
+                        <select 
+                            name="tipo" 
+                            id="template_tipo"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                            <option value="">Seleccionar tipo (opcional)</option>
+                            <option value="business" ${formData.tipo === 'business' ? 'selected' : ''}>Business</option>
+                            <option value="agricultura" ${formData.tipo === 'agricultura' ? 'selected' : ''}>Agricultura</option>
+                            <option value="b2b" ${formData.tipo === 'b2b' ? 'selected' : ''}>B2B</option>
+                            <option value="b2c" ${formData.tipo === 'b2c' ? 'selected' : ''}>B2C</option>
+                        </select>
                     </div>
                     
                     <div>
@@ -368,9 +396,10 @@
                     // Agregar event listeners para guardar datos mientras se escribe
                     const form = document.getElementById('template-form');
                     if (form) {
-                        const inputs = form.querySelectorAll('input, textarea');
+                        const inputs = form.querySelectorAll('input, textarea, select');
                         inputs.forEach(input => {
                             input.addEventListener('input', saveTemplateFormDataFromModal);
+                            input.addEventListener('change', saveTemplateFormDataFromModal);
                         });
                     }
                 },
@@ -379,6 +408,7 @@
                     if (!form) return false;
                     
                     const nombre = form.querySelector('[name="nombre"]')?.value;
+                    const tipo = form.querySelector('[name="tipo"]')?.value;
                     const asunto = form.querySelector('[name="asunto"]')?.value;
                     const contenido = form.querySelector('[name="contenido"]')?.value;
                     
@@ -397,6 +427,7 @@
                     
                     return {
                         nombre: nombre.trim(),
+                        tipo: tipo || null,
                         asunto: asunto.trim(),
                         contenido: contenido.trim(),
                         ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || null,
@@ -419,6 +450,7 @@
             
             const formData = {
                 nombre: form.querySelector('[name="nombre"]')?.value || '',
+                tipo: form.querySelector('[name="tipo"]')?.value || '',
                 asunto: form.querySelector('[name="asunto"]')?.value || '',
                 contenido: form.querySelector('[name="contenido"]')?.value || '',
                 ai_prompt: form.querySelector('[name="ai_prompt"]')?.value || ''
@@ -458,6 +490,21 @@
                             value="${template.nombre || ''}"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo</label>
+                        <select 
+                            name="tipo" 
+                            id="template_tipo"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                            <option value="">Seleccionar tipo (opcional)</option>
+                            <option value="business" ${template.tipo === 'business' ? 'selected' : ''}>Business</option>
+                            <option value="agricultura" ${template.tipo === 'agricultura' ? 'selected' : ''}>Agricultura</option>
+                            <option value="b2b" ${template.tipo === 'b2b' ? 'selected' : ''}>B2B</option>
+                            <option value="b2c" ${template.tipo === 'b2c' ? 'selected' : ''}>B2C</option>
+                        </select>
                     </div>
                     
                     <div>
@@ -543,9 +590,10 @@
                     // Agregar event listeners para guardar datos mientras se escribe
                     const form = document.getElementById('template-form');
                     if (form) {
-                        const inputs = form.querySelectorAll('input, textarea');
+                        const inputs = form.querySelectorAll('input, textarea, select');
                         inputs.forEach(input => {
                             input.addEventListener('input', saveTemplateFormDataFromModal);
+                            input.addEventListener('change', saveTemplateFormDataFromModal);
                         });
                     }
                 },

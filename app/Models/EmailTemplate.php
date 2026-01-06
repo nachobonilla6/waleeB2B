@@ -9,6 +9,7 @@ class EmailTemplate extends Model
 {
     protected $fillable = [
         'nombre',
+        'tipo',
         'asunto',
         'contenido',
         'ai_prompt',

@@ -458,83 +458,85 @@
                     <div class="p-4 sm:p-6">
                         <!-- World Map Widget -->
                         <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative;">
-                            <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: 8px;">
-                                <!-- Mapa mundial con marcadores mejorados -->
-                                <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" class="world-map-svg" preserveAspectRatio="xMidYMid meet">
+                            <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
+                                <!-- Imagen de fondo del mapa -->
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" alt="World Map" style="width: 100%; height: 100%; object-fit: fill; position: absolute; top: 0; left: 0; opacity: 0.8; filter: brightness(0.95);" class="world-map-bg">
+                                <!-- Mapa mundial con marcadores mejorados - coordenadas ajustadas para alinearse con la imagen -->
+                                <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10;" class="world-map-svg" preserveAspectRatio="none">
                                     <!-- Fondo transparente para que se vea la imagen de fondo -->
                                     <rect width="1000" height="500" fill="transparent"/>
                                     
-                                    <!-- Marcadores de ciudades con coordenadas geográficas correctas -->
-                                    <!-- New York: -74.0060, 40.7128 -->
+                                    <!-- Marcadores de ciudades - coordenadas ajustadas manualmente para alinearse con la imagen -->
+                                    <!-- New York: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="ny" data-timezone="America/New_York">
-                                        <circle cx="254" cy="137" r="12" fill="#ef4444" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="254" cy="137" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="254" y="122" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">NY</text>
-                                        <rect x="224" y="157" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="254" y="174" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-ny">--:--</text>
+                                        <circle cx="280" cy="180" r="12" fill="#ef4444" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="280" cy="180" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="280" y="165" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">NY</text>
+                                        <rect x="250" y="200" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="280" y="217" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-ny">--:--</text>
                                     </g>
                                     
-                                    <!-- London: -0.1276, 51.5074 -->
+                                    <!-- London: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="london" data-timezone="Europe/London">
-                                        <circle cx="500" cy="107" r="12" fill="#3b82f6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="500" cy="107" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="500" y="92" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">LDN</text>
-                                        <rect x="470" y="127" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#3b82f6" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="500" y="144" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-london">--:--</text>
+                                        <circle cx="500" cy="150" r="12" fill="#3b82f6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="500" cy="150" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="500" y="135" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">LDN</text>
+                                        <rect x="470" y="170" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#3b82f6" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="500" y="187" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-london">--:--</text>
                                     </g>
                                     
-                                    <!-- Tokyo: 139.6503, 35.6762 -->
+                                    <!-- Tokyo: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="tokyo" data-timezone="Asia/Tokyo">
-                                        <circle cx="888" cy="151" r="12" fill="#10b981" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="888" cy="151" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="888" y="136" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">TKY</text>
-                                        <rect x="858" y="171" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#10b981" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="888" y="188" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-tokyo">--:--</text>
+                                        <circle cx="870" cy="200" r="12" fill="#10b981" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="870" cy="200" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="870" y="185" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">TKY</text>
+                                        <rect x="840" y="220" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#10b981" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="870" y="237" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-tokyo">--:--</text>
                                     </g>
                                     
-                                    <!-- Sydney: 151.2093, -33.8688 -->
+                                    <!-- Sydney: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="sydney" data-timezone="Australia/Sydney">
-                                        <circle cx="920" cy="344" r="12" fill="#f59e0b" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="920" cy="344" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="920" y="329" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SYD</text>
-                                        <rect x="890" y="364" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#f59e0b" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="920" y="381" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-sydney">--:--</text>
+                                        <circle cx="900" cy="380" r="12" fill="#f59e0b" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="900" cy="380" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="900" y="365" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SYD</text>
+                                        <rect x="870" y="400" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#f59e0b" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="900" y="417" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-sydney">--:--</text>
                                     </g>
                                     
-                                    <!-- Dubai: 55.2708, 25.2048 -->
+                                    <!-- Dubai: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="dubai" data-timezone="Asia/Dubai">
-                                        <circle cx="653" cy="180" r="12" fill="#8b5cf6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="653" cy="180" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="653" y="165" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">DXB</text>
-                                        <rect x="623" y="200" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="653" y="217" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-dubai">--:--</text>
+                                        <circle cx="640" cy="220" r="12" fill="#8b5cf6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="640" cy="220" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="640" y="205" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">DXB</text>
+                                        <rect x="610" y="240" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="640" y="257" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-dubai">--:--</text>
                                     </g>
                                     
-                                    <!-- São Paulo: -46.6333, -23.5505 -->
+                                    <!-- São Paulo: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="saopaulo" data-timezone="America/Sao_Paulo">
-                                        <circle cx="370" cy="315" r="12" fill="#ec4899" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="370" cy="315" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="370" y="300" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SP</text>
-                                        <rect x="340" y="335" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ec4899" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="370" y="352" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-saopaulo">--:--</text>
+                                        <circle cx="380" cy="340" r="12" fill="#ec4899" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="380" cy="340" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="380" y="325" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SP</text>
+                                        <rect x="350" y="360" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ec4899" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="380" y="377" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-saopaulo">--:--</text>
                                     </g>
                                     
-                                    <!-- Los Angeles: -118.2437, 34.0522 -->
+                                    <!-- Los Angeles: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="la" data-timezone="America/Los_Angeles">
-                                        <circle cx="171" cy="155" r="12" fill="#06b6d4" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="171" cy="155" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="171" y="140" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">LA</text>
-                                        <rect x="141" y="175" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="171" y="192" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-la">--:--</text>
+                                        <circle cx="200" cy="200" r="12" fill="#06b6d4" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="200" cy="200" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="200" y="185" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">LA</text>
+                                        <rect x="170" y="220" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="200" y="237" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-la">--:--</text>
                                     </g>
                                     
-                                    <!-- Madrid: -3.7038, 40.4168 -->
+                                    <!-- Madrid: Ajustado para alinearse con la imagen -->
                                     <g class="city-marker" data-city="madrid" data-timezone="Europe/Madrid">
-                                        <circle cx="490" cy="138" r="12" fill="#14b8a6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
-                                        <circle cx="490" cy="138" r="8" fill="#fff" class="city-pulse"/>
-                                        <text x="490" y="123" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">MAD</text>
-                                        <rect x="460" y="158" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#14b8a6" stroke-width="1.5" opacity="0.95"/>
-                                        <text x="490" y="175" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-madrid">--:--</text>
+                                        <circle cx="490" cy="180" r="12" fill="#14b8a6" stroke="#fff" stroke-width="3" class="city-dot" opacity="0.9"/>
+                                        <circle cx="490" cy="180" r="8" fill="#fff" class="city-pulse"/>
+                                        <text x="490" y="165" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">MAD</text>
+                                        <rect x="460" y="200" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#14b8a6" stroke-width="1.5" opacity="0.95"/>
+                                        <text x="490" y="217" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-madrid">--:--</text>
                                     </g>
                                 </svg>
                             </div>

@@ -11,6 +11,24 @@
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // DEFINIR openEmailModal INMEDIATAMENTE al cargar la página
+        // Esto asegura que esté disponible incluso si hay errores en otros scripts
+        console.log('=== SCRIPT INLINE: Definiendo openEmailModal placeholder ===');
+        window.openEmailModal = function() {
+            console.log('=== PLACEHOLDER openEmailModal ejecutado ===');
+            console.log('Esperando a que se defina la función real...');
+            // Si la función real no está definida, mostrar mensaje
+            if (typeof window._realOpenEmailModal === 'function') {
+                console.log('Llamando a función real...');
+                window._realOpenEmailModal();
+            } else {
+                console.error('ERROR: Función real no está disponible aún');
+                alert('La función de email se está cargando. Por favor, espera un momento y vuelve a intentar.');
+            }
+        };
+        console.log('Placeholder definido:', typeof window.openEmailModal);
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">

@@ -179,17 +179,32 @@
             
             // Obtener información del calendario en uso
             $configuredCalendarId = config('services.google.calendar_id', 'primary');
-            $credentialsPath = config('services.google.credentials_path', storage_path('app/google-credentials.json'));
             
-            // Verificar si existe el archivo de credenciales
-            if (!file_exists($credentialsPath)) {
-                $credentialsError = $credentialsPath;
+            // Buscar el archivo de credenciales en diferentes ubicaciones
+            $credentialsPath = null;
+            $possiblePaths = [
+                config('services.google.credentials_path'),
+                storage_path('app/google-credentials.json'),
+                base_path('storage/app/google-credentials.json'),
+            ];
+            
+            foreach ($possiblePaths as $path) {
+                if ($path && file_exists($path)) {
+                    $credentialsPath = $path;
+                    break;
+                }
+            }
+            
+            // Si no se encuentra, mostrar el error con todas las rutas verificadas
+            if (!$credentialsPath) {
+                $credentialsError = 'No encontrado en ninguna de estas ubicaciones: ' . implode(', ', array_filter($possiblePaths));
             }
             
             $calendarInfo = [
                 'configured_id' => $configuredCalendarId,
                 'credentials_path' => $credentialsPath,
-                'credentials_exists' => file_exists($credentialsPath),
+                'credentials_exists' => $credentialsPath !== null,
+                'possible_paths' => array_filter($possiblePaths),
             ];
         } catch (\Exception $e) {
             \Log::error('Error verificando autorización: ' . $e->getMessage());
@@ -233,9 +248,18 @@
                                 El archivo de credenciales de Google no se encuentra en la ruta esperada.
                             </p>
                             <div class="bg-amber-100 dark:bg-amber-900/30 rounded p-2 mb-2">
-                                <p class="text-xs font-mono text-amber-900 dark:text-amber-200 break-all">
-                                    {{ $calendarInfo['credentials_path'] ?? $credentialsError }}
-                                </p>
+                                <p class="text-xs font-semibold text-amber-900 dark:text-amber-200 mb-1">Rutas verificadas:</p>
+                                @if(isset($calendarInfo['possible_paths']))
+                                    @foreach($calendarInfo['possible_paths'] as $path)
+                                        <p class="text-xs font-mono text-amber-800 dark:text-amber-300 break-all {{ file_exists($path) ? 'text-emerald-700 dark:text-emerald-300' : '' }}">
+                                            {{ file_exists($path) ? '✓ ' : '✗ ' }}{{ $path }}
+                                        </p>
+                                    @endforeach
+                                @else
+                                    <p class="text-xs font-mono text-amber-900 dark:text-amber-200 break-all">
+                                        {{ $calendarInfo['credentials_path'] ?? $credentialsError }}
+                                    </p>
+                                @endif
                             </div>
                             <p class="text-xs text-amber-700 dark:text-amber-400">
                                 <strong>Instrucciones:</strong> Sube el archivo <code class="bg-amber-200 dark:bg-amber-800 px-1 rounded">google-credentials.json</code> a esa ubicación en el servidor. 

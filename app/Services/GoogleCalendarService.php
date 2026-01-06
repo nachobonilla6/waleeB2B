@@ -61,10 +61,10 @@ class GoogleCalendarService
             $client = new Google_Client();
             
             // Si hay credenciales OAuth2 configuradas, usarlas
-            $credentialsPath = config('services.google.credentials_path');
+            $credentialsPath = $this->findCredentialsFile();
             $accessToken = $this->getStoredAccessToken();
             
-            if ($credentialsPath && file_exists($credentialsPath)) {
+            if ($credentialsPath) {
                 $client->setAuthConfig($credentialsPath);
             } elseif ($this->apiKey) {
                 // Fallback a API key para calendarios públicos
@@ -112,16 +112,10 @@ class GoogleCalendarService
     {
         try {
             $client = new Google_Client();
-            $credentialsPath = config('services.google.credentials_path');
+            $credentialsPath = $this->findCredentialsFile();
             
             if (!$credentialsPath) {
-                Log::error('GOOGLE_CREDENTIALS_PATH no está configurado');
-                return null;
-            }
-            
-            if (!file_exists($credentialsPath)) {
-                Log::error('Archivo de credenciales no encontrado en: ' . $credentialsPath);
-                Log::error('Ruta absoluta esperada: ' . storage_path('app/google-credentials.json'));
+                Log::error('No se pudo encontrar el archivo de credenciales de Google');
                 return null;
             }
             
@@ -148,6 +142,56 @@ class GoogleCalendarService
             return null;
         }
     }
+    
+    /**
+     * Buscar el archivo de credenciales en diferentes ubicaciones
+     */
+    protected function findCredentialsFile(): ?string
+    {
+        // 1. Intentar con la ruta configurada
+        $configuredPath = config('services.google.credentials_path');
+        if ($configuredPath && file_exists($configuredPath)) {
+            return $configuredPath;
+        }
+        
+        // 2. Intentar con la ruta por defecto
+        $defaultPath = storage_path('app/google-credentials.json');
+        if (file_exists($defaultPath)) {
+            return $defaultPath;
+        }
+        
+        // 3. Intentar con rutas relativas comunes
+        $possiblePaths = [
+            base_path('storage/app/google-credentials.json'),
+            base_path('google-credentials.json'),
+            __DIR__ . '/../../storage/app/google-credentials.json',
+        ];
+        
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        
+        // 4. Buscar en el directorio storage/app
+        $storagePath = storage_path('app');
+        if (is_dir($storagePath)) {
+            $files = glob($storagePath . '/google-credentials*.json');
+            if (!empty($files)) {
+                return $files[0];
+            }
+        }
+        
+        Log::error('No se encontró google-credentials.json en ninguna ubicación esperada');
+        Log::error('Rutas verificadas:');
+        Log::error('  - Configurada: ' . ($configuredPath ?? 'no configurada'));
+        Log::error('  - Por defecto: ' . $defaultPath);
+        foreach ($possiblePaths as $path) {
+            Log::error('  - Alternativa: ' . $path);
+        }
+        
+        return null;
+    }
 
     /**
      * Manejar callback de OAuth2
@@ -156,9 +200,10 @@ class GoogleCalendarService
     {
         try {
             $client = new Google_Client();
-            $credentialsPath = config('services.google.credentials_path');
+            $credentialsPath = $this->findCredentialsFile();
             
-            if (!$credentialsPath || !file_exists($credentialsPath)) {
+            if (!$credentialsPath) {
+                Log::error('No se encontró el archivo de credenciales para el callback');
                 return false;
             }
             

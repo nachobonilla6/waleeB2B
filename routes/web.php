@@ -1285,6 +1285,11 @@ Route::get('/walee-calendario/dia/{ano}/{mes}/{dia}', function ($ano, $mes, $dia
     return view('walee-calendario-dia', compact('fecha', 'items', 'meses', 'citas', 'tareas', 'notas', 'clientes', 'listas', 'tiposExistentes'));
 })->middleware(['auth'])->name('walee.calendario.dia');
 
+// Ruta para Calendario de Aplicaciones
+Route::get('/walee-calendario-aplicaciones', function () {
+    return view('walee-calendario-aplicaciones');
+})->middleware(['auth'])->name('walee.calendario.aplicaciones');
+
 // Rutas para Citas
 Route::post('/citas', function (\Illuminate\Http\Request $request) {
     try {

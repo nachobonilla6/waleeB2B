@@ -624,8 +624,29 @@
                 modalWidth = '700px'; // Ancho más amplio
             }
             
+            // Generar opciones de clientes
+            let clientesOptions = '<option value="">Seleccionar cliente (opcional)</option>';
+            if (clientes && clientes.length > 0) {
+                clientes.forEach(cliente => {
+                    const clienteName = cliente.name || 'Sin nombre';
+                    const clienteEmail = cliente.email || '';
+                    clientesOptions += `<option value="${clienteEmail}" data-name="${clienteName}">${clienteName}${clienteEmail ? ' - ' + clienteEmail : ''}</option>`;
+                });
+            }
+            
             const html = `
                 <form id="enviar-template-form" class="space-y-2.5 text-left">
+                    <div>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Cliente</label>
+                        <select 
+                            id="enviar_cliente_select"
+                            onchange="selectClienteEmail()"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border-2 border-slate-900 dark:border-slate-700 rounded-lg focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
+                        >
+                            ${clientesOptions}
+                        </select>
+                    </div>
+                    
                     <div>
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Email destinatario *</label>
                         <input 
@@ -634,7 +655,7 @@
                             id="enviar_email"
                             required
                             placeholder="cliente@correo.com"
-                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border-2 border-slate-900 dark:border-slate-700 rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
@@ -1056,6 +1077,14 @@
             searchInput.value = '';
             filterTemplates();
             searchInput.focus();
+        }
+        
+        function selectClienteEmail() {
+            const select = document.getElementById('enviar_cliente_select');
+            const emailInput = document.getElementById('enviar_email');
+            if (select && emailInput && select.value) {
+                emailInput.value = select.value;
+            }
         }
     </script>
     

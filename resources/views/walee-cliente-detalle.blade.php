@@ -1983,10 +1983,10 @@
                         </div>
                         <div class="relative">
                             <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none appearance-none">
+                                class="w-full px-3 py-2 pr-20 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none appearance-none">
                                 ${templatesOptions}
                             </select>
-                            <div id="template_tipo_badge_inline" class="absolute right-10 top-1/2 -translate-y-1/2 pointer-events-none" style="display: none;">
+                            <div id="template_tipo_badge_inline" class="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none z-10" style="display: none;">
                                 <span id="template_tipo_badge_value" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"></span>
                             </div>
                         </div>
@@ -2456,6 +2456,13 @@
                         tipoBadgeValue.textContent = tipoText;
                         tipoBadgeValue.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ' + tipoColors;
                         tipoBadgeInline.style.display = 'block';
+                        tipoBadgeInline.style.visibility = 'visible';
+                        console.log('Badge inline mostrado con className:', tipoBadgeValue.className);
+                        console.log('Badge inline text:', tipoBadgeValue.textContent);
+                    } else {
+                        console.error('tipoBadgeInline o tipoBadgeValue no encontrados');
+                        console.error('tipoBadgeInline:', tipoBadgeInline);
+                        console.error('tipoBadgeValue:', tipoBadgeValue);
                     }
                 } else {
                     console.log('Template sin tipo, ocultando badge');

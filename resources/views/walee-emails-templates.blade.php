@@ -483,36 +483,6 @@
             
             if (result.isConfirmed && result.value) {
                 await saveTemplate(result.value);
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Mostrar confirmación antes de cancelar
-                const confirmCancel = await Swal.fire({
-                    title: '¿Cancelar?',
-                    text: '¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, cancelar',
-                    cancelButtonText: 'No, continuar',
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                    background: isDarkMode ? '#1e293b' : '#ffffff',
-                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                    customClass: {
-                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                        cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
-                    }
-                });
-                
-                if (confirmCancel.isConfirmed) {
-                    // Limpiar datos guardados y cerrar
-                    localStorage.removeItem('templateFormData');
-                    return;
-                } else {
-                    // Volver a abrir la modal
-                    showNuevoTemplateModal();
-                    return;
-                }
             } else {
                 // Guardar datos antes de cerrar
                 saveTemplateFormDataFromModal();
@@ -750,36 +720,6 @@
             
             if (result.isConfirmed && result.value) {
                 await saveTemplate(result.value);
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Mostrar confirmación antes de cancelar
-                const confirmCancel = await Swal.fire({
-                    title: '¿Cancelar?',
-                    text: '¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, cancelar',
-                    cancelButtonText: 'No, continuar',
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
-                    background: isDarkMode ? '#1e293b' : '#ffffff',
-                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                    customClass: {
-                        popup: isDarkMode ? 'dark-swal' : 'light-swal',
-                        title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
-                        confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
-                        cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel',
-                    }
-                });
-                
-                if (confirmCancel.isConfirmed) {
-                    // Limpiar datos guardados y cerrar
-                    localStorage.removeItem('templateFormData');
-                    return;
-                } else {
-                    // Volver a abrir la modal de edición
-                    editTemplate(template.id);
-                    return;
-                }
             } else {
                 // Guardar datos antes de cerrar
                 saveTemplateFormDataFromModal();

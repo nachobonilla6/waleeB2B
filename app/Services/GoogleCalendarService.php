@@ -24,8 +24,8 @@ class GoogleCalendarService
             // Usar el ID configurado explícitamente
             $this->calendarId = (string) $configuredCalendarId;
         } else {
-            // Si no está configurado o es 'primary', intentar buscar 'WEBSOLUTIONS-TEST'
-            $this->calendarId = $this->getWebSolutionsTestCalendarId() ?? 'primary';
+            // Usar siempre el calendario primario
+            $this->calendarId = 'primary';
         }
     }
 

@@ -254,9 +254,6 @@
                         <span>
                             <strong>Calendario en uso:</strong> 
                             {{ $calendarInfo['calendar_id_in_use'] === 'primary' ? 'Calendario Principal (primary)' : $calendarInfo['calendar_id_in_use'] }}
-                            @if($calendarInfo['calendar_id_in_use'] === 'primary')
-                                <span class="text-xs opacity-75">(o WEBSOLUTIONS-TEST si existe)</span>
-                            @endif
                             @if($calendarInfo['authorized_email'])
                                 <br><strong>Cuenta:</strong> {{ $calendarInfo['authorized_email'] }}
                             @endif

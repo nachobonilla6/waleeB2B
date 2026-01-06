@@ -301,36 +301,76 @@
                     ];
 
                     // Texto de recurrencia
-                    $txtRecurrencia = 'sin recurrencia';
+                    $txtRecurrencia = 'Sin recurrencia';
                     if (!is_null($recurrenciaConfig)) {
                         if ((float)$recurrenciaConfig === 0.5) {
-                            $txtRecurrencia = 'cada media hora';
+                            $txtRecurrencia = 'Cada media hora';
                         } elseif ((float)$recurrenciaConfig === 1.0) {
-                            $txtRecurrencia = 'cada 1 hora';
+                            $txtRecurrencia = 'Cada 1 hora';
                         } else {
-                            $txtRecurrencia = 'cada ' . (float)$recurrenciaConfig . ' horas';
+                            $txtRecurrencia = 'Cada ' . (float)$recurrenciaConfig . ' horas';
                         }
                     }
 
                     // Texto de idioma
                     $txtIdioma = $idiomaConfig
                         ? ($idiomasLabels[$idiomaConfig] ?? $idiomaConfig)
-                        : 'todos los idiomas';
+                        : 'Todos los idiomas';
 
                     // Texto de industria
-                    $txtIndustria = $industriaConfig ?: 'todas las industrias';
+                    $txtIndustria = $industriaConfig ?: 'Todas las industrias';
+
+                    $botActivo = (bool)($ordenExtraccion->activo ?? false);
                 @endphp
-                <div class="mb-3 sm:mb-4">
-                    <div class="inline-flex items-start gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] sm:text-xs text-slate-700 dark:text-slate-300">
-                        <span class="mt-0.5">
-                            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13h2l3 7 4-14 3 7h6" />
-                            </svg>
-                        </span>
-                        <span>
-                            <span class="font-semibold">Extractor configurado:</span>
-                            <span> {{ $txtRecurrencia }}, idioma: {{ $txtIdioma }}, industria: {{ $txtIndustria }}.</span>
-                        </span>
+                <div class="mb-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 py-3 rounded-xl border text-xs sm:text-sm
+                        {{ $botActivo 
+                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-600 text-emerald-900 dark:text-emerald-200' 
+                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300' }}">
+                        <div class="flex items-start gap-2">
+                            <span class="mt-0.5 sm:mt-0">
+                                @if($botActivo)
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                @else
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                    </svg>
+                                @endif
+                            </span>
+                            <div>
+                                <p class="font-semibold flex items-center gap-1">
+                                    Estado del extractor:
+                                    @if($botActivo)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[11px] sm:text-xs font-semibold">
+                                            Activo
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-500 text-white text-[11px] sm:text-xs font-semibold">
+                                            Pausado
+                                        </span>
+                                    @endif
+                                </p>
+                                <p class="mt-0.5">
+                                    <span class="font-medium">Recurrencia:</span> {{ $txtRecurrencia }} ·
+                                    <span class="font-medium">Idioma:</span> {{ $txtIdioma }} ·
+                                    <span class="font-medium">Industria:</span> {{ $txtIndustria }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('walee.bot.alpha.config') }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold
+                                {{ $botActivo 
+                                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white' 
+                                    : 'bg-slate-600 hover:bg-slate-700 text-white' }}">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span>Editar</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             @endif

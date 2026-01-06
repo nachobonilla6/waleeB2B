@@ -1971,9 +1971,9 @@
             
             let modalWidth = '95%';
             if (isDesktop) {
-                modalWidth = '900px'; // Ancho en vistas grandes
+                modalWidth = '600px'; // Ancho más pequeño
             } else if (isTablet) {
-                modalWidth = '700px';
+                modalWidth = '500px';
             } else if (isMobile) {
                 modalWidth = '95%';
             }
@@ -2102,9 +2102,9 @@
             
             let modalWidth = '95%';
             if (isDesktop) {
-                modalWidth = '900px'; // Ancho en vistas grandes
+                modalWidth = '600px'; // Ancho más pequeño
             } else if (isTablet) {
-                modalWidth = '700px';
+                modalWidth = '500px';
             } else if (isMobile) {
                 modalWidth = '95%';
             }
@@ -2180,9 +2180,9 @@
             
             let modalWidth = '95%';
             if (isDesktop) {
-                modalWidth = '900px'; // Ancho en vistas grandes
+                modalWidth = '600px'; // Ancho más pequeño
             } else if (isTablet) {
-                modalWidth = '700px';
+                modalWidth = '500px';
             } else if (isMobile) {
                 modalWidth = '95%';
             }

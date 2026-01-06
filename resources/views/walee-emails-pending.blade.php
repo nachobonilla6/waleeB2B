@@ -277,7 +277,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 mb-0.5">
-                                <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors flex items-center gap-1.5">
+                                <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors flex items-center gap-1.5 flex-1 min-w-0">
                                     @if($cliente->idioma && !$fotoUrl)
                                         @php
                                             $banderas = [
@@ -291,13 +291,13 @@
                                             $bandera = $banderas[$cliente->idioma] ?? '';
                                         @endphp
                                         @if($bandera)
-                                            <span class="text-sm">{{ $bandera }}</span>
+                                            <span class="text-sm flex-shrink-0">{{ $bandera }}</span>
                                         @endif
                                     @endif
-                                    <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
+                                    <span class="truncate">{{ $cliente->name ?: 'Sin nombre' }}</span>
                                 </p>
                                 @if($cliente->emails_count > 0)
-                                    <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded border bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0 hover:bg-emerald-500/30 dark:hover:bg-emerald-500/20 transition-colors" title="Ver emails enviados">
+                                    <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0 hover:bg-emerald-500/30 dark:hover:bg-emerald-500/20 transition-colors" title="Ver emails enviados">
                                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>

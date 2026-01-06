@@ -498,7 +498,7 @@
                                 @endif
             
                                 <!-- Email Button -->
-                                <button type="button" onclick="openEmailModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
+                                <button type="button" onclick="if(typeof openEmailModal === 'function') { openEmailModal(); } else if(typeof window.openEmailModal === 'function') { window.openEmailModal(); } else { console.error('openEmailModal no está definido'); alert('Error: La función de email no está disponible. Por favor, recarga la página.'); }" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>

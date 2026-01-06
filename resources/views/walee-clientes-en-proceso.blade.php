@@ -589,9 +589,9 @@
             
             let modalWidth = '95%';
             if (isDesktop) {
-                modalWidth = '600px';
+                modalWidth = '900px';
             } else if (isTablet) {
-                modalWidth = '500px';
+                modalWidth = '700px';
             } else if (isMobile) {
                 modalWidth = '95%';
             }
@@ -666,7 +666,7 @@
                     
                     <div>
                         <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Instrucciones para AI (opcional)</label>
-                        <textarea id="ai_prompt" rows="5" placeholder="Ej: Genera un email profesional..."
+                        <textarea id="ai_prompt" rows="3" placeholder="Ej: Genera un email profesional..."
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none">${emailModalData.aiPrompt}</textarea>
                         <div id="ai_generate_container">
                             <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
@@ -729,9 +729,9 @@
             
             let modalWidth = '95%';
             if (isDesktop) {
-                modalWidth = '600px';
+                modalWidth = '900px';
             } else if (isTablet) {
-                modalWidth = '500px';
+                modalWidth = '700px';
             } else if (isMobile) {
                 modalWidth = '95%';
             }
@@ -752,7 +752,7 @@
                     
                     <div>
                         <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Mensaje <span class="text-red-500">*</span></label>
-                        <textarea id="email_body" rows="10" required placeholder="Escribe o genera el contenido del email..."
+                        <textarea id="email_body" rows="6" required placeholder="Escribe o genera el contenido del email..."
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none">${emailModalData.body}</textarea>
                     </div>
                 </div>
@@ -807,9 +807,9 @@
             
             let modalWidth = '95%';
             if (isDesktop) {
-                modalWidth = '600px';
+                modalWidth = '900px';
             } else if (isTablet) {
-                modalWidth = '500px';
+                modalWidth = '700px';
             } else if (isMobile) {
                 modalWidth = '95%';
             }

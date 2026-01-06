@@ -835,7 +835,8 @@
         let currentWebhookUrl = '{{ $webhookUrl ?? '' }}';
         
         // Abrir modal de configuración para webhook
-        async function openConfigModal() {
+        // Definir la función y asignarla inmediatamente a window
+        window.openConfigModal = async function openConfigModal() {
             try {
                 console.log('openConfigModal llamado');
                 const isDarkMode = document.documentElement.classList.contains('dark');
@@ -1096,10 +1097,7 @@
                     text: 'Error al abrir el modal: ' + error.message,
                 });
             }
-        }
-        
-        // Hacer la función disponible globalmente
-        window.openConfigModal = openConfigModal;
+        };
         
         // Validar URL
         function isValidUrl(string) {

@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -83,6 +84,7 @@
     @php
         use App\Models\Client;
         use App\Models\PropuestaPersonalizada;
+        use App\Models\EmailTemplate;
         
         $idiomaFilter = request()->get('idioma', '');
         
@@ -104,6 +106,17 @@
             ->groupBy('cliente_id')
             ->pluck('total', 'cliente_id')
             ->toArray();
+        
+        // Obtener templates de email del usuario
+        $templates = EmailTemplate::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        // Obtener clientes en proceso con email
+        $clientesEnProceso = Client::whereNotNull('email')
+            ->where('email', '!=', '')
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name', 'email']);
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -286,11 +299,11 @@
                             <!-- Action Buttons -->
                             <div class="flex-shrink-0 flex items-center gap-1.5">
                                 <!-- Email with AI Button -->
-                                <a href="{{ route('walee.emails.crear') }}?cliente_id={{ $cliente->id }}" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Email AI">
+                                <button onclick="openEmailModalForCliente({{ $cliente->id }}, '{{ $cliente->email ?? '' }}', '{{ addslashes($cliente->name ?? '') }}', '{{ $cliente->website ?? '' }}')" class="p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all" title="Email AI">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                     </svg>
-                                </a>
+                                </button>
                                 
                                 <!-- WhatsApp Button -->
                                 @if($whatsappLink)
@@ -348,6 +361,673 @@
     </div>
 
     <script>
+        // Templates de email disponibles
+        const emailTemplates = @json($templates ?? []);
+        
+        // Clientes en proceso disponibles
+        const clientesEnProceso = @json($clientesEnProceso ?? []);
+        
+        // Variables globales para el flujo de fases del modal de email
+        let emailModalData = {
+            clienteId: null,
+            clienteEmail: '',
+            clienteName: '',
+            clienteWebsite: '',
+            email: '',
+            aiPrompt: '',
+            subject: '',
+            body: '',
+            attachments: null
+        };
+        
+        function openEmailModalForCliente(clienteId, email, clienteName, clienteWebsite) {
+            // Configurar datos del cliente
+            emailModalData.clienteId = clienteId || null;
+            emailModalData.clienteEmail = email || '';
+            emailModalData.clienteName = clienteName || '';
+            emailModalData.clienteWebsite = clienteWebsite || '';
+            emailModalData.email = email || '';
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            emailModalData.attachments = null;
+            
+            // Abrir desde la fase 1
+            showEmailPhase1();
+        }
+        
+        function loadEmailTemplate(templateId) {
+            const aiGenerateContainer = document.getElementById('ai_generate_container');
+            const tipoDisplay = document.getElementById('template_tipo_display');
+            const tipoBadgeInline = document.getElementById('template_tipo_badge_inline');
+            const tipoBadgeValue = document.getElementById('template_tipo_badge_value');
+            
+            if (!templateId || !emailTemplates) {
+                if (aiGenerateContainer) {
+                    aiGenerateContainer.style.display = 'block';
+                }
+                if (tipoDisplay) {
+                    tipoDisplay.style.display = 'none';
+                }
+                if (tipoBadgeInline) {
+                    tipoBadgeInline.style.display = 'none';
+                }
+                return;
+            }
+            
+            const template = emailTemplates.find(t => t.id == templateId);
+            if (!template) {
+                if (aiGenerateContainer) {
+                    aiGenerateContainer.style.display = 'block';
+                }
+                if (tipoDisplay) {
+                    tipoDisplay.style.display = 'none';
+                }
+                if (tipoBadgeInline) {
+                    tipoBadgeInline.style.display = 'none';
+                }
+                return;
+            }
+            
+            emailModalData.aiPrompt = template.ai_prompt || '';
+            emailModalData.subject = template.asunto || '';
+            emailModalData.body = template.contenido || '';
+            
+            const aiPromptField = document.getElementById('ai_prompt');
+            if (aiPromptField) {
+                aiPromptField.value = emailModalData.aiPrompt;
+            }
+            
+            const subjectField = document.getElementById('email_subject');
+            const bodyField = document.getElementById('email_body');
+            if (subjectField) {
+                subjectField.value = emailModalData.subject;
+            }
+            if (bodyField) {
+                bodyField.value = emailModalData.body;
+            }
+            
+            // Mostrar el tipo del template como badge
+            setTimeout(() => {
+                const tipoValue = document.getElementById('template_tipo_value');
+                
+                // Función para obtener colores del badge según el tipo
+                const getTipoColors = (tipo) => {
+                    const tipoColors = {
+                        'business': {
+                            class: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
+                            style: 'background-color: rgb(219 234 254); color: rgb(29 78 216); border: 1px solid rgb(147 197 253);'
+                        },
+                        'agricultura': {
+                            class: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
+                            style: 'background-color: rgb(220 252 231); color: rgb(21 128 61); border: 1px solid rgb(134 239 172);'
+                        },
+                        'b2b': {
+                            class: 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
+                            style: 'background-color: rgb(243 232 255); color: rgb(126 34 206); border: 1px solid rgb(196 181 253);'
+                        },
+                        'b2c': {
+                            class: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30',
+                            style: 'background-color: rgb(255 237 213); color: rgb(194 65 12); border: 1px solid rgb(254 215 170);'
+                        }
+                    };
+                    const defaultColors = {
+                        class: 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30',
+                        style: 'background-color: rgb(237 233 254); color: rgb(109 40 217); border: 1px solid rgb(196 181 253);'
+                    };
+                    return tipoColors[tipo] || defaultColors;
+                };
+                
+                if (template.tipo) {
+                    const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
+                    const tipoColors = getTipoColors(template.tipo);
+                    
+                    // Badge debajo del select
+                    if (tipoDisplay && tipoValue) {
+                        tipoValue.textContent = tipoText;
+                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + tipoColors.class;
+                        tipoValue.style.cssText = tipoColors.style + ' display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;';
+                        tipoDisplay.style.display = 'block';
+                        tipoDisplay.style.visibility = 'visible';
+                    }
+                    
+                    // Badge inline en el select
+                    if (tipoBadgeInline && tipoBadgeValue) {
+                        tipoBadgeValue.textContent = tipoText;
+                        tipoBadgeValue.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ' + tipoColors.class;
+                        tipoBadgeValue.style.cssText = tipoColors.style + ' display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 600;';
+                        tipoBadgeInline.style.display = 'block';
+                        tipoBadgeInline.style.visibility = 'visible';
+                    }
+                } else {
+                    if (tipoDisplay) {
+                        tipoDisplay.style.display = 'none';
+                    }
+                    if (tipoBadgeInline) {
+                        tipoBadgeInline.style.display = 'none';
+                    }
+                }
+            }, 100);
+            
+            if (aiGenerateContainer) {
+                aiGenerateContainer.style.display = 'none';
+            }
+            
+            const showAiBtn = document.getElementById('show_ai_btn');
+            if (showAiBtn) {
+                showAiBtn.style.display = 'block';
+            }
+        }
+        
+        function showAIGenerateButton() {
+            const aiGenerateContainer = document.getElementById('ai_generate_container');
+            if (aiGenerateContainer) {
+                aiGenerateContainer.style.display = 'block';
+            }
+            
+            const showAiBtn = document.getElementById('show_ai_btn');
+            if (showAiBtn) {
+                showAiBtn.style.display = 'none';
+            }
+            
+            const templateSelect = document.getElementById('email_template_select');
+            if (templateSelect) {
+                templateSelect.value = '';
+            }
+            
+            // Ocultar badges de tipo
+            const tipoDisplay = document.getElementById('template_tipo_display');
+            const tipoBadgeInline = document.getElementById('template_tipo_badge_inline');
+            if (tipoDisplay) {
+                tipoDisplay.style.display = 'none';
+            }
+            if (tipoBadgeInline) {
+                tipoBadgeInline.style.display = 'none';
+            }
+            
+            emailModalData.aiPrompt = '';
+            emailModalData.subject = '';
+            emailModalData.body = '';
+            
+            const aiPromptField = document.getElementById('ai_prompt');
+            if (aiPromptField) {
+                aiPromptField.value = '';
+            }
+        }
+        
+        function selectClienteProceso(clienteId) {
+            if (!clienteId) {
+                return;
+            }
+            
+            const select = document.getElementById('cliente_proceso_select');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption) {
+                const email = selectedOption.getAttribute('data-email') || '';
+                const name = selectedOption.getAttribute('data-name') || '';
+                
+                // Actualizar datos del modal
+                emailModalData.clienteId = clienteId;
+                emailModalData.clienteEmail = email;
+                emailModalData.clienteName = name;
+                emailModalData.email = email;
+                
+                // Actualizar el campo de email
+                const emailField = document.getElementById('email_destinatario');
+                if (emailField) {
+                    emailField.value = email;
+                }
+            }
+        }
+        
+        function showEmailPhase1() {
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '600px';
+            } else if (isTablet) {
+                modalWidth = '500px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            // Generar opciones de templates
+            let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
+            if (emailTemplates && emailTemplates.length > 0) {
+                const sortedTemplates = [...emailTemplates].sort((a, b) => {
+                    const aHasTipo = a.tipo && a.tipo.trim() !== '';
+                    const bHasTipo = b.tipo && b.tipo.trim() !== '';
+                    if (aHasTipo && !bHasTipo) return -1;
+                    if (!aHasTipo && bHasTipo) return 1;
+                    return 0;
+                });
+                
+                sortedTemplates.forEach(template => {
+                    const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
+                    templatesOptions += `<option value="${template.id}" data-tipo="${template.tipo || ''}">${template.nombre}${tipoLabel}</option>`;
+                });
+            }
+            
+            const html = `
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    ${emailTemplates && emailTemplates.length > 0 ? `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">Template guardado (opcional)</label>
+                            <button type="button" onclick="showAIGenerateButton()" id="show_ai_btn" style="display: none;"
+                                class="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 underline">
+                                Usar AI en su lugar
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <select id="email_template_select" onchange="loadEmailTemplate(this.value)"
+                                class="w-full px-3 py-2 pr-20 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none appearance-none">
+                                ${templatesOptions}
+                            </select>
+                            <div id="template_tipo_badge_inline" class="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none z-10" style="display: none;">
+                                <span id="template_tipo_badge_value" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold"></span>
+                            </div>
+                        </div>
+                        <div id="template_tipo_display" class="mt-2" style="display: none;">
+                            <span id="template_tipo_value" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"></span>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    ${clientesEnProceso && clientesEnProceso.length > 0 ? `
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Seleccionar cliente en proceso (opcional)</label>
+                        <select id="cliente_proceso_select" onchange="selectClienteProceso(this.value)"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            <option value="">Seleccionar cliente...</option>
+                            ${clientesEnProceso.map(cliente => 
+                                `<option value="${cliente.id}" data-email="${cliente.email || ''}" data-name="${cliente.name || ''}">${cliente.name || 'Sin nombre'} - ${cliente.email || 'Sin email'}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    ` : ''}
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Email destinatario <span class="text-red-500">*</span></label>
+                        <input type="email" id="email_destinatario" value="${emailModalData.email}" required
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Instrucciones para AI (opcional)</label>
+                        <textarea id="ai_prompt" rows="5" placeholder="Ej: Genera un email profesional..."
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none">${emailModalData.aiPrompt}</textarea>
+                        <div id="ai_generate_container">
+                            <button type="button" onclick="generateEmailWithAI()" id="generateEmailBtn"
+                                class="mt-2 w-full px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                </svg>
+                                <span>Generar con AI</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 1</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const email = document.getElementById('email_destinatario').value;
+                    if (!email) {
+                        Swal.showValidationMessage('El email destinatario es requerido');
+                        return false;
+                    }
+                    emailModalData.email = email;
+                    const aiPromptField = document.getElementById('ai_prompt');
+                    if (aiPromptField) {
+                        emailModalData.aiPrompt = aiPromptField.value;
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showEmailPhase2();
+                }
+            });
+        }
+        
+        function showEmailPhase2() {
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '600px';
+            } else if (isTablet) {
+                modalWidth = '500px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const html = `
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Asunto <span class="text-red-500">*</span></label>
+                        <input type="text" id="email_subject" value="${emailModalData.subject}" required placeholder="Asunto del email"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Mensaje <span class="text-red-500">*</span></label>
+                        <textarea id="email_body" rows="10" required placeholder="Escribe o genera el contenido del email..."
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none">${emailModalData.body}</textarea>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 2</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                preConfirm: () => {
+                    const subject = document.getElementById('email_subject').value;
+                    const body = document.getElementById('email_body').value;
+                    if (!subject || !body) {
+                        Swal.showValidationMessage('Por favor, completa el asunto y el mensaje');
+                        return false;
+                    }
+                    emailModalData.subject = subject;
+                    emailModalData.body = body;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showEmailPhase3();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    showEmailPhase1();
+                }
+            });
+        }
+        
+        function showEmailPhase3() {
+            const isMobile = window.innerWidth < 640;
+            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+            const isDesktop = window.innerWidth >= 1024;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            let modalWidth = '95%';
+            if (isDesktop) {
+                modalWidth = '600px';
+            } else if (isTablet) {
+                modalWidth = '500px';
+            } else if (isMobile) {
+                modalWidth = '95%';
+            }
+            
+            const html = `
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                        <div class="w-2 h-2 rounded-full bg-violet-600"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-2">Adjuntar archivos (opcional)</label>
+                        <input type="file" id="email_attachments" multiple accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        <p class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} mt-1">PDF o imágenes (máx. 10MB por archivo)</p>
+                        <div id="email_files_list" class="mt-2 space-y-1.5"></div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: '<div class="flex items-center gap-2"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 21.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Crear Email - Paso 3</span></div>',
+                html: html,
+                width: modalWidth,
+                padding: isMobile ? '1rem' : '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Enviar Email',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#8b5cf6',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    title: isDarkMode ? 'dark-swal-title' : 'light-swal-title',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html',
+                    confirmButton: isDarkMode ? 'dark-swal-confirm' : 'light-swal-confirm',
+                    cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
+                },
+                didOpen: () => {
+                    const fileInput = document.getElementById('email_attachments');
+                    const filesList = document.getElementById('email_files_list');
+                    if (fileInput) {
+                        fileInput.addEventListener('change', function(e) {
+                            if (filesList) {
+                                filesList.innerHTML = '';
+                                Array.from(e.target.files).forEach((file, index) => {
+                                    const fileItem = document.createElement('div');
+                                    fileItem.className = `flex items-center justify-between p-1.5 rounded ${isDarkMode ? 'bg-slate-700' : 'bg-slate-100'}`;
+                                    fileItem.innerHTML = `
+                                        <span class="text-xs ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}">${file.name}</span>
+                                        <span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                    `;
+                                    filesList.appendChild(fileItem);
+                                });
+                            }
+                        });
+                    }
+                },
+                preConfirm: async () => {
+                    const attachments = document.getElementById('email_attachments');
+                    emailModalData.attachments = attachments && attachments.files && attachments.files.length > 0 ? attachments.files : null;
+                    
+                    const formData = new FormData();
+                    formData.append('cliente_id', emailModalData.clienteId || '');
+                    formData.append('email', emailModalData.email);
+                    formData.append('subject', emailModalData.subject);
+                    formData.append('body', emailModalData.body);
+                    formData.append('ai_prompt', emailModalData.aiPrompt || '');
+                    formData.append('from_bot_alpha', 'true');
+                    
+                    if (emailModalData.attachments) {
+                        Array.from(emailModalData.attachments).forEach((file, index) => {
+                            formData.append(`archivos[${index}]`, file);
+                        });
+                    }
+                    
+                    try {
+                        Swal.fire({
+                            title: 'Enviando...',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        });
+                        
+                        const response = await fetch('{{ route("walee.emails.enviar") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Email enviado!',
+                                text: data.message || 'El email se ha enviado correctamente',
+                                confirmButtonColor: '#8b5cf6',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al enviar el email',
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode ? '#1e293b' : '#ffffff',
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: error.message,
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        });
+                    }
+                    
+                    return false;
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    showEmailPhase2();
+                }
+            });
+        }
+        
+        async function generateEmailWithAI() {
+            const generateBtn = document.getElementById('generateEmailBtn');
+            const aiPrompt = document.getElementById('ai_prompt').value;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            const clienteId = emailModalData.clienteId;
+            const clienteName = emailModalData.clienteName;
+            const clienteWebsite = emailModalData.clienteWebsite;
+            
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = `
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.emails.generar") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        cliente_id: clienteId,
+                        ai_prompt: aiPrompt,
+                        client_name: clienteName,
+                        client_website: clienteWebsite,
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    emailModalData.subject = data.subject;
+                    emailModalData.body = data.body;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email generado',
+                        text: 'El contenido ha sido generado con AI',
+                        confirmButtonColor: '#8b5cf6',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        Swal.close();
+                        showEmailPhase2();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al generar email',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: error.message,
+                    confirmButtonColor: '#ef4444'
+                });
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                    </svg>
+                    <span>Generar con AI</span>
+                `;
+            }
+        }
+        
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const searchInput = document.getElementById('searchInput');
         const clientsList = document.getElementById('clientsList');

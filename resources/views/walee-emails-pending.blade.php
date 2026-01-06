@@ -206,6 +206,14 @@
                             @if($cliente->email)
                                 <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</p>
                             @endif
+                            @if($cliente->industria)
+                                <p class="text-xs text-slate-500 dark:text-slate-400 truncate flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 10h6m-6 4h6m-6 4h6"/>
+                                    </svg>
+                                    <span>{{ $cliente->industria }}</span>
+                                </p>
+                            @endif
                             @if($cliente->website)
                                 <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $cliente->website }}</p>
                             @endif

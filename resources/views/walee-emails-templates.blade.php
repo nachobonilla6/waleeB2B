@@ -248,6 +248,7 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const templatesData = @json($templatesData);
         const clientes = @json(\App\Models\Client::orderBy('name')->get(['id', 'name', 'email']));
+        const tiposDisponibles = @json($tiposDisponibles ?? []);
         
         async function showNuevoTemplateModal() {
             const isMobile = window.innerWidth < 640;
@@ -311,18 +312,21 @@
                             <option value="agricultura" ${formData.tipo === 'agricultura' ? 'selected' : ''}>Agricultura</option>
                             <option value="b2b" ${formData.tipo === 'b2b' ? 'selected' : ''}>B2B</option>
                             <option value="b2c" ${formData.tipo === 'b2c' ? 'selected' : ''}>B2C</option>
-                            <option value="otro" ${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(formData.tipo) ? 'selected' : ''}>Otro</option>
+                            ${tiposDisponibles.filter(t => !['business', 'agricultura', 'b2b', 'b2c'].includes(t)).map(t => 
+                                `<option value="${t}" ${formData.tipo === t ? 'selected' : ''}>${t.charAt(0).toUpperCase() + t.slice(1)}</option>`
+                            ).join('')}
+                            <option value="otro" ${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c', ...tiposDisponibles].includes(formData.tipo) ? 'selected' : ''}>Otro (nuevo tipo)</option>
                         </select>
                     </div>
                     
-                    <div id="tipo_personalizado_container" style="display: ${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(formData.tipo) ? 'block' : 'none'};">
+                    <div id="tipo_personalizado_container" style="display: ${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c', ...tiposDisponibles].includes(formData.tipo) ? 'block' : 'none'};">
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Tipo personalizado</label>
                         <input 
                             type="text" 
                             name="tipo_personalizado" 
                             id="template_tipo_personalizado"
-                            placeholder="Escribe el tipo personalizado"
-                            value="${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c'].includes(formData.tipo) ? formData.tipo : ''}"
+                            placeholder="Escribe el nuevo tipo"
+                            value="${formData.tipo && !['business', 'agricultura', 'b2b', 'b2c', ...tiposDisponibles].includes(formData.tipo) ? formData.tipo : ''}"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>

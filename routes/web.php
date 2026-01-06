@@ -2280,7 +2280,16 @@ Route::get('/walee-emails/templates', function () {
     $templates = \App\Models\EmailTemplate::where('user_id', auth()->id())
         ->orderBy('created_at', 'desc')
         ->get();
-    return view('walee-emails-templates', compact('templates'));
+    
+    // Obtener todos los tipos únicos de templates del usuario
+    $tiposDisponibles = \App\Models\EmailTemplate::where('user_id', auth()->id())
+        ->whereNotNull('tipo')
+        ->where('tipo', '!=', '')
+        ->distinct()
+        ->pluck('tipo')
+        ->toArray();
+    
+    return view('walee-emails-templates', compact('templates', 'tiposDisponibles'));
 })->middleware(['auth'])->name('walee.emails.templates');
 
 // Rutas para Email Templates

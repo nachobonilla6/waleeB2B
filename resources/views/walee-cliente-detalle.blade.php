@@ -1856,11 +1856,12 @@
         
         // DEFINIR openEmailModal INMEDIATAMENTE después de emailModalData
         // Esto asegura que esté disponible desde el inicio
-        console.log('=== DEBUG: Definiendo openEmailModal INMEDIATAMENTE ===');
+        console.log('=== DEBUG: Definiendo openEmailModal REAL ===');
         console.log('emailModalData:', typeof emailModalData, emailModalData);
         
+        // Definir la función real y reemplazar el placeholder
         window.openEmailModal = function() {
-            console.log('=== DEBUG: openEmailModal EJECUTADO ===');
+            console.log('=== DEBUG: openEmailModal REAL EJECUTADO ===');
             console.log('emailModalData:', typeof emailModalData, emailModalData);
             console.log('showEmailPhase1:', typeof showEmailPhase1);
             console.log('Swal:', typeof Swal);
@@ -1907,10 +1908,8 @@
             }
         };
         
-        // Reemplazar el placeholder con la función real
-        console.log('=== DEBUG: Reemplazando placeholder con función real ===');
-        window.openEmailModal = window._realOpenEmailModal;
-        console.log('window.openEmailModal después de reemplazar:', typeof window.openEmailModal);
+        console.log('=== DEBUG: Función real definida ===');
+        console.log('window.openEmailModal:', typeof window.openEmailModal);
         
         // También definirla localmente para compatibilidad
         const openEmailModal = window.openEmailModal;
@@ -2399,8 +2398,7 @@
                 bodyField.value = emailModalData.body;
             }
             
-            // Mostrar el tipo del template
-            const tipoDisplay = document.getElementById('template_tipo_display');
+            // Mostrar el tipo del template (reutilizar tipoDisplay ya declarado arriba)
             const tipoValue = document.getElementById('template_tipo_value');
             if (tipoDisplay && tipoValue) {
                 if (template.tipo) {

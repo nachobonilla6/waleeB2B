@@ -421,32 +421,54 @@
                         </div>
                         
                         <!-- Eventos del día -->
-                        <div class="space-y-1 overflow-y-auto max-h-[90px] sm:max-h-[110px] md:max-h-[130px]">
+                        <div class="relative overflow-y-auto max-h-[90px] sm:max-h-[110px] md:max-h-[130px]" style="min-height: 60px;">
                             @foreach($eventosOrdenados->take(3) as $evento)
                                 @php
                                     $fechaInicio = $evento->fecha_inicio instanceof \DateTime 
                                         ? $evento->fecha_inicio 
                                         : \Carbon\Carbon::parse($evento->fecha_inicio);
+                                    $fechaFin = isset($evento->fecha_fin) 
+                                        ? ($evento->fecha_fin instanceof \DateTime ? $evento->fecha_fin : \Carbon\Carbon::parse($evento->fecha_fin))
+                                        : $fechaInicio->copy()->addHour();
+                                    
+                                    // Calcular posición y altura basada en la duración
+                                    $horaInicio = $fechaInicio->hour + ($fechaInicio->minute / 60);
+                                    $horaFin = $fechaFin->hour + ($fechaFin->minute / 60);
+                                    $duracionHoras = $horaFin - $horaInicio;
+                                    
+                                    // El día va de 0:00 a 24:00 (24 horas)
+                                    $topPorcentaje = ($horaInicio / 24) * 100;
+                                    $alturaPorcentaje = ($duracionHoras / 24) * 100;
+                                    
+                                    // Altura mínima de 20px
+                                    $alturaMinima = max(20, ($alturaPorcentaje / 100) * 60);
+                                    
                                     $hora = $fechaInicio->format('H:i');
+                                    $horaFinStr = $fechaFin->format('H:i');
                                     $titulo = $evento->titulo ?? 'Sin título';
                                 @endphp
-                                <div class="group relative">
+                                <div class="group absolute left-0 right-0" style="top: {{ $topPorcentaje }}%; height: {{ $alturaPorcentaje }}%; min-height: {{ $alturaMinima }}px; z-index: 1;">
                                     <button 
                                         @if(isset($evento->is_tarea) && $evento->is_tarea)
                                             onclick="event.preventDefault(); showTareaDetail('{{ $evento->tarea_id }}', '{{ addslashes($titulo) }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $evento->tarea_color ?? '#f59e0b' }}');"
                                         @else
                                             onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
                                         @endif
-                                        class="w-full text-left px-1.5 py-0.5 rounded text-xs sm:text-sm font-medium transition-all hover:opacity-80 active:scale-95 truncate {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
+                                        class="w-full h-full text-left px-1 py-0.5 rounded text-[9px] sm:text-[10px] font-medium transition-all hover:opacity-80 active:scale-95 {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
                                         style="border-left: 2px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
-                                        title="{{ $titulo }}"
+                                        title="{{ $titulo }} ({{ $hora }} - {{ $horaFinStr }})"
                                     >
-                                        <div class="flex items-center gap-1">
-                                            <span class="text-[9px] sm:text-[10px]">{{ $hora }}</span>
-                                            @if(isset($evento->is_tarea) && $evento->is_tarea)
-                                                <span class="text-[8px] px-1 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300 mr-0.5">T</span>
-                                            @endif
-                                            <span class="truncate font-semibold">{{ $titulo }}</span>
+                                        <div class="flex flex-col h-full justify-between">
+                                            <div class="flex items-center gap-0.5">
+                                                <span class="text-[8px] sm:text-[9px] font-semibold">{{ $hora }}</span>
+                                                @if($horaFinStr !== $hora)
+                                                    <span class="text-[7px] text-slate-500 dark:text-slate-400">-{{ $horaFinStr }}</span>
+                                                @endif
+                                                @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                                    <span class="text-[7px] px-0.5 py-0 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300">T</span>
+                                                @endif
+                                            </div>
+                                            <span class="truncate font-semibold text-[8px] sm:text-[9px]">{{ $titulo }}</span>
                                         </div>
                                     </button>
                                     @if(isset($evento->is_tarea) && $evento->is_tarea)

@@ -131,6 +131,12 @@
             9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
         ];
         
+        // Obtener clientes con email para el selector
+        $clientesConEmail = \App\Models\Client::whereNotNull('email')
+            ->where('email', '!=', '')
+            ->orderBy('name', 'asc')
+            ->get(['id', 'name', 'email']);
+        
         // Obtener eventos de Google Calendar
         $eventos = collect();
         try {
@@ -462,8 +468,16 @@
         function showNuevoEventoModal() {
             const isDarkMode = document.documentElement.classList.contains('dark');
             
+            // Generar opciones del select de clientes
+            const clientesOptions = `
+                <option value="">Seleccionar cliente...</option>
+                @foreach($clientesConEmail as $cliente)
+                <option value="{{ $cliente->email }}">{{ $cliente->name }} ({{ $cliente->email }})</option>
+                @endforeach
+            `;
+            
             Swal.fire({
-                title: 'Nuevo Evento',
+                title: 'Nueva Cita',
                 html: `
                     <form id="nuevoEventoForm" class="space-y-3 text-left">
                         <div>
@@ -472,32 +486,54 @@
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Elegir un email de cliente</label>
+                            <select id="evento_cliente_email" 
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                                ${clientesOptions}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado</label>
+                            <input type="email" id="evento_invitado" placeholder="email@ejemplo.com"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
                             <input type="datetime-local" id="evento_fecha" required
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción (opcional)</label>
-                            <textarea id="evento_descripcion" rows="3"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
-                        </div>
                     </form>
                 `,
                 showCancelButton: true,
-                confirmButtonText: 'Crear',
+                confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                buttonsStyling: true,
+                reverseButtons: true, // Cancelar a la izquierda, Guardar a la derecha
                 preConfirm: async () => {
                     const titulo = document.getElementById('evento_titulo').value;
                     const fecha = document.getElementById('evento_fecha').value;
-                    const descripcion = document.getElementById('evento_descripcion').value;
+                    const clienteEmail = document.getElementById('evento_cliente_email').value;
+                    const invitado = document.getElementById('evento_invitado').value;
+                    
+                    // Usar el email del cliente seleccionado o el invitado manual
+                    const emailFinal = clienteEmail || invitado;
                     
                     if (!titulo || !fecha) {
                         Swal.showValidationMessage('Título y fecha son requeridos');
                         return false;
+                    }
+                    
+                    // Construir descripción con información del cliente/invitado
+                    let descripcion = '';
+                    if (clienteEmail) {
+                        descripcion = `Cliente: ${clienteEmail}`;
+                    }
+                    if (invitado) {
+                        descripcion += (descripcion ? '\n' : '') + `Invitado: ${invitado}`;
                     }
                     
                     try {
@@ -511,6 +547,7 @@
                                 titulo: titulo,
                                 fecha_inicio: fecha,
                                 descripcion: descripcion,
+                                invitado_email: emailFinal,
                             }),
                         });
                         
@@ -519,14 +556,14 @@
                         if (data.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Evento creado',
-                                text: 'El evento se ha creado y sincronizado con Google Calendar',
+                                title: 'Cita creada',
+                                text: 'La cita se ha creado y sincronizado con Google Calendar',
                                 confirmButtonColor: '#8b5cf6'
                             }).then(() => {
                                 window.location.reload();
                             });
                         } else {
-                            let errorMessage = data.message || 'Error al crear el evento';
+                            let errorMessage = data.message || 'Error al crear la cita';
                             
                             // Si necesita autorización, mostrar botón para conectar
                             if (data.needs_auth) {
@@ -573,8 +610,16 @@
             const fechaHora = fecha + 'T' + hora;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
+            // Generar opciones del select de clientes
+            const clientesOptions = `
+                <option value="">Seleccionar cliente...</option>
+                @foreach($clientesConEmail as $cliente)
+                <option value="{{ $cliente->email }}">{{ $cliente->name }} ({{ $cliente->email }})</option>
+                @endforeach
+            `;
+            
             Swal.fire({
-                title: 'Nuevo Evento',
+                title: 'Nueva Cita',
                 html: `
                     <form id="nuevoEventoForm" class="space-y-3 text-left">
                         <div>
@@ -583,20 +628,28 @@
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Elegir un email de cliente</label>
+                            <select id="evento_cliente_email" 
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                                ${clientesOptions}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Invitado</label>
+                            <input type="email" id="evento_invitado" placeholder="email@ejemplo.com"
+                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
                             <input type="datetime-local" id="evento_fecha" value="${fechaHora}" required
                                 class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Descripción (opcional)</label>
-                            <textarea id="evento_descripcion" rows="3"
-                                class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none resize-none"></textarea>
-                        </div>
                     </form>
                 `,
                 showCancelButton: true,
-                confirmButtonText: 'Crear',
+                confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
+                reverseButtons: true, // Cancelar a la izquierda, Guardar a la derecha
                 confirmButtonColor: '#8b5cf6',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
@@ -604,11 +657,24 @@
                 preConfirm: async () => {
                     const titulo = document.getElementById('evento_titulo').value;
                     const fecha = document.getElementById('evento_fecha').value;
-                    const descripcion = document.getElementById('evento_descripcion').value;
+                    const clienteEmail = document.getElementById('evento_cliente_email').value;
+                    const invitado = document.getElementById('evento_invitado').value;
+                    
+                    // Usar el email del cliente seleccionado o el invitado manual
+                    const emailFinal = clienteEmail || invitado;
                     
                     if (!titulo || !fecha) {
                         Swal.showValidationMessage('Título y fecha son requeridos');
                         return false;
+                    }
+                    
+                    // Construir descripción con información del cliente/invitado
+                    let descripcion = '';
+                    if (clienteEmail) {
+                        descripcion = `Cliente: ${clienteEmail}`;
+                    }
+                    if (invitado) {
+                        descripcion += (descripcion ? '\n' : '') + `Invitado: ${invitado}`;
                     }
                     
                     try {
@@ -622,6 +688,7 @@
                                 titulo: titulo,
                                 fecha_inicio: fecha,
                                 descripcion: descripcion,
+                                invitado_email: emailFinal,
                             }),
                         });
                         
@@ -630,14 +697,14 @@
                         if (data.success) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Evento creado',
-                                text: 'El evento se ha creado y sincronizado con Google Calendar',
+                                title: 'Cita creada',
+                                text: 'La cita se ha creado y sincronizado con Google Calendar',
                                 confirmButtonColor: '#8b5cf6'
                             }).then(() => {
                                 window.location.reload();
                             });
                         } else {
-                            let errorMessage = data.message || 'Error al crear el evento';
+                            let errorMessage = data.message || 'Error al crear la cita';
                             
                             // Si necesita autorización, mostrar botón para conectar
                             if (data.needs_auth) {
@@ -700,6 +767,17 @@
             });
         }
     </script>
+    
+    <script>
+        // Abrir el modal automáticamente al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Esperar un momento para que la página cargue completamente
+            setTimeout(() => {
+                showNuevoEventoModal();
+            }, 500);
+        });
+    </script>
+    
     @include('partials.walee-support-button')
 </body>
 </html>

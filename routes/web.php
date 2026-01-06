@@ -2086,7 +2086,16 @@ Route::get('/walee-bot-alpha', function () {
     // Obtener webhook guardado
     $webhookUrl = \Illuminate\Support\Facades\Cache::get('bot_alpha_webhook_' . auth()->id(), '');
     
-    return view('walee-bot-alpha', compact('templates', 'webhookUrl'));
+    // Obtener órdenes programadas guardadas
+    $ordenExtraccion = \App\Models\OrdenProgramada::where('tipo', 'extraccion_clientes')
+        ->where('user_id', auth()->id())
+        ->first();
+    
+    $ordenEmails = \App\Models\OrdenProgramada::where('tipo', 'emails_automaticos')
+        ->where('user_id', auth()->id())
+        ->first();
+    
+    return view('walee-bot-alpha', compact('templates', 'webhookUrl', 'ordenExtraccion', 'ordenEmails'));
 })->middleware(['auth'])->name('walee.bot.alpha');
 
 // Ruta para guardar webhook del Bot Alpha

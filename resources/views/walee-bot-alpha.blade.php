@@ -440,10 +440,18 @@
     
     <script>
         // Variables para almacenar las recurrencias seleccionadas
-        let recurrenciaSeleccionada = null; // Para extracción de clientes
-        let recurrenciaEmailsSeleccionada = null; // Para emails automáticos
-        let botToggleChecked = false; // Estado del toggle de bot
-        let emailsToggleChecked = false; // Estado del toggle de emails
+        // Inicializar desde las órdenes guardadas en la base de datos
+        let recurrenciaSeleccionada = @json($ordenExtraccion->recurrencia_horas ?? null); // Para extracción de clientes
+        let recurrenciaEmailsSeleccionada = @json($ordenEmails->recurrencia_horas ?? null); // Para emails automáticos
+        let botToggleChecked = @json($ordenExtraccion->activo ?? false); // Estado del toggle de bot
+        let emailsToggleChecked = @json($ordenEmails->activo ?? false); // Estado del toggle de emails
+        
+        console.log('Configuración cargada desde BD:', {
+            recurrenciaSeleccionada,
+            recurrenciaEmailsSeleccionada,
+            botToggleChecked,
+            emailsToggleChecked
+        });
         
         // Función para guardar orden programada en la base de datos
         async function guardarOrdenProgramada(tipo, activo, recurrenciaHoras) {
@@ -534,12 +542,8 @@
                 }
             }
             
-            // Guardar orden programada en la base de datos
-            if (enabled && recurrenciaSeleccionada) {
-                await guardarOrdenProgramada('extraccion_clientes', true, recurrenciaSeleccionada);
-            } else if (!enabled) {
-                await guardarOrdenProgramada('extraccion_clientes', false, recurrenciaSeleccionada);
-            }
+            // SIEMPRE guardar orden programada en la base de datos (activo/inactivo, con o sin recurrencia)
+            await guardarOrdenProgramada('extraccion_clientes', enabled, recurrenciaSeleccionada);
         }
         
         // Toggle Emails Automáticos
@@ -559,12 +563,8 @@
                 }
             }
             
-            // Guardar orden programada en la base de datos
-            if (enabled && recurrenciaEmailsSeleccionada) {
-                await guardarOrdenProgramada('emails_automaticos', true, recurrenciaEmailsSeleccionada);
-            } else if (!enabled) {
-                await guardarOrdenProgramada('emails_automaticos', false, recurrenciaEmailsSeleccionada);
-            }
+            // SIEMPRE guardar orden programada en la base de datos (activo/inactivo, con o sin recurrencia)
+            await guardarOrdenProgramada('emails_automaticos', enabled, recurrenciaEmailsSeleccionada);
         }
         
         // Abrir modal de recurrencia para Extracción de Clientes
@@ -656,10 +656,8 @@
                     
                     console.log('Recurrencia de extracción seleccionada:', recurrenciaSeleccionada ? `${recurrenciaSeleccionada} horas` : 'Sin recurrencia');
                     
-                    // Guardar orden programada en la base de datos si el bot está activo
-                    if (botToggleChecked && recurrenciaSeleccionada) {
-                        guardarOrdenProgramada('extraccion_clientes', true, recurrenciaSeleccionada);
-                    }
+                    // SIEMPRE guardar orden programada en la base de datos (con o sin bot activo)
+                    await guardarOrdenProgramada('extraccion_clientes', botToggleChecked, recurrenciaSeleccionada);
                 }
             });
         }
@@ -746,13 +744,49 @@
                     
                     console.log('Recurrencia de emails seleccionada:', recurrenciaEmailsSeleccionada ? `${recurrenciaEmailsSeleccionada} horas` : 'Sin recurrencia');
                     
-                    // Guardar orden programada en la base de datos si los emails están activos
-                    if (emailsToggleChecked && recurrenciaEmailsSeleccionada) {
-                        guardarOrdenProgramada('emails_automaticos', true, recurrenciaEmailsSeleccionada);
-                    }
+                    // SIEMPRE guardar orden programada en la base de datos (con o sin emails activos)
+                    await guardarOrdenProgramada('emails_automaticos', emailsToggleChecked, recurrenciaEmailsSeleccionada);
                 }
             });
         }
+        
+        // Inicializar valores al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando configuración desde BD...');
+            
+            // Actualizar textos de recurrencia si existen
+            const configRecurrenciaText = document.getElementById('configRecurrenciaText');
+            if (configRecurrenciaText && recurrenciaSeleccionada) {
+                let texto = '';
+                if (recurrenciaSeleccionada === 0.5) {
+                    texto = 'Cada media hora';
+                } else if (recurrenciaSeleccionada === 1) {
+                    texto = 'Cada una hora';
+                } else {
+                    texto = `Cada ${recurrenciaSeleccionada} horas`;
+                }
+                configRecurrenciaText.textContent = texto;
+            }
+            
+            const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');
+            if (configRecurrenciaEmailsText && recurrenciaEmailsSeleccionada) {
+                const recurrencias = [
+                    { value: 0.5, label: 'Cada media hora' },
+                    { value: 1, label: 'Cada 1 hora' },
+                    { value: 2, label: 'Cada 2 horas' },
+                    { value: 3, label: 'Cada 3 horas' },
+                    { value: 4, label: 'Cada 4 horas' },
+                    { value: 5, label: 'Cada 5 horas' },
+                    { value: 6, label: 'Cada 6 horas' },
+                    { value: 8, label: 'Cada 8 horas' },
+                    { value: 12, label: 'Cada 12 horas' },
+                    { value: 48, label: 'Cada 48 horas' },
+                    { value: 72, label: 'Cada 72 horas' }
+                ];
+                const label = recurrencias.find(r => r.value == recurrenciaEmailsSeleccionada)?.label || `Cada ${recurrenciaEmailsSeleccionada} horas`;
+                configRecurrenciaEmailsText.textContent = label;
+            }
+        });
         
         // Manejar búsqueda y filtros
         let searchTimeout;

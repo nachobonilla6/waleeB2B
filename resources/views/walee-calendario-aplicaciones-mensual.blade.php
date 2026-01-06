@@ -119,20 +119,14 @@
                     $googleEventId = $eventoData['google_event_id'] ?? null;
                     
                     // Verificar si este evento de Google Calendar corresponde a una tarea
+                    // SOLO si hay un google_event_id y existe una tarea con ese ID
                     $tareaCorrespondiente = null;
                     if ($googleEventId) {
                         $tareaCorrespondiente = \App\Models\Tarea::where('google_event_id', $googleEventId)->first();
                     }
                     
-                    // Si no se encontró por google_event_id, verificar por descripción "Tarea: ..."
-                    if (!$tareaCorrespondiente && isset($eventoData['descripcion']) && strpos($eventoData['descripcion'], 'Tarea:') === 0) {
-                        $tituloTarea = trim(str_replace('Tarea:', '', $eventoData['descripcion']));
-                        $tareaCorrespondiente = \App\Models\Tarea::where('texto', $tituloTarea)
-                            ->where('fecha_hora', $eventoData['fecha_inicio']->format('Y-m-d H:i:s'))
-                            ->first();
-                    }
-                    
                     // Convertir a objeto para facilitar el uso en la vista
+                    // Los eventos de Google Calendar son eventos, NO tareas, a menos que tengan un google_event_id que corresponda a una tarea
                     $evento = (object) [
                         'id' => $googleEventId ?? null,
                         'titulo' => $eventoData['titulo'] ?? 'Sin título',
@@ -141,8 +135,8 @@
                         'fecha_fin' => $eventoData['fecha_fin'] ?? null,
                         'ubicacion' => $eventoData['ubicacion'] ?? null,
                         'google_event_id' => $googleEventId,
-                        'from_google' => !$tareaCorrespondiente, // Solo es "from_google" si NO es una tarea
-                        'is_tarea' => $tareaCorrespondiente ? true : false,
+                        'from_google' => true, // Por defecto, los eventos de Google Calendar son eventos
+                        'is_tarea' => $tareaCorrespondiente ? true : false, // Solo es tarea si hay una tarea correspondiente
                         'tarea_id' => $tareaCorrespondiente ? $tareaCorrespondiente->id : null,
                         'tarea_estado' => $tareaCorrespondiente ? $tareaCorrespondiente->estado : null,
                         'tarea_color' => $tareaCorrespondiente ? ($tareaCorrespondiente->color ?? '#f59e0b') : null,
@@ -151,6 +145,11 @@
                         'has_tentative' => $eventoData['has_tentative'] ?? false,
                         'attendees' => $eventoData['attendees'] ?? [],
                     ];
+                    
+                    // Si es una tarea, cambiar from_google a false
+                    if ($tareaCorrespondiente) {
+                        $evento->from_google = false;
+                    }
                     
                     $fechaKey = $eventoData['fecha_inicio']->format('Y-m-d');
                     if (!$eventos->has($fechaKey)) {

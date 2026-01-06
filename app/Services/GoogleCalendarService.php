@@ -142,14 +142,24 @@ class GoogleCalendarService
             $client->addScope(Google_Service_Calendar::CALENDAR);
             $client->setAccessType('offline');
             $client->setPrompt('select_account consent');
-            $client->setRedirectUri(route('google-calendar.callback'));
+            
+            // Obtener la URL de redirección
+            $redirectUri = route('google-calendar.callback');
+            $client->setRedirectUri($redirectUri);
+            
+            // Log para depuración
+            Log::info('Google Calendar OAuth - Redirect URI generado: ' . $redirectUri);
+            Log::info('Google Calendar OAuth - APP_URL: ' . config('app.url'));
             
             // Agregar state para saber a dónde redirigir después
             if ($state) {
                 $client->setState($state);
             }
             
-            return $client->createAuthUrl();
+            $authUrl = $client->createAuthUrl();
+            Log::info('Google Calendar OAuth - Auth URL generada: ' . $authUrl);
+            
+            return $authUrl;
         } catch (\Exception $e) {
             Log::error('Error generando URL de autorización: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());

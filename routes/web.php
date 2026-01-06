@@ -5627,6 +5627,31 @@ Route::post('/walee-tareas', function (\Illuminate\Http\Request $request) {
         
         $tarea->save();
         
+        // Sincronizar con Google Calendar si tiene fecha_hora
+        if ($tarea->fecha_hora) {
+            try {
+                $googleService = new \App\Services\GoogleCalendarService();
+                if ($googleService->isAuthorized()) {
+                    // Convertir tarea a formato de Cita para usar con GoogleCalendarService
+                    $citaTemporal = new \App\Models\Cita();
+                    $citaTemporal->titulo = $tarea->texto;
+                    $citaTemporal->fecha_inicio = $tarea->fecha_hora;
+                    $citaTemporal->fecha_fin = $tarea->fecha_hora->copy()->addHour();
+                    $citaTemporal->descripcion = "Tarea: {$tarea->texto}";
+                    $citaTemporal->estado = 'programada';
+                    
+                    $eventId = $googleService->createEvent($citaTemporal);
+                    if ($eventId) {
+                        $tarea->google_event_id = $eventId;
+                        $tarea->save();
+                    }
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Error sincronizando tarea con Google Calendar: ' . $e->getMessage());
+                // No fallar la creación de la tarea si falla la sincronización
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Tarea creada correctamente',
@@ -5661,6 +5686,38 @@ Route::put('/walee-tareas/{id}', function (\Illuminate\Http\Request $request, $i
         
         $tarea->save();
         
+        // Sincronizar con Google Calendar si tiene fecha_hora
+        if ($tarea->fecha_hora) {
+            try {
+                $googleService = new \App\Services\GoogleCalendarService();
+                if ($googleService->isAuthorized()) {
+                    // Convertir tarea a formato de Cita para usar con GoogleCalendarService
+                    $citaTemporal = new \App\Models\Cita();
+                    $citaTemporal->google_event_id = $tarea->google_event_id;
+                    $citaTemporal->titulo = $tarea->texto;
+                    $citaTemporal->fecha_inicio = $tarea->fecha_hora;
+                    $citaTemporal->fecha_fin = $tarea->fecha_hora->copy()->addHour();
+                    $citaTemporal->descripcion = "Tarea: {$tarea->texto}";
+                    $citaTemporal->estado = 'programada';
+                    
+                    if ($tarea->google_event_id) {
+                        // Si ya tiene ID, actualizar
+                        $googleService->updateEvent($citaTemporal);
+                    } else {
+                        // Si no tiene ID, crear uno nuevo
+                        $eventId = $googleService->createEvent($citaTemporal);
+                        if ($eventId) {
+                            $tarea->google_event_id = $eventId;
+                            $tarea->save();
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Error sincronizando tarea con Google Calendar: ' . $e->getMessage());
+                // No fallar la actualización de la tarea si falla la sincronización
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Tarea actualizada correctamente',
@@ -5676,6 +5733,23 @@ Route::put('/walee-tareas/{id}', function (\Illuminate\Http\Request $request, $i
 Route::delete('/walee-tareas/{id}', function ($id) {
     try {
         $tarea = \App\Models\Tarea::findOrFail($id);
+        
+        // Eliminar de Google Calendar si existe
+        if ($tarea->google_event_id) {
+            try {
+                $googleService = new \App\Services\GoogleCalendarService();
+                if ($googleService->isAuthorized()) {
+                    // Convertir tarea a formato de Cita para usar con GoogleCalendarService
+                    $citaTemporal = new \App\Models\Cita();
+                    $citaTemporal->google_event_id = $tarea->google_event_id;
+                    $googleService->deleteEvent($citaTemporal);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Error eliminando tarea de Google Calendar: ' . $e->getMessage());
+                // Continuar con la eliminación local aunque falle la sincronización
+            }
+        }
+        
         $tarea->delete();
         
         return response()->json([

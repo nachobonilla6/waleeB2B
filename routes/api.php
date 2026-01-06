@@ -480,12 +480,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Webhooks para órdenes programadas (Bot Alpha)
-// Crear o actualizar orden programada (requiere usuario autenticado para asociar correctamente la orden)
-Route::middleware(['auth'])->post('/ordenes-programadas', function (\Illuminate\Http\Request $request) {
+// Crear o actualizar orden programada (global, sin asociar a usuario específico)
+Route::post('/ordenes-programadas', function (\Illuminate\Http\Request $request) {
     try {
         \Log::info('Webhook ordenes-programadas recibido', [
             'data' => $request->all(),
-            'user_id' => auth()->id(),
         ]);
 
         $validated = $request->validate([
@@ -495,12 +494,9 @@ Route::middleware(['auth'])->post('/ordenes-programadas', function (\Illuminate\
             'configuracion' => 'nullable|array',
         ]);
 
-        // Siempre usar el usuario autenticado
-        $userId = auth()->id();
-
-        // Buscar si ya existe una orden del mismo tipo para el usuario autenticado
+        // Configuración global por tipo (no ligada a usuario)
         $orden = \App\Models\OrdenProgramada::where('tipo', $validated['tipo'])
-            ->where('user_id', $userId)
+            ->whereNull('user_id')
             ->first();
 
         if ($orden) {
@@ -509,7 +505,7 @@ Route::middleware(['auth'])->post('/ordenes-programadas', function (\Illuminate\
                 'activo' => $validated['activo'] ?? $orden->activo,
                 'recurrencia_horas' => $validated['recurrencia_horas'] ?? $orden->recurrencia_horas,
                 'configuracion' => $validated['configuracion'] ?? $orden->configuracion,
-                'user_id' => $userId,
+                'user_id' => null,
             ]);
             
             \Log::info('Orden actualizada', ['orden_id' => $orden->id, 'data' => $orden->toArray()]);
@@ -526,7 +522,7 @@ Route::middleware(['auth'])->post('/ordenes-programadas', function (\Illuminate\
                 'activo' => $validated['activo'] ?? true,
                 'recurrencia_horas' => $validated['recurrencia_horas'] ?? null,
                 'configuracion' => $validated['configuracion'] ?? null,
-                'user_id' => $userId,
+                'user_id' => null,
                 'last_run' => null,
             ]);
             

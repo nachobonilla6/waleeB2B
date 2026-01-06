@@ -2086,13 +2086,13 @@ Route::get('/walee-bot-alpha', function () {
     // Obtener webhook guardado
     $webhookUrl = \Illuminate\Support\Facades\Cache::get('bot_alpha_webhook_' . auth()->id(), '');
     
-    // Obtener órdenes programadas guardadas
+    // Obtener órdenes programadas guardadas (configuración global, no por usuario)
     $ordenExtraccion = \App\Models\OrdenProgramada::where('tipo', 'extraccion_clientes')
-        ->where('user_id', auth()->id())
+        ->whereNull('user_id')
         ->first();
     
     $ordenEmails = \App\Models\OrdenProgramada::where('tipo', 'emails_automaticos')
-        ->where('user_id', auth()->id())
+        ->whereNull('user_id')
         ->first();
     
     return view('walee-bot-alpha', compact('templates', 'webhookUrl', 'ordenExtraccion', 'ordenEmails'));
@@ -2101,7 +2101,7 @@ Route::get('/walee-bot-alpha', function () {
 // Página de configuración simple para Bot Alpha (toggle de extracción de clientes)
 Route::get('/walee-bot-alpha/config', function () {
     $ordenExtraccion = \App\Models\OrdenProgramada::where('tipo', 'extraccion_clientes')
-        ->where('user_id', auth()->id())
+        ->whereNull('user_id')
         ->first();
     
     return view('walee-bot-alpha-config', compact('ordenExtraccion'));

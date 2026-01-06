@@ -1305,6 +1305,11 @@ Route::get('/google-calendar/auth', function () {
 
 // Ruta para crear evento en calendario de aplicaciones (sincroniza con Google Calendar)
 Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\Request $request) {
+    // Log para debug
+    \Log::info('POST /walee-calendario-aplicaciones/crear - Inicio');
+    \Log::info('Request data: ' . json_encode($request->all()));
+    \Log::info('User authenticated: ' . (auth()->check() ? 'Yes' : 'No'));
+    
     try {
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',

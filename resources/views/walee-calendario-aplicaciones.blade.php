@@ -534,6 +534,7 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             },
                             body: JSON.stringify({
@@ -543,6 +544,27 @@
                                 invitado_email: emailFinal,
                             }),
                         });
+                        
+                        // Verificar si la respuesta es JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            const text = await response.text();
+                            console.error('Respuesta no es JSON:', text);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error del servidor',
+                                html: `
+                                    <p>El servidor devolvió una respuesta inesperada (${response.status}).</p>
+                                    <p class="text-xs mt-2">Por favor, revisa los logs del servidor o contacta al administrador.</p>
+                                    <details class="mt-2 text-xs">
+                                        <summary>Detalles técnicos</summary>
+                                        <pre class="text-left mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded overflow-auto max-h-40">${text.substring(0, 500)}</pre>
+                                    </details>
+                                `,
+                                confirmButtonColor: '#ef4444'
+                            });
+                            return false;
+                        }
                         
                         const data = await response.json();
                         
@@ -668,6 +690,7 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             },
                             body: JSON.stringify({
@@ -677,6 +700,27 @@
                                 invitado_email: emailFinal,
                             }),
                         });
+                        
+                        // Verificar si la respuesta es JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            const text = await response.text();
+                            console.error('Respuesta no es JSON:', text);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error del servidor',
+                                html: `
+                                    <p>El servidor devolvió una respuesta inesperada (${response.status}).</p>
+                                    <p class="text-xs mt-2">Por favor, revisa los logs del servidor o contacta al administrador.</p>
+                                    <details class="mt-2 text-xs">
+                                        <summary>Detalles técnicos</summary>
+                                        <pre class="text-left mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded overflow-auto max-h-40">${text.substring(0, 500)}</pre>
+                                    </details>
+                                `,
+                                confirmButtonColor: '#ef4444'
+                            });
+                            return false;
+                        }
                         
                         const data = await response.json();
                         

@@ -481,13 +481,15 @@
         let configExtraccion = @json($ordenExtraccion->configuracion ?? []);
         let configIdiomaExtraccion = configExtraccion?.idioma || '';
         let configIndustriaExtraccion = configExtraccion?.industria || '';
+        let configRecurrenciaExtraccion = configExtraccion?.recurrencia || recurrenciaSeleccionada || null;
         
         console.log('Configuración cargada desde BD:', {
             recurrenciaSeleccionada,
             recurrenciaEmailsSeleccionada,
             botToggleChecked,
             emailsToggleChecked,
-            configExtraccion
+            configExtraccion,
+            configRecurrenciaExtraccion
         });
         
         // Variable para almacenar el webhook actual
@@ -580,7 +582,7 @@
                                         </svg>
                                     </label>
                                 </div>
-                                <div class="flex items-center gap-2 mb-3">
+                                <div class="flex items-center gap-2 mb-2">
                                     <button type="button" onclick="openRecurrenciaModal()" id="configRecurrenciaBtn" class="px-2.5 py-1.5 ${botToggleChecked ? 'bg-blue-500 hover:bg-blue-600' : 'bg-slate-400 hover:bg-slate-500'} text-white font-medium rounded-md transition-all flex items-center gap-1.5 text-xs shadow-sm">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -588,6 +590,9 @@
                                         <span id="configRecurrenciaText">Recurrencia</span>
                                     </button>
                                 </div>
+                                <p id="configResumenExtraccion" class="text-[11px] text-slate-500 dark:text-slate-400 mb-3">
+                                    <!-- Se rellena dinámicamente con la configuración actual -->
+                                </p>
                                 <!-- Filtros de idioma e industria para extracción -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
@@ -686,6 +691,44 @@
                         cancelButton: isDarkMode ? 'dark-swal-cancel' : 'light-swal-cancel'
                     },
                     didOpen: () => {
+                        // Helper para mostrar el resumen de configuración actual del extractor
+                        const actualizarResumenExtraccion = () => {
+                            const resumenEl = document.getElementById('configResumenExtraccion');
+                            if (!resumenEl) return;
+
+                            // Recurrencia
+                            const r = recurrenciaSeleccionada || configRecurrenciaExtraccion || null;
+                            let txtRecurrencia = 'sin recurrencia';
+                            if (r) {
+                                if (r === 0.5) txtRecurrencia = 'cada media hora';
+                                else if (r === 1) txtRecurrencia = 'cada 1 hora';
+                                else txtRecurrencia = `cada ${r} horas`;
+                            }
+
+                            // Idioma
+                            const idiomas = {
+                                'es': 'Español',
+                                'en': 'Inglés',
+                                'fr': 'Francés',
+                                'de': 'Alemán',
+                                'it': 'Italiano',
+                                'pt': 'Portugués'
+                            };
+                            const txtIdioma = configIdiomaExtraccion
+                                ? idiomas[configIdiomaExtraccion] || configIdiomaExtraccion
+                                : 'todos los idiomas';
+
+                            // Industria
+                            const txtIndustria = configIndustriaExtraccion
+                                ? configIndustriaExtraccion
+                                : 'todas las industrias';
+
+                            resumenEl.textContent = `Extractor configurado: ${txtRecurrencia}, idioma: ${txtIdioma}, industria: ${txtIndustria}.`;
+                        };
+
+                        // Guardar helper en window para reutilizar desde otros handlers si es necesario
+                        window.actualizarResumenExtraccion = actualizarResumenExtraccion;
+
                         // Selects de idioma e industria para extracción
                         const idiomaSelect = document.getElementById('configIdiomaExtraccion');
                         const industriaSelect = document.getElementById('configIndustriaExtraccion');
@@ -693,12 +736,14 @@
                             idiomaSelect.addEventListener('change', (e) => {
                                 configIdiomaExtraccion = e.target.value || '';
                                 console.log('Idioma extracción (config):', configIdiomaExtraccion);
+                                actualizarResumenExtraccion();
                             });
                         }
                         if (industriaSelect) {
                             industriaSelect.addEventListener('change', (e) => {
                                 configIndustriaExtraccion = e.target.value || '';
                                 console.log('Industria extracción (config):', configIndustriaExtraccion);
+                                actualizarResumenExtraccion();
                             });
                         }
                         
@@ -764,6 +809,9 @@
                             }
                             configRecurrenciaText.textContent = texto;
                         }
+
+                        // Pintar resumen inicial
+                        actualizarResumenExtraccion();
                         
                         const configRecurrenciaEmailsText = document.getElementById('configRecurrenciaEmailsText');
                         if (configRecurrenciaEmailsText && recurrenciaEmailsSeleccionada) {
@@ -1055,6 +1103,11 @@
                         industria: configIndustriaExtraccion || null,
                         recurrencia: recurrenciaSeleccionada || null,
                     });
+
+                    // Actualizar resumen en la modal de configuración si existe
+                    if (typeof window.actualizarResumenExtraccion === 'function') {
+                        window.actualizarResumenExtraccion();
+                    }
                 }
             });
         }

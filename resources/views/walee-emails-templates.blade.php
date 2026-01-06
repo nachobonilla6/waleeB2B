@@ -243,7 +243,7 @@
             
             let modalWidth = '95%';
             if (!isMobile) {
-                modalWidth = '600px'; // Ancho más compacto
+                modalWidth = '800px'; // Ancho más amplio
             }
             
             // Restaurar datos guardados
@@ -330,7 +330,7 @@
                             name="contenido" 
                             id="template_contenido"
                             required
-                            rows="8"
+                            rows="5"
                             placeholder="Contenido del email..."
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${formData.contenido || ''}</textarea>
@@ -435,7 +435,7 @@
             
             let modalWidth = '95%';
             if (!isMobile) {
-                modalWidth = '600px'; // Ancho más compacto
+                modalWidth = '800px'; // Ancho más amplio
             }
             
             const html = `
@@ -504,7 +504,7 @@
                             name="contenido" 
                             id="template_contenido"
                             required
-                            rows="8"
+                            rows="5"
                             placeholder="Contenido del email..."
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${template.contenido || ''}</textarea>
@@ -622,7 +622,7 @@
             
             let modalWidth = '95%';
             if (!isMobile) {
-                modalWidth = '500px'; // Ancho más compacto
+                modalWidth = '700px'; // Ancho más amplio
             }
             
             const html = `
@@ -657,7 +657,7 @@
                             name="contenido" 
                             id="enviar_contenido"
                             required
-                            rows="8"
+                            rows="5"
                             class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${template.contenido || ''}</textarea>
                     </div>
@@ -820,7 +820,7 @@
             
             let modalWidth = '95%';
             if (!isMobile) {
-                modalWidth = '600px'; // Ancho más compacto
+                modalWidth = '800px'; // Ancho más amplio
             }
             
             const html = `
@@ -831,7 +831,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Contenido:</label>
-                        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-2.5 border border-slate-200 dark:border-slate-700 max-h-[400px] overflow-y-auto">
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-2.5 border border-slate-200 dark:border-slate-700 max-h-[300px] overflow-y-auto">
                             <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap text-xs leading-relaxed">${template.contenido || 'Sin contenido'}</p>
                         </div>
                     </div>
@@ -975,7 +975,7 @@
                 background: #ef4444 !important;
             }
             .swal2-html-container {
-                max-height: calc(90vh - 150px) !important;
+                max-height: calc(85vh - 120px) !important;
                 overflow-y: auto !important;
                 padding: 0 !important;
             }

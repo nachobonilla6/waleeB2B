@@ -239,17 +239,11 @@
         
         async function showNuevoTemplateModal() {
             const isMobile = window.innerWidth < 640;
-            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (isDesktop) {
-                modalWidth = '900px'; // Ancho en vistas grandes
-            } else if (isTablet) {
-                modalWidth = '700px';
-            } else if (isMobile) {
-                modalWidth = '95%';
+            if (!isMobile) {
+                modalWidth = '600px'; // Ancho más compacto
             }
             
             // Restaurar datos guardados
@@ -270,11 +264,11 @@
             }
             
             const html = `
-                <form id="template-form" class="space-y-3 sm:space-y-4 text-left">
+                <form id="template-form" class="space-y-2.5 text-left">
                     <input type="hidden" name="template_id" id="template_id" value="">
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Nombre del Template *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Nombre del Template *</label>
                         <input 
                             type="text" 
                             name="nombre" 
@@ -282,12 +276,12 @@
                             required
                             placeholder="Ej: Propuesta para restaurantes"
                             value="${formData.nombre || ''}"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto *</label>
                         <input 
                             type="text" 
                             name="asunto" 
@@ -295,35 +289,35 @@
                             required
                             placeholder="Asunto del email"
                             value="${formData.asunto || ''}"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
-                    <div class="bg-gradient-to-br ${isDarkMode ? 'from-violet-500/10 to-violet-600/5 border-violet-500/20' : 'from-violet-50 to-violet-100/50 border-violet-200'} border rounded-lg sm:rounded-xl p-3 sm:p-4">
-                        <h4 class="text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-gradient-to-br ${isDarkMode ? 'from-violet-500/10 to-violet-600/5 border-violet-500/20' : 'from-violet-50 to-violet-100/50 border-violet-200'} border rounded-lg p-2.5">
+                        <h4 class="text-xs font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-1.5 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                             </svg>
                             Generar con AI
                         </h4>
-                        <div class="mb-2 sm:mb-3">
-                            <label for="ai_prompt" class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Instrucciones para AI</label>
+                        <div class="mb-1.5">
+                            <label for="ai_prompt" class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Instrucciones para AI</label>
                             <textarea 
                                 id="ai_prompt" 
                                 name="ai_prompt"
-                                rows="3"
-                                placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante..."
+                                rows="2"
+                                placeholder="Ej: Genera un email profesional de propuesta..."
                                 value="${formData.ai_prompt || ''}"
-                                class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
+                                class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
                             >${formData.ai_prompt || ''}</textarea>
                         </div>
                         <button 
                             type="button" 
                             id="generateBtn"
                             onclick="generateTemplateWithAI()"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                            class="w-full px-2.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs"
                         >
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                             </svg>
                             Generar Contenido con AI
@@ -331,14 +325,14 @@
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Contenido *</label>
                         <textarea 
                             name="contenido" 
                             id="template_contenido"
                             required
-                            rows="6"
+                            rows="8"
                             placeholder="Contenido del email..."
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${formData.contenido || ''}</textarea>
                     </div>
                 </form>
@@ -348,7 +342,7 @@
                 title: 'Nuevo Template',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
+                padding: '1rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#D59F3B',
@@ -436,25 +430,19 @@
             if (!template) return;
             
             const isMobile = window.innerWidth < 640;
-            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (isDesktop) {
-                modalWidth = '900px'; // Ancho en vistas grandes
-            } else if (isTablet) {
-                modalWidth = '700px';
-            } else if (isMobile) {
-                modalWidth = '95%';
+            if (!isMobile) {
+                modalWidth = '600px'; // Ancho más compacto
             }
             
             const html = `
-                <form id="template-form" class="space-y-3 sm:space-y-4 text-left">
+                <form id="template-form" class="space-y-2.5 text-left">
                     <input type="hidden" name="template_id" id="template_id" value="${template.id}">
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Nombre del Template *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Nombre del Template *</label>
                         <input 
                             type="text" 
                             name="nombre" 
@@ -462,12 +450,12 @@
                             required
                             placeholder="Ej: Propuesta para restaurantes"
                             value="${template.nombre || ''}"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto *</label>
                         <input 
                             type="text" 
                             name="asunto" 
@@ -475,34 +463,34 @@
                             required
                             placeholder="Asunto del email"
                             value="${template.asunto || ''}"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
-                    <div class="bg-gradient-to-br ${isDarkMode ? 'from-violet-500/10 to-violet-600/5 border-violet-500/20' : 'from-violet-50 to-violet-100/50 border-violet-200'} border rounded-lg sm:rounded-xl p-3 sm:p-4">
-                        <h4 class="text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-gradient-to-br ${isDarkMode ? 'from-violet-500/10 to-violet-600/5 border-violet-500/20' : 'from-violet-50 to-violet-100/50 border-violet-200'} border rounded-lg p-2.5">
+                        <h4 class="text-xs font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-1.5 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                             </svg>
                             Generar con AI
                         </h4>
-                        <div class="mb-2 sm:mb-3">
-                            <label for="ai_prompt" class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Instrucciones para AI</label>
+                        <div class="mb-1.5">
+                            <label for="ai_prompt" class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Instrucciones para AI</label>
                             <textarea 
                                 id="ai_prompt" 
                                 name="ai_prompt"
-                                rows="3"
-                                placeholder="Ej: Genera un email profesional de propuesta para un negocio de restaurante..."
-                                class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
+                                rows="2"
+                                placeholder="Ej: Genera un email profesional de propuesta..."
+                                class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 focus:outline-none transition-all resize-none"
                             ></textarea>
                         </div>
                         <button 
                             type="button" 
                             id="generateBtn"
                             onclick="generateTemplateWithAI()"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                            class="w-full px-2.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs"
                         >
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                             </svg>
                             Generar Contenido con AI
@@ -510,14 +498,14 @@
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Contenido *</label>
                         <textarea 
                             name="contenido" 
                             id="template_contenido"
                             required
-                            rows="6"
+                            rows="8"
                             placeholder="Contenido del email..."
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${template.contenido || ''}</textarea>
                     </div>
                 </form>
@@ -527,7 +515,7 @@
                 title: 'Editar Template',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
+                padding: '1rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Guardar',
                 confirmButtonColor: '#D59F3B',
@@ -628,53 +616,47 @@
             if (!template) return;
             
             const isMobile = window.innerWidth < 640;
-            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (isDesktop) {
-                modalWidth = '600px';
-            } else if (isTablet) {
-                modalWidth = '550px';
-            } else if (isMobile) {
-                modalWidth = '95%';
+            if (!isMobile) {
+                modalWidth = '500px'; // Ancho más compacto
             }
             
             const html = `
-                <form id="enviar-template-form" class="space-y-3 sm:space-y-4 text-left">
+                <form id="enviar-template-form" class="space-y-2.5 text-left">
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Email destinatario *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Email destinatario *</label>
                         <input 
                             type="email" 
                             name="email" 
                             id="enviar_email"
                             required
                             placeholder="cliente@correo.com"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto *</label>
                         <input 
                             type="text" 
                             name="asunto" 
                             id="enviar_asunto"
                             required
                             value="${template.asunto || ''}"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
                     
                     <div>
-                        <label class="block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido *</label>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Contenido *</label>
                         <textarea 
                             name="contenido" 
                             id="enviar_contenido"
                             required
-                            rows="5"
-                            class="w-full px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg sm:rounded-xl placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
+                            rows="8"
+                            class="w-full px-2.5 py-1.5 text-xs ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg placeholder-slate-500 focus:border-walee-500 focus:ring-1 focus:ring-walee-500/20 focus:outline-none transition-all resize-none"
                         >${template.contenido || ''}</textarea>
                     </div>
                 </form>
@@ -684,7 +666,7 @@
                 title: 'Enviar Template',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
+                padding: '1rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Enviar',
                 confirmButtonColor: '#D59F3B',
@@ -832,29 +814,23 @@
             if (!template) return;
             
             const isMobile = window.innerWidth < 640;
-            const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
-            const isDesktop = window.innerWidth >= 1024;
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             let modalWidth = '95%';
-            if (isDesktop) {
-                modalWidth = '900px'; // Ancho en vistas grandes
-            } else if (isTablet) {
-                modalWidth = '700px';
-            } else if (isMobile) {
-                modalWidth = '95%';
+            if (!isMobile) {
+                modalWidth = '600px'; // Ancho más compacto
             }
             
             const html = `
-                <div class="text-left space-y-3 sm:space-y-4 ${isMobile ? 'text-xs' : 'text-sm'}">
+                <div class="text-left space-y-2.5 text-xs">
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Asunto:</label>
-                        <p class="font-semibold ${isMobile ? 'text-sm' : 'text-base md:text-lg'} ${isDarkMode ? 'text-white' : 'text-slate-900'}">${template.asunto || 'Sin asunto'}</p>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Asunto:</label>
+                        <p class="font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-slate-900'}">${template.asunto || 'Sin asunto'}</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1.5 sm:mb-2">Contenido:</label>
-                        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700">
-                            <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap ${isMobile ? 'text-xs' : 'text-sm'}">${template.contenido || 'Sin contenido'}</p>
+                        <label class="block text-xs font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Contenido:</label>
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-2.5 border border-slate-200 dark:border-slate-700 max-h-[400px] overflow-y-auto">
+                            <p class="${isDarkMode ? 'text-slate-200' : 'text-slate-800'} whitespace-pre-wrap text-xs leading-relaxed">${template.contenido || 'Sin contenido'}</p>
                         </div>
                     </div>
                 </div>
@@ -864,7 +840,7 @@
                 title: template.nombre || 'Template',
                 html: html,
                 width: modalWidth,
-                padding: isMobile ? '1rem' : '1.5rem',
+                padding: '1rem',
                 showConfirmButton: true,
                 confirmButtonText: 'Cerrar',
                 confirmButtonColor: '#D59F3B',
@@ -985,15 +961,29 @@
             .light-swal-deny {
                 background: #ef4444 !important;
             }
-            @media (min-width: 1024px) {
-                .swal2-popup {
-                    max-height: 90vh !important;
-                    overflow-y: auto !important;
-                }
-                .swal2-html-container {
-                    max-height: calc(90vh - 200px) !important;
-                    overflow-y: auto !important;
-                }
+            .swal2-popup {
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+            }
+            .swal2-html-container {
+                max-height: calc(90vh - 150px) !important;
+                overflow-y: auto !important;
+                padding: 0 !important;
+            }
+            .swal2-title {
+                font-size: 1rem !important;
+                margin-bottom: 0.75rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+            .swal2-actions {
+                margin-top: 0.75rem !important;
+                gap: 0.5rem !important;
+            }
+            .swal2-confirm,
+            .swal2-cancel,
+            .swal2-deny {
+                font-size: 0.75rem !important;
+                padding: 0.5rem 1rem !important;
             }
             
             @media (max-width: 640px) {
@@ -1001,24 +991,6 @@
                     width: 95% !important;
                     margin: 0.5rem !important;
                     padding: 1rem !important;
-                }
-                .swal2-title {
-                    font-size: 1.125rem !important;
-                    margin-bottom: 0.75rem !important;
-                }
-                .swal2-html-container {
-                    margin: 0.5rem 0 !important;
-                    font-size: 0.875rem !important;
-                }
-                .swal2-confirm,
-                .swal2-cancel,
-                .swal2-deny {
-                    font-size: 0.875rem !important;
-                    padding: 0.5rem 1rem !important;
-                }
-                .swal2-actions {
-                    margin-top: 1rem !important;
-                    gap: 0.5rem !important;
                 }
             }
         `;

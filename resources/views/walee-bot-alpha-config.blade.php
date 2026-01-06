@@ -21,7 +21,7 @@
             </a>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 space-y-4 mb-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-slate-900 dark:text-white">Extracción de Clientes</p>
@@ -60,14 +60,57 @@
                 </div>
             </div>
         </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-900 dark:text-white">Emails Automáticos</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Activa o desactiva el envío automático de emails</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggleEmails" class="sr-only peer" {{ ($ordenEmails->activo ?? false) ? 'checked' : '' }}>
+                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 dark:peer-focus:ring-emerald-400 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div>
+                    <label for="recurrenciaEmails" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                        Recurrencia de emails
+                    </label>
+                    <select
+                        id="recurrenciaEmails"
+                        class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                        <option value="">Sin recurrencia</option>
+                        <option value="0.5">Cada media hora</option>
+                        <option value="1">Cada 1 hora</option>
+                        <option value="2">Cada 2 horas</option>
+                        <option value="3">Cada 3 horas</option>
+                        <option value="4">Cada 4 horas</option>
+                        <option value="5">Cada 5 horas</option>
+                        <option value="6">Cada 6 horas</option>
+                        <option value="8">Cada 8 horas</option>
+                        <option value="12">Cada 12 horas</option>
+                        <option value="48">Cada 48 horas</option>
+                        <option value="72">Cada 72 horas</option>
+                    </select>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        Define cada cuánto tiempo se enviarán automáticamente los emails.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const toggleExtraccion = document.getElementById('toggleExtraccion');
         const recurrenciaSelect = document.getElementById('recurrenciaExtraccion');
+        const toggleEmails = document.getElementById('toggleEmails');
+        const recurrenciaEmailsSelect = document.getElementById('recurrenciaEmails');
 
-        // Recurrencia inicial desde la BD (normalizada a número para que coincida con los <option>)
+        // Recurrencia inicial de extracción desde la BD (normalizada a número para que coincida con los <option>)
         let recurrenciaActual = @json($ordenExtraccion->recurrencia_horas ?? null);
 
         if (recurrenciaSelect && recurrenciaActual !== null && recurrenciaActual !== undefined) {
@@ -78,6 +121,20 @@
             } else {
                 recurrenciaSelect.value = '';
                 recurrenciaActual = null;
+            }
+        }
+
+        // Recurrencia inicial de emails desde la BD (normalizada)
+        let recurrenciaEmailsActual = @json($ordenEmails->recurrencia_horas ?? null);
+
+        if (recurrenciaEmailsSelect && recurrenciaEmailsActual !== null && recurrenciaEmailsActual !== undefined) {
+            const normalizadaEmails = parseFloat(recurrenciaEmailsActual);
+            if (!isNaN(normalizadaEmails)) {
+                recurrenciaEmailsActual = normalizadaEmails;
+                recurrenciaEmailsSelect.value = String(normalizadaEmails);
+            } else {
+                recurrenciaEmailsSelect.value = '';
+                recurrenciaEmailsActual = null;
             }
         }
 
@@ -175,6 +232,102 @@
             }
         }
 
+        async function guardarEstadoEmails(activo) {
+            const isDark = document.documentElement.classList.contains('dark');
+            try {
+                const response = await fetch('/api/ordenes-programadas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({
+                        tipo: 'emails_automaticos',
+                        activo: activo,
+                        recurrencia_horas: recurrenciaEmailsActual ?? null,
+                        configuracion: null,
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Guardado',
+                        text: 'Estado de emails automáticos actualizado',
+                        timer: 1800,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e293b' : '#ffffff',
+                        color: isDark ? '#e2e8f0' : '#1e293b'
+                    });
+                } else {
+                    throw new Error(data.message || 'Error al guardar');
+                }
+            } catch (error) {
+                console.error('Error al guardar estado de emails:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message,
+                    background: isDark ? '#1e293b' : '#ffffff',
+                    color: isDark ? '#e2e8f0' : '#1e293b'
+                });
+                // revert toggle
+                if (toggleEmails) {
+                    toggleEmails.checked = !activo;
+                }
+            }
+        }
+
+        async function guardarRecurrenciaEmails(nuevaRecurrencia) {
+            const isDark = document.documentElement.classList.contains('dark');
+            try {
+                const response = await fetch('/api/ordenes-programadas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({
+                        tipo: 'emails_automaticos',
+                        activo: toggleEmails?.checked ?? false,
+                        recurrencia_horas: nuevaRecurrencia,
+                        configuracion: null,
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Guardado',
+                        text: 'Recurrencia de emails actualizada',
+                        timer: 1800,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e293b' : '#ffffff',
+                        color: isDark ? '#e2e8f0' : '#1e293b'
+                    });
+                } else {
+                    throw new Error(data.message || 'Error al guardar');
+                }
+            } catch (error) {
+                console.error('Error al guardar recurrencia de emails:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message,
+                    background: isDark ? '#1e293b' : '#ffffff',
+                    color: isDark ? '#e2e8f0' : '#1e293b'
+                });
+                // Revertir select al valor anterior
+                if (recurrenciaEmailsSelect) {
+                    recurrenciaEmailsSelect.value = recurrenciaEmailsActual ? String(recurrenciaEmailsActual) : '';
+                }
+            }
+        }
+
         toggleExtraccion?.addEventListener('change', (e) => {
             guardarEstadoExtraccion(e.target.checked);
         });
@@ -183,6 +336,16 @@
             const value = e.target.value;
             recurrenciaActual = value ? parseFloat(value) : null;
             guardarRecurrenciaExtraccion(recurrenciaActual);
+        });
+
+        toggleEmails?.addEventListener('change', (e) => {
+            guardarEstadoEmails(e.target.checked);
+        });
+
+        recurrenciaEmailsSelect?.addEventListener('change', (e) => {
+            const value = e.target.value;
+            recurrenciaEmailsActual = value ? parseFloat(value) : null;
+            guardarRecurrenciaEmails(recurrenciaEmailsActual);
         });
     </script>
 </body>

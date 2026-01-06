@@ -822,9 +822,21 @@
         
         // Abrir modal de configuración para webhook
         async function openConfigModal() {
-            const isDarkMode = document.documentElement.classList.contains('dark');
-            const isMobile = window.innerWidth < 640;
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            try {
+                console.log('openConfigModal llamado');
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const isMobile = window.innerWidth < 640;
+                const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+                if (!csrfTokenElement) {
+                    console.error('CSRF token no encontrado');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo encontrar el token de seguridad. Por favor, recarga la página.',
+                    });
+                    return;
+                }
+                const csrfToken = csrfTokenElement.getAttribute('content');
             
             // Cargar webhook guardado si no lo tenemos
             if (!currentWebhookUrl) {
@@ -1062,8 +1074,26 @@
                 if (result.isConfirmed && result.value) {
                     saveWebhook(result.value.webhook_url);
                 }
+            }).catch((error) => {
+                console.error('Error al abrir modal de configuración:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo abrir el modal de configuración. Por favor, recarga la página.',
+                });
             });
+            } catch (error) {
+                console.error('Error en openConfigModal:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al abrir el modal: ' + error.message,
+                });
+            }
         }
+        
+        // Hacer la función disponible globalmente
+        window.openConfigModal = openConfigModal;
         
         // Validar URL
         function isValidUrl(string) {

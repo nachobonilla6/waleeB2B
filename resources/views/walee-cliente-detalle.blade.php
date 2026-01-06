@@ -879,7 +879,10 @@
             </div>
             
             <!-- Google Maps -->
-            @if($cliente->ciudad)
+            @php
+                $ubicacion = $cliente->direccion ?? $cliente->ciudad ?? null;
+            @endphp
+            @if($ubicacion)
             <div class="mb-4 sm:mb-6 mt-4 sm:mt-6">
                 <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
                     <div class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
@@ -888,7 +891,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
-                            Ubicación - {{ $cliente->ciudad }}
+                            Ubicación - {{ $ubicacion }}
                         </h3>
                     </div>
                     <div class="w-full" style="height: 300px;">
@@ -899,7 +902,7 @@
                             loading="lazy"
                             allowfullscreen
                             referrerpolicy="no-referrer-when-downgrade"
-                            src="https://www.google.com/maps?q={{ urlencode($cliente->ciudad) }}&output=embed&zoom=13">
+                            src="https://www.google.com/maps?q={{ urlencode($ubicacion) }}&output=embed&zoom={{ $cliente->direccion ? '15' : '13' }}">
                         </iframe>
                     </div>
                 </div>

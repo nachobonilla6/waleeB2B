@@ -144,10 +144,12 @@
         }
         
         // Obtener tareas con fecha_hora en el rango del mes
+        // Solo mostrar tareas que NO tienen google_event_id (para evitar duplicados)
         try {
             $tareas = \App\Models\Tarea::whereNotNull('fecha_hora')
                 ->whereBetween('fecha_hora', [$inicioCalendario->copy()->startOfDay(), $finCalendario->copy()->endOfDay()])
                 ->where('estado', 'pending') // Solo tareas pendientes
+                ->whereNull('google_event_id') // Solo tareas que NO están sincronizadas con Google Calendar
                 ->get();
             
             foreach ($tareas as $tarea) {
@@ -180,6 +182,38 @@
             }
         } catch (\Exception $e) {
             \Log::error('Error obteniendo tareas: ' . $e->getMessage());
+        }
+        
+        // Verificar eventos de Google Calendar que corresponden a tareas y marcarlos como tareas
+        try {
+            $tareasConGoogleId = \App\Models\Tarea::whereNotNull('google_event_id')
+                ->whereBetween('fecha_hora', [$inicioCalendario->copy()->startOfDay(), $finCalendario->copy()->endOfDay()])
+                ->where('estado', 'pending')
+                ->pluck('google_event_id', 'id')
+                ->toArray();
+            
+            // Recorrer todos los eventos y marcar los que son tareas
+            foreach ($eventos as $fechaKey => $eventosDelDia) {
+                foreach ($eventosDelDia as $evento) {
+                    if (isset($evento->google_event_id) && $evento->google_event_id) {
+                        // Buscar si este google_event_id corresponde a una tarea
+                        $tareaId = array_search($evento->google_event_id, $tareasConGoogleId);
+                        if ($tareaId !== false) {
+                            // Es una tarea sincronizada, marcarla como tarea
+                            $tarea = \App\Models\Tarea::find($tareaId);
+                            if ($tarea) {
+                                $evento->is_tarea = true;
+                                $evento->tarea_id = $tarea->id;
+                                $evento->tarea_estado = $tarea->estado;
+                                $evento->tarea_color = $tarea->color ?? '#f59e0b';
+                                $evento->from_google = false; // Ya no es "from_google", es una tarea
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error verificando tareas sincronizadas: ' . $e->getMessage());
         }
         
         // Verificar si está autorizado y obtener información del calendario

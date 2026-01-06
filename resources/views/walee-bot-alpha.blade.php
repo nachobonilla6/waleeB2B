@@ -376,7 +376,7 @@
                                         </p>
                                         @if($cliente->industria)
                                             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
-                                                <span class="font-medium">Industria:</span> {{ $cliente->industria }}
+                                                {{ $cliente->industria }}
                                             </p>
                                         @endif
                                         @if($cliente->emails_count > 0)

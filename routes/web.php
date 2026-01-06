@@ -1310,6 +1310,7 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
             'titulo' => 'required|string|max:255',
             'fecha_inicio' => 'required|date',
             'descripcion' => 'nullable|string',
+            'invitado_email' => 'nullable|email',
         ]);
         
         // Crear una cita temporal para usar con GoogleCalendarService
@@ -1319,6 +1320,11 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
         $cita->fecha_fin = $cita->fecha_inicio->copy()->addHour();
         $cita->descripcion = $validated['descripcion'] ?? null;
         $cita->estado = 'programada';
+        
+        // Si hay un email de invitado, agregarlo a invitados_emails
+        if (!empty($validated['invitado_email'])) {
+            $cita->invitados_emails = $validated['invitado_email'];
+        }
         
         // Verificar si está autorizado antes de intentar sincronizar
         $googleService = new \App\Services\GoogleCalendarService();
@@ -1368,11 +1374,22 @@ Route::post('/walee-calendario-aplicaciones/crear', function (\Illuminate\Http\R
                 'error_details' => config('app.debug') ? $e->getTraceAsString() : null
             ], 500);
         }
-    } catch (\Exception $e) {
-        \Log::error('Error creando evento: ' . $e->getMessage());
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Manejar errores de validación
         return response()->json([
             'success' => false,
-            'message' => 'Error al crear el evento: ' . $e->getMessage()
+            'message' => 'Error de validación: ' . implode(', ', array_map(function($errors) {
+                return implode(', ', $errors);
+            }, $e->errors())),
+            'errors' => $e->errors()
+        ], 422);
+    } catch (\Exception $e) {
+        \Log::error('Error creando evento: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al crear el evento: ' . $e->getMessage(),
+            'error_details' => config('app.debug') ? $e->getTraceAsString() : null
         ], 500);
     }
 })->middleware(['auth'])->name('walee.calendario.aplicaciones.crear');

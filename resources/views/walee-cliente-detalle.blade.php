@@ -408,6 +408,22 @@
                                         <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                 {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                             </span>
+                            
+                            <!-- Is Active Toggle Mobile -->
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Is Active:</span>
+                                <button 
+                                    onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
+                                    class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
+                                    title="{{ (($cliente->is_active ?? false)) ? 'Activo' : 'Inactivo' }}"
+                                >
+                                    <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-5' : 'translate-x-0.5' }}"></span>
+                                </button>
+                                <span class="text-xs font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
+                                    {{ (($cliente->is_active ?? false)) ? 'Sí' : 'No' }}
+                                </span>
+                            </div>
+                            
                             @if($cliente->horario)
                                 <div id="negocioEstadoMobile" class="mb-1.5">
                                     <!-- Se actualizará con JavaScript -->
@@ -617,6 +633,22 @@
                                             <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
                                             {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
                                     </span>
+                                    
+                                    <!-- Is Active Toggle Desktop -->
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Is Active:</span>
+                                        <button 
+                                            onclick="toggleIsActive({{ $cliente->id }}, {{ ($cliente->is_active ?? false) ? 'true' : 'false' }})"
+                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 {{ (($cliente->is_active ?? false)) ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-slate-300 dark:bg-slate-600 focus:ring-slate-500' }}"
+                                            title="{{ (($cliente->is_active ?? false)) ? 'Activo' : 'Inactivo' }}"
+                                        >
+                                            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform {{ (($cliente->is_active ?? false)) ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                                        </button>
+                                        <span class="text-sm font-medium {{ (($cliente->is_active ?? false)) ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
+                                            {{ (($cliente->is_active ?? false)) ? 'Sí' : 'No' }}
+                                        </span>
+                                    </div>
+                                    
                             @if($cliente->horario)
                                 <div id="negocioEstadoDesktop" class="mb-2">
                                     <!-- Se actualizará con JavaScript -->
@@ -1787,6 +1819,36 @@
             body: '',
             attachments: null
         };
+        
+        // Toggle is_active
+        async function toggleIsActive(clientId, currentValue) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const newValue = !currentValue;
+            
+            try {
+                const response = await fetch(`/walee-clientes-en-proceso/${clientId}/toggle-active`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        is_active: newValue
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Recargar la página para reflejar el cambio
+                    location.reload();
+                } else {
+                    alert('Error al actualizar el estado: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        }
         
         function openEmailModal() {
             // Resetear datos

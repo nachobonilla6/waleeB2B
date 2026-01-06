@@ -83,16 +83,6 @@
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
-    @php
-        // Contadores de emails enviados
-        $totalEmails = \App\Models\PropuestaPersonalizada::count();
-        $emailsEsteMes = \App\Models\PropuestaPersonalizada::whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-        $emailsHoy = \App\Models\PropuestaPersonalizada::whereDate('created_at', today())->count();
-        $emailsEstaSemana = \App\Models\PropuestaPersonalizada::where('created_at', '>=', now()->startOfWeek())
-            ->count();
-    @endphp
 
     <div class="min-h-screen relative overflow-hidden">
         <!-- Background Pattern -->
@@ -141,65 +131,6 @@
                     </button>
                 </div>
             </header>
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total</p>
-                            <p class="text-lg font-bold text-slate-900 dark:text-white">{{ number_format($totalEmails) }}</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Hoy</p>
-                            <p class="text-lg font-bold text-slate-900 dark:text-white">{{ number_format($emailsHoy) }}</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Esta Semana</p>
-                            <p class="text-lg font-bold text-slate-900 dark:text-white">{{ number_format($emailsEstaSemana) }}</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Este Mes</p>
-                            <p class="text-lg font-bold text-slate-900 dark:text-white">{{ number_format($emailsEsteMes) }}</p>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Search Bar -->
             <div class="mb-3">

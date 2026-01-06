@@ -470,41 +470,10 @@
             }
         }
         
-        // Ver PDF de factura en modal
+        // Ver PDF de factura en nueva ventana
         function verPDFFactura(facturaId, numeroFactura) {
             const pdfUrl = `/walee-facturas/${facturaId}/pdf`;
-            
-            Swal.fire({
-                title: `Factura #${numeroFactura}`,
-                html: `
-                    <div style="width: 100%; height: 80vh; overflow: hidden;">
-                        <iframe src="${pdfUrl}" style="width: 100%; height: 100%; border: none;"></iframe>
-                    </div>
-                `,
-                width: '90%',
-                maxWidth: '1200px',
-                showCancelButton: true,
-                cancelButtonText: 'Cerrar',
-                confirmButtonText: 'Descargar',
-                confirmButtonColor: '#D59F3B',
-                cancelButtonColor: '#6b7280',
-                reverseButtons: true,
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
-                didOpen: () => {
-                    // Asegurar que el iframe tenga el tamaño correcto
-                    const iframe = Swal.getHtmlContainer().querySelector('iframe');
-                    if (iframe) {
-                        iframe.style.width = '100%';
-                        iframe.style.height = '80vh';
-                    }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Descargar el PDF
-                    window.open(pdfUrl, '_blank');
-                }
-            });
+            window.open(pdfUrl, '_blank');
         }
         
         // Datos para modal

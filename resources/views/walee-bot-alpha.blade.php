@@ -442,10 +442,46 @@
         // Variables para almacenar las recurrencias seleccionadas
         let recurrenciaSeleccionada = null; // Para extracción de clientes
         let recurrenciaEmailsSeleccionada = null; // Para emails automáticos
+        let botToggleChecked = false; // Estado del toggle de bot
+        let emailsToggleChecked = false; // Estado del toggle de emails
         
-        // Toggle Bot - Extracción de Clientes (solo diseño por ahora)
-        function toggleBot(enabled) {
+        // Función para guardar orden programada en la base de datos
+        async function guardarOrdenProgramada(tipo, activo, recurrenciaHoras) {
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                const response = await fetch('/api/ordenes-programadas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || '',
+                    },
+                    body: JSON.stringify({
+                        tipo: tipo,
+                        activo: activo,
+                        recurrencia_horas: recurrenciaHoras,
+                        user_id: null // Se puede obtener del backend si es necesario
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log(`Orden programada ${tipo} guardada:`, data.data);
+                    return true;
+                } else {
+                    console.error('Error al guardar orden programada:', data.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error de conexión al guardar orden programada:', error);
+                return false;
+            }
+        }
+        
+        // Toggle Bot - Extracción de Clientes
+        async function toggleBot(enabled) {
             console.log('Extracción de Clientes:', enabled ? 'Activado' : 'Desactivado');
+            botToggleChecked = enabled;
             
             // Cambiar estilo del botón de recurrencia en la modal de config
             const configRecurrenciaBtn = document.getElementById('configRecurrenciaBtn');
@@ -459,12 +495,18 @@
                 }
             }
             
-            // Aquí se implementará la lógica real más adelante
+            // Guardar orden programada en la base de datos
+            if (enabled && recurrenciaSeleccionada) {
+                await guardarOrdenProgramada('extraccion_clientes', true, recurrenciaSeleccionada);
+            } else if (!enabled) {
+                await guardarOrdenProgramada('extraccion_clientes', false, recurrenciaSeleccionada);
+            }
         }
         
-        // Toggle Emails Automáticos (solo diseño por ahora)
-        function toggleEmails(enabled) {
+        // Toggle Emails Automáticos
+        async function toggleEmails(enabled) {
             console.log('Emails Automáticos:', enabled ? 'Activado' : 'Desactivado');
+            emailsToggleChecked = enabled;
             
             // Cambiar estilo del botón de recurrencia en la modal de config
             const configRecurrenciaEmailsBtn = document.getElementById('configRecurrenciaEmailsBtn');
@@ -478,7 +520,12 @@
                 }
             }
             
-            // Aquí se implementará la lógica real más adelante
+            // Guardar orden programada en la base de datos
+            if (enabled && recurrenciaEmailsSeleccionada) {
+                await guardarOrdenProgramada('emails_automaticos', true, recurrenciaEmailsSeleccionada);
+            } else if (!enabled) {
+                await guardarOrdenProgramada('emails_automaticos', false, recurrenciaEmailsSeleccionada);
+            }
         }
         
         // Abrir modal de recurrencia para Extracción de Clientes
@@ -569,7 +616,11 @@
                     }
                     
                     console.log('Recurrencia de extracción seleccionada:', recurrenciaSeleccionada ? `${recurrenciaSeleccionada} horas` : 'Sin recurrencia');
-                    // Aquí se implementará la lógica real más adelante
+                    
+                    // Guardar orden programada en la base de datos si el bot está activo
+                    if (botToggleChecked && recurrenciaSeleccionada) {
+                        guardarOrdenProgramada('extraccion_clientes', true, recurrenciaSeleccionada);
+                    }
                 }
             });
         }
@@ -655,7 +706,11 @@
                     }
                     
                     console.log('Recurrencia de emails seleccionada:', recurrenciaEmailsSeleccionada ? `${recurrenciaEmailsSeleccionada} horas` : 'Sin recurrencia');
-                    // Aquí se implementará la lógica real más adelante
+                    
+                    // Guardar orden programada en la base de datos si los emails están activos
+                    if (emailsToggleChecked && recurrenciaEmailsSeleccionada) {
+                        guardarOrdenProgramada('emails_automaticos', true, recurrenciaEmailsSeleccionada);
+                    }
                 }
             });
         }

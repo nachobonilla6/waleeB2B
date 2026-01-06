@@ -145,7 +145,7 @@
                 
                 <div id="templatesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 @forelse($templates as $template)
-                    <div class="template-card bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-lg p-4 hover:shadow-lg dark:hover:shadow-none transition-all group w-full flex flex-col" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
+                    <div class="template-card bg-white dark:bg-slate-800/50 border-2 border-slate-900 dark:border-slate-700/50 rounded-lg p-4 hover:shadow-lg dark:hover:shadow-none transition-all group w-full flex flex-col" data-nombre="{{ strtolower($template->nombre) }}" data-asunto="{{ strtolower($template->asunto) }}" data-contenido="{{ strtolower($template->contenido) }}">
                         <div class="mb-3">
                             <div class="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center border border-violet-500/30 mb-2">
                                 <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

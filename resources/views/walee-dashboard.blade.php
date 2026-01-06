@@ -412,6 +412,109 @@
                 </div>
             </section>
             
+            <!-- World Map with Clocks -->
+            <section class="mb-8">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Mapa Mundial y Zonas Horarias
+                </h2>
+                
+                <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
+                    <div class="p-4 sm:p-6">
+                        <!-- World Map -->
+                        <div class="mb-6">
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden" style="height: 300px; position: relative;">
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    style="border:0"
+                                    loading="lazy"
+                                    allowfullscreen
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.184132189616!2d-73.98811768459418!3d40.75889597932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus&z=2">
+                                </iframe>
+                            </div>
+                        </div>
+                        
+                        <!-- World Clocks -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <!-- New York -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">New York</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-ny">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-ny">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- London -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">London</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-london">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-london">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tokyo -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Tokyo</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-tokyo">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-tokyo">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sydney -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Sydney</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-sydney">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-sydney">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Dubai -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Dubai</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-dubai">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-dubai">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- São Paulo -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">São Paulo</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-saopaulo">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-saopaulo">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Los Angeles -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Los Angeles</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-la">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-la">--</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Madrid -->
+                            <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="text-center">
+                                    <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Madrid</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-madrid">--:--</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-500" id="date-madrid">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             <!-- Footer -->
             <footer class="text-center py-6 border-t border-slate-200 dark:border-slate-800/50">
                 <p class="text-sm text-slate-600 dark:text-slate-500">
@@ -558,6 +661,47 @@
         
         // Initialize on page load
         initDarkMode();
+        
+        // World Clocks
+        function updateWorldClocks() {
+            const timezones = {
+                'ny': 'America/New_York',
+                'london': 'Europe/London',
+                'tokyo': 'Asia/Tokyo',
+                'sydney': 'Australia/Sydney',
+                'dubai': 'Asia/Dubai',
+                'saopaulo': 'America/Sao_Paulo',
+                'la': 'America/Los_Angeles',
+                'madrid': 'Europe/Madrid'
+            };
+            
+            Object.keys(timezones).forEach(city => {
+                try {
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: timezones[city] }));
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const seconds = String(now.getSeconds()).padStart(2, '0');
+                    
+                    const clockElement = document.getElementById(`clock-${city}`);
+                    const dateElement = document.getElementById(`date-${city}`);
+                    
+                    if (clockElement) {
+                        clockElement.textContent = `${hours}:${minutes}`;
+                    }
+                    
+                    if (dateElement) {
+                        const options = { month: 'short', day: 'numeric' };
+                        dateElement.textContent = now.toLocaleDateString('en-US', options);
+                    }
+                } catch (error) {
+                    console.error(`Error updating clock for ${city}:`, error);
+                }
+            });
+        }
+        
+        // Update clocks every second
+        updateWorldClocks();
+        setInterval(updateWorldClocks, 1000);
         
         // WhatsApp Modal Functions
         function openWhatsAppModal() {

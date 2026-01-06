@@ -864,20 +864,20 @@
             }
             
             const html = `
-                <div class="text-left space-y-2 sm:space-y-3 md:space-y-4 ${isMobile ? 'text-xs' : 'text-sm'}">
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-                            <div>
+                <div class="text-left space-y-2 sm:space-y-3 md:space-y-4 ${isMobile ? 'text-xs w-full' : 'text-sm'}">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl ${isMobile ? 'p-2 w-full' : 'p-2.5 sm:p-3 md:p-4'} border border-slate-200 dark:border-slate-700">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4 w-full">
+                            <div class="w-full">
                                 <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Para</h4>
-                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white break-words">${email.email}</p>
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white break-words w-full">${email.email}</p>
                             </div>
-                            <div>
+                            <div class="w-full">
                                 <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Cliente</h4>
-                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white">${email.cliente_nombre || 'N/A'}</p>
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white w-full">${email.cliente_nombre || 'N/A'}</p>
                             </div>
-                            <div class="col-span-1 sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2 w-full">
                                 <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Enviado</h4>
-                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white">${new Date(email.created_at).toLocaleString('es-ES', { 
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white w-full">${new Date(email.created_at).toLocaleString('es-ES', { 
                                     year: 'numeric', 
                                     month: 'long', 
                                     day: 'numeric',
@@ -888,21 +888,21 @@
                         </div>
                     </div>
                     ${email.ai_prompt ? `
-                        <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4">
+                        <div class="bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-lg sm:rounded-xl ${isMobile ? 'p-2 w-full' : 'p-2.5 sm:p-3 md:p-4'}">
                             <h4 class="text-xs font-medium text-violet-600 dark:text-violet-400 mb-2 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
                                 </svg>
                                 Prompt de AI
                             </h4>
-                            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">${email.ai_prompt}</p>
+                            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 w-full break-words">${email.ai_prompt}</p>
                         </div>
                     ` : ''}
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-slate-200 dark:border-slate-700">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-lg sm:rounded-xl ${isMobile ? 'p-2 w-full' : 'p-2.5 sm:p-3 md:p-4'} border border-slate-200 dark:border-slate-700">
                         <h4 class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Mensaje</h4>
                         ${email.tipo === 'extractor' || email.cliente_estado === 'extractor' ? 
-                            `<div class="text-slate-900 dark:text-white text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none">${email.body}</div>` : 
-                            `<div class="text-slate-900 dark:text-white whitespace-pre-wrap text-xs sm:text-sm">${email.body}</div>`
+                            `<div class="text-slate-900 dark:text-white text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none w-full break-words">${email.body}</div>` : 
+                            `<div class="text-slate-900 dark:text-white whitespace-pre-wrap text-xs sm:text-sm w-full break-words">${email.body}</div>`
                         }
                     </div>
                 </div>
@@ -973,16 +973,25 @@
             @media (max-width: 640px) {
                 .swal2-popup {
                     width: 95% !important;
+                    max-width: 95% !important;
                     margin: 0.5rem !important;
-                    padding: 1rem !important;
+                    padding: 0.75rem !important;
                 }
                 .swal2-title {
                     font-size: 1.125rem !important;
                     margin-bottom: 0.75rem !important;
+                    padding: 0 0.5rem !important;
                 }
                 .swal2-html-container {
                     margin: 0.5rem 0 !important;
+                    padding: 0 !important;
                     font-size: 0.875rem !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+                .swal2-html-container > div {
+                    width: 100% !important;
+                    max-width: 100% !important;
                 }
                 .swal2-confirm {
                     font-size: 0.875rem !important;

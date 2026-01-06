@@ -374,6 +374,11 @@
                                             @endif
                                             <span>{{ $cliente->name ?: 'Sin nombre' }}</span>
                                         </p>
+                                        @if($cliente->industria)
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                                <span class="font-medium">Industria:</span> {{ $cliente->industria }}
+                                            </p>
+                                        @endif
                                         @if($cliente->emails_count > 0)
                                             <span class="px-2 py-0.5 text-xs font-semibold rounded-lg border bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 dark:border-emerald-500/20 flex-shrink-0">
                                                 Email Enviado

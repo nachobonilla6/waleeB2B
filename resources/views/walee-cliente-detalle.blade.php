@@ -2427,15 +2427,31 @@
                 console.log('loadEmailTemplate - tipoDisplay:', tipoDisplay);
                 console.log('loadEmailTemplate - tipoValue:', tipoValue);
                 
-                // Función para obtener colores del badge según el tipo
+                // Función para obtener colores del badge según el tipo (con estilos inline como fallback)
                 const getTipoColors = (tipo) => {
                     const tipoColors = {
-                        'business': 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
-                        'agricultura': 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
-                        'b2b': 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
-                        'b2c': 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30'
+                        'business': {
+                            class: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
+                            style: 'background-color: rgb(219 234 254); color: rgb(29 78 216); border: 1px solid rgb(147 197 253);'
+                        },
+                        'agricultura': {
+                            class: 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
+                            style: 'background-color: rgb(220 252 231); color: rgb(21 128 61); border: 1px solid rgb(134 239 172);'
+                        },
+                        'b2b': {
+                            class: 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
+                            style: 'background-color: rgb(243 232 255); color: rgb(126 34 206); border: 1px solid rgb(196 181 253);'
+                        },
+                        'b2c': {
+                            class: 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30',
+                            style: 'background-color: rgb(255 237 213); color: rgb(194 65 12); border: 1px solid rgb(254 215 170);'
+                        }
                     };
-                    return tipoColors[tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30';
+                    const defaultColors = {
+                        class: 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30',
+                        style: 'background-color: rgb(237 233 254); color: rgb(109 40 217); border: 1px solid rgb(196 181 253);'
+                    };
+                    return tipoColors[tipo] || defaultColors;
                 };
                 
                 if (template.tipo) {
@@ -2446,7 +2462,8 @@
                     // Badge debajo del select
                     if (tipoDisplay && tipoValue) {
                         tipoValue.textContent = tipoText;
-                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + tipoColors;
+                        tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + tipoColors.class;
+                        tipoValue.style.cssText = tipoColors.style + ' display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;';
                         tipoDisplay.style.display = 'block';
                         tipoDisplay.style.visibility = 'visible';
                     }
@@ -2454,10 +2471,12 @@
                     // Badge inline en el select
                     if (tipoBadgeInline && tipoBadgeValue) {
                         tipoBadgeValue.textContent = tipoText;
-                        tipoBadgeValue.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ' + tipoColors;
+                        tipoBadgeValue.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ' + tipoColors.class;
+                        tipoBadgeValue.style.cssText = tipoColors.style + ' display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 600;';
                         tipoBadgeInline.style.display = 'block';
                         tipoBadgeInline.style.visibility = 'visible';
                         console.log('Badge inline mostrado con className:', tipoBadgeValue.className);
+                        console.log('Badge inline style:', tipoBadgeValue.style.cssText);
                         console.log('Badge inline text:', tipoBadgeValue.textContent);
                     } else {
                         console.error('tipoBadgeInline o tipoBadgeValue no encontrados');

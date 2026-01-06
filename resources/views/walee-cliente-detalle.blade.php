@@ -1943,10 +1943,19 @@
                 modalWidth = '95%';
             }
             
-            // Generar opciones de templates - MOSTRAR TODOS, CON O SIN TIPO
+            // Generar opciones de templates - ORDENAR: PRIMERO LOS QUE TIENEN TIPO
             let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
             if (emailTemplates && emailTemplates.length > 0) {
-                emailTemplates.forEach(template => {
+                // Ordenar: primero los que tienen tipo, luego los que no tienen
+                const sortedTemplates = [...emailTemplates].sort((a, b) => {
+                    const aHasTipo = a.tipo && a.tipo.trim() !== '';
+                    const bHasTipo = b.tipo && b.tipo.trim() !== '';
+                    if (aHasTipo && !bHasTipo) return -1; // a primero
+                    if (!aHasTipo && bHasTipo) return 1;  // b primero
+                    return 0; // mantener orden original si ambos tienen o no tienen tipo
+                });
+                
+                sortedTemplates.forEach(template => {
                     // Mostrar el template siempre, con o sin tipo
                     const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
                     templatesOptions += `<option value="${template.id}">${template.nombre}${tipoLabel}</option>`;
@@ -2398,20 +2407,20 @@
                 bodyField.value = emailModalData.body;
             }
             
-            // Mostrar el tipo del template (reutilizar tipoDisplay ya declarado arriba)
+            // Mostrar el tipo del template como badge (reutilizar tipoDisplay ya declarado arriba)
             const tipoValue = document.getElementById('template_tipo_value');
             if (tipoDisplay && tipoValue) {
                 if (template.tipo) {
                     const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
                     tipoValue.textContent = tipoText;
-                    // Aplicar color según el tipo
-                    tipoValue.className = 'font-semibold ' + (
-                        template.tipo === 'business' ? 'text-blue-600 dark:text-blue-400' :
-                        template.tipo === 'agricultura' ? 'text-green-600 dark:text-green-400' :
-                        template.tipo === 'b2b' ? 'text-purple-600 dark:text-purple-400' :
-                        template.tipo === 'b2c' ? 'text-orange-600 dark:text-orange-400' :
-                        'text-violet-600 dark:text-violet-400'
-                    );
+                    // Aplicar color según el tipo con estilo badge
+                    const tipoColors = {
+                        'business': 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30',
+                        'agricultura': 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-500/30',
+                        'b2b': 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30',
+                        'b2c': 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-500/30'
+                    };
+                    tipoValue.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ' + (tipoColors[template.tipo] || 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-500/30');
                     tipoDisplay.style.display = 'block';
                 } else {
                     tipoDisplay.style.display = 'none';

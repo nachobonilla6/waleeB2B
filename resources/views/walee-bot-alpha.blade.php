@@ -49,7 +49,16 @@
                     window.openConfigModal();
                 } else {
                     console.error('openConfigModal aún no está completamente cargada');
-                    alert('Por favor, espera un momento y vuelve a intentar.');
+                    const isDarkMode = document.documentElement.classList.contains('dark');
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Cargando...',
+                        text: 'Por favor, espera un momento y vuelve a intentar.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    });
                 }
             }, 500);
         };
@@ -1043,7 +1052,14 @@
                         window.openConfigModal();
                     } else {
                         console.error('openConfigModal no está disponible');
-                        alert('Error: La función de configuración no está disponible. Por favor, recarga la página.');
+                        const isDarkMode = document.documentElement.classList.contains('dark');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'La función de configuración no está disponible. Por favor, recarga la página.',
+                            background: isDarkMode ? '#1e293b' : '#ffffff',
+                            color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                        });
                     }
                 });
                 console.log('Event listener agregado al botón Config');

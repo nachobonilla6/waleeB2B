@@ -2379,6 +2379,12 @@
                 showAiBtn.style.display = 'none';
             }
             
+            // Ocultar el tipo del template
+            const tipoDisplay = document.getElementById('template_tipo_display');
+            if (tipoDisplay) {
+                tipoDisplay.style.display = 'none';
+            }
+            
             // Limpiar el template seleccionado
             const templateSelect = document.getElementById('email_template_select');
             if (templateSelect) {

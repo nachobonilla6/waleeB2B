@@ -242,11 +242,7 @@
                         // Verificar si el cliente tiene emails enviados
                         $tieneEmails = ($cliente->emails_count ?? 0) > 0;
                     @endphp
-                    @if($tieneEmails)
-                        <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all group">
-                    @else
-                        <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 opacity-60">
-                    @endif
+                    <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-violet-400 dark:hover:border-violet-500/30 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-all group">
                         <div class="w-9 h-9 rounded-lg bg-violet-100 dark:bg-violet-500/20 flex-shrink-0 flex items-center justify-center border border-violet-500/30 overflow-hidden">
                             @if($fotoUrl)
                                 <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="w-full h-full object-cover rounded-lg">
@@ -311,11 +307,7 @@
                             @endif
                             <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
                         </div>
-                    @if($tieneEmails)
-                        </a>
-                    @else
-                        </div>
-                    @endif
+                    </a>
                 @empty
                     <div class="text-center py-8">
                         <p class="text-sm text-slate-500 dark:text-slate-400">No se encontraron clientes pending</p>

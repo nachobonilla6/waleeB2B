@@ -37,6 +37,12 @@
                 }
             }
         }
+        
+        // Definir openConfigModal inmediatamente en el head para que esté disponible cuando se renderiza el HTML
+        window.openConfigModal = function() {
+            console.log('openConfigModal: función placeholder llamada. La función completa se cargará en breve...');
+            // Esta función será reemplazada por la función completa más adelante
+        };
     </script>
     <style>
         * {
@@ -892,7 +898,7 @@
                     const select = document.getElementById('recurrenciaSelect');
                     return select ? select.value : null;
                 }
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
                     const valor = result.value;
                     recurrenciaSeleccionada = valor ? parseFloat(valor) : null;
@@ -988,7 +994,7 @@
                     const select = document.getElementById('recurrenciaEmailsSelect');
                     return select ? select.value : null;
                 }
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
                     const valor = result.value;
                     recurrenciaEmailsSeleccionada = valor ? parseFloat(valor) : null;

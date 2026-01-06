@@ -1148,7 +1148,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">Fecha y Hora</p>
-                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${fecha}</p>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-white">${fecha}${fechaFinInput ? ' - ' + new Date(fechaFinInput).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : ''}</p>
                                 </div>
                             </div>
                         ` : ''}

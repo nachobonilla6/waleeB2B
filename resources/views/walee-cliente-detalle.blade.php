@@ -498,7 +498,7 @@
                                 @endif
             
                                 <!-- Email Button -->
-                                <button type="button" onclick="window.openEmailModal && window.openEmailModal();" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
+                                <button type="button" onclick="if(typeof window.openEmailModal === 'function') { window.openEmailModal(); } else { console.error('openEmailModal no disponible:', typeof window.openEmailModal); alert('Error: La función de email no está disponible. Por favor, recarga la página.'); }" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-walee-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-walee-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
@@ -732,7 +732,7 @@
                                 @endif
             
                                 <!-- Email Button -->
-                                <button type="button" onclick="window.openEmailModal && window.openEmailModal();" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
+                                <button type="button" onclick="if(typeof window.openEmailModal === 'function') { window.openEmailModal(); } else { console.error('openEmailModal no disponible:', typeof window.openEmailModal); alert('Error: La función de email no está disponible. Por favor, recarga la página.'); }" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">
                                     <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
@@ -1866,20 +1866,45 @@
             }
         }
         
-        function openEmailModal() {
-            // Resetear datos para un nuevo email
-            emailModalData.email = emailModalData.clienteEmail;
-            emailModalData.aiPrompt = '';
-            emailModalData.subject = '';
-            emailModalData.body = '';
-            emailModalData.attachments = null;
-            
-            // Abrir desde la fase 1
-            showEmailPhase1();
-        }
+        // Definir openEmailModal directamente en window para disponibilidad inmediata
+        window.openEmailModal = function() {
+            console.log('openEmailModal ejecutado');
+            try {
+                // Verificar que emailModalData esté disponible
+                if (typeof emailModalData === 'undefined') {
+                    console.error('emailModalData no está definido');
+                    alert('Error: Datos del modal no están disponibles. Por favor, recarga la página.');
+                    return;
+                }
+                
+                // Verificar que showEmailPhase1 esté disponible
+                if (typeof showEmailPhase1 === 'undefined') {
+                    console.error('showEmailPhase1 no está definido');
+                    alert('Error: La función showEmailPhase1 no está disponible. Por favor, recarga la página.');
+                    return;
+                }
+                
+                // Resetear datos para un nuevo email
+                emailModalData.email = emailModalData.clienteEmail;
+                emailModalData.aiPrompt = '';
+                emailModalData.subject = '';
+                emailModalData.body = '';
+                emailModalData.attachments = null;
+                
+                console.log('Llamando a showEmailPhase1');
+                // Abrir desde la fase 1
+                showEmailPhase1();
+            } catch (error) {
+                console.error('Error en openEmailModal:', error);
+                alert('Error al abrir el modal: ' + error.message);
+            }
+        };
         
-        // Asegurar que la función esté disponible globalmente
-        window.openEmailModal = openEmailModal;
+        // También definirla localmente para compatibilidad
+        const openEmailModal = window.openEmailModal;
+        
+        // Verificar inmediatamente que esté disponible
+        console.log('openEmailModal definido:', typeof window.openEmailModal);
         
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;

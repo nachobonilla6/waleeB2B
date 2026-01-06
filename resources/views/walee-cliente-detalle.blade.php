@@ -883,11 +883,15 @@
                 // Priorizar dirección, si no hay usar ciudad
                 $ubicacion = null;
                 $tipoUbicacion = '';
-                if (!empty($cliente->direccion)) {
-                    $ubicacion = $cliente->direccion;
+                
+                // Intentar obtener direccion de diferentes formas
+                $direccion = $cliente->getAttribute('direccion') ?? $cliente->direccion ?? $cliente->getAttribute('address') ?? $cliente->address ?? null;
+                
+                if (!empty($direccion)) {
+                    $ubicacion = trim($direccion);
                     $tipoUbicacion = 'Dirección';
                 } elseif (!empty($cliente->ciudad)) {
-                    $ubicacion = $cliente->ciudad;
+                    $ubicacion = trim($cliente->ciudad);
                     $tipoUbicacion = 'Ciudad';
                 }
             @endphp

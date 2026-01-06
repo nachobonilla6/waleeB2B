@@ -40,6 +40,18 @@ class Client extends Model
         'is_active' => 'boolean',
     ];
 
+    /**
+     * Accessor para direccion - asegura que sea accesible
+     */
+    public function getDireccionAttribute($value)
+    {
+        // Si direccion está vacío pero address tiene valor, usar address
+        if (empty($value) && !empty($this->attributes['address'] ?? null)) {
+            return $this->attributes['address'];
+        }
+        return $value;
+    }
+
     public function notes()
     {
         return $this->hasMany(Note::class);

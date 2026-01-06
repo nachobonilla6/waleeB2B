@@ -1928,6 +1928,41 @@
             console.error('Tipo actual:', typeof window.openEmailModal);
         }
         
+        // Toggle is_active
+        async function toggleIsActive(clientId, currentValue) {
+            console.log('toggleIsActive llamado con clientId:', clientId, 'currentValue:', currentValue);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const newValue = !currentValue;
+            
+            try {
+                const response = await fetch(`/walee-clientes-en-proceso/${clientId}/toggle-active`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        is_active: newValue
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Recargar la página para reflejar el cambio
+                    location.reload();
+                } else {
+                    alert('Error al actualizar el estado: ' + (data.message || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error en toggleIsActive:', error);
+                alert('Error de conexión: ' + error.message);
+            }
+        }
+        
+        // Asegurar que la función esté disponible globalmente
+        window.toggleIsActive = toggleIsActive;
+        
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;
             const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;

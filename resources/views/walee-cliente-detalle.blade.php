@@ -1944,10 +1944,11 @@
                 modalWidth = '95%';
             }
             
-            // Generar opciones de templates
+            // Generar opciones de templates - MOSTRAR TODOS, CON O SIN TIPO
             let templatesOptions = '<option value="">Seleccionar template (opcional)</option>';
             if (emailTemplates && emailTemplates.length > 0) {
                 emailTemplates.forEach(template => {
+                    // Mostrar el template siempre, con o sin tipo
                     const tipoLabel = template.tipo ? ` [${template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1)}]` : '';
                     templatesOptions += `<option value="${template.id}">${template.nombre}${tipoLabel}</option>`;
                 });

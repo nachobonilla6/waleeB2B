@@ -155,7 +155,13 @@
                             <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-1 line-clamp-1">
                                 {{ $template->nombre }}
                                 @if($template->tipo)
-                                    <span class="text-xs font-normal text-slate-500 dark:text-slate-400 ml-1">[{{ ucfirst($template->tipo) }}]</span>
+                                    <span class="text-xs font-medium ml-1 
+                                        @if($template->tipo === 'business') text-blue-600 dark:text-blue-400
+                                        @elseif($template->tipo === 'agricultura') text-green-600 dark:text-green-400
+                                        @elseif($template->tipo === 'b2b') text-purple-600 dark:text-purple-400
+                                        @elseif($template->tipo === 'b2c') text-orange-600 dark:text-orange-400
+                                        @else text-violet-600 dark:text-violet-400
+                                        @endif">[{{ ucfirst($template->tipo) }}]</span>
                                 @endif
                             </h3>
                             @if($template->tipo)

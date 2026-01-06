@@ -1918,6 +1918,10 @@
                             class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                             ${templatesOptions}
                         </select>
+                        <div id="template_tipo_display" class="mt-2 text-xs font-medium" style="display: none;">
+                            <span class="text-slate-600 dark:text-slate-400">Tipo: </span>
+                            <span id="template_tipo_value" class="font-semibold"></span>
+                        </div>
                     </div>
                     ` : ''}
                     
@@ -2283,11 +2287,16 @@
         
         function loadEmailTemplate(templateId) {
             const aiGenerateContainer = document.getElementById('ai_generate_container');
+            const tipoDisplay = document.getElementById('template_tipo_display');
             
             if (!templateId || !emailTemplates) {
                 // Si no hay template seleccionado, mostrar el botón de AI
                 if (aiGenerateContainer) {
                     aiGenerateContainer.style.display = 'block';
+                }
+                // Ocultar el tipo
+                if (tipoDisplay) {
+                    tipoDisplay.style.display = 'none';
                 }
                 return;
             }
@@ -2296,6 +2305,10 @@
             if (!template) {
                 if (aiGenerateContainer) {
                     aiGenerateContainer.style.display = 'block';
+                }
+                // Ocultar el tipo
+                if (tipoDisplay) {
+                    tipoDisplay.style.display = 'none';
                 }
                 return;
             }
@@ -2319,6 +2332,27 @@
             }
             if (bodyField) {
                 bodyField.value = emailModalData.body;
+            }
+            
+            // Mostrar el tipo del template
+            const tipoDisplay = document.getElementById('template_tipo_display');
+            const tipoValue = document.getElementById('template_tipo_value');
+            if (tipoDisplay && tipoValue) {
+                if (template.tipo) {
+                    const tipoText = template.tipo.charAt(0).toUpperCase() + template.tipo.slice(1);
+                    tipoValue.textContent = tipoText;
+                    // Aplicar color según el tipo
+                    tipoValue.className = 'font-semibold ' + (
+                        template.tipo === 'business' ? 'text-blue-600 dark:text-blue-400' :
+                        template.tipo === 'agricultura' ? 'text-green-600 dark:text-green-400' :
+                        template.tipo === 'b2b' ? 'text-purple-600 dark:text-purple-400' :
+                        template.tipo === 'b2c' ? 'text-orange-600 dark:text-orange-400' :
+                        'text-violet-600 dark:text-violet-400'
+                    );
+                    tipoDisplay.style.display = 'block';
+                } else {
+                    tipoDisplay.style.display = 'none';
+                }
             }
             
             // Ocultar el botón de generar con AI cuando hay template seleccionado

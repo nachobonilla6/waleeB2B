@@ -497,6 +497,9 @@
                                                     $fechaInicio = $evento->fecha_inicio instanceof \DateTime 
                                                         ? $evento->fecha_inicio 
                                                         : \Carbon\Carbon::parse($evento->fecha_inicio);
+                                                    $fechaFin = isset($evento->fecha_fin) 
+                                                        ? ($evento->fecha_fin instanceof \DateTime ? $evento->fecha_fin : \Carbon\Carbon::parse($evento->fecha_fin))
+                                                        : $fechaInicio->copy()->addHour();
                                                     $hora = $fechaInicio->format('H:i');
                                                     $titulo = $evento->titulo ?? 'Sin título';
                                                 @endphp
@@ -505,7 +508,7 @@
                                                         @if(isset($evento->is_tarea) && $evento->is_tarea)
                                                             onclick="event.preventDefault(); showTareaDetail('{{ $evento->tarea_id }}', '{{ addslashes($titulo) }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $evento->tarea_color ?? '#f59e0b' }}');"
                                                         @else
-                                                            onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
+                                                            onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', '{{ $fechaFin->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
                                                         @endif
                                                         class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 shadow-sm md:shadow-none {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
                                                         style="border-left: 4px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
@@ -1072,7 +1075,7 @@
             });
         }
         
-        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput, hasAccepted = false, hasDeclined = false, hasTentative = false) {
+        function showEventoDetail(eventoId, titulo, descripcion, fecha, ubicacion, fechaInput, fechaFinInput = null, hasAccepted = false, hasDeclined = false, hasTentative = false) {
             const isDarkMode = document.documentElement.classList.contains('dark');
             
             // Extraer información del invitado de la descripción
@@ -1092,7 +1095,7 @@
             if (eventoId) {
                 buttonsHtml = `
                     <div class="flex gap-2 mt-4">
-                        <button onclick="Swal.close(); showEditarEventoModal('${eventoId}', '${titulo.replace(/'/g, "\\'")}', '${(descripcion || '').replace(/'/g, "\\'")}', '${fechaInput}');" class="flex-1 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 dark:bg-blue-400/10 dark:hover:bg-blue-400/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 dark:border-blue-400/30 rounded-lg transition-all text-sm">
+                        <button onclick="Swal.close(); showEditarEventoModal('${eventoId}', '${titulo.replace(/'/g, "\\'")}', '${(descripcion || '').replace(/'/g, "\\'")}', '${fechaInput}', '${fechaFinInput || ''}');" class="flex-1 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 dark:bg-blue-400/10 dark:hover:bg-blue-400/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 dark:border-blue-400/30 rounded-lg transition-all text-sm">
                             Editar
                         </button>
                         <button onclick="Swal.close(); eliminarEvento('${eventoId}');" class="flex-1 px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 dark:bg-red-400/10 dark:hover:bg-red-400/20 text-red-600 dark:text-red-400 border border-red-500/30 dark:border-red-400/30 rounded-lg transition-all text-sm">
@@ -1225,8 +1228,15 @@
             });
         }
         
-        function showEditarEventoModal(eventoId, tituloActual, descripcionActual, fechaActual) {
+        function showEditarEventoModal(eventoId, tituloActual, descripcionActual, fechaActual, fechaFinActual = null) {
             const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            // Si no hay fecha de fin, calcular 2 horas después de la fecha de inicio
+            if (!fechaFinActual) {
+                const fechaInicioObj = new Date(fechaActual);
+                const fechaFinObj = new Date(fechaInicioObj.getTime() + (2 * 60 * 60 * 1000));
+                fechaFinActual = new Date(fechaFinObj.getTime() - (fechaFinObj.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            }
             
             // Generar opciones del select de clientes
             const clientesOptions = `
@@ -1262,8 +1272,13 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora</label>
-                                <input type="datetime-local" id="editar_fecha" value="${fechaActual}" required
+                                <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora de Inicio</label>
+                                <input type="datetime-local" id="editar_fecha_inicio" value="${fechaActual}" required
+                                    class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium ${isDarkMode ? 'text-slate-300' : 'text-slate-700'} mb-1">Fecha y Hora de Fin</label>
+                                <input type="datetime-local" id="editar_fecha_fin" value="${fechaFinActual}" required
                                     class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none">
                             </div>
                             <div class="pt-2">
@@ -1296,6 +1311,16 @@
                         swalContainer.appendChild(closeBtn);
                     }
                     
+                    // Actualizar fecha de fin cuando cambie la fecha de inicio
+                    const fechaInicioInput = document.getElementById('editar_fecha_inicio');
+                    const fechaFinInput = document.getElementById('editar_fecha_fin');
+                    
+                    fechaInicioInput.addEventListener('change', function() {
+                        const inicio = new Date(this.value);
+                        const fin = new Date(inicio.getTime() + (2 * 60 * 60 * 1000));
+                        fechaFinInput.value = new Date(fin.getTime() - (fin.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    });
+                    
                     // Seleccionar el cliente si existe en la descripción
                     if (emailClienteSeleccionado) {
                         const select = document.getElementById('editar_cliente_email');
@@ -1309,14 +1334,25 @@
                     if (guardarBtn) {
                         guardarBtn.onclick = async () => {
                             const titulo = document.getElementById('editar_titulo').value;
-                            const fecha = document.getElementById('editar_fecha').value;
+                            const fechaInicio = document.getElementById('editar_fecha_inicio').value;
+                            const fechaFin = document.getElementById('editar_fecha_fin').value;
                             const clienteEmail = document.getElementById('editar_cliente_email').value;
                             
-                            if (!titulo || !fecha) {
+                            if (!titulo || !fechaInicio || !fechaFin) {
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Campos requeridos',
-                                    text: 'Título y fecha son requeridos',
+                                    text: 'Título, fecha de inicio y fecha de fin son requeridos',
+                                    confirmButtonColor: '#8b5cf6'
+                                });
+                                return;
+                            }
+                            
+                            if (new Date(fechaFin) <= new Date(fechaInicio)) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Fecha inválida',
+                                    text: 'La fecha de fin debe ser posterior a la fecha de inicio',
                                     confirmButtonColor: '#8b5cf6'
                                 });
                                 return;
@@ -1336,7 +1372,8 @@
                                     body: JSON.stringify({
                                         evento_id: eventoId,
                                         titulo: titulo,
-                                        fecha_inicio: fecha,
+                                        fecha_inicio: fechaInicio,
+                                        fecha_fin: fechaFin,
                                         descripcion: descripcion,
                                         invitado_email: clienteEmail,
                                     }),

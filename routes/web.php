@@ -1588,6 +1588,7 @@ Route::put('/walee-calendario-aplicaciones/actualizar', function (\Illuminate\Ht
             'evento_id' => 'required|string',
             'titulo' => 'required|string|max:255',
             'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'nullable|date|after:fecha_inicio',
             'descripcion' => 'nullable|string',
             'invitado_email' => 'nullable|email',
         ]);
@@ -1597,7 +1598,10 @@ Route::put('/walee-calendario-aplicaciones/actualizar', function (\Illuminate\Ht
         $cita->google_event_id = $validated['evento_id'];
         $cita->titulo = $validated['titulo'];
         $cita->fecha_inicio = \Carbon\Carbon::parse($validated['fecha_inicio']);
-        $cita->fecha_fin = $cita->fecha_inicio->copy()->addHour();
+        // Si viene fecha_fin, usarla; si no, calcular 2 horas después
+        $cita->fecha_fin = !empty($validated['fecha_fin']) 
+            ? \Carbon\Carbon::parse($validated['fecha_fin'])
+            : $cita->fecha_inicio->copy()->addHours(2);
         $cita->descripcion = $validated['descripcion'] ?? null;
         
         // Si hay un email de invitado, agregarlo a invitados_emails

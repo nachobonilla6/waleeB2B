@@ -189,6 +189,8 @@
             
             // Obtener información del calendario en uso
             $configuredCalendarId = config('services.google.calendar_id', 'primary');
+            $calendarIdInUse = $googleService->getCalendarId();
+            $authorizedEmail = $googleService->getAuthorizedEmail();
             
             // Buscar el archivo de credenciales en diferentes ubicaciones
             $credentialsPath = $googleService->findCredentialsFile();
@@ -209,6 +211,8 @@
             
             $calendarInfo = [
                 'configured_id' => $configuredCalendarId,
+                'calendar_id_in_use' => $calendarIdInUse,
+                'authorized_email' => $authorizedEmail,
                 'credentials_path' => $credentialsPath,
                 'credentials_exists' => $credentialsPath !== null,
                 'possible_paths' => array_filter($possiblePaths),

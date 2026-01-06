@@ -154,6 +154,8 @@
             
             // Obtener información del calendario en uso
             $configuredCalendarId = config('services.google.calendar_id', 'primary');
+            $calendarIdInUse = $googleService->getCalendarId();
+            $authorizedEmail = $googleService->getAuthorizedEmail();
             
             // Buscar el archivo de credenciales en diferentes ubicaciones
             $credentialsPath = $googleService->findCredentialsFile();
@@ -173,6 +175,8 @@
             
             $calendarInfo = [
                 'configured_id' => $configuredCalendarId,
+                'calendar_id_in_use' => $calendarIdInUse,
+                'authorized_email' => $authorizedEmail,
                 'credentials_path' => $credentialsPath,
                 'credentials_exists' => $credentialsPath !== null,
                 'possible_paths' => array_filter($possiblePaths),
@@ -249,9 +253,12 @@
                         </svg>
                         <span>
                             <strong>Calendario en uso:</strong> 
-                            {{ $calendarInfo['configured_id'] === 'primary' ? 'Calendario Principal (primary)' : $calendarInfo['configured_id'] }}
-                            @if($calendarInfo['configured_id'] === 'primary')
+                            {{ $calendarInfo['calendar_id_in_use'] === 'primary' ? 'Calendario Principal (primary)' : $calendarInfo['calendar_id_in_use'] }}
+                            @if($calendarInfo['calendar_id_in_use'] === 'primary')
                                 <span class="text-xs opacity-75">(o WEBSOLUTIONS-TEST si existe)</span>
+                            @endif
+                            @if($calendarInfo['authorized_email'])
+                                <br><strong>Cuenta:</strong> {{ $calendarInfo['authorized_email'] }}
                             @endif
                         </span>
                     </div>

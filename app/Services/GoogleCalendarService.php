@@ -284,6 +284,64 @@ class GoogleCalendarService
     }
 
     /**
+     * Obtener el email de la cuenta autorizada
+     */
+    public function getAuthorizedEmail(): ?string
+    {
+        try {
+            $client = $this->getClient();
+            if (!$client) {
+                return null;
+            }
+
+            // Obtener información del token
+            $token = $this->getStoredAccessToken();
+            if (!$token) {
+                return null;
+            }
+
+            // Si el token tiene información del usuario, usarla
+            if (isset($token['id_token'])) {
+                // Decodificar el ID token para obtener el email
+                $parts = explode('.', $token['id_token']);
+                if (count($parts) === 3) {
+                    $payload = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $parts[1])), true);
+                    if (isset($payload['email'])) {
+                        return $payload['email'];
+                    }
+                }
+            }
+
+            // Si no hay id_token, intentar obtener el email desde el servicio de Calendar
+            $service = $this->getService();
+            if ($service) {
+                // Obtener información del calendario primario que incluye el email del propietario
+                $calendar = $service->calendars->get('primary');
+                if ($calendar && method_exists($calendar, 'getId')) {
+                    // El ID del calendario primario es el email del propietario
+                    $calendarId = $calendar->getId();
+                    if (filter_var($calendarId, FILTER_VALIDATE_EMAIL)) {
+                        return $calendarId;
+                    }
+                }
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::debug('No se pudo obtener el email autorizado: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Obtener el ID del calendario en uso
+     */
+    public function getCalendarId(): string
+    {
+        return $this->calendarId;
+    }
+
+    /**
      * Obtener servicio de Google Calendar
      */
     protected function getService(): ?Google_Service_Calendar

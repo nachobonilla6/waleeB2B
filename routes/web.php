@@ -1290,6 +1290,10 @@ Route::get('/walee-calendario-aplicaciones', function () {
     return view('walee-calendario-aplicaciones');
 })->middleware(['auth'])->name('walee.calendario.aplicaciones');
 
+Route::get('/walee-calendario-aplicaciones/mensual', function () {
+    return view('walee-calendario-aplicaciones-mensual');
+})->middleware(['auth'])->name('walee.calendario.aplicaciones.mensual');
+
 // Ruta para autenticar Google Calendar desde calendario de aplicaciones
 Route::get('/google-calendar/auth', function () {
     $service = new \App\Services\GoogleCalendarService();

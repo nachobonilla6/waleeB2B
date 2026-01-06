@@ -1867,15 +1867,23 @@
         }
         
         function openEmailModal() {
-            // Resetear datos
-            emailModalData.email = emailModalData.clienteEmail;
-            emailModalData.aiPrompt = '';
-            emailModalData.subject = '';
-            emailModalData.body = '';
-            emailModalData.attachments = null;
-            
-            showEmailPhase1();
+            try {
+                // Resetear datos
+                emailModalData.email = emailModalData.clienteEmail;
+                emailModalData.aiPrompt = '';
+                emailModalData.subject = '';
+                emailModalData.body = '';
+                emailModalData.attachments = null;
+                
+                showEmailPhase1();
+            } catch (error) {
+                console.error('Error al abrir modal de email:', error);
+                alert('Error al abrir el modal de email. Por favor, recarga la página.');
+            }
         }
+        
+        // Asegurar que la función esté disponible globalmente
+        window.openEmailModal = openEmailModal;
         
         function showEmailPhase1() {
             const isMobile = window.innerWidth < 640;

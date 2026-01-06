@@ -1032,6 +1032,25 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Inicializando configuración desde BD...');
             
+            // Agregar event listener al botón de config
+            const configButton = document.getElementById('configButton');
+            if (configButton) {
+                configButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Botón Config clickeado, llamando openConfigModal...');
+                    if (typeof window.openConfigModal === 'function') {
+                        window.openConfigModal();
+                    } else {
+                        console.error('openConfigModal no está disponible');
+                        alert('Error: La función de configuración no está disponible. Por favor, recarga la página.');
+                    }
+                });
+                console.log('Event listener agregado al botón Config');
+            } else {
+                console.error('Botón Config no encontrado');
+            }
+            
             // Actualizar textos de recurrencia si existen
             const configRecurrenciaText = document.getElementById('configRecurrenciaText');
             if (configRecurrenciaText && recurrenciaSeleccionada) {

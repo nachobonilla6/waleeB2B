@@ -117,14 +117,12 @@
                         </svg>
                         <span class="hidden sm:inline">Alpha</span>
                     </a>
-                    @if(!isset($clienteId) || !$clienteId)
                     <button onclick="openNewEmailModal()" class="px-2 sm:px-3 py-1.5 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow" title="Nuevo Email">
                         <svg class="w-4 h-4 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         <span class="hidden sm:inline">Nuevo</span>
                     </button>
-                    @endif
                     <button onclick="window.open('https://mail.google.com', '_blank')" class="px-2 sm:px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow" title="Gmail">
                         <svg class="w-4 h-4 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>

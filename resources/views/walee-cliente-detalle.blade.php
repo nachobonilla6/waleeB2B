@@ -584,7 +584,7 @@
                             </a>
                             
                             <!-- Emails Enviados -->
-                            <a href="{{ route('walee.emails.enviados') }}?search={{ urlencode($cliente->email ?? '') }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
+                            <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -797,7 +797,7 @@
                                 </a>
                                 
                                 <!-- Emails Enviados -->
-                                <a href="{{ route('walee.emails.enviados') }}?search={{ urlencode($cliente->email ?? '') }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
+                                <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors cursor-pointer">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>

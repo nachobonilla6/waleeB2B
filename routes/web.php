@@ -2203,11 +2203,15 @@ Route::get('/walee-emails/pending', function (\Illuminate\Http\Request $request)
 
 Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request) {
     $searchQuery = $request->get('search', '');
+    $clienteId = $request->get('cliente_id');
     
     $query = \App\Models\PropuestaPersonalizada::with('cliente');
     
-    // Aplicar búsqueda si existe
-    if ($searchQuery) {
+    // Filtrar por cliente_id si se proporciona (prioridad sobre search)
+    if ($clienteId) {
+        $query->where('cliente_id', $clienteId);
+    } elseif ($searchQuery) {
+        // Aplicar búsqueda si existe y no hay cliente_id
         $query->where(function($q) use ($searchQuery) {
             $q->where('subject', 'like', '%' . $searchQuery . '%')
               ->orWhere('email', 'like', '%' . $searchQuery . '%')

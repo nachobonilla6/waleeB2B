@@ -156,19 +156,18 @@
             $configuredCalendarId = config('services.google.calendar_id', 'primary');
             
             // Buscar el archivo de credenciales en diferentes ubicaciones
-            $credentialsPath = null;
-            $googleService = new GoogleCalendarService();
             $credentialsPath = $googleService->findCredentialsFile();
             
             // Si no se encuentra, obtener todas las rutas posibles para el mensaje de error
+            $possiblePaths = [
+                config('services.google.credentials_path'),
+                storage_path('app/google-credentials.json'),
+                base_path('storage/app/google-credentials.json'),
+                base_path('google-credentials.json'),
+                __DIR__ . '/../../storage/app/google-credentials.json',
+            ];
+            
             if (!$credentialsPath) {
-                $possiblePaths = [
-                    config('services.google.credentials_path'),
-                    storage_path('app/google-credentials.json'),
-                    base_path('storage/app/google-credentials.json'),
-                    base_path('google-credentials.json'),
-                    __DIR__ . '/../../storage/app/google-credentials.json',
-                ];
                 $credentialsError = 'No encontrado en ninguna de estas ubicaciones: ' . implode(', ', array_filter($possiblePaths));
             }
             

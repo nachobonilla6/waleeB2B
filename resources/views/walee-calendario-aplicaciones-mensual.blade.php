@@ -392,13 +392,20 @@
                                     $titulo = $evento->titulo ?? 'Sin título';
                                 @endphp
                                 <button 
-                                    onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
-                                    class="w-full text-left px-1.5 py-0.5 rounded text-xs sm:text-sm font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 truncate"
-                                    style="border-left: 2px solid #8b5cf6;"
+                                    @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                        onclick="event.preventDefault(); window.location.href='{{ route('walee.tarea.detalle', $evento->tarea_id) }}';"
+                                    @else
+                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
+                                    @endif
+                                    class="w-full text-left px-1.5 py-0.5 rounded text-xs sm:text-sm font-medium transition-all hover:opacity-80 active:scale-95 truncate {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
+                                    style="border-left: 2px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
                                     title="{{ $titulo }}"
                                 >
                                     <div class="flex items-center gap-1">
                                         <span class="text-[9px] sm:text-[10px]">{{ $hora }}</span>
+                                        @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                            <span class="text-[8px] px-1 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300 mr-0.5">T</span>
+                                        @endif
                                         <span class="truncate font-semibold">{{ $titulo }}</span>
                                     </div>
                                 </button>

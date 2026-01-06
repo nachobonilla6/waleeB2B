@@ -178,6 +178,45 @@
             \Log::error('Error obteniendo eventos de Google Calendar: ' . $e->getMessage());
         }
         
+        // Obtener tareas con fecha_hora en el rango de la semana
+        try {
+            $tareas = \App\Models\Tarea::whereNotNull('fecha_hora')
+                ->whereBetween('fecha_hora', [$inicioSemana->copy()->startOfDay(), $finSemana->copy()->endOfDay()])
+                ->where('estado', 'pending') // Solo tareas pendientes
+                ->get();
+            
+            foreach ($tareas as $tarea) {
+                $fechaKey = $tarea->fecha_hora->format('Y-m-d');
+                if (!$eventos->has($fechaKey)) {
+                    $eventos->put($fechaKey, collect());
+                }
+                
+                // Convertir tarea a formato de evento
+                $evento = (object) [
+                    'id' => 'tarea_' . $tarea->id,
+                    'titulo' => $tarea->texto,
+                    'descripcion' => null,
+                    'fecha_inicio' => $tarea->fecha_hora,
+                    'fecha_fin' => $tarea->fecha_hora->copy()->addHour(),
+                    'ubicacion' => null,
+                    'google_event_id' => null,
+                    'from_google' => false,
+                    'is_tarea' => true,
+                    'tarea_id' => $tarea->id,
+                    'tarea_estado' => $tarea->estado,
+                    'tarea_color' => $tarea->color ?? '#8b5cf6',
+                    'has_accepted' => false,
+                    'has_declined' => false,
+                    'has_tentative' => false,
+                    'attendees' => [],
+                ];
+                
+                $eventos->get($fechaKey)->push($evento);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error obteniendo tareas: ' . $e->getMessage());
+        }
+        
         // Verificar si está autorizado y obtener información del calendario
         $isAuthorized = false;
         $calendarInfo = null;
@@ -445,15 +484,21 @@
                                                 @endphp
                                                 <div class="group relative">
                                                     <button 
-                                                        onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
-                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 shadow-sm md:shadow-none"
-                                                        style="border-left: 4px solid #8b5cf6;"
+                                                        @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                                            onclick="event.preventDefault(); window.location.href='{{ route('walee.tarea.detalle', $evento->tarea_id) }}';"
+                                                        @else
+                                                            onclick="event.preventDefault(); showEventoDetail('{{ $evento->google_event_id ?? '' }}', '{{ addslashes($titulo) }}', '{{ addslashes($evento->descripcion ?? '') }}', '{{ $fechaInicio->format('Y-m-d H:i') }}', '{{ $evento->ubicacion ?? '' }}', '{{ $fechaInicio->format('Y-m-d\TH:i') }}', {{ isset($evento->has_accepted) && $evento->has_accepted ? 'true' : 'false' }}, {{ isset($evento->has_declined) && $evento->has_declined ? 'true' : 'false' }}, {{ isset($evento->has_tentative) && $evento->has_tentative ? 'true' : 'false' }});"
+                                                        @endif
+                                                        class="w-full text-left px-3 py-2.5 md:px-2 md:py-1.5 rounded-lg md:rounded text-sm md:text-xs font-medium transition-all hover:opacity-80 active:scale-95 shadow-sm md:shadow-none {{ isset($evento->is_tarea) && $evento->is_tarea ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300' }}"
+                                                        style="border-left: 4px solid {{ isset($evento->is_tarea) && $evento->is_tarea ? ($evento->tarea_color ?? '#f59e0b') : '#8b5cf6' }};"
                                                         title="{{ $titulo }}"
                                                     >
                                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-1.5">
                                                         <div class="flex items-center justify-between md:justify-start gap-2">
                                                             <span class="text-xs md:text-[10px] font-semibold">{{ $hora }}</span>
-                                                            @if(isset($evento->from_google) && $evento->from_google)
+                                                            @if(isset($evento->is_tarea) && $evento->is_tarea)
+                                                                <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-amber-200 dark:bg-amber-800/50 text-amber-700 dark:text-amber-300">Tarea</span>
+                                                            @elseif(isset($evento->from_google) && $evento->from_google)
                                                                 <span class="text-[9px] font-medium px-1.5 py-0.5 rounded bg-blue-200 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300">Google</span>
                                                             @endif
                                                             @if(isset($evento->has_accepted) && $evento->has_accepted)

@@ -2700,12 +2700,9 @@ Route::get('/walee-emails/clientes-proceso', function (\Illuminate\Http\Request 
     // Obtener todos los clientes en proceso (excluyendo activos)
     $query = \App\Models\Client::where('estado', '!=', 'activo');
     
-    // Aplicar filtro por idioma si existe
     if ($idiomaFilter) {
         $query->where('idioma', $idiomaFilter);
     }
-    
-    // Aplicar búsqueda si existe
     if ($searchQuery) {
         $query->where(function($q) use ($searchQuery) {
             $q->where('name', 'like', '%' . $searchQuery . '%')
@@ -2723,6 +2720,29 @@ Route::get('/walee-emails/clientes-proceso', function (\Illuminate\Http\Request 
     
     return view('walee-emails-clientes-proceso', compact('clientesProceso', 'searchQuery', 'idiomaFilter'));
 })->middleware(['auth'])->name('walee.emails.clientes.proceso');
+
+Route::get('/walee-emails/all-clients', function (\Illuminate\Http\Request $request) {
+    $searchQuery = $request->get('search', '');
+    
+    $query = \App\Models\Cliente::query();
+    
+    if ($searchQuery) {
+        $query->where(function($q) use ($searchQuery) {
+            $q->where('nombre_empresa', 'like', '%' . $searchQuery . '%')
+              ->orWhere('correo', 'like', '%' . $searchQuery . '%')
+              ->orWhere('url_sitio', 'like', '%' . $searchQuery . '%');
+        });
+    }
+    
+    $clientesProceso = $query->withCount('facturas')
+        ->orderBy('created_at', 'desc')
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('id', 'desc')
+        ->paginate(10)
+        ->appends(request()->query());
+    
+    return view('walee-emails-all-clients', compact('clientesProceso', 'searchQuery'));
+})->middleware(['auth'])->name('walee.emails.all.clients');
 
 Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request) {
     $searchQuery = $request->get('search', '');

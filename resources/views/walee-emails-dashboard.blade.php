@@ -369,7 +369,7 @@
                         </a>
                     </div>
                     
-                    <!-- Clientes en Proceso y Pending - Enlaces -->
+                    <!-- Clientes en Proceso, All Clients y Pending - Enlaces -->
                     <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1.5">
                         <!-- Todos los clientes en proceso -->
                         <a href="{{ route('walee.emails.clientes.proceso') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all group">
@@ -387,6 +387,27 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ number_format($totalClientesEnProceso) }}</span>
                                 <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </a>
+                        
+                        <!-- Todos los clientes (tabla clientes) -->
+                        <a href="{{ route('walee.emails.all.clients') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all group">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-xs text-slate-900 dark:text-white">Todos los Clientes (tabla clientes)</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">Ver lista completa</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
                             </div>

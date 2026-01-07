@@ -82,30 +82,8 @@
                     }
                 }
             @endphp
-            
-            <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
-                @foreach($worldClockDefaults as $slotIndex => $defaultCity)
-                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $slotIndex }}">
-                        <div class="text-center">
-                            <div class="flex items-center justify-start gap-1 mb-1">
-                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
-                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-transparent rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-transparent">
-                                @foreach($worldClockOptions as $cityKey => $cityLabel)
-                                    <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
-                                        {{ $cityLabel }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            </div>
-                            <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
-                            <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
 
-            <!-- World Map Widget (debajo de los relojes) -->
+            <!-- World Map Widget (arriba de los relojes) -->
             <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
                 <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
                     <!-- Mapa mundial con imagen de fondo integrada en SVG para mantener alineación perfecta -->
@@ -224,6 +202,28 @@
                         </g>
                     </svg>
                 </div>
+            </div>
+            
+            <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
+                @foreach($worldClockDefaults as $slotIndex => $defaultCity)
+                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $slotIndex }}">
+                        <div class="text-center">
+                            <div class="flex items-center justify-start gap-1 mb-1">
+                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
+                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-transparent rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-transparent">
+                                @foreach($worldClockOptions as $cityKey => $cityLabel)
+                                    <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
+                                        {{ $cityLabel }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                            <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

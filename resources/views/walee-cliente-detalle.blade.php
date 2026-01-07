@@ -911,6 +911,19 @@
                                 </div>
                                 <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
                             </a>
+                            
+                            <!-- Extractor de Clientes -->
+                            <a href="{{ route('walee.bot.alpha') }}" class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Extractor</span>
+                                </div>
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 
@@ -1158,6 +1171,19 @@
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
                                     </div>
                                     <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
+                                </a>
+                                
+                                <!-- Extractor de Clientes -->
+                                <a href="{{ route('walee.bot.alpha') }}" class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                        </svg>
+                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Extractor</span>
+                                    </div>
+                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
                                 </a>
                                         </div>
                                         </div>

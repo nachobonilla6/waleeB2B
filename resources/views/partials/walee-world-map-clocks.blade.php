@@ -84,7 +84,13 @@
             @endphp
 
             <!-- World Map Widget (arriba de los relojes) -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
+            <h3 class="text-base font-semibold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Usos Horarios y Mapa Mundial
+            </h3>
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative mb-6" style="height: 450px; position: relative;">
                 <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
                     <!-- Mapa mundial con imagen de fondo integrada en SVG para mantener alineación perfecta -->
                     <svg id="worldMapSvg" viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10;" class="world-map-svg" preserveAspectRatio="none">
@@ -208,7 +214,7 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6">
                 @foreach($worldClockDefaults as $slotIndex => $defaultCity)
                     <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $slotIndex }}">
-                        <div class="text-center">
+                    <div class="text-center">
                             <div class="flex items-center justify-start gap-1 mb-1">
                                 <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
                                 <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-transparent rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-transparent">
@@ -218,10 +224,10 @@
                                     </option>
                                 @endforeach
                             </select>
-                            </div>
+                    </div>
                             <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
                             <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
-                        </div>
+                </div>
                     </div>
                 @endforeach
             </div>
@@ -280,13 +286,13 @@
                     const now = new Date(new Date().toLocaleString('en-US', { timeZone: config.tz }));
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
-
+                    
                     const options = { month: 'short', day: 'numeric' };
                     const dateStr = now.toLocaleDateString('en-US', options);
 
                     const clockEl = card.querySelector('.world-clock-time');
                     const dateEl = card.querySelector('.world-clock-date');
-
+                    
                     if (clockEl) {
                         clockEl.textContent = `${hours}:${minutes}`;
                     }
@@ -396,7 +402,7 @@
                 }
             });
         }
-
+        
         // Actualizar relojes al cambiar una ciudad en cualquier tarjeta
         document.addEventListener('change', function (event) {
             if (event.target.classList.contains('world-clock-select')) {

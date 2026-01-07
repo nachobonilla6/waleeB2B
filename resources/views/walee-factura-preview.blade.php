@@ -23,7 +23,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 12px;
-            border-bottom: 2px solid #D59F3B;
+            border-bottom: 2px solid #8b5cf6;
             padding-bottom: 8px;
         }
         .header-left {
@@ -35,7 +35,7 @@
         .logo {
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, #D59F3B 0%, #C78F2E 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -55,7 +55,7 @@
         .factura-number-top {
             font-size: 16pt;
             font-weight: bold;
-            color: #D59F3B;
+            color: #8b5cf6;
             text-align: right;
             margin-bottom: 8px;
             padding-bottom: 6px;
@@ -89,7 +89,7 @@
             background: #f9fafb;
             padding: 10px;
             border-radius: 6px;
-            border-left: 3px solid #D59F3B;
+            border-left: 3px solid #8b5cf6;
             flex: 1;
             min-width: 0;
             display: flex;
@@ -97,7 +97,7 @@
         }
         .datos-title {
             font-weight: bold;
-            color: #D59F3B;
+            color: #8b5cf6;
             margin-bottom: 6px;
             font-size: 10pt;
             line-height: 1.2;
@@ -155,7 +155,7 @@
             margin-bottom: 12px;
         }
         thead {
-            background-color: #D59F3B;
+            background-color: #8b5cf6;
             color: white;
         }
         th {
@@ -223,7 +223,7 @@
             font-size: 9pt;
         }
         .totals-row.total {
-            background-color: #D59F3B;
+            background-color: #8b5cf6;
             color: white;
             padding: 8px 12px;
             border-radius: 4px;
@@ -238,14 +238,14 @@
         .pagos-title {
             font-weight: bold;
             font-size: 10pt;
-            color: #D59F3B;
+            color: #8b5cf6;
             margin-bottom: 6px;
         }
         .terminos {
             margin-top: 15px;
             padding: 10px;
             background: #f9fafb;
-            border-left: 3px solid #D59F3B;
+            border-left: 3px solid #8b5cf6;
             border-radius: 4px;
             font-size: 8pt;
             color: #555;
@@ -511,7 +511,7 @@
         <div class="header-left">
             <div class="logo">WS</div>
             <div>
-                <div style="font-weight: bold; font-size: 11pt; color: #D59F3B;">WebSolutions.Work</div>
+                <div style="font-weight: bold; font-size: 11pt; color: #8b5cf6;">WebSolutions.Work</div>
                 <div style="font-size: 8pt; color: #666;">
                     Jaco, Puntarenas, Costa Rica · Tel: +506 8806 1829
                 </div>

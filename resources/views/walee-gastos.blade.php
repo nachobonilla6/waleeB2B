@@ -350,13 +350,19 @@
                             @else
                                 <div class="space-y-3">
                                     @foreach($gastos as $gasto)
+                                        @php
+                                            $estaVencido = false;
+                                            if ($gasto->proxima_fecha_pago && !$gasto->pagado) {
+                                                $estaVencido = $gasto->proxima_fecha_pago->isPast();
+                                            }
+                                        @endphp
                                         <div 
-                                            class="gasto-item bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border border-slate-200 dark:border-slate-600 hover:border-orange-400 dark:hover:border-orange-500/30 transition-all"
+                                            class="gasto-item bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border {{ $estaVencido ? 'border-red-400 dark:border-red-500/50' : 'border-slate-200 dark:border-slate-600' }} hover:border-orange-400 dark:hover:border-orange-500/30 transition-all"
                                             data-gasto-id="{{ $gasto->id }}"
                                         >
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="flex-1 min-w-0">
-                                                    <div class="flex items-center gap-2 mb-2">
+                                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
                                                         <h4 class="font-semibold text-slate-900 dark:text-white">{{ $gasto->nombre }}</h4>
                                                         <span class="px-2 py-0.5 text-xs font-medium rounded-md 
                                                             {{ $gasto->tipo === 'mensual' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' }}">
@@ -366,6 +372,10 @@
                                                             <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
                                                                 Pagado
                                                             </span>
+                                                        @elseif($estaVencido)
+                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 animate-pulse">
+                                                                Vencido
+                                                            </span>
                                                         @endif
                                                     </div>
                                                     
@@ -373,10 +383,15 @@
                                                         <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">{{ $gasto->descripcion }}</p>
                                                     @endif
                                                     
-                                                    <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                                                    <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
                                                         <span class="font-semibold text-slate-900 dark:text-white">₡{{ number_format($gasto->total, 2, '.', ',') }}</span>
                                                         @if($gasto->proxima_fecha_pago)
-                                                            <span>Próximo pago: {{ $gasto->proxima_fecha_pago->format('d/m/Y') }}</span>
+                                                            <span class="{{ $estaVencido ? 'text-red-600 dark:text-red-400 font-semibold' : '' }}">
+                                                                Próximo pago: {{ $gasto->proxima_fecha_pago->format('d/m/Y') }}
+                                                                @if($estaVencido)
+                                                                    ({{ $gasto->proxima_fecha_pago->diffForHumans() }})
+                                                                @endif
+                                                            </span>
                                                         @endif
                                                         @if($gasto->link)
                                                             <a href="{{ $gasto->link }}" target="_blank" class="text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1">

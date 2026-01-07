@@ -753,9 +753,22 @@
         </div>
     </div>
     
-    <div class="page-number">
-        {{ $t['page'] ?? 'Page' }} 1 {{ $t['of'] ?? 'of' }} 1
-    </div>
+    @php
+        $pageTextTemplate = ($t['page'] ?? 'Page') . ' {PAGE_NUM} ' . ($t['of'] ?? 'of') . ' {PAGE_COUNT}';
+    @endphp
+    
+    <script type="text/php">
+        if (isset($pdf)) {
+            $font = $fontMetrics->get_font('DejaVu Sans', 'normal');
+            $size = 8;
+            $color = [0.6, 0.6, 0.6];
+            $text = '{{ $pageTextTemplate }}';
+            $width = $pdf->get_width();
+            $y = $pdf->get_height() - 24;
+            $x = $width - 120;
+            $pdf->page_text($x, $y, $text, $font, $size, $color);
+        }
+    </script>
     
 </body>
 </html>

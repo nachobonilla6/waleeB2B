@@ -317,6 +317,12 @@
             border-top: 1px solid #cbd5e1;
             padding-top: 4px;
         }
+        .signature-date-line {
+            display: inline-block;
+            min-width: 90px;
+            border-bottom: 1px solid #cbd5e1;
+            margin-left: 4px;
+        }
     </style>
 </head>
 <body>
@@ -732,7 +738,7 @@
             <div>{{ $t['client_signature'] ?? 'Client signature' }}</div>
             <div style="margin-top: 4px; text-align: right; font-size: 7pt; color: #6b7280;">
                 {{ $t['signature_date'] ?? 'Date' }}:
-                {{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}
+                <span class="signature-date-line">&nbsp;</span>
             </div>
         </div>
     </div>

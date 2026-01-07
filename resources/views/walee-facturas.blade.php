@@ -141,6 +141,7 @@
                     <div class="mb-2 sm:mb-3">
                         <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Facturado Este Mes</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalFacturadoEsteMes, 2, '.', ',') }}</p>
+                        <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">${{ number_format($totalFacturadoEsteMes / $tasaCambio, 2, '.', ',') }} USD</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,6 +163,7 @@
                     <div class="mb-2 sm:mb-3">
                         <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Gastos Este Mes</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
+                        <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">${{ number_format(($totalGastosEsteMes ?? 0) / $tasaCambio, 2, '.', ',') }} USD</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-orange-600 dark:text-orange-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,6 +213,9 @@
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Diferencia</p>
                         <p class="text-xl sm:text-2xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                             {{ $diferencia >= 0 ? '+' : '' }}₡{{ number_format($diferencia, 2, '.', ',') }}
+                        </p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
+                            ${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }} USD
                         </p>
                     </div>
                     <div class="text-center sm:text-left">

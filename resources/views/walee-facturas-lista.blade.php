@@ -1292,7 +1292,7 @@
                 reverseButtons: true,
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                preConfirm: async () => {
+                preConfirm: () => {
                     // Validar que haya items
                     if (!facturaData.items || facturaData.items.length === 0) {
                         Swal.showValidationMessage('Debe agregar al menos un item');
@@ -1307,110 +1307,117 @@
                     
                     // Recalcular totales antes de enviar
                     calcularTotalesModal();
-                    
-                    Swal.fire({
-                        title: 'Creando factura...',
-                        allowOutsideClick: false,
-                        background: isDarkMode() ? '#1e293b' : '#ffffff',
-                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-                    
-                    const formData = new FormData();
-                    formData.append('_token', csrfToken);
-                    formData.append('cliente_id', facturaData.cliente_id);
-                    formData.append('correo', facturaData.correo);
-                    formData.append('numero_factura', facturaData.numero_factura);
-                    formData.append('serie', facturaData.serie);
-                    formData.append('fecha_emision', facturaData.fecha_emision);
-                    formData.append('fecha_vencimiento', facturaData.fecha_vencimiento);
-                    formData.append('estado', facturaData.estado);
-                    formData.append('concepto', facturaData.concepto);
-                    formData.append('concepto_pago', facturaData.concepto_pago);
-                    formData.append('subtotal', facturaData.subtotal);
-                    formData.append('total', facturaData.total);
-                    formData.append('monto_pagado', facturaData.monto_pagado);
-                    formData.append('metodo_pago', facturaData.metodo_pago || 'sin_especificar');
-                    formData.append('descuento_antes_impuestos', facturaData.descuento_antes_impuestos);
-                    formData.append('descuento_despues_impuestos', facturaData.descuento_despues_impuestos);
-                    formData.append('numero_orden', facturaData.numero_orden);
-                    formData.append('notas', facturaData.notas);
-                    
-                    if (facturaData.archivos) {
-                        Array.from(facturaData.archivos).forEach(file => {
-                            formData.append('archivos[]', file);
-                        });
+                    return true;
+                }
+            }).then(async (result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 8;
+                    mostrarFase8();
+                    return;
+                }
+                
+                if (!result.isConfirmed) {
+                    return;
+                }
+                
+                // Enviar factura
+                Swal.fire({
+                    title: 'Creando factura...',
+                    allowOutsideClick: false,
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    didOpen: () => {
+                        Swal.showLoading();
                     }
-                    
-                    facturaData.items.forEach((item, index) => {
-                        formData.append(`items[${index}][descripcion]`, item.descripcion);
-                        formData.append(`items[${index}][cantidad]`, item.cantidad);
-                        formData.append(`items[${index}][precio_unitario]`, item.precio_unitario);
-                        formData.append(`items[${index}][subtotal]`, item.subtotal);
-                        formData.append(`items[${index}][orden]`, index);
+                });
+                
+                const formData = new FormData();
+                formData.append('_token', csrfToken);
+                formData.append('cliente_id', facturaData.cliente_id);
+                formData.append('correo', facturaData.correo);
+                formData.append('numero_factura', facturaData.numero_factura);
+                formData.append('serie', facturaData.serie);
+                formData.append('fecha_emision', facturaData.fecha_emision);
+                formData.append('fecha_vencimiento', facturaData.fecha_vencimiento);
+                formData.append('estado', facturaData.estado);
+                formData.append('concepto', facturaData.concepto);
+                formData.append('concepto_pago', facturaData.concepto_pago);
+                formData.append('subtotal', facturaData.subtotal);
+                formData.append('total', facturaData.total);
+                formData.append('monto_pagado', facturaData.monto_pagado);
+                formData.append('metodo_pago', facturaData.metodo_pago || 'sin_especificar');
+                formData.append('descuento_antes_impuestos', facturaData.descuento_antes_impuestos);
+                formData.append('descuento_despues_impuestos', facturaData.descuento_despues_impuestos);
+                formData.append('numero_orden', facturaData.numero_orden);
+                formData.append('notas', facturaData.notas);
+                
+                if (facturaData.archivos) {
+                    Array.from(facturaData.archivos).forEach(file => {
+                        formData.append('archivos[]', file);
+                    });
+                }
+                
+                facturaData.items.forEach((item, index) => {
+                    formData.append(`items[${index}][descripcion]`, item.descripcion);
+                    formData.append(`items[${index}][cantidad]`, item.cantidad);
+                    formData.append(`items[${index}][precio_unitario]`, item.precio_unitario);
+                    formData.append(`items[${index}][subtotal]`, item.subtotal);
+                    formData.append(`items[${index}][orden]`, index);
+                });
+                
+                facturaData.pagos.forEach((pago, index) => {
+                    formData.append(`pagos[${index}][descripcion]`, pago.descripcion);
+                    formData.append(`pagos[${index}][fecha]`, pago.fecha);
+                    formData.append(`pagos[${index}][importe]`, pago.importe);
+                    formData.append(`pagos[${index}][metodo_pago]`, pago.metodo_pago || '');
+                    formData.append(`pagos[${index}][notas]`, pago.notas || '');
+                });
+                
+                try {
+                    const response = await fetch('{{ route("walee.facturas.guardar") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: formData,
                     });
                     
-                    facturaData.pagos.forEach((pago, index) => {
-                        formData.append(`pagos[${index}][descripcion]`, pago.descripcion);
-                        formData.append(`pagos[${index}][fecha]`, pago.fecha);
-                        formData.append(`pagos[${index}][importe]`, pago.importe);
-                        formData.append(`pagos[${index}][metodo_pago]`, pago.metodo_pago || '');
-                        formData.append(`pagos[${index}][notas]`, pago.notas || '');
-                    });
+                    const data = await response.json();
                     
-                    try {
-                        const response = await fetch('{{ route("walee.facturas.guardar") }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                            },
-                            body: formData,
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Factura Creada!',
+                            text: 'La factura ha sido creada correctamente',
+                            confirmButtonColor: '#10b981',
+                            background: isDarkMode() ? '#1e293b' : '#ffffff',
+                            color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                        }).then(() => {
+                            if (data.client_id) {
+                                window.location.href = `/walee-facturas/cliente/${data.client_id}`;
+                            } else {
+                                window.location.reload();
+                            }
                         });
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Factura Creada!',
-                                text: 'La factura ha sido creada correctamente',
-                                confirmButtonColor: '#10b981',
-                                background: isDarkMode() ? '#1e293b' : '#ffffff',
-                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                            }).then(() => {
-                                if (data.client_id) {
-                                    window.location.href = `/walee-facturas/cliente/${data.client_id}`;
-                                } else {
-                                    window.location.reload();
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message || 'Error al crear factura',
-                                confirmButtonColor: '#ef4444',
-                                background: isDarkMode() ? '#1e293b' : '#ffffff',
-                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                            });
-                        }
-                    } catch (error) {
+                    } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error de Conexión',
-                            text: error.message,
+                            title: 'Error',
+                            text: data.message || 'Error al crear factura',
                             confirmButtonColor: '#ef4444',
                             background: isDarkMode() ? '#1e293b' : '#ffffff',
                             color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                         });
                     }
-                }
-            }).then((result) => {
-                if (result.dismiss === Swal.DismissReason.cancel) {
-                    currentPhase = 8;
-                    mostrarFase8();
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de Conexión',
+                        text: error.message,
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                    });
                 }
             });
         }

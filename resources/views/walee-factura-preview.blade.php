@@ -28,7 +28,7 @@
         }
         .header-left {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
             flex: 1;
         }
@@ -65,6 +65,15 @@
             color: #333;
             line-height: 1.3;
         }
+        .factura-number-top {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #8b5cf6;
+            text-align: right;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e5e7eb;
+        }
         .estado {
             display: inline-block;
             padding: 3px 10px;
@@ -98,7 +107,6 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
         }
         .datos-title {
             font-weight: bold;
@@ -108,14 +116,12 @@
             line-height: 1.2;
             margin-top: 0;
             padding-top: 0;
-            width: 100%;
         }
         .datos-content {
             font-size: 9pt;
             color: #555;
             line-height: 1.5;
             margin-top: 0;
-            width: 100%;
         }
         .datos-content > div {
             margin-bottom: 3px;
@@ -124,6 +130,7 @@
             margin-bottom: 0;
         }
         .datos-box.cliente-box {
+            text-align: right;
             align-items: flex-end;
         }
         .datos-box.cliente-box .datos-title {
@@ -134,9 +141,7 @@
         .datos-box.cliente-box .datos-content {
             text-align: right;
             margin-top: 0;
-        }
-        .datos-box.cliente-box .datos-content > div {
-            text-align: right;
+            align-items: flex-end;
         }
         .info-row {
             display: grid;
@@ -322,6 +327,11 @@
         }
     @endphp
     
+    <!-- Número de Factura en la parte superior -->
+    <div class="factura-number-top">
+        Factura #{{ $data['numero_factura'] ?? 'N/A' }}
+    </div>
+    
     <div class="header">
         <div class="header-left">
             <div class="logo">WS</div>
@@ -331,8 +341,6 @@
             </div>
         </div>
         <div class="header-right">
-            <div class="factura-title">Factura</div>
-            <div class="factura-number">{{ $data['numero_factura'] ?? 'N/A' }}</div>
             <div class="estado estado-{{ $estado }}">
                 {{ ucfirst($estado) }}
             </div>

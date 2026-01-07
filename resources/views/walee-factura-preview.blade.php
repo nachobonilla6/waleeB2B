@@ -305,7 +305,7 @@
 <body>
     @php
         $cliente = \App\Models\Cliente::find($data['cliente_id'] ?? null);
-        
+        $lang = $language ?? ($data['language'] ?? 'en');
         // Procesar items - asegurar que siempre sea un array
         $items = [];
         if (isset($data['items_json']) && !empty($data['items_json'])) {
@@ -355,11 +355,124 @@
         if ($montoPagado >= $total && $total > 0) {
             $estado = 'pagada';
         }
+
+        $translations = [
+            'en' => [
+                'invoice' => 'Invoice',
+                'invoice_no' => 'Invoice No.',
+                'order_no' => 'Order No.',
+                'issue_date' => 'Issue Date',
+                'due_date' => 'Due Date',
+                'payment_terms' => 'Payment Terms',
+                'payment_terms_value' => 'Net 30 days',
+                'currency' => 'Currency',
+                'tax_rate' => 'Tax Rate',
+                'payment_method' => 'Payment Method',
+                'bill_to' => 'Bill To',
+                'invoice_details' => 'Invoice Details',
+                'description' => 'Description',
+                'qty' => 'Qty',
+                'unit_price' => 'Unit Price',
+                'tax' => 'Tax (13%)',
+                'amount' => 'Amount',
+                'no_items' => 'There are no items on this invoice',
+                'discount_before' => 'Discount before tax',
+                'subtotal' => 'Subtotal (excl. tax)',
+                'vat' => 'VAT (13%)',
+                'discount_after' => 'Discount after tax',
+                'total_usd' => 'Total (USD)',
+                'amount_paid' => 'Amount paid',
+                'amount_due' => 'Amount due (USD)',
+                'payments' => 'Payments',
+                'payments_desc' => 'Description',
+                'payments_date' => 'Date',
+                'payments_amount' => 'Amount',
+                'terms' => 'Terms and Conditions',
+                'legal' => 'Legal Notice',
+                'currency_note' => 'USD (US Dollar)',
+                'page' => 'Page',
+                'of' => 'of',
+            ],
+            'es' => [
+                'invoice' => 'Factura',
+                'invoice_no' => 'Factura Nº',
+                'order_no' => 'N° Orden',
+                'issue_date' => 'Fecha de emisión',
+                'due_date' => 'Fecha de vencimiento',
+                'payment_terms' => 'Términos de pago',
+                'payment_terms_value' => 'Pago a 30 días',
+                'currency' => 'Moneda',
+                'tax_rate' => 'Tasa de impuesto',
+                'payment_method' => 'Método de pago',
+                'bill_to' => 'Datos del cliente',
+                'invoice_details' => 'Detalles de la factura',
+                'description' => 'Descripción',
+                'qty' => 'Cant.',
+                'unit_price' => 'Precio unitario',
+                'tax' => 'Impuestos (13%)',
+                'amount' => 'Importe',
+                'no_items' => 'No hay items en esta factura',
+                'discount_before' => 'Descuento antes de impuestos',
+                'subtotal' => 'Subtotal (sin impuestos)',
+                'vat' => 'IVA (13%)',
+                'discount_after' => 'Descuento después de impuestos',
+                'total_usd' => 'Total (USD)',
+                'amount_paid' => 'Monto pagado',
+                'amount_due' => 'Monto pendiente (USD)',
+                'payments' => 'Pagos',
+                'payments_desc' => 'Descripción',
+                'payments_date' => 'Fecha',
+                'payments_amount' => 'Importe',
+                'terms' => 'Términos y Condiciones',
+                'legal' => 'Aviso Legal',
+                'currency_note' => 'USD (Dólar estadounidense)',
+                'page' => 'Página',
+                'of' => 'de',
+            ],
+            'fr' => [
+                'invoice' => 'Facture',
+                'invoice_no' => 'N° de facture',
+                'order_no' => 'N° de commande',
+                'issue_date' => 'Date d’émission',
+                'due_date' => 'Date d’échéance',
+                'payment_terms' => 'Conditions de paiement',
+                'payment_terms_value' => 'Net 30 jours',
+                'currency' => 'Devise',
+                'tax_rate' => 'Taux de taxe',
+                'payment_method' => 'Mode de paiement',
+                'bill_to' => 'Coordonnées du client',
+                'invoice_details' => 'Détails de la facture',
+                'description' => 'Description',
+                'qty' => 'Qté',
+                'unit_price' => 'Prix unitaire',
+                'tax' => 'Taxe (13%)',
+                'amount' => 'Montant',
+                'no_items' => 'Aucun article dans cette facture',
+                'discount_before' => 'Remise avant taxes',
+                'subtotal' => 'Sous-total (HT)',
+                'vat' => 'TVA (13%)',
+                'discount_after' => 'Remise après taxes',
+                'total_usd' => 'Total (USD)',
+                'amount_paid' => 'Montant payé',
+                'amount_due' => 'Montant dû (USD)',
+                'payments' => 'Paiements',
+                'payments_desc' => 'Description',
+                'payments_date' => 'Date',
+                'payments_amount' => 'Montant',
+                'terms' => 'Termes et conditions',
+                'legal' => 'Mentions légales',
+                'currency_note' => 'USD (Dollar US)',
+                'page' => 'Page',
+                'of' => 'sur',
+            ],
+        ];
+
+        $t = $translations[$lang] ?? $translations['en'];
     @endphp
     
     <!-- Invoice number at the top -->
     <div class="factura-number-top">
-        Invoice #{{ $data['numero_factura'] ?? 'N/A' }}
+        {{ $t['invoice'] ?? 'Invoice' }} #{{ $data['numero_factura'] ?? 'N/A' }}
     </div>
     
     <div class="header">
@@ -388,7 +501,7 @@
     <!-- Customer and invoice details -->
     <div class="datos-section">
         <div class="datos-box cliente-box">
-            <div class="datos-title">Bill To</div>
+            <div class="datos-title">{{ $t['bill_to'] ?? 'Bill To' }}</div>
             <div class="datos-content">
                 @if($cliente)
                     <div><strong>{{ $cliente->nombre_empresa }}</strong></div>
@@ -423,20 +536,20 @@
         </div>
         
         <div class="datos-box">
-            <div class="datos-title">Invoice Details</div>
+            <div class="datos-title">{{ $t['invoice_details'] ?? 'Invoice Details' }}</div>
             <div class="datos-content">
-                <div><strong>Invoice No.:</strong> {{ $data['serie'] ?? 'A' }}-{{ str_pad($data['numero_factura'] ?? 'N/A', 4, '0', STR_PAD_LEFT) }}</div>
-                <div><strong>Order No.:</strong> {{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</div>
-                <div><strong>Issue Date:</strong> {{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</div>
+                <div><strong>{{ $t['invoice_no'] ?? 'Invoice No.' }}:</strong> {{ $data['serie'] ?? 'A' }}-{{ str_pad($data['numero_factura'] ?? 'N/A', 4, '0', STR_PAD_LEFT) }}</div>
+                <div><strong>{{ $t['order_no'] ?? 'Order No.' }}:</strong> {{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</div>
+                <div><strong>{{ $t['issue_date'] ?? 'Issue Date' }}:</strong> {{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</div>
                 @if(!empty($data['fecha_vencimiento']))
-                    <div><strong>Due Date:</strong> {{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</div>
+                    <div><strong>{{ $t['due_date'] ?? 'Due Date' }}:</strong> {{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</div>
                 @else
-                    <div><strong>Payment Terms:</strong> Net 30 days</div>
+                    <div><strong>{{ $t['payment_terms'] ?? 'Payment Terms' }}:</strong> {{ $t['payment_terms_value'] ?? 'Net 30 days' }}</div>
                 @endif
-                <div><strong>Currency:</strong> USD (US Dollar)</div>
-                <div><strong>Tax Rate:</strong> 13% VAT</div>
+                <div><strong>{{ $t['currency'] ?? 'Currency' }}:</strong> {{ $t['currency_note'] ?? 'USD' }}</div>
+                <div><strong>{{ $t['tax_rate'] ?? 'Tax Rate' }}:</strong> 13% VAT</div>
                 @if(!empty($data['metodo_pago']) && $data['metodo_pago'] !== 'sin_especificar')
-                    <div><strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $data['metodo_pago'])) }}</div>
+                    <div><strong>{{ $t['payment_method'] ?? 'Payment Method' }}:</strong> {{ ucfirst(str_replace('_', ' ', $data['metodo_pago'])) }}</div>
                 @endif
             </div>
         </div>
@@ -446,11 +559,11 @@
     <table>
         <thead>
             <tr>
-                <th>Description</th>
-                <th class="text-center">Qty</th>
-                <th class="text-right">Unit Price</th>
-                <th class="text-right">Tax (13%)</th>
-                <th class="text-right">Amount</th>
+                <th>{{ $t['description'] ?? 'Description' }}</th>
+                <th class="text-center">{{ $t['qty'] ?? 'Qty' }}</th>
+                <th class="text-right">{{ $t['unit_price'] ?? 'Unit Price' }}</th>
+                <th class="text-right">{{ $t['tax'] ?? 'Tax' }}</th>
+                <th class="text-right">{{ $t['amount'] ?? 'Amount' }}</th>
             </tr>
         </thead>
         <tbody>
@@ -483,7 +596,7 @@
                 @endforeach
             @else
                 <tr>
-                    <td colspan="5" class="text-center" style="padding: 20px; color: #999;">There are no items on this invoice</td>
+                    <td colspan="5" class="text-center" style="padding: 20px; color: #999;">{{ $t['no_items'] ?? 'There are no items on this invoice' }}</td>
                 </tr>
             @endif
         </tbody>
@@ -494,42 +607,42 @@
         <div class="totals-table">
             @if($descuentoAntes > 0)
             <div class="totals-row">
-                <span>Discount before tax:</span>
+                <span>{{ $t['discount_before'] ?? 'Discount before tax' }}:</span>
                 <span style="color: #dc2626;">-${{ number_format($descuentoAntes, 2, '.', ',') }}</span>
             </div>
             @endif
             
             <div class="totals-row">
-                <span>Subtotal (excl. tax):</span>
+                <span>{{ $t['subtotal'] ?? 'Subtotal' }}:</span>
                 <span><strong>${{ number_format($subtotalConDescuento, 2, '.', ',') }}</strong></span>
             </div>
             
             <div class="totals-row">
-                <span>VAT (13%):</span>
+                <span>{{ $t['vat'] ?? 'VAT' }}:</span>
                 <span><strong>${{ number_format($iva, 2, '.', ',') }}</strong></span>
             </div>
             
             @if($descuentoDespues > 0)
             <div class="totals-row">
-                <span>Discount after tax:</span>
+                <span>{{ $t['discount_after'] ?? 'Discount after tax' }}:</span>
                 <span style="color: #dc2626;">-${{ number_format($descuentoDespues, 2, '.', ',') }}</span>
             </div>
             @endif
             
             <div class="totals-row total">
-                <span>Total (USD):</span>
+                <span>{{ $t['total_usd'] ?? 'Total' }}:</span>
                 <span>${{ number_format($total, 2, '.', ',') }}</span>
             </div>
             
             <div class="totals-row">
-                <span>Amount paid:</span>
+                <span>{{ $t['amount_paid'] ?? 'Amount paid' }}:</span>
                 <span><strong>${{ number_format($montoPagado, 2, '.', ',') }}</strong></span>
             </div>
             <div class="totals-row">
                 @php
                     $amountDue = max($total - $montoPagado, 0);
                 @endphp
-                <span><strong>Amount due (USD):</strong></span>
+                <span><strong>{{ $t['amount_due'] ?? 'Amount due' }}:</strong></span>
                 <span><strong>${{ number_format($amountDue, 2, '.', ',') }}</strong></span>
             </div>
         </div>
@@ -538,13 +651,13 @@
     <!-- Payments -->
     @if(is_array($pagos) && count($pagos) > 0)
     <div class="pagos-section">
-        <div class="pagos-title">Payments</div>
+        <div class="pagos-title">{{ $t['payments'] ?? 'Payments' }}</div>
         <table>
             <thead>
                 <tr>
-                    <th>Description</th>
-                    <th class="text-center">Date</th>
-                    <th class="text-right">Amount</th>
+                    <th>{{ $t['payments_desc'] ?? 'Description' }}</th>
+                    <th class="text-center">{{ $t['payments_date'] ?? 'Date' }}</th>
+                    <th class="text-right">{{ $t['payments_amount'] ?? 'Amount' }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -565,19 +678,25 @@
     <!-- Terms and conditions -->
     @if(!empty($data['notas']))
     <div class="terminos">
-        <strong>Terms and Conditions</strong><br>
+        <strong>{{ $t['terms'] ?? 'Terms and Conditions' }}</strong><br>
         {{ $data['notas'] }}
     </div>
     @endif
     
     <!-- Legal information -->
     <div class="legal-info">
-        <strong>Legal Notice</strong><br>
-        This invoice has been generated electronically and is valid without signature or stamp. All amounts are expressed in US Dollars (USD) and include taxes as detailed above. Any disputes regarding this invoice must be notified in writing within 30 days from the issue date.
+        <strong>{{ $t['legal'] ?? 'Legal Notice' }}</strong><br>
+        @if($lang === 'es')
+            Esta factura ha sido generada electrónicamente y es válida sin firma ni sello. Todos los montos están expresados en dólares estadounidenses (USD) e incluyen los impuestos detallados arriba. Cualquier disputa sobre esta factura debe notificarse por escrito dentro de los 30 días posteriores a la fecha de emisión.
+        @elseif($lang === 'fr')
+            Cette facture a été générée électroniquement et est valable sans signature ni cachet. Tous les montants sont exprimés en dollars américains (USD) et incluent les taxes détaillées ci-dessus. Toute contestation relative à cette facture doit être notifiée par écrit dans un délai de 30 jours à compter de la date d’émission.
+        @else
+            This invoice has been generated electronically and is valid without signature or stamp. All amounts are expressed in US Dollars (USD) and include taxes as detailed above. Any disputes regarding this invoice must be notified in writing within 30 days from the issue date.
+        @endif
     </div>
     
     <div class="page-number">
-        Page 1 of 1
+        {{ $t['page'] ?? 'Page' }} 1 {{ $t['of'] ?? 'of' }} 1
     </div>
     
 </body>

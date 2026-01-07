@@ -3928,7 +3928,22 @@ Route::get('/walee-facturas/lista', function (\Illuminate\Http\Request $request)
     $ultimaFactura = \App\Models\Factura::orderBy('id', 'desc')->first();
     $siguienteNumero = $ultimaFactura ? intval($ultimaFactura->numero_factura) + 1 : 1;
     
-    return view('walee-facturas-lista', compact('facturas', 'searchQuery', 'totalFacturas', 'facturasHoy', 'facturasEstaSemana', 'facturasEsteMes', 'clientes', 'siguienteNumero'));
+    // Obtener tasa de cambio USD a CRC (Colones)
+    $tasaCambio = 520; // Tasa por defecto
+    try {
+        // Intentar obtener la tasa de cambio desde una API
+        $response = @file_get_contents('https://api.exchangerate-api.com/v4/latest/USD');
+        if ($response) {
+            $data = json_decode($response, true);
+            if (isset($data['rates']['CRC'])) {
+                $tasaCambio = $data['rates']['CRC'];
+            }
+        }
+    } catch (\Exception $e) {
+        // Si falla, usar tasa por defecto
+    }
+    
+    return view('walee-facturas-lista', compact('facturas', 'searchQuery', 'totalFacturas', 'facturasHoy', 'facturasEstaSemana', 'facturasEsteMes', 'clientes', 'siguienteNumero', 'tasaCambio'));
 })->middleware(['auth'])->name('walee.facturas.lista');
 
 // Lista de facturas por cliente

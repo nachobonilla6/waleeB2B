@@ -482,32 +482,97 @@
         // Datos para modal
         const clientes = @json($clientes ?? []);
         const siguienteNumero = {{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }};
+        const tasaCambio = {{ $tasaCambio ?? 520 }};
         
         // Generar opciones de clientes para el select
         const clientesOptions = clientes.map(cliente => 
             `<option value="${cliente.id}">${cliente.nombre_empresa}</option>`
         ).join('');
         
+        // Sistema de modales por fases para crear factura
+        let facturaData = {
+            factura_id: null,
+            cliente_id: '',
+            correo: '',
+            numero_factura: '{{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }}',
+            serie: 'A',
+            fecha_emision: '{{ date("Y-m-d") }}',
+            fecha_vencimiento: '{{ date("Y-m-d", strtotime("+30 days")) }}',
+            estado: 'pendiente',
+            items: [],
+            subtotal: 0,
+            descuento_antes_impuestos: 0,
+            iva: 0,
+            descuento_despues_impuestos: 0,
+            total: 0,
+            monto_pagado: 0,
+            saldo_pendiente: 0,
+            metodo_pago: '',
+            concepto_pago: '',
+            concepto: '',
+            numero_orden: '',
+            pagos: [],
+            notas: '',
+            archivos: null
+        };
+        
+        let currentPhase = 1;
+        const totalPhases = 9;
+        
+        // Detectar modo oscuro
+        function isDarkMode() {
+            return document.documentElement.classList.contains('dark');
+        }
+        
+        // Calcular totales en modal
+        function calcularTotalesModal() {
+            if (facturaData.items.length === 0) return;
+            
+            const subtotal = facturaData.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+            const descuentoAntes = facturaData.descuento_antes_impuestos || 0;
+            const subtotalConDescuento = subtotal - descuentoAntes;
+            const iva = subtotalConDescuento * 0.13;
+            const descuentoDespues = facturaData.descuento_despues_impuestos || 0;
+            const total = subtotalConDescuento + iva - descuentoDespues;
+            const montoPagado = facturaData.monto_pagado || 0;
+            const saldoPendiente = total - montoPagado;
+            
+            facturaData.subtotal = subtotal;
+            facturaData.iva = iva;
+            facturaData.total = total;
+            facturaData.saldo_pendiente = saldoPendiente;
+        }
+        
         // Abrir modal para crear factura (Fase 1)
         function abrirModalCrearFactura() {
+            currentPhase = 1;
+            mostrarFase1();
+        }
+        
+        // FASE 1: Cliente y Correo
+        function mostrarFase1() {
+            const clientesOptionsHtml = clientes.map(cliente => 
+                `<option value="${cliente.id}" data-email="${cliente.correo || ''}">${cliente.nombre_empresa}</option>`
+            ).join('');
+            
             const html = `
                 <div class="text-left space-y-4">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
-                            <div class="h-1 bg-violet-600 rounded-full" style="width: 11%"></div>
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
                         </div>
-                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase 1/9</span>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cliente <span class="text-red-500">*</span></label>
                         <select id="modal_cliente_id" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
                             <option value="">Seleccionar cliente...</option>
-                            ${clientesOptions}
+                            ${clientesOptionsHtml}
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Correo <span class="text-red-500">*</span></label>
-                        <input type="email" id="modal_correo" value="" placeholder="correo@ejemplo.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
+                        <input type="email" id="modal_correo" value="${facturaData.correo}" placeholder="correo@ejemplo.com" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
                     </div>
                 </div>
             `;
@@ -519,46 +584,802 @@
                 showCancelButton: true,
                 confirmButtonText: 'Siguiente',
                 cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#6366f1',
-                cancelButtonColor: '#6b7280',
+                confirmButtonColor: '#7c3aed',
                 reverseButtons: true,
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
-                    const clienteSelect = document.getElementById('modal_cliente_id');
-                    const correoInput = document.getElementById('modal_correo');
+                    const select = document.getElementById('modal_cliente_id');
+                    const emailInput = document.getElementById('modal_correo');
                     
-                    // Auto-completar correo cuando se selecciona cliente
-                    if (clienteSelect) {
-                        clienteSelect.addEventListener('change', function() {
-                            const clienteId = this.value;
-                            const cliente = clientes.find(c => c.id == clienteId);
-                            if (cliente && correoInput) {
-                                correoInput.value = cliente.correo || '';
-                            }
-                        });
-                    }
+                    select.addEventListener('change', function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const email = selectedOption.dataset.email || '';
+                        emailInput.value = email;
+                    });
                 },
                 preConfirm: () => {
-                    const clienteId = document.getElementById('modal_cliente_id').value;
-                    const correo = document.getElementById('modal_correo').value;
+                    const clienteId = document.getElementById('modal_cliente_id').value.trim();
+                    const correo = document.getElementById('modal_correo').value.trim();
                     
                     if (!clienteId) {
-                        Swal.showValidationMessage('Por favor selecciona un cliente');
+                        Swal.showValidationMessage('Debe seleccionar un cliente');
                         return false;
                     }
-                    
                     if (!correo || !correo.includes('@')) {
-                        Swal.showValidationMessage('Por favor ingresa un correo válido');
+                        Swal.showValidationMessage('Debe ingresar un correo válido');
                         return false;
                     }
                     
-                    return { clienteId, correo };
+                    facturaData.cliente_id = clienteId;
+                    facturaData.correo = correo;
+                    return true;
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Redirigir a la página de crear con el cliente seleccionado
-                    window.location.href = `{{ route('walee.facturas.crear') }}?cliente_id=${result.value.clienteId}`;
+                    currentPhase = 2;
+                    mostrarFase2();
+                }
+            });
+        }
+        
+        // FASE 2: Información Básica de Factura
+        function mostrarFase2() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Factura <span class="text-red-500">*</span></label>
+                            <input type="text" id="modal_numero_factura" value="${facturaData.numero_factura}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Serie</label>
+                            <input type="text" id="modal_serie" value="${facturaData.serie}" placeholder="A, B, C..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Emisión <span class="text-red-500">*</span></label>
+                            <input type="date" id="modal_fecha_emision" value="${facturaData.fecha_emision}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Vencimiento</label>
+                            <input type="date" id="modal_fecha_vencimiento" value="${facturaData.fecha_vencimiento}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estado</label>
+                        <select id="modal_estado" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                            <option value="pendiente" ${facturaData.estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="pagada" ${facturaData.estado === 'pagada' ? 'selected' : ''}>Pagada</option>
+                            <option value="vencida" ${facturaData.estado === 'vencida' ? 'selected' : ''}>Vencida</option>
+                            <option value="cancelada" ${facturaData.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 2: Información Básica de Factura',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const numeroFactura = document.getElementById('modal_numero_factura').value.trim();
+                    const fechaEmision = document.getElementById('modal_fecha_emision').value;
+                    
+                    if (!numeroFactura) {
+                        Swal.showValidationMessage('El número de factura es requerido');
+                        return false;
+                    }
+                    if (!fechaEmision) {
+                        Swal.showValidationMessage('La fecha de emisión es requerida');
+                        return false;
+                    }
+                    
+                    facturaData.numero_factura = numeroFactura;
+                    facturaData.serie = document.getElementById('modal_serie').value || 'A';
+                    facturaData.fecha_emision = fechaEmision;
+                    facturaData.fecha_vencimiento = document.getElementById('modal_fecha_vencimiento').value || facturaData.fecha_vencimiento;
+                    facturaData.estado = document.getElementById('modal_estado').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 3;
+                    mostrarFase3();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 1;
+                    mostrarFase1();
+                }
+            });
+        }
+        
+        // FASE 3: Items de Factura
+        function mostrarFase3() {
+            let itemsHtml = '';
+            if (facturaData.items.length === 0) {
+                itemsHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay items agregados</p>';
+            } else {
+                itemsHtml = facturaData.items.map((item, index) => `
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg mb-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${item.descripcion || 'Sin descripción'}</p>
+                                <p class="text-xs text-slate-500">Cant: ${item.cantidad} x $${parseFloat(item.precio_unitario).toLocaleString()} = $${parseFloat(item.subtotal).toLocaleString()}</p>
+                            </div>
+                            <button onclick="eliminarItemModal(${index})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div id="modal_items_list" class="max-h-60 overflow-y-auto mb-3">
+                        ${itemsHtml}
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="col-span-2">
+                            <input type="text" id="modal_item_descripcion" placeholder="Descripción" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="number" id="modal_item_cantidad" placeholder="Cantidad" value="1" min="1" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="number" id="modal_item_precio" step="0.01" placeholder="Precio" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <button onclick="agregarItemModal()" class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm">Agregar Item</button>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 3: Items de Factura',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.eliminarItemModal = function(index) {
+                        facturaData.items.splice(index, 1);
+                        calcularTotalesModal();
+                        mostrarFase3();
+                    };
+                    window.agregarItemModal = function() {
+                        const descripcion = document.getElementById('modal_item_descripcion').value.trim();
+                        const cantidad = parseFloat(document.getElementById('modal_item_cantidad').value) || 1;
+                        const precio = parseFloat(document.getElementById('modal_item_precio').value) || 0;
+                        
+                        if (!descripcion) {
+                            Swal.showValidationMessage('La descripción es requerida');
+                            return;
+                        }
+                        if (precio <= 0) {
+                            Swal.showValidationMessage('El precio debe ser mayor a 0');
+                            return;
+                        }
+                        
+                        facturaData.items.push({
+                            descripcion: descripcion,
+                            cantidad: cantidad,
+                            precio_unitario: precio,
+                            subtotal: cantidad * precio
+                        });
+                        
+                        document.getElementById('modal_item_descripcion').value = '';
+                        document.getElementById('modal_item_cantidad').value = '1';
+                        document.getElementById('modal_item_precio').value = '';
+                        
+                        calcularTotalesModal();
+                        mostrarFase3();
+                    };
+                },
+                preConfirm: () => {
+                    if (facturaData.items.length === 0) {
+                        Swal.showValidationMessage('Debe agregar al menos un item');
+                        return false;
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 4;
+                    mostrarFase4();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 2;
+                    mostrarFase2();
+                }
+            });
+        }
+        
+        // FASE 4: Descuentos e Impuestos
+        function mostrarFase4() {
+            calcularTotalesModal();
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg mb-3">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Subtotal</label>
+                                <p class="text-lg font-bold text-slate-900 dark:text-white">$${facturaData.subtotal.toFixed(2)}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500" id="modalSubtotalCRC">₡0</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">IVA (13%)</label>
+                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">$${facturaData.iva.toFixed(2)}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500" id="modalIvaCRC">₡0</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Total</label>
+                            <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">$${facturaData.total.toFixed(2)}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500" id="modalTotalCRC">₡0</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Antes Impuestos</label>
+                            <input type="number" step="0.01" id="modal_descuento_antes" value="${facturaData.descuento_antes_impuestos}" oninput="calcularTotalesModalFase4()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descuento Después Impuestos</label>
+                            <input type="number" step="0.01" id="modal_descuento_despues" value="${facturaData.descuento_despues_impuestos}" oninput="calcularTotalesModalFase4()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Monto Pagado</label>
+                            <input type="number" step="0.01" id="modal_monto_pagado" value="${facturaData.monto_pagado}" oninput="calcularTotalesModalFase4()" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Total <span class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" id="modal_total" value="${facturaData.total.toFixed(2)}" readonly class="w-full px-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 rounded-lg text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 4: Descuentos e Impuestos',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.calcularTotalesModalFase4 = function() {
+                        const subtotal = facturaData.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
+                        const descuentoAntes = parseFloat(document.getElementById('modal_descuento_antes')?.value) || 0;
+                        const subtotalConDescuento = subtotal - descuentoAntes;
+                        const iva = subtotalConDescuento * 0.13;
+                        const descuentoDespues = parseFloat(document.getElementById('modal_descuento_despues')?.value) || 0;
+                        const total = subtotalConDescuento + iva - descuentoDespues;
+                        const montoPagado = parseFloat(document.getElementById('modal_monto_pagado')?.value) || 0;
+                        const saldoPendiente = total - montoPagado;
+                        
+                        facturaData.subtotal = subtotal;
+                        facturaData.descuento_antes_impuestos = descuentoAntes;
+                        facturaData.iva = iva;
+                        facturaData.descuento_despues_impuestos = descuentoDespues;
+                        facturaData.total = total;
+                        facturaData.monto_pagado = montoPagado;
+                        facturaData.saldo_pendiente = saldoPendiente;
+                        
+                        if (document.getElementById('modal_total')) {
+                            document.getElementById('modal_total').value = total.toFixed(2);
+                        }
+                        if (document.getElementById('modalSubtotalCRC')) {
+                            document.getElementById('modalSubtotalCRC').textContent = `₡${(subtotal * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                        if (document.getElementById('modalIvaCRC')) {
+                            document.getElementById('modalIvaCRC').textContent = `₡${(iva * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                        if (document.getElementById('modalTotalCRC')) {
+                            document.getElementById('modalTotalCRC').textContent = `₡${(total * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                    };
+                    // Calcular inicialmente
+                    window.calcularTotalesModalFase4();
+                },
+                preConfirm: () => {
+                    if (window.calcularTotalesModalFase4) {
+                        window.calcularTotalesModalFase4();
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 5;
+                    mostrarFase5();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 3;
+                    mostrarFase3();
+                }
+            });
+        }
+        
+        // FASE 5: Método de Pago
+        function mostrarFase5() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Método de Pago</label>
+                            <select id="modal_metodo_pago" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                                <option value="">Sin especificar</option>
+                                <option value="transferencia" ${facturaData.metodo_pago === 'transferencia' ? 'selected' : ''}>Transferencia Bancaria</option>
+                                <option value="efectivo" ${facturaData.metodo_pago === 'efectivo' ? 'selected' : ''}>Efectivo</option>
+                                <option value="tarjeta" ${facturaData.metodo_pago === 'tarjeta' ? 'selected' : ''}>Tarjeta de Crédito/Débito</option>
+                                <option value="sinpe" ${facturaData.metodo_pago === 'sinpe' ? 'selected' : ''}>SINPE Móvil</option>
+                                <option value="paypal" ${facturaData.metodo_pago === 'paypal' ? 'selected' : ''}>PayPal</option>
+                                <option value="otro" ${facturaData.metodo_pago === 'otro' ? 'selected' : ''}>Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto de Pago</label>
+                            <input type="text" id="modal_concepto_pago" value="${facturaData.concepto_pago}" placeholder="Ej: Pago inicial..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 5: Método de Pago',
+                html: html,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    facturaData.metodo_pago = document.getElementById('modal_metodo_pago').value || 'sin_especificar';
+                    facturaData.concepto_pago = document.getElementById('modal_concepto_pago').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 6;
+                    mostrarFase6();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 4;
+                    mostrarFase4();
+                }
+            });
+        }
+        
+        // FASE 6: Concepto General
+        function mostrarFase6() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Concepto General <span class="text-red-500">*</span></label>
+                        <textarea id="modal_concepto" rows="4" placeholder="Descripción general de la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">${facturaData.concepto}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de Orden</label>
+                        <input type="text" id="modal_numero_orden" value="${facturaData.numero_orden}" placeholder="Ej: 1_191125 cliente" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 6: Concepto y Referencias',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const concepto = document.getElementById('modal_concepto').value.trim();
+                    if (!concepto) {
+                        Swal.showValidationMessage('El concepto general es requerido');
+                        return false;
+                    }
+                    facturaData.concepto = concepto;
+                    facturaData.numero_orden = document.getElementById('modal_numero_orden').value;
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 7;
+                    mostrarFase7();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 5;
+                    mostrarFase5();
+                }
+            });
+        }
+        
+        // FASE 7: Pagos Recibidos
+        function mostrarFase7() {
+            let pagosHtml = '';
+            if (facturaData.pagos.length === 0) {
+                pagosHtml = '<p class="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No hay pagos agregados</p>';
+            } else {
+                pagosHtml = facturaData.pagos.map((pago, index) => `
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg mb-2">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${pago.descripcion || 'Sin descripción'}</p>
+                                <p class="text-xs text-slate-500">${pago.fecha} - $${parseFloat(pago.importe).toLocaleString()} (${pago.metodo_pago || 'Sin método'})</p>
+                            </div>
+                            <button onclick="eliminarPagoModal(${index})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div id="modal_pagos_list" class="max-h-60 overflow-y-auto mb-3">
+                        ${pagosHtml}
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="col-span-2">
+                            <input type="text" id="modal_pago_descripcion" placeholder="Descripción" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="date" id="modal_pago_fecha" value="${new Date().toISOString().split('T')[0]}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <input type="number" id="modal_pago_importe" step="0.01" placeholder="Importe" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <select id="modal_pago_metodo" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                            <option value="">Método de pago...</option>
+                            <option value="sinpe">SINPE</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="tarjeta">Tarjeta</option>
+                        </select>
+                    </div>
+                    <button onclick="agregarPagoModal()" class="w-full px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm">Agregar Pago</button>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 7: Pagos Recibidos',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                didOpen: () => {
+                    window.eliminarPagoModal = function(index) {
+                        facturaData.pagos.splice(index, 1);
+                        mostrarFase7();
+                    };
+                    window.agregarPagoModal = function() {
+                        const descripcion = document.getElementById('modal_pago_descripcion').value.trim();
+                        const fecha = document.getElementById('modal_pago_fecha').value;
+                        const importe = parseFloat(document.getElementById('modal_pago_importe').value) || 0;
+                        const metodo = document.getElementById('modal_pago_metodo').value;
+                        
+                        if (!descripcion || importe <= 0) {
+                            Swal.showValidationMessage('Complete la descripción y el importe');
+                            return;
+                        }
+                        
+                        facturaData.pagos.push({
+                            descripcion: descripcion,
+                            fecha: fecha,
+                            importe: importe,
+                            metodo_pago: metodo
+                        });
+                        
+                        document.getElementById('modal_pago_descripcion').value = '';
+                        document.getElementById('modal_pago_importe').value = '';
+                        document.getElementById('modal_pago_metodo').value = '';
+                        
+                        mostrarFase7();
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 8;
+                    mostrarFase8();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 6;
+                    mostrarFase6();
+                }
+            });
+        }
+        
+        // FASE 8: Notas y Archivos
+        function mostrarFase8() {
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Notas Adicionales</label>
+                        <textarea id="modal_notas" rows="3" placeholder="Notas adicionales para la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">${facturaData.notas}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Archivos Adjuntos (Opcional)</label>
+                        <input type="file" id="modal_archivos" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm">
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 8: Notas y Archivos',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Siguiente',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#7c3aed',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    facturaData.notas = document.getElementById('modal_notas').value;
+                    const archivosInput = document.getElementById('modal_archivos');
+                    if (archivosInput.files.length > 0) {
+                        facturaData.archivos = archivosInput.files;
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentPhase = 9;
+                    mostrarFase9();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 7;
+                    mostrarFase7();
+                }
+            });
+        }
+        
+        // FASE 9: Resumen Final y Confirmación
+        function mostrarFase9() {
+            calcularTotalesModal();
+            const clienteNombre = clientes.find(c => c.id == facturaData.cliente_id)?.nombre_empresa || 'N/A';
+            
+            const html = `
+                <div class="text-left space-y-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full">
+                            <div class="h-1 bg-violet-600 rounded-full" style="width: ${(currentPhase/totalPhases)*100}%"></div>
+                        </div>
+                        <span class="text-xs text-slate-600 dark:text-slate-400">Fase ${currentPhase}/${totalPhases}</span>
+                    </div>
+                    <div class="bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 rounded-lg p-4">
+                        <h3 class="text-base font-bold text-emerald-700 dark:text-emerald-400 mb-3">Resumen de la Factura</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Cliente:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${clienteNombre}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Número de Factura:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.numero_factura}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Fecha de Emisión:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.fecha_emision}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Items:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.items.length}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Subtotal:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">$${facturaData.subtotal.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">IVA (13%):</span>
+                                <span class="font-medium text-slate-900 dark:text-white">$${facturaData.iva.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between border-t border-emerald-300 dark:border-emerald-500/30 pt-2 mt-2">
+                                <span class="text-base font-bold text-slate-900 dark:text-white">Total:</span>
+                                <span class="text-lg font-bold text-emerald-700 dark:text-emerald-400">$${facturaData.total.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Monto Pagado:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">$${facturaData.monto_pagado.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Saldo Pendiente:</span>
+                                <span class="font-medium text-red-600 dark:text-red-400">$${facturaData.saldo_pendiente.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600 dark:text-slate-400">Pagos Registrados:</span>
+                                <span class="font-medium text-slate-900 dark:text-white">${facturaData.pagos.length}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg p-3">
+                        <p class="text-xs text-blue-700 dark:text-blue-300"><strong>Concepto:</strong> ${facturaData.concepto || 'Sin concepto'}</p>
+                    </div>
+                </div>
+            `;
+            
+            Swal.fire({
+                title: 'Fase 9: Resumen Final',
+                html: html,
+                width: '700px',
+                showCancelButton: true,
+                confirmButtonText: 'Crear Factura',
+                cancelButtonText: 'Anterior',
+                confirmButtonColor: '#10b981',
+                reverseButtons: true,
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: async () => {
+                    Swal.fire({
+                        title: 'Creando factura...',
+                        allowOutsideClick: false,
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    const formData = new FormData();
+                    formData.append('_token', csrfToken);
+                    formData.append('cliente_id', facturaData.cliente_id);
+                    formData.append('correo', facturaData.correo);
+                    formData.append('numero_factura', facturaData.numero_factura);
+                    formData.append('serie', facturaData.serie);
+                    formData.append('fecha_emision', facturaData.fecha_emision);
+                    formData.append('fecha_vencimiento', facturaData.fecha_vencimiento);
+                    formData.append('estado', facturaData.estado);
+                    formData.append('concepto', facturaData.concepto);
+                    formData.append('concepto_pago', facturaData.concepto_pago);
+                    formData.append('subtotal', facturaData.subtotal);
+                    formData.append('total', facturaData.total);
+                    formData.append('monto_pagado', facturaData.monto_pagado);
+                    formData.append('metodo_pago', facturaData.metodo_pago || 'sin_especificar');
+                    formData.append('descuento_antes_impuestos', facturaData.descuento_antes_impuestos);
+                    formData.append('descuento_despues_impuestos', facturaData.descuento_despues_impuestos);
+                    formData.append('numero_orden', facturaData.numero_orden);
+                    formData.append('notas', facturaData.notas);
+                    
+                    if (facturaData.archivos) {
+                        Array.from(facturaData.archivos).forEach(file => {
+                            formData.append('archivos[]', file);
+                        });
+                    }
+                    
+                    facturaData.items.forEach((item, index) => {
+                        formData.append(`items[${index}][descripcion]`, item.descripcion);
+                        formData.append(`items[${index}][cantidad]`, item.cantidad);
+                        formData.append(`items[${index}][precio_unitario]`, item.precio_unitario);
+                        formData.append(`items[${index}][subtotal]`, item.subtotal);
+                        formData.append(`items[${index}][orden]`, index);
+                    });
+                    
+                    facturaData.pagos.forEach((pago, index) => {
+                        formData.append(`pagos[${index}][descripcion]`, pago.descripcion);
+                        formData.append(`pagos[${index}][fecha]`, pago.fecha);
+                        formData.append(`pagos[${index}][importe]`, pago.importe);
+                        formData.append(`pagos[${index}][metodo_pago]`, pago.metodo_pago || '');
+                        formData.append(`pagos[${index}][notas]`, pago.notas || '');
+                    });
+                    
+                    try {
+                        const response = await fetch('{{ route("walee.facturas.guardar") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                            },
+                            body: formData,
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Factura Creada!',
+                                text: 'La factura ha sido creada correctamente',
+                                confirmButtonColor: '#10b981',
+                                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                            }).then(() => {
+                                if (data.client_id) {
+                                    window.location.href = `/walee-facturas/cliente/${data.client_id}`;
+                                } else {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error al crear factura',
+                                confirmButtonColor: '#ef4444',
+                                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de Conexión',
+                            text: error.message,
+                            confirmButtonColor: '#ef4444',
+                            background: isDarkMode() ? '#1e293b' : '#ffffff',
+                            color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                        });
+                    }
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    currentPhase = 8;
+                    mostrarFase8();
                 }
             });
         }

@@ -364,19 +364,19 @@
                                             }
                                         @endphp
                                         <div 
-                                            class="gasto-item bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border {{ $estaVencido ? 'border-red-600 dark:border-red-500 border-2' : ($venceraPronto ? 'border-amber-500 dark:border-amber-500 border-2' : 'border-slate-200 dark:border-slate-600') }} hover:border-orange-400 dark:hover:border-orange-500/30 transition-all {{ $estaVencido ? 'bg-red-50/50 dark:bg-red-900/10' : ($venceraPronto ? 'bg-amber-50/50 dark:bg-amber-900/10' : '') }}"
+                                            class="gasto-item rounded-lg p-4 border transition-all {{ $gasto->pagado ? 'bg-slate-100 dark:bg-slate-800/70 border-slate-300 dark:border-slate-600 opacity-75' : ($estaVencido ? 'border-red-600 dark:border-red-500 border-2 bg-red-50/50 dark:bg-red-900/10' : ($venceraPronto ? 'border-amber-500 dark:border-amber-500 border-2 bg-amber-50/50 dark:bg-amber-900/10' : 'bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 hover:border-orange-400 dark:hover:border-orange-500/30')) }}"
                                             data-gasto-id="{{ $gasto->id }}"
                                         >
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="flex-1 min-w-0">
                                                     <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                                        <h4 class="font-semibold {{ $estaVencido ? 'text-red-900 dark:text-red-300' : ($venceraPronto ? 'text-amber-900 dark:text-amber-300' : 'text-slate-900 dark:text-white') }}">{{ $gasto->nombre }}</h4>
+                                                        <h4 class="font-semibold {{ $gasto->pagado ? 'text-slate-500 dark:text-slate-400' : ($estaVencido ? 'text-red-900 dark:text-red-300' : ($venceraPronto ? 'text-amber-900 dark:text-amber-300' : 'text-slate-900 dark:text-white')) }}">{{ $gasto->nombre }}</h4>
                                                         <span class="px-2 py-0.5 text-xs font-medium rounded-md 
                                                             {{ $gasto->tipo === 'mensual' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' }}">
                                                             {{ ucfirst($gasto->tipo) }}
                                                         </span>
                                                         @if($gasto->pagado)
-                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
+                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
                                                                 Pagado
                                                             </span>
                                                         @elseif($estaVencido)
@@ -391,7 +391,7 @@
                                                     </div>
                                                     
                                                     @if($gasto->descripcion)
-                                                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">{{ $gasto->descripcion }}</p>
+                                                        <p class="text-sm {{ $gasto->pagado ? 'text-slate-500 dark:text-slate-500' : 'text-slate-600 dark:text-slate-400' }} mb-2">{{ $gasto->descripcion }}</p>
                                                     @endif
                                                     
                                                     <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
@@ -400,7 +400,7 @@
                                                             <span class="text-slate-500 dark:text-slate-500 ml-1">(₡{{ number_format($gasto->total * $tasaCambio, 2, '.', ',') }})</span>
                                                         </span>
                                                         @if($gasto->proxima_fecha_pago)
-                                                            <span class="{{ $estaVencido ? 'text-red-700 dark:text-red-400 font-bold' : ($venceraPronto ? 'text-amber-700 dark:text-amber-400 font-semibold' : '') }}">
+                                                            <span class="{{ $gasto->pagado ? 'text-slate-500 dark:text-slate-500' : ($estaVencido ? 'text-red-700 dark:text-red-400 font-bold' : ($venceraPronto ? 'text-amber-700 dark:text-amber-400 font-semibold' : '')) }}">
                                                                 Próximo pago: {{ $gasto->proxima_fecha_pago->format('d/m/Y') }}
                                                                 @if($estaVencido)
                                                                     ({{ $gasto->proxima_fecha_pago->diffForHumans() }})

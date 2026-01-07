@@ -704,14 +704,14 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <!-- Navbar con ancho estándar -->
-        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
+        <!-- Navbar -->
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
         </div>
             
-        <!-- Contenido principal con ancho estándar -->
-        <div class="relative max-w-[90rem] mx-auto px-3 py-0 sm:px-4 sm:py-0 lg:px-8 pb-6 flex flex-col">
+        <!-- Contenido principal -->
+        <div class="relative max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-6 flex flex-col">
             <!-- Header Profesional -->
             <div class="mb-3 sm:mb-4 lg:mb-6 flex flex-col w-full header-profesional-wrapper">
                 <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">

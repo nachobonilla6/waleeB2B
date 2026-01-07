@@ -185,7 +185,7 @@
                         <div class="text-center">
                             <div class="flex items-center justify-start gap-1 mb-1">
                                 <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
-                                <select class="world-clock-select text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-transparent focus:border-violet-400 rounded-md pr-4 py-0.5 focus:outline-none focus:ring-0">
+                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-slate-200/70 dark:border-slate-600/80 rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-white dark:bg-slate-900/80">
                                 @foreach($worldClockOptions as $cityKey => $cityLabel)
                                     <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
                                         {{ $cityLabel }}
@@ -335,6 +335,39 @@
     
     .dark .city-marker {
         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    /* Dropdown de ciudades compatible con light/dark */
+    .world-clock-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: linear-gradient(45deg, transparent 50%, #6b21a8 50%), linear-gradient(135deg, #6b21a8 50%, transparent 50%);
+        background-position: right 6px top 50%, right 2px top 50%;
+        background-size: 6px 6px, 6px 6px;
+        background-repeat: no-repeat;
+        cursor: pointer;
+    }
+
+    html:not(.dark) .world-clock-select {
+        background-color: #ffffff;
+        color: #0f172a;
+    }
+
+    .dark .world-clock-select {
+        background-color: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        background-image: linear-gradient(45deg, transparent 50%, #a855f7 50%), linear-gradient(135deg, #a855f7 50%, transparent 50%);
+    }
+
+    .world-clock-select option {
+        background-color: #ffffff;
+        color: #0f172a;
+    }
+
+    .dark .world-clock-select option {
+        background-color: #020617;
+        color: #e5e7eb;
     }
 </style>
 

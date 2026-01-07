@@ -254,25 +254,10 @@
         }
 
         function updateWorldClocks() {
-            // Primero, actualizar los relojes del mapa (clocks fijos por ciudad)
-            Object.keys(timezones).forEach(city => {
-                try {
-                    const tz = timezones[city].tz;
-                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));
-                    const hours = String(now.getHours()).padStart(2, '0');
-                    const minutes = String(now.getMinutes()).padStart(2, '0');
-                    const seconds = String(now.getSeconds()).padStart(2, '0');
+            // Ciudades activas según las tarjetas (lugares "guardados")
+            const activeCities = new Set();
 
-                    const mapClockElement = document.getElementById(`map-clock-${city}`);
-                    if (mapClockElement) {
-                        mapClockElement.textContent = `${hours}:${minutes}:${seconds}`;
-                    }
-                } catch (error) {
-                    console.error(`Error updating map clock for ${city}:`, error);
-                }
-            });
-
-            // Luego, actualizar las tarjetas según la ciudad seleccionada en cada una
+            // Actualizar las tarjetas según la ciudad seleccionada en cada una
             document.querySelectorAll('.world-clock-card').forEach(card => {
                 const select = card.querySelector('.world-clock-select');
                 if (!select) return;
@@ -280,6 +265,8 @@
                 const cityKey = select.value;
                 const config = timezones[cityKey];
                 if (!config) return;
+
+                activeCities.add(cityKey);
 
                 try {
                     const now = new Date(new Date().toLocaleString('en-US', { timeZone: config.tz }));
@@ -300,6 +287,33 @@
                     }
                 } catch (error) {
                     console.error(`Error updating card clock for ${cityKey}:`, error);
+                }
+            });
+
+            // Luego, actualizar los relojes del mapa y mostrar solo los puntos de las ciudades activas
+            Object.keys(timezones).forEach(city => {
+                try {
+                    const tz = timezones[city].tz;
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                    const mapClockElement = document.getElementById(`map-clock-${city}`);
+                    if (mapClockElement) {
+                        mapClockElement.textContent = `${hours}:${minutes}:${seconds}`;
+                    }
+
+                    const markerGroup = document.querySelector(`.city-marker[data-city="${city}"]`);
+                    if (markerGroup) {
+                        if (activeCities.has(city)) {
+                            markerGroup.style.display = 'block';
+                        } else {
+                            markerGroup.style.display = 'none';
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error updating map clock for ${city}:`, error);
                 }
             });
         }

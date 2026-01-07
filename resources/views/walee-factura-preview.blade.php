@@ -411,6 +411,7 @@
                 'of' => 'of',
                 'seller_signature' => 'Seller signature',
                 'client_signature' => 'Client signature',
+                'signature_date' => 'Date',
             ],
             'es' => [
                 'invoice' => 'Factura',
@@ -449,6 +450,7 @@
                 'of' => 'de',
                 'seller_signature' => 'Firma del vendedor',
                 'client_signature' => 'Firma del cliente',
+                'signature_date' => 'Fecha',
             ],
             'fr' => [
                 'invoice' => 'Facture',
@@ -487,6 +489,7 @@
                 'of' => 'sur',
                 'seller_signature' => 'Signature du vendeur',
                 'client_signature' => 'Signature du client',
+                'signature_date' => 'Date',
             ],
         ];
 
@@ -727,6 +730,10 @@
         <div class="signature-box">
             <div class="signature-line"></div>
             <div>{{ $t['client_signature'] ?? 'Client signature' }}</div>
+            <div style="margin-top: 4px; text-align: right; font-size: 7pt; color: #6b7280;">
+                {{ $t['signature_date'] ?? 'Date' }}:
+                {{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}
+            </div>
         </div>
     </div>
     

@@ -191,11 +191,25 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                     <!-- Formulario de Agregar Producto (Izquierda en pantallas grandes) -->
                     <div class="lg:col-span-1">
-                        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-md sticky top-4">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Agregar Producto</h3>
+                        <!-- Botón para mostrar/ocultar formulario en móvil -->
+                        <button 
+                            onclick="toggleFormulario()"
+                            class="lg:hidden w-full mb-4 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors shadow-md flex items-center justify-center gap-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span>Agregar Producto</span>
+                            <svg id="formToggleIcon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <div id="formularioProducto" class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-md sticky top-4 hidden lg:block">
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4">Agregar Producto</h3>
                             <form id="productoForm" class="space-y-4" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" id="productoId" name="producto_id">
@@ -328,37 +342,64 @@
                     </div>
                     
                     <!-- Lista de Productos y Stats (Derecha en pantallas grandes) -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- Stats -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Productos</p>
-                                <p class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{{ $totalProductos }}</p>
-                            </div>
-                            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Activos</p>
-                                <p class="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{{ $productosActivos }}</p>
-                            </div>
-                            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Inactivos</p>
-                                <p class="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">{{ $productosInactivos }}</p>
-                            </div>
-                            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Valor Inventario</p>
-                                <p class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($valorTotalInventario, 2, '.', ',') }}</p>
+                    <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+                        <!-- Search Bar - Móvil primero -->
+                        <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-md">
+                            <div class="relative">
+                                <input 
+                                    type="text" 
+                                    id="searchProductos"
+                                    placeholder="Buscar productos por nombre, categoría..."
+                                    class="w-full px-4 py-2.5 pl-10 pr-10 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
+                                    onkeyup="buscarProductos()"
+                                >
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                </div>
+                                <button 
+                                    id="clearSearchBtn"
+                                    onclick="clearSearch()"
+                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors hidden"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                         
-                        <!-- Filtros -->
-                        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
-                            <div class="flex flex-wrap items-center gap-3">
-                                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Filtrar por categoría:</label>
+                        <!-- Stats - Optimizado para móvil -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+                            <div class="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-sm sm:shadow-md">
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 mb-1">Total</p>
+                                <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ $totalProductos }}</p>
+                            </div>
+                            <div class="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-sm sm:shadow-md">
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 mb-1">Activos</p>
+                                <p class="text-xl sm:text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{{ $productosActivos }}</p>
+                            </div>
+                            <div class="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-sm sm:shadow-md">
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 mb-1">Inactivos</p>
+                                <p class="text-xl sm:text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">{{ $productosInactivos }}</p>
+                            </div>
+                            <div class="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-sm sm:shadow-md">
+                                <p class="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 mb-1">Inventario</p>
+                                <p class="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($valorTotalInventario, 0, '.', ',') }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Filtros - Optimizado para móvil -->
+                        <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-md">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                                <label class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">Filtros:</label>
                                 <select 
                                     id="filtroCategoria" 
                                     onchange="filtrarProductos()"
-                                    class="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    class="flex-1 sm:flex-none px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 >
-                                    <option value="">Todas</option>
+                                    <option value="">Todas las categorías</option>
                                     @foreach($categorias as $categoria)
                                         <option value="{{ $categoria }}">{{ $categoria }}</option>
                                     @endforeach
@@ -366,7 +407,7 @@
                                 <select 
                                     id="filtroActivo" 
                                     onchange="filtrarProductos()"
-                                    class="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    class="flex-1 sm:flex-none px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 >
                                     <option value="">Todos</option>
                                     <option value="1">Solo Activos</option>
@@ -376,8 +417,11 @@
                         </div>
                         
                         <!-- Lista de Productos -->
-                        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-md">
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Lista de Productos</h3>
+                        <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 dark:border-slate-700 shadow-md">
+                            <div class="flex items-center justify-between mb-3 sm:mb-4">
+                                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Productos</h3>
+                                <span id="productosCount" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{{ $productos->count() }} productos</span>
+                            </div>
                             
                             @if($productos->isEmpty())
                                 <div class="text-center py-12">
@@ -402,12 +446,13 @@
                                             }
                                         @endphp
                                         <div 
-                                            class="producto-item rounded-lg p-4 border transition-all {{ $producto->activo ? ($estaVencido ? 'border-red-600 dark:border-red-500 border-2 bg-red-50/50 dark:bg-red-900/10' : ($venceraPronto ? 'border-amber-500 dark:border-amber-500 border-2 bg-amber-50/50 dark:bg-amber-900/10' : 'bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 hover:border-emerald-400 dark:hover:border-emerald-500/30')) : 'bg-slate-100 dark:bg-slate-800/70 border-slate-300 dark:border-slate-600 opacity-75' }}"
+                                            class="producto-item rounded-lg p-3 sm:p-4 border transition-all {{ $producto->activo ? ($estaVencido ? 'border-red-600 dark:border-red-500 border-2 bg-red-50/50 dark:bg-red-900/10' : ($venceraPronto ? 'border-amber-500 dark:border-amber-500 border-2 bg-amber-50/50 dark:bg-amber-900/10' : 'bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 hover:border-emerald-400 dark:hover:border-emerald-500/30')) : 'bg-slate-100 dark:bg-slate-800/70 border-slate-300 dark:border-slate-600 opacity-75' }}"
                                             data-producto-id="{{ $producto->id }}"
                                             data-categoria="{{ $producto->categoria ?? '' }}"
                                             data-activo="{{ $producto->activo ? '1' : '0' }}"
+                                            data-nombre="{{ strtolower($producto->nombre) }}"
                                         >
-                                            <div class="flex items-start justify-between gap-4">
+                                            <div class="flex items-start gap-2 sm:gap-4">
                                                 @if($producto->imagen && !empty(trim($producto->imagen)))
                                                     @php
                                                         // Construir URL de la imagen directamente
@@ -426,8 +471,8 @@
                                                     @endphp
                                                     <div class="flex-shrink-0">
                                                         @if(!$fileExists)
-                                                            <div class="w-20 h-20 rounded-lg border border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 flex items-center justify-center" title="Archivo no encontrado: {{ $imagenPath }}">
-                                                                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 flex items-center justify-center" title="Archivo no encontrado: {{ $imagenPath }}">
+                                                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                                                 </svg>
                                                             </div>
@@ -435,7 +480,7 @@
                                                             <img 
                                                                 src="{{ $imagenUrl }}" 
                                                                 alt="{{ $producto->nombre }}" 
-                                                                class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
+                                                                class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
                                                                 loading="lazy"
                                                                 onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Ruta DB:', '{{ $imagenPath }}', 'URL:', this.src, 'Archivo existe:', {{ $fileExists ? 'true' : 'false' }}); this.onerror=null; this.style.display='none';"
                                                             >
@@ -443,105 +488,105 @@
                                                     </div>
                                                 @endif
                                                 <div class="flex-1 min-w-0">
-                                                    <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                                        <h4 class="font-semibold {{ $producto->activo ? ($estaVencido ? 'text-red-900 dark:text-red-300' : ($venceraPronto ? 'text-amber-900 dark:text-amber-300' : 'text-slate-900 dark:text-white')) : 'text-slate-500 dark:text-slate-400' }}">{{ $producto->nombre }}</h4>
-                                                        @if($producto->categoria)
-                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                                                                {{ $producto->categoria }}
-                                                            </span>
-                                                        @endif
-                                                        @if($estaVencido)
-                                                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-red-500 text-white dark:bg-red-600 dark:text-white shadow-md animate-pulse">
-                                                                Vencido
-                                                            </span>
-                                                        @elseif($venceraPronto)
-                                                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-500 text-white dark:bg-amber-600 dark:text-white shadow-md">
-                                                                Vence Pronto
-                                                            </span>
-                                                        @endif
+                                                    <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
+                                                        <div class="flex-1 min-w-0">
+                                                            <h4 class="text-sm sm:text-base font-semibold {{ $producto->activo ? ($estaVencido ? 'text-red-900 dark:text-red-300' : ($venceraPronto ? 'text-amber-900 dark:text-amber-300' : 'text-slate-900 dark:text-white')) : 'text-slate-500 dark:text-slate-400' }} truncate">{{ $producto->nombre }}</h4>
+                                                            <div class="flex items-center gap-1.5 sm:gap-2 mt-1 flex-wrap">
+                                                                @if($producto->categoria)
+                                                                    <span class="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                                                                        {{ $producto->categoria }}
+                                                                    </span>
+                                                                @endif
+                                                                @if($estaVencido)
+                                                                    <span class="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-md bg-red-500 text-white dark:bg-red-600 shadow-md animate-pulse">
+                                                                        Vencido
+                                                                    </span>
+                                                                @elseif($venceraPronto)
+                                                                    <span class="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-bold rounded-md bg-amber-500 text-white dark:bg-amber-600 shadow-md">
+                                                                        Vence Pronto
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <!-- Toggles y botones - Móvil optimizado -->
+                                                        <div class="flex flex-col sm:flex-row items-end sm:items-start gap-1.5 sm:gap-2 flex-shrink-0">
+                                                            <!-- Toggles compactos en móvil -->
+                                                            <div class="flex gap-1.5 sm:flex-col sm:gap-2">
+                                                                <!-- Toggle Activo/Inactivo -->
+                                                                <label class="relative inline-flex items-center cursor-pointer group">
+                                                                    <input 
+                                                                        type="checkbox" 
+                                                                        class="sr-only peer" 
+                                                                        {{ $producto->activo ? 'checked' : '' }}
+                                                                        disabled
+                                                                    >
+                                                                    <div class="w-7 h-4 sm:w-9 sm:h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 sm:after:h-4 sm:after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                                                    <span class="ml-1.5 sm:ml-2 text-[10px] sm:text-xs font-medium text-slate-700 dark:text-slate-300 hidden sm:inline min-w-[60px]">
+                                                                        {{ $producto->activo ? 'Activo' : 'Inactivo' }}
+                                                                    </span>
+                                                                </label>
+                                                                
+                                                                <!-- Toggle Facebook -->
+                                                                <label class="relative inline-flex items-center cursor-pointer group">
+                                                                    <input 
+                                                                        type="checkbox" 
+                                                                        class="sr-only peer" 
+                                                                        disabled
+                                                                    >
+                                                                    <div class="w-7 h-4 sm:w-9 sm:h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 sm:after:h-4 sm:after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-blue-500"></div>
+                                                                    <span class="ml-1.5 sm:ml-2 text-[10px] sm:text-xs font-medium text-slate-700 dark:text-slate-300 hidden sm:flex sm:items-center gap-1 min-w-[80px]">
+                                                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                                                        </svg>
+                                                                        <span>FB</span>
+                                                                    </span>
+                                                                </label>
+                                                            </div>
+                                                            
+                                                            <!-- Botones de acción -->
+                                                            <div class="flex items-center gap-1 sm:gap-2">
+                                                                <button 
+                                                                    onclick="openEditProductoModal({{ $producto->id }})"
+                                                                    class="p-1.5 sm:p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                                                                    title="Editar"
+                                                                >
+                                                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                                    </svg>
+                                                                </button>
+                                                                <button 
+                                                                    onclick="deleteProducto({{ $producto->id }})"
+                                                                    class="p-1.5 sm:p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                                                                    title="Eliminar"
+                                                                >
+                                                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     
                                                     @if($producto->descripcion)
-                                                        <p class="text-sm {{ $producto->activo ? 'text-slate-600 dark:text-slate-400' : 'text-slate-500 dark:text-slate-500' }} mb-2">{{ $producto->descripcion }}</p>
+                                                        <p class="text-xs sm:text-sm {{ $producto->activo ? 'text-slate-600 dark:text-slate-400' : 'text-slate-500 dark:text-slate-500' }} mb-1.5 sm:mb-2 line-clamp-2">{{ $producto->descripcion }}</p>
                                                     @endif
                                                     
-                                                    <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                                                    <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
                                                         <span class="font-semibold {{ $producto->activo ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400' }}">
-                                                            Precio: ₡{{ number_format($producto->precio, 2, '.', ',') }}
+                                                            ₡{{ number_format($producto->precio, 2, '.', ',') }}
                                                         </span>
                                                         <span class="{{ $producto->activo ? 'text-slate-700 dark:text-slate-300' : 'text-slate-500 dark:text-slate-500' }}">
                                                             Stock: {{ $producto->stock }}
                                                         </span>
                                                         @if($producto->fecha_expiracion)
                                                             <span class="{{ $estaVencido ? 'text-red-700 dark:text-red-400 font-bold' : ($venceraPronto ? 'text-amber-700 dark:text-amber-400 font-semibold' : '') }}">
-                                                                Expira: {{ \Carbon\Carbon::parse($producto->fecha_expiracion)->format('d/m/Y') }}
+                                                                Exp: {{ \Carbon\Carbon::parse($producto->fecha_expiracion)->format('d/m/Y') }}
                                                                 @if($estaVencido || $venceraPronto)
-                                                                    ({{ \Carbon\Carbon::parse($producto->fecha_expiracion)->diffForHumans() }})
+                                                                    <span class="hidden sm:inline">({{ \Carbon\Carbon::parse($producto->fecha_expiracion)->diffForHumans() }})</span>
                                                                 @endif
                                                             </span>
                                                         @endif
-                                                        @if($producto->codigo_barras)
-                                                            <span class="text-slate-500 dark:text-slate-500">
-                                                                Código: {{ $producto->codigo_barras }}
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="flex flex-col items-end gap-3">
-                                                    <!-- Toggles -->
-                                                    <div class="flex flex-col gap-2">
-                                                        <!-- Toggle Activo/Inactivo -->
-                                                        <label class="relative inline-flex items-center cursor-pointer group">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                class="sr-only peer" 
-                                                                {{ $producto->activo ? 'checked' : '' }}
-                                                                disabled
-                                                            >
-                                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
-                                                            <span class="ml-2 text-xs font-medium text-slate-700 dark:text-slate-300 min-w-[60px]">
-                                                                {{ $producto->activo ? 'Activo' : 'Inactivo' }}
-                                                            </span>
-                                                        </label>
-                                                        
-                                                        <!-- Toggle Facebook -->
-                                                        <label class="relative inline-flex items-center cursor-pointer group">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                class="sr-only peer" 
-                                                                disabled
-                                                            >
-                                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-blue-500"></div>
-                                                            <span class="ml-2 text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1 min-w-[80px]">
-                                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                                                </svg>
-                                                                <span>Facebook</span>
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                    
-                                                    <!-- Botones de acción -->
-                                                    <div class="flex items-center gap-2">
-                                                        <button 
-                                                            onclick="openEditProductoModal({{ $producto->id }})"
-                                                            class="p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-                                                            title="Editar"
-                                                        >
-                                                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                            </svg>
-                                                        </button>
-                                                        <button 
-                                                            onclick="deleteProducto({{ $producto->id }})"
-                                                            class="p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
-                                                            title="Eliminar"
-                                                        >
-                                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                            </svg>
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -572,7 +617,21 @@
         
         function openCreateProductoModal() {
             resetProductoForm();
-            document.getElementById('productoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Mostrar formulario en móvil si está oculto
+            const formulario = document.getElementById('formularioProducto');
+            if (formulario.classList.contains('hidden')) {
+                formulario.classList.remove('hidden');
+                formulario.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                document.getElementById('productoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function toggleFormulario() {
+            const formulario = document.getElementById('formularioProducto');
+            const icon = document.getElementById('formToggleIcon');
+            formulario.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
         }
         
         function resetProductoForm() {
@@ -599,26 +658,72 @@
         });
         
         function filtrarProductos() {
+            aplicarFiltros();
+        }
+        
+        function buscarProductos() {
+            aplicarFiltros();
+            const searchInput = document.getElementById('searchProductos');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            if (searchInput.value.trim() !== '') {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchProductos').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            aplicarFiltros();
+        }
+        
+        function aplicarFiltros() {
             const categoria = document.getElementById('filtroCategoria').value;
             const activo = document.getElementById('filtroActivo').value;
+            const searchTerm = document.getElementById('searchProductos').value.toLowerCase().trim();
             const items = document.querySelectorAll('.producto-item');
+            let visibleCount = 0;
             
             items.forEach(item => {
                 const itemCategoria = item.getAttribute('data-categoria') || '';
                 const itemActivo = item.getAttribute('data-activo');
+                const itemNombre = item.getAttribute('data-nombre') || '';
                 
                 let show = true;
                 
+                // Filtro por categoría
                 if (categoria && itemCategoria !== categoria) {
                     show = false;
                 }
                 
+                // Filtro por activo/inactivo
                 if (activo !== '' && itemActivo !== activo) {
                     show = false;
                 }
                 
-                item.style.display = show ? 'block' : 'none';
+                // Búsqueda por nombre o categoría
+                if (show && searchTerm !== '') {
+                    const categoriaLower = itemCategoria.toLowerCase();
+                    if (!itemNombre.includes(searchTerm) && !categoriaLower.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                if (show) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
             });
+            
+            // Actualizar contador
+            const countElement = document.getElementById('productosCount');
+            if (countElement) {
+                countElement.textContent = visibleCount + ' producto' + (visibleCount !== 1 ? 's' : '');
+            }
         }
         
         function openEditProductoModal(productoId) {

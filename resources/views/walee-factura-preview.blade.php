@@ -29,7 +29,7 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
         .logo {
             width: 45px;
@@ -76,7 +76,7 @@
         .datos-section {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: stretch;
             gap: 20px;
             margin-bottom: 12px;
         }
@@ -86,6 +86,8 @@
             border-radius: 6px;
             border-left: 3px solid #8b5cf6;
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .datos-title {
             font-weight: bold;
@@ -97,6 +99,10 @@
             font-size: 9pt;
             color: #555;
             line-height: 1.4;
+            flex: 1;
+        }
+        .datos-content > div {
+            margin-bottom: 2px;
         }
         .datos-box.cliente-box {
             text-align: right;
@@ -111,12 +117,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 9pt;
         }
         .info-item {
             display: flex;
             justify-content: space-between;
+            align-items: baseline;
         }
         .info-label {
             font-weight: bold;
@@ -139,6 +146,7 @@
             text-align: left;
             font-weight: bold;
             font-size: 9pt;
+            vertical-align: top;
         }
         th.text-center {
             text-align: center;
@@ -150,12 +158,15 @@
             padding: 5px 6px;
             border-bottom: 1px solid #e5e7eb;
             font-size: 9pt;
+            vertical-align: top;
         }
         td.text-center {
             text-align: center;
+            vertical-align: middle;
         }
         td.text-right {
             text-align: right;
+            vertical-align: middle;
         }
         .item-descripcion {
             font-weight: 500;
@@ -189,6 +200,7 @@
         .totals-row {
             display: flex;
             justify-content: space-between;
+            align-items: baseline;
             padding: 4px 0;
             border-bottom: 1px solid #e5e7eb;
             font-size: 9pt;

@@ -74,8 +74,8 @@
             color: white;
         }
         .datos-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            justify-content: space-between;
             gap: 30px;
             margin-bottom: 25px;
         }

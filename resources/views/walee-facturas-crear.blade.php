@@ -1239,7 +1239,13 @@
                         'success'
                     );
                     setTimeout(() => {
-                        window.location.href = '{{ route("walee.facturas.lista") }}';
+                        // Si hay client_id, redirigir a la página de facturas del cliente
+                        if (data.client_id) {
+                            window.location.href = `/walee-facturas/cliente/${data.client_id}`;
+                        } else {
+                            // Si no hay client_id, redirigir a la lista general
+                            window.location.href = '{{ route("walee.facturas.lista") }}';
+                        }
                     }, 1500);
                 } else {
                     showNotification('Error', data.message || 'Error al crear factura', 'error');
@@ -2240,7 +2246,13 @@
                                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                             }).then(() => {
-                                window.location.href = '{{ route("walee.facturas") }}';
+                                // Si hay client_id, redirigir a la página de facturas del cliente
+                                if (data.client_id) {
+                                    window.location.href = `/walee-facturas/cliente/${data.client_id}`;
+                                } else {
+                                    // Si no hay client_id, redirigir a la lista general
+                                    window.location.href = '{{ route("walee.facturas.lista") }}';
+                                }
                             });
                         } else {
                             Swal.fire({

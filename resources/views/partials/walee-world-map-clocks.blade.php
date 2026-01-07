@@ -9,15 +9,111 @@
     
     <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
         <div class="p-4 sm:p-6">
-            <!-- World Map Widget -->
-            <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
+            @php
+                use App\Models\UserWorldClock;
+
+                // Opciones disponibles para los relojes (tarjetas) – con banderas
+                $worldClockOptions = [
+                    'montreal'     => '🇨🇦 Montreal',
+                    'london'       => '🇬🇧 London',
+                    'tokyo'        => '🇯🇵 Tokyo',
+                    'sydney'       => '🇦🇺 Sydney',
+                    'dubai'        => '🇦🇪 Dubai',
+                    'saopaulo'     => '🇧🇷 São Paulo',
+                    'la'           => '🇺🇸 Los Angeles',
+                    'madrid'       => '🇪🇸 Madrid',
+                    'sanjosecr'    => '🇨🇷 San José, Costa Rica',
+                    'cameroon'     => '🇨🇲 Cameroon',
+                    'hongkong'     => '🇭🇰 Hong Kong',
+                    'southafrica'  => '🇿🇦 South Africa',
+                    // Más opciones extra que también se verán en el mapa
+                    'newyork'      => '🇺🇸 New York',
+                    'mexico'       => '🇲🇽 Ciudad de México',
+                    'buenosaires'  => '🇦🇷 Buenos Aires',
+                    'paris'        => '🇫🇷 Paris',
+                    'berlin'       => '🇩🇪 Berlin',
+                    'rome'         => '🇮🇹 Rome',
+                    'lisbon'       => '🇵🇹 Lisbon',
+                    'singapore'    => '🇸🇬 Singapore',
+                    'bangkok'      => '🇹🇭 Bangkok',
+                    'moscow'       => '🇷🇺 Moscow',
+                    'beijing'      => '🇨🇳 Beijing',
+                    'delhi'        => '🇮🇳 New Delhi',
+                    'auckland'     => '🇳🇿 Auckland',
+                ];
+
+                // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
+                $defaultOrder = [
+                    'montreal',
+                    'london',
+                    'tokyo',
+                    'sydney',
+                    'dubai',
+                    'saopaulo',
+                    'la',
+                    'madrid',
+                    'sanjosecr',
+                    'cameroon',
+                    'hongkong',
+                    'southafrica',
+                ];
+
+                $worldClockDefaults = [];
+
+                // Si hay usuario autenticado, intentamos cargar sus preferencias desde DB
+                if (auth()->check()) {
+                    $prefs = UserWorldClock::where('user_id', auth()->id())
+                        ->orderBy('slot')
+                        ->get()
+                        ->keyBy('slot');
+
+                    for ($i = 0; $i < 12; $i++) {
+                        if (isset($prefs[$i]) && array_key_exists($prefs[$i]->city_key, $worldClockOptions)) {
+                            $worldClockDefaults[$i] = $prefs[$i]->city_key;
+                        } else {
+                            // Fallback al orden por defecto si existe, si no, usar la primera opción disponible
+                            $worldClockDefaults[$i] = $defaultOrder[$i] ?? array_key_first($worldClockOptions);
+                        }
+                    }
+                } else {
+                    // Sin usuario autenticado, usar solo el orden por defecto
+                    for ($i = 0; $i < 12; $i++) {
+                        $worldClockDefaults[$i] = $defaultOrder[$i] ?? array_key_first($worldClockOptions);
+                    }
+                }
+            @endphp
+            
+            <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                @foreach($worldClockDefaults as $slotIndex => $defaultCity)
+                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $slotIndex }}">
+                        <div class="text-center">
+                            <div class="flex items-center justify-start gap-1 mb-1">
+                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
+                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-transparent rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-transparent">
+                                @foreach($worldClockOptions as $cityKey => $cityLabel)
+                                    <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
+                                        {{ $cityLabel }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            </div>
+                            <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- World Map Widget (debajo de los relojes) -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
                 <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
                     <!-- Mapa mundial con imagen de fondo integrada en SVG para mantener alineación perfecta -->
                     <svg id="worldMapSvg" viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10;" class="world-map-svg" preserveAspectRatio="none">
                         <!-- Imagen de fondo del mapa integrada en SVG para mantener alineación -->
                         <image href="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" x="0" y="0" width="1000" height="500" preserveAspectRatio="none" opacity="0.8" style="filter: brightness(0.95);"/>
                         
-                        <!-- Marcadores de ciudades - coordenadas ajustadas para alinearse perfectamente con las ciudades del mapa -->
+                        <!-- Marcadores de ciudades fijos (los existentes) -->
                         <!-- Montreal: Coordenadas aproximadas (-73°W, 45°N) -->
                         <g class="city-marker" data-city="montreal" data-timezone="America/Toronto">
                             <circle cx="294" cy="130" r="4" fill="#ef4444" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
@@ -128,102 +224,6 @@
                         </g>
                     </svg>
                 </div>
-            </div>
-
-            @php
-                use App\Models\UserWorldClock;
-
-                // Opciones disponibles para los relojes (tarjetas) – con banderas
-                $worldClockOptions = [
-                    'montreal'     => '🇨🇦 Montreal',
-                    'london'       => '🇬🇧 London',
-                    'tokyo'        => '🇯🇵 Tokyo',
-                    'sydney'       => '🇦🇺 Sydney',
-                    'dubai'        => '🇦🇪 Dubai',
-                    'saopaulo'     => '🇧🇷 São Paulo',
-                    'la'           => '🇺🇸 Los Angeles',
-                    'madrid'       => '🇪🇸 Madrid',
-                    'sanjosecr'    => '🇨🇷 San José, Costa Rica',
-                    'cameroon'     => '🇨🇲 Cameroon',
-                    'hongkong'     => '🇭🇰 Hong Kong',
-                    'southafrica'  => '🇿🇦 South Africa',
-                    // Más opciones extra que también se verán en el mapa
-                    'newyork'      => '🇺🇸 New York',
-                    'mexico'       => '🇲🇽 Ciudad de México',
-                    'buenosaires'  => '🇦🇷 Buenos Aires',
-                    'paris'        => '🇫🇷 Paris',
-                    'berlin'       => '🇩🇪 Berlin',
-                    'rome'         => '🇮🇹 Rome',
-                    'lisbon'       => '🇵🇹 Lisbon',
-                    'singapore'    => '🇸🇬 Singapore',
-                    'bangkok'      => '🇹🇭 Bangkok',
-                    'moscow'       => '🇷🇺 Moscow',
-                    'beijing'      => '🇨🇳 Beijing',
-                    'delhi'        => '🇮🇳 New Delhi',
-                    'auckland'     => '🇳🇿 Auckland',
-                ];
-
-                // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
-                $defaultOrder = [
-                    'montreal',
-                    'london',
-                    'tokyo',
-                    'sydney',
-                    'dubai',
-                    'saopaulo',
-                    'la',
-                    'madrid',
-                    'sanjosecr',
-                    'cameroon',
-                    'hongkong',
-                    'southafrica',
-                ];
-
-                $worldClockDefaults = [];
-
-                // Si hay usuario autenticado, intentamos cargar sus preferencias desde DB
-                if (auth()->check()) {
-                    $prefs = UserWorldClock::where('user_id', auth()->id())
-                        ->orderBy('slot')
-                        ->get()
-                        ->keyBy('slot');
-
-                    for ($i = 0; $i < 12; $i++) {
-                        if (isset($prefs[$i]) && array_key_exists($prefs[$i]->city_key, $worldClockOptions)) {
-                            $worldClockDefaults[$i] = $prefs[$i]->city_key;
-                        } else {
-                            // Fallback al orden por defecto si existe, si no, usar la primera opción disponible
-                            $worldClockDefaults[$i] = $defaultOrder[$i] ?? array_key_first($worldClockOptions);
-                        }
-                    }
-                } else {
-                    // Sin usuario autenticado, usar solo el orden por defecto
-                    for ($i = 0; $i < 12; $i++) {
-                        $worldClockDefaults[$i] = $defaultOrder[$i] ?? array_key_first($worldClockOptions);
-                    }
-                }
-            @endphp
-            
-            <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                @foreach($worldClockDefaults as $slotIndex => $defaultCity)
-                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $slotIndex }}">
-                        <div class="text-center">
-                            <div class="flex items-center justify-start gap-1 mb-1">
-                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
-                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-transparent rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-transparent">
-                                @foreach($worldClockOptions as $cityKey => $cityLabel)
-                                    <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
-                                        {{ $cityLabel }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            </div>
-                            <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
-                            <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
-                        </div>
-                    </div>
-                @endforeach
             </div>
         </div>
     </div>

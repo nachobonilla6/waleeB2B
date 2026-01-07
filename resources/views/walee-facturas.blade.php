@@ -267,52 +267,99 @@
     </div>
     
     <script>
-        // Chart data
-        const ultimos15Dias = [];
-        const facturasPorDia = [];
+        // Datos para la gráfica de Gastos y Entradas
+        @php
+            // Obtener todos los días del mes actual
+            $diasDelMes = [];
+            $gastosPorDia = [];
+            $entradasPorDia = [];
+            
+            $mesActual = now()->month;
+            $añoActual = now()->year;
+            $diasEnMes = now()->daysInMonth;
+            
+            for ($dia = 1; $dia <= $diasEnMes; $dia++) {
+                $fecha = \Carbon\Carbon::create($añoActual, $mesActual, $dia);
+                $diasDelMes[] = $fecha->format('d/m');
+                
+                // Gastos del día
+                $gastosDia = \App\Models\Gasto::whereDate('created_at', $fecha->format('Y-m-d'))
+                    ->sum('total');
+                $gastosPorDia[] = $gastosDia;
+                
+                // Entradas (facturas) del día
+                $entradasDia = \App\Models\Factura::whereDate('created_at', $fecha->format('Y-m-d'))
+                    ->sum('total');
+                $entradasPorDia[] = $entradasDia;
+            }
+        @endphp
         
-        @for ($i = 14; $i >= 0; $i--)
-            @php
-                $fecha = now()->subDays($i);
-                $facturasDia = \App\Models\Factura::whereDate('created_at', $fecha->format('Y-m-d'))->count();
-            @endphp
-            ultimos15Dias.push('{{ $fecha->format("d/m") }}');
-            facturasPorDia.push({{ $facturasDia }});
-        @endfor
+        const diasDelMes = @json($diasDelMes);
+        const gastosPorDia = @json($gastosPorDia);
+        const entradasPorDia = @json($entradasPorDia);
         
-        // Chart configuration
+        // Configuración de la gráfica
         const isDarkMode = document.documentElement.classList.contains('dark');
-        const ctx = document.getElementById('facturasChart');
+        const ctx = document.getElementById('gastosEntradasChart');
         
         if (ctx) {
-            window.facturasChartInstance = new Chart(ctx, {
+            window.gastosEntradasChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ultimos15Dias,
-                    datasets: [{
-                        label: 'Facturas',
-                        data: facturasPorDia,
-                        borderColor: isDarkMode ? 'rgb(99, 102, 241)' : 'rgb(99, 102, 241)',
-                        backgroundColor: isDarkMode ? 'rgba(99, 102, 241, 0.1)' : 'rgba(99, 102, 241, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        borderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: isDarkMode ? 'rgb(99, 102, 241)' : 'rgb(99, 102, 241)',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: isDarkMode ? 'rgb(99, 102, 241)' : 'rgb(99, 102, 241)',
-                        pointHoverBorderWidth: 2
-                    }]
+                    labels: diasDelMes,
+                    datasets: [
+                        {
+                            label: 'Gastos',
+                            data: gastosPorDia,
+                            borderColor: isDarkMode ? 'rgb(249, 115, 22)' : 'rgb(249, 115, 22)',
+                            backgroundColor: isDarkMode ? 'rgba(249, 115, 22, 0.1)' : 'rgba(249, 115, 22, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: isDarkMode ? 'rgb(249, 115, 22)' : 'rgb(249, 115, 22)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: isDarkMode ? 'rgb(249, 115, 22)' : 'rgb(249, 115, 22)',
+                            pointHoverBorderWidth: 2
+                        },
+                        {
+                            label: 'Entradas (Facturado)',
+                            data: entradasPorDia,
+                            borderColor: isDarkMode ? 'rgb(59, 130, 246)' : 'rgb(59, 130, 246)',
+                            backgroundColor: isDarkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: isDarkMode ? 'rgb(59, 130, 246)' : 'rgb(59, 130, 246)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: isDarkMode ? 'rgb(59, 130, 246)' : 'rgb(59, 130, 246)',
+                            pointHoverBorderWidth: 2
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                                font: {
+                                    size: 12
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
                         },
                         tooltip: {
                             backgroundColor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
@@ -321,10 +368,13 @@
                             borderColor: isDarkMode ? 'rgba(148, 163, 184, 0.2)' : 'rgba(148, 163, 184, 0.2)',
                             borderWidth: 1,
                             padding: 12,
-                            displayColors: false,
+                            displayColors: true,
                             callbacks: {
                                 label: function(context) {
-                                    return 'Facturas: ' + context.parsed.y;
+                                    return context.dataset.label + ': ₡' + context.parsed.y.toLocaleString('es-CR', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    });
                                 }
                             }
                         }
@@ -337,7 +387,9 @@
                                 font: {
                                     size: 11
                                 },
-                                stepSize: 1
+                                callback: function(value) {
+                                    return '₡' + value.toLocaleString('es-CR');
+                                }
                             },
                             grid: {
                                 color: isDarkMode ? 'rgba(148, 163, 184, 0.1)' : 'rgba(148, 163, 184, 0.1)',
@@ -349,7 +401,9 @@
                                 color: isDarkMode ? '#94a3b8' : '#64748b',
                                 font: {
                                     size: 11
-                                }
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
                             },
                             grid: {
                                 display: false
@@ -360,14 +414,13 @@
             });
         }
         
-        // Update chart colors on dark mode toggle
+        // Actualizar gráfica cuando cambie el modo oscuro
         const darkModeToggle = document.querySelector('[data-dark-mode-toggle]');
         if (darkModeToggle) {
             darkModeToggle.addEventListener('click', () => {
                 setTimeout(() => {
-                    if (ctx && window.facturasChartInstance) {
-                        window.facturasChartInstance.destroy();
-                        // Recreate chart with updated colors
+                    if (ctx && window.gastosEntradasChartInstance) {
+                        window.gastosEntradasChartInstance.destroy();
                         location.reload();
                     }
                 }, 100);

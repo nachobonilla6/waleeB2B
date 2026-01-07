@@ -1245,6 +1245,92 @@
             }
         `;
         document.head.appendChild(style);
+        
+        function togglePriorityMenu(ticketId) {
+            const menu = document.getElementById(`priorityMenu-${ticketId}`);
+            if (!menu) return;
+            
+            // Cerrar todos los otros menús
+            document.querySelectorAll('[id^="priorityMenu-"]').forEach(m => {
+                if (m.id !== `priorityMenu-${ticketId}`) {
+                    m.classList.add('hidden');
+                }
+            });
+            
+            // Toggle del menú actual
+            menu.classList.toggle('hidden');
+        }
+        
+        async function changeTicketPriority(ticketId, priority) {
+            // Cerrar el menú
+            const menu = document.getElementById(`priorityMenu-${ticketId}`);
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+            
+            let route = '';
+            if (priority === 'urgente') {
+                route = `/walee-tickets/${ticketId}/urgente`;
+            } else if (priority === 'prioritario') {
+                route = `/walee-tickets/${ticketId}/prioritario`;
+            } else if (priority === 'a_discutir') {
+                route = `/walee-tickets/${ticketId}/a-discutir`;
+            } else if (priority === 'ninguno') {
+                // Si ya está marcado, desmarcarlo
+                const ticketCard = document.querySelector(`[data-id="${ticketId}"]`);
+                if (ticketCard) {
+                    // Determinar qué prioridad tiene actualmente y desmarcarla
+                    const isUrgente = ticketCard.classList.contains('border-red-500');
+                    const isPrioritario = ticketCard.classList.contains('border-yellow-500');
+                    const isADiscutir = ticketCard.classList.contains('border-blue-500');
+                    
+                    if (isUrgente) {
+                        route = `/walee-tickets/${ticketId}/urgente`;
+                    } else if (isPrioritario) {
+                        route = `/walee-tickets/${ticketId}/prioritario`;
+                    } else if (isADiscutir) {
+                        route = `/walee-tickets/${ticketId}/a-discutir`;
+                    } else {
+                        return; // Ya no tiene prioridad
+                    }
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+            
+            try {
+                const response = await fetch(route, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Prioridad actualizada', data.message, 'success');
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    showNotification('Error', data.message || 'No se pudo actualizar la prioridad', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error', 'Error de conexión', 'error');
+            }
+        }
+        
+        // Cerrar menús al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('[id^="priorityMenu-"]') && !event.target.closest('button[onclick*="togglePriorityMenu"]')) {
+                document.querySelectorAll('[id^="priorityMenu-"]').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
     </script>
     @include('partials.walee-support-button')
 </body>

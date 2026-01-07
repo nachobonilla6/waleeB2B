@@ -357,13 +357,13 @@
                                             }
                                         @endphp
                                         <div 
-                                            class="gasto-item bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border {{ $estaVencido ? 'border-red-400 dark:border-red-500/50' : 'border-slate-200 dark:border-slate-600' }} hover:border-orange-400 dark:hover:border-orange-500/30 transition-all"
+                                            class="gasto-item bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border {{ $estaVencido ? 'border-red-600 dark:border-red-500 border-2' : 'border-slate-200 dark:border-slate-600' }} hover:border-orange-400 dark:hover:border-orange-500/30 transition-all {{ $estaVencido ? 'bg-red-50/50 dark:bg-red-900/10' : '' }}"
                                             data-gasto-id="{{ $gasto->id }}"
                                         >
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="flex-1 min-w-0">
                                                     <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                                        <h4 class="font-semibold text-slate-900 dark:text-white">{{ $gasto->nombre }}</h4>
+                                                        <h4 class="font-semibold {{ $estaVencido ? 'text-red-900 dark:text-red-300' : 'text-slate-900 dark:text-white' }}">{{ $gasto->nombre }}</h4>
                                                         <span class="px-2 py-0.5 text-xs font-medium rounded-md 
                                                             {{ $gasto->tipo === 'mensual' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' }}">
                                                             {{ ucfirst($gasto->tipo) }}
@@ -373,7 +373,7 @@
                                                                 Pagado
                                                             </span>
                                                         @elseif($estaVencido)
-                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 animate-pulse">
+                                                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-red-500 text-white dark:bg-red-600 dark:text-white shadow-md animate-pulse">
                                                                 Vencido
                                                             </span>
                                                         @endif
@@ -384,9 +384,9 @@
                                                     @endif
                                                     
                                                     <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                                                        <span class="font-semibold text-slate-900 dark:text-white">₡{{ number_format($gasto->total, 2, '.', ',') }}</span>
+                                                        <span class="font-semibold {{ $estaVencido ? 'text-red-700 dark:text-red-400' : 'text-slate-900 dark:text-white' }}">₡{{ number_format($gasto->total, 2, '.', ',') }}</span>
                                                         @if($gasto->proxima_fecha_pago)
-                                                            <span class="{{ $estaVencido ? 'text-red-600 dark:text-red-400 font-semibold' : '' }}">
+                                                            <span class="{{ $estaVencido ? 'text-red-700 dark:text-red-400 font-bold' : '' }}">
                                                                 Próximo pago: {{ $gasto->proxima_fecha_pago->format('d/m/Y') }}
                                                                 @if($estaVencido)
                                                                     ({{ $gasto->proxima_fecha_pago->diffForHumans() }})

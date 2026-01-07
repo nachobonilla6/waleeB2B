@@ -655,11 +655,16 @@
                         }
                     @endphp
                     
-                    <!-- Botones de editar y configuraciones en esquina superior izquierda -->
+                    <!-- Botones de editar, configuraciones y nota en esquina superior izquierda -->
                     <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2">
                         <button onclick="openEditClientModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg">
                             <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </button>
+                        <button onclick="openNotaModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500/80 hover:bg-amber-500 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Nota">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </button>
                         <button onclick="openConfiguracionesModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-violet-600/80 hover:bg-violet-600 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Configuraciones">
@@ -3296,6 +3301,104 @@
                         showConfirmButton: false
                     }).then(() => {
                         // Recargar la página para actualizar el estado del botón de Facebook
+                        location.reload();
+                    });
+                }
+            });
+        }
+        
+        // Función para abrir modal de nota
+        function openNotaModal() {
+            const isMobile = window.innerWidth < 640;
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            
+            const clienteId = {{ $cliente->id }};
+            const notaActual = {!! json_encode($cliente->nota ?? '') !!};
+            
+            const html = `
+                <form id="nota-form" class="space-y-4 text-left">
+                    <div>
+                        <textarea 
+                            id="nota_content" 
+                            name="nota" 
+                            rows="10" 
+                            placeholder="Escribe tu nota aquí..." 
+                            class="w-full px-3 py-2 text-sm ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-800'} border rounded-lg focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"
+                            style="min-width: 100%; width: 100%; max-width: 100%;"
+                        >${notaActual}</textarea>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: 'Nota',
+                html: html,
+                width: isMobile ? '95%' : '700px',
+                padding: isMobile ? '0.75rem' : '1.5rem',
+                showCancelButton: true,
+                showCloseButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                reverseButtons: true,
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                customClass: {
+                    popup: isMobile ? '!w-[95%] !max-w-[95%]' : '',
+                    htmlContainer: isMobile ? '!w-full !max-w-full' : '',
+                    confirmButton: '!bg-amber-500 hover:!bg-amber-600'
+                },
+                didOpen: () => {
+                    // Asegurar que el textarea use todo el ancho
+                    const textarea = document.getElementById('nota_content');
+                    if (textarea) {
+                        textarea.style.width = '100%';
+                        textarea.style.minWidth = '100%';
+                        textarea.style.maxWidth = '100%';
+                    }
+                    const form = document.getElementById('nota-form');
+                    if (form) {
+                        form.style.width = '100%';
+                        form.style.maxWidth = '100%';
+                    }
+                },
+                preConfirm: () => {
+                    const nota = document.getElementById('nota_content').value;
+                    
+                    return fetch(`/walee-cliente/${clienteId}/nota`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            nota: nota
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            throw new Error(data.message || 'Error al guardar');
+                        }
+                        return data;
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(error.message || 'Error al guardar la nota');
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Nota guardada!',
+                        text: 'La nota se ha guardado correctamente',
+                        confirmButtonColor: '#f59e0b',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Recargar la página para actualizar la nota
                         location.reload();
                     });
                 }

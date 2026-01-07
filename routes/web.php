@@ -3767,10 +3767,24 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
         
         \DB::commit();
         
+        // Buscar el Client correspondiente para redirección
+        $clientId = null;
+        if ($factura->cliente_id) {
+            $cliente = \App\Models\Cliente::find($factura->cliente_id);
+            if ($cliente && $cliente->correo) {
+                $client = \App\Models\Client::where('email', $cliente->correo)->first();
+                if ($client) {
+                    $clientId = $client->id;
+                }
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'message' => $esEdicion ? 'Factura actualizada correctamente' : 'Factura creada correctamente',
             'factura_id' => $factura->id,
+            'cliente_id' => $factura->cliente_id,
+            'client_id' => $clientId, // ID del Client para redirección
         ]);
     } catch (\Exception $e) {
         \DB::rollBack();
@@ -5772,6 +5786,26 @@ Route::post('/walee-cliente/{id}/webhook-productos', function (\Illuminate\Http\
         ], 500);
     }
 })->middleware(['auth'])->name('walee.cliente.webhook.productos');
+
+// Ruta para guardar nota del cliente
+Route::post('/walee-cliente/{id}/nota', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $cliente = \App\Models\Client::findOrFail($id);
+        
+        $cliente->nota = $request->input('nota');
+        $cliente->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Nota guardada correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.cliente.nota');
 
 // Rutas para Tareas (POST, PUT, DELETE)
 Route::post('/walee-tareas', function (\Illuminate\Http\Request $request) {

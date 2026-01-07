@@ -32,6 +32,7 @@ class Client extends Model
         'webhook_productos',
         'page_id',
         'token',
+        'nota',
     ];
 
     protected $casts = [

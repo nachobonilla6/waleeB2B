@@ -12,12 +12,10 @@
             <!-- World Map Widget -->
             <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
                 <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
-                    <!-- Imagen de fondo del mapa -->
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" alt="World Map" style="width: 100%; height: 100%; object-fit: fill; position: absolute; top: 0; left: 0; opacity: 0.8; filter: brightness(0.95);" class="world-map-bg">
-                    <!-- Mapa mundial con marcadores mejorados - coordenadas ajustadas para alinearse con la imagen -->
+                    <!-- Mapa mundial con imagen de fondo integrada en SVG para mantener alineación perfecta -->
                     <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10;" class="world-map-svg" preserveAspectRatio="none">
-                        <!-- Fondo transparente para que se vea la imagen de fondo -->
-                        <rect width="1000" height="500" fill="transparent"/>
+                        <!-- Imagen de fondo del mapa integrada en SVG para mantener alineación -->
+                        <image href="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" x="0" y="0" width="1000" height="500" preserveAspectRatio="none" opacity="0.8" style="filter: brightness(0.95);"/>
                         
                         <!-- Marcadores de ciudades - coordenadas ajustadas para alinearse perfectamente con las ciudades del mapa -->
                         <!-- New York: Coordenadas ajustadas (-74°W, 40°N) -->
@@ -227,7 +225,11 @@
 <style>
     /* World Map Styles */
     .world-map-svg {
-        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        /* Sin filtro global para evitar afectar la imagen de fondo */
+    }
+    
+    .city-marker {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     }
     
     .city-dot {
@@ -254,8 +256,8 @@
         }
     }
     
-    .dark .world-map-svg {
-        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    .dark .city-marker {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
     }
 </style>
 

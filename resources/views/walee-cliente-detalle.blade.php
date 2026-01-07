@@ -356,6 +356,89 @@
         $emailsColor = ($emailsEnviados ?? 0) >= 3 ? 'text-red-400' : (($emailsEnviados ?? 0) >= 1 ? 'text-amber-400' : 'text-slate-500');
         $emailsBg = ($emailsEnviados ?? 0) >= 3 ? 'bg-red-500/20' : (($emailsEnviados ?? 0) >= 1 ? 'bg-amber-500/20' : 'bg-slate-800/50');
         $emailsBorder = ($emailsEnviados ?? 0) >= 3 ? 'border-red-500/30' : (($emailsEnviados ?? 0) >= 1 ? 'border-amber-500/30' : 'border-slate-700');
+        
+        // Determinar zona horaria del cliente basada en ciudad y address
+        $cityTimezones = [
+            'madrid' => 'Europe/Madrid', 'barcelona' => 'Europe/Madrid', 'valencia' => 'Europe/Madrid', 'sevilla' => 'Europe/Madrid',
+            'new york' => 'America/New_York', 'los angeles' => 'America/Los_Angeles', 'chicago' => 'America/Chicago',
+            'london' => 'Europe/London', 'paris' => 'Europe/Paris', 'berlin' => 'Europe/Berlin',
+            'rome' => 'Europe/Rome', 'milan' => 'Europe/Rome', 'lisbon' => 'Europe/Lisbon',
+            'méxico' => 'America/Mexico_City', 'mexico' => 'America/Mexico_City', 'guadalajara' => 'America/Mexico_City',
+            'buenos aires' => 'America/Argentina/Buenos_Aires', 'bogotá' => 'America/Bogota', 'bogota' => 'America/Bogota',
+            'santiago' => 'America/Santiago', 'lima' => 'America/Lima', 'são paulo' => 'America/Sao_Paulo', 'sao paulo' => 'America/Sao_Paulo',
+            'toronto' => 'America/Toronto', 'tokyo' => 'Asia/Tokyo', 'sydney' => 'Australia/Sydney', 'dubai' => 'Asia/Dubai',
+        ];
+        
+        $countryTimezones = [
+            'spain' => 'Europe/Madrid', 'españa' => 'Europe/Madrid', 'united states' => 'America/New_York', 'usa' => 'America/New_York',
+            'united kingdom' => 'Europe/London', 'uk' => 'Europe/London', 'france' => 'Europe/Paris', 'germany' => 'Europe/Berlin',
+            'italy' => 'Europe/Rome', 'portugal' => 'Europe/Lisbon', 'mexico' => 'America/Mexico_City', 'argentina' => 'America/Argentina/Buenos_Aires',
+            'colombia' => 'America/Bogota', 'chile' => 'America/Santiago', 'peru' => 'America/Lima', 'brazil' => 'America/Sao_Paulo',
+            'canada' => 'America/Toronto', 'costa rica' => 'America/Costa_Rica',
+        ];
+        
+        $langTimezones = [
+            'es' => 'Europe/Madrid', 'en' => 'America/New_York', 'fr' => 'Europe/Paris',
+            'de' => 'Europe/Berlin', 'it' => 'Europe/Rome', 'pt' => 'Europe/Lisbon'
+        ];
+        
+        $findCityInText = function($text) use ($cityTimezones) {
+            if (empty($text)) return null;
+            $textLower = strtolower(trim($text));
+            $sortedCities = array_keys($cityTimezones);
+            usort($sortedCities, function($a, $b) { return strlen($b) - strlen($a); });
+            foreach ($sortedCities as $city) {
+                if (strpos($textLower, $city) !== false) return $cityTimezones[$city];
+            }
+            return null;
+        };
+        
+        $findCountryInText = function($text) use ($countryTimezones) {
+            if (empty($text)) return null;
+            $textLower = strtolower(trim($text));
+            foreach ($countryTimezones as $country => $tz) {
+                if (strpos($textLower, $country) !== false) return $tz;
+            }
+            return null;
+        };
+        
+        $clientTimezone = null;
+        if ($cliente->ciudad) {
+            $clientTimezone = $findCityInText($cliente->ciudad);
+        }
+        if (!$clientTimezone && $cliente->address) {
+            $clientTimezone = $findCityInText($cliente->address);
+        }
+        if (!$clientTimezone && $cliente->address) {
+            $clientTimezone = $findCountryInText($cliente->address);
+        }
+        if (!$clientTimezone && $cliente->ciudad) {
+            $clientTimezone = $findCountryInText($cliente->ciudad);
+        }
+        if (!$clientTimezone && $cliente->idioma && isset($langTimezones[$cliente->idioma])) {
+            $clientTimezone = $langTimezones[$cliente->idioma];
+        }
+        
+        // Obtener hora del sistema (Costa Rica)
+        $systemTimezone = 'America/Costa_Rica';
+        $systemTime = null;
+        $systemDate = null;
+        try {
+            $systemNow = new \DateTime('now', new \DateTimeZone($systemTimezone));
+            $systemTime = $systemNow->format('H:i');
+            $systemDate = $systemNow->format('d/m');
+        } catch (\Exception $e) {}
+        
+        // Obtener hora del cliente
+        $clientTime = null;
+        $clientDate = null;
+        if ($clientTimezone) {
+            try {
+                $clientNow = new \DateTime('now', new \DateTimeZone($clientTimezone));
+                $clientTime = $clientNow->format('H:i');
+                $clientDate = $clientNow->format('d/m');
+            } catch (\Exception $e) {}
+        }
     @endphp
 
     <div class="min-h-screen relative flex flex-col">
@@ -485,13 +568,24 @@
                                 </div>
                             @endif
                             @if($cliente->horario)
-                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" id="horarioBtn" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtn" class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <span>Horario</span>
                                     <span id="horarioEstado" class="ml-1"></span>
                                 </button>
+                            @endif
+                            
+                            <!-- Zona Horaria Widget Mobile -->
+                            @if($clientTimezone)
+                                <div class="mt-1.5 bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex items-center gap-1.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}">
+                                    <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="text-xs font-bold text-violet-600 dark:text-violet-400 client-time-mobile">{{ $clientTime ?? '--:--' }}</span>
+                                    <span class="text-[10px] text-violet-500 dark:text-violet-400 client-date-mobile">{{ $clientDate ?? '--' }}</span>
+                                </div>
                             @endif
                         </div>
                 </div>
@@ -718,13 +812,24 @@
                                 </div>
                             @endif
                             @if($cliente->horario)
-                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}')" id="horarioBtnDesktop" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
+                                <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtnDesktop" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <span>Horario</span>
                                     <span id="horarioEstadoDesktop" class="ml-1"></span>
                                 </button>
+                            @endif
+                            
+                            <!-- Zona Horaria Widget Desktop -->
+                            @if($clientTimezone)
+                                <div class="mt-2 bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}">
+                                    <svg class="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span class="text-xs font-bold text-violet-600 dark:text-violet-400 client-time-desktop">{{ $clientTime ?? '--:--' }}</span>
+                                    <span class="text-[10px] text-violet-500 dark:text-violet-400 client-date-desktop">{{ $clientDate ?? '--' }}</span>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -2621,7 +2726,7 @@
             }
         }
         
-        function showHorarioModal(horario) {
+        function showHorarioModal(horario, clientTimezone, systemTimezone) {
             const isDarkMode = document.documentElement.classList.contains('dark');
             const isMobile = window.innerWidth < 640;
             
@@ -2638,6 +2743,44 @@
                 horarios = horario.split(',').map(h => h.trim().replace(/^\[|\]$/g, ''));
             }
             
+            // Función para convertir hora entre zonas horarias
+            const convertTime = function(timeStr, fromTZ, toTZ) {
+                if (!fromTZ || !toTZ || fromTZ === toTZ) return timeStr;
+                try {
+                    // Obtener fecha de hoy
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = today.getMonth();
+                    const day = today.getDate();
+                    
+                    // Parsear la hora (formato HH:MM o HH:MM-HH:MM)
+                    const timeMatch = timeStr.match(/(\d{1,2}):(\d{2})(?:-(\d{1,2}):(\d{2}))?/);
+                    if (!timeMatch) return timeStr;
+                    
+                    const startHour = parseInt(timeMatch[1]);
+                    const startMin = parseInt(timeMatch[2]);
+                    const endHour = timeMatch[3] ? parseInt(timeMatch[3]) : null;
+                    const endMin = timeMatch[4] ? parseInt(timeMatch[4]) : null;
+                    
+                    // Crear fecha en la zona horaria origen
+                    const startDate = new Date(new Date(year, month, day, startHour, startMin).toLocaleString('en-US', { timeZone: fromTZ }));
+                    const startInTarget = new Date(startDate.toLocaleString('en-US', { timeZone: toTZ }));
+                    
+                    let result = String(startInTarget.getHours()).padStart(2, '0') + ':' + String(startInTarget.getMinutes()).padStart(2, '0');
+                    
+                    if (endHour !== null && endMin !== null) {
+                        const endDate = new Date(new Date(year, month, day, endHour, endMin).toLocaleString('en-US', { timeZone: fromTZ }));
+                        const endInTarget = new Date(endDate.toLocaleString('en-US', { timeZone: toTZ }));
+                        result += '-' + String(endInTarget.getHours()).padStart(2, '0') + ':' + String(endInTarget.getMinutes()).padStart(2, '0');
+                    }
+                    
+                    return result;
+                } catch (e) {
+                    console.error('Error converting time:', e);
+                    return timeStr;
+                }
+            };
+            
             // Mapeo de días en español
             const diasOrden = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
             
@@ -2648,7 +2791,14 @@
                     const partes = horarioDia.split(':');
                     const diaNombre = partes[0].trim();
                     const horas = partes.slice(1).join(':').trim();
-                    return { dia: diaNombre, horas: horas };
+                    
+                    // Convertir horario a hora del sistema si hay zona horaria del cliente
+                    let horasSistema = horas;
+                    if (clientTimezone && systemTimezone && clientTimezone !== systemTimezone) {
+                        horasSistema = convertTime(horas, clientTimezone, systemTimezone);
+                    }
+                    
+                    return { dia: diaNombre, horas: horas, horasSistema: horasSistema };
                 }
                 return null;
             }).filter(h => h !== null);
@@ -2668,10 +2818,16 @@
             
             horariosOrdenados.forEach((item, index) => {
                 const esPar = index % 2 === 0;
+                // Mostrar hora del cliente y hora del sistema entre paréntesis si son diferentes
+                let horasDisplay = item.horas;
+                if (clientTimezone && systemTimezone && clientTimezone !== systemTimezone && item.horasSistema !== item.horas) {
+                    horasDisplay = `${item.horasSistema} <span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">(${item.horas})</span>`;
+                }
+                
                 tablaHTML += `
                     <tr class="${esPar ? (isDarkMode ? 'bg-slate-800/30' : 'bg-slate-50') : ''}">
                         <td class="py-2.5 px-3 font-medium">${item.dia.charAt(0).toUpperCase() + item.dia.slice(1)}</td>
-                        <td class="py-2.5 px-3">${item.horas}</td>
+                        <td class="py-2.5 px-3">${horasDisplay}</td>
                     </tr>
                 `;
             });
@@ -2864,6 +3020,42 @@
                 verificarFunciones();
             }
         }, true);
+        
+        // Update client clocks
+        @if($clientTimezone)
+        function updateClientClocks() {
+            const clientTimezone = '{{ $clientTimezone }}';
+            const systemTimezone = '{{ $systemTimezone }}';
+            
+            // Update mobile clock
+            const mobileTimeElement = document.querySelector('.client-time-mobile');
+            const mobileDateElement = document.querySelector('.client-date-mobile');
+            
+            // Update desktop clock
+            const desktopTimeElement = document.querySelector('.client-time-desktop');
+            const desktopDateElement = document.querySelector('.client-date-desktop');
+            
+            if (clientTimezone) {
+                try {
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: clientTimezone }));
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    
+                    if (mobileTimeElement) mobileTimeElement.textContent = `${hours}:${minutes}`;
+                    if (mobileDateElement) mobileDateElement.textContent = date;
+                    if (desktopTimeElement) desktopTimeElement.textContent = `${hours}:${minutes}`;
+                    if (desktopDateElement) desktopDateElement.textContent = date;
+                } catch (error) {
+                    console.error('Error updating client clock:', error);
+                }
+            }
+        }
+        
+        // Update clocks every second
+        updateClientClocks();
+        setInterval(updateClientClocks, 1000);
+        @endif
     </script>
 </body>
 </html>

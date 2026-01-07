@@ -437,76 +437,28 @@
                         
                         <!-- Línea 2: Botones -->
                         <div class="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-700/50 flex items-center gap-1 sm:gap-1.5 flex-wrap" onclick="event.stopPropagation();">
-                            <!-- Selector de Prioridad -->
-                            <div class="relative inline-block">
-                                <button 
-                                    onclick="event.stopPropagation(); togglePriorityMenu({{ $ticket->id }})"
-                                    class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all flex items-center gap-0.5 sm:gap-1 {{ $ticket->urgente ? 'bg-red-500 text-white' : ($ticket->prioritario ? 'bg-yellow-500 text-white' : ($ticket->a_discutir ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-600')) }}"
-                                    title="Cambiar prioridad"
-                                >
-                                    @if($ticket->urgente)
-                                        <span>⚠️</span>
-                                    @elseif($ticket->prioritario)
-                                        <span>⭐</span>
-                                    @elseif($ticket->a_discutir)
-                                        <span>💬</span>
-                                    @else
-                                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                                        </svg>
-                                    @endif
-                                    <svg class="w-2 h-2 sm:w-2.5 sm:h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </button>
-                                <div id="priorityMenu-{{ $ticket->id }}" class="hidden absolute left-0 top-full mt-1 z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg min-w-[140px]">
-                                    <button 
-                                        onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'urgente')"
-                                        class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2 {{ $ticket->urgente ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400' : 'text-slate-700 dark:text-slate-300' }}"
-                                    >
-                                        <span>⚠️</span>
-                                        <span>Urgente</span>
-                                        @if($ticket->urgente)
-                                            <svg class="w-3 h-3 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        @endif
-                                    </button>
-                                    <button 
-                                        onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'prioritario')"
-                                        class="w-full text-left px-3 py-2 text-xs hover:bg-yellow-50 dark:hover:bg-yellow-900/20 flex items-center gap-2 {{ $ticket->prioritario ? 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400' : 'text-slate-700 dark:text-slate-300' }}"
-                                    >
-                                        <span>⭐</span>
-                                        <span>Prioritario</span>
-                                        @if($ticket->prioritario)
-                                            <svg class="w-3 h-3 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        @endif
-                                    </button>
-                                    <button 
-                                        onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'a_discutir')"
-                                        class="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-2 {{ $ticket->a_discutir ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300' }}"
-                                    >
-                                        <span>💬</span>
-                                        <span>A Discutir</span>
-                                        @if($ticket->a_discutir)
-                                            <svg class="w-3 h-3 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        @endif
-                                    </button>
-                                    @if($ticket->urgente || $ticket->prioritario || $ticket->a_discutir)
-                                        <div class="border-t border-slate-200 dark:border-slate-700"></div>
-                                        <button 
-                                            onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'ninguno')"
-                                            class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400"
-                                        >
-                                            Quitar prioridad
-                                        </button>
-                                    @endif
-                                </div>
-                            </div>
+                            <!-- Iconos de Prioridad -->
+                            <button 
+                                onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'urgente')"
+                                class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs sm:text-sm rounded transition-all {{ $ticket->urgente ? 'bg-red-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-red-100 dark:hover:bg-red-900/30' }}"
+                                title="Urgente"
+                            >
+                                ⚠️
+                            </button>
+                            <button 
+                                onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'prioritario')"
+                                class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs sm:text-sm rounded transition-all {{ $ticket->prioritario ? 'bg-yellow-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-yellow-100 dark:hover:bg-yellow-900/30' }}"
+                                title="Prioritario"
+                            >
+                                ⭐
+                            </button>
+                            <button 
+                                onclick="event.stopPropagation(); changeTicketPriority({{ $ticket->id }}, 'a_discutir')"
+                                class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs sm:text-sm rounded transition-all {{ $ticket->a_discutir ? 'bg-blue-500 text-white shadow-md' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-blue-100 dark:hover:bg-blue-900/30' }}"
+                                title="A Discutir"
+                            >
+                                💬
+                            </button>
                             <button onclick="changeStatus({{ $ticket->id }}, 'enviado')" class="px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded transition-all {{ $ticket->estado === 'enviado' ? 'bg-amber-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 hover:bg-amber-100 dark:hover:bg-amber-500/20' }}">
                                 Enviado
                             </button>
@@ -1246,28 +1198,7 @@
         `;
         document.head.appendChild(style);
         
-        function togglePriorityMenu(ticketId) {
-            const menu = document.getElementById(`priorityMenu-${ticketId}`);
-            if (!menu) return;
-            
-            // Cerrar todos los otros menús
-            document.querySelectorAll('[id^="priorityMenu-"]').forEach(m => {
-                if (m.id !== `priorityMenu-${ticketId}`) {
-                    m.classList.add('hidden');
-                }
-            });
-            
-            // Toggle del menú actual
-            menu.classList.toggle('hidden');
-        }
-        
         async function changeTicketPriority(ticketId, priority) {
-            // Cerrar el menú
-            const menu = document.getElementById(`priorityMenu-${ticketId}`);
-            if (menu) {
-                menu.classList.add('hidden');
-            }
-            
             let route = '';
             if (priority === 'urgente') {
                 route = `/walee-tickets/${ticketId}/urgente`;
@@ -1275,27 +1206,6 @@
                 route = `/walee-tickets/${ticketId}/prioritario`;
             } else if (priority === 'a_discutir') {
                 route = `/walee-tickets/${ticketId}/a-discutir`;
-            } else if (priority === 'ninguno') {
-                // Si ya está marcado, desmarcarlo
-                const ticketCard = document.querySelector(`[data-id="${ticketId}"]`);
-                if (ticketCard) {
-                    // Determinar qué prioridad tiene actualmente y desmarcarla
-                    const isUrgente = ticketCard.classList.contains('border-red-500');
-                    const isPrioritario = ticketCard.classList.contains('border-yellow-500');
-                    const isADiscutir = ticketCard.classList.contains('border-blue-500');
-                    
-                    if (isUrgente) {
-                        route = `/walee-tickets/${ticketId}/urgente`;
-                    } else if (isPrioritario) {
-                        route = `/walee-tickets/${ticketId}/prioritario`;
-                    } else if (isADiscutir) {
-                        route = `/walee-tickets/${ticketId}/a-discutir`;
-                    } else {
-                        return; // Ya no tiene prioridad
-                    }
-                } else {
-                    return;
-                }
             } else {
                 return;
             }
@@ -1322,15 +1232,6 @@
                 showNotification('Error', 'Error de conexión', 'error');
             }
         }
-        
-        // Cerrar menús al hacer clic fuera
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('[id^="priorityMenu-"]') && !event.target.closest('button[onclick*="togglePriorityMenu"]')) {
-                document.querySelectorAll('[id^="priorityMenu-"]').forEach(menu => {
-                    menu.classList.add('hidden');
-                });
-            }
-        });
     </script>
     @include('partials.walee-support-button')
 </body>

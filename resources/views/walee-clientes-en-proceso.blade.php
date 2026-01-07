@@ -109,6 +109,26 @@
                 width: 1.125rem !important;
                 height: 1.125rem !important;
             }
+            
+            /* Permitir que el contenido del cliente se expanda completamente */
+            .client-card > div {
+                min-height: auto !important;
+                height: auto !important;
+            }
+            
+            .client-card a {
+                overflow: visible !important;
+                text-overflow: unset !important;
+                white-space: normal !important;
+            }
+            
+            .client-card p {
+                overflow: visible !important;
+                text-overflow: unset !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                word-break: break-word !important;
+            }
         }
     </style>
 </head>
@@ -528,7 +548,7 @@
                         }
                     @endphp
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . ($phone ?? '') . ' ' . ($cliente->email ?? '')) }}" data-client-id="{{ $cliente->id }}">
-                        <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all">
+                        <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all">
                             <!-- Checkbox -->
                             <input 
                                 type="checkbox" 
@@ -552,25 +572,25 @@
                             <!-- Content -->
                             <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-0.5">
-                                    <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
+                                    <p class="font-medium text-sm text-slate-900 dark:text-white break-words group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
                                 </div>
                                 @if($cliente->industria)
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate mb-0.5">{{ $cliente->industria }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 break-words mb-0.5">{{ $cliente->industria }}</p>
                                 @endif
                                 @if($cliente->email)
-                                    <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 break-words">{{ $cliente->email }}</p>
                                 @endif
                                 @if($phone)
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $phone }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 break-words">{{ $phone }}</p>
                                 @endif
                                 @if($cliente->website)
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 truncate">{{ $cliente->website }}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 break-words">{{ $cliente->website }}</p>
                                 @endif
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
                             </a>
                             
                             <!-- Email Counter and Timezone -->
-                            <div class="flex-shrink-0 flex items-center gap-1.5">
+                            <div class="flex-shrink-0 flex items-start gap-1.5 self-start">
                                 @if($clientTime && $timezone)
                                     <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex flex-col items-center gap-0.5" title="Hora local del cliente{{ $timezoneSource ? ' (basada en ' . $timezoneSource . ')' : '' }}" data-client-timezone="{{ $timezone }}" data-client-ciudad="{{ $cliente->ciudad ?? '' }}">
                                         <div class="flex items-center gap-1">
@@ -591,7 +611,7 @@
                             </div>
                             
                             <!-- Action Buttons -->
-                            <div class="flex-shrink-0 flex items-center gap-1.5 sm:gap-1.5">
+                            <div class="flex-shrink-0 flex items-start gap-1.5 sm:gap-1.5 self-start">
                                 <!-- Email with AI Button -->
                                 <button onclick="openEmailModalForCliente({{ $cliente->id }}, '{{ $cliente->email ?? '' }}', '{{ addslashes($cliente->name ?? '') }}', '{{ $cliente->website ?? '' }}')" class="p-1.5 sm:p-1.5 rounded-md bg-walee-500/20 hover:bg-walee-500/30 text-walee-600 dark:text-walee-400 border border-walee-500/30 hover:border-walee-400/50 transition-all flex items-center justify-center" title="Email AI">
                                     <svg class="w-4 h-4 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

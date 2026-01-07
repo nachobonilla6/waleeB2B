@@ -129,8 +129,11 @@
             
             <!-- Stats Grid - 4 Widgets -->
             @php
-                $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMes / $totalFacturadoEsteMes) * 100 : 0;
-                $diferencia = $totalFacturadoEsteMes - ($totalGastosEsteMes ?? 0);
+                // Los gastos están en dólares, las facturas en colones
+                $totalGastosEsteMesUSD = $totalGastosEsteMes ?? 0;
+                $totalGastosEsteMesCRC = $totalGastosEsteMesUSD * $tasaCambio;
+                $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMesCRC / $totalFacturadoEsteMes) * 100 : 0;
+                $diferencia = $totalFacturadoEsteMes - $totalGastosEsteMesCRC;
             @endphp
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
                 <!-- Total Facturado Este Mes -->
@@ -225,11 +228,13 @@
             
             <!-- Comparación y Diferencia -->
             @php
-                $totalGastosEsteMes = \App\Models\Gasto::whereMonth('created_at', now()->month)
+                // Los gastos están en dólares, las facturas en colones
+                $totalGastosEsteMesUSD = \App\Models\Gasto::whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
                     ->sum('total');
-                $diferencia = $totalFacturadoEsteMes - $totalGastosEsteMes;
-                $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMes / $totalFacturadoEsteMes) * 100 : 0;
+                $totalGastosEsteMesCRC = $totalGastosEsteMesUSD * $tasaCambio;
+                $diferencia = $totalFacturadoEsteMes - $totalGastosEsteMesCRC;
+                $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMesCRC / $totalFacturadoEsteMes) * 100 : 0;
             @endphp
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm dark:shadow-none mb-6 sm:mb-8 animate-fade-in-up">
                 <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Resumen del Mes</h3>

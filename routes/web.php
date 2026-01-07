@@ -3379,6 +3379,15 @@ Route::get('/walee-facturas', function () {
         $cotizacionesEsteMes = 0;
     }
     
+    // Gastos
+    try {
+        $totalGastos = \App\Models\Gasto::sum('total');
+        $gastosPendientes = \App\Models\Gasto::where('pagado', false)->sum('total');
+    } catch (\Exception $e) {
+        $totalGastos = 0;
+        $gastosPendientes = 0;
+    }
+    
     return view('walee-facturas', compact(
         'totalFacturas',
         'facturasEsteMes',
@@ -3394,9 +3403,107 @@ Route::get('/walee-facturas', function () {
         'totalPagadoEsteMes',
         'facturasRecientes',
         'totalCotizaciones',
-        'cotizacionesEsteMes'
+        'cotizacionesEsteMes',
+        'totalGastos',
+        'gastosPendientes'
     ));
 })->middleware(['auth'])->name('walee.facturas');
+
+// Rutas para Gastos
+Route::get('/walee-gastos', function () {
+    return view('walee-gastos');
+})->middleware(['auth'])->name('walee.gastos');
+
+Route::post('/walee-gastos', function (\Illuminate\Http\Request $request) {
+    try {
+        $gasto = new \App\Models\Gasto();
+        $gasto->nombre = $request->input('nombre');
+        $gasto->descripcion = $request->input('descripcion');
+        $gasto->link = $request->input('link');
+        $gasto->total = $request->input('total');
+        $gasto->tipo = $request->input('tipo', 'mensual');
+        $gasto->proxima_fecha_pago = $request->input('proxima_fecha_pago');
+        $gasto->pagado = $request->input('pagado', false);
+        $gasto->fecha = now();
+        $gasto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Gasto creado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.gastos.store');
+
+Route::get('/walee-gastos/{id}', function ($id) {
+    try {
+        $gasto = \App\Models\Gasto::findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'gasto' => [
+                'id' => $gasto->id,
+                'nombre' => $gasto->nombre,
+                'descripcion' => $gasto->descripcion,
+                'link' => $gasto->link,
+                'total' => $gasto->total,
+                'tipo' => $gasto->tipo,
+                'proxima_fecha_pago' => $gasto->proxima_fecha_pago ? $gasto->proxima_fecha_pago->format('Y-m-d') : null,
+                'pagado' => $gasto->pagado,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.gastos.show');
+
+Route::put('/walee-gastos/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $gasto = \App\Models\Gasto::findOrFail($id);
+        $gasto->nombre = $request->input('nombre');
+        $gasto->descripcion = $request->input('descripcion');
+        $gasto->link = $request->input('link');
+        $gasto->total = $request->input('total');
+        $gasto->tipo = $request->input('tipo', 'mensual');
+        $gasto->proxima_fecha_pago = $request->input('proxima_fecha_pago');
+        $gasto->pagado = $request->input('pagado', false);
+        $gasto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Gasto actualizado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.gastos.update');
+
+Route::delete('/walee-gastos/{id}', function ($id) {
+    try {
+        $gasto = \App\Models\Gasto::findOrFail($id);
+        $gasto->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Gasto eliminado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.gastos.delete');
 
 Route::get('/walee-facturas/crear', function (\Illuminate\Http\Request $request) {
     $facturaId = $request->get('factura_id');

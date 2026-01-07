@@ -10,7 +10,10 @@ class Gasto extends Model
 
     protected $fillable = [
         'nombre',
+        'descripcion',
+        'tipo',
         'fecha',
+        'proxima_fecha_pago',
         'pagado',
         'total',
         'link',
@@ -18,6 +21,7 @@ class Gasto extends Model
 
     protected $casts = [
         'fecha' => 'date',
+        'proxima_fecha_pago' => 'date',
         'pagado' => 'boolean',
         'total' => 'decimal:2',
     ];

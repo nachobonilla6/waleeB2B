@@ -210,20 +210,25 @@
                     </div>
                 </div>
                 
-                <!-- Pendiente por Cobrar -->
-                <div class="stat-card bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border border-red-200 dark:border-red-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none">
+                <!-- Gastos -->
+                <a href="{{ route('walee.gastos') }}" class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none hover:shadow-md transition-all cursor-pointer">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-red-500/20 dark:bg-red-500/10 flex items-center justify-center">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-orange-500/20 dark:bg-orange-500/10 flex items-center justify-center">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Por Cobrar</p>
-                        <p class="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalPendiente, 2, '.', ',') }}</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Gastos</p>
+                        <p class="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
+                            @php
+                                $totalGastos = \App\Models\Gasto::sum('total');
+                            @endphp
+                            ₡{{ number_format($totalGastos, 2, '.', ',') }}
+                        </p>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Charts and Quick Actions -->

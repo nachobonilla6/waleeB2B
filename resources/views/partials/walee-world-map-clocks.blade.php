@@ -27,13 +27,13 @@
                             <text x="327" y="162" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-ny">--:--</text>
                         </g>
 
-                        <!-- Montreal: Coordenadas aproximadas (-73°W, 45°N) -->
-                        <g class="city-marker" data-city="montreal" data-timezone="America/Toronto">
-                            <circle cx="305" cy="120" r="4" fill="#a855f7" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
-                            <circle cx="305" cy="120" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="295" y="108" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">MTL</text>
-                            <rect x="313" y="114" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#a855f7" stroke-width="1.5" opacity="0.95"/>
-                            <text x="338" y="128" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-montreal">--:--</text>
+                        <!-- San José, Costa Rica: Coordenadas aproximadas (-84°W, 9°N) -->
+                        <g class="city-marker" data-city="sanjosecr" data-timezone="America/Costa_Rica">
+                            <circle cx="260" cy="210" r="4" fill="#a855f7" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
+                            <circle cx="260" cy="210" r="3" fill="#fff" class="city-pulse"/>
+                            <text x="250" y="198" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SJO</text>
+                            <rect x="268" y="204" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#a855f7" stroke-width="1.5" opacity="0.95"/>
+                            <text x="293" y="218" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-sanjosecr">--:--</text>
                         </g>
                         
                         <!-- London: Coordenadas ajustadas (0°W, 51°N) -->
@@ -203,12 +203,12 @@
                     </div>
                 </div>
 
-                <!-- Montreal -->
+                <!-- San José, Costa Rica -->
                 <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Montreal</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-montreal">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-montreal">--</div>
+                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">San José, Costa Rica</div>
+                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-sanjosecr">--:--</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-sanjosecr">--</div>
                     </div>
                 </div>
 
@@ -256,7 +256,7 @@
                 'saopaulo': 'America/Sao_Paulo',
                 'la': 'America/Los_Angeles',
                 'madrid': 'Europe/Madrid',
-                'montreal': 'America/Toronto',
+                'sanjosecr': 'America/Costa_Rica',
                 'cameroon': 'Africa/Douala',
                 'hongkong': 'Asia/Hong_Kong',
                 'southafrica': 'Africa/Johannesburg'

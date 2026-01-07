@@ -1455,12 +1455,46 @@
                 
                 if (clientTimezone) {
                     try {
-                        // Obtener fecha/hora en la zona horaria del cliente
-                        const nowInClientTZ = new Date(new Date().toLocaleString('en-US', { timeZone: clientTimezone }));
-                        ahora = nowInClientTZ;
-                        diaActual = nowInClientTZ.getDay(); // 0 = domingo, 1 = lunes, etc.
-                        horaActual = nowInClientTZ.getHours();
-                        minutoActual = nowInClientTZ.getMinutes();
+                        // Usar Intl.DateTimeFormat para obtener hora y día en la zona horaria del cliente
+                        const now = new Date();
+                        const timeFormatter = new Intl.DateTimeFormat('en-US', {
+                            timeZone: clientTimezone,
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                            weekday: 'long'
+                        });
+                        
+                        const dateFormatter = new Intl.DateTimeFormat('en-US', {
+                            timeZone: clientTimezone,
+                            day: 'numeric',
+                            month: 'numeric',
+                            year: 'numeric'
+                        });
+                        
+                        const timeParts = timeFormatter.formatToParts(now);
+                        horaActual = parseInt(timeParts.find(part => part.type === 'hour').value);
+                        minutoActual = parseInt(timeParts.find(part => part.type === 'minute').value);
+                        
+                        // Obtener día de la semana usando el formatter
+                        const weekdayFormatter = new Intl.DateTimeFormat('es-ES', {
+                            timeZone: clientTimezone,
+                            weekday: 'long'
+                        });
+                        const diaNombreCompleto = weekdayFormatter.format(now).toLowerCase();
+                        
+                        // Mapeo de días en español a número
+                        const diasMapReverse = {
+                            'domingo': 0,
+                            'lunes': 1,
+                            'martes': 2,
+                            'miércoles': 3,
+                            'jueves': 4,
+                            'viernes': 5,
+                            'sábado': 6
+                        };
+                        diaActual = diasMapReverse[diaNombreCompleto] ?? new Date().getDay();
+                        ahora = now;
                     } catch (e) {
                         console.error('Error obteniendo hora del cliente:', e);
                         // Fallback a hora del sistema
@@ -3098,7 +3132,6 @@
         @if($clientTimezone)
         function updateClientClocks() {
             const clientTimezone = '{{ $clientTimezone }}';
-            const systemTimezone = '{{ $systemTimezone }}';
             
             // Update mobile clock
             const mobileTimeElement = document.querySelector('.client-time-mobile');
@@ -3110,10 +3143,25 @@
             
             if (clientTimezone) {
                 try {
-                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: clientTimezone }));
-                    const hours = String(now.getHours()).padStart(2, '0');
-                    const minutes = String(now.getMinutes()).padStart(2, '0');
-                    const date = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    // Usar Intl.DateTimeFormat para obtener hora y fecha directamente en la zona horaria del cliente
+                    const timeFormatter = new Intl.DateTimeFormat('en-US', {
+                        timeZone: clientTimezone,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                    
+                    const dateFormatter = new Intl.DateTimeFormat('en-US', {
+                        timeZone: clientTimezone,
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    
+                    const now = new Date();
+                    const timeParts = timeFormatter.formatToParts(now);
+                    const hours = timeParts.find(part => part.type === 'hour').value;
+                    const minutes = timeParts.find(part => part.type === 'minute').value;
+                    const date = dateFormatter.format(now);
                     
                     if (mobileTimeElement) mobileTimeElement.textContent = `${hours}:${minutes}`;
                     if (mobileDateElement) mobileDateElement.textContent = date;

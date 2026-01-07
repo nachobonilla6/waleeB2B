@@ -130,18 +130,18 @@
             margin-bottom: 0;
         }
         .datos-box.cliente-box {
-            text-align: right;
-            align-items: flex-end;
+            text-align: left;
+            align-items: flex-start;
         }
         .datos-box.cliente-box .datos-title {
-            text-align: right;
+            text-align: left;
             margin-top: 0;
             padding-top: 0;
         }
         .datos-box.cliente-box .datos-content {
-            text-align: right;
+            text-align: left;
             margin-top: 0;
-            align-items: flex-end;
+            align-items: flex-start;
         }
         .info-row {
             display: grid;
@@ -347,19 +347,8 @@
         </div>
     </div>
     
-    <!-- Datos del Emisor y Cliente -->
+    <!-- Datos del Cliente y Emisor -->
     <div class="datos-section">
-        <div class="datos-box">
-            <div class="datos-title">Datos del emisor</div>
-            <div class="datos-content">
-                <div><strong>WebSolutions.Work</strong></div>
-                <div>Jaco, Puntarenas</div>
-                <div>506 8806 1829</div>
-                <div>websolutionscrnow@gmail.com</div>
-                <div>Costa Rica</div>
-            </div>
-        </div>
-        
         <div class="datos-box cliente-box">
             <div class="datos-title">Datos del cliente</div>
             <div class="datos-content">
@@ -378,6 +367,17 @@
                 @else
                     <div><strong>{{ $data['correo'] ?? 'N/A' }}</strong></div>
                 @endif
+            </div>
+        </div>
+        
+        <div class="datos-box">
+            <div class="datos-title">Datos del emisor</div>
+            <div class="datos-content">
+                <div><strong>WebSolutions.Work</strong></div>
+                <div>Jaco, Puntarenas</div>
+                <div>506 8806 1829</div>
+                <div>websolutionscrnow@gmail.com</div>
+                <div>Costa Rica</div>
             </div>
         </div>
     </div>

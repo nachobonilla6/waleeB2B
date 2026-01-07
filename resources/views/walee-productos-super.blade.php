@@ -412,6 +412,10 @@
                                                     @php
                                                         // Construir URL de la imagen directamente
                                                         $imagenPath = trim($producto->imagen);
+                                                        // Verificar si el archivo existe físicamente
+                                                        $fullPath = storage_path('app/public/' . $imagenPath);
+                                                        $fileExists = file_exists($fullPath);
+                                                        
                                                         // Si ya es una URL completa, usarla
                                                         if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
                                                             $imagenUrl = $imagenPath;
@@ -421,13 +425,21 @@
                                                         }
                                                     @endphp
                                                     <div class="flex-shrink-0">
-                                                        <img 
-                                                            src="{{ $imagenUrl }}" 
-                                                            alt="{{ $producto->nombre }}" 
-                                                            class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
-                                                            loading="lazy"
-                                                            onerror="console.error('Error cargando imagen de producto:', '{{ $producto->nombre }}', 'Ruta:', '{{ $imagenPath }}', 'URL:', this.src); this.onerror=null; this.style.display='none';"
-                                                        >
+                                                        @if(!$fileExists)
+                                                            <div class="w-20 h-20 rounded-lg border border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 flex items-center justify-center" title="Archivo no encontrado: {{ $imagenPath }}">
+                                                                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                                </svg>
+                                                            </div>
+                                                        @else
+                                                            <img 
+                                                                src="{{ $imagenUrl }}" 
+                                                                alt="{{ $producto->nombre }}" 
+                                                                class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
+                                                                loading="lazy"
+                                                                onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Ruta DB:', '{{ $imagenPath }}', 'URL:', this.src, 'Archivo existe:', {{ $fileExists ? 'true' : 'false' }}); this.onerror=null; this.style.display='none';"
+                                                            >
+                                                        @endif
                                                     </div>
                                                 @endif
                                                 <div class="flex-1 min-w-0">

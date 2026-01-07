@@ -3036,12 +3036,6 @@
             const convertTime = function(timeStr, fromTZ, toTZ) {
                 if (!fromTZ || !toTZ || fromTZ === toTZ) return timeStr;
                 try {
-                    // Obtener fecha de hoy
-                    const today = new Date();
-                    const year = today.getFullYear();
-                    const month = today.getMonth();
-                    const day = today.getDate();
-                    
                     // Parsear la hora (formato HH:MM o HH:MM-HH:MM)
                     const timeMatch = timeStr.match(/(\d{1,2}):(\d{2})(?:-(\d{1,2}):(\d{2}))?/);
                     if (!timeMatch) return timeStr;
@@ -3051,16 +3045,56 @@
                     const endHour = timeMatch[3] ? parseInt(timeMatch[3]) : null;
                     const endMin = timeMatch[4] ? parseInt(timeMatch[4]) : null;
                     
-                    // Crear fecha en la zona horaria origen
-                    const startDate = new Date(new Date(year, month, day, startHour, startMin).toLocaleString('en-US', { timeZone: fromTZ }));
-                    const startInTarget = new Date(startDate.toLocaleString('en-US', { timeZone: toTZ }));
+                    // Obtener fecha de hoy en zona origen
+                    const now = new Date();
+                    const fromDateFormatter = new Intl.DateTimeFormat('en-US', {
+                        timeZone: fromTZ,
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+                    const fromDateParts = fromDateFormatter.formatToParts(now);
+                    const year = parseInt(fromDateParts.find(p => p.type === 'year').value);
+                    const month = parseInt(fromDateParts.find(p => p.type === 'month').value) - 1;
+                    const day = parseInt(fromDateParts.find(p => p.type === 'day').value);
                     
-                    let result = String(startInTarget.getHours()).padStart(2, '0') + ':' + String(startInTarget.getMinutes()).padStart(2, '0');
+                    // Crear string de fecha ISO en zona origen y luego convertir
+                    // Usar un método más simple: crear fecha local y ajustar
+                    const localDate = new Date(year, month, day, startHour, startMin);
+                    const localTimeStr = localDate.toLocaleString('en-US', { timeZone: fromTZ, hour: '2-digit', minute: '2-digit', hour12: false });
+                    const localParts = localTimeStr.split(':');
+                    const localHour = parseInt(localParts[0]);
+                    const localMin = parseInt(localParts[1]);
+                    
+                    // Calcular offset necesario
+                    const offsetMinutes = ((startHour - localHour) * 60) + (startMin - localMin);
+                    const adjustedStartDate = new Date(localDate.getTime() - (offsetMinutes * 60000));
+                    
+                    // Formatear en zona destino
+                    const toFormatter = new Intl.DateTimeFormat('en-US', {
+                        timeZone: toTZ,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+                    const startParts = toFormatter.formatToParts(adjustedStartDate);
+                    const startHourAdj = startParts.find(p => p.type === 'hour').value;
+                    const startMinAdj = startParts.find(p => p.type === 'minute').value;
+                    
+                    let result = `${startHourAdj}:${startMinAdj}`;
                     
                     if (endHour !== null && endMin !== null) {
-                        const endDate = new Date(new Date(year, month, day, endHour, endMin).toLocaleString('en-US', { timeZone: fromTZ }));
-                        const endInTarget = new Date(endDate.toLocaleString('en-US', { timeZone: toTZ }));
-                        result += '-' + String(endInTarget.getHours()).padStart(2, '0') + ':' + String(endInTarget.getMinutes()).padStart(2, '0');
+                        const localEndDate = new Date(year, month, day, endHour, endMin);
+                        const localEndTimeStr = localEndDate.toLocaleString('en-US', { timeZone: fromTZ, hour: '2-digit', minute: '2-digit', hour12: false });
+                        const localEndParts = localEndTimeStr.split(':');
+                        const localEndHour = parseInt(localEndParts[0]);
+                        const localEndMin = parseInt(localEndParts[1]);
+                        const endOffsetMinutes = ((endHour - localEndHour) * 60) + (endMin - localEndMin);
+                        const adjustedEndDate = new Date(localEndDate.getTime() - (endOffsetMinutes * 60000));
+                        const endParts = toFormatter.formatToParts(adjustedEndDate);
+                        const endHourAdj = endParts.find(p => p.type === 'hour').value;
+                        const endMinAdj = endParts.find(p => p.type === 'minute').value;
+                        result += `-${endHourAdj}:${endMinAdj}`;
                     }
                     
                     return result;
@@ -3107,10 +3141,14 @@
             
             horariosOrdenados.forEach((item, index) => {
                 const esPar = index % 2 === 0;
-                // Mostrar hora del cliente y hora del sistema entre paréntesis si son diferentes
-                let horasDisplay = item.horas;
-                if (clientTimezone && systemTimezone && clientTimezone !== systemTimezone && item.horasSistema !== item.horas) {
+                // Mostrar horario ajustado (zona horaria del sistema) primero y original entre paréntesis
+                let horasDisplay;
+                if (clientTimezone && systemTimezone && clientTimezone !== systemTimezone) {
+                    // Mostrar horario ajustado primero y original entre paréntesis
                     horasDisplay = `${item.horasSistema} <span class="text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}">(${item.horas})</span>`;
+                } else {
+                    // Si no hay diferencia de zona horaria, mostrar solo el horario original
+                    horasDisplay = item.horas;
                 }
                 
                 tablaHTML += `

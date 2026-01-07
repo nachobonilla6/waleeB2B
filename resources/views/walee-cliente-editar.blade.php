@@ -179,6 +179,9 @@
                 </div>
             </form>
             
+            <!-- World Map with Clocks -->
+            @include('partials.walee-world-map-clocks')
+            
             <!-- Footer -->
             <footer class="text-center py-8 mt-6">
                 <p class="text-sm text-slate-500">

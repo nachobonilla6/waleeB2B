@@ -487,6 +487,9 @@
                 </div>
             </div>
             
+            <!-- World Map with Clocks -->
+            @include('partials.walee-world-map-clocks')
+            
             <!-- Footer -->
             <footer class="text-center py-3">
                 <p class="text-xs text-slate-600 dark:text-slate-500">

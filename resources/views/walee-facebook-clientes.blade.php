@@ -385,6 +385,9 @@
         }
     </script>
     
+    <!-- World Map with Clocks -->
+    @include('partials.walee-world-map-clocks')
+    
     @include('partials.walee-support-button')
 </body>
 </html>

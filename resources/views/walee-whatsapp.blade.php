@@ -1006,5 +1006,8 @@
             document.getElementById('chat-area').classList.add('hidden-mobile');
         }
     </script>
+    
+    <!-- World Map with Clocks -->
+    @include('partials.walee-world-map-clocks')
 </body>
 </html>

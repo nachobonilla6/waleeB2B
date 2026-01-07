@@ -39,6 +39,7 @@ class Client extends Model
         'page_id',
         'token',
         'nota',
+        'template',
     ];
 
     protected $casts = [

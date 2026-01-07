@@ -527,23 +527,23 @@
                         
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha de Emisión <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <input type="date" id="fecha_emision" name="fecha_emision" required value="{{ date('Y-m-d') }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <input type="date" id="fecha_emision" name="fecha_emision" required value="{{ isset($factura) && $factura && $factura->fecha_emision ? $factura->fecha_emision->format('Y-m-d') : date('Y-m-d') }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Fecha de Vencimiento</label>
-                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
+                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ isset($factura) && $factura && $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : date('Y-m-d', strtotime('+30 days')) }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
                         </div>
                         
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Estado</label>
                             <select id="estado" name="estado" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all">
-                                <option value="pendiente">Pendiente</option>
-                                <option value="pagada">Pagada</option>
-                                <option value="vencida">Vencida</option>
-                                <option value="cancelada">Cancelada</option>
+                                <option value="pendiente" {{ isset($factura) && $factura && $factura->estado == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                <option value="pagada" {{ isset($factura) && $factura && $factura->estado == 'pagada' ? 'selected' : '' }}>Pagada</option>
+                                <option value="vencida" {{ isset($factura) && $factura && $factura->estado == 'vencida' ? 'selected' : '' }}>Vencida</option>
+                                <option value="cancelada" {{ isset($factura) && $factura && $factura->estado == 'cancelada' ? 'selected' : '' }}>Cancelada</option>
                             </select>
                         </div>
                     </div>
@@ -632,7 +632,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Número de Orden</label>
-                                <input type="text" id="numero_orden" name="numero_orden" placeholder="Ej: 1_191125 cliente" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <input type="text" id="numero_orden" name="numero_orden" placeholder="Ej: 1_191125 cliente" value="{{ isset($factura) && $factura ? ($factura->numero_orden ?? '') : '' }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         
@@ -650,7 +650,7 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descuento Antes Impuestos</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
-                                    <input type="number" step="0.01" id="descuento_antes_impuestos" name="descuento_antes_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
+                                    <input type="number" step="0.01" id="descuento_antes_impuestos" name="descuento_antes_impuestos" value="{{ isset($factura) && $factura ? ($factura->descuento_antes_impuestos ?? 0) : 0 }}" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
@@ -669,7 +669,7 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descuento Después Impuestos</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
-                                    <input type="number" step="0.01" id="descuento_despues_impuestos" name="descuento_despues_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
+                                    <input type="number" step="0.01" id="descuento_despues_impuestos" name="descuento_despues_impuestos" value="{{ isset($factura) && $factura ? ($factura->descuento_despues_impuestos ?? 0) : 0 }}" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
                             
@@ -688,7 +688,7 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Monto Pagado</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
-                                    <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0" oninput="calcularSaldo()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                    <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="{{ isset($factura) && $factura ? ($factura->monto_pagado ?? 0) : 0 }}" oninput="calcularSaldo()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 </div>
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5" id="montoPagadoCRC">₡0</p>
                             </div>
@@ -708,24 +708,24 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Método de Pago</label>
                                 <select id="metodo_pago" name="metodo_pago" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                     <option value="">Sin especificar</option>
-                                    <option value="transferencia">Transferencia Bancaria</option>
-                                    <option value="efectivo">Efectivo</option>
-                                    <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                                    <option value="sinpe">SINPE Móvil</option>
-                                    <option value="paypal">PayPal</option>
-                                    <option value="otro">Otro</option>
+                                    <option value="transferencia" {{ isset($factura) && $factura && $factura->metodo_pago == 'transferencia' ? 'selected' : '' }}>Transferencia Bancaria</option>
+                                    <option value="efectivo" {{ isset($factura) && $factura && $factura->metodo_pago == 'efectivo' ? 'selected' : '' }}>Efectivo</option>
+                                    <option value="tarjeta" {{ isset($factura) && $factura && $factura->metodo_pago == 'tarjeta' ? 'selected' : '' }}>Tarjeta de Crédito/Débito</option>
+                                    <option value="sinpe" {{ isset($factura) && $factura && $factura->metodo_pago == 'sinpe' ? 'selected' : '' }}>SINPE Móvil</option>
+                                    <option value="paypal" {{ isset($factura) && $factura && $factura->metodo_pago == 'paypal' ? 'selected' : '' }}>PayPal</option>
+                                    <option value="otro" {{ isset($factura) && $factura && $factura->metodo_pago == 'otro' ? 'selected' : '' }}>Otro</option>
                                 </select>
                             </div>
                             
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Concepto de Pago</label>
-                                <input type="text" id="concepto_pago" name="concepto_pago" placeholder="Ej: Pago inicial, Pago final..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
+                                <input type="text" id="concepto_pago" name="concepto_pago" placeholder="Ej: Pago inicial, Pago final..." value="{{ isset($factura) && $factura ? ($factura->concepto_pago ?? '') : '' }}" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                             </div>
                         </div>
                         
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Concepto General <span class="text-red-500 dark:text-red-400">*</span></label>
-                            <textarea id="concepto" name="concepto" rows="2" placeholder="Descripción general de la factura (se generará automáticamente si se deja vacío)..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none"></textarea>
+                            <textarea id="concepto" name="concepto" rows="2" placeholder="Descripción general de la factura (se generará automáticamente si se deja vacío)..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all resize-none">{{ isset($factura) && $factura ? ($factura->concepto ?? '') : '' }}</textarea>
                             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Si se deja vacío, se generará automáticamente basado en los items</p>
                         </div>
                     </div>
@@ -761,7 +761,7 @@
                         Notas Adicionales
                     </h2>
                     
-                    <textarea id="notas" name="notas" rows="2" placeholder="Notas adicionales para la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none"></textarea>
+                    <textarea id="notas" name="notas" rows="2" placeholder="Notas adicionales para la factura..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all resize-none">{{ isset($factura) && $factura ? ($factura->notas ?? '') : '' }}</textarea>
                 </div>
                 
                 <!-- Archivos Adjuntos Section -->
@@ -1467,6 +1467,43 @@
             if (document.getElementById('serie')) {
                 document.getElementById('serie').value = facturaData.serie || 'A';
             }
+            if (document.getElementById('fecha_emision')) {
+                document.getElementById('fecha_emision').value = facturaData.fecha_emision || '';
+            }
+            if (document.getElementById('fecha_vencimiento')) {
+                document.getElementById('fecha_vencimiento').value = facturaData.fecha_vencimiento || '';
+            }
+            if (document.getElementById('estado')) {
+                document.getElementById('estado').value = facturaData.estado || 'pendiente';
+            }
+            if (document.getElementById('numero_orden')) {
+                document.getElementById('numero_orden').value = facturaData.numero_orden || '';
+            }
+            if (document.getElementById('concepto_pago')) {
+                document.getElementById('concepto_pago').value = facturaData.concepto_pago || '';
+            }
+            if (document.getElementById('concepto')) {
+                document.getElementById('concepto').value = facturaData.concepto || '';
+            }
+            if (document.getElementById('notas')) {
+                document.getElementById('notas').value = facturaData.notas || '';
+            }
+            if (document.getElementById('metodo_pago')) {
+                document.getElementById('metodo_pago').value = facturaData.metodo_pago || '';
+            }
+            if (document.getElementById('descuento_antes_impuestos')) {
+                document.getElementById('descuento_antes_impuestos').value = facturaData.descuento_antes_impuestos || 0;
+            }
+            if (document.getElementById('descuento_despues_impuestos')) {
+                document.getElementById('descuento_despues_impuestos').value = facturaData.descuento_despues_impuestos || 0;
+            }
+            if (document.getElementById('monto_pagado')) {
+                document.getElementById('monto_pagado').value = facturaData.monto_pagado || 0;
+                calcularSaldo();
+            }
+            
+            // Recalcular totales después de cargar todos los datos
+            calcularTotales();
             
             // Cargar items y pagos
             if (facturaData.items && facturaData.items.length > 0) {

@@ -474,6 +474,10 @@ Route::get('/walee-tareas', function () {
     return view('walee-tareas');
 })->middleware(['auth'])->name('walee.tareas');
 
+Route::get('/walee-notas', function () {
+    return view('walee-notas');
+})->middleware(['auth'])->name('walee.notas');
+
 // Calendario
 // Planeador de Publicidad - Requiere cliente_id
 Route::get('/walee-planeador-publicidad/{cliente_id}', function ($cliente_id) {

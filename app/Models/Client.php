@@ -10,6 +10,12 @@ class Client extends Model
 
     protected $fillable = [
         'name',
+        'fiscal_name',
+        'fiscal_tax_id',
+        'fiscal_country',
+        'fiscal_city',
+        'fiscal_postal_code',
+        'fiscal_address',
         'foto',
         'email',
         'website',

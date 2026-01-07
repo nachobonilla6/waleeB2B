@@ -96,18 +96,23 @@
             border-left: 3px solid #8b5cf6;
             flex: 1;
             min-width: 0;
+            display: flex;
+            flex-direction: column;
         }
         .datos-title {
             font-weight: bold;
             color: #8b5cf6;
             margin-bottom: 6px;
             font-size: 10pt;
-            line-height: 1.3;
+            line-height: 1.2;
+            margin-top: 0;
+            padding-top: 0;
         }
         .datos-content {
             font-size: 9pt;
             color: #555;
             line-height: 1.5;
+            margin-top: 0;
         }
         .datos-content > div {
             margin-bottom: 3px;
@@ -120,9 +125,12 @@
         }
         .datos-box.cliente-box .datos-title {
             text-align: right;
+            margin-top: 0;
+            padding-top: 0;
         }
         .datos-box.cliente-box .datos-content {
             text-align: right;
+            margin-top: 0;
         }
         .info-row {
             display: grid;

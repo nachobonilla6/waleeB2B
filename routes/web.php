@@ -3692,6 +3692,11 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             \App\Models\FacturaPago::where('factura_id', $factura->id)->delete();
             
             // Actualizar factura
+            $metodoPago = $request->input('metodo_pago');
+            if (empty($metodoPago) || $metodoPago === '') {
+                $metodoPago = 'sin_especificar';
+            }
+            
             $factura->update([
                 'cliente_id' => $clienteIdFinal,
                 'correo' => $request->input('correo'),
@@ -3703,7 +3708,7 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
                 'subtotal' => $request->input('subtotal') ?: 0,
                 'total' => $request->input('total') ?: 0,
                 'monto_pagado' => $request->input('monto_pagado') ?: 0,
-                'metodo_pago' => $request->input('metodo_pago') ?: null,
+                'metodo_pago' => $metodoPago,
                 'estado' => $request->input('estado', 'pendiente'),
                 'fecha_vencimiento' => $request->input('fecha_vencimiento'),
                 'notas' => $request->input('notas') ?: null,
@@ -3714,6 +3719,11 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
             ]);
         } else {
             // Crear nueva factura
+            $metodoPago = $request->input('metodo_pago');
+            if (empty($metodoPago) || $metodoPago === '') {
+                $metodoPago = 'sin_especificar';
+            }
+            
             $factura = \App\Models\Factura::create([
                 'cliente_id' => $clienteIdFinal,
                 'correo' => $request->input('correo'),
@@ -3725,7 +3735,7 @@ Route::post('/walee-facturas/guardar', function (\Illuminate\Http\Request $reque
                 'subtotal' => $request->input('subtotal') ?: 0,
                 'total' => $request->input('total') ?: 0,
                 'monto_pagado' => $request->input('monto_pagado') ?: 0,
-                'metodo_pago' => $request->input('metodo_pago') ?: null,
+                'metodo_pago' => $metodoPago,
                 'estado' => $request->input('estado', 'pendiente'),
                 'fecha_vencimiento' => $request->input('fecha_vencimiento'),
                 'notas' => $request->input('notas') ?: null,

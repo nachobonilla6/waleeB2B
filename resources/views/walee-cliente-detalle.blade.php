@@ -655,16 +655,11 @@
                         }
                     @endphp
                     
-                    <!-- Botones de editar, configuraciones y nota en esquina superior izquierda -->
+                    <!-- Botones de editar y configuraciones en esquina superior izquierda -->
                     <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 flex items-center gap-2">
                         <button onclick="openEditClientModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-black/50 hover:bg-black/70 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg">
                             <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                        </button>
-                        <button onclick="openNotaModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500/80 hover:bg-amber-500 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Nota">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </button>
                         <button onclick="openConfiguracionesModal()" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-violet-600/80 hover:bg-violet-600 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Configuraciones">
@@ -790,7 +785,14 @@
             
                         <!-- Acciones Rápidas Mobile -->
                         <div class="px-3 pb-3">
-                            <div class="grid grid-cols-4 gap-1.5">
+                            <div class="grid grid-cols-5 gap-1.5">
+                                <!-- Nota Button -->
+                                <button onclick="openNotaModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Nota">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </button>
+                                
                                 <!-- Website Button -->
                                 @if($cliente->website)
                                     <a href="{{ $cliente->website }}" target="_blank" class="flex items-center justify-center p-2 rounded-lg bg-blue-100 dark:bg-slate-800 hover:bg-blue-200 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-600 border border-blue-600 dark:border-slate-700 transition-all group shadow-sm">
@@ -1034,6 +1036,14 @@
                 
                             <!-- Acciones Rápidas Desktop -->
                             <div class="flex flex-wrap gap-2.5">
+                                <!-- Nota Button -->
+                                <button onclick="openNotaModal()" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Nota">
+                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-semibold">Nota</span>
+                                </button>
+                                
                                 <!-- Website Button -->
                                 @if($cliente->website)
                                     <a href="{{ $cliente->website }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 hover:from-blue-100 hover:to-blue-200/50 dark:hover:from-blue-500/20 dark:hover:to-blue-600/10 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-500/20 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">

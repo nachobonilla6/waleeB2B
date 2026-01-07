@@ -450,15 +450,6 @@
                                                                 {{ $producto->categoria }}
                                                             </span>
                                                         @endif
-                                                        @if($producto->activo)
-                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
-                                                                Activo
-                                                            </span>
-                                                        @else
-                                                            <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
-                                                                Inactivo
-                                                            </span>
-                                                        @endif
                                                         @if($estaVencido)
                                                             <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-red-500 text-white dark:bg-red-600 dark:text-white shadow-md animate-pulse">
                                                                 Vencido
@@ -497,25 +488,61 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="flex items-center gap-2">
-                                                    <button 
-                                                        onclick="openEditProductoModal({{ $producto->id }})"
-                                                        class="p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-                                                        title="Editar"
-                                                    >
-                                                        <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                        </svg>
-                                                    </button>
-                                                    <button 
-                                                        onclick="deleteProducto({{ $producto->id }})"
-                                                        class="p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
-                                                        title="Eliminar"
-                                                    >
-                                                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                        </svg>
-                                                    </button>
+                                                <div class="flex flex-col items-end gap-3">
+                                                    <!-- Toggles -->
+                                                    <div class="flex flex-col gap-2">
+                                                        <!-- Toggle Activo/Inactivo -->
+                                                        <label class="relative inline-flex items-center cursor-pointer group">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                class="sr-only peer" 
+                                                                {{ $producto->activo ? 'checked' : '' }}
+                                                                disabled
+                                                            >
+                                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                                            <span class="ml-2 text-xs font-medium text-slate-700 dark:text-slate-300 min-w-[60px]">
+                                                                {{ $producto->activo ? 'Activo' : 'Inactivo' }}
+                                                            </span>
+                                                        </label>
+                                                        
+                                                        <!-- Toggle Facebook -->
+                                                        <label class="relative inline-flex items-center cursor-pointer group">
+                                                            <input 
+                                                                type="checkbox" 
+                                                                class="sr-only peer" 
+                                                                disabled
+                                                            >
+                                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-blue-500"></div>
+                                                            <span class="ml-2 text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1 min-w-[80px]">
+                                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                                                </svg>
+                                                                <span>Facebook</span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                    
+                                                    <!-- Botones de acción -->
+                                                    <div class="flex items-center gap-2">
+                                                        <button 
+                                                            onclick="openEditProductoModal({{ $producto->id }})"
+                                                            class="p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                                                            title="Editar"
+                                                        >
+                                                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                            </svg>
+                                                        </button>
+                                                        <button 
+                                                            onclick="deleteProducto({{ $producto->id }})"
+                                                            class="p-2 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                                                            title="Eliminar"
+                                                        >
+                                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -214,6 +215,14 @@
                             style="width: {{ min($porcentajeGastos, 100) }}%"
                         ></div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Gráfica de Gastos y Entradas -->
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm dark:shadow-none mb-6 sm:mb-8 animate-fade-in-up">
+                <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Gastos vs Entradas Este Mes</h3>
+                <div class="relative w-full" style="height: 300px;">
+                    <canvas id="gastosEntradasChart"></canvas>
                 </div>
             </div>
             

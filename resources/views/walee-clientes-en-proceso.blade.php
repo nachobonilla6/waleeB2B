@@ -169,6 +169,33 @@
             ->where('email', '!=', '')
             ->orderBy('name', 'asc')
             ->get(['id', 'name', 'email']);
+        
+        // Obtener clientes con ubicaciones para el mapa
+        $clientesConUbicacion = Client::whereIn('estado', ['pending', 'received'])
+            ->where(function($q) {
+                $q->whereNotNull('ciudad')
+                  ->orWhereNotNull('address');
+            })
+            ->select('id', 'name', 'ciudad', 'address', 'email', 'estado')
+            ->get()
+            ->map(function($cliente) {
+                $ubicacion = '';
+                if ($cliente->ciudad) {
+                    $ubicacion = $cliente->ciudad;
+                } elseif ($cliente->address) {
+                    $ubicacion = $cliente->address;
+                }
+                return [
+                    'id' => $cliente->id,
+                    'name' => $cliente->name,
+                    'ubicacion' => $ubicacion,
+                    'email' => $cliente->email,
+                    'estado' => $cliente->estado,
+                ];
+            })
+            ->filter(function($cliente) {
+                return !empty($cliente['ubicacion']);
+            });
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -674,6 +701,60 @@
             
             <!-- World Map with Clocks -->
             @include('partials.walee-world-map-clocks')
+            
+            <!-- Mapa de Ubicaciones de Clientes -->
+            @if($clientesConUbicacion->count() > 0)
+            <section class="mb-8">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Ubicaciones de Clientes
+                </h2>
+                
+                <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
+                    <div class="p-4 sm:p-6">
+                        <!-- Mapa Interactivo -->
+                        <div class="mb-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-900 rounded-xl overflow-hidden relative" style="height: 500px; position: relative;">
+                            <div id="clientesMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
+                                <iframe
+                                    id="clientesMapIframe"
+                                    width="100%"
+                                    height="100%"
+                                    style="border:0"
+                                    loading="lazy"
+                                    allowfullscreen
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    src="">
+                                </iframe>
+                            </div>
+                        </div>
+                        
+                        <!-- Lista de ubicaciones -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-64 overflow-y-auto">
+                            @foreach($clientesConUbicacion as $cliente)
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer cliente-ubicacion-item" 
+                                 data-ubicacion="{{ urlencode($cliente['ubicacion']) }}"
+                                 data-nombre="{{ htmlspecialchars($cliente['name']) }}"
+                                 onclick="centrarMapaEnUbicacion('{{ urlencode($cliente['ubicacion']) }}', '{{ htmlspecialchars($cliente['name']) }}')">
+                                <div class="flex items-start gap-2">
+                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente['name'] }}</p>
+                                        <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente['ubicacion'] }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </section>
+            @endif
             
             <!-- Footer -->
             <footer class="text-center py-4 sm:py-6 md:py-8 mt-4 sm:mt-6 md:mt-8">
@@ -1889,6 +1970,51 @@
         // Update clocks every second
         updateClientClocks();
         setInterval(updateClientClocks, 1000);
+        
+        // Inicializar mapa de clientes
+        @if($clientesConUbicacion->count() > 0)
+        function inicializarMapaClientes() {
+            const clientes = @json($clientesConUbicacion);
+            if (clientes.length === 0) return;
+            
+            // Crear lista de ubicaciones para el mapa
+            const ubicaciones = clientes.map(c => c.ubicacion).filter(u => u);
+            
+            if (ubicaciones.length === 0) return;
+            
+            // Usar la primera ubicación como centro inicial, o crear un mapa con múltiples marcadores
+            const primeraUbicacion = ubicaciones[0];
+            const mapIframe = document.getElementById('clientesMapIframe');
+            
+            if (mapIframe && ubicaciones.length === 1) {
+                // Si solo hay una ubicación, mostrar esa
+                mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(primeraUbicacion)}&output=embed&zoom=10`;
+            } else if (mapIframe && ubicaciones.length > 1) {
+                // Si hay múltiples ubicaciones, crear un mapa con todas
+                // Usar la primera como centro y zoom para mostrar todas
+                mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(primeraUbicacion)}&output=embed&zoom=2`;
+            }
+        }
+        
+        function centrarMapaEnUbicacion(ubicacion, nombre) {
+            const mapIframe = document.getElementById('clientesMapIframe');
+            if (mapIframe) {
+                mapIframe.src = `https://www.google.com/maps?q=${ubicacion}&output=embed&zoom=12`;
+                
+                // Resaltar el item seleccionado
+                document.querySelectorAll('.cliente-ubicacion-item').forEach(item => {
+                    item.classList.remove('ring-2', 'ring-walee-500', 'bg-walee-50', 'dark:bg-walee-900/20');
+                });
+                
+                event.currentTarget.classList.add('ring-2', 'ring-walee-500', 'bg-walee-50', 'dark:bg-walee-900/20');
+            }
+        }
+        
+        // Inicializar mapa al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarMapaClientes();
+        });
+        @endif
     </script>
     @include('partials.walee-support-button')
 </body>

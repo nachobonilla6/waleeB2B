@@ -318,23 +318,22 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                                 <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Este Mes</p>
-                                <p class="text-xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes, 2, '.', ',') }}</p>
+                                <p class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes, 2, '.', ',') }}</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($totalGastosEsteMes * $tasaCambio, 2, '.', ',') }}</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">Total: ${{ number_format($totalGastos, 2, '.', ',') }}</p>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                                 <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Pendientes</p>
-                                <p class="text-xl font-bold text-red-600 dark:text-red-400">${{ number_format($gastosPendientes, 2, '.', ',') }}</p>
+                                <p class="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">${{ number_format($gastosPendientes, 2, '.', ',') }}</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">₡{{ number_format($gastosPendientes * $tasaCambio, 2, '.', ',') }}</p>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                                 <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Pagados</p>
-                                <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">${{ number_format($gastosPagados, 2, '.', ',') }}</p>
+                                <p class="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">${{ number_format($gastosPagados, 2, '.', ',') }}</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">₡{{ number_format($gastosPagados * $tasaCambio, 2, '.', ',') }}</p>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                                 <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Próximos 30 días</p>
-                                <p class="text-xl font-bold text-orange-600 dark:text-orange-400">{{ $gastosProximos }}</p>
+                                <p class="text-2xl sm:text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $gastosProximos }}</p>
                             </div>
                         </div>
                         

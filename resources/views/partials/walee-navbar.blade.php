@@ -86,7 +86,7 @@
             </a>
             
             <a 
-                href="{{ route('walee.calendario') }}" 
+                href="{{ route('walee.calendario.aplicaciones') }}" 
                 onclick="closeMobileMenu()"
                 class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 last:border-b-0"
             >

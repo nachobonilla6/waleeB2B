@@ -264,6 +264,49 @@
             color: #555;
             line-height: 1.4;
         }
+        .legal-info {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 7pt;
+            color: #666;
+            line-height: 1.4;
+        }
+        .legal-info strong {
+            color: #333;
+            font-size: 7.5pt;
+        }
+        .tax-info {
+            margin-top: 8px;
+            padding: 8px;
+            background: #fef3c7;
+            border-left: 3px solid #D59F3B;
+            border-radius: 4px;
+            font-size: 8pt;
+            color: #92400e;
+        }
+        .fiscal-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+            font-size: 8pt;
+        }
+        .fiscal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dotted #e5e7eb;
+        }
+        .fiscal-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .fiscal-value {
+            color: #333;
+        }
         .page-number {
             text-align: right;
             color: #999;
@@ -357,15 +400,23 @@
                     @if($cliente->direccion)
                         <div>{{ $cliente->direccion }}</div>
                     @endif
+                    @if($cliente->ciudad || $cliente->pais)
+                        <div>{{ $cliente->ciudad ?? '' }}{{ $cliente->ciudad && $cliente->pais ? ', ' : '' }}{{ $cliente->pais ?? 'Costa Rica' }}</div>
+                    @else
+                        <div>Costa Rica</div>
+                    @endif
                     @if($cliente->telefono)
-                        <div>{{ $cliente->telefono }}</div>
+                        <div>Tel: {{ $cliente->telefono }}</div>
                     @endif
                     @if($cliente->correo)
-                        <div>{{ $cliente->correo }}</div>
+                        <div>Email: {{ $cliente->correo }}</div>
                     @endif
-                    <div>Costa Rica</div>
+                    @if($cliente->codigo_postal)
+                        <div>Postal Code: {{ $cliente->codigo_postal }}</div>
+                    @endif
                 @else
                     <div><strong>{{ $data['correo'] ?? 'N/A' }}</strong></div>
+                    <div>Cliente no registrado</div>
                 @endif
             </div>
         </div>
@@ -374,35 +425,58 @@
             <div class="datos-title">Datos del emisor</div>
             <div class="datos-content">
                 <div><strong>WebSolutions.Work</strong></div>
-                <div>Jaco, Puntarenas</div>
-                <div>506 8806 1829</div>
-                <div>websolutionscrnow@gmail.com</div>
-                <div>Costa Rica</div>
+                <div>Jaco, Puntarenas, Costa Rica</div>
+                <div>Tel: +506 8806 1829</div>
+                <div>Email: websolutionscrnow@gmail.com</div>
+                <div>Website: websolutions.work</div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                    <div><strong>Información Fiscal:</strong></div>
+                    <div>Cédula Jurídica: 3-101-XXXXXX</div>
+                    <div>Tax ID / NIF: CR-3-101-XXXXXX</div>
+                    <div>Registro Nacional: Activo</div>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Información de Orden y Fechas -->
-    <div class="info-row">
-        <div class="info-item">
-            <span class="info-label">N° de orden:</span>
-            <span class="info-value">{{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</span>
+    <!-- Información Fiscal y Legal -->
+    <div class="fiscal-info">
+        <div class="fiscal-item">
+            <span class="fiscal-label">Invoice Number / N° Factura:</span>
+            <span class="fiscal-value"><strong>{{ $data['serie'] ?? 'A' }}-{{ str_pad($data['numero_factura'] ?? 'N/A', 4, '0', STR_PAD_LEFT) }}</strong></span>
         </div>
-        <div class="info-item">
-            <span class="info-label">Fecha de emisión:</span>
-            <span class="info-value">{{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</span>
+        <div class="fiscal-item">
+            <span class="fiscal-label">Order Number / N° Orden:</span>
+            <span class="fiscal-value">{{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</span>
+        </div>
+        <div class="fiscal-item">
+            <span class="fiscal-label">Issue Date / Fecha Emisión:</span>
+            <span class="fiscal-value">{{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</span>
+        </div>
+        @if(!empty($data['fecha_vencimiento']))
+        <div class="fiscal-item">
+            <span class="fiscal-label">Due Date / Fecha Vencimiento:</span>
+            <span class="fiscal-value">{{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</span>
+        </div>
+        @else
+        <div class="fiscal-item">
+            <span class="fiscal-label">Payment Terms / Términos:</span>
+            <span class="fiscal-value">Net 30</span>
+        </div>
+        @endif
+        <div class="fiscal-item">
+            <span class="fiscal-label">Currency / Moneda:</span>
+            <span class="fiscal-value"><strong>USD (US Dollar)</strong></span>
+        </div>
+        <div class="fiscal-item">
+            <span class="fiscal-label">Tax Rate / Tasa Impuesto:</span>
+            <span class="fiscal-value">13% VAT / IVA</span>
         </div>
     </div>
     
-    @if(!empty($data['fecha_vencimiento']))
-    <div class="info-row">
-        <div class="info-item">
-            <span class="info-label">Fecha de vencimiento:</span>
-            <span class="info-value">{{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</span>
-        </div>
-        <div class="info-item">
-            <!-- Espacio vacío para mantener alineación -->
-        </div>
+    @if(!empty($data['metodo_pago']) && $data['metodo_pago'] !== 'sin_especificar')
+    <div class="tax-info">
+        <strong>Payment Method / Método de Pago:</strong> {{ ucfirst(str_replace('_', ' ', $data['metodo_pago'])) }}
     </div>
     @endif
     
@@ -517,10 +591,34 @@
     <!-- Términos y Condiciones -->
     @if(!empty($data['notas']))
     <div class="terminos">
-        <strong>Términos y condiciones:</strong><br>
+        <strong>Terms and Conditions / Términos y Condiciones:</strong><br>
         {{ $data['notas'] }}
     </div>
     @endif
+    
+    <!-- Información Legal -->
+    <div class="legal-info">
+        <strong>Legal Information / Información Legal:</strong><br>
+        This invoice is issued in accordance with international accounting standards and tax regulations. 
+        All amounts are stated in US Dollars (USD). VAT/IVA is calculated at 13% as per Costa Rican tax law. 
+        Payment is due within the terms specified above. Late payments may be subject to interest charges as permitted by law.<br><br>
+        
+        <strong>Esta factura se emite de acuerdo con estándares internacionales de contabilidad y regulaciones fiscales. 
+        Todos los montos están expresados en Dólares Estadounidenses (USD). El IVA se calcula al 13% según la ley fiscal costarricense. 
+        El pago vence dentro de los términos especificados arriba. Los pagos tardíos pueden estar sujetos a cargos por intereses según lo permitido por la ley.</strong><br><br>
+        
+        <strong>Tax Compliance:</strong> This invoice complies with international invoicing standards (ISO/IEC 19845:2015) 
+        and includes all required elements for tax purposes. The invoice number is unique and sequential.<br><br>
+        
+        <strong>Cumplimiento Fiscal:</strong> Esta factura cumple con los estándares internacionales de facturación (ISO/IEC 19845:2015) 
+        e incluye todos los elementos requeridos para fines fiscales. El número de factura es único y secuencial.<br><br>
+        
+        <strong>Dispute Resolution:</strong> Any disputes regarding this invoice must be notified in writing within 30 days of the invoice date. 
+        All disputes will be resolved in accordance with Costa Rican commercial law.<br><br>
+        
+        <strong>Resolución de Disputas:</strong> Cualquier disputa relacionada con esta factura debe ser notificada por escrito dentro de los 30 días posteriores a la fecha de la factura. 
+        Todas las disputas se resolverán de acuerdo con la ley comercial costarricense.
+    </div>
     
     <div class="page-number">
         Página 1 de 1

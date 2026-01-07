@@ -703,7 +703,6 @@
             @include('partials.walee-world-map-clocks')
             
             <!-- Mapa de Ubicaciones de Clientes -->
-            @if($clientesConUbicacion->count() > 0)
             <section class="mb-8">
                 <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
                     <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -715,6 +714,7 @@
                 
                 <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
                     <div class="p-4 sm:p-6">
+                        @if($clientesConUbicacion->count() > 0)
                         <!-- Mapa Interactivo -->
                         <div class="mb-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-900 rounded-xl overflow-hidden relative" style="height: 500px; position: relative;">
                             <div id="clientesMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
@@ -726,7 +726,7 @@
                                     loading="lazy"
                                     allowfullscreen
                                     referrerpolicy="no-referrer-when-downgrade"
-                                    src="">
+                                    src="https://www.google.com/maps?q=world&output=embed&zoom=2">
                                 </iframe>
                             </div>
                         </div>
@@ -751,10 +751,18 @@
                             </div>
                             @endforeach
                         </div>
+                        @else
+                        <div class="text-center py-12">
+                            <svg class="w-16 h-16 text-slate-400 dark:text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <p class="text-slate-600 dark:text-slate-400">No hay clientes con ubicaciones disponibles</p>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </section>
-            @endif
             
             <!-- Footer -->
             <footer class="text-center py-4 sm:py-6 md:py-8 mt-4 sm:mt-6 md:mt-8">
@@ -1972,9 +1980,8 @@
         setInterval(updateClientClocks, 1000);
         
         // Inicializar mapa de clientes
-        @if($clientesConUbicacion->count() > 0)
         function inicializarMapaClientes() {
-            const clientes = @json($clientesConUbicacion);
+            const clientes = @json($clientesConUbicacion ?? []);
             if (clientes.length === 0) return;
             
             // Crear lista de ubicaciones para el mapa
@@ -1982,17 +1989,18 @@
             
             if (ubicaciones.length === 0) return;
             
-            // Usar la primera ubicación como centro inicial, o crear un mapa con múltiples marcadores
+            // Usar la primera ubicación como centro inicial
             const primeraUbicacion = ubicaciones[0];
             const mapIframe = document.getElementById('clientesMapIframe');
             
-            if (mapIframe && ubicaciones.length === 1) {
-                // Si solo hay una ubicación, mostrar esa
-                mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(primeraUbicacion)}&output=embed&zoom=10`;
-            } else if (mapIframe && ubicaciones.length > 1) {
-                // Si hay múltiples ubicaciones, crear un mapa con todas
-                // Usar la primera como centro y zoom para mostrar todas
-                mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(primeraUbicacion)}&output=embed&zoom=2`;
+            if (mapIframe) {
+                if (ubicaciones.length === 1) {
+                    // Si solo hay una ubicación, mostrar esa con zoom cercano
+                    mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(primeraUbicacion)}&output=embed&zoom=10`;
+                } else {
+                    // Si hay múltiples ubicaciones, mostrar la primera con zoom medio
+                    mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(primeraUbicacion)}&output=embed&zoom=6`;
+                }
             }
         }
         
@@ -2019,7 +2027,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             inicializarMapaClientes();
         });
-        @endif
     </script>
     @include('partials.walee-support-button')
 </body>

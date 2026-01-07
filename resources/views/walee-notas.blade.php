@@ -111,6 +111,72 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
+        
+        /* SweetAlert Dark Mode Support */
+        .dark-mode-swal {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+        
+        .dark-mode-swal-title {
+            color: #f1f5f9 !important;
+        }
+        
+        .dark-mode-swal-html {
+            color: #f1f5f9 !important;
+        }
+        
+        .light-mode-swal {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        
+        .light-mode-swal-title {
+            color: #0f172a !important;
+        }
+        
+        .light-mode-swal-html {
+            color: #0f172a !important;
+        }
+        
+        /* Asegurar que los inputs en SweetAlert respeten el modo dark */
+        .swal2-popup input,
+        .swal2-popup textarea,
+        .swal2-popup select {
+            background-color: var(--swal2-background, #fff) !important;
+            color: var(--swal2-color, #000) !important;
+        }
+        
+        html.dark .swal2-popup input,
+        html.dark .swal2-popup textarea,
+        html.dark .swal2-popup select {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #334155 !important;
+        }
+        
+        html.dark .swal2-popup {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+        
+        html.dark .swal2-title {
+            color: #f1f5f9 !important;
+        }
+        
+        html.dark .swal2-html-container {
+            color: #f1f5f9 !important;
+        }
+        
+        /* Botón de eliminar sutil */
+        .swal2-deny-subtle {
+            opacity: 0.7 !important;
+            font-size: 0.875rem !important;
+        }
+        
+        .swal2-deny-subtle:hover {
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
@@ -183,6 +249,15 @@
                                     </div>
                                     <div class="flex items-center gap-1 ml-2">
                                         <button 
+                                            onclick="copyNoteContent({{ $nota->id }}, '{{ addslashes($nota->content) }}')"
+                                            class="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                            title="Copiar"
+                                        >
+                                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                            </svg>
+                                        </button>
+                                        <button 
                                             onclick="togglePin({{ $nota->id }}, {{ $nota->pinned ? 'false' : 'true' }})"
                                             class="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                                             title="{{ $nota->pinned ? 'Desfijar' : 'Fijar' }}"
@@ -244,9 +319,21 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         
+        function getSwalTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                background: isDark ? '#1e293b' : '#ffffff',
+                color: isDark ? '#f1f5f9' : '#0f172a',
+                borderColor: isDark ? '#334155' : '#e2e8f0'
+            };
+        }
+        
         function openCreateNoteModal() {
+            const theme = getSwalTheme();
             Swal.fire({
                 title: 'Nueva Nota',
+                background: theme.background,
+                color: theme.color,
                 html: `
                     <form id="swal-note-form">
                         <div class="mb-4 text-left">
@@ -307,6 +394,11 @@
                 cancelButtonColor: '#6b7280',
                 reverseButtons: true,
                 focusConfirm: false,
+                customClass: {
+                    popup: document.documentElement.classList.contains('dark') ? 'dark-mode-swal' : 'light-mode-swal',
+                    title: document.documentElement.classList.contains('dark') ? 'dark-mode-swal-title' : 'light-mode-swal-title',
+                    htmlContainer: document.documentElement.classList.contains('dark') ? 'dark-mode-swal-html' : 'light-mode-swal-html'
+                },
                 preConfirm: () => {
                     const content = document.getElementById('swal-note-content').value;
                     const type = document.getElementById('swal-note-type').value;
@@ -349,8 +441,11 @@
             })
             .then(data => {
                 if (data.success && data.nota) {
+                    const theme = getSwalTheme();
                     Swal.fire({
                         title: 'Editar Nota',
+                        background: theme.background,
+                        color: theme.color,
                         html: `
                             <form id="swal-note-form">
                                 <div class="mb-4 text-left">
@@ -412,6 +507,27 @@
                         cancelButtonColor: '#6b7280',
                         reverseButtons: true,
                         focusConfirm: false,
+                        customClass: {
+                            popup: document.documentElement.classList.contains('dark') ? 'dark-mode-swal' : 'light-mode-swal',
+                            title: document.documentElement.classList.contains('dark') ? 'dark-mode-swal-title' : 'light-mode-swal-title',
+                            htmlContainer: document.documentElement.classList.contains('dark') ? 'dark-mode-swal-html' : 'light-mode-swal-html'
+                        },
+                        didOpen: () => {
+                            // Aplicar estilos dark/light a los inputs dentro del modal
+                            const isDark = document.documentElement.classList.contains('dark');
+                            const inputs = document.querySelectorAll('#swal-note-form input, #swal-note-form textarea, #swal-note-form select');
+                            inputs.forEach(input => {
+                                if (isDark) {
+                                    input.style.backgroundColor = '#1e293b';
+                                    input.style.color = '#f1f5f9';
+                                    input.style.borderColor = '#334155';
+                                } else {
+                                    input.style.backgroundColor = '#ffffff';
+                                    input.style.color = '#0f172a';
+                                    input.style.borderColor = '#e2e8f0';
+                                }
+                            });
+                        },
                         preConfirm: () => {
                             const content = document.getElementById('swal-note-content').value;
                             const type = document.getElementById('swal-note-type').value;
@@ -474,6 +590,37 @@
             });
         }
         
+        function copyNoteContent(noteId, content) {
+            navigator.clipboard.writeText(content).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Copiado',
+                    text: 'El contenido de la nota ha sido copiado al portapapeles',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end',
+                    customClass: {
+                        popup: document.documentElement.classList.contains('dark') ? 'dark-mode-swal' : 'light-mode-swal'
+                    }
+                });
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo copiar el contenido',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end',
+                    customClass: {
+                        popup: document.documentElement.classList.contains('dark') ? 'dark-mode-swal' : 'light-mode-swal'
+                    }
+                });
+            });
+        }
+        
         function viewNote(noteId) {
             fetch(`/notas/${noteId}`, {
                 headers: {
@@ -491,38 +638,59 @@
             })
             .then(data => {
                 if (data.success && data.nota) {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    const bgColor = isDark ? '#1e293b' : '#ffffff';
+                    const textColor = isDark ? '#f1f5f9' : '#0f172a';
+                    const borderColor = isDark ? '#334155' : '#e2e8f0';
+                    const bgSecondary = isDark ? '#0f172a' : '#f8fafc';
+                    
                     // Mostrar el contenido completo en un modal de solo lectura
                     Swal.fire({
                         title: 'Nota',
                         html: `
-                            <div class="text-left">
+                            <div class="text-left" style="color: ${textColor};">
                                 <div class="mb-3">
                                     <span class="inline-block px-2 py-1 text-xs font-medium rounded-md 
-                                        ${data.nota.type === 'note' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 
-                                          data.nota.type === 'call' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
-                                          data.nota.type === 'meeting' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' :
-                                          data.nota.type === 'email' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300' :
-                                          'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">
+                                        ${data.nota.type === 'note' ? (isDark ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700') : 
+                                          data.nota.type === 'call' ? (isDark ? 'bg-green-900/30 text-green-300' : 'bg-green-100 text-green-700') :
+                                          data.nota.type === 'meeting' ? (isDark ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700') :
+                                          data.nota.type === 'email' ? (isDark ? 'bg-orange-900/30 text-orange-300' : 'bg-orange-100 text-orange-700') :
+                                          (isDark ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-700')}">
                                         ${data.nota.type ? data.nota.type.charAt(0).toUpperCase() + data.nota.type.slice(1) : 'Nota'}
                                     </span>
                                 </div>
-                                <div class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap mb-4">${data.nota.content || ''}</div>
-                                <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <div class="whitespace-pre-wrap mb-4" style="color: ${textColor}; max-height: 400px; overflow-y: auto; padding: 1rem; background: ${bgSecondary}; border-radius: 0.5rem; border: 1px solid ${borderColor};">
+                                    ${(data.nota.content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                                </div>
+                                <div class="text-xs" style="color: ${isDark ? '#94a3b8' : '#64748b'};">
                                     <p>Creada: ${new Date(data.nota.created_at).toLocaleString('es-ES')}</p>
                                     ${data.nota.fecha ? `<p>Fecha: ${data.nota.fecha}</p>` : ''}
                                 </div>
                             </div>
                         `,
                         width: '600px',
+                        background: bgColor,
+                        color: textColor,
                         showCancelButton: true,
+                        showDenyButton: true,
                         confirmButtonText: 'Editar',
+                        denyButtonText: 'Eliminar',
                         cancelButtonText: 'Cerrar',
                         confirmButtonColor: '#D59F3B',
+                        denyButtonColor: '#ef4444',
                         cancelButtonColor: '#6b7280',
-                        reverseButtons: true
+                        reverseButtons: true,
+                        customClass: {
+                            popup: isDark ? 'dark-mode-swal' : 'light-mode-swal',
+                            title: isDark ? 'dark-mode-swal-title' : 'light-mode-swal-title',
+                            htmlContainer: isDark ? 'dark-mode-swal-html' : 'light-mode-swal-html',
+                            denyButton: 'swal2-deny-subtle'
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             openEditNoteModal(noteId);
+                        } else if (result.isDenied) {
+                            deleteNote(noteId);
                         }
                     });
                 } else {

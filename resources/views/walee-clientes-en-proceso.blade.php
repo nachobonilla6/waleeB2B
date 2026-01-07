@@ -246,6 +246,35 @@
                             'pt' => '🇵🇹'
                         ];
                         $bandera = ($cliente->idioma) ? ($banderas[$cliente->idioma] ?? '') : '';
+                        
+                        // Mapeo de idiomas a zonas horarias comunes
+                        $timezones = [
+                            'es' => 'Europe/Madrid',      // España
+                            'en' => 'America/New_York',   // Estados Unidos (puede variar)
+                            'fr' => 'Europe/Paris',       // Francia
+                            'de' => 'Europe/Berlin',      // Alemania
+                            'it' => 'Europe/Rome',        // Italia
+                            'pt' => 'Europe/Lisbon'       // Portugal
+                        ];
+                        
+                        // Determinar zona horaria basada en idioma
+                        $timezone = null;
+                        if ($cliente->idioma && isset($timezones[$cliente->idioma])) {
+                            $timezone = $timezones[$cliente->idioma];
+                        }
+                        
+                        // Obtener hora actual en la zona horaria del cliente
+                        $clientTime = null;
+                        $clientDate = null;
+                        if ($timezone) {
+                            try {
+                                $now = new \DateTime('now', new \DateTimeZone($timezone));
+                                $clientTime = $now->format('H:i');
+                                $clientDate = $now->format('d/m');
+                            } catch (\Exception $e) {
+                                // Si hay error, no mostrar hora
+                            }
+                        }
                     @endphp
                     <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . ($phone ?? '') . ' ' . ($cliente->email ?? '')) }}" data-client-id="{{ $cliente->id }}">
                         <div class="flex items-center gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all">
@@ -289,8 +318,19 @@
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">{{ $cliente->created_at->diffForHumans() }}</p>
                             </a>
                             
-                            <!-- Email Counter -->
+                            <!-- Email Counter and Timezone -->
                             <div class="flex-shrink-0 flex items-center gap-1.5">
+                                @if($clientTime && $cliente->idioma)
+                                    <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex flex-col items-center gap-0.5" title="Hora local del cliente" data-client-lang="{{ $cliente->idioma }}">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="text-xs font-bold text-violet-600 dark:text-violet-400 client-time-{{ $cliente->id }}">{{ $clientTime }}</span>
+                                        </div>
+                                        <span class="text-[10px] text-violet-500 dark:text-violet-400 client-date-{{ $cliente->id }}">{{ $clientDate }}</span>
+                                    </div>
+                                @endif
                                 <div class="bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-lg px-2 py-1 flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -1482,6 +1522,48 @@
                 });
             }
         }
+        
+        // Update client timezones
+        function updateClientClocks() {
+            const timezones = {
+                'es': 'Europe/Madrid',
+                'en': 'America/New_York',
+                'fr': 'Europe/Paris',
+                'de': 'Europe/Berlin',
+                'it': 'Europe/Rome',
+                'pt': 'Europe/Lisbon'
+            };
+            
+            // Obtener todos los contenedores de reloj con data-client-lang
+            document.querySelectorAll('[data-client-lang]').forEach(container => {
+                const lang = container.getAttribute('data-client-lang');
+                if (!lang || !timezones[lang]) return;
+                
+                const timeElement = container.querySelector('[class*="client-time-"]');
+                const dateElement = container.querySelector('[class*="client-date-"]');
+                
+                if (!timeElement) return;
+                
+                try {
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: timezones[lang] }));
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    
+                    timeElement.textContent = `${hours}:${minutes}`;
+                    
+                    if (dateElement) {
+                        const options = { month: 'short', day: 'numeric' };
+                        dateElement.textContent = now.toLocaleDateString('en-US', options);
+                    }
+                } catch (error) {
+                    console.error(`Error updating clock for lang ${lang}:`, error);
+                }
+            });
+        }
+        
+        // Update clocks every second
+        updateClientClocks();
+        setInterval(updateClientClocks, 1000);
     </script>
     @include('partials.walee-support-button')
 </body>

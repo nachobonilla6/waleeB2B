@@ -247,20 +247,150 @@
                         ];
                         $bandera = ($cliente->idioma) ? ($banderas[$cliente->idioma] ?? '') : '';
                         
-                        // Mapeo de idiomas a zonas horarias comunes
-                        $timezones = [
-                            'es' => 'Europe/Madrid',      // España
-                            'en' => 'America/New_York',   // Estados Unidos (puede variar)
-                            'fr' => 'Europe/Paris',       // Francia
-                            'de' => 'Europe/Berlin',      // Alemania
-                            'it' => 'Europe/Rome',        // Italia
-                            'pt' => 'Europe/Lisbon'       // Portugal
+                        // Mapeo de ciudades a zonas horarias (ciudades comunes)
+                        $cityTimezones = [
+                            // España
+                            'madrid' => 'Europe/Madrid',
+                            'barcelona' => 'Europe/Madrid',
+                            'valencia' => 'Europe/Madrid',
+                            'sevilla' => 'Europe/Madrid',
+                            'bilbao' => 'Europe/Madrid',
+                            'zaragoza' => 'Europe/Madrid',
+                            'málaga' => 'Europe/Madrid',
+                            'murcia' => 'Europe/Madrid',
+                            'córdoba' => 'Europe/Madrid',
+                            'palma' => 'Europe/Madrid',
+                            
+                            // Estados Unidos
+                            'new york' => 'America/New_York',
+                            'los angeles' => 'America/Los_Angeles',
+                            'chicago' => 'America/Chicago',
+                            'houston' => 'America/Chicago',
+                            'phoenix' => 'America/Phoenix',
+                            'philadelphia' => 'America/New_York',
+                            'san antonio' => 'America/Chicago',
+                            'san diego' => 'America/Los_Angeles',
+                            'dallas' => 'America/Chicago',
+                            'san jose' => 'America/Los_Angeles',
+                            'miami' => 'America/New_York',
+                            'atlanta' => 'America/New_York',
+                            'boston' => 'America/New_York',
+                            'seattle' => 'America/Los_Angeles',
+                            'denver' => 'America/Denver',
+                            
+                            // Reino Unido
+                            'london' => 'Europe/London',
+                            'manchester' => 'Europe/London',
+                            'birmingham' => 'Europe/London',
+                            'glasgow' => 'Europe/London',
+                            'liverpool' => 'Europe/London',
+                            'edinburgh' => 'Europe/London',
+                            
+                            // Francia
+                            'paris' => 'Europe/Paris',
+                            'lyon' => 'Europe/Paris',
+                            'marseille' => 'Europe/Paris',
+                            'toulouse' => 'Europe/Paris',
+                            'nice' => 'Europe/Paris',
+                            
+                            // Alemania
+                            'berlin' => 'Europe/Berlin',
+                            'munich' => 'Europe/Berlin',
+                            'hamburg' => 'Europe/Berlin',
+                            'frankfurt' => 'Europe/Berlin',
+                            'cologne' => 'Europe/Berlin',
+                            'stuttgart' => 'Europe/Berlin',
+                            
+                            // Italia
+                            'rome' => 'Europe/Rome',
+                            'milano' => 'Europe/Rome',
+                            'milan' => 'Europe/Rome',
+                            'naples' => 'Europe/Rome',
+                            'napoli' => 'Europe/Rome',
+                            'turin' => 'Europe/Rome',
+                            'palermo' => 'Europe/Rome',
+                            
+                            // Portugal
+                            'lisbon' => 'Europe/Lisbon',
+                            'lisboa' => 'Europe/Lisbon',
+                            'porto' => 'Europe/Lisbon',
+                            
+                            // México
+                            'méxico' => 'America/Mexico_City',
+                            'mexico' => 'America/Mexico_City',
+                            'mexico city' => 'America/Mexico_City',
+                            'guadalajara' => 'America/Mexico_City',
+                            'monterrey' => 'America/Monterrey',
+                            
+                            // Argentina
+                            'buenos aires' => 'America/Argentina/Buenos_Aires',
+                            'córdoba' => 'America/Argentina/Cordoba',
+                            
+                            // Colombia
+                            'bogotá' => 'America/Bogota',
+                            'bogota' => 'America/Bogota',
+                            'medellín' => 'America/Bogota',
+                            'medellin' => 'America/Bogota',
+                            
+                            // Chile
+                            'santiago' => 'America/Santiago',
+                            
+                            // Perú
+                            'lima' => 'America/Lima',
+                            
+                            // Brasil
+                            'são paulo' => 'America/Sao_Paulo',
+                            'sao paulo' => 'America/Sao_Paulo',
+                            'rio de janeiro' => 'America/Sao_Paulo',
+                            'brasilia' => 'America/Sao_Paulo',
+                            
+                            // Canadá
+                            'toronto' => 'America/Toronto',
+                            'montreal' => 'America/Toronto',
+                            'vancouver' => 'America/Vancouver',
+                            
+                            // Asia
+                            'tokyo' => 'Asia/Tokyo',
+                            'beijing' => 'Asia/Shanghai',
+                            'shanghai' => 'Asia/Shanghai',
+                            'hong kong' => 'Asia/Hong_Kong',
+                            'singapore' => 'Asia/Singapore',
+                            'dubai' => 'Asia/Dubai',
+                            'mumbai' => 'Asia/Kolkata',
+                            'delhi' => 'Asia/Kolkata',
+                            
+                            // Australia
+                            'sydney' => 'Australia/Sydney',
+                            'melbourne' => 'Australia/Melbourne',
+                            'brisbane' => 'Australia/Brisbane',
                         ];
                         
-                        // Determinar zona horaria basada en idioma
+                        // Mapeo de idiomas a zonas horarias (fallback)
+                        $langTimezones = [
+                            'es' => 'Europe/Madrid',
+                            'en' => 'America/New_York',
+                            'fr' => 'Europe/Paris',
+                            'de' => 'Europe/Berlin',
+                            'it' => 'Europe/Rome',
+                            'pt' => 'Europe/Lisbon'
+                        ];
+                        
+                        // Determinar zona horaria: primero por ciudad, luego por idioma
                         $timezone = null;
-                        if ($cliente->idioma && isset($timezones[$cliente->idioma])) {
-                            $timezone = $timezones[$cliente->idioma];
+                        if ($cliente->ciudad) {
+                            $ciudadLower = strtolower(trim($cliente->ciudad));
+                            // Buscar coincidencia exacta o parcial
+                            foreach ($cityTimezones as $city => $tz) {
+                                if (strpos($ciudadLower, $city) !== false || $ciudadLower === $city) {
+                                    $timezone = $tz;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Si no se encontró por ciudad, usar idioma como fallback
+                        if (!$timezone && $cliente->idioma && isset($langTimezones[$cliente->idioma])) {
+                            $timezone = $langTimezones[$cliente->idioma];
                         }
                         
                         // Obtener hora actual en la zona horaria del cliente
@@ -320,8 +450,8 @@
                             
                             <!-- Email Counter and Timezone -->
                             <div class="flex-shrink-0 flex items-center gap-1.5">
-                                @if($clientTime && $cliente->idioma)
-                                    <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex flex-col items-center gap-0.5" title="Hora local del cliente" data-client-lang="{{ $cliente->idioma }}">
+                                @if($clientTime && $timezone)
+                                    <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex flex-col items-center gap-0.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}" data-client-timezone="{{ $timezone }}" data-client-ciudad="{{ $cliente->ciudad ?? '' }}">
                                         <div class="flex items-center gap-1">
                                             <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -1525,19 +1655,10 @@
         
         // Update client timezones
         function updateClientClocks() {
-            const timezones = {
-                'es': 'Europe/Madrid',
-                'en': 'America/New_York',
-                'fr': 'Europe/Paris',
-                'de': 'Europe/Berlin',
-                'it': 'Europe/Rome',
-                'pt': 'Europe/Lisbon'
-            };
-            
-            // Obtener todos los contenedores de reloj con data-client-lang
-            document.querySelectorAll('[data-client-lang]').forEach(container => {
-                const lang = container.getAttribute('data-client-lang');
-                if (!lang || !timezones[lang]) return;
+            // Obtener todos los contenedores de reloj con data-client-timezone
+            document.querySelectorAll('[data-client-timezone]').forEach(container => {
+                const timezone = container.getAttribute('data-client-timezone');
+                if (!timezone) return;
                 
                 const timeElement = container.querySelector('[class*="client-time-"]');
                 const dateElement = container.querySelector('[class*="client-date-"]');
@@ -1545,7 +1666,7 @@
                 if (!timeElement) return;
                 
                 try {
-                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: timezones[lang] }));
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: timezone }));
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
                     
@@ -1556,7 +1677,7 @@
                         dateElement.textContent = now.toLocaleDateString('en-US', options);
                     }
                 } catch (error) {
-                    console.error(`Error updating clock for lang ${lang}:`, error);
+                    console.error(`Error updating clock for timezone ${timezone}:`, error);
                 }
             });
         }

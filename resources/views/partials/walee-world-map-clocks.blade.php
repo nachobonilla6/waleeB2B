@@ -131,112 +131,112 @@
             </div>
             
             <!-- World Clocks Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 <!-- Montreal -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Montreal</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-montreal">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-montreal">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Montreal</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-montreal">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-montreal">--</div>
                     </div>
                 </div>
                 
                 <!-- London -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">London</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-london">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-london">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">London</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-london">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-london">--</div>
                     </div>
                 </div>
                 
                 <!-- Tokyo -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Tokyo</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-tokyo">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-tokyo">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Tokyo</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-tokyo">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-tokyo">--</div>
                     </div>
                 </div>
                 
                 <!-- Sydney -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Sydney</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-sydney">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-sydney">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Sydney</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-sydney">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-sydney">--</div>
                     </div>
                 </div>
                 
                 <!-- Dubai -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Dubai</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-dubai">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-dubai">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Dubai</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-dubai">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-dubai">--</div>
                     </div>
                 </div>
                 
                 <!-- São Paulo -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">São Paulo</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-saopaulo">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-saopaulo">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">São Paulo</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-saopaulo">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-saopaulo">--</div>
                     </div>
                 </div>
                 
                 <!-- Los Angeles -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Los Angeles</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-la">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-la">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Los Angeles</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-la">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-la">--</div>
                     </div>
                 </div>
                 
                 <!-- Madrid -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Madrid</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-madrid">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-madrid">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Madrid</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-madrid">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-madrid">--</div>
                     </div>
                 </div>
 
                 <!-- San José, Costa Rica -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">San José, Costa Rica</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-sanjosecr">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-sanjosecr">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">San José, Costa Rica</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-sanjosecr">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-sanjosecr">--</div>
                     </div>
                 </div>
 
                 <!-- Cameroon -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Cameroon</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-cameroon">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-cameroon">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Cameroon</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-cameroon">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-cameroon">--</div>
                     </div>
                 </div>
 
                 <!-- Hong Kong -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Hong Kong</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-hongkong">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-hongkong">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Hong Kong</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-hongkong">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-hongkong">--</div>
                     </div>
                 </div>
 
                 <!-- South Africa -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">South Africa</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-southafrica">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-southafrica">--</div>
+                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">South Africa</div>
+                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-southafrica">--:--</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-southafrica">--</div>
                     </div>
                 </div>
             </div>

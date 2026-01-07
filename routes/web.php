@@ -2693,6 +2693,37 @@ Route::get('/walee-emails/pending', function (\Illuminate\Http\Request $request)
     return view('walee-emails-pending', compact('clientesPending', 'searchQuery', 'idiomaFilter', 'templates', 'clientesEnProceso', 'totalPropuestaPersonalizada', 'totalExtractor', 'totalEmails'));
 })->middleware(['auth'])->name('walee.emails.pending');
 
+Route::get('/walee-emails/clientes-proceso', function (\Illuminate\Http\Request $request) {
+    $searchQuery = $request->get('search', '');
+    $idiomaFilter = $request->get('idioma', '');
+    
+    // Obtener todos los clientes en proceso (excluyendo activos)
+    $query = \App\Models\Client::where('estado', '!=', 'activo');
+    
+    // Aplicar filtro por idioma si existe
+    if ($idiomaFilter) {
+        $query->where('idioma', $idiomaFilter);
+    }
+    
+    // Aplicar búsqueda si existe
+    if ($searchQuery) {
+        $query->where(function($q) use ($searchQuery) {
+            $q->where('name', 'like', '%' . $searchQuery . '%')
+              ->orWhere('email', 'like', '%' . $searchQuery . '%')
+              ->orWhere('website', 'like', '%' . $searchQuery . '%');
+        });
+    }
+    
+    $clientesProceso = $query->withCount('emails')
+        ->orderBy('created_at', 'desc')
+        ->orderBy('updated_at', 'desc')
+        ->orderBy('id', 'desc')
+        ->paginate(10)
+        ->appends(request()->query());
+    
+    return view('walee-emails-clientes-proceso', compact('clientesProceso', 'searchQuery', 'idiomaFilter'));
+})->middleware(['auth'])->name('walee.emails.clientes.proceso');
+
 Route::get('/walee-emails/enviados', function (\Illuminate\Http\Request $request) {
     $searchQuery = $request->get('search', '');
     $clienteId = $request->get('cliente_id');

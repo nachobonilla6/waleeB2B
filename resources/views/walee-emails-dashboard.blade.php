@@ -369,8 +369,30 @@
                         </a>
                     </div>
                     
-                    <!-- Clientes Pending - Contador -->
-                    <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <!-- Clientes en Proceso y Pending - Enlaces -->
+                    <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1.5">
+                        <!-- Todos los clientes en proceso -->
+                        <a href="{{ route('walee.emails.clientes.proceso') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all group">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-xs text-slate-900 dark:text-white">Todos los Clientes en Proceso</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-400">Ver lista completa</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">{{ number_format($totalClientesEnProceso) }}</span>
+                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </a>
+                        
+                        <!-- Clientes Pending - Contador -->
                         <a href="{{ route('walee.emails.pending') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all group">
                             <div class="flex items-center gap-2">
                                 <div class="w-7 h-7 rounded-lg bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">

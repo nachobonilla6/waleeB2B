@@ -443,7 +443,7 @@
                                 }
                             }
                         @endphp
-                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group">
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group" data-client-id="{{ $cliente->id }}">
                             <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
                                 <!-- Desktop: Foto -->
                                 @if($fotoUrl)
@@ -518,6 +518,11 @@
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                                </svg>
+                            </button>
+                            <button onclick="deleteCliente({{ $cliente->id }}, '{{ addslashes($cliente->name ?? 'Cliente') }}')" class="p-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white border border-red-600 hover:border-red-700 transition-all flex-shrink-0 shadow-sm hover:shadow flex items-center justify-center" title="Eliminar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
                             </button>
                         </div>
@@ -2501,6 +2506,87 @@
                     </svg>
                     <span>Generar con AI</span>
                 `;
+            }
+        }
+        
+        // Delete individual client
+        async function deleteCliente(clienteId, clienteName) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            const result = await Swal.fire({
+                title: '¿Eliminar cliente?',
+                text: `¿Estás seguro de que deseas eliminar a ${clienteName}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+            });
+            
+            if (!result.isConfirmed) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('{{ route("walee.clientes.en-proceso.delete") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        client_ids: [clienteId]
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Remove client from DOM
+                    const card = document.querySelector(`[data-client-id="${clienteId}"]`);
+                    if (card) {
+                        card.style.transition = 'opacity 0.3s, transform 0.3s';
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(-20px)';
+                        setTimeout(() => card.remove(), 300);
+                    } else {
+                        // If card doesn't have data-client-id, try to find by other means
+                        location.reload();
+                    }
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cliente eliminado!',
+                        text: 'El cliente ha sido eliminado correctamente',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al eliminar el cliente',
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión: ' + error.message,
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                });
             }
         }
     </script>

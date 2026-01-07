@@ -62,6 +62,33 @@
                             <rect x="661" y="193" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.95"/>
                             <text x="686" y="207" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-dubai">--:--</text>
                         </g>
+
+                        <!-- Cameroon (Douala): Coordenadas aproximadas (10°E, 4°N) -->
+                        <g class="city-marker" data-city="cameroon" data-timezone="Africa/Douala">
+                            <circle cx="530" cy="235" r="4" fill="#22c55e" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
+                            <circle cx="530" cy="235" r="3" fill="#fff" class="city-pulse"/>
+                            <text x="520" y="223" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">CMR</text>
+                            <rect x="538" y="229" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#22c55e" stroke-width="1.5" opacity="0.95"/>
+                            <text x="563" y="243" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-cameroon">--:--</text>
+                        </g>
+
+                        <!-- Hong Kong: Coordenadas aproximadas (114°E, 22°N) -->
+                        <g class="city-marker" data-city="hongkong" data-timezone="Asia/Hong_Kong">
+                            <circle cx="820" cy="190" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
+                            <circle cx="820" cy="190" r="3" fill="#fff" class="city-pulse"/>
+                            <text x="810" y="178" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">HKG</text>
+                            <rect x="828" y="184" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#0ea5e9" stroke-width="1.5" opacity="0.95"/>
+                            <text x="853" y="198" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-hongkong">--:--</text>
+                        </g>
+
+                        <!-- South Africa (Johannesburg): Coordenadas aproximadas (28°E, 26°S) -->
+                        <g class="city-marker" data-city="southafrica" data-timezone="Africa/Johannesburg">
+                            <circle cx="580" cy="325" r="4" fill="#f97316" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
+                            <circle cx="580" cy="325" r="3" fill="#fff" class="city-pulse"/>
+                            <text x="570" y="313" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SA</text>
+                            <rect x="588" y="319" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#f97316" stroke-width="1.5" opacity="0.95"/>
+                            <text x="613" y="333" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-southafrica">--:--</text>
+                        </g>
                         
                         <!-- São Paulo: Coordenadas ajustadas (46°W, 23°S) -->
                         <g class="city-marker" data-city="saopaulo" data-timezone="America/Sao_Paulo">
@@ -166,6 +193,33 @@
                         <div class="text-xs text-slate-500 dark:text-slate-500" id="date-madrid">--</div>
                     </div>
                 </div>
+
+                <!-- Cameroon -->
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                    <div class="text-center">
+                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Cameroon</div>
+                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-cameroon">--:--</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-cameroon">--</div>
+                    </div>
+                </div>
+
+                <!-- Hong Kong -->
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                    <div class="text-center">
+                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Hong Kong</div>
+                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-hongkong">--:--</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-hongkong">--</div>
+                    </div>
+                </div>
+
+                <!-- South Africa -->
+                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                    <div class="text-center">
+                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">South Africa</div>
+                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-southafrica">--:--</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-southafrica">--</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -183,7 +237,10 @@
                 'dubai': 'Asia/Dubai',
                 'saopaulo': 'America/Sao_Paulo',
                 'la': 'America/Los_Angeles',
-                'madrid': 'Europe/Madrid'
+                'madrid': 'Europe/Madrid',
+                'cameroon': 'Africa/Douala',
+                'hongkong': 'Asia/Hong_Kong',
+                'southafrica': 'Africa/Johannesburg'
             };
             
             Object.keys(timezones).forEach(city => {

@@ -96,33 +96,40 @@
                 <span class="font-medium">Calendario</span>
             </a>
             
-            <a 
-                href="{{ route('walee.notas') }}" 
-                onclick="closeMobileMenu()"
-                class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700"
-            >
-                <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span class="font-medium">Notas</span>
-            </a>
-            
-            @php
-                $userNotes = \App\Models\Note::where('user_id', auth()->id())
-                    ->whereNull('cliente_id')
-                    ->whereNull('client_id')
-                    ->orderBy('pinned', 'desc')
-                    ->orderBy('created_at', 'desc')
-                    ->limit(5)
-                    ->get();
-            @endphp
-            
-            @if($userNotes->count() > 0)
-                <div class="border-b border-slate-200 dark:border-slate-700">
-                    <div class="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                        Mis Notas Recientes
-                    </div>
-                    <div class="max-h-64 overflow-y-auto">
+            <div class="border-b border-slate-200 dark:border-slate-700">
+                <a 
+                    href="{{ route('walee.notas') }}" 
+                    onclick="closeMobileMenu()"
+                    class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                    <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span class="font-medium flex-1">Notas</span>
+                </a>
+                
+                @php
+                    $userNotes = \App\Models\Note::where('user_id', auth()->id())
+                        ->whereNull('cliente_id')
+                        ->whereNull('client_id')
+                        ->orderBy('pinned', 'desc')
+                        ->orderBy('created_at', 'desc')
+                        ->limit(5)
+                        ->get();
+                @endphp
+                
+                @if($userNotes->count() > 0)
+                    <button 
+                        onclick="toggleNotesMenu()"
+                        class="w-full flex items-center justify-between px-4 py-2 text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    >
+                        <span class="font-semibold uppercase tracking-wider">Mis Notas Recientes</span>
+                        <svg id="notesMenuIcon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    
+                    <div id="notesMenuContent" class="hidden max-h-64 overflow-y-auto">
                         @foreach($userNotes as $nota)
                             <div class="flex items-start gap-2 px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
                                 <div class="flex-1 min-w-0">
@@ -144,18 +151,18 @@
                                 </button>
                             </div>
                         @endforeach
+                        @if($userNotes->count() >= 5)
+                            <a 
+                                href="{{ route('walee.notas') }}" 
+                                onclick="closeMobileMenu()"
+                                class="block px-4 py-2 text-xs text-center text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-200 dark:border-slate-700"
+                            >
+                                Ver todas las notas →
+                            </a>
+                        @endif
                     </div>
-                    @if($userNotes->count() >= 5)
-                        <a 
-                            href="{{ route('walee.notas') }}" 
-                            onclick="closeMobileMenu()"
-                            class="block px-4 py-2 text-xs text-center text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-200 dark:border-slate-700"
-                        >
-                            Ver todas las notas →
-                        </a>
-                    @endif
-                </div>
-            @endif
+                @endif
+            </div>
             
             <a 
                 href="/admin" 
@@ -266,6 +273,25 @@
             closeMobileMenu();
         }
     });
+    
+    function toggleNotesMenu() {
+        const content = document.getElementById('notesMenuContent');
+        const icon = document.getElementById('notesMenuIcon');
+        
+        if (content) {
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                if (icon) {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            } else {
+                content.classList.add('hidden');
+                if (icon) {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+    }
     
     function copyNoteFromMenu(content, event) {
         event.stopPropagation();

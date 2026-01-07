@@ -489,7 +489,11 @@
                                 }
                             }
                         @endphp
-                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group" data-client-id="{{ $cliente->id }}">
+                        <div 
+                            class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group client-card-selectable" 
+                            data-client-id="{{ $cliente->id }}"
+                            onclick="handleClientCardClick(event, {{ $cliente->id }}, '{{ addslashes($cliente->name ?? 'Cliente') }}')"
+                        >
                             <!-- Checkbox -->
                             <input 
                                 type="checkbox" 
@@ -499,7 +503,7 @@
                                 onchange="updateDeleteButton()"
                             >
                             
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0" onclick="handleClientLinkClick(event)">
                                 <!-- Desktop: Foto -->
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $cliente->name }}" class="hidden sm:block w-11 h-11 rounded-xl object-cover border-2 border-emerald-500/30 flex-shrink-0 shadow-sm group-hover:border-emerald-400 transition-colors">
@@ -2648,6 +2652,39 @@
             }
         }
         
+        // Handle client card click
+        function handleClientCardClick(event, clientId, clientName) {
+            // Only handle if actions menu is open
+            const menu = document.getElementById('actionsMenu');
+            if (!menu || menu.classList.contains('hidden')) {
+                return;
+            }
+            
+            // Don't handle if clicking on checkbox, link, or buttons
+            if (event.target.closest('input[type="checkbox"]') || 
+                event.target.closest('a') || 
+                event.target.closest('button')) {
+                return;
+            }
+            
+            // Toggle checkbox
+            const checkbox = document.querySelector(`.client-checkbox[data-client-id="${clientId}"]`);
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                updateDeleteButton();
+            }
+        }
+        
+        // Handle client link click
+        function handleClientLinkClick(event) {
+            // If actions menu is open, prevent navigation
+            const menu = document.getElementById('actionsMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                event.preventDefault();
+                return false;
+            }
+        }
+        
         // Toggle actions menu
         function toggleActionsMenu() {
             const menu = document.getElementById('actionsMenu');
@@ -2660,6 +2697,11 @@
                     checkboxes.forEach(checkbox => {
                         checkbox.classList.remove('hidden');
                     });
+                    // Add cursor pointer to cards
+                    const cards = document.querySelectorAll('.client-card-selectable');
+                    cards.forEach(card => {
+                        card.style.cursor = 'pointer';
+                    });
                 } else {
                     // Closing menu - hide checkboxes and uncheck them
                     menu.classList.add('hidden');
@@ -2667,6 +2709,11 @@
                     checkboxes.forEach(checkbox => {
                         checkbox.classList.add('hidden');
                         checkbox.checked = false;
+                    });
+                    // Remove cursor pointer from cards
+                    const cards = document.querySelectorAll('.client-card-selectable');
+                    cards.forEach(card => {
+                        card.style.cursor = '';
                     });
                 }
                 

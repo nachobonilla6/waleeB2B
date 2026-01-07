@@ -547,7 +547,7 @@
                             }
                         }
                     @endphp
-                    <div class="client-card group" data-search="{{ strtolower($cliente->name . ' ' . ($phone ?? '') . ' ' . ($cliente->email ?? '')) }}" data-client-id="{{ $cliente->id }}">
+                    <div class="client-card group client-card-selectable" data-search="{{ strtolower($cliente->name . ' ' . ($phone ?? '') . ' ' . ($cliente->email ?? '')) }}" data-client-id="{{ $cliente->id }}" onclick="handleClientCardClick(event, {{ $cliente->id }}, '{{ addslashes($cliente->name ?? 'Cliente') }}')">
                         <div class="flex items-start gap-2.5 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all">
                             <!-- Checkbox -->
                             <input 
@@ -570,7 +570,7 @@
                             </div>
                             
                             <!-- Content -->
-                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex-1 min-w-0">
+                            <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex-1 min-w-0" onclick="handleClientLinkClick(event)">
                                 <div class="flex items-center gap-2 mb-0.5">
                                     <p class="font-medium text-sm text-slate-900 dark:text-white break-words group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
                                 </div>
@@ -1539,6 +1539,39 @@
             });
         }
         
+        // Handle client card click
+        function handleClientCardClick(event, clientId, clientName) {
+            // Only handle if actions menu is open
+            const menu = document.getElementById('actionsMenu');
+            if (!menu || menu.classList.contains('hidden')) {
+                return;
+            }
+            
+            // Don't handle if clicking on checkbox, link, or buttons
+            if (event.target.closest('input[type="checkbox"]') || 
+                event.target.closest('a') || 
+                event.target.closest('button')) {
+                return;
+            }
+            
+            // Toggle checkbox
+            const checkbox = document.querySelector(`.client-checkbox[data-client-id="${clientId}"]`);
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                updateDeleteButton();
+            }
+        }
+        
+        // Handle client link click
+        function handleClientLinkClick(event) {
+            // If actions menu is open, prevent navigation
+            const menu = document.getElementById('actionsMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                event.preventDefault();
+                return false;
+            }
+        }
+        
         // Toggle actions menu
         function toggleActionsMenu() {
             const menu = document.getElementById('actionsMenu');
@@ -1557,6 +1590,16 @@
                         // Closing menu - hide checkboxes and uncheck them
                         checkbox.classList.add('hidden');
                         checkbox.checked = false;
+                    }
+                });
+                
+                // Add/remove cursor pointer to cards
+                const cards = document.querySelectorAll('.client-card-selectable');
+                cards.forEach(card => {
+                    if (isHidden) {
+                        card.style.cursor = 'pointer';
+                    } else {
+                        card.style.cursor = '';
                     }
                 });
                 

@@ -268,8 +268,9 @@
                     const now = new Date(new Date().toLocaleString('en-US', { timeZone: timezones[city] }));
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const seconds = String(now.getSeconds()).padStart(2, '0');
                     
-                    // Actualizar relojes en las tarjetas
+                    // Actualizar relojes en las tarjetas (HH:MM)
                     const clockElement = document.getElementById(`clock-${city}`);
                     const dateElement = document.getElementById(`date-${city}`);
                     
@@ -282,10 +283,10 @@
                         dateElement.textContent = now.toLocaleDateString('en-US', options);
                     }
                     
-                    // Actualizar relojes en el mapa
+                    // Actualizar relojes en el mapa (HH:MM:SS)
                     const mapClockElement = document.getElementById(`map-clock-${city}`);
                     if (mapClockElement) {
-                        mapClockElement.textContent = `${hours}:${minutes}`;
+                        mapClockElement.textContent = `${hours}:${minutes}:${seconds}`;
                     }
                 } catch (error) {
                     console.error(`Error updating clock for ${city}:`, error);

@@ -147,20 +147,6 @@
                     'cameroon'     => '🇨🇲 Cameroon',
                     'hongkong'     => '🇭🇰 Hong Kong',
                     'southafrica'  => '🇿🇦 South Africa',
-                    // Más opciones extra
-                    'newyork'      => '🇺🇸 New York',
-                    'mexico'       => '🇲🇽 Ciudad de México',
-                    'buenosaires'  => '🇦🇷 Buenos Aires',
-                    'paris'        => '🇫🇷 Paris',
-                    'berlin'       => '🇩🇪 Berlin',
-                    'rome'         => '🇮🇹 Rome',
-                    'lisbon'       => '🇵🇹 Lisbon',
-                    'singapore'    => '🇸🇬 Singapore',
-                    'bangkok'      => '🇹🇭 Bangkok',
-                    'moscow'       => '🇷🇺 Moscow',
-                    'beijing'      => '🇨🇳 Beijing',
-                    'delhi'        => '🇮🇳 New Delhi',
-                    'auckland'     => '🇳🇿 Auckland',
                 ];
 
                 // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
@@ -245,20 +231,6 @@
             cameroon:    { label: 'Cameroon',             tz: 'Africa/Douala' },
             hongkong:    { label: 'Hong Kong',            tz: 'Asia/Hong_Kong' },
             southafrica: { label: 'South Africa',         tz: 'Africa/Johannesburg' },
-            // Extra cities solo para tarjetas
-            newyork:     { label: 'New York',             tz: 'America/New_York' },
-            mexico:      { label: 'Ciudad de México',     tz: 'America/Mexico_City' },
-            buenosaires: { label: 'Buenos Aires',         tz: 'America/Argentina/Buenos_Aires' },
-            paris:       { label: 'Paris',                tz: 'Europe/Paris' },
-            berlin:      { label: 'Berlin',               tz: 'Europe/Berlin' },
-            rome:        { label: 'Rome',                 tz: 'Europe/Rome' },
-            lisbon:      { label: 'Lisbon',               tz: 'Europe/Lisbon' },
-            singapore:   { label: 'Singapore',            tz: 'Asia/Singapore' },
-            bangkok:     { label: 'Bangkok',              tz: 'Asia/Bangkok' },
-            moscow:      { label: 'Moscow',               tz: 'Europe/Moscow' },
-            beijing:     { label: 'Beijing',              tz: 'Asia/Shanghai' },
-            delhi:       { label: 'New Delhi',            tz: 'Asia/Kolkata' },
-            auckland:    { label: 'Auckland',             tz: 'Pacific/Auckland' },
         };
 
         function updateWorldClocks() {

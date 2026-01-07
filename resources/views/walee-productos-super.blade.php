@@ -261,6 +261,16 @@
                                 </div>
                                 
                                 <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Expiración</label>
+                                    <input 
+                                        type="date" 
+                                        id="productoFechaExpiracion" 
+                                        name="fecha_expiracion" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    >
+                                </div>
+                                
+                                <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código de Barras</label>
                                     <input 
                                         type="text" 
@@ -269,6 +279,20 @@
                                         class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                         placeholder="Opcional"
                                     >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen del Producto</label>
+                                    <input 
+                                        type="file" 
+                                        id="productoImagen" 
+                                        name="imagen" 
+                                        accept="image/*"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                    >
+                                    <div id="imagenPreview" class="mt-2 hidden">
+                                        <img id="imagenPreviewImg" src="" alt="Vista previa" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    </div>
                                 </div>
                                 
                                 <div>
@@ -366,16 +390,32 @@
                             @else
                                 <div class="space-y-3" id="productosList">
                                     @foreach($productos as $producto)
+                                        @php
+                                            $estaVencido = false;
+                                            $venceraPronto = false;
+                                            if ($producto->fecha_expiracion) {
+                                                $estaVencido = \Carbon\Carbon::parse($producto->fecha_expiracion)->isPast();
+                                                if (!$estaVencido) {
+                                                    $diasRestantes = now()->diffInDays(\Carbon\Carbon::parse($producto->fecha_expiracion), false);
+                                                    $venceraPronto = $diasRestantes <= 7 && $diasRestantes >= 0;
+                                                }
+                                            }
+                                        @endphp
                                         <div 
-                                            class="producto-item rounded-lg p-4 border transition-all {{ $producto->activo ? 'bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 hover:border-emerald-400 dark:hover:border-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800/70 border-slate-300 dark:border-slate-600 opacity-75' }}"
+                                            class="producto-item rounded-lg p-4 border transition-all {{ $producto->activo ? ($estaVencido ? 'border-red-600 dark:border-red-500 border-2 bg-red-50/50 dark:bg-red-900/10' : ($venceraPronto ? 'border-amber-500 dark:border-amber-500 border-2 bg-amber-50/50 dark:bg-amber-900/10' : 'bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 hover:border-emerald-400 dark:hover:border-emerald-500/30')) : 'bg-slate-100 dark:bg-slate-800/70 border-slate-300 dark:border-slate-600 opacity-75' }}"
                                             data-producto-id="{{ $producto->id }}"
                                             data-categoria="{{ $producto->categoria ?? '' }}"
                                             data-activo="{{ $producto->activo ? '1' : '0' }}"
                                         >
                                             <div class="flex items-start justify-between gap-4">
+                                                @if($producto->imagen)
+                                                    <div class="flex-shrink-0">
+                                                        <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                                    </div>
+                                                @endif
                                                 <div class="flex-1 min-w-0">
                                                     <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                                        <h4 class="font-semibold {{ $producto->activo ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400' }}">{{ $producto->nombre }}</h4>
+                                                        <h4 class="font-semibold {{ $producto->activo ? ($estaVencido ? 'text-red-900 dark:text-red-300' : ($venceraPronto ? 'text-amber-900 dark:text-amber-300' : 'text-slate-900 dark:text-white')) : 'text-slate-500 dark:text-slate-400' }}">{{ $producto->nombre }}</h4>
                                                         @if($producto->categoria)
                                                             <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
                                                                 {{ $producto->categoria }}
@@ -388,6 +428,15 @@
                                                         @else
                                                             <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
                                                                 Inactivo
+                                                            </span>
+                                                        @endif
+                                                        @if($estaVencido)
+                                                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-red-500 text-white dark:bg-red-600 dark:text-white shadow-md animate-pulse">
+                                                                Vencido
+                                                            </span>
+                                                        @elseif($venceraPronto)
+                                                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-500 text-white dark:bg-amber-600 dark:text-white shadow-md">
+                                                                Vence Pronto
                                                             </span>
                                                         @endif
                                                     </div>
@@ -403,6 +452,14 @@
                                                         <span class="{{ $producto->activo ? 'text-slate-700 dark:text-slate-300' : 'text-slate-500 dark:text-slate-500' }}">
                                                             Stock: {{ $producto->stock }}
                                                         </span>
+                                                        @if($producto->fecha_expiracion)
+                                                            <span class="{{ $estaVencido ? 'text-red-700 dark:text-red-400 font-bold' : ($venceraPronto ? 'text-amber-700 dark:text-amber-400 font-semibold' : '') }}">
+                                                                Expira: {{ \Carbon\Carbon::parse($producto->fecha_expiracion)->format('d/m/Y') }}
+                                                                @if($estaVencido || $venceraPronto)
+                                                                    ({{ \Carbon\Carbon::parse($producto->fecha_expiracion)->diffForHumans() }})
+                                                                @endif
+                                                            </span>
+                                                        @endif
                                                         @if($producto->codigo_barras)
                                                             <span class="text-slate-500 dark:text-slate-500">
                                                                 Código: {{ $producto->codigo_barras }}
@@ -466,7 +523,24 @@
             document.getElementById('productoForm').reset();
             document.getElementById('productoId').value = '';
             document.getElementById('productoActivo').checked = true;
+            document.getElementById('imagenPreview').classList.add('hidden');
+            document.getElementById('imagenPreviewImg').src = '';
         }
+        
+        // Preview de imagen
+        document.getElementById('productoImagen').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagenPreviewImg').src = e.target.result;
+                    document.getElementById('imagenPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('imagenPreview').classList.add('hidden');
+            }
+        });
         
         function filtrarProductos() {
             const categoria = document.getElementById('filtroCategoria').value;
@@ -512,8 +586,17 @@
                     document.getElementById('productoPrecio').value = data.producto.precio || '';
                     document.getElementById('productoCategoria').value = data.producto.categoria || '';
                     document.getElementById('productoStock').value = data.producto.stock || 0;
+                    document.getElementById('productoFechaExpiracion').value = data.producto.fecha_expiracion || '';
                     document.getElementById('productoCodigoBarras').value = data.producto.codigo_barras || '';
                     document.getElementById('productoActivo').checked = data.producto.activo || false;
+                    
+                    // Mostrar imagen actual si existe
+                    if (data.producto.imagen_url) {
+                        document.getElementById('imagenPreviewImg').src = data.producto.imagen_url;
+                        document.getElementById('imagenPreview').classList.remove('hidden');
+                    } else {
+                        document.getElementById('imagenPreview').classList.add('hidden');
+                    }
                     
                     document.getElementById('productoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
@@ -572,26 +655,34 @@
             
             const productoId = document.getElementById('productoId').value;
             const url = productoId ? `/walee-productos-super/${productoId}` : '/walee-productos-super';
-            const method = productoId ? 'PUT' : 'POST';
+            const method = productoId ? 'POST' : 'POST'; // Usar POST para PUT con FormData
             
-            const formData = {
-                nombre: document.getElementById('productoNombre').value,
-                descripcion: document.getElementById('productoDescripcion').value,
-                precio: document.getElementById('productoPrecio').value,
-                categoria: document.getElementById('productoCategoria').value,
-                stock: document.getElementById('productoStock').value,
-                codigo_barras: document.getElementById('productoCodigoBarras').value,
-                activo: document.getElementById('productoActivo').checked
-            };
+            const formDataObj = new FormData();
+            formDataObj.append('nombre', document.getElementById('productoNombre').value);
+            formDataObj.append('descripcion', document.getElementById('productoDescripcion').value);
+            formDataObj.append('precio', document.getElementById('productoPrecio').value);
+            formDataObj.append('categoria', document.getElementById('productoCategoria').value);
+            formDataObj.append('stock', document.getElementById('productoStock').value);
+            formDataObj.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
+            formDataObj.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
+            formDataObj.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
+            
+            const imagenFile = document.getElementById('productoImagen').files[0];
+            if (imagenFile) {
+                formDataObj.append('imagen', imagenFile);
+            }
+            
+            if (productoId) {
+                formDataObj.append('_method', 'PUT');
+            }
             
             fetch(url, {
-                method: method,
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: formDataObj
             })
             .then(response => response.json())
             .then(data => {

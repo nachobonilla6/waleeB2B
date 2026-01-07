@@ -5,6 +5,7 @@ CREATE TABLE `producto_supers` (
   `precio` DECIMAL(10, 2) NOT NULL,
   `categoria` VARCHAR(255) NULL,
   `stock` INT NOT NULL DEFAULT 0,
+  `fecha_expiracion` DATE NULL,
   `codigo_barras` VARCHAR(255) NULL,
   `imagen` VARCHAR(255) NULL,
   `activo` TINYINT(1) NOT NULL DEFAULT 1,

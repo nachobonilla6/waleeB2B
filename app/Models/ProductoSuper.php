@@ -12,6 +12,7 @@ class ProductoSuper extends Model
         'precio',
         'categoria',
         'stock',
+        'fecha_expiracion',
         'codigo_barras',
         'imagen',
         'activo',
@@ -21,5 +22,6 @@ class ProductoSuper extends Model
         'precio' => 'decimal:2',
         'stock' => 'integer',
         'activo' => 'boolean',
+        'fecha_expiracion' => 'date',
     ];
 }

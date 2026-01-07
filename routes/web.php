@@ -4649,8 +4649,21 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
         $producto->stock = $request->input('stock', 0);
+        $producto->fecha_expiracion = $request->input('fecha_expiracion');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
+        
+        // Subir imagen si existe
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $productosDir = storage_path('app/public/productos-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $imagen->store('productos-super', 'public');
+            $producto->imagen = $path;
+        }
+        
         $producto->save();
         
         return response()->json([
@@ -4678,7 +4691,9 @@ Route::get('/walee-productos-super/{id}', function ($id) {
                 'precio' => $producto->precio,
                 'categoria' => $producto->categoria,
                 'stock' => $producto->stock,
+                'fecha_expiracion' => $producto->fecha_expiracion ? $producto->fecha_expiracion->format('Y-m-d') : null,
                 'codigo_barras' => $producto->codigo_barras,
+                'imagen_url' => $producto->imagen ? asset('storage/' . $producto->imagen) : null,
                 'activo' => $producto->activo,
             ]
         ]);
@@ -4698,8 +4713,26 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
         $producto->stock = $request->input('stock', 0);
+        $producto->fecha_expiracion = $request->input('fecha_expiracion');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
+        
+        // Subir nueva imagen si existe
+        if ($request->hasFile('imagen')) {
+            // Eliminar imagen anterior si existe
+            if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
+                unlink(storage_path('app/public/' . $producto->imagen));
+            }
+            
+            $imagen = $request->file('imagen');
+            $productosDir = storage_path('app/public/productos-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $imagen->store('productos-super', 'public');
+            $producto->imagen = $path;
+        }
+        
         $producto->save();
         
         return response()->json([

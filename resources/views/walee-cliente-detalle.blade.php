@@ -58,7 +58,7 @@
         /* Asegurar que el card de perfil use todo el ancho en mobile */
         @media (max-width: 640px) {
             /* Contenedor principal de la página - usar selector de atributo */
-            div[class*="max-w-[100rem]"] {
+            div[class*="max-w-[90rem]"] {
                 width: 100% !important;
                 max-width: 100% !important;
             }
@@ -630,14 +630,14 @@
             <div class="absolute bottom-20 -left-20 w-60 h-60 bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
-        <!-- Navbar con ancho independiente -->
-        <div class="relative w-full max-w-[100rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8 xl:px-12">
+        <!-- Navbar con ancho estándar -->
+        <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
             @php $pageTitle = $cliente->name; @endphp
             @include('partials.walee-navbar')
         </div>
             
-        <!-- Contenido principal con ancho más amplio -->
-        <div class="relative w-full max-w-[100rem] mx-auto px-3 py-0 sm:px-4 sm:py-0 lg:px-12 xl:px-16 pb-6 flex flex-col">
+        <!-- Contenido principal con ancho estándar -->
+        <div class="relative max-w-[90rem] mx-auto px-3 py-0 sm:px-4 sm:py-0 lg:px-8 pb-6 flex flex-col">
             <!-- Header Profesional -->
             <div class="mb-3 sm:mb-4 lg:mb-6 flex flex-col w-full header-profesional-wrapper">
                 <div class="relative w-full bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none header-profesional-card">

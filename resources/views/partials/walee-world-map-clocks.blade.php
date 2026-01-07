@@ -10,7 +10,7 @@
     <div class="bg-white dark:bg-slate-900/50 rounded-2xl shadow-lg border border-black dark:border-black overflow-hidden">
         <div class="p-4 sm:p-6">
             <!-- World Map Widget -->
-            <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 400px; position: relative;">
+            <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
                 <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
                     <!-- Imagen de fondo del mapa -->
                     <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" alt="World Map" style="width: 100%; height: 100%; object-fit: fill; position: absolute; top: 0; left: 0; opacity: 0.8; filter: brightness(0.95);" class="world-map-bg">

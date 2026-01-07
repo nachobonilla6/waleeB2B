@@ -250,34 +250,6 @@
                 </div>
             </div>
             
-            <!-- Gastos -->
-            <div class="mb-6 sm:mb-8">
-                <a href="{{ route('walee.gastos') }}" class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm dark:shadow-none hover:shadow-md transition-all cursor-pointer inline-block w-full">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3 sm:gap-4">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-orange-500/20 dark:bg-orange-500/10 flex items-center justify-center">
-                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5">Gastos Este Mes</p>
-                                <p class="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
-                                    ₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}
-                                </p>
-                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                                    Total: ₡{{ number_format($totalGastos ?? 0, 2, '.', ',') }}
-                                </p>
-                            </div>
-                        </div>
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </a>
-            </div>
-            
-            
             <!-- World Map with Clocks -->
             @include('partials.walee-world-map-clocks')
             

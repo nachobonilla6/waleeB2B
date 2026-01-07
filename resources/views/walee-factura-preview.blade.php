@@ -734,11 +734,19 @@
             <div>{{ $t['seller_signature'] ?? 'Seller signature' }}</div>
         </div>
         <div class="signature-box">
-            <div class="signature-line"></div>
-            <div>{{ $t['client_signature'] ?? 'Client signature' }}</div>
-            <div style="margin-top: 4px; text-align: right; font-size: 7pt; color: #6b7280;">
-                {{ $t['signature_date'] ?? 'Date' }}:
-                <span class="signature-date-line">&nbsp;</span>
+            <div style="display: flex; justify-content: space-between; gap: 24px; align-items: flex-end;">
+                <!-- Columna firma cliente -->
+                <div style="flex: 1; text-align: center;">
+                    <div class="signature-line"></div>
+                    <div>{{ $t['client_signature'] ?? 'Client signature' }}</div>
+                </div>
+                <!-- Columna fecha -->
+                <div style="flex: 1; text-align: right;">
+                    <div style="margin-top: 30px; font-size: 7pt; color: #6b7280;">
+                        {{ $t['signature_date'] ?? 'Date' }}:
+                        <span class="signature-date-line">&nbsp;</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

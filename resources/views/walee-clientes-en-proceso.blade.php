@@ -2006,7 +2006,12 @@
                     item.classList.remove('ring-2', 'ring-walee-500', 'bg-walee-50', 'dark:bg-walee-900/20');
                 });
                 
-                event.currentTarget.classList.add('ring-2', 'ring-walee-500', 'bg-walee-50', 'dark:bg-walee-900/20');
+                // Encontrar y resaltar el item que corresponde a esta ubicación
+                document.querySelectorAll('.cliente-ubicacion-item').forEach(item => {
+                    if (item.getAttribute('data-ubicacion') === ubicacion) {
+                        item.classList.add('ring-2', 'ring-walee-500', 'bg-walee-50', 'dark:bg-walee-900/20');
+                    }
+                });
             }
         }
         

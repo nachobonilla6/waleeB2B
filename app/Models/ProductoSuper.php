@@ -41,12 +41,12 @@ class ProductoSuper extends Model
             return $imagen;
         }
 
-        // Si empieza con storage/, usar asset directamente
+        // Si empieza con storage/, removerlo porque asset() lo agregará
         if (str_starts_with($imagen, 'storage/')) {
-            return asset($imagen);
+            $imagen = substr($imagen, 8); // Remover "storage/"
         }
 
-        // Si es una ruta relativa (ej: productos-super/nombre.jpg), agregar storage/
+        // Construir URL usando asset con storage/
         return asset('storage/' . $imagen);
     }
 }

@@ -106,6 +106,36 @@ Route::get('/storage/productos/{filename}', function ($filename) {
     }
 })->where('filename', '.*')->name('storage.productos');
 
+// Ruta para servir imágenes de productos super
+Route::get('/storage/productos-super/{filename}', function ($filename) {
+    try {
+        // Limpiar el nombre del archivo para seguridad
+        $filename = basename($filename);
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+        
+        $path = storage_path('app/public/productos-super/' . $filename);
+        
+        if (!file_exists($path) || !is_file($path)) {
+            abort(404, 'Archivo no encontrado: ' . $filename);
+        }
+        
+        $file = file_get_contents($path);
+        $type = mime_content_type($path) ?: 'image/jpeg';
+        
+        return response($file, 200)
+            ->header('Content-Type', $type)
+            ->header('Content-Length', filesize($path))
+            ->header('Cache-Control', 'public, max-age=31536000')
+            ->header('Access-Control-Allow-Origin', '*');
+    } catch (\Exception $e) {
+        \Log::error('Error al servir archivo de producto super', [
+            'filename' => $filename ?? 'unknown',
+            'error' => $e->getMessage()
+        ]);
+        abort(500, 'Error al servir archivo');
+    }
+})->where('filename', '.*')->name('storage.productos-super');
+
 // Ruta para servir fotos de clientes (pública, sin autenticación)
 Route::get('/storage/clientes/{filename}', function ($filename) {
     try {

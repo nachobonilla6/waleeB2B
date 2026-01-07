@@ -274,6 +274,9 @@
                                 <div class="flex items-center gap-2 mb-0.5">
                                     <p class="font-medium text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $cliente->name ?: 'Sin nombre' }}</p>
                                 </div>
+                                @if($cliente->industria)
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate mb-0.5">{{ $cliente->industria }}</p>
+                                @endif
                                 @if($cliente->email)
                                     <p class="text-xs text-slate-600 dark:text-slate-400 truncate">{{ $cliente->email }}</p>
                                 @endif

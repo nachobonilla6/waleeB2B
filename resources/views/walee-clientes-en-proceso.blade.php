@@ -1547,11 +1547,16 @@
                 return;
             }
             
-            // Don't handle if clicking on checkbox, link, or buttons
+            // Don't handle if clicking on checkbox or buttons
             if (event.target.closest('input[type="checkbox"]') || 
-                event.target.closest('a') || 
                 event.target.closest('button')) {
                 return;
+            }
+            
+            // Prevent default link navigation
+            if (event.target.closest('a')) {
+                event.preventDefault();
+                event.stopPropagation();
             }
             
             // Toggle checkbox
@@ -1568,6 +1573,18 @@
             const menu = document.getElementById('actionsMenu');
             if (menu && !menu.classList.contains('hidden')) {
                 event.preventDefault();
+                event.stopPropagation();
+                
+                // Toggle checkbox instead
+                const card = event.target.closest('[data-client-id]');
+                if (card) {
+                    const clientId = card.dataset.clientId;
+                    const checkbox = document.querySelector(`.client-checkbox[data-client-id="${clientId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        updateDeleteButton();
+                    }
+                }
                 return false;
             }
         }

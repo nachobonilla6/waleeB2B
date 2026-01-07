@@ -246,8 +246,35 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Crear Factura'; @endphp
+            @php $pageTitle = isset($factura) && $factura ? 'Editar Factura' : 'Crear Factura'; @endphp
             @include('partials.walee-navbar')
+            
+            <!-- Header -->
+            <header class="mb-4 sm:mb-6 animate-fade-in-up">
+                <div class="flex items-center gap-3">
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        @if(isset($factura) && $factura)
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span>Editar Factura</span>
+                        @else
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span>Crear Factura</span>
+                        @endif
+                    </h1>
+                    @if(isset($factura) && $factura)
+                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                            #{{ $factura->numero_factura }}
+                        </span>
+                    @endif
+                </div>
+                @if(isset($factura) && $factura)
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1.5">Modificando factura existente</p>
+                @endif
+            </header>
             
             <!-- Notifications -->
             <div id="notifications" class="fixed top-4 right-4 z-50 space-y-2"></div>

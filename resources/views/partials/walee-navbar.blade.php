@@ -141,10 +141,11 @@
                                     </p>
                                 </div>
                                 <button 
-                                    onclick="copyNoteFromMenu({{ $nota->id }}, event)"
+                                    onclick="copyNoteFromMenu(event)"
                                     class="flex-shrink-0 p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors opacity-60 group-hover:opacity-100"
                                     title="Copiar nota"
                                     data-note-id="{{ $nota->id }}"
+                                    data-note-content="{{ base64_encode($nota->content) }}"
                                 >
                                     <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -294,59 +295,65 @@
         }
     }
     
-    function copyNoteFromMenu(noteId, event) {
+    function copyNoteFromMenu(event) {
         event.stopPropagation();
         event.preventDefault();
         
-        // Obtener el contenido completo de la nota desde la API
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        const button = event.currentTarget;
+        const noteContentEncoded = button.getAttribute('data-note-content');
         
-        fetch(`/notas/${noteId}`, {
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al cargar la nota');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.nota && data.nota.content) {
-                // Copiar el contenido completo
-                return navigator.clipboard.writeText(data.nota.content);
-            } else {
-                throw new Error('No se pudo obtener el contenido de la nota');
-            }
-        })
-        .then(() => {
-            // Mostrar notificación simple
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in';
-            notification.textContent = 'Nota copiada';
-            document.body.appendChild(notification);
+        if (!noteContentEncoded) {
+            console.error('No se encontró el contenido de la nota');
+            showNotification('Error al copiar', 'error');
+            return;
+        }
+        
+        try {
+            // Decodificar el contenido desde base64
+            const noteContent = atob(noteContentEncoded);
             
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.3s';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 2000);
-        })
-        .catch(err => {
-            console.error('Error al copiar:', err);
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-            notification.textContent = 'Error al copiar';
-            document.body.appendChild(notification);
-            
+            // Copiar al portapapeles
+            navigator.clipboard.writeText(noteContent).then(() => {
+                showNotification('Nota copiada', 'success');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                // Fallback: usar método alternativo
+                const textArea = document.createElement('textarea');
+                textArea.value = noteContent;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification('Nota copiada', 'success');
+                } catch (e) {
+                    console.error('Error al copiar:', e);
+                    showNotification('Error al copiar', 'error');
+                }
+                document.body.removeChild(textArea);
+            });
+        } catch (err) {
+            console.error('Error al decodificar:', err);
+            showNotification('Error al copiar', 'error');
+        }
+    }
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s';
             setTimeout(() => {
                 notification.remove();
-            }, 2000);
-        });
+            }, 300);
+        }, 2000);
     }
 </script>
 

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factura - {{ $data['numero_factura'] ?? 'N/A' }}</title>
+    <title>Invoice - {{ $data['numero_factura'] ?? 'N/A' }}</title>
     <style>
         @page {
             margin: 15mm;
@@ -51,19 +51,6 @@
         .header-right {
             text-align: right;
             flex-shrink: 0;
-        }
-        .factura-title {
-            font-size: 18pt;
-            font-weight: bold;
-            color: #D59F3B;
-            margin-bottom: 2px;
-            line-height: 1.2;
-        }
-        .factura-number {
-            font-size: 13pt;
-            font-weight: bold;
-            color: #333;
-            line-height: 1.3;
         }
         .factura-number-top {
             font-size: 16pt;
@@ -370,17 +357,25 @@
         }
     @endphp
     
-    <!-- Número de Factura en la parte superior -->
+    <!-- Invoice number at the top -->
     <div class="factura-number-top">
-        Factura #{{ $data['numero_factura'] ?? 'N/A' }}
+        Invoice #{{ $data['numero_factura'] ?? 'N/A' }}
     </div>
     
     <div class="header">
         <div class="header-left">
             <div class="logo">WS</div>
             <div>
-                <div style="font-weight: bold; font-size: 11pt; color: #D59F3B;">Web Solutions CR</div>
-                <div style="font-size: 8pt; color: #666;">WebSolutions.Work</div>
+                <div style="font-weight: bold; font-size: 11pt; color: #D59F3B;">WebSolutions.Work</div>
+                <div style="font-size: 8pt; color: #666;">
+                    Jaco, Puntarenas, Costa Rica · Tel: +506 8806 1829
+                </div>
+                <div style="font-size: 8pt; color: #666;">
+                    Email: websolutionscrnow@gmail.com · Web: websolutions.work
+                </div>
+                <div style="font-size: 8pt; color: #666; margin-top: 2px;">
+                    Tax ID: CR-3-101-XXXXXX
+                </div>
             </div>
         </div>
         <div class="header-right">
@@ -390,10 +385,10 @@
         </div>
     </div>
     
-    <!-- Datos del Cliente y Emisor -->
+    <!-- Customer and invoice details -->
     <div class="datos-section">
         <div class="datos-box cliente-box">
-            <div class="datos-title">Datos del cliente</div>
+            <div class="datos-title">Bill To</div>
             <div class="datos-content">
                 @if($cliente)
                     <div><strong>{{ $cliente->nombre_empresa }}</strong></div>
@@ -416,79 +411,40 @@
                     @endif
                 @else
                     <div><strong>{{ $data['correo'] ?? 'N/A' }}</strong></div>
-                    <div>Cliente no registrado</div>
+                    <div>Unregistered customer</div>
                 @endif
             </div>
         </div>
         
         <div class="datos-box">
-            <div class="datos-title">Datos del emisor</div>
+            <div class="datos-title">Invoice Details</div>
             <div class="datos-content">
-                <div><strong>WebSolutions.Work</strong></div>
-                <div>Jaco, Puntarenas, Costa Rica</div>
-                <div>Tel: +506 8806 1829</div>
-                <div>Email: websolutionscrnow@gmail.com</div>
-                <div>Website: websolutions.work</div>
-                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
-                    <div><strong>Información Fiscal:</strong></div>
-                    <div>Cédula Jurídica: 3-101-XXXXXX</div>
-                    <div>Tax ID / NIF: CR-3-101-XXXXXX</div>
-                    <div>Registro Nacional: Activo</div>
-                </div>
+                <div><strong>Invoice No.:</strong> {{ $data['serie'] ?? 'A' }}-{{ str_pad($data['numero_factura'] ?? 'N/A', 4, '0', STR_PAD_LEFT) }}</div>
+                <div><strong>Order No.:</strong> {{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</div>
+                <div><strong>Issue Date:</strong> {{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</div>
+                @if(!empty($data['fecha_vencimiento']))
+                    <div><strong>Due Date:</strong> {{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</div>
+                @else
+                    <div><strong>Payment Terms:</strong> Net 30 days</div>
+                @endif
+                <div><strong>Currency:</strong> USD (US Dollar)</div>
+                <div><strong>Tax Rate:</strong> 13% VAT</div>
+                @if(!empty($data['metodo_pago']) && $data['metodo_pago'] !== 'sin_especificar')
+                    <div><strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $data['metodo_pago'])) }}</div>
+                @endif
             </div>
         </div>
     </div>
     
-    <!-- Información Fiscal y Legal -->
-    <div class="fiscal-info">
-        <div class="fiscal-item">
-            <span class="fiscal-label">Invoice Number / N° Factura:</span>
-            <span class="fiscal-value"><strong>{{ $data['serie'] ?? 'A' }}-{{ str_pad($data['numero_factura'] ?? 'N/A', 4, '0', STR_PAD_LEFT) }}</strong></span>
-        </div>
-        <div class="fiscal-item">
-            <span class="fiscal-label">Order Number / N° Orden:</span>
-            <span class="fiscal-value">{{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</span>
-        </div>
-        <div class="fiscal-item">
-            <span class="fiscal-label">Issue Date / Fecha Emisión:</span>
-            <span class="fiscal-value">{{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</span>
-        </div>
-        @if(!empty($data['fecha_vencimiento']))
-        <div class="fiscal-item">
-            <span class="fiscal-label">Due Date / Fecha Vencimiento:</span>
-            <span class="fiscal-value">{{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</span>
-        </div>
-        @else
-        <div class="fiscal-item">
-            <span class="fiscal-label">Payment Terms / Términos:</span>
-            <span class="fiscal-value">Net 30</span>
-        </div>
-        @endif
-        <div class="fiscal-item">
-            <span class="fiscal-label">Currency / Moneda:</span>
-            <span class="fiscal-value"><strong>USD (US Dollar)</strong></span>
-        </div>
-        <div class="fiscal-item">
-            <span class="fiscal-label">Tax Rate / Tasa Impuesto:</span>
-            <span class="fiscal-value">13% VAT / IVA</span>
-        </div>
-    </div>
-    
-    @if(!empty($data['metodo_pago']) && $data['metodo_pago'] !== 'sin_especificar')
-    <div class="tax-info">
-        <strong>Payment Method / Método de Pago:</strong> {{ ucfirst(str_replace('_', ' ', $data['metodo_pago'])) }}
-    </div>
-    @endif
-    
-    <!-- Tabla de Items -->
+    <!-- Items table -->
     <table>
         <thead>
             <tr>
-                <th>Artículo</th>
-                <th class="text-center">Uds.</th>
-                <th class="text-right">Precio</th>
-                <th class="text-right">Impuestos</th>
-                <th class="text-right">Total</th>
+                <th>Description</th>
+                <th class="text-center">Qty</th>
+                <th class="text-right">Unit Price</th>
+                <th class="text-right">Tax (13%)</th>
+                <th class="text-right">Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -521,56 +477,68 @@
                 @endforeach
             @else
                 <tr>
-                    <td colspan="5" class="text-center" style="padding: 20px; color: #999;">No hay items en esta factura</td>
+                    <td colspan="5" class="text-center" style="padding: 20px; color: #999;">There are no items on this invoice</td>
                 </tr>
             @endif
         </tbody>
     </table>
     
-    <!-- Totales -->
+    <!-- Totals -->
     <div class="totals-section">
         <div class="totals-table">
             @if($descuentoAntes > 0)
             <div class="totals-row">
-                <span>Descuento antes de impuestos:</span>
+                <span>Discount before tax:</span>
                 <span style="color: #dc2626;">-${{ number_format($descuentoAntes, 2, '.', ',') }}</span>
             </div>
             @endif
             
             <div class="totals-row">
-                <span>Subtotal:</span>
+                <span>Subtotal (excl. tax):</span>
                 <span><strong>${{ number_format($subtotalConDescuento, 2, '.', ',') }}</strong></span>
             </div>
             
             <div class="totals-row">
-                <span>IVA (13%):</span>
+                <span>VAT (13%):</span>
                 <span><strong>${{ number_format($iva, 2, '.', ',') }}</strong></span>
             </div>
             
             @if($descuentoDespues > 0)
             <div class="totals-row">
-                <span>Descuento después de impuestos:</span>
+                <span>Discount after tax:</span>
                 <span style="color: #dc2626;">-${{ number_format($descuentoDespues, 2, '.', ',') }}</span>
             </div>
             @endif
             
             <div class="totals-row total">
-                <span>Total:</span>
-                <span>${{ number_format($total, 2, '.', ',') }} USD</span>
+                <span>Total (USD):</span>
+                <span>${{ number_format($total, 2, '.', ',') }}</span>
+            </div>
+            
+            <div class="totals-row">
+                <span>Amount paid:</span>
+                <span><strong>${{ number_format($montoPagado, 2, '.', ',') }}</strong></span>
+            </div>
+            <div class="totals-row">
+                @php
+                    $amountDue = max($total - $montoPagado, 0);
+                @endphp
+                <span><strong>Amount due (USD):</strong></span>
+                <span><strong>${{ number_format($amountDue, 2, '.', ',') }}</strong></span>
             </div>
         </div>
     </div>
     
-    <!-- Pagos Recibidos -->
+    <!-- Payments -->
     @if(is_array($pagos) && count($pagos) > 0)
     <div class="pagos-section">
-        <div class="pagos-title">Pagos recibidos</div>
+        <div class="pagos-title">Payments</div>
         <table>
             <thead>
                 <tr>
-                    <th>Descripción</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-right">Importe</th>
+                    <th>Description</th>
+                    <th class="text-center">Date</th>
+                    <th class="text-right">Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -588,40 +556,22 @@
     </div>
     @endif
     
-    <!-- Términos y Condiciones -->
+    <!-- Terms and conditions -->
     @if(!empty($data['notas']))
     <div class="terminos">
-        <strong>Terms and Conditions / Términos y Condiciones:</strong><br>
+        <strong>Terms and Conditions</strong><br>
         {{ $data['notas'] }}
     </div>
     @endif
     
-    <!-- Información Legal -->
+    <!-- Legal information -->
     <div class="legal-info">
-        <strong>Legal Information / Información Legal:</strong><br>
-        This invoice is issued in accordance with international accounting standards and tax regulations. 
-        All amounts are stated in US Dollars (USD). VAT/IVA is calculated at 13% as per Costa Rican tax law. 
-        Payment is due within the terms specified above. Late payments may be subject to interest charges as permitted by law.<br><br>
-        
-        <strong>Esta factura se emite de acuerdo con estándares internacionales de contabilidad y regulaciones fiscales. 
-        Todos los montos están expresados en Dólares Estadounidenses (USD). El IVA se calcula al 13% según la ley fiscal costarricense. 
-        El pago vence dentro de los términos especificados arriba. Los pagos tardíos pueden estar sujetos a cargos por intereses según lo permitido por la ley.</strong><br><br>
-        
-        <strong>Tax Compliance:</strong> This invoice complies with international invoicing standards (ISO/IEC 19845:2015) 
-        and includes all required elements for tax purposes. The invoice number is unique and sequential.<br><br>
-        
-        <strong>Cumplimiento Fiscal:</strong> Esta factura cumple con los estándares internacionales de facturación (ISO/IEC 19845:2015) 
-        e incluye todos los elementos requeridos para fines fiscales. El número de factura es único y secuencial.<br><br>
-        
-        <strong>Dispute Resolution:</strong> Any disputes regarding this invoice must be notified in writing within 30 days of the invoice date. 
-        All disputes will be resolved in accordance with Costa Rican commercial law.<br><br>
-        
-        <strong>Resolución de Disputas:</strong> Cualquier disputa relacionada con esta factura debe ser notificada por escrito dentro de los 30 días posteriores a la fecha de la factura. 
-        Todas las disputas se resolverán de acuerdo con la ley comercial costarricense.
+        <strong>Legal Notice</strong><br>
+        This invoice has been generated electronically and is valid without signature or stamp. All amounts are expressed in US Dollars (USD) and include taxes as detailed above. Any disputes regarding this invoice must be notified in writing within 30 days from the issue date.
     </div>
     
     <div class="page-number">
-        Página 1 de 1
+        Page 1 of 1
     </div>
     
 </body>

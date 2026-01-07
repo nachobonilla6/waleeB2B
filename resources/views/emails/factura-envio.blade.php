@@ -14,6 +14,9 @@
             $dueDate = $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : null;
             $total = number_format((float) $factura->total, 2, '.', ',');
             $vat = number_format((float) ($factura->subtotal * 0.13), 2, '.', ',');
+            $clientCountry = $cliente->pais ?? 'Costa Rica';
+            $clientCity = $cliente->ciudad ?? null;
+            $clientPostal = $cliente->codigo_postal ?? null;
         @endphp
 
         @if($lang === 'es')
@@ -33,8 +36,16 @@ Detalles fiscales:
 @endif
 - Importe total: ${{ $total }} USD
 - IVA (13%): ${{ $vat }} USD
-
 Moneda: USD (Dólar estadounidense).
+
+Datos fiscales del cliente:
+- Cliente: {{ $cliente->nombre_empresa ?? $factura->correo }}
+@if($clientCity || $clientCountry)
+- Dirección fiscal: {{ $clientCity ? $clientCity . ', ' : '' }}{{ $clientCountry }}
+@endif
+@if($clientPostal)
+- Código postal: {{ $clientPostal }}
+@endif
 
 Saludos cordiales,
 Web Solutions</p>
@@ -55,8 +66,16 @@ Détails fiscaux :
 @endif
 - Montant total : ${{ $total }} USD
 - TVA (13 %) : ${{ $vat }} USD
-
 Devise : USD (dollar américain).
+
+Informations fiscales du client :
+- Client : {{ $cliente->nombre_empresa ?? $factura->correo }}
+@if($clientCity || $clientCountry)
+- Adresse fiscale : {{ $clientCity ? $clientCity . ', ' : '' }}{{ $clientCountry }}
+@endif
+@if($clientPostal)
+- Code postal : {{ $clientPostal }}
+@endif
 
 Cordialement,
 Web Solutions</p>
@@ -77,8 +96,16 @@ Fiscal details:
 @endif
 - Total amount: ${{ $total }} USD
 - VAT (13%): ${{ $vat }} USD
-
 Currency: USD (US Dollar).
+
+Customer fiscal information:
+- Customer: {{ $cliente->nombre_empresa ?? $factura->correo }}
+@if($clientCity || $clientCountry)
+- Fiscal address: {{ $clientCity ? $clientCity . ', ' : '' }}{{ $clientCountry }}
+@endif
+@if($clientPostal)
+- Postal code: {{ $clientPostal }}
+@endif
 
 Best regards,
 Web Solutions</p>

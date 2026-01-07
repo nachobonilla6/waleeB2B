@@ -292,7 +292,7 @@
     
     <!-- Datos del Emisor y Cliente -->
     <div class="datos-section">
-        <div class="datos-box">
+        <div class="datos-box" style="flex: 1;">
             <div class="datos-title">Datos del emisor</div>
             <div class="datos-content">
                 <div><strong>WebSolutions.Work</strong></div>
@@ -303,9 +303,9 @@
             </div>
         </div>
         
-        <div class="datos-box">
-            <div class="datos-title">Datos del cliente</div>
-            <div class="datos-content">
+        <div class="datos-box" style="flex: 1; text-align: right;">
+            <div class="datos-title" style="text-align: right;">Datos del cliente</div>
+            <div class="datos-content" style="text-align: right;">
                 @if($cliente)
                     <div><strong>{{ $cliente->nombre_empresa }}</strong></div>
                     @if($cliente->direccion)

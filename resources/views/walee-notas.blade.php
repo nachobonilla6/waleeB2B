@@ -233,7 +233,6 @@
     </div>
     
     @include('partials.walee-support-button')
-    @include('partials.walee-footer')
     
     <!-- Modal para crear/editar nota -->
     <div id="noteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">

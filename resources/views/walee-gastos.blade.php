@@ -328,7 +328,7 @@
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                                 <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Pagados</p>
-                                <p class="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">${{ number_format($gastosPagados, 2, '.', ',') }}</p>
+                                <p class="text-2xl sm:text-3xl font-bold text-slate-600 dark:text-slate-400">${{ number_format($gastosPagados, 2, '.', ',') }}</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">₡{{ number_format($gastosPagados * $tasaCambio, 2, '.', ',') }}</p>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">

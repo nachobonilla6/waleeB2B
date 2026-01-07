@@ -180,7 +180,7 @@
     @endphp
     
     <div class="min-h-screen relative overflow-hidden">
-        <div class="relative max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div class="relative max-w-[140rem] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             @include('partials.walee-navbar')
             
             <div class="mt-6 sm:mt-8 animate-fade-in-up">

@@ -415,6 +415,52 @@
                 </div>
             </div>
             
+            <!-- Header con acciones -->
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                        Clientes Extraídos
+                    </h1>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button 
+                        id="actionsMenuBtn"
+                        onclick="toggleActionsMenu()"
+                        class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                        </svg>
+                        <span>Acciones</span>
+                    </button>
+                    <button 
+                        id="deleteSelectedBtn"
+                        onclick="deleteSelectedClients()"
+                        class="hidden px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span id="deleteCount">Borrar (0)</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Actions Menu (hidden by default) -->
+            <div id="actionsMenu" class="hidden mb-3 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
+                <div class="flex items-center gap-2">
+                    <label class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="selectAll"
+                            onchange="toggleSelectAll(this.checked)"
+                            class="w-3.5 h-3.5 rounded border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0"
+                        >
+                        <span>Seleccionar todos</span>
+                    </label>
+                </div>
+            </div>
+            
             <!-- Lista de Clientes -->
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
@@ -444,6 +490,15 @@
                             }
                         @endphp
                         <div class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-800/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500/30 hover:shadow-md dark:hover:shadow-lg hover:from-emerald-50/50 hover:to-slate-50 dark:hover:from-emerald-500/10 dark:hover:to-slate-800/50 transition-all group" data-client-id="{{ $cliente->id }}">
+                            <!-- Checkbox -->
+                            <input 
+                                type="checkbox" 
+                                class="client-checkbox w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer hidden"
+                                data-client-id="{{ $cliente->id }}"
+                                data-client-name="{{ $cliente->name ?? 'Cliente' }}"
+                                onchange="updateDeleteButton()"
+                            >
+                            
                             <a href="{{ route('walee.cliente.detalle', $cliente->id) }}" class="flex items-center gap-3 flex-1 min-w-0">
                                 <!-- Desktop: Foto -->
                                 @if($fotoUrl)
@@ -2590,6 +2645,185 @@
                     background: isDarkMode ? '#1e293b' : '#ffffff',
                     color: isDarkMode ? '#e2e8f0' : '#1e293b',
                 });
+            }
+        }
+        
+        // Toggle actions menu
+        function toggleActionsMenu() {
+            const menu = document.getElementById('actionsMenu');
+            
+            if (menu) {
+                if (menu.classList.contains('hidden')) {
+                    // Opening menu - show checkboxes
+                    menu.classList.remove('hidden');
+                    const checkboxes = document.querySelectorAll('.client-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.classList.remove('hidden');
+                    });
+                } else {
+                    // Closing menu - hide checkboxes and uncheck them
+                    menu.classList.add('hidden');
+                    const checkboxes = document.querySelectorAll('.client-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.classList.add('hidden');
+                        checkbox.checked = false;
+                    });
+                }
+                
+                // Update delete button and select all checkbox
+                updateDeleteButton();
+                const selectAllCheckbox = document.getElementById('selectAll');
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = false;
+                }
+            }
+        }
+        
+        // Toggle select all
+        function toggleSelectAll(checked) {
+            const checkboxes = document.querySelectorAll('.client-checkbox');
+            checkboxes.forEach(checkbox => {
+                // Only check visible checkboxes
+                const card = checkbox.closest('[data-client-id]');
+                if (card && !card.classList.contains('hidden')) {
+                    checkbox.checked = checked;
+                }
+            });
+            updateDeleteButton();
+        }
+        
+        // Update delete button
+        function updateDeleteButton() {
+            const checkedBoxes = document.querySelectorAll('.client-checkbox:checked');
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            const deleteCount = document.getElementById('deleteCount');
+            
+            if (deleteBtn && deleteCount) {
+                if (checkedBoxes.length > 0) {
+                    deleteBtn.classList.remove('hidden');
+                    deleteCount.textContent = `Borrar (${checkedBoxes.length})`;
+                } else {
+                    deleteBtn.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Delete selected clients
+        async function deleteSelectedClients() {
+            const checkedBoxes = document.querySelectorAll('.client-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                return;
+            }
+            
+            const clientIds = Array.from(checkedBoxes).map(cb => cb.dataset.clientId);
+            const clientNames = Array.from(checkedBoxes).map(cb => cb.dataset.clientName);
+            
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            const confirmMessage = clientIds.length === 1 
+                ? `¿Estás seguro de que deseas borrar a ${clientNames[0]}?`
+                : `¿Estás seguro de que deseas borrar ${clientIds.length} clientes?`;
+            
+            const result = await Swal.fire({
+                title: '¿Eliminar cliente(s)?',
+                text: confirmMessage,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#e2e8f0' : '#1e293b',
+            });
+            
+            if (!result.isConfirmed) {
+                return;
+            }
+            
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = `
+                <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Borrando...</span>
+            `;
+            
+            try {
+                const response = await fetch('{{ route("walee.clientes.en-proceso.delete") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        client_ids: clientIds
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Remove deleted clients from DOM
+                    checkedBoxes.forEach(checkbox => {
+                        const card = checkbox.closest('[data-client-id]');
+                        if (card) {
+                            card.style.transition = 'opacity 0.3s, transform 0.3s';
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateX(-20px)';
+                            setTimeout(() => card.remove(), 300);
+                        }
+                    });
+                    
+                    // Reset select all checkbox
+                    const selectAllCheckbox = document.getElementById('selectAll');
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = false;
+                    }
+                    updateDeleteButton();
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Clientes eliminados!',
+                        text: `${clientIds.length} ${clientIds.length === 1 ? 'cliente ha sido' : 'clientes han sido'} eliminado${clientIds.length === 1 ? '' : 's'} exitosamente`,
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error al borrar clientes',
+                        confirmButtonColor: '#ef4444',
+                        background: isDarkMode ? '#1e293b' : '#ffffff',
+                        color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error de conexión: ' + error.message,
+                    confirmButtonColor: '#ef4444',
+                    background: isDarkMode ? '#1e293b' : '#ffffff',
+                    color: isDarkMode ? '#e2e8f0' : '#1e293b',
+                });
+            } finally {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <span id="deleteCount">Borrar (0)</span>
+                `;
             }
         }
     </script>

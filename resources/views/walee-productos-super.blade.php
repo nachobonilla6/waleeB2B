@@ -196,7 +196,7 @@
                     <div class="lg:col-span-1">
                         <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-md sticky top-4">
                             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Agregar Producto</h3>
-                            <form id="productoForm" class="space-y-4">
+                            <form id="productoForm" class="space-y-4" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" id="productoId" name="producto_id">
                                 
@@ -408,9 +408,14 @@
                                             data-activo="{{ $producto->activo ? '1' : '0' }}"
                                         >
                                             <div class="flex items-start justify-between gap-4">
-                                                @if($producto->imagen)
+                                                @if($producto->imagen && !empty($producto->imagen))
                                                     <div class="flex-shrink-0">
-                                                        <img src="{{ $producto->imagen_url }}" alt="{{ $producto->nombre }}" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600" onerror="this.style.display='none'">
+                                                        <img 
+                                                            src="{{ $producto->imagen_url }}" 
+                                                            alt="{{ $producto->nombre }}" 
+                                                            class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
+                                                            onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'%3E%3Crect fill=\'%23e2e8f0\' width=\'80\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%2394a3b8\' font-size=\'12\'%3ESin imagen%3C/text%3E%3C/svg%3E';"
+                                                        >
                                                     </div>
                                                 @endif
                                                 <div class="flex-1 min-w-0">

@@ -22,72 +22,72 @@
                         <g class="city-marker" data-city="ny" data-timezone="America/New_York">
                             <circle cx="294" cy="139" r="4" fill="#ef4444" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="294" cy="139" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="274" y="123" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">NY</text>
-                            <rect x="314" y="159" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
-                            <text x="344" y="176" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-ny">--:--</text>
+                            <text x="282" y="126" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">NY</text>
+                            <rect x="304" y="156" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
+                            <text x="334" y="173" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-ny">--:--</text>
                         </g>
                         
                         <!-- London: Coordenadas ajustadas (0°W, 51°N) -->
                         <g class="city-marker" data-city="london" data-timezone="Europe/London">
                             <circle cx="500" cy="108" r="4" fill="#3b82f6" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="500" cy="108" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="480" y="92" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">LDN</text>
-                            <rect x="520" y="132" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#3b82f6" stroke-width="1.5" opacity="0.95"/>
-                            <text x="550" y="149" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-london">--:--</text>
+                            <text x="488" y="96" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">LDN</text>
+                            <rect x="510" y="128" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#3b82f6" stroke-width="1.5" opacity="0.95"/>
+                            <text x="540" y="145" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-london">--:--</text>
                         </g>
                         
                         <!-- Tokyo: Coordenadas ajustadas (139°E, 35°N) -->
                         <g class="city-marker" data-city="tokyo" data-timezone="Asia/Tokyo">
                             <circle cx="886" cy="152" r="4" fill="#10b981" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="886" cy="152" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="866" y="136" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">TKY</text>
-                            <rect x="906" y="176" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#10b981" stroke-width="1.5" opacity="0.95"/>
-                            <text x="936" y="193" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-tokyo">--:--</text>
+                            <text x="874" y="140" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">TKY</text>
+                            <rect x="896" y="172" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#10b981" stroke-width="1.5" opacity="0.95"/>
+                            <text x="926" y="189" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-tokyo">--:--</text>
                         </g>
                         
                         <!-- Sydney: Coordenadas ajustadas (151°E, 33°S) -->
                         <g class="city-marker" data-city="sydney" data-timezone="Australia/Sydney">
                             <circle cx="919" cy="342" r="4" fill="#f59e0b" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="919" cy="342" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="899" y="326" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">SYD</text>
-                            <rect x="939" y="366" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#f59e0b" stroke-width="1.5" opacity="0.95"/>
-                            <text x="969" y="383" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-sydney">--:--</text>
+                            <text x="907" y="330" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">SYD</text>
+                            <rect x="929" y="362" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#f59e0b" stroke-width="1.5" opacity="0.95"/>
+                            <text x="959" y="379" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-sydney">--:--</text>
                         </g>
                         
                         <!-- Dubai: Coordenadas ajustadas (55°E, 25°N) -->
                         <g class="city-marker" data-city="dubai" data-timezone="Asia/Dubai">
                             <circle cx="653" cy="181" r="4" fill="#8b5cf6" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="653" cy="181" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="633" y="165" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">DXB</text>
-                            <rect x="673" y="205" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.95"/>
-                            <text x="703" y="222" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-dubai">--:--</text>
+                            <text x="641" y="169" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">DXB</text>
+                            <rect x="663" y="201" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#8b5cf6" stroke-width="1.5" opacity="0.95"/>
+                            <text x="693" y="218" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-dubai">--:--</text>
                         </g>
                         
                         <!-- São Paulo: Coordenadas ajustadas (46°W, 23°S) -->
                         <g class="city-marker" data-city="saopaulo" data-timezone="America/Sao_Paulo">
                             <circle cx="372" cy="314" r="4" fill="#ec4899" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="372" cy="314" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="352" y="298" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">SP</text>
-                            <rect x="392" y="338" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ec4899" stroke-width="1.5" opacity="0.95"/>
-                            <text x="422" y="355" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-saopaulo">--:--</text>
+                            <text x="360" y="302" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">SP</text>
+                            <rect x="382" y="334" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ec4899" stroke-width="1.5" opacity="0.95"/>
+                            <text x="412" y="351" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-saopaulo">--:--</text>
                         </g>
                         
                         <!-- Los Angeles: Coordenadas ajustadas (118°W, 34°N) -->
                         <g class="city-marker" data-city="la" data-timezone="America/Los_Angeles">
                             <circle cx="172" cy="156" r="4" fill="#06b6d4" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="172" cy="156" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="152" y="140" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">LA</text>
-                            <rect x="192" y="180" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
-                            <text x="222" y="197" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-la">--:--</text>
+                            <text x="160" y="144" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">LA</text>
+                            <rect x="182" y="176" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
+                            <text x="212" y="193" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-la">--:--</text>
                         </g>
                         
                         <!-- Madrid: Coordenadas ajustadas (3°W, 40°N) -->
                         <g class="city-marker" data-city="madrid" data-timezone="Europe/Madrid">
                             <circle cx="491" cy="139" r="4" fill="#14b8a6" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
                             <circle cx="491" cy="139" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="471" y="123" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">MAD</text>
-                            <rect x="511" y="163" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#14b8a6" stroke-width="1.5" opacity="0.95"/>
-                            <text x="541" y="180" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-madrid">--:--</text>
+                            <text x="479" y="127" text-anchor="middle" fill="#111827" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.25);">MAD</text>
+                            <rect x="501" y="159" width="60" height="25" rx="4" fill="rgba(255,255,255,0.95)" stroke="#14b8a6" stroke-width="1.5" opacity="0.95"/>
+                            <text x="531" y="176" text-anchor="middle" fill="#1e293b" font-size="11" font-weight="bold" id="map-clock-madrid">--:--</text>
                         </g>
                     </svg>
                 </div>

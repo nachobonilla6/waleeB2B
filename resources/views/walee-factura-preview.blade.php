@@ -395,19 +395,25 @@
                     @if($cliente->direccion)
                         <div>{{ $cliente->direccion }}</div>
                     @endif
-                    @if($cliente->ciudad || $cliente->pais)
-                        <div>{{ $cliente->ciudad ?? '' }}{{ $cliente->ciudad && $cliente->pais ? ', ' : '' }}{{ $cliente->pais ?? 'Costa Rica' }}</div>
+                    @if($cliente->ciudad || $cliente->estado || $cliente->pais)
+                        <div>
+                            {{ $cliente->ciudad ?? '' }}
+                            @if($cliente->ciudad && ($cliente->estado || $cliente->pais)), @endif
+                            {{ $cliente->estado ?? '' }}
+                            @if(($cliente->ciudad || $cliente->estado) && $cliente->pais), @endif
+                            {{ $cliente->pais ?? 'Costa Rica' }}
+                        </div>
                     @else
                         <div>Costa Rica</div>
+                    @endif
+                    @if($cliente->codigo_postal)
+                        <div>Postal Code: {{ $cliente->codigo_postal }}</div>
                     @endif
                     @if($cliente->telefono)
                         <div>Tel: {{ $cliente->telefono }}</div>
                     @endif
                     @if($cliente->correo)
                         <div>Email: {{ $cliente->correo }}</div>
-                    @endif
-                    @if($cliente->codigo_postal)
-                        <div>Postal Code: {{ $cliente->codigo_postal }}</div>
                     @endif
                 @else
                     <div><strong>{{ $data['correo'] ?? 'N/A' }}</strong></div>

@@ -832,18 +832,18 @@
                         <div class="grid grid-cols-2 gap-3 mb-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Subtotal</label>
-                                <p class="text-lg font-bold text-slate-900 dark:text-white">$${facturaData.subtotal.toFixed(2)}</p>
+                                <p class="text-lg font-bold text-slate-900 dark:text-white" id="modalSubtotalUSD">$${facturaData.subtotal.toFixed(2)}</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-500" id="modalSubtotalCRC">₡0</p>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">IVA (13%)</label>
-                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">$${facturaData.iva.toFixed(2)}</p>
+                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400" id="modalIvaUSD">$${facturaData.iva.toFixed(2)}</p>
                                 <p class="text-xs text-slate-500 dark:text-slate-500" id="modalIvaCRC">₡0</p>
                             </div>
                         </div>
                         <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
                             <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Total</label>
-                            <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">$${facturaData.total.toFixed(2)}</p>
+                            <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400" id="modalTotalUSD">$${facturaData.total.toFixed(2)}</p>
                             <p class="text-xs text-slate-500 dark:text-slate-500" id="modalTotalCRC">₡0</p>
                         </div>
                     </div>
@@ -900,9 +900,21 @@
                         facturaData.monto_pagado = montoPagado;
                         facturaData.saldo_pendiente = saldoPendiente;
                         
+                        // Actualizar valores en dólares
+                        if (document.getElementById('modalSubtotalUSD')) {
+                            document.getElementById('modalSubtotalUSD').textContent = `$${subtotal.toFixed(2)}`;
+                        }
+                        if (document.getElementById('modalIvaUSD')) {
+                            document.getElementById('modalIvaUSD').textContent = `$${iva.toFixed(2)}`;
+                        }
+                        if (document.getElementById('modalTotalUSD')) {
+                            document.getElementById('modalTotalUSD').textContent = `$${total.toFixed(2)}`;
+                        }
                         if (document.getElementById('modal_total')) {
                             document.getElementById('modal_total').value = total.toFixed(2);
                         }
+                        
+                        // Actualizar valores en colones
                         if (document.getElementById('modalSubtotalCRC')) {
                             document.getElementById('modalSubtotalCRC').textContent = `₡${(subtotal * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                         }
@@ -914,7 +926,11 @@
                         }
                     };
                     // Calcular inicialmente
-                    window.calcularTotalesModalFase4();
+                    setTimeout(() => {
+                        if (window.calcularTotalesModalFase4) {
+                            window.calcularTotalesModalFase4();
+                        }
+                    }, 100);
                 },
                 preConfirm: () => {
                     if (window.calcularTotalesModalFase4) {
@@ -1277,6 +1293,21 @@
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 preConfirm: async () => {
+                    // Validar que haya items
+                    if (!facturaData.items || facturaData.items.length === 0) {
+                        Swal.showValidationMessage('Debe agregar al menos un item');
+                        return false;
+                    }
+                    
+                    // Validar que haya concepto
+                    if (!facturaData.concepto || facturaData.concepto.trim() === '') {
+                        Swal.showValidationMessage('El concepto general es requerido');
+                        return false;
+                    }
+                    
+                    // Recalcular totales antes de enviar
+                    calcularTotalesModal();
+                    
                     Swal.fire({
                         title: 'Creando factura...',
                         allowOutsideClick: false,

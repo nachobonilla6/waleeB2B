@@ -128,7 +128,7 @@
             </header>
             
             <!-- Stats Grid - Total Facturado vs Gastos Este Mes -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
                 <!-- Total Facturado Este Mes -->
                 <a href="{{ route('walee.facturas.lista') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
@@ -140,8 +140,8 @@
                     </div>
                     <div class="mb-2 sm:mb-3">
                         <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Facturado Este Mes</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalFacturadoEsteMes, 2, '.', ',') }}</p>
-                        <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">${{ number_format($totalFacturadoEsteMes / $tasaCambio, 2, '.', ',') }} USD</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalFacturadoEsteMes / $tasaCambio, 2, '.', ',') }}</p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($totalFacturadoEsteMes, 2, '.', ',') }}</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,8 +162,8 @@
                     </div>
                     <div class="mb-2 sm:mb-3">
                         <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Gastos Este Mes</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
-                        <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">${{ number_format(($totalGastosEsteMes ?? 0) / $tasaCambio, 2, '.', ',') }} USD</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format(($totalGastosEsteMes ?? 0) / $tasaCambio, 2, '.', ',') }}</p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-orange-600 dark:text-orange-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,10 +212,10 @@
                     <div class="text-center sm:text-left">
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Diferencia</p>
                         <p class="text-xl sm:text-2xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                            {{ $diferencia >= 0 ? '+' : '' }}₡{{ number_format($diferencia, 2, '.', ',') }}
+                            {{ $diferencia >= 0 ? '+' : '' }}${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }}
                         </p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-0.5">
-                            ${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }} USD
+                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
+                            ₡{{ number_format($diferencia, 2, '.', ',') }}
                         </p>
                     </div>
                     <div class="text-center sm:text-left">

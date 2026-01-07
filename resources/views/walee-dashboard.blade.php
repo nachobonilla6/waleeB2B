@@ -360,6 +360,9 @@
             @php $pageTitle = 'Dashboard'; @endphp
             @include('partials.walee-navbar')
             
+            <!-- World Map & Timezones (primero en el dashboard) -->
+            @include('partials.walee-world-map-clocks')
+            
             <!-- Quick Actions -->
             <section class="mb-8">
                 <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-300 mb-4 flex items-center gap-2">
@@ -444,8 +447,6 @@
                     </a>
                 </div>
             </section>
-            
-            @include('partials.walee-world-map-clocks')
             
             <!-- Footer -->
             <footer class="text-center py-6 border-t border-slate-200 dark:border-slate-800/50">

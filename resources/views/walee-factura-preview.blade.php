@@ -92,8 +92,8 @@
             color: white;
         }
         .datos-section {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             align-items: flex-start;
             gap: 20px;
             margin-bottom: 10px;

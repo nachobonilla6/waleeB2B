@@ -181,11 +181,11 @@
             <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 @foreach($worldClockDefaults as $defaultCity)
-                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card">
+                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $loop->index }}">
                         <div class="text-center">
                             <div class="flex items-center justify-start gap-1 mb-1">
                                 <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
-                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-slate-200/70 dark:border-slate-600/80 rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-white dark:bg-slate-900/80">
+                                <select class="world-clock-select text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-transparent rounded-md pr-4 pl-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 bg-transparent">
                                 @foreach($worldClockOptions as $cityKey => $cityLabel)
                                     <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
                                         {{ $cityLabel }}
@@ -234,6 +234,24 @@
             delhi:       { label: 'New Delhi',            tz: 'Asia/Kolkata' },
             auckland:    { label: 'Auckland',             tz: 'Pacific/Auckland' },
         };
+
+        function applySavedWorldClockSelections() {
+            // Restaurar selección de ciudad por tarjeta desde localStorage
+            document.querySelectorAll('.world-clock-card').forEach(card => {
+                const index = card.getAttribute('data-card-index');
+                if (!index) return;
+
+                const savedCity = localStorage.getItem(`waleeWorldClockCard_${index}`);
+                if (!savedCity) return;
+
+                const select = card.querySelector('.world-clock-select');
+                if (!select) return;
+
+                if (timezones[savedCity]) {
+                    select.value = savedCity;
+                }
+            });
+        }
 
         function updateWorldClocks() {
             // Primero, actualizar los relojes del mapa (clocks fijos por ciudad)
@@ -289,11 +307,23 @@
         // Actualizar relojes al cambiar una ciudad en cualquier tarjeta
         document.addEventListener('change', function (event) {
             if (event.target.classList.contains('world-clock-select')) {
+                const card = event.target.closest('.world-clock-card');
+                if (card) {
+                    const index = card.getAttribute('data-card-index');
+                    if (index !== null) {
+                        try {
+                            localStorage.setItem(`waleeWorldClockCard_${index}`, event.target.value);
+                        } catch (e) {
+                            console.warn('No se pudo guardar la selección de ciudad en localStorage', e);
+                        }
+                    }
+                }
                 updateWorldClocks();
             }
         });
 
         // Actualizar relojes cada segundo
+        applySavedWorldClockSelections();
         updateWorldClocks();
         setInterval(updateWorldClocks, 1000);
     }

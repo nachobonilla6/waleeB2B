@@ -30,21 +30,23 @@ class ProductoSuper extends Model
      */
     public function getImagenUrlAttribute()
     {
-        if (!$this->imagen) {
+        if (!$this->imagen || empty(trim($this->imagen))) {
             return null;
         }
 
+        $imagen = trim($this->imagen);
+
         // Si ya es una URL completa, retornarla
-        if (str_starts_with($this->imagen, 'http://') || str_starts_with($this->imagen, 'https://')) {
-            return $this->imagen;
+        if (str_starts_with($imagen, 'http://') || str_starts_with($imagen, 'https://')) {
+            return $imagen;
         }
 
         // Si empieza con storage/, usar asset directamente
-        if (str_starts_with($this->imagen, 'storage/')) {
-            return asset($this->imagen);
+        if (str_starts_with($imagen, 'storage/')) {
+            return asset($imagen);
         }
 
-        // Si es una ruta relativa, agregar storage/
-        return asset('storage/' . $this->imagen);
+        // Si es una ruta relativa (ej: productos-super/nombre.jpg), agregar storage/
+        return asset('storage/' . $imagen);
     }
 }

@@ -409,12 +409,26 @@
                                         >
                                             <div class="flex items-start justify-between gap-4">
                                                 @if($producto->imagen && !empty($producto->imagen))
+                                                    @php
+                                                        // Generar URL de la imagen
+                                                        $imagenUrl = $producto->imagen_url;
+                                                        if (!$imagenUrl) {
+                                                            // Fallback: construir URL manualmente
+                                                            if (str_starts_with($producto->imagen, 'http://') || str_starts_with($producto->imagen, 'https://')) {
+                                                                $imagenUrl = $producto->imagen;
+                                                            } elseif (str_starts_with($producto->imagen, 'storage/')) {
+                                                                $imagenUrl = asset($producto->imagen);
+                                                            } else {
+                                                                $imagenUrl = asset('storage/' . $producto->imagen);
+                                                            }
+                                                        }
+                                                    @endphp
                                                     <div class="flex-shrink-0">
                                                         <img 
-                                                            src="{{ $producto->imagen_url }}" 
+                                                            src="{{ $imagenUrl }}" 
                                                             alt="{{ $producto->nombre }}" 
                                                             class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
-                                                            onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'%3E%3Crect fill=\'%23e2e8f0\' width=\'80\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%2394a3b8\' font-size=\'12\'%3ESin imagen%3C/text%3E%3C/svg%3E';"
+                                                            onerror="console.error('Error cargando imagen:', this.src); this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'%3E%3Crect fill=\'%23e2e8f0\' width=\'80\' height=\'80\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%2394a3b8\' font-size=\'12\'%3ESin imagen%3C/text%3E%3C/svg%3E';"
                                                         >
                                                     </div>
                                                 @endif

@@ -376,7 +376,7 @@
                                         class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent resize-none"
                                         placeholder="Escribe tu nota aquí..."
                                         required
-                                    >${(data.nota.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                                    >${(data.nota.content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</textarea>
                                 </div>
                                 
                                 <div class="mb-4 text-left">

@@ -459,5 +459,10 @@
     <div class="page-number">
         Página 1 de 1
     </div>
+    
+    <!-- World Map with Clocks (no se imprime) -->
+    <div class="no-print" style="page-break-inside: avoid;">
+        @include('partials.walee-world-map-clocks')
+    </div>
 </body>
 </html>

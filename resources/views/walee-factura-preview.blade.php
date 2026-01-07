@@ -76,6 +76,7 @@
         .datos-section {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             gap: 30px;
             margin-bottom: 25px;
         }
@@ -96,6 +97,15 @@
             font-size: 10pt;
             color: #555;
             line-height: 1.6;
+        }
+        .datos-box.cliente-box {
+            text-align: right;
+        }
+        .datos-box.cliente-box .datos-title {
+            text-align: right;
+        }
+        .datos-box.cliente-box .datos-content {
+            text-align: right;
         }
         .info-row {
             display: grid;

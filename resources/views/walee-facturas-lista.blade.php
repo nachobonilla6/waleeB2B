@@ -288,16 +288,30 @@
         
         // Enviar factura
         async function enviarFactura(id) {
+            let selectedLanguage = 'en';
+            
             const { value: language } = await Swal.fire({
                 title: 'Enviar factura',
                 html: `
                     <div class="text-left space-y-3">
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-1">Selecciona el idioma del correo:</p>
-                        <select id="swal-language" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100">
-                            <option value="en">English (Original)</option>
-                            <option value="es">Español</option>
-                            <option value="fr">Français</option>
-                        </select>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Selecciona el idioma del correo:</p>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button type="button" class="lang-option group border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-3 flex flex-col items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800 data-[active=true]:border-emerald-500 data-[active=true]:bg-emerald-50/80 dark:data-[active=true]:bg-emerald-500/10"
+                                data-lang="en" data-active="true">
+                                <span class="text-2xl">🇺🇸</span>
+                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">English</span>
+                            </button>
+                            <button type="button" class="lang-option group border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-3 flex flex-col items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800 data-[active=true]:border-emerald-500 data-[active=true]:bg-emerald-50/80 dark:data-[active=true]:bg-emerald-500/10"
+                                data-lang="es">
+                                <span class="text-2xl">🇪🇸</span>
+                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Español</span>
+                            </button>
+                            <button type="button" class="lang-option group border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-3 flex flex-col items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800 data-[active=true]:border-emerald-500 data-[active=true]:bg-emerald-50/80 dark:data-[active=true]:bg-emerald-500/10"
+                                data-lang="fr">
+                                <span class="text-2xl">🇫🇷</span>
+                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Français</span>
+                            </button>
+                        </div>
                     </div>
                 `,
                 icon: 'question',
@@ -308,10 +322,17 @@
                 cancelButtonColor: '#6b7280',
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                preConfirm: () => {
-                    const select = document.getElementById('swal-language');
-                    return select ? select.value : 'en';
-                }
+                didOpen: () => {
+                    const options = document.querySelectorAll('.lang-option');
+                    options.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            options.forEach(b => b.setAttribute('data-active', 'false'));
+                            btn.setAttribute('data-active', 'true');
+                            selectedLanguage = btn.getAttribute('data-lang') || 'en';
+                        });
+                    });
+                },
+                preConfirm: () => selectedLanguage || 'en',
             });
             
             if (!language) return;
@@ -364,16 +385,30 @@
         
         // Reenviar factura
         async function reenviarFactura(id) {
+            let selectedLanguage = 'en';
+            
             const { value: language } = await Swal.fire({
                 title: 'Reenviar factura',
                 html: `
                     <div class="text-left space-y-3">
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-1">Selecciona el idioma del correo:</p>
-                        <select id="swal-language" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100">
-                            <option value="en">English (Original)</option>
-                            <option value="es">Español</option>
-                            <option value="fr">Français</option>
-                        </select>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Selecciona el idioma del correo:</p>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button type="button" class="lang-option group border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-3 flex flex-col items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800 data-[active=true]:border-emerald-500 data-[active=true]:bg-emerald-50/80 dark:data-[active=true]:bg-emerald-500/10"
+                                data-lang="en" data-active="true">
+                                <span class="text-2xl">🇺🇸</span>
+                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">English</span>
+                            </button>
+                            <button type="button" class="lang-option group border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-3 flex flex-col items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800 data-[active=true]:border-emerald-500 data-[active=true]:bg-emerald-50/80 dark:data-[active=true]:bg-emerald-500/10"
+                                data-lang="es">
+                                <span class="text-2xl">🇪🇸</span>
+                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Español</span>
+                            </button>
+                            <button type="button" class="lang-option group border border-slate-300 dark:border-slate-600 rounded-xl px-2 py-3 flex flex-col items-center justify-center gap-1 bg-slate-50 dark:bg-slate-800 data-[active=true]:border-emerald-500 data-[active=true]:bg-emerald-50/80 dark:data-[active=true]:bg-emerald-500/10"
+                                data-lang="fr">
+                                <span class="text-2xl">🇫🇷</span>
+                                <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-200">Français</span>
+                            </button>
+                        </div>
                     </div>
                 `,
                 icon: 'question',
@@ -384,10 +419,17 @@
                 cancelButtonColor: '#6b7280',
                 background: isDarkMode() ? '#1e293b' : '#ffffff',
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
-                preConfirm: () => {
-                    const select = document.getElementById('swal-language');
-                    return select ? select.value : 'en';
-                }
+                didOpen: () => {
+                    const options = document.querySelectorAll('.lang-option');
+                    options.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            options.forEach(b => b.setAttribute('data-active', 'false'));
+                            btn.setAttribute('data-active', 'true');
+                            selectedLanguage = btn.getAttribute('data-lang') || 'en';
+                        });
+                    });
+                },
+                preConfirm: () => selectedLanguage || 'en',
             });
             
             if (!language) return;

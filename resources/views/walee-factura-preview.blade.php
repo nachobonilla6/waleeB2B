@@ -300,6 +300,22 @@
             font-size: 9pt;
             margin-top: 20px;
         }
+        .signature-section {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .signature-box {
+            font-size: 8pt;
+            color: #555;
+            text-align: center;
+        }
+        .signature-line {
+            margin-top: 30px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -392,6 +408,8 @@
                 'currency_note' => 'USD (US Dollar)',
                 'page' => 'Page',
                 'of' => 'of',
+                'seller_signature' => 'Seller signature',
+                'client_signature' => 'Client signature',
             ],
             'es' => [
                 'invoice' => 'Factura',
@@ -428,6 +446,8 @@
                 'currency_note' => 'USD (Dólar estadounidense)',
                 'page' => 'Página',
                 'of' => 'de',
+                'seller_signature' => 'Firma del vendedor',
+                'client_signature' => 'Firma del cliente',
             ],
             'fr' => [
                 'invoice' => 'Facture',
@@ -464,6 +484,8 @@
                 'currency_note' => 'USD (Dollar US)',
                 'page' => 'Page',
                 'of' => 'sur',
+                'seller_signature' => 'Signature du vendeur',
+                'client_signature' => 'Signature du client',
             ],
         ];
 
@@ -693,6 +715,18 @@
         @else
             This invoice has been generated electronically and is valid without signature or stamp. All amounts are expressed in US Dollars (USD) and include taxes as detailed above. Any disputes regarding this invoice must be notified in writing within 30 days from the issue date.
         @endif
+    </div>
+    
+    <!-- Signatures -->
+    <div class="signature-section">
+        <div class="signature-box">
+            <div class="signature-line"></div>
+            <div>{{ $t['seller_signature'] ?? 'Seller signature' }}</div>
+        </div>
+        <div class="signature-box">
+            <div class="signature-line"></div>
+            <div>{{ $t['client_signature'] ?? 'Client signature' }}</div>
+        </div>
     </div>
     
     <div class="page-number">

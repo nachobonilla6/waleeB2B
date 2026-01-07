@@ -285,7 +285,6 @@
     
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const isDarkMode = document.documentElement.classList.contains('dark');
         
         // Enviar factura
         async function enviarFactura(id) {
@@ -545,8 +544,44 @@
         
         // Abrir modal para crear factura (Fase 1)
         function abrirModalCrearFactura() {
-            currentPhase = 1;
-            mostrarFase1();
+            try {
+                // Resetear datos de factura
+                facturaData = {
+                    factura_id: null,
+                    cliente_id: '',
+                    correo: '',
+                    numero_factura: '{{ str_pad($siguienteNumero, 4, "0", STR_PAD_LEFT) }}',
+                    serie: 'A',
+                    fecha_emision: '{{ date("Y-m-d") }}',
+                    fecha_vencimiento: '{{ date("Y-m-d", strtotime("+30 days")) }}',
+                    estado: 'pendiente',
+                    items: [],
+                    subtotal: 0,
+                    descuento_antes_impuestos: 0,
+                    iva: 0,
+                    descuento_despues_impuestos: 0,
+                    total: 0,
+                    monto_pagado: 0,
+                    saldo_pendiente: 0,
+                    metodo_pago: '',
+                    concepto_pago: '',
+                    concepto: '',
+                    numero_orden: '',
+                    pagos: [],
+                    notas: '',
+                    archivos: null
+                };
+                currentPhase = 1;
+                mostrarFase1();
+            } catch (error) {
+                console.error('Error al abrir modal:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo abrir el modal. Por favor, recarga la página.',
+                    confirmButtonColor: '#ef4444',
+                });
+            }
         }
         
         // FASE 1: Cliente y Correo

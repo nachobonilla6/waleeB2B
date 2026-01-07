@@ -302,14 +302,15 @@
         }
         .signature-section {
             margin-top: 25px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            justify-content: space-between;
             gap: 40px;
         }
         .signature-box {
             font-size: 8pt;
             color: #555;
             text-align: center;
+            width: 45%;
         }
         .signature-line {
             margin-top: 30px;

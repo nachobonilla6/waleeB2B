@@ -739,7 +739,22 @@
                         document.getElementById('imagenPreview').classList.add('hidden');
                     }
                     
-                    document.getElementById('productoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // En móvil, mostrar el formulario si está oculto
+                    const formulario = document.getElementById('formularioProducto');
+                    const icon = document.getElementById('formToggleIcon');
+                    const isMobile = window.innerWidth < 1024; // lg breakpoint
+                    
+                    if (isMobile && formulario.classList.contains('hidden')) {
+                        formulario.classList.remove('hidden');
+                        if (icon) {
+                            icon.classList.add('rotate-180');
+                        }
+                    }
+                    
+                    // Scroll al formulario
+                    setTimeout(() => {
+                        document.getElementById('productoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, isMobile ? 100 : 0);
                 } else {
                     Swal.fire('Error', data.message || 'No se pudo cargar el producto', 'error');
                 }

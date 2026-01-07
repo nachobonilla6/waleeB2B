@@ -166,8 +166,8 @@
                     </div>
                     <div class="mb-2 sm:mb-3">
                         <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Gastos Este Mes</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format(($totalGastosEsteMes ?? 0) / $tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format(($totalGastosEsteMes ?? 0) * $tasaCambio, 2, '.', ',') }}</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-orange-600 dark:text-orange-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

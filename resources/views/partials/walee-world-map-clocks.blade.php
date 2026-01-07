@@ -18,22 +18,23 @@
                         <image href="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" x="0" y="0" width="1000" height="500" preserveAspectRatio="none" opacity="0.8" style="filter: brightness(0.95);"/>
                         
                         <!-- Marcadores de ciudades - coordenadas ajustadas para alinearse perfectamente con las ciudades del mapa -->
-                        <!-- New York: Coordenadas ajustadas (-74°W, 40°N) -->
-                        <g class="city-marker" data-city="ny" data-timezone="America/New_York">
-                            <circle cx="294" cy="139" r="4" fill="#ef4444" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
-                            <circle cx="294" cy="139" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="282" y="126" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">NY</text>
-                            <rect x="302" y="148" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
-                            <text x="327" y="162" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-ny">--:--</text>
+                        <!-- Montreal: Coordenadas aproximadas (-73°W, 45°N) -->
+                        <g class="city-marker" data-city="montreal" data-timezone="America/Toronto">
+                            <circle cx="294" cy="130" r="4" fill="#ef4444" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
+                            <circle cx="294" cy="130" r="3" fill="#fff" class="city-pulse"/>
+                            <text x="284" y="118" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">MTL</text>
+                            <rect x="302" y="140" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#ef4444" stroke-width="1.5" opacity="0.95"/>
+                            <text x="327" y="154" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-montreal">--:--</text>
                         </g>
 
-                        <!-- San José, Costa Rica: Coordenadas aproximadas (-84°W, 9°N) -->
+                        <!-- San José, Costa Rica: Coordenadas ajustadas (-84°W, 9°N) -->
                         <g class="city-marker" data-city="sanjosecr" data-timezone="America/Costa_Rica">
-                            <circle cx="260" cy="210" r="4" fill="#a855f7" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
-                            <circle cx="260" cy="210" r="3" fill="#fff" class="city-pulse"/>
-                            <text x="250" y="198" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SJO</text>
-                            <rect x="268" y="204" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#a855f7" stroke-width="1.5" opacity="0.95"/>
-                            <text x="293" y="218" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-sanjosecr">--:--</text>
+                            <!-- Equirectangular: x = (lon+180)/360*1000, y = (90-lat)/180*500 ≈ (267, 225) -->
+                            <circle cx="267" cy="225" r="4" fill="#a855f7" stroke="#fff" stroke-width="1.5" class="city-dot" opacity="0.9"/>
+                            <circle cx="267" cy="225" r="3" fill="#fff" class="city-pulse"/>
+                            <text x="257" y="213" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" style="text-shadow: 0 1px 2px rgba(0,0,0,0.5);">SJO</text>
+                            <rect x="275" y="219" width="50" height="18" rx="4" fill="rgba(255,255,255,0.95)" stroke="#a855f7" stroke-width="1.5" opacity="0.95"/>
+                            <text x="300" y="233" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold" id="map-clock-sanjosecr">--:--</text>
                         </g>
                         
                         <!-- London: Coordenadas ajustadas (0°W, 51°N) -->
@@ -131,12 +132,12 @@
             
             <!-- World Clocks Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- New York -->
+                <!-- Montreal -->
                 <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                     <div class="text-center">
-                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">New York</div>
-                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-ny">--:--</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-ny">--</div>
+                        <div class="text-xs font-semibold text-slate-600 dark:text-slate-400 mb-2">Montreal</div>
+                        <div class="text-2xl font-bold text-slate-900 dark:text-white mb-1" id="clock-montreal">--:--</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-500" id="date-montreal">--</div>
                     </div>
                 </div>
                 
@@ -248,7 +249,7 @@
     if (typeof updateWorldClocks === 'undefined') {
         function updateWorldClocks() {
             const timezones = {
-                'ny': 'America/New_York',
+                'montreal': 'America/Toronto',
                 'london': 'Europe/London',
                 'tokyo': 'Asia/Tokyo',
                 'sydney': 'Australia/Sydney',

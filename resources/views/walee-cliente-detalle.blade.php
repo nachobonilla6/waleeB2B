@@ -670,6 +670,15 @@
                         </button>
                     </div>
                     
+                    <!-- Botón del extractor en esquina superior derecha -->
+                    <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+                        <a href="{{ route('walee.bot.alpha') }}" class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-blue-600/80 hover:bg-blue-600 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg" title="Extractor de Clientes">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                        </a>
+                    </div>
+                    
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden w-full">
                         <div class="flex items-start gap-3 p-3 w-full">
@@ -910,19 +919,6 @@
                                     <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
                                 </div>
                                 <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
-                            </a>
-                            
-                            <!-- Extractor de Clientes -->
-                            <a href="{{ route('walee.bot.alpha') }}" class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                                    </svg>
-                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Extractor</span>
-                                </div>
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
                             </a>
                         </div>
                     </div>
@@ -1171,19 +1167,6 @@
                                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Emails Enviados</span>
                                     </div>
                                     <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{{ $emailsEnviados ?? 0 }}</span>
-                                </a>
-                                
-                                <!-- Extractor de Clientes -->
-                                <a href="{{ route('walee.bot.alpha') }}" class="flex items-center justify-between p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                                        </svg>
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Extractor</span>
-                                    </div>
-                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                    </svg>
                                 </a>
                                         </div>
                                         </div>

@@ -5,7 +5,7 @@
 Conéctate al servidor por SSH y ejecuta:
 
 ```bash
-cd /home/u655097049/domains/websolutions.work/public_html
+cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com/public_html
 git pull origin main
 ```
 
@@ -19,8 +19,8 @@ Si el `git pull` no funciona, puedes subir el archivo manualmente:
    - `storage/app/google-credentials.json`
 
 2. **Ubicación en el servidor:**
-   - `/home/u655097049/domains/websolutions.work/storage/app/google-credentials.json`
-   - O también puede estar en: `/home/u655097049/domains/websolutions.work/public_html/storage/app/google-credentials.json`
+   - `/home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com/storage/app/google-credentials.json`
+   - O también puede estar en: `/home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com/public_html/storage/app/google-credentials.json`
 
 3. **Contenido del archivo:**
 ```json
@@ -51,7 +51,7 @@ Si el `git pull` no funciona, puedes subir el archivo manualmente:
 Si tienes acceso SSH, puedes crear el archivo directamente:
 
 ```bash
-cd /home/u655097049/domains/websolutions.work/public_html
+cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com/public_html
 mkdir -p storage/app
 cat > storage/app/google-credentials.json << 'EOF'
 {

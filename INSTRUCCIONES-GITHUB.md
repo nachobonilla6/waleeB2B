@@ -41,7 +41,7 @@ git push origin main
 Una vez que Hostinger haga el pull automático o manualmente:
 
 ```bash
-cd /home/u655097049/domains/websolutions.work
+cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
 
 # Si es pull manual:
 git pull origin main

@@ -9,7 +9,8 @@ echo "🚀 Iniciando deploy a Hostinger..."
 WEBHOOK_URL="https://n8n.srv1137974.hstgr.cloud/webhook/0c01d9a1-788c-44d2-9c1b-9457901d0a3c"
 
 # Comando completo: git pull + composer install + migraciones + limpiar caché + optimizar
-COMMAND="cd /home/u655097049/domains/websolutions.work && git pull origin main && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan filament:cache-components && php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear && php artisan optimize:clear && php artisan optimize"
+# Actualizado para el nuevo dominio: ghostwhite-parrot-934435.hostingersite.com
+COMMAND="cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com && git pull origin main && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan filament:cache-components && php artisan config:clear && php artisan cache:clear && php artisan view:clear && php artisan route:clear && php artisan optimize:clear && php artisan optimize"
 
 # Ejecutar el webhook
 RESPONSE=$(curl -s -X POST "$WEBHOOK_URL" \

@@ -33,7 +33,7 @@ git push origin main
 ## 🔧 Después del push, en Hostinger:
 
 ```bash
-cd /home/u655097049/domains/websolutions.work
+cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
 git pull origin main
 
 # Agregar variables al .env (si no existen)

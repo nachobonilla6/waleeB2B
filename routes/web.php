@@ -6029,6 +6029,95 @@ Route::post('/walee-tareas/{id}/favorito', function ($id) {
     }
 })->middleware(['auth'])->name('tareas.favorito');
 
+// Rutas para Tasks Rápidas del Navbar
+Route::post('/walee-quick-task', function (\Illuminate\Http\Request $request) {
+    try {
+        $tarea = new \App\Models\Tarea();
+        $tarea->lista_id = null; // Tasks rápidas sin lista
+        $tarea->texto = $request->input('texto');
+        $tarea->fecha_hora = null;
+        $tarea->tipo = null;
+        $tarea->favorito = false;
+        $tarea->estado = 'pending';
+        $tarea->recurrencia = 'none';
+        $tarea->color = '#8b5cf6';
+        $tarea->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Task agregada correctamente',
+            'task' => [
+                'id' => $tarea->id,
+                'texto' => $tarea->texto,
+                'estado' => $tarea->estado,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.quick-task.store');
+
+Route::put('/walee-quick-task/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $tarea = \App\Models\Tarea::findOrFail($id);
+        
+        // Solo permitir actualizar estado para tasks rápidas (sin lista_id)
+        if ($tarea->lista_id === null) {
+            if ($request->has('estado')) {
+                $tarea->estado = $request->input('estado');
+            }
+            if ($request->has('texto')) {
+                $tarea->texto = $request->input('texto');
+            }
+            $tarea->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Task actualizada correctamente',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Esta task no es una task rápida',
+            ], 403);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.quick-task.update');
+
+Route::delete('/walee-quick-task/{id}', function ($id) {
+    try {
+        $tarea = \App\Models\Tarea::findOrFail($id);
+        
+        // Solo permitir eliminar tasks rápidas (sin lista_id)
+        if ($tarea->lista_id === null) {
+            $tarea->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Task eliminada correctamente',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Esta task no es una task rápida',
+            ], 403);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.quick-task.delete');
+
 // Rutas para Notas (POST, PUT, DELETE)
 Route::post('/notas', function (\Illuminate\Http\Request $request) {
     try {

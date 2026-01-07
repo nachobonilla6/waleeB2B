@@ -74,16 +74,99 @@
                 <span class="font-medium">Tickets</span>
             </a>
             
-            <a 
-                href="{{ route('walee.tareas') }}" 
-                onclick="closeMobileMenu()"
-                class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 last:border-b-0"
-            >
-                <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                </svg>
-                <span class="font-medium">Tareas</span>
-            </a>
+            <div class="border-b border-slate-200 dark:border-slate-700">
+                <a 
+                    href="{{ route('walee.tareas') }}" 
+                    onclick="closeMobileMenu()"
+                    class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                    <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                    <span class="font-medium flex-1">Tasks</span>
+                </a>
+                
+                <!-- Formulario para agregar task rápida -->
+                <div class="px-4 py-2 border-b border-slate-200 dark:border-slate-700">
+                    <form id="quickTaskForm" onsubmit="agregarQuickTask(event)" class="flex gap-2">
+                        <input 
+                            type="text" 
+                            id="quickTaskInput"
+                            placeholder="Agregar task rápida..." 
+                            class="flex-1 px-2 py-1.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-slate-900 dark:text-white placeholder-slate-400"
+                            required
+                        />
+                        <button 
+                            type="submit"
+                            class="px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-md transition-colors text-sm font-medium flex items-center justify-center"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                
+                @php
+                    $userTasks = \App\Models\Tarea::whereNull('lista_id')
+                        ->where('estado', 'pending')
+                        ->orderBy('created_at', 'desc')
+                        ->limit(5)
+                        ->get();
+                @endphp
+                
+                @if($userTasks->count() > 0)
+                    <button 
+                        onclick="toggleTasksMenu()"
+                        class="w-full flex items-center justify-between px-4 py-2 text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    >
+                        <span class="font-semibold uppercase tracking-wider">Tasks Recientes</span>
+                        <svg id="tasksMenuIcon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    
+                    <div id="tasksMenuContent" class="tasks-menu-content hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                        @foreach($userTasks as $task)
+                            <div class="task-item flex items-start gap-2 px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
+                                <input 
+                                    type="checkbox" 
+                                    class="mt-1 w-4 h-4 text-violet-600 border-slate-300 rounded focus:ring-violet-500 task-checkbox"
+                                    data-task-id="{{ $task->id }}"
+                                    onchange="toggleTaskEstado(event, {{ $task->id }})"
+                                    {{ $task->estado === 'completado' ? 'checked' : '' }}
+                                />
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 break-words {{ $task->estado === 'completado' ? 'line-through opacity-60' : '' }}">
+                                        {{ $task->texto }}
+                                    </p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                        {{ $task->created_at->diffForHumans() }}
+                                    </p>
+                                </div>
+                                <button 
+                                    onclick="eliminarQuickTask(event, {{ $task->id }})"
+                                    class="flex-shrink-0 p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors opacity-60 group-hover:opacity-100"
+                                    title="Eliminar task"
+                                >
+                                    <svg class="w-4 h-4 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        @endforeach
+                        @if($userTasks->count() >= 5)
+                            <a 
+                                href="{{ route('walee.tareas') }}" 
+                                onclick="closeMobileMenu()"
+                                class="block px-4 py-2 text-xs text-center text-violet-600 dark:text-violet-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-200 dark:border-slate-700"
+                            >
+                                Ver todas las tasks →
+                            </a>
+                        @endif
+                    </div>
+                @endif
+            </div>
             
             <a 
                 href="{{ route('walee.calendario.aplicaciones') }}" 
@@ -372,6 +455,141 @@
             }, 300);
         }, 2000);
     }
+    
+    function toggleTasksMenu() {
+        const content = document.getElementById('tasksMenuContent');
+        const icon = document.getElementById('tasksMenuIcon');
+        
+        if (content) {
+            if (content.classList.contains('hidden')) {
+                // Abrir menú
+                content.classList.remove('hidden');
+                content.offsetHeight;
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                
+                if (icon) {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            } else {
+                // Cerrar menú
+                content.style.maxHeight = '0px';
+                content.style.opacity = '0';
+                
+                if (icon) {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+                
+                setTimeout(() => {
+                    if (content.style.maxHeight === '0px') {
+                        content.classList.add('hidden');
+                    }
+                }, 300);
+            }
+        }
+    }
+    
+    async function agregarQuickTask(event) {
+        event.preventDefault();
+        const input = document.getElementById('quickTaskInput');
+        const texto = input.value.trim();
+        
+        if (!texto) return;
+        
+        try {
+            const response = await fetch('/walee-quick-task', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ texto: texto })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                input.value = '';
+                showNotification('Task agregada', 'success');
+                // Recargar la página después de un breve delay
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            } else {
+                showNotification('Error al agregar task', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al agregar task', 'error');
+        }
+    }
+    
+    async function toggleTaskEstado(event, taskId) {
+        event.stopPropagation();
+        const checked = event.target.checked;
+        const estado = checked ? 'completado' : 'pending';
+        
+        try {
+            const response = await fetch(`/walee-quick-task/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ estado: estado })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Actualizar visualmente
+                const taskItem = event.target.closest('.task-item');
+                const taskText = taskItem.querySelector('p');
+                if (checked) {
+                    taskText.classList.add('line-through', 'opacity-60');
+                } else {
+                    taskText.classList.remove('line-through', 'opacity-60');
+                }
+            } else {
+                // Revertir checkbox
+                event.target.checked = !checked;
+                showNotification('Error al actualizar task', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            event.target.checked = !checked;
+            showNotification('Error al actualizar task', 'error');
+        }
+    }
+    
+    async function eliminarQuickTask(event, taskId) {
+        event.stopPropagation();
+        event.preventDefault();
+        
+        if (!confirm('¿Eliminar esta task?')) return;
+        
+        try {
+            const response = await fetch(`/walee-quick-task/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('Task eliminada', 'success');
+                // Remover el elemento del DOM
+                event.target.closest('.task-item').remove();
+            } else {
+                showNotification('Error al eliminar task', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al eliminar task', 'error');
+        }
+    }
 </script>
 
 <style>
@@ -428,5 +646,32 @@
     .note-item:nth-child(3) { animation-delay: 0.15s; }
     .note-item:nth-child(4) { animation-delay: 0.2s; }
     .note-item:nth-child(5) { animation-delay: 0.25s; }
+    
+    /* Animaciones suaves para el menú de tasks */
+    .tasks-menu-content {
+        transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        opacity: 0;
+    }
+    
+    .tasks-menu-content:not(.hidden) {
+        opacity: 1;
+    }
+    
+    #tasksMenuIcon {
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    /* Animación de entrada para las tasks individuales */
+    .task-item {
+        animation: slideIn 0.3s ease-out forwards;
+        opacity: 0;
+    }
+    
+    /* Delay escalonado para cada task */
+    .task-item:nth-child(1) { animation-delay: 0.05s; }
+    .task-item:nth-child(2) { animation-delay: 0.1s; }
+    .task-item:nth-child(3) { animation-delay: 0.15s; }
+    .task-item:nth-child(4) { animation-delay: 0.2s; }
+    .task-item:nth-child(5) { animation-delay: 0.25s; }
 </style>
 

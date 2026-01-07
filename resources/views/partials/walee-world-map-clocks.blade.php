@@ -131,20 +131,34 @@
             </div>
 
             @php
-                // Opciones disponibles para los relojes (tarjetas)
+                // Opciones disponibles para los relojes (tarjetas) – con banderas
                 $worldClockOptions = [
-                    'montreal'     => 'Montreal',
-                    'london'       => 'London',
-                    'tokyo'        => 'Tokyo',
-                    'sydney'       => 'Sydney',
-                    'dubai'        => 'Dubai',
-                    'saopaulo'     => 'São Paulo',
-                    'la'           => 'Los Angeles',
-                    'madrid'       => 'Madrid',
-                    'sanjosecr'    => 'San José, Costa Rica',
-                    'cameroon'     => 'Cameroon',
-                    'hongkong'     => 'Hong Kong',
-                    'southafrica'  => 'South Africa',
+                    'montreal'     => '🇨🇦 Montreal',
+                    'london'       => '🇬🇧 London',
+                    'tokyo'        => '🇯🇵 Tokyo',
+                    'sydney'       => '🇦🇺 Sydney',
+                    'dubai'        => '🇦🇪 Dubai',
+                    'saopaulo'     => '🇧🇷 São Paulo',
+                    'la'           => '🇺🇸 Los Angeles',
+                    'madrid'       => '🇪🇸 Madrid',
+                    'sanjosecr'    => '🇨🇷 San José, Costa Rica',
+                    'cameroon'     => '🇨🇲 Cameroon',
+                    'hongkong'     => '🇭🇰 Hong Kong',
+                    'southafrica'  => '🇿🇦 South Africa',
+                    // Más opciones extra
+                    'newyork'      => '🇺🇸 New York',
+                    'mexico'       => '🇲🇽 Ciudad de México',
+                    'buenosaires'  => '🇦🇷 Buenos Aires',
+                    'paris'        => '🇫🇷 Paris',
+                    'berlin'       => '🇩🇪 Berlin',
+                    'rome'         => '🇮🇹 Rome',
+                    'lisbon'       => '🇵🇹 Lisbon',
+                    'singapore'    => '🇸🇬 Singapore',
+                    'bangkok'      => '🇹🇭 Bangkok',
+                    'moscow'       => '🇷🇺 Moscow',
+                    'beijing'      => '🇨🇳 Beijing',
+                    'delhi'        => '🇮🇳 New Delhi',
+                    'auckland'     => '🇳🇿 Auckland',
                 ];
 
                 // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
@@ -169,13 +183,16 @@
                 @foreach($worldClockDefaults as $defaultCity)
                     <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card">
                         <div class="text-center">
-                            <select class="world-clock-select text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1 bg-transparent border border-slate-200 dark:border-slate-600 rounded-md px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500">
+                            <div class="flex items-center justify-start gap-1 mb-1">
+                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
+                                <select class="world-clock-select text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-transparent border border-transparent focus:border-violet-400 rounded-md pr-4 py-0.5 focus:outline-none focus:ring-0">
                                 @foreach($worldClockOptions as $cityKey => $cityLabel)
                                     <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
                                         {{ $cityLabel }}
                                     </option>
                                 @endforeach
                             </select>
+                            </div>
                             <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
                             <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
                         </div>
@@ -190,18 +207,32 @@
     // World Clocks - Solo inicializar si no existe ya
     if (typeof updateWorldClocks === 'undefined') {
         const timezones = {
-            montreal:    { label: 'Montreal',            tz: 'America/Toronto' },
-            london:      { label: 'London',              tz: 'Europe/London' },
-            tokyo:       { label: 'Tokyo',               tz: 'Asia/Tokyo' },
-            sydney:      { label: 'Sydney',              tz: 'Australia/Sydney' },
-            dubai:       { label: 'Dubai',               tz: 'Asia/Dubai' },
-            saopaulo:    { label: 'São Paulo',           tz: 'America/Sao_Paulo' },
-            la:          { label: 'Los Angeles',         tz: 'America/Los_Angeles' },
-            madrid:      { label: 'Madrid',              tz: 'Europe/Madrid' },
+            montreal:    { label: 'Montreal',             tz: 'America/Toronto' },
+            london:      { label: 'London',               tz: 'Europe/London' },
+            tokyo:       { label: 'Tokyo',                tz: 'Asia/Tokyo' },
+            sydney:      { label: 'Sydney',               tz: 'Australia/Sydney' },
+            dubai:       { label: 'Dubai',                tz: 'Asia/Dubai' },
+            saopaulo:    { label: 'São Paulo',            tz: 'America/Sao_Paulo' },
+            la:          { label: 'Los Angeles',          tz: 'America/Los_Angeles' },
+            madrid:      { label: 'Madrid',               tz: 'Europe/Madrid' },
             sanjosecr:   { label: 'San José, Costa Rica', tz: 'America/Costa_Rica' },
-            cameroon:    { label: 'Cameroon',            tz: 'Africa/Douala' },
-            hongkong:    { label: 'Hong Kong',           tz: 'Asia/Hong_Kong' },
-            southafrica: { label: 'South Africa',        tz: 'Africa/Johannesburg' },
+            cameroon:    { label: 'Cameroon',             tz: 'Africa/Douala' },
+            hongkong:    { label: 'Hong Kong',            tz: 'Asia/Hong_Kong' },
+            southafrica: { label: 'South Africa',         tz: 'Africa/Johannesburg' },
+            // Extra cities solo para tarjetas
+            newyork:     { label: 'New York',             tz: 'America/New_York' },
+            mexico:      { label: 'Ciudad de México',     tz: 'America/Mexico_City' },
+            buenosaires: { label: 'Buenos Aires',         tz: 'America/Argentina/Buenos_Aires' },
+            paris:       { label: 'Paris',                tz: 'Europe/Paris' },
+            berlin:      { label: 'Berlin',               tz: 'Europe/Berlin' },
+            rome:        { label: 'Rome',                 tz: 'Europe/Rome' },
+            lisbon:      { label: 'Lisbon',               tz: 'Europe/Lisbon' },
+            singapore:   { label: 'Singapore',            tz: 'Asia/Singapore' },
+            bangkok:     { label: 'Bangkok',              tz: 'Asia/Bangkok' },
+            moscow:      { label: 'Moscow',               tz: 'Europe/Moscow' },
+            beijing:     { label: 'Beijing',              tz: 'Asia/Shanghai' },
+            delhi:       { label: 'New Delhi',            tz: 'Asia/Kolkata' },
+            auckland:    { label: 'Auckland',             tz: 'Pacific/Auckland' },
         };
 
         function updateWorldClocks() {

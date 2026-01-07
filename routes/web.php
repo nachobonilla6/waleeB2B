@@ -4806,6 +4806,127 @@ Route::delete('/walee-productos-super/{id}', function ($id) {
     }
 })->middleware(['auth'])->name('walee.productos.super.delete');
 
+// Ruta para generar producto con IA
+Route::post('/walee-productos-super/ai/generate', function (\Illuminate\Http\Request $request) {
+    try {
+        $prompt = $request->input('prompt');
+        if (empty($prompt)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El prompt no puede estar vacío',
+            ], 400);
+        }
+        
+        $apiKey = config('services.openai.api_key');
+        if (empty($apiKey)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'OpenAI API key no configurada',
+            ], 500);
+        }
+        
+        $systemPrompt = 'Eres un asistente que ayuda a crear productos para un supermercado. 
+Analiza la descripción del usuario y genera un objeto JSON con los siguientes campos:
+- nombre (string, requerido)
+- descripcion (string, opcional)
+- precio (number, requerido, en colones costarricenses)
+- categoria (string, opcional)
+- stock (number, opcional, default 0)
+- fecha_expiracion (string, formato YYYY-MM-DD, opcional)
+- codigo_barras (string, opcional)
+- activo (boolean, default true)
+
+Responde SOLO con un objeto JSON válido, sin texto adicional. Si falta información, usa valores razonables por defecto.';
+        
+        $response = \Illuminate\Support\Facades\Http::timeout(60)
+            ->withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json',
+            ])
+            ->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => $systemPrompt,
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $prompt,
+                    ],
+                ],
+                'temperature' => 0.7,
+                'max_tokens' => 500,
+            ]);
+        
+        if (!$response->successful()) {
+            \Log::error('OpenAI API error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar respuesta con IA',
+            ], 500);
+        }
+        
+        $json = $response->json();
+        $aiResponse = $json['choices'][0]['message']['content'] ?? '';
+        
+        // Extraer JSON de la respuesta (puede venir con markdown code blocks)
+        $jsonMatch = preg_match('/```(?:json)?\s*(\{.*?\})\s*```/s', $aiResponse, $matches);
+        if ($jsonMatch) {
+            $aiResponse = $matches[1];
+        } else {
+            // Intentar encontrar JSON directamente
+            $jsonMatch = preg_match('/\{.*\}/s', $aiResponse, $matches);
+            if ($jsonMatch) {
+                $aiResponse = $matches[0];
+            }
+        }
+        
+        $productoData = json_decode($aiResponse, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE || !$productoData) {
+            \Log::error('Error parsing AI response', [
+                'response' => $aiResponse,
+                'error' => json_last_error_msg(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar la respuesta de la IA',
+            ], 500);
+        }
+        
+        // Validar y limpiar datos
+        $producto = [
+            'nombre' => $productoData['nombre'] ?? 'Producto sin nombre',
+            'descripcion' => $productoData['descripcion'] ?? null,
+            'precio' => floatval($productoData['precio'] ?? 0),
+            'categoria' => $productoData['categoria'] ?? null,
+            'stock' => intval($productoData['stock'] ?? 0),
+            'fecha_expiracion' => $productoData['fecha_expiracion'] ?? null,
+            'codigo_barras' => $productoData['codigo_barras'] ?? null,
+            'activo' => $productoData['activo'] ?? true,
+        ];
+        
+        return response()->json([
+            'success' => true,
+            'producto' => $producto,
+            'response' => 'Producto generado correctamente. Revisa y ajusta los campos si es necesario.',
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error generating product with AI', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.super.ai.generate');
+
 // Google Sheets Viewer
 Route::get('/walee-google-sheets', function () {
     return view('walee-google-sheets');

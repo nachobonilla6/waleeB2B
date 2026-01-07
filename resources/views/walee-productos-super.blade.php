@@ -180,6 +180,15 @@
                             <span class="hidden sm:inline">Volver</span>
                         </a>
                         <button 
+                            onclick="openAIModal()"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg font-medium transition-colors shadow-lg"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            <span class="hidden sm:inline">IA</span>
+                        </button>
+                        <button 
                             onclick="openCreateProductoModal()"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors shadow-lg"
                         >
@@ -583,6 +592,80 @@
     
     @include('partials.walee-support-button')
     
+    <!-- Modal de IA -->
+    <div id="aiModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-6 h-6 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        Asistente IA para Productos
+                    </h3>
+                    <button onclick="closeAIModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Describe el producto que quieres crear o editar:
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="aiPrompt"
+                            rows="4"
+                            placeholder="Ej: Crear un producto llamado 'Leche entera' de la categoría 'Lácteos', precio 2500 colones, stock 50 unidades, expira en 30 días..."
+                            class="w-full px-4 py-3 pr-20 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all resize-none"
+                        ></textarea>
+                        <button 
+                            id="voiceBtn"
+                            onclick="toggleVoiceRecognition()"
+                            class="absolute bottom-3 right-3 p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 hover:bg-violet-200 dark:hover:bg-violet-900/50 text-violet-600 dark:text-violet-400 transition-colors"
+                            title="Grabar con voz"
+                        >
+                            <svg id="voiceIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="voiceStatus" class="text-xs text-slate-500 dark:text-slate-400 mt-2 hidden"></p>
+                </div>
+                
+                <div id="aiResponse" class="hidden">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Respuesta de la IA:
+                    </label>
+                    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                        <p id="aiResponseText" class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700 flex items-center gap-3">
+                <button 
+                    onclick="closeAIModal()"
+                    class="flex-1 px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                    Cancelar
+                </button>
+                <button 
+                    onclick="processAIPrompt()"
+                    id="processAIBtn"
+                    class="flex-1 px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span id="processAIText">Generar Producto</span>
+                    <span id="processAILoading" class="hidden">Procesando...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         
@@ -855,6 +938,172 @@
                 Swal.fire('Error', 'No se pudo guardar el producto', 'error');
             });
         });
+        
+        // Funciones de IA
+        let recognition = null;
+        let isListening = false;
+        
+        function openAIModal() {
+            document.getElementById('aiModal').classList.remove('hidden');
+            document.getElementById('aiPrompt').focus();
+            
+            // Inicializar reconocimiento de voz si está disponible
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'es-ES';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const promptTextarea = document.getElementById('aiPrompt');
+                    promptTextarea.value = transcript;
+                    stopVoiceRecognition();
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Error en reconocimiento de voz:', event.error);
+                    document.getElementById('voiceStatus').textContent = 'Error: ' + event.error;
+                    stopVoiceRecognition();
+                };
+                
+                recognition.onend = function() {
+                    stopVoiceRecognition();
+                };
+            } else {
+                document.getElementById('voiceBtn').style.display = 'none';
+            }
+        }
+        
+        function closeAIModal() {
+            document.getElementById('aiModal').classList.add('hidden');
+            document.getElementById('aiPrompt').value = '';
+            document.getElementById('aiResponse').classList.add('hidden');
+            if (isListening) {
+                stopVoiceRecognition();
+            }
+        }
+        
+        function toggleVoiceRecognition() {
+            if (isListening) {
+                stopVoiceRecognition();
+            } else {
+                startVoiceRecognition();
+            }
+        }
+        
+        function startVoiceRecognition() {
+            if (!recognition) return;
+            
+            try {
+                recognition.start();
+                isListening = true;
+                document.getElementById('voiceBtn').classList.add('bg-red-100', 'dark:bg-red-900/30');
+                document.getElementById('voiceBtn').classList.remove('bg-violet-100', 'dark:bg-violet-900/30');
+                document.getElementById('voiceIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>';
+                document.getElementById('voiceStatus').textContent = 'Escuchando... Habla ahora.';
+                document.getElementById('voiceStatus').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error al iniciar reconocimiento:', error);
+                document.getElementById('voiceStatus').textContent = 'Error al iniciar el micrófono';
+                document.getElementById('voiceStatus').classList.remove('hidden');
+            }
+        }
+        
+        function stopVoiceRecognition() {
+            if (recognition && isListening) {
+                recognition.stop();
+            }
+            isListening = false;
+            document.getElementById('voiceBtn').classList.remove('bg-red-100', 'dark:bg-red-900/30');
+            document.getElementById('voiceBtn').classList.add('bg-violet-100', 'dark:bg-violet-900/30');
+            document.getElementById('voiceIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>';
+            document.getElementById('voiceStatus').classList.add('hidden');
+        }
+        
+        function processAIPrompt() {
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            if (!prompt) {
+                Swal.fire('Error', 'Por favor, describe el producto que quieres crear', 'warning');
+                return;
+            }
+            
+            const processBtn = document.getElementById('processAIBtn');
+            const processText = document.getElementById('processAIText');
+            const processLoading = document.getElementById('processAILoading');
+            
+            processBtn.disabled = true;
+            processText.classList.add('hidden');
+            processLoading.classList.remove('hidden');
+            
+            fetch('/walee-productos-super/ai/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                processBtn.disabled = false;
+                processText.classList.remove('hidden');
+                processLoading.classList.add('hidden');
+                
+                if (data.success && data.producto) {
+                    // Mostrar respuesta
+                    document.getElementById('aiResponseText').textContent = data.response || 'Producto generado correctamente';
+                    document.getElementById('aiResponse').classList.remove('hidden');
+                    
+                    // Rellenar formulario
+                    fillFormWithAI(data.producto);
+                    
+                    // Mostrar formulario en móvil si está oculto
+                    const formulario = document.getElementById('formularioProducto');
+                    const isMobile = window.innerWidth < 1024;
+                    if (isMobile && formulario.classList.contains('hidden')) {
+                        formulario.classList.remove('hidden');
+                        const icon = document.getElementById('formToggleIcon');
+                        if (icon) icon.classList.add('rotate-180');
+                    }
+                    
+                    // Scroll al formulario
+                    setTimeout(() => {
+                        document.getElementById('productoForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, isMobile ? 100 : 0);
+                    
+                    // Cerrar modal después de un momento
+                    setTimeout(() => {
+                        closeAIModal();
+                    }, 2000);
+                } else {
+                    Swal.fire('Error', data.message || 'No se pudo generar el producto', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                processBtn.disabled = false;
+                processText.classList.remove('hidden');
+                processLoading.classList.add('hidden');
+                Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
+            });
+        }
+        
+        function fillFormWithAI(producto) {
+            if (producto.nombre) document.getElementById('productoNombre').value = producto.nombre;
+            if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
+            if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
+            if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
+            if (producto.stock !== undefined) document.getElementById('productoStock').value = producto.stock;
+            if (producto.fecha_expiracion) document.getElementById('productoFechaExpiracion').value = producto.fecha_expiracion;
+            if (producto.codigo_barras) document.getElementById('productoCodigoBarras').value = producto.codigo_barras;
+            if (producto.activo !== undefined) document.getElementById('productoActivo').checked = producto.activo;
+            
+            // Limpiar ID si es nuevo producto
+            document.getElementById('productoId').value = '';
+        }
     </script>
 </body>
 </html>

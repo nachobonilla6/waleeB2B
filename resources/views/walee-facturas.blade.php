@@ -127,7 +127,11 @@
                 </div>
             </header>
             
-            <!-- Stats Grid - Total Facturado vs Gastos Este Mes -->
+            <!-- Stats Grid - 4 Widgets -->
+            @php
+                $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMes / $totalFacturadoEsteMes) * 100 : 0;
+                $diferencia = $totalFacturadoEsteMes - ($totalGastosEsteMes ?? 0);
+            @endphp
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
                 <!-- Total Facturado Este Mes -->
                 <a href="{{ route('walee.facturas.lista') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
@@ -174,10 +178,6 @@
                 </a>
                 
                 <!-- Porcentaje de Gastos -->
-                @php
-                    $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMes / $totalFacturadoEsteMes) * 100 : 0;
-                    $promedioDiarioFacturado = $totalFacturadoEsteMes / now()->day;
-                @endphp
                 <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center">
@@ -198,96 +198,27 @@
                     </div>
                 </div>
                 
-                <!-- Promedio Diario -->
-                <div class="stat-card bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-500/10 dark:to-cyan-600/5 border border-cyan-200 dark:border-cyan-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
+                <!-- Diferencia -->
+                <div class="stat-card bg-gradient-to-br {{ $diferencia >= 0 ? 'from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border-emerald-200 dark:border-emerald-500/20' : 'from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border-red-200 dark:border-red-500/20' }} border rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-cyan-500/20 dark:bg-cyan-500/10 flex items-center justify-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl {{ $diferencia >= 0 ? 'bg-emerald-500/20 dark:bg-emerald-500/10' : 'bg-red-500/20 dark:bg-red-500/10' }} flex items-center justify-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                             </svg>
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Promedio Diario</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($promedioDiarioFacturado / $tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($promedioDiarioFacturado, 2, '.', ',') }}</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Diferencia</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
+                            {{ $diferencia >= 0 ? '+' : '' }}${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }}
+                        </p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($diferencia, 2, '.', ',') }}</p>
                     </div>
-                    <div class="flex items-center gap-2 text-xs sm:text-sm text-cyan-600 dark:text-cyan-400">
+                    <div class="flex items-center gap-2 text-xs sm:text-sm {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>Día {{ now()->day }} de {{ now()->daysInMonth }}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Stats Adicionales -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
-                <!-- Proyección Mensual -->
-                @php
-                    $proyeccionMensualFacturado = $promedioDiarioFacturado * now()->daysInMonth;
-                    $proyeccionMensualGastos = (($totalGastosEsteMes ?? 0) / now()->day) * now()->daysInMonth;
-                @endphp
-                <div class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border border-emerald-200 dark:border-emerald-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg dark:shadow-none">
-                    <div class="flex items-center justify-between mb-3 sm:mb-4">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/20 dark:bg-emerald-500/10 flex items-center justify-center">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Proyección Mensual</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">${{ number_format($proyeccionMensualFacturado / $tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">₡{{ number_format($proyeccionMensualFacturado, 2, '.', ',') }}</p>
-                    </div>
-                </div>
-                
-                <!-- Total Histórico Facturado -->
-                <a href="{{ route('walee.facturas.lista') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
-                    <div class="flex items-center justify-between mb-3 sm:mb-4">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Total Histórico</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">${{ number_format($totalFacturado / $tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">₡{{ number_format($totalFacturado, 2, '.', ',') }}</p>
-                    </div>
-                </a>
-                
-                <!-- Total Histórico Gastos -->
-                <a href="{{ route('walee.gastos') }}" class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
-                    <div class="flex items-center justify-between mb-3 sm:mb-4">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-500/20 dark:bg-orange-500/10 flex items-center justify-center">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Gastos Totales</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">${{ number_format(($totalGastos ?? 0) / $tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">₡{{ number_format($totalGastos ?? 0, 2, '.', ',') }}</p>
-                    </div>
-                </a>
-                
-                <!-- Tasa de Cambio -->
-                <div class="stat-card bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-500/10 dark:to-slate-600/5 border border-slate-200 dark:border-slate-500/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg dark:shadow-none">
-                    <div class="flex items-center justify-between mb-3 sm:mb-4">
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-500/20 dark:bg-slate-500/10 flex items-center justify-center">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Tasa de Cambio</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">₡{{ number_format($tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">1 USD = ₡{{ number_format($tasaCambio, 2, '.', ',') }}</p>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </div>
             </div>

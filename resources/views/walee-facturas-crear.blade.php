@@ -1077,12 +1077,15 @@
         
         // Calcular saldo pendiente
         function calcularSaldo() {
+            const tasaCambio = {{ $tasaCambio ?? 520 }};
             const total = parseFloat(document.getElementById('total').value) || 0;
             const montoPagadoInput = parseFloat(document.getElementById('monto_pagado').value) || 0;
             const totalPagos = pagos.reduce((sum, pago) => sum + (parseFloat(pago.importe) || 0), 0);
             const montoPagado = montoPagadoInput + totalPagos;
             const saldoPendiente = total - montoPagado;
             document.getElementById('saldo_pendiente').value = saldoPendiente.toFixed(2);
+            document.getElementById('saldoPendienteCRC').textContent = `₡${(saldoPendiente * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('montoPagadoCRC').textContent = `₡${(montoPagado * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         }
         
         // Vista previa

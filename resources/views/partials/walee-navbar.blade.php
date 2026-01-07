@@ -99,13 +99,63 @@
             <a 
                 href="{{ route('walee.notas') }}" 
                 onclick="closeMobileMenu()"
-                class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 last:border-b-0"
+                class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700"
             >
                 <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 <span class="font-medium">Notas</span>
             </a>
+            
+            @php
+                $userNotes = \App\Models\Note::where('user_id', auth()->id())
+                    ->whereNull('cliente_id')
+                    ->whereNull('client_id')
+                    ->orderBy('pinned', 'desc')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+                    ->get();
+            @endphp
+            
+            @if($userNotes->count() > 0)
+                <div class="border-b border-slate-200 dark:border-slate-700">
+                    <div class="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        Mis Notas Recientes
+                    </div>
+                    <div class="max-h-64 overflow-y-auto">
+                        @foreach($userNotes as $nota)
+                            <div class="flex items-start gap-2 px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 break-words">
+                                        {{ Str::limit($nota->content, 80) }}
+                                    </p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                        {{ $nota->created_at->diffForHumans() }}
+                                    </p>
+                                </div>
+                                <button 
+                                    onclick="copyNoteFromMenu('{{ addslashes($nota->content) }}', event)"
+                                    class="flex-shrink-0 p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors opacity-60 group-hover:opacity-100"
+                                    title="Copiar nota"
+                                >
+                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                    @if($userNotes->count() >= 5)
+                        <a 
+                            href="{{ route('walee.notas') }}" 
+                            onclick="closeMobileMenu()"
+                            class="block px-4 py-2 text-xs text-center text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-200 dark:border-slate-700"
+                        >
+                            Ver todas las notas →
+                        </a>
+                    @endif
+                </div>
+            @endif
             
             <a 
                 href="/admin" 
@@ -216,5 +266,54 @@
             closeMobileMenu();
         }
     });
+    
+    function copyNoteFromMenu(content, event) {
+        event.stopPropagation();
+        event.preventDefault();
+        
+        navigator.clipboard.writeText(content).then(() => {
+            // Mostrar notificación simple
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in';
+            notification.textContent = 'Nota copiada';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 2000);
+        }).catch(err => {
+            console.error('Error al copiar:', err);
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            notification.textContent = 'Error al copiar';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        });
+    }
 </script>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+    
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
 

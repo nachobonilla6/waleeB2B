@@ -186,24 +186,7 @@
             <div class="mt-6 sm:mt-8 animate-fade-in-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
                     <div>
-                        <div class="flex items-center gap-3">
-                            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Productos Super</h2>
-                            @if($productosVencenPronto->count() > 0)
-                                <button 
-                                    onclick="openVencenProntoModal()"
-                                    class="relative inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors shadow-md animate-pulse"
-                                >
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                    </svg>
-                                    <span class="text-sm">{{ $productosVencenPronto->count() }} vencen pronto</span>
-                                    <span class="absolute -top-1 -right-1 flex h-4 w-4">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
-                                    </span>
-                                </button>
-                            @endif
-                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Productos Super</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Gestiona los productos del supermercado</p>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-3">
@@ -392,29 +375,51 @@
                         <!-- Search Bar con Filtros Integrados -->
                         <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                             <div class="space-y-3">
-                                <!-- Barra de búsqueda -->
-                                <div class="relative">
-                                    <input 
-                                        type="text" 
-                                        id="searchProductos"
-                                        placeholder="Buscar productos por nombre, categoría..."
-                                        class="w-full px-4 py-2.5 pl-10 pr-10 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
-                                        onkeyup="buscarProductos()"
-                                    >
-                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                        <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                        </svg>
+                                <!-- Barra de búsqueda con botón de alerta -->
+                                <div class="flex items-center gap-2">
+                                    <div class="relative flex-1">
+                                        <input 
+                                            type="text" 
+                                            id="searchProductos"
+                                            placeholder="Buscar productos por nombre, categoría..."
+                                            class="w-full px-4 py-2.5 pl-10 pr-10 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
+                                            onkeyup="buscarProductos()"
+                                        >
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                            </svg>
+                                        </div>
+                                        <button 
+                                            id="clearSearchBtn"
+                                            onclick="clearSearch()"
+                                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors hidden"
+                                        >
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <button 
-                                        id="clearSearchBtn"
-                                        onclick="clearSearch()"
-                                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors hidden"
-                                    >
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                        </svg>
-                                    </button>
+                                    
+                                    @if($productosVencenPronto->count() > 0)
+                                        <button 
+                                            id="vencenProntoBtn"
+                                            onclick="filtrarVencenPronto()"
+                                            class="relative inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors shadow-md whitespace-nowrap"
+                                        >
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
+                                            <span class="hidden sm:inline">Vencen Pronto</span>
+                                            <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 text-xs font-bold bg-white text-amber-600 rounded-full">
+                                                {{ $productosVencenPronto->count() }}
+                                            </span>
+                                            <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                            </span>
+                                        </button>
+                                    @endif
                                 </div>
                                 
                                 <!-- Filtros integrados -->
@@ -477,6 +482,7 @@
                                             data-categoria="{{ $producto->categoria ?? '' }}"
                                             data-activo="{{ $producto->activo ? '1' : '0' }}"
                                             data-nombre="{{ strtolower($producto->nombre) }}"
+                                            data-vencen-pronto="{{ $venceraPronto ? '1' : '0' }}"
                                         >
                                             <div class="flex items-start gap-2 sm:gap-4">
                                                 @if($producto->imagen && !empty(trim($producto->imagen)))
@@ -629,106 +635,6 @@
     
     @include('partials.walee-support-button')
     
-    <!-- Modal de Productos que Vencen Pronto -->
-    <div id="vencenProntoModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="p-4 sm:p-6 border-b border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-amber-500 rounded-lg">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-                                Productos que Vencen Pronto
-                            </h3>
-                            <p class="text-sm text-slate-600 dark:text-slate-400">
-                                {{ $productosVencenPronto->count() }} producto(s) vence(n) en los próximos 7 días
-                            </p>
-                        </div>
-                    </div>
-                    <button onclick="closeVencenProntoModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto p-4 sm:p-6">
-                @if($productosVencenPronto->isEmpty())
-                    <div class="text-center py-8">
-                        <p class="text-slate-600 dark:text-slate-400">No hay productos que vencen pronto</p>
-                    </div>
-                @else
-                    <div class="space-y-3">
-                        @foreach($productosVencenPronto as $producto)
-                            @php
-                                $fechaExpiracion = \Carbon\Carbon::parse($producto->fecha_expiracion);
-                                $diasRestantes = now()->diffInDays($fechaExpiracion, false);
-                            @endphp
-                            <div class="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-500 rounded-lg p-4 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
-                                <div class="flex items-start justify-between gap-4">
-                                    <div class="flex-1">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <h4 class="font-bold text-amber-900 dark:text-amber-200">{{ $producto->nombre }}</h4>
-                                            @if($producto->categoria)
-                                                <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                                                    {{ $producto->categoria }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                        
-                                        <div class="flex flex-wrap items-center gap-4 text-sm">
-                                            <span class="font-semibold text-amber-900 dark:text-amber-200">
-                                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                                @if($diasRestantes === 0)
-                                                    Vence HOY
-                                                @elseif($diasRestantes === 1)
-                                                    Vence mañana
-                                                @else
-                                                    Vence en {{ $diasRestantes }} días
-                                                @endif
-                                            </span>
-                                            <span class="text-slate-600 dark:text-slate-400">
-                                                Fecha: {{ $fechaExpiracion->format('d/m/Y') }}
-                                            </span>
-                                            @if($producto->stock > 0)
-                                                <span class="text-slate-600 dark:text-slate-400">
-                                                    Stock: {{ $producto->stock }}
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    
-                                    <button 
-                                        onclick="openEditProductoModal({{ $producto->id }}); closeVencenProntoModal();"
-                                        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors text-sm whitespace-nowrap"
-                                    >
-                                        Editar
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-            
-            <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700">
-                <button 
-                    onclick="closeVencenProntoModal()"
-                    class="w-full px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors"
-                >
-                    Cerrar
-                </button>
-            </div>
-        </div>
-    </div>
-    
     <!-- Modal de IA -->
     <div id="aiModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
@@ -879,6 +785,28 @@
             aplicarFiltros();
         }
         
+        let filtroVencenPronto = false;
+        
+        function filtrarVencenPronto() {
+            filtroVencenPronto = !filtroVencenPronto;
+            const btn = document.getElementById('vencenProntoBtn');
+            
+            if (filtroVencenPronto) {
+                btn.classList.add('ring-2', 'ring-amber-300', 'ring-offset-2');
+                btn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                btn.classList.add('bg-amber-600');
+            } else {
+                btn.classList.remove('ring-2', 'ring-amber-300', 'ring-offset-2');
+                btn.classList.remove('bg-amber-600');
+                btn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+            }
+            
+            aplicarFiltros();
+            
+            // Scroll a la lista
+            document.getElementById('productosList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
         function aplicarFiltros() {
             const categoria = document.getElementById('filtroCategoria').value;
             const activo = document.getElementById('filtroActivo').value;
@@ -890,16 +818,22 @@
                 const itemCategoria = item.getAttribute('data-categoria') || '';
                 const itemActivo = item.getAttribute('data-activo');
                 const itemNombre = item.getAttribute('data-nombre') || '';
+                const itemVencenPronto = item.getAttribute('data-vencen-pronto');
                 
                 let show = true;
                 
+                // Filtro por vencen pronto
+                if (filtroVencenPronto && itemVencenPronto !== '1') {
+                    show = false;
+                }
+                
                 // Filtro por categoría
-                if (categoria && itemCategoria !== categoria) {
+                if (show && categoria && itemCategoria !== categoria) {
                     show = false;
                 }
                 
                 // Filtro por activo/inactivo
-                if (activo !== '' && itemActivo !== activo) {
+                if (show && activo !== '' && itemActivo !== activo) {
                     show = false;
                 }
                 
@@ -1242,23 +1176,6 @@
             document.getElementById('productoId').value = '';
         }
         
-        // Funciones para modal de productos que vencen pronto
-        function openVencenProntoModal() {
-            document.getElementById('vencenProntoModal').classList.remove('hidden');
-        }
-        
-        function closeVencenProntoModal() {
-            document.getElementById('vencenProntoModal').classList.add('hidden');
-        }
-        
-        // Abrir modal automáticamente al cargar si hay productos que vencen pronto
-        @if($productosVencenPronto->count() > 0)
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                openVencenProntoModal();
-            }, 500); // Pequeño delay para mejor UX
-        });
-        @endif
     </script>
 </body>
 </html>

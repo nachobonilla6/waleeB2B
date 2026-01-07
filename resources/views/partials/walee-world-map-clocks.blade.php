@@ -13,7 +13,7 @@
             <div class="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-4 overflow-hidden relative" style="height: 450px; position: relative;">
                 <div id="worldMapContainer" style="width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 8px;">
                     <!-- Mapa mundial con imagen de fondo integrada en SVG para mantener alineación perfecta -->
-                    <svg viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10;" class="world-map-svg" preserveAspectRatio="none">
+                    <svg id="worldMapSvg" viewBox="0 0 1000 500" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10;" class="world-map-svg" preserveAspectRatio="none">
                         <!-- Imagen de fondo del mapa integrada en SVG para mantener alineación -->
                         <image href="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg" x="0" y="0" width="1000" height="500" preserveAspectRatio="none" opacity="0.8" style="filter: brightness(0.95);"/>
                         
@@ -147,6 +147,20 @@
                     'cameroon'     => '🇨🇲 Cameroon',
                     'hongkong'     => '🇭🇰 Hong Kong',
                     'southafrica'  => '🇿🇦 South Africa',
+                    // Más opciones extra que también se verán en el mapa
+                    'newyork'      => '🇺🇸 New York',
+                    'mexico'       => '🇲🇽 Ciudad de México',
+                    'buenosaires'  => '🇦🇷 Buenos Aires',
+                    'paris'        => '🇫🇷 Paris',
+                    'berlin'       => '🇩🇪 Berlin',
+                    'rome'         => '🇮🇹 Rome',
+                    'lisbon'       => '🇵🇹 Lisbon',
+                    'singapore'    => '🇸🇬 Singapore',
+                    'bangkok'      => '🇹🇭 Bangkok',
+                    'moscow'       => '🇷🇺 Moscow',
+                    'beijing'      => '🇨🇳 Beijing',
+                    'delhi'        => '🇮🇳 New Delhi',
+                    'auckland'     => '🇳🇿 Auckland',
                 ];
 
                 // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
@@ -219,18 +233,32 @@
     // World Clocks - Solo inicializar si no existe ya
     if (typeof updateWorldClocks === 'undefined') {
         const timezones = {
-            montreal:    { label: 'Montreal',             tz: 'America/Toronto' },
-            london:      { label: 'London',               tz: 'Europe/London' },
-            tokyo:       { label: 'Tokyo',                tz: 'Asia/Tokyo' },
-            sydney:      { label: 'Sydney',               tz: 'Australia/Sydney' },
-            dubai:       { label: 'Dubai',                tz: 'Asia/Dubai' },
-            saopaulo:    { label: 'São Paulo',            tz: 'America/Sao_Paulo' },
-            la:          { label: 'Los Angeles',          tz: 'America/Los_Angeles' },
-            madrid:      { label: 'Madrid',               tz: 'Europe/Madrid' },
-            sanjosecr:   { label: 'San José, Costa Rica', tz: 'America/Costa_Rica' },
-            cameroon:    { label: 'Cameroon',             tz: 'Africa/Douala' },
-            hongkong:    { label: 'Hong Kong',            tz: 'Asia/Hong_Kong' },
-            southafrica: { label: 'South Africa',         tz: 'Africa/Johannesburg' },
+            montreal:    { label: 'Montreal',             tz: 'America/Toronto',               lat: 45.5017,  lon: -73.5673,  code: 'MTL', color: '#ef4444' },
+            london:      { label: 'London',               tz: 'Europe/London',                 lat: 51.5074,  lon: -0.1278,   code: 'LDN', color: '#3b82f6' },
+            tokyo:       { label: 'Tokyo',                tz: 'Asia/Tokyo',                    lat: 35.6762,  lon: 139.6503,  code: 'TKY', color: '#10b981' },
+            sydney:      { label: 'Sydney',               tz: 'Australia/Sydney',              lat: -33.8688, lon: 151.2093,  code: 'SYD', color: '#f59e0b' },
+            dubai:       { label: 'Dubai',                tz: 'Asia/Dubai',                    lat: 25.2048,  lon: 55.2708,   code: 'DXB', color: '#8b5cf6' },
+            saopaulo:    { label: 'São Paulo',            tz: 'America/Sao_Paulo',             lat: -23.5558, lon: -46.6396,  code: 'SP',  color: '#ec4899' },
+            la:          { label: 'Los Angeles',          tz: 'America/Los_Angeles',           lat: 34.0522,  lon: -118.2437, code: 'LA',  color: '#06b6d4' },
+            madrid:      { label: 'Madrid',               tz: 'Europe/Madrid',                 lat: 40.4168,  lon: -3.7038,   code: 'MAD', color: '#14b8a6' },
+            sanjosecr:   { label: 'San José, Costa Rica', tz: 'America/Costa_Rica',            lat: 9.9281,   lon: -84.0907,  code: 'SJO', color: '#a855f7' },
+            cameroon:    { label: 'Cameroon',             tz: 'Africa/Douala',                 lat: 4.0511,   lon: 9.7679,    code: 'CMR', color: '#22c55e' },
+            hongkong:    { label: 'Hong Kong',            tz: 'Asia/Hong_Kong',                lat: 22.3193,  lon: 114.1694,  code: 'HKG', color: '#0ea5e9' },
+            southafrica: { label: 'South Africa',         tz: 'Africa/Johannesburg',           lat: -26.2041, lon: 28.0473,   code: 'SA',  color: '#f97316' },
+            // Extra cities que también tendrán punto dinámico en el mapa
+            newyork:     { label: 'New York',             tz: 'America/New_York',              lat: 40.7128,  lon: -74.0060,  code: 'NYC', color: '#16a34a' },
+            mexico:      { label: 'Ciudad de México',     tz: 'America/Mexico_City',           lat: 19.4326,  lon: -99.1332,  code: 'CDMX',color: '#22c55e' },
+            buenosaires: { label: 'Buenos Aires',         tz: 'America/Argentina/Buenos_Aires',lat: -34.6037, lon: -58.3816,  code: 'BA',  color: '#e11d48' },
+            paris:       { label: 'Paris',                tz: 'Europe/Paris',                  lat: 48.8566,  lon: 2.3522,    code: 'PAR', color: '#6366f1' },
+            berlin:      { label: 'Berlin',               tz: 'Europe/Berlin',                 lat: 52.5200,  lon: 13.4050,   code: 'BER', color: '#0891b2' },
+            rome:        { label: 'Rome',                 tz: 'Europe/Rome',                   lat: 41.9028,  lon: 12.4964,   code: 'ROM', color: '#d97706' },
+            lisbon:      { label: 'Lisbon',               tz: 'Europe/Lisbon',                 lat: 38.7223,  lon: -9.1393,   code: 'LIS', color: '#22c55e' },
+            singapore:   { label: 'Singapore',            tz: 'Asia/Singapore',                lat: 1.3521,   lon: 103.8198,  code: 'SGP', color: '#db2777' },
+            bangkok:     { label: 'Bangkok',              tz: 'Asia/Bangkok',                  lat: 13.7563,  lon: 100.5018,  code: 'BKK', color: '#10b981' },
+            moscow:      { label: 'Moscow',               tz: 'Europe/Moscow',                 lat: 55.7558,  lon: 37.6173,   code: 'MOW', color: '#3b82f6' },
+            beijing:     { label: 'Beijing',              tz: 'Asia/Shanghai',                 lat: 39.9042,  lon: 116.4074,  code: 'BJ',  color: '#ef4444' },
+            delhi:       { label: 'New Delhi',            tz: 'Asia/Kolkata',                  lat: 28.6139,  lon: 77.2090,   code: 'DEL', color: '#f97316' },
+            auckland:    { label: 'Auckland',             tz: 'Pacific/Auckland',              lat: -36.8485, lon: 174.7633,  code: 'AKL', color: '#22d3ee' },
         };
 
         function updateWorldClocks() {
@@ -273,7 +301,8 @@
             // Luego, actualizar los relojes del mapa y mostrar solo los puntos de las ciudades activas
             Object.keys(timezones).forEach(city => {
                 try {
-                    const tz = timezones[city].tz;
+                    const config = timezones[city];
+                    const tz = config.tz;
                     const now = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -284,7 +313,77 @@
                         mapClockElement.textContent = `${hours}:${minutes}:${seconds}`;
                     }
 
-                    const markerGroup = document.querySelector(`.city-marker[data-city="${city}"]`);
+                    let markerGroup = document.querySelector(`.city-marker[data-city="${city}"]`);
+
+                    // Si no existe marcador y tenemos lat/lon, crearlo dinámicamente
+                    if (!markerGroup && typeof config.lat === 'number' && typeof config.lon === 'number') {
+                        const svg = document.getElementById('worldMapSvg');
+                        if (svg) {
+                            const xmlns = 'http://www.w3.org/2000/svg';
+                            markerGroup = document.createElementNS(xmlns, 'g');
+                            markerGroup.classList.add('city-marker');
+                            markerGroup.setAttribute('data-city', city);
+
+                            const x = ((config.lon + 180) / 360) * 1000;
+                            const y = ((90 - config.lat) / 180) * 500;
+
+                            const circleOuter = document.createElementNS(xmlns, 'circle');
+                            circleOuter.setAttribute('cx', x);
+                            circleOuter.setAttribute('cy', y);
+                            circleOuter.setAttribute('r', 4);
+                            circleOuter.setAttribute('fill', config.color || '#8b5cf6');
+                            circleOuter.setAttribute('stroke', '#fff');
+                            circleOuter.setAttribute('stroke-width', '1.5');
+                            circleOuter.setAttribute('class', 'city-dot');
+                            circleOuter.setAttribute('opacity', '0.9');
+                            markerGroup.appendChild(circleOuter);
+
+                            const circleInner = document.createElementNS(xmlns, 'circle');
+                            circleInner.setAttribute('cx', x);
+                            circleInner.setAttribute('cy', y);
+                            circleInner.setAttribute('r', 3);
+                            circleInner.setAttribute('fill', '#fff');
+                            circleInner.setAttribute('class', 'city-pulse');
+                            markerGroup.appendChild(circleInner);
+
+                            const label = document.createElementNS(xmlns, 'text');
+                            label.setAttribute('x', x - 10);
+                            label.setAttribute('y', y - 12);
+                            label.setAttribute('text-anchor', 'middle');
+                            label.setAttribute('fill', '#fff');
+                            label.setAttribute('font-size', '8');
+                            label.setAttribute('font-weight', 'bold');
+                            label.setAttribute('style', 'text-shadow: 0 1px 2px rgba(0,0,0,0.5);');
+                            label.textContent = config.code || (config.label || city).substring(0, 3).toUpperCase();
+                            markerGroup.appendChild(label);
+
+                            const rect = document.createElementNS(xmlns, 'rect');
+                            rect.setAttribute('x', x + 8);
+                            rect.setAttribute('y', y + 10);
+                            rect.setAttribute('width', 60);
+                            rect.setAttribute('height', 18);
+                            rect.setAttribute('rx', 4);
+                            rect.setAttribute('fill', 'rgba(255,255,255,0.95)');
+                            rect.setAttribute('stroke', config.color || '#8b5cf6');
+                            rect.setAttribute('stroke-width', '1.5');
+                            rect.setAttribute('opacity', '0.95');
+                            markerGroup.appendChild(rect);
+
+                            const text = document.createElementNS(xmlns, 'text');
+                            text.setAttribute('x', x + 38);
+                            text.setAttribute('y', y + 24);
+                            text.setAttribute('text-anchor', 'middle');
+                            text.setAttribute('fill', '#1e293b');
+                            text.setAttribute('font-size', '10');
+                            text.setAttribute('font-weight', 'bold');
+                            text.setAttribute('id', `map-clock-${city}`);
+                            text.textContent = '--:--';
+                            markerGroup.appendChild(text);
+
+                            svg.appendChild(markerGroup);
+                        }
+                    }
+
                     if (markerGroup) {
                         if (activeCities.has(city)) {
                             markerGroup.style.display = 'block';

@@ -4636,6 +4636,101 @@ Route::get('/walee-herramientas', function () {
     return view('walee-herramientas');
 })->middleware(['auth'])->name('walee.herramientas');
 
+// Productos Super
+Route::get('/walee-productos-super', function () {
+    return view('walee-productos-super');
+})->middleware(['auth'])->name('walee.productos.super');
+
+Route::post('/walee-productos-super', function (\Illuminate\Http\Request $request) {
+    try {
+        $producto = new \App\Models\ProductoSuper();
+        $producto->nombre = $request->input('nombre');
+        $producto->descripcion = $request->input('descripcion');
+        $producto->precio = $request->input('precio');
+        $producto->categoria = $request->input('categoria');
+        $producto->stock = $request->input('stock', 0);
+        $producto->codigo_barras = $request->input('codigo_barras');
+        $producto->activo = $request->input('activo', true);
+        $producto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto creado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.super.store');
+
+Route::get('/walee-productos-super/{id}', function ($id) {
+    try {
+        $producto = \App\Models\ProductoSuper::findOrFail($id);
+        
+        return response()->json([
+            'success' => true,
+            'producto' => [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'descripcion' => $producto->descripcion,
+                'precio' => $producto->precio,
+                'categoria' => $producto->categoria,
+                'stock' => $producto->stock,
+                'codigo_barras' => $producto->codigo_barras,
+                'activo' => $producto->activo,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.super.show');
+
+Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $producto = \App\Models\ProductoSuper::findOrFail($id);
+        $producto->nombre = $request->input('nombre');
+        $producto->descripcion = $request->input('descripcion');
+        $producto->precio = $request->input('precio');
+        $producto->categoria = $request->input('categoria');
+        $producto->stock = $request->input('stock', 0);
+        $producto->codigo_barras = $request->input('codigo_barras');
+        $producto->activo = $request->input('activo', true);
+        $producto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto actualizado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.super.update');
+
+Route::delete('/walee-productos-super/{id}', function ($id) {
+    try {
+        $producto = \App\Models\ProductoSuper::findOrFail($id);
+        $producto->delete();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto eliminado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.super.delete');
+
 // Google Sheets Viewer
 Route::get('/walee-google-sheets', function () {
     return view('walee-google-sheets');

@@ -22,14 +22,15 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-bottom: 2px solid #8b5cf6;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
         .header-left {
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
         }
         .logo {
             width: 45px;
@@ -42,20 +43,27 @@
             color: white;
             font-weight: bold;
             font-size: 11pt;
+            flex-shrink: 0;
+        }
+        .header-left > div:last-child {
+            flex: 1;
         }
         .header-right {
             text-align: right;
+            flex-shrink: 0;
         }
         .factura-title {
             font-size: 18pt;
             font-weight: bold;
             color: #8b5cf6;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
+            line-height: 1.2;
         }
         .factura-number {
             font-size: 13pt;
             font-weight: bold;
             color: #333;
+            line-height: 1.3;
         }
         .estado {
             display: inline-block;
@@ -63,7 +71,8 @@
             border-radius: 15px;
             font-size: 8pt;
             font-weight: bold;
-            margin-top: 3px;
+            margin-top: 4px;
+            line-height: 1.2;
         }
         .estado-pagada {
             background-color: #10b981;
@@ -76,9 +85,9 @@
         .datos-section {
             display: flex;
             justify-content: space-between;
-            align-items: stretch;
+            align-items: flex-start;
             gap: 20px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .datos-box {
             background: #f9fafb;
@@ -86,23 +95,25 @@
             border-radius: 6px;
             border-left: 3px solid #8b5cf6;
             flex: 1;
-            display: flex;
-            flex-direction: column;
+            min-width: 0;
         }
         .datos-title {
             font-weight: bold;
             color: #8b5cf6;
             margin-bottom: 6px;
             font-size: 10pt;
+            line-height: 1.3;
         }
         .datos-content {
             font-size: 9pt;
             color: #555;
-            line-height: 1.4;
-            flex: 1;
+            line-height: 1.5;
         }
         .datos-content > div {
-            margin-bottom: 2px;
+            margin-bottom: 3px;
+        }
+        .datos-content > div:last-child {
+            margin-bottom: 0;
         }
         .datos-box.cliente-box {
             text-align: right;
@@ -316,7 +327,7 @@
     
     <!-- Datos del Emisor y Cliente -->
     <div class="datos-section">
-        <div class="datos-box" style="flex: 1;">
+        <div class="datos-box">
             <div class="datos-title">Datos del emisor</div>
             <div class="datos-content">
                 <div><strong>WebSolutions.Work</strong></div>
@@ -327,7 +338,7 @@
             </div>
         </div>
         
-        <div class="datos-box cliente-box" style="flex: 1;">
+        <div class="datos-box cliente-box">
             <div class="datos-title">Datos del cliente</div>
             <div class="datos-content">
                 @if($cliente)
@@ -335,13 +346,13 @@
                     @if($cliente->direccion)
                         <div>{{ $cliente->direccion }}</div>
                     @endif
-                    <div>Costa Rica</div>
                     @if($cliente->telefono)
                         <div>{{ $cliente->telefono }}</div>
                     @endif
                     @if($cliente->correo)
                         <div>{{ $cliente->correo }}</div>
                     @endif
+                    <div>Costa Rica</div>
                 @else
                     <div><strong>{{ $data['correo'] ?? 'N/A' }}</strong></div>
                 @endif
@@ -356,7 +367,7 @@
             <span class="info-value">{{ $data['numero_orden'] ?? ($data['numero_factura'] ?? 'N/A') }}</span>
         </div>
         <div class="info-item">
-            <span class="info-label">Fecha:</span>
+            <span class="info-label">Fecha de emisión:</span>
             <span class="info-value">{{ isset($data['fecha_emision']) ? \Carbon\Carbon::parse($data['fecha_emision'])->format('d/m/Y') : date('d/m/Y') }}</span>
         </div>
     </div>
@@ -366,6 +377,9 @@
         <div class="info-item">
             <span class="info-label">Fecha de vencimiento:</span>
             <span class="info-value">{{ \Carbon\Carbon::parse($data['fecha_vencimiento'])->format('d/m/Y') }}</span>
+        </div>
+        <div class="info-item">
+            <!-- Espacio vacío para mantener alineación -->
         </div>
     </div>
     @endif
@@ -430,6 +444,11 @@
             <div class="totals-row">
                 <span>Subtotal:</span>
                 <span><strong>${{ number_format($subtotalConDescuento, 2, '.', ',') }}</strong></span>
+            </div>
+            
+            <div class="totals-row">
+                <span>IVA (13%):</span>
+                <span><strong>${{ number_format($iva, 2, '.', ',') }}</strong></span>
             </div>
             
             @if($descuentoDespues > 0)

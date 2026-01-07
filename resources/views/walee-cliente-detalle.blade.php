@@ -336,6 +336,80 @@
             outline-color: #D59F3B !important;
             background-color: #f8fafc !important;
         }
+        
+        /* Estilos para la sección de Template HTML */
+        .template-content {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .template-content img {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block;
+            margin: 1rem 0;
+        }
+        
+        .template-content table {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+        }
+        
+        .template-content table td,
+        .template-content table th {
+            padding: 0.5rem;
+            word-wrap: break-word;
+        }
+        
+        .template-content iframe,
+        .template-content video,
+        .template-content embed {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        
+        .template-content pre {
+            overflow-x: auto;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        .template-content code {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        /* Responsive para mobile */
+        @media (max-width: 640px) {
+            .template-content {
+                font-size: 0.875rem;
+            }
+            
+            .template-content h1,
+            .template-content h2,
+            .template-content h3,
+            .template-content h4,
+            .template-content h5,
+            .template-content h6 {
+                font-size: 1.1em;
+                margin-top: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .template-content p {
+                margin-bottom: 0.75rem;
+            }
+            
+            .template-content ul,
+            .template-content ol {
+                padding-left: 1.25rem;
+                margin-bottom: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen transition-colors duration-200">
@@ -1229,6 +1303,27 @@
                             referrerpolicy="no-referrer-when-downgrade"
                             src="https://www.google.com/maps?q={{ urlencode($ubicacion) }}&output=embed&zoom={{ !empty($cliente->direccion) ? '15' : '13' }}">
                         </iframe>
+                    </div>
+                </div>
+            </div>
+            @endif
+            
+            <!-- Template HTML Section -->
+            @if($cliente->template && !empty(trim($cliente->template)))
+            <div class="mb-4 sm:mb-6 mt-4 sm:mt-6">
+                <div class="bg-white dark:bg-slate-800/50 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                    <div class="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700">
+                        <h3 class="text-sm sm:text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Template HTML
+                        </h3>
+                    </div>
+                    <div class="p-3 sm:p-4 sm:p-6">
+                        <div class="template-content prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-headings:text-slate-900 dark:prose-headings:text-white prose-p:text-slate-700 dark:prose-p:text-slate-300 prose-a:text-violet-600 dark:prose-a:text-violet-400 prose-strong:text-slate-900 dark:prose-strong:text-white prose-img:rounded-lg prose-img:shadow-md">
+                            {!! $cliente->template !!}
+                        </div>
                     </div>
                 </div>
             </div>

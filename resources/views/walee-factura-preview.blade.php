@@ -7,24 +7,24 @@
     <title>Factura - {{ $data['numero_factura'] ?? 'N/A' }}</title>
     <style>
         @page {
-            margin: 20mm;
+            margin: 15mm;
         }
         * {
             font-family: 'DejaVu Sans', Arial, sans-serif;
         }
         body {
             font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 11pt;
+            font-size: 10pt;
             color: #333;
-            line-height: 1.4;
+            line-height: 1.3;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #8b5cf6;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
         }
         .header-left {
             display: flex;
@@ -32,38 +32,38 @@
             gap: 15px;
         }
         .logo {
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 14pt;
+            font-size: 11pt;
         }
         .header-right {
             text-align: right;
         }
         .factura-title {
-            font-size: 24pt;
+            font-size: 18pt;
             font-weight: bold;
             color: #8b5cf6;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
         .factura-number {
-            font-size: 16pt;
+            font-size: 13pt;
             font-weight: bold;
             color: #333;
         }
         .estado {
             display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 10pt;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 8pt;
             font-weight: bold;
-            margin-top: 5px;
+            margin-top: 3px;
         }
         .estado-pagada {
             background-color: #10b981;
@@ -77,26 +77,26 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 30px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 12px;
         }
         .datos-box {
             background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #8b5cf6;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #8b5cf6;
             flex: 1;
         }
         .datos-title {
             font-weight: bold;
             color: #8b5cf6;
-            margin-bottom: 10px;
-            font-size: 12pt;
+            margin-bottom: 6px;
+            font-size: 10pt;
         }
         .datos-content {
-            font-size: 10pt;
+            font-size: 9pt;
             color: #555;
-            line-height: 1.6;
+            line-height: 1.4;
         }
         .datos-box.cliente-box {
             text-align: right;
@@ -110,9 +110,9 @@
         .info-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            font-size: 10pt;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 9pt;
         }
         .info-item {
             display: flex;
@@ -128,17 +128,17 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
         thead {
             background-color: #8b5cf6;
             color: white;
         }
         th {
-            padding: 12px 8px;
+            padding: 6px 6px;
             text-align: left;
             font-weight: bold;
-            font-size: 10pt;
+            font-size: 9pt;
         }
         th.text-center {
             text-align: center;
@@ -147,9 +147,9 @@
             text-align: right;
         }
         td {
-            padding: 10px 8px;
+            padding: 5px 6px;
             border-bottom: 1px solid #e5e7eb;
-            font-size: 10pt;
+            font-size: 9pt;
         }
         td.text-center {
             text-align: center;
@@ -160,11 +160,12 @@
         .item-descripcion {
             font-weight: 500;
             color: #333;
+            font-size: 9pt;
         }
         .item-detalle {
-            font-size: 9pt;
+            font-size: 8pt;
             color: #666;
-            margin-top: 3px;
+            margin-top: 2px;
             font-style: italic;
         }
         .descuento-badge {
@@ -177,8 +178,8 @@
             margin-left: 5px;
         }
         .totals-section {
-            margin-top: 20px;
-            margin-bottom: 30px;
+            margin-top: 12px;
+            margin-bottom: 15px;
         }
         .totals-table {
             width: 100%;
@@ -188,37 +189,38 @@
         .totals-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 4px 0;
             border-bottom: 1px solid #e5e7eb;
+            font-size: 9pt;
         }
         .totals-row.total {
             background-color: #8b5cf6;
             color: white;
-            padding: 12px 15px;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border-radius: 4px;
             font-weight: bold;
-            font-size: 14pt;
-            margin-top: 10px;
+            font-size: 12pt;
+            margin-top: 6px;
         }
         .pagos-section {
-            margin-top: 30px;
+            margin-top: 15px;
             page-break-inside: avoid;
         }
         .pagos-title {
             font-weight: bold;
-            font-size: 12pt;
+            font-size: 10pt;
             color: #8b5cf6;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
         .terminos {
-            margin-top: 30px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 10px;
             background: #f9fafb;
-            border-left: 4px solid #8b5cf6;
-            border-radius: 6px;
-            font-size: 9pt;
+            border-left: 3px solid #8b5cf6;
+            border-radius: 4px;
+            font-size: 8pt;
             color: #555;
-            line-height: 1.6;
+            line-height: 1.4;
         }
         .page-number {
             text-align: right;

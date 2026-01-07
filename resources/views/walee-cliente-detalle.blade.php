@@ -359,22 +359,154 @@
         
         // Determinar zona horaria del cliente basada en ciudad y address
         $cityTimezones = [
-            'madrid' => 'Europe/Madrid', 'barcelona' => 'Europe/Madrid', 'valencia' => 'Europe/Madrid', 'sevilla' => 'Europe/Madrid',
-            'new york' => 'America/New_York', 'los angeles' => 'America/Los_Angeles', 'chicago' => 'America/Chicago',
-            'london' => 'Europe/London', 'paris' => 'Europe/Paris', 'berlin' => 'Europe/Berlin',
-            'rome' => 'Europe/Rome', 'milan' => 'Europe/Rome', 'lisbon' => 'Europe/Lisbon',
-            'méxico' => 'America/Mexico_City', 'mexico' => 'America/Mexico_City', 'guadalajara' => 'America/Mexico_City',
-            'buenos aires' => 'America/Argentina/Buenos_Aires', 'bogotá' => 'America/Bogota', 'bogota' => 'America/Bogota',
-            'santiago' => 'America/Santiago', 'lima' => 'America/Lima', 'são paulo' => 'America/Sao_Paulo', 'sao paulo' => 'America/Sao_Paulo',
-            'toronto' => 'America/Toronto', 'tokyo' => 'Asia/Tokyo', 'sydney' => 'Australia/Sydney', 'dubai' => 'Asia/Dubai',
+            // España
+            'madrid' => 'Europe/Madrid',
+            'barcelona' => 'Europe/Madrid',
+            'valencia' => 'Europe/Madrid',
+            'sevilla' => 'Europe/Madrid',
+            'bilbao' => 'Europe/Madrid',
+            'zaragoza' => 'Europe/Madrid',
+            'málaga' => 'Europe/Madrid',
+            'murcia' => 'Europe/Madrid',
+            'córdoba' => 'Europe/Madrid',
+            'palma' => 'Europe/Madrid',
+            
+            // Estados Unidos
+            'new york' => 'America/New_York',
+            'los angeles' => 'America/Los_Angeles',
+            'chicago' => 'America/Chicago',
+            'houston' => 'America/Chicago',
+            'phoenix' => 'America/Phoenix',
+            'philadelphia' => 'America/New_York',
+            'san antonio' => 'America/Chicago',
+            'san diego' => 'America/Los_Angeles',
+            'dallas' => 'America/Chicago',
+            'san jose' => 'America/Los_Angeles',
+            'miami' => 'America/New_York',
+            'atlanta' => 'America/New_York',
+            'boston' => 'America/New_York',
+            'seattle' => 'America/Los_Angeles',
+            'denver' => 'America/Denver',
+            
+            // Reino Unido
+            'london' => 'Europe/London',
+            'manchester' => 'Europe/London',
+            'birmingham' => 'Europe/London',
+            'glasgow' => 'Europe/London',
+            'liverpool' => 'Europe/London',
+            'edinburgh' => 'Europe/London',
+            
+            // Francia
+            'paris' => 'Europe/Paris',
+            'lyon' => 'Europe/Paris',
+            'marseille' => 'Europe/Paris',
+            'toulouse' => 'Europe/Paris',
+            'nice' => 'Europe/Paris',
+            
+            // Alemania
+            'berlin' => 'Europe/Berlin',
+            'munich' => 'Europe/Berlin',
+            'hamburg' => 'Europe/Berlin',
+            'frankfurt' => 'Europe/Berlin',
+            'cologne' => 'Europe/Berlin',
+            'stuttgart' => 'Europe/Berlin',
+            
+            // Italia
+            'rome' => 'Europe/Rome',
+            'milano' => 'Europe/Rome',
+            'milan' => 'Europe/Rome',
+            'naples' => 'Europe/Rome',
+            'napoli' => 'Europe/Rome',
+            'turin' => 'Europe/Rome',
+            'palermo' => 'Europe/Rome',
+            
+            // Portugal
+            'lisbon' => 'Europe/Lisbon',
+            'lisboa' => 'Europe/Lisbon',
+            'porto' => 'Europe/Lisbon',
+            
+            // México
+            'méxico' => 'America/Mexico_City',
+            'mexico' => 'America/Mexico_City',
+            'mexico city' => 'America/Mexico_City',
+            'guadalajara' => 'America/Mexico_City',
+            'monterrey' => 'America/Monterrey',
+            
+            // Argentina
+            'buenos aires' => 'America/Argentina/Buenos_Aires',
+            'córdoba' => 'America/Argentina/Cordoba',
+            
+            // Colombia
+            'bogotá' => 'America/Bogota',
+            'bogota' => 'America/Bogota',
+            'medellín' => 'America/Bogota',
+            'medellin' => 'America/Bogota',
+            
+            // Chile
+            'santiago' => 'America/Santiago',
+            
+            // Perú
+            'lima' => 'America/Lima',
+            
+            // Brasil
+            'são paulo' => 'America/Sao_Paulo',
+            'sao paulo' => 'America/Sao_Paulo',
+            'rio de janeiro' => 'America/Sao_Paulo',
+            'brasilia' => 'America/Sao_Paulo',
+            
+            // Canadá
+            'toronto' => 'America/Toronto',
+            'montreal' => 'America/Toronto',
+            'vancouver' => 'America/Vancouver',
+            
+            // Asia
+            'tokyo' => 'Asia/Tokyo',
+            'beijing' => 'Asia/Shanghai',
+            'shanghai' => 'Asia/Shanghai',
+            'hong kong' => 'Asia/Hong_Kong',
+            'singapore' => 'Asia/Singapore',
+            'dubai' => 'Asia/Dubai',
+            'mumbai' => 'Asia/Kolkata',
+            'delhi' => 'Asia/Kolkata',
+            
+            // Australia
+            'sydney' => 'Australia/Sydney',
+            'melbourne' => 'Australia/Melbourne',
+            'brisbane' => 'Australia/Brisbane',
         ];
         
         $countryTimezones = [
-            'spain' => 'Europe/Madrid', 'españa' => 'Europe/Madrid', 'united states' => 'America/New_York', 'usa' => 'America/New_York',
-            'united kingdom' => 'Europe/London', 'uk' => 'Europe/London', 'france' => 'Europe/Paris', 'germany' => 'Europe/Berlin',
-            'italy' => 'Europe/Rome', 'portugal' => 'Europe/Lisbon', 'mexico' => 'America/Mexico_City', 'argentina' => 'America/Argentina/Buenos_Aires',
-            'colombia' => 'America/Bogota', 'chile' => 'America/Santiago', 'peru' => 'America/Lima', 'brazil' => 'America/Sao_Paulo',
-            'canada' => 'America/Toronto', 'costa rica' => 'America/Costa_Rica',
+            'spain' => 'Europe/Madrid',
+            'españa' => 'Europe/Madrid',
+            'united states' => 'America/New_York',
+            'usa' => 'America/New_York',
+            'estados unidos' => 'America/New_York',
+            'united kingdom' => 'Europe/London',
+            'uk' => 'Europe/London',
+            'reino unido' => 'Europe/London',
+            'france' => 'Europe/Paris',
+            'francia' => 'Europe/Paris',
+            'germany' => 'Europe/Berlin',
+            'alemania' => 'Europe/Berlin',
+            'italy' => 'Europe/Rome',
+            'italia' => 'Europe/Rome',
+            'portugal' => 'Europe/Lisbon',
+            'mexico' => 'America/Mexico_City',
+            'méxico' => 'America/Mexico_City',
+            'argentina' => 'America/Argentina/Buenos_Aires',
+            'colombia' => 'America/Bogota',
+            'chile' => 'America/Santiago',
+            'peru' => 'America/Lima',
+            'perú' => 'America/Lima',
+            'brazil' => 'America/Sao_Paulo',
+            'brasil' => 'America/Sao_Paulo',
+            'canada' => 'America/Toronto',
+            'canadá' => 'America/Toronto',
+            'costa rica' => 'America/Costa_Rica',
+            'japan' => 'Asia/Tokyo',
+            'japón' => 'Asia/Tokyo',
+            'china' => 'Asia/Shanghai',
+            'australia' => 'Australia/Sydney',
         ];
         
         $langTimezones = [
@@ -382,41 +514,91 @@
             'de' => 'Europe/Berlin', 'it' => 'Europe/Rome', 'pt' => 'Europe/Lisbon'
         ];
         
+        // Función para buscar ciudad en un texto
         $findCityInText = function($text) use ($cityTimezones) {
             if (empty($text)) return null;
             $textLower = strtolower(trim($text));
+            // Buscar ciudades en orden de longitud (más específicas primero)
             $sortedCities = array_keys($cityTimezones);
-            usort($sortedCities, function($a, $b) { return strlen($b) - strlen($a); });
+            usort($sortedCities, function($a, $b) {
+                return strlen($b) - strlen($a);
+            });
             foreach ($sortedCities as $city) {
-                if (strpos($textLower, $city) !== false) return $cityTimezones[$city];
+                if (strpos($textLower, $city) !== false) {
+                    return $cityTimezones[$city];
+                }
             }
             return null;
         };
         
+        // Función para buscar país en un texto
         $findCountryInText = function($text) use ($countryTimezones) {
             if (empty($text)) return null;
             $textLower = strtolower(trim($text));
             foreach ($countryTimezones as $country => $tz) {
-                if (strpos($textLower, $country) !== false) return $tz;
+                if (strpos($textLower, $country) !== false) {
+                    return $tz;
+                }
             }
             return null;
         };
         
+        // Determinar zona horaria: primero por ciudad (campo ciudad), luego por address/direccion, luego por país, luego por idioma
         $clientTimezone = null;
+        $timezoneSource = null; // Para el tooltip
+        
+        // 1. Buscar por campo ciudad
         if ($cliente->ciudad) {
             $clientTimezone = $findCityInText($cliente->ciudad);
+            if ($clientTimezone) {
+                $timezoneSource = 'ciudad: ' . $cliente->ciudad;
+            }
         }
+        
+        // 2. Si no se encontró, buscar en el campo address
         if (!$clientTimezone && $cliente->address) {
             $clientTimezone = $findCityInText($cliente->address);
+            if ($clientTimezone) {
+                $timezoneSource = 'address: ' . (strlen($cliente->address) > 30 ? substr($cliente->address, 0, 30) . '...' : $cliente->address);
+            }
         }
+        
+        // 3. Si no se encontró, buscar en el campo direccion
+        if (!$clientTimezone && $cliente->direccion) {
+            $clientTimezone = $findCityInText($cliente->direccion);
+            if ($clientTimezone) {
+                $timezoneSource = 'direccion: ' . (strlen($cliente->direccion) > 30 ? substr($cliente->direccion, 0, 30) . '...' : $cliente->direccion);
+            }
+        }
+        
+        // 4. Si no se encontró ciudad, buscar país en address
         if (!$clientTimezone && $cliente->address) {
             $clientTimezone = $findCountryInText($cliente->address);
+            if ($clientTimezone) {
+                $timezoneSource = 'address (país)';
+            }
         }
+        
+        // 5. Si no se encontró, buscar país en direccion
+        if (!$clientTimezone && $cliente->direccion) {
+            $clientTimezone = $findCountryInText($cliente->direccion);
+            if ($clientTimezone) {
+                $timezoneSource = 'direccion (país)';
+            }
+        }
+        
+        // 6. Si no se encontró, buscar país en campo ciudad
         if (!$clientTimezone && $cliente->ciudad) {
             $clientTimezone = $findCountryInText($cliente->ciudad);
+            if ($clientTimezone) {
+                $timezoneSource = 'ciudad (país)';
+            }
         }
+        
+        // 7. Si no se encontró, usar idioma como fallback
         if (!$clientTimezone && $cliente->idioma && isset($langTimezones[$cliente->idioma])) {
             $clientTimezone = $langTimezones[$cliente->idioma];
+            $timezoneSource = 'idioma: ' . $cliente->idioma;
         }
         
         // Obtener hora del sistema (Costa Rica)

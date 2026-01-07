@@ -10,6 +10,10 @@
         @php
             $lang = $language ?? 'en';
             $name = $cliente && $cliente->nombre_empresa ? ' ' . $cliente->nombre_empresa : '';
+            $issueDate = $factura->fecha_emision ? $factura->fecha_emision->format('Y-m-d') : null;
+            $dueDate = $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : null;
+            $total = number_format((float) $factura->total, 2, '.', ',');
+            $vat = number_format((float) ($factura->subtotal * 0.13), 2, '.', ',');
         @endphp
 
         @if($lang === 'es')
@@ -18,6 +22,19 @@
 Esperamos que se encuentre bien.
 
 Le enviamos la factura adjunta a este correo.
+
+Detalles fiscales:
+- Número de factura: {{ $factura->numero_factura }}
+@if($issueDate)
+- Fecha de emisión: {{ $issueDate }}
+@endif
+@if($dueDate)
+- Fecha de vencimiento: {{ $dueDate }}
+@endif
+- Importe total: ${{ $total }} USD
+- IVA (13%): ${{ $vat }} USD
+
+Moneda: USD (Dólar estadounidense).
 
 Saludos cordiales,
 Web Solutions</p>
@@ -28,6 +45,19 @@ Nous espérons que vous allez bien.
 
 Nous vous envoyons la facture en pièce jointe à cet e-mail.
 
+Détails fiscaux :
+- Numéro de facture : {{ $factura->numero_factura }}
+@if($issueDate)
+- Date d'émission : {{ $issueDate }}
+@endif
+@if($dueDate)
+- Date d'échéance : {{ $dueDate }}
+@endif
+- Montant total : ${{ $total }} USD
+- TVA (13 %) : ${{ $vat }} USD
+
+Devise : USD (dollar américain).
+
 Cordialement,
 Web Solutions</p>
         @else
@@ -36,6 +66,19 @@ Web Solutions</p>
 We hope you are doing well.
 
 Please find your invoice attached to this email.
+
+Fiscal details:
+- Invoice number: {{ $factura->numero_factura }}
+@if($issueDate)
+- Issue date: {{ $issueDate }}
+@endif
+@if($dueDate)
+- Due date: {{ $dueDate }}
+@endif
+- Total amount: ${{ $total }} USD
+- VAT (13%): ${{ $vat }} USD
+
+Currency: USD (US Dollar).
 
 Best regards,
 Web Solutions</p>

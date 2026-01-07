@@ -336,9 +336,9 @@
                             @else {{ $concepto }}
                             @endif
                         </td>
-                        <td class="text-right">${{ number_format($subtotal ?? 0, 2) }}</td>
-                        <td class="text-right">${{ number_format(($total ?? 0) - ($subtotal ?? 0), 2) }}</td>
-                        <td class="text-right"><strong>${{ number_format($total ?? 0, 2) }}</strong></td>
+                        <td class="text-right">${{ number_format($subtotal ?? 0, 2, '.', ',') }}</td>
+                        <td class="text-right">${{ number_format(($total ?? 0) - ($subtotal ?? 0), 2, '.', ',') }}</td>
+                        <td class="text-right"><strong>${{ number_format($total ?? 0, 2, '.', ',') }}</strong></td>
                     </tr>
                 </tbody>
             </table>

@@ -328,7 +328,7 @@
                             <div class="text-xs text-amber-600/80 dark:text-amber-400/70">Pendientes</div>
                         </div>
                         <div class="bg-blue-50 dark:bg-blue-500/10 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-blue-600 dark:text-blue-400">₡{{ number_format($totalMonto, 2) }}</div>
+                            <div class="text-xl font-bold text-blue-600 dark:text-blue-400">${{ number_format($totalMonto, 2) }}</div>
                             <div class="text-xs text-blue-600/80 dark:text-blue-400/70">Total</div>
                         </div>
                     </div>
@@ -385,7 +385,7 @@
                                     </p>
                                     <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs text-slate-500 dark:text-slate-400">
                                         <span>{{ \Carbon\Carbon::parse($factura->fecha_emision)->format('d/m/Y') }}</span>
-                                        <span class="font-semibold text-slate-900 dark:text-white text-sm">₡{{ number_format($factura->total, 2) }}</span>
+                                        <span class="font-semibold text-slate-900 dark:text-white text-sm">${{ number_format($factura->total, 2) }}</span>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-4 gap-1.5 sm:flex sm:flex-nowrap sm:gap-2 sm:ml-3">
@@ -533,15 +533,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Facturado</p>
-                            <p class="text-base font-bold text-slate-900 dark:text-white" id="infoTotalFacturado">₡0</p>
+                            <p class="text-base font-bold text-slate-900 dark:text-white" id="infoTotalFacturado">$0</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500" id="infoTotalFacturadoCRC">₡0</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Pagado</p>
-                            <p class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="infoTotalPagado">₡0</p>
+                            <p class="text-base font-bold text-emerald-600 dark:text-emerald-400" id="infoTotalPagado">$0</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500" id="infoTotalPagadoCRC">₡0</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Saldo Pendiente</p>
-                            <p class="text-base font-bold text-red-600 dark:text-red-400" id="infoSaldoPendiente">₡0</p>
+                            <p class="text-base font-bold text-red-600 dark:text-red-400" id="infoSaldoPendiente">$0</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500" id="infoSaldoPendienteCRC">₡0</p>
                         </div>
                         <div>
                             <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Facturas</p>
@@ -610,15 +613,16 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Subtotal</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="subtotal" name="subtotal" value="0" readonly class="w-full pl-7 pr-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
                                 </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5" id="subtotalCRC">₡0</p>
                             </div>
                             
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descuento Antes Impuestos</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="descuento_antes_impuestos" name="descuento_antes_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
@@ -626,9 +630,10 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">IVA (13%)</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="iva" name="iva" value="0" readonly class="w-full pl-7 pr-3 py-2 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white">
                                 </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5" id="ivaCRC">₡0</p>
                             </div>
                         </div>
                         
@@ -636,7 +641,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descuento Después Impuestos</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="descuento_despues_impuestos" name="descuento_despues_impuestos" value="0" oninput="calcularTotales()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none transition-all">
                                 </div>
                             </div>
@@ -644,9 +649,10 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Total <span class="text-red-500 dark:text-red-400">*</span></label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="total" name="total" required value="0" readonly class="w-full pl-7 pr-3 py-2 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-500 dark:border-emerald-500 rounded-lg text-sm text-emerald-700 dark:text-emerald-400 font-bold">
                                 </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5" id="totalCRC">₡0</p>
                             </div>
                         </div>
                         
@@ -654,17 +660,19 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Monto Pagado</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="monto_pagado" name="monto_pagado" value="0" oninput="calcularSaldo()" class="w-full pl-7 pr-3 py-2 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all">
                                 </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5" id="montoPagadoCRC">₡0</p>
                             </div>
                             
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Saldo Pendiente</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">₡</span>
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
                                     <input type="number" step="0.01" id="saldo_pendiente" name="saldo_pendiente" value="0" readonly class="w-full pl-7 pr-3 py-2 bg-red-50 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg text-sm text-red-700 dark:text-red-400 font-semibold">
                                 </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5" id="saldoPendienteCRC">₡0</p>
                             </div>
                         </div>
                         
@@ -813,7 +821,7 @@
                     paquetes.forEach(paquete => {
                         const option = document.createElement('option');
                         option.value = paquete.id;
-                        option.textContent = `${paquete.nombre} - ₡${parseFloat(paquete.precio).toLocaleString()}`;
+                        option.textContent = `${paquete.nombre} - $${parseFloat(paquete.precio).toLocaleString()}`;
                         option.dataset.paquete = JSON.stringify(paquete);
                         select.appendChild(option);
                     });
@@ -834,9 +842,13 @@
                 const response = await fetch(`/walee-facturas/cliente/${clienteId}/info`);
                 const data = await response.json();
                 if (data.success) {
-                    document.getElementById('infoTotalFacturado').textContent = `₡${parseFloat(data.resumen.total_facturado).toLocaleString()}`;
-                    document.getElementById('infoTotalPagado').textContent = `₡${parseFloat(data.resumen.total_pagado).toLocaleString()}`;
-                    document.getElementById('infoSaldoPendiente').textContent = `₡${parseFloat(data.resumen.saldo_pendiente).toLocaleString()}`;
+                    const tasaCambio = {{ $tasaCambio ?? 520 }};
+                    document.getElementById('infoTotalFacturado').textContent = `$${parseFloat(data.resumen.total_facturado).toLocaleString()}`;
+                    document.getElementById('infoTotalFacturadoCRC').textContent = `₡${(parseFloat(data.resumen.total_facturado) * tasaCambio).toLocaleString()}`;
+                    document.getElementById('infoTotalPagado').textContent = `$${parseFloat(data.resumen.total_pagado).toLocaleString()}`;
+                    document.getElementById('infoTotalPagadoCRC').textContent = `₡${(parseFloat(data.resumen.total_pagado) * tasaCambio).toLocaleString()}`;
+                    document.getElementById('infoSaldoPendiente').textContent = `$${parseFloat(data.resumen.saldo_pendiente).toLocaleString()}`;
+                    document.getElementById('infoSaldoPendienteCRC').textContent = `₡${(parseFloat(data.resumen.saldo_pendiente) * tasaCambio).toLocaleString()}`;
                     document.getElementById('infoFacturasCount').textContent = data.resumen.facturas_count;
                     document.getElementById('clienteInfoCard').classList.remove('hidden');
                 }
@@ -1045,6 +1057,7 @@
         
         // Calcular totales
         function calcularTotales() {
+            const tasaCambio = {{ $tasaCambio ?? 520 }};
             const subtotal = items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
             const descuentoAntes = parseFloat(document.getElementById('descuento_antes_impuestos').value) || 0;
             const subtotalConDescuento = subtotal - descuentoAntes;
@@ -1053,8 +1066,11 @@
             const total = subtotalConDescuento + iva - descuentoDespues;
             
             document.getElementById('subtotal').value = subtotal.toFixed(2);
+            document.getElementById('subtotalCRC').textContent = `₡${(subtotal * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             document.getElementById('iva').value = iva.toFixed(2);
+            document.getElementById('ivaCRC').textContent = `₡${(iva * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             document.getElementById('total').value = total.toFixed(2);
+            document.getElementById('totalCRC').textContent = `₡${(total * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             
             calcularSaldo();
         }
@@ -1602,7 +1618,7 @@
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex-1">
                                 <p class="text-sm font-medium">${item.descripcion || 'Sin descripción'}</p>
-                                <p class="text-xs text-slate-500">Cant: ${item.cantidad} x ₡${parseFloat(item.precio_unitario).toLocaleString()} = ₡${parseFloat(item.subtotal).toLocaleString()}</p>
+                                <p class="text-xs text-slate-500">Cant: ${item.cantidad} x $${parseFloat(item.precio_unitario).toLocaleString()} = $${parseFloat(item.subtotal).toLocaleString()}</p>
                             </div>
                             <button onclick="eliminarItemModal(${index})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
                         </div>

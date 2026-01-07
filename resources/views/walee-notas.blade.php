@@ -241,93 +241,95 @@
     
     @include('partials.walee-support-button')
     
-    <!-- Modal para crear/editar nota -->
-    <div id="noteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
-                <h3 id="modalTitle" class="text-xl font-bold text-slate-900 dark:text-white">Nueva Nota</h3>
-            </div>
-            <form id="noteForm" class="p-6">
-                @csrf
-                <input type="hidden" id="noteId" name="note_id">
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
-                    <select 
-                        id="noteType" 
-                        name="type" 
-                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent"
-                    >
-                        <option value="note">Nota</option>
-                        <option value="call">Llamada</option>
-                        <option value="meeting">Reunión</option>
-                        <option value="email">Email</option>
-                    </select>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido</label>
-                    <textarea 
-                        id="noteContent" 
-                        name="content" 
-                        rows="8" 
-                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent resize-none"
-                        placeholder="Escribe tu nota aquí..."
-                        required
-                    ></textarea>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
-                    <input 
-                        type="date" 
-                        id="noteFecha" 
-                        name="fecha" 
-                        value="{{ date('Y-m-d') }}"
-                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent"
-                    >
-                </div>
-                
-                <div class="mb-6">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input 
-                            type="checkbox" 
-                            id="notePinned" 
-                            name="pinned" 
-                            class="w-4 h-4 text-walee-500 border-slate-300 dark:border-slate-600 rounded focus:ring-walee-500"
-                        >
-                        <span class="text-sm text-slate-700 dark:text-slate-300">Fijar nota</span>
-                    </label>
-                </div>
-                
-                <div class="flex items-center justify-end gap-3">
-                    <button 
-                        type="button" 
-                        onclick="closeNoteModal()"
-                        class="px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                    >
-                        Cancelar
-                    </button>
-                    <button 
-                        type="submit"
-                        class="px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors"
-                    >
-                        Guardar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         
         function openCreateNoteModal() {
-            document.getElementById('modalTitle').textContent = 'Nueva Nota';
-            document.getElementById('noteForm').reset();
-            document.getElementById('noteId').value = '';
-            document.getElementById('noteFecha').value = '{{ date('Y-m-d') }}';
-            document.getElementById('noteModal').classList.remove('hidden');
+            Swal.fire({
+                title: 'Nueva Nota',
+                html: `
+                    <form id="swal-note-form">
+                        <div class="mb-4 text-left">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                            <select 
+                                id="swal-note-type" 
+                                name="type" 
+                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent"
+                            >
+                                <option value="note">Nota</option>
+                                <option value="call">Llamada</option>
+                                <option value="meeting">Reunión</option>
+                                <option value="email">Email</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4 text-left">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido</label>
+                            <textarea 
+                                id="swal-note-content" 
+                                name="content" 
+                                rows="8" 
+                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent resize-none"
+                                placeholder="Escribe tu nota aquí..."
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <div class="mb-4 text-left">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
+                            <input 
+                                type="date" 
+                                id="swal-note-fecha" 
+                                name="fecha" 
+                                value="{{ date('Y-m-d') }}"
+                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent"
+                            >
+                        </div>
+                        
+                        <div class="mb-4 text-left">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    id="swal-note-pinned" 
+                                    name="pinned" 
+                                    class="w-4 h-4 text-walee-500 border-slate-300 dark:border-slate-600 rounded focus:ring-walee-500"
+                                >
+                                <span class="text-sm text-slate-700 dark:text-slate-300">Fijar nota</span>
+                            </label>
+                        </div>
+                    </form>
+                `,
+                width: '600px',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#D59F3B',
+                cancelButtonColor: '#6b7280',
+                reverseButtons: true,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const content = document.getElementById('swal-note-content').value;
+                    const type = document.getElementById('swal-note-type').value;
+                    const fecha = document.getElementById('swal-note-fecha').value;
+                    const pinned = document.getElementById('swal-note-pinned').checked;
+                    
+                    if (!content.trim()) {
+                        Swal.showValidationMessage('El contenido es requerido');
+                        return false;
+                    }
+                    
+                    return {
+                        content: content,
+                        type: type,
+                        fecha: fecha,
+                        pinned: pinned
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    saveNote(null, result.value);
+                }
+            });
         }
         
         function openEditNoteModal(noteId) {
@@ -347,13 +349,92 @@
             })
             .then(data => {
                 if (data.success && data.nota) {
-                    document.getElementById('modalTitle').textContent = 'Editar Nota';
-                    document.getElementById('noteId').value = data.nota.id;
-                    document.getElementById('noteContent').value = data.nota.content || '';
-                    document.getElementById('noteType').value = data.nota.type || 'note';
-                    document.getElementById('noteFecha').value = data.nota.fecha || '{{ date('Y-m-d') }}';
-                    document.getElementById('notePinned').checked = data.nota.pinned || false;
-                    document.getElementById('noteModal').classList.remove('hidden');
+                    Swal.fire({
+                        title: 'Editar Nota',
+                        html: `
+                            <form id="swal-note-form">
+                                <div class="mb-4 text-left">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tipo</label>
+                                    <select 
+                                        id="swal-note-type" 
+                                        name="type" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent"
+                                    >
+                                        <option value="note" ${data.nota.type === 'note' ? 'selected' : ''}>Nota</option>
+                                        <option value="call" ${data.nota.type === 'call' ? 'selected' : ''}>Llamada</option>
+                                        <option value="meeting" ${data.nota.type === 'meeting' ? 'selected' : ''}>Reunión</option>
+                                        <option value="email" ${data.nota.type === 'email' ? 'selected' : ''}>Email</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-4 text-left">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Contenido</label>
+                                    <textarea 
+                                        id="swal-note-content" 
+                                        name="content" 
+                                        rows="8" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent resize-none"
+                                        placeholder="Escribe tu nota aquí..."
+                                        required
+                                    >${(data.nota.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                                </div>
+                                
+                                <div class="mb-4 text-left">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha</label>
+                                    <input 
+                                        type="date" 
+                                        id="swal-note-fecha" 
+                                        name="fecha" 
+                                        value="${data.nota.fecha || '{{ date('Y-m-d') }}'}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-walee-500 focus:border-transparent"
+                                    >
+                                </div>
+                                
+                                <div class="mb-4 text-left">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            id="swal-note-pinned" 
+                                            name="pinned" 
+                                            class="w-4 h-4 text-walee-500 border-slate-300 dark:border-slate-600 rounded focus:ring-walee-500"
+                                            ${data.nota.pinned ? 'checked' : ''}
+                                        >
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">Fijar nota</span>
+                                    </label>
+                                </div>
+                            </form>
+                        `,
+                        width: '600px',
+                        showCancelButton: true,
+                        confirmButtonText: 'Guardar',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#D59F3B',
+                        cancelButtonColor: '#6b7280',
+                        reverseButtons: true,
+                        focusConfirm: false,
+                        preConfirm: () => {
+                            const content = document.getElementById('swal-note-content').value;
+                            const type = document.getElementById('swal-note-type').value;
+                            const fecha = document.getElementById('swal-note-fecha').value;
+                            const pinned = document.getElementById('swal-note-pinned').checked;
+                            
+                            if (!content.trim()) {
+                                Swal.showValidationMessage('El contenido es requerido');
+                                return false;
+                            }
+                            
+                            return {
+                                content: content,
+                                type: type,
+                                fecha: fecha,
+                                pinned: pinned
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed && result.value) {
+                            saveNote(noteId, result.value);
+                        }
+                    });
                 } else {
                     Swal.fire('Error', data.message || 'No se pudo cargar la nota', 'error');
                 }
@@ -364,8 +445,33 @@
             });
         }
         
-        function closeNoteModal() {
-            document.getElementById('noteModal').classList.add('hidden');
+        function saveNote(noteId, formData) {
+            const url = noteId ? `/notas/${noteId}` : '/notas';
+            const method = noteId ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Éxito', noteId ? 'Nota actualizada' : 'Nota creada', 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'No se pudo guardar la nota', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo guardar la nota', 'error');
+            });
         }
         
         function viewNote(noteId) {
@@ -412,7 +518,8 @@
                         confirmButtonText: 'Editar',
                         cancelButtonText: 'Cerrar',
                         confirmButtonColor: '#D59F3B',
-                        cancelButtonColor: '#6b7280'
+                        cancelButtonColor: '#6b7280',
+                        reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
                             openEditNoteModal(noteId);
@@ -481,7 +588,8 @@
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(`/notas/${noteId}`, {
@@ -509,51 +617,6 @@
             });
         }
         
-        document.getElementById('noteForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const noteId = document.getElementById('noteId').value;
-            const url = noteId ? `/notas/${noteId}` : '/notas';
-            const method = noteId ? 'PUT' : 'POST';
-            
-            const formData = {
-                content: document.getElementById('noteContent').value,
-                type: document.getElementById('noteType').value,
-                fecha: document.getElementById('noteFecha').value,
-                pinned: document.getElementById('notePinned').checked
-            };
-            
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire('Éxito', noteId ? 'Nota actualizada' : 'Nota creada', 'success').then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire('Error', data.message || 'No se pudo guardar la nota', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'No se pudo guardar la nota', 'error');
-            });
-        });
-        
-        // Cerrar modal al hacer clic fuera
-        document.getElementById('noteModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeNoteModal();
-            }
-        });
     </script>
 </body>
 </html>

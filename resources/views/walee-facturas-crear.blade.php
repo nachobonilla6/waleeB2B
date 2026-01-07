@@ -1470,8 +1470,12 @@
             
             // Cargar items y pagos
             if (facturaData.items && facturaData.items.length > 0) {
-                items = facturaData.items;
-                actualizarItemsLista();
+                // Asignar IDs únicos a los items cargados
+                items = facturaData.items.map((item, index) => ({
+                    ...item,
+                    id: itemCounter++ // Asignar ID único para cada item
+                }));
+                renderizarItems();
                 calcularTotales();
             }
             

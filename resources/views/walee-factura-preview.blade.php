@@ -98,6 +98,7 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
         }
         .datos-title {
             font-weight: bold;
@@ -107,12 +108,14 @@
             line-height: 1.2;
             margin-top: 0;
             padding-top: 0;
+            width: 100%;
         }
         .datos-content {
             font-size: 9pt;
             color: #555;
             line-height: 1.5;
             margin-top: 0;
+            width: 100%;
         }
         .datos-content > div {
             margin-bottom: 3px;
@@ -121,7 +124,7 @@
             margin-bottom: 0;
         }
         .datos-box.cliente-box {
-            text-align: right;
+            align-items: flex-end;
         }
         .datos-box.cliente-box .datos-title {
             text-align: right;
@@ -131,6 +134,9 @@
         .datos-box.cliente-box .datos-content {
             text-align: right;
             margin-top: 0;
+        }
+        .datos-box.cliente-box .datos-content > div {
+            text-align: right;
         }
         .info-row {
             display: grid;

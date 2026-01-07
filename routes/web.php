@@ -3383,9 +3383,13 @@ Route::get('/walee-facturas', function () {
     try {
         $totalGastos = \App\Models\Gasto::sum('total');
         $gastosPendientes = \App\Models\Gasto::where('pagado', false)->sum('total');
+        $totalGastosEsteMes = \App\Models\Gasto::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total');
     } catch (\Exception $e) {
         $totalGastos = 0;
         $gastosPendientes = 0;
+        $totalGastosEsteMes = 0;
     }
     
     return view('walee-facturas', compact(
@@ -3405,7 +3409,8 @@ Route::get('/walee-facturas', function () {
         'totalCotizaciones',
         'cotizacionesEsteMes',
         'totalGastos',
-        'gastosPendientes'
+        'gastosPendientes',
+        'totalGastosEsteMes'
     ));
 })->middleware(['auth'])->name('walee.facturas');
 

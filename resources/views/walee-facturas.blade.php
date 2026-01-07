@@ -228,12 +228,12 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5">Gastos</p>
+                                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5">Gastos Este Mes</p>
                                 <p class="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
-                                    @php
-                                        $totalGastos = \App\Models\Gasto::sum('total');
-                                    @endphp
-                                    ₡{{ number_format($totalGastos, 2, '.', ',') }}
+                                    ₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}
+                                </p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                                    Total: ₡{{ number_format($totalGastos ?? 0, 2, '.', ',') }}
                                 </p>
                             </div>
                         </div>

@@ -161,6 +161,11 @@
             ->where('proxima_fecha_pago', '>=', now())
             ->where('proxima_fecha_pago', '<=', now()->addDays(30))
             ->count();
+        
+        // Gastos del mes actual
+        $totalGastosEsteMes = \App\Models\Gasto::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total');
     @endphp
     
     <div class="min-h-screen relative overflow-hidden">
@@ -312,8 +317,9 @@
                         <!-- Stats -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
-                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total</p>
-                                <p class="text-xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalGastos, 2, '.', ',') }}</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Este Mes</p>
+                                <p class="text-xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalGastosEsteMes, 2, '.', ',') }}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Total: ₡{{ number_format($totalGastos, 2, '.', ',') }}</p>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-md">
                                 <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Pendientes</p>

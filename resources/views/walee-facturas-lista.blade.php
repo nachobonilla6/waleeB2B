@@ -288,20 +288,33 @@
         
         // Enviar factura
         async function enviarFactura(id) {
-            const result = await Swal.fire({
-                title: '¿Enviar factura?',
-                text: '¿Deseas enviar esta factura al cliente?',
+            const { value: language } = await Swal.fire({
+                title: 'Enviar factura',
+                html: `
+                    <div class="text-left space-y-3">
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-1">Selecciona el idioma del correo:</p>
+                        <select id="swal-language" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100">
+                            <option value="en">English (Original)</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                        </select>
+                    </div>
+                `,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Enviar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Send',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#10b981',
                 cancelButtonColor: '#6b7280',
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const select = document.getElementById('swal-language');
+                    return select ? select.value : 'en';
+                }
             });
             
-            if (!result.isConfirmed) return;
+            if (!language) return;
             
             try {
                 const response = await fetch(`/walee-facturas/${id}/enviar`, {
@@ -310,6 +323,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
+                    body: JSON.stringify({ language }),
                 });
                 
                 const data = await response.json();
@@ -317,13 +331,13 @@
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Factura enviada',
-                        text: 'La factura ha sido enviada correctamente',
+                        title: language === 'es' ? 'Factura enviada' : language === 'fr' ? 'Facture envoyée' : 'Invoice sent',
+                        text: language === 'es' ? 'La factura ha sido enviada correctamente' : language === 'fr' ? 'La facture a été envoyée correctement' : 'The invoice has been sent successfully',
                         confirmButtonColor: '#10b981',
                         timer: 2000,
                         showConfirmButton: false,
-                        background: isDarkMode ? '#1e293b' : '#ffffff',
-                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                     });
                     setTimeout(() => location.reload(), 2000);
                 } else {
@@ -332,8 +346,8 @@
                         title: 'Error',
                         text: data.message || 'Error al enviar factura',
                         confirmButtonColor: '#ef4444',
-                        background: isDarkMode ? '#1e293b' : '#ffffff',
-                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                     });
                 }
             } catch (error) {
@@ -342,28 +356,41 @@
                     title: 'Error',
                     text: 'Error de conexión: ' + error.message,
                     confirmButtonColor: '#ef4444',
-                    background: isDarkMode ? '#1e293b' : '#ffffff',
-                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                 });
             }
         }
         
         // Reenviar factura
         async function reenviarFactura(id) {
-            const result = await Swal.fire({
-                title: '¿Reenviar factura?',
-                text: '¿Deseas reenviar esta factura al cliente?',
+            const { value: language } = await Swal.fire({
+                title: 'Reenviar factura',
+                html: `
+                    <div class="text-left space-y-3">
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-1">Selecciona el idioma del correo:</p>
+                        <select id="swal-language" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100">
+                            <option value="en">English (Original)</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                        </select>
+                    </div>
+                `,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Reenviar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Resend',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#6366f1',
                 cancelButtonColor: '#6b7280',
-                background: isDarkMode ? '#1e293b' : '#ffffff',
-                color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                background: isDarkMode() ? '#1e293b' : '#ffffff',
+                color: isDarkMode() ? '#e2e8f0' : '#1e293b',
+                preConfirm: () => {
+                    const select = document.getElementById('swal-language');
+                    return select ? select.value : 'en';
+                }
             });
             
-            if (!result.isConfirmed) return;
+            if (!language) return;
             
             try {
                 const response = await fetch(`/walee-facturas/${id}/enviar`, {
@@ -372,6 +399,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
+                    body: JSON.stringify({ language }),
                 });
                 
                 const data = await response.json();
@@ -379,13 +407,13 @@
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Factura reenviada',
-                        text: 'La factura ha sido reenviada correctamente',
+                        title: language === 'es' ? 'Factura reenviada' : language === 'fr' ? 'Facture renvoyée' : 'Invoice resent',
+                        text: language === 'es' ? 'La factura ha sido reenviada correctamente' : language === 'fr' ? 'La facture a été renvoyée correctement' : 'The invoice has been resent successfully',
                         confirmButtonColor: '#10b981',
                         timer: 2000,
                         showConfirmButton: false,
-                        background: isDarkMode ? '#1e293b' : '#ffffff',
-                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                     });
                 } else {
                     Swal.fire({
@@ -393,8 +421,8 @@
                         title: 'Error',
                         text: data.message || 'Error al reenviar factura',
                         confirmButtonColor: '#ef4444',
-                        background: isDarkMode ? '#1e293b' : '#ffffff',
-                        color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                        background: isDarkMode() ? '#1e293b' : '#ffffff',
+                        color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                     });
                 }
             } catch (error) {
@@ -403,8 +431,8 @@
                     title: 'Error',
                     text: 'Error de conexión: ' + error.message,
                     confirmButtonColor: '#ef4444',
-                    background: isDarkMode ? '#1e293b' : '#ffffff',
-                    color: isDarkMode ? '#e2e8f0' : '#1e293b'
+                    background: isDarkMode() ? '#1e293b' : '#ffffff',
+                    color: isDarkMode() ? '#e2e8f0' : '#1e293b'
                 });
             }
         }

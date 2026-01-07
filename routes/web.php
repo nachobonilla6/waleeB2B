@@ -5103,8 +5103,8 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
     }
 })->middleware(['auth'])->name('walee.herramientas.enviar-contrato.post');
 
-// Enviar factura por email
-Route::post('/walee-facturas/{id}/enviar', function ($id) {
+// Enviar factura por email (con selección de idioma)
+Route::post('/walee-facturas/{id}/enviar', function ($id, \Illuminate\Http\Request $request) {
     try {
         $factura = \App\Models\Factura::with('cliente')->findOrFail($id);
         
@@ -5114,6 +5114,9 @@ Route::post('/walee-facturas/{id}/enviar', function ($id) {
                 'message' => 'La factura no tiene correo asociado',
             ], 400);
         }
+        
+        // Idioma del correo (en, es, fr)
+        $language = $request->input('language', 'en');
         
         // Preparar datos para el PDF
         $data = [
@@ -5178,10 +5181,17 @@ Route::post('/walee-facturas/{id}/enviar', function ($id) {
         \Mail::send('emails.factura-envio', [
             'factura' => $factura,
             'cliente' => $factura->cliente,
-        ], function ($message) use ($factura, $pdf, $archivosAdjuntos) {
+            'language' => $language,
+        ], function ($message) use ($factura, $pdf, $archivosAdjuntos, $language) {
+            $subject = match ($language) {
+                'es' => 'Factura ' . $factura->numero_factura . ' - Web Solutions',
+                'fr' => 'Facture ' . $factura->numero_factura . ' - Web Solutions',
+                default => 'Invoice ' . $factura->numero_factura . ' - Web Solutions',
+            };
+            
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions')
                     ->to($factura->correo)
-                    ->subject('Factura ' . $factura->numero_factura . ' - Web Solutions')
+                    ->subject($subject)
                     ->attachData($pdf->output(), 'factura-' . $factura->numero_factura . '.pdf', [
                         'mime' => 'application/pdf',
                     ]);

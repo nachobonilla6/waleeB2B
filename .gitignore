@@ -15,3 +15,6 @@ yarn-error.log
 storage/app/google-calendar-token.json
 storage/app/google-sheets-token.json
 storage/app/google-gmail-token.json
+
+# Archivos específicos de Hostinger
+public_html/default.php

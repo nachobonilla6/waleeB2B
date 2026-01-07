@@ -84,6 +84,7 @@
             padding: 15px;
             border-radius: 8px;
             border-left: 4px solid #8b5cf6;
+            flex: 1;
         }
         .datos-title {
             font-weight: bold;
@@ -460,9 +461,5 @@
         Página 1 de 1
     </div>
     
-    <!-- World Map with Clocks (no se imprime) -->
-    <div class="no-print" style="page-break-inside: avoid;">
-        @include('partials.walee-world-map-clocks')
-    </div>
 </body>
 </html>

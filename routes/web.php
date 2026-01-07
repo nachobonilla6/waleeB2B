@@ -5819,6 +5819,7 @@ Route::post('/notas', function (\Illuminate\Http\Request $request) {
         $nota->content = $request->input('content');
         $nota->type = $request->input('type', 'note');
         $nota->cliente_id = $request->input('cliente_id') ?: null;
+        $nota->client_id = $request->input('client_id') ?: null;
         $nota->pinned = $request->input('pinned', false);
         $nota->fecha = $request->input('fecha') ?: now()->format('Y-m-d');
         $nota->user_id = auth()->id();
@@ -5827,6 +5828,13 @@ Route::post('/notas', function (\Illuminate\Http\Request $request) {
         return response()->json([
             'success' => true,
             'message' => 'Nota creada correctamente',
+            'nota' => [
+                'id' => $nota->id,
+                'content' => $nota->content,
+                'type' => $nota->type,
+                'pinned' => $nota->pinned,
+                'fecha' => $nota->fecha,
+            ]
         ]);
     } catch (\Exception $e) {
         return response()->json([
@@ -5840,14 +5848,34 @@ Route::get('/notas/{id}', function ($id) {
     try {
         $nota = \App\Models\Note::with(['cliente', 'user'])->findOrFail($id);
         
+        // Verificar que el usuario tenga permiso para ver esta nota
+        if ($nota->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para ver esta nota',
+            ], 403);
+        }
+        
         // Formatear la fecha para que se muestre correctamente en el input date
+        $fechaFormateada = null;
+        if ($nota->fecha) {
+            if (is_string($nota->fecha)) {
+                $fechaFormateada = $nota->fecha;
+            } else {
+                $fechaFormateada = $nota->fecha->format('Y-m-d');
+            }
+        } else {
+            $fechaFormateada = now()->format('Y-m-d');
+        }
+        
         $notaData = [
             'id' => $nota->id,
             'content' => $nota->content,
-            'type' => $nota->type,
+            'type' => $nota->type ?? 'note',
             'cliente_id' => $nota->cliente_id,
-            'pinned' => $nota->pinned,
-            'fecha' => $nota->fecha ? $nota->fecha->format('Y-m-d') : null,
+            'client_id' => $nota->client_id,
+            'pinned' => $nota->pinned ?? false,
+            'fecha' => $fechaFormateada,
             'created_at' => $nota->created_at,
             'updated_at' => $nota->updated_at,
         ];
@@ -5881,9 +5909,19 @@ Route::get('/notas/{id}', function ($id) {
 Route::put('/notas/{id}', function (\Illuminate\Http\Request $request, $id) {
     try {
         $nota = \App\Models\Note::findOrFail($id);
+        
+        // Verificar que el usuario tenga permiso para editar esta nota
+        if ($nota->user_id !== auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para editar esta nota',
+            ], 403);
+        }
+        
         $nota->content = $request->input('content');
         $nota->type = $request->input('type', 'note');
         $nota->cliente_id = $request->input('cliente_id') ?: null;
+        $nota->client_id = $request->input('client_id') ?: null;
         $nota->pinned = $request->input('pinned', false);
         $nota->fecha = $request->input('fecha') ?: now()->format('Y-m-d');
         $nota->save();
@@ -5891,6 +5929,13 @@ Route::put('/notas/{id}', function (\Illuminate\Http\Request $request, $id) {
         return response()->json([
             'success' => true,
             'message' => 'Nota actualizada correctamente',
+            'nota' => [
+                'id' => $nota->id,
+                'content' => $nota->content,
+                'type' => $nota->type,
+                'pinned' => $nota->pinned,
+                'fecha' => $nota->fecha,
+            ]
         ]);
     } catch (\Exception $e) {
         return response()->json([

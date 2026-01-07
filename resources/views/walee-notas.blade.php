@@ -212,8 +212,15 @@
                                     </div>
                                 </div>
                                 
-                                <div class="note-content text-slate-700 dark:text-slate-300 mb-3 text-sm leading-relaxed">
+                                <div 
+                                    class="note-content text-slate-700 dark:text-slate-300 mb-3 text-sm leading-relaxed cursor-pointer hover:text-walee-600 dark:hover:text-walee-400 transition-colors"
+                                    onclick="viewNote({{ $nota->id }})"
+                                    title="Haz clic para ver el contenido completo"
+                                >
                                     {{ Str::limit($nota->content, 200) }}
+                                    @if(strlen($nota->content) > 200)
+                                        <span class="text-walee-500 text-xs">... (ver más)</span>
+                                    @endif
                                 </div>
                                 
                                 <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-200 dark:border-slate-700">
@@ -330,21 +337,30 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error al cargar la nota');
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.success) {
+                if (data.success && data.nota) {
                     document.getElementById('modalTitle').textContent = 'Editar Nota';
-                    document.getElementById('noteId').value = data.note.id;
-                    document.getElementById('noteContent').value = data.note.content;
-                    document.getElementById('noteType').value = data.note.type || 'note';
-                    document.getElementById('noteFecha').value = data.note.fecha || '{{ date('Y-m-d') }}';
-                    document.getElementById('notePinned').checked = data.note.pinned || false;
+                    document.getElementById('noteId').value = data.nota.id;
+                    document.getElementById('noteContent').value = data.nota.content || '';
+                    document.getElementById('noteType').value = data.nota.type || 'note';
+                    document.getElementById('noteFecha').value = data.nota.fecha || '{{ date('Y-m-d') }}';
+                    document.getElementById('notePinned').checked = data.nota.pinned || false;
                     document.getElementById('noteModal').classList.remove('hidden');
+                } else {
+                    Swal.fire('Error', data.message || 'No se pudo cargar la nota', 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire('Error', 'No se pudo cargar la nota', 'error');
+                Swal.fire('Error', error.message || 'No se pudo cargar la nota', 'error');
             });
         }
         
@@ -352,20 +368,95 @@
             document.getElementById('noteModal').classList.add('hidden');
         }
         
-        function togglePin(noteId, pinned) {
+        function viewNote(noteId) {
             fetch(`/notas/${noteId}`, {
-                method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    pinned: pinned,
-                    content: document.querySelector(`[data-note-id="${noteId}"] .note-content`).textContent.trim(),
-                    type: 'note',
-                    fecha: '{{ date('Y-m-d') }}'
-                })
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error al cargar la nota');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success && data.nota) {
+                    // Mostrar el contenido completo en un modal de solo lectura
+                    Swal.fire({
+                        title: 'Nota',
+                        html: `
+                            <div class="text-left">
+                                <div class="mb-3">
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-md 
+                                        ${data.nota.type === 'note' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 
+                                          data.nota.type === 'call' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
+                                          data.nota.type === 'meeting' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' :
+                                          data.nota.type === 'email' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300' :
+                                          'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">
+                                        ${data.nota.type ? data.nota.type.charAt(0).toUpperCase() + data.nota.type.slice(1) : 'Nota'}
+                                    </span>
+                                </div>
+                                <div class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap mb-4">${data.nota.content || ''}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">
+                                    <p>Creada: ${new Date(data.nota.created_at).toLocaleString('es-ES')}</p>
+                                    ${data.nota.fecha ? `<p>Fecha: ${data.nota.fecha}</p>` : ''}
+                                </div>
+                            </div>
+                        `,
+                        width: '600px',
+                        showCancelButton: true,
+                        confirmButtonText: 'Editar',
+                        cancelButtonText: 'Cerrar',
+                        confirmButtonColor: '#D59F3B',
+                        cancelButtonColor: '#6b7280'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            openEditNoteModal(noteId);
+                        }
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'No se pudo cargar la nota', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', error.message || 'No se pudo cargar la nota', 'error');
+            });
+        }
+        
+        function togglePin(noteId, pinned) {
+            // Primero obtener la nota completa desde la base de datos
+            fetch(`/notas/${noteId}`, {
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.nota) {
+                    // Actualizar solo el pinned
+                    return fetch(`/notas/${noteId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            pinned: pinned,
+                            content: data.nota.content,
+                            type: data.nota.type || 'note',
+                            fecha: data.nota.fecha || '{{ date('Y-m-d') }}'
+                        })
+                    });
+                } else {
+                    throw new Error(data.message || 'No se pudo cargar la nota');
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -377,7 +468,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire('Error', 'No se pudo actualizar la nota', 'error');
+                Swal.fire('Error', error.message || 'No se pudo actualizar la nota', 'error');
             });
         }
         

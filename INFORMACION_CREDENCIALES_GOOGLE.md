@@ -107,3 +107,4 @@ php artisan route:list --name=google-calendar.callback
 Esto mostrará la ruta completa que Laravel está generando.
 
 
+

@@ -16,3 +16,4 @@ ADD COLUMN `proxima_fecha_pago` DATE NULL AFTER `fecha`;
 -- Verificar que los campos se agregaron correctamente
 -- DESCRIBE `gastos`;
 
+

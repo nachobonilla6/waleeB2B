@@ -8,7 +8,7 @@
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
     <div style="background: #ffffff; padding: 30px;">
         @php
-            $lang = $language ?? 'en';
+            $lang = $language ?? ($cliente->idioma ?? 'es');
             $name = $cliente && $cliente->nombre_empresa ? ' ' . $cliente->nombre_empresa : '';
             $issueDate = $factura->fecha_emision ? $factura->fecha_emision->format('Y-m-d') : null;
             $dueDate = $factura->fecha_vencimiento ? $factura->fecha_vencimiento->format('Y-m-d') : null;

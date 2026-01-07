@@ -430,8 +430,8 @@ class GoogleCalendarService
                 Log::error('Verificando autorización: ' . ($this->isAuthorized() ? 'Sí' : 'No'));
                 $credentialsPath = $this->findCredentialsFile();
                 Log::error('Archivo de credenciales encontrado: ' . ($credentialsPath ? $credentialsPath : 'No'));
-                return null;
-            }
+            return null;
+        }
 
             $event = new \Google_Service_Calendar_Event();
             $event->setSummary($cita->titulo);
@@ -467,7 +467,7 @@ class GoogleCalendarService
             Log::info('Intentando crear evento en calendario: ' . $this->calendarId);
             Log::info('Título del evento: ' . $cita->titulo);
             Log::info('Fecha inicio: ' . $cita->fecha_inicio->format('Y-m-d H:i:s'));
-            
+
             $createdEvent = $service->events->insert($this->calendarId, $event, [
                 'sendUpdates' => 'all', // Enviar invitaciones automáticamente
             ]);
@@ -612,8 +612,8 @@ class GoogleCalendarService
                 Log::warning('No se pudo obtener el servicio de Google Calendar');
                 // Si la cita existe en la BD, limpiar el ID localmente
                 if ($cita->exists) {
-                    $cita->google_event_id = null;
-                    return $cita->save();
+        $cita->google_event_id = null;
+        return $cita->save();
                 }
                 return false;
             }
@@ -622,7 +622,7 @@ class GoogleCalendarService
             
             // Si la cita existe en la BD, limpiar el ID localmente
             if ($cita->exists) {
-                $cita->google_event_id = null;
+            $cita->google_event_id = null;
                 $cita->save();
             }
             
@@ -631,7 +631,7 @@ class GoogleCalendarService
             Log::error('Error al eliminar evento de Google Calendar: ' . $e->getMessage());
             // Si la cita existe en la BD, limpiar el ID localmente aunque falle
             if ($cita->exists) {
-                $cita->google_event_id = null;
+            $cita->google_event_id = null;
                 $cita->save();
             }
             return false;

@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('clientes_en_proceso', function (Blueprint $table) {
-            if (!Schema::hasColumn('clientes_en_proceso', 'nota')) {
-                $table->text('nota')->nullable()->after('token');
-            }
+            //
         });
     }
 
@@ -24,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('clientes_en_proceso', function (Blueprint $table) {
-            if (Schema::hasColumn('clientes_en_proceso', 'nota')) {
-                $table->dropColumn('nota');
-            }
+            //
         });
     }
 };

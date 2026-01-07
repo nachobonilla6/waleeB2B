@@ -5200,10 +5200,11 @@ Route::post('/walee-facturas/{id}/enviar', function ($id, \Illuminate\Http\Reque
                     'importe' => $pago->importe,
                 ];
             })->toArray()),
+            'language' => $language,
         ];
         
         // Generar PDF
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data]);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('walee-factura-preview', ['data' => $data, 'language' => $language]);
         $pdf->setPaper('A4', 'portrait');
         
         // Obtener archivos adjuntos guardados

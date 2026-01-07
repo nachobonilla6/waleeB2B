@@ -413,7 +413,7 @@
                             </div>
                         </a>
                         
-                        <!-- Clientes Pending - Contador -->
+                    <!-- Clientes Pending - Contador -->
                         <a href="{{ route('walee.emails.pending') }}" class="flex items-center justify-between p-2.5 rounded-lg bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 hover:bg-violet-100 dark:hover:bg-violet-500/20 transition-all group">
                             <div class="flex items-center gap-2">
                                 <div class="w-7 h-7 rounded-lg bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">

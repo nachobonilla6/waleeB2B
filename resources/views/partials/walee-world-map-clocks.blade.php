@@ -129,116 +129,58 @@
                     </svg>
                 </div>
             </div>
+
+            @php
+                // Opciones disponibles para los relojes (tarjetas)
+                $worldClockOptions = [
+                    'montreal'     => 'Montreal',
+                    'london'       => 'London',
+                    'tokyo'        => 'Tokyo',
+                    'sydney'       => 'Sydney',
+                    'dubai'        => 'Dubai',
+                    'saopaulo'     => 'São Paulo',
+                    'la'           => 'Los Angeles',
+                    'madrid'       => 'Madrid',
+                    'sanjosecr'    => 'San José, Costa Rica',
+                    'cameroon'     => 'Cameroon',
+                    'hongkong'     => 'Hong Kong',
+                    'southafrica'  => 'South Africa',
+                ];
+
+                // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
+                $worldClockDefaults = [
+                    'montreal',
+                    'london',
+                    'tokyo',
+                    'sydney',
+                    'dubai',
+                    'saopaulo',
+                    'la',
+                    'madrid',
+                    'sanjosecr',
+                    'cameroon',
+                    'hongkong',
+                    'southafrica',
+                ];
+            @endphp
             
-            <!-- World Clocks Grid -->
+            <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                <!-- Montreal -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Montreal</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-montreal">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-montreal">--</div>
+                @foreach($worldClockDefaults as $defaultCity)
+                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card">
+                        <div class="text-center">
+                            <select class="world-clock-select text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-1 bg-transparent border border-slate-200 dark:border-slate-600 rounded-md px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-violet-500">
+                                @foreach($worldClockOptions as $cityKey => $cityLabel)
+                                    <option value="{{ $cityKey }}" {{ $cityKey === $defaultCity ? 'selected' : '' }}>
+                                        {{ $cityLabel }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5 world-clock-time">--:--</div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-500 world-clock-date">--</div>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- London -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">London</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-london">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-london">--</div>
-                    </div>
-                </div>
-                
-                <!-- Tokyo -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Tokyo</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-tokyo">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-tokyo">--</div>
-                    </div>
-                </div>
-                
-                <!-- Sydney -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Sydney</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-sydney">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-sydney">--</div>
-                    </div>
-                </div>
-                
-                <!-- Dubai -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Dubai</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-dubai">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-dubai">--</div>
-                    </div>
-                </div>
-                
-                <!-- São Paulo -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">São Paulo</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-saopaulo">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-saopaulo">--</div>
-                    </div>
-                </div>
-                
-                <!-- Los Angeles -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Los Angeles</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-la">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-la">--</div>
-                    </div>
-                </div>
-                
-                <!-- Madrid -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Madrid</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-madrid">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-madrid">--</div>
-                    </div>
-                </div>
-
-                <!-- San José, Costa Rica -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">San José, Costa Rica</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-sanjosecr">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-sanjosecr">--</div>
-                    </div>
-                </div>
-
-                <!-- Cameroon -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Cameroon</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-cameroon">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-cameroon">--</div>
-                    </div>
-                </div>
-
-                <!-- Hong Kong -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Hong Kong</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-hongkong">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-hongkong">--</div>
-                    </div>
-                </div>
-
-                <!-- South Africa -->
-                <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
-                    <div class="text-center">
-                        <div class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">South Africa</div>
-                        <div class="text-xl font-bold text-slate-900 dark:text-white mb-0.5" id="clock-southafrica">--:--</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-500" id="date-southafrica">--</div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -247,54 +189,80 @@
 <script>
     // World Clocks - Solo inicializar si no existe ya
     if (typeof updateWorldClocks === 'undefined') {
+        const timezones = {
+            montreal:    { label: 'Montreal',            tz: 'America/Toronto' },
+            london:      { label: 'London',              tz: 'Europe/London' },
+            tokyo:       { label: 'Tokyo',               tz: 'Asia/Tokyo' },
+            sydney:      { label: 'Sydney',              tz: 'Australia/Sydney' },
+            dubai:       { label: 'Dubai',               tz: 'Asia/Dubai' },
+            saopaulo:    { label: 'São Paulo',           tz: 'America/Sao_Paulo' },
+            la:          { label: 'Los Angeles',         tz: 'America/Los_Angeles' },
+            madrid:      { label: 'Madrid',              tz: 'Europe/Madrid' },
+            sanjosecr:   { label: 'San José, Costa Rica', tz: 'America/Costa_Rica' },
+            cameroon:    { label: 'Cameroon',            tz: 'Africa/Douala' },
+            hongkong:    { label: 'Hong Kong',           tz: 'Asia/Hong_Kong' },
+            southafrica: { label: 'South Africa',        tz: 'Africa/Johannesburg' },
+        };
+
         function updateWorldClocks() {
-            const timezones = {
-                'montreal': 'America/Toronto',
-                'london': 'Europe/London',
-                'tokyo': 'Asia/Tokyo',
-                'sydney': 'Australia/Sydney',
-                'dubai': 'Asia/Dubai',
-                'saopaulo': 'America/Sao_Paulo',
-                'la': 'America/Los_Angeles',
-                'madrid': 'Europe/Madrid',
-                'sanjosecr': 'America/Costa_Rica',
-                'cameroon': 'Africa/Douala',
-                'hongkong': 'Asia/Hong_Kong',
-                'southafrica': 'Africa/Johannesburg'
-            };
-            
+            // Primero, actualizar los relojes del mapa (clocks fijos por ciudad)
             Object.keys(timezones).forEach(city => {
                 try {
-                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: timezones[city] }));
+                    const tz = timezones[city].tz;
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
                     const seconds = String(now.getSeconds()).padStart(2, '0');
-                    
-                    // Actualizar relojes en las tarjetas (HH:MM)
-                    const clockElement = document.getElementById(`clock-${city}`);
-                    const dateElement = document.getElementById(`date-${city}`);
-                    
-                    if (clockElement) {
-                        clockElement.textContent = `${hours}:${minutes}`;
-                    }
-                    
-                    if (dateElement) {
-                        const options = { month: 'short', day: 'numeric' };
-                        dateElement.textContent = now.toLocaleDateString('en-US', options);
-                    }
-                    
-                    // Actualizar relojes en el mapa (HH:MM:SS)
+
                     const mapClockElement = document.getElementById(`map-clock-${city}`);
                     if (mapClockElement) {
                         mapClockElement.textContent = `${hours}:${minutes}:${seconds}`;
                     }
                 } catch (error) {
-                    console.error(`Error updating clock for ${city}:`, error);
+                    console.error(`Error updating map clock for ${city}:`, error);
+                }
+            });
+
+            // Luego, actualizar las tarjetas según la ciudad seleccionada en cada una
+            document.querySelectorAll('.world-clock-card').forEach(card => {
+                const select = card.querySelector('.world-clock-select');
+                if (!select) return;
+
+                const cityKey = select.value;
+                const config = timezones[cityKey];
+                if (!config) return;
+
+                try {
+                    const now = new Date(new Date().toLocaleString('en-US', { timeZone: config.tz }));
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+                    const options = { month: 'short', day: 'numeric' };
+                    const dateStr = now.toLocaleDateString('en-US', options);
+
+                    const clockEl = card.querySelector('.world-clock-time');
+                    const dateEl = card.querySelector('.world-clock-date');
+
+                    if (clockEl) {
+                        clockEl.textContent = `${hours}:${minutes}`;
+                    }
+                    if (dateEl) {
+                        dateEl.textContent = dateStr;
+                    }
+                } catch (error) {
+                    console.error(`Error updating card clock for ${cityKey}:`, error);
                 }
             });
         }
-        
-        // Update clocks every second
+
+        // Actualizar relojes al cambiar una ciudad en cualquier tarjeta
+        document.addEventListener('change', function (event) {
+            if (event.target.classList.contains('world-clock-select')) {
+                updateWorldClocks();
+            }
+        });
+
+        // Actualizar relojes cada segundo
         updateWorldClocks();
         setInterval(updateWorldClocks, 1000);
     }

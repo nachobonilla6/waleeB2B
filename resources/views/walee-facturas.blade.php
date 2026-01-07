@@ -128,9 +128,9 @@
             </header>
             
             <!-- Stats Grid - Total Facturado vs Gastos Este Mes -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
                 <!-- Total Facturado Este Mes -->
-                <div class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
+                <a href="{{ route('walee.facturas.lista') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center">
                             <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,10 +148,10 @@
                         </svg>
                         <span>{{ now()->format('F Y') }}</span>
                     </div>
-                </div>
+                </a>
                 
                 <!-- Total Gastos Este Mes -->
-                <div class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
+                <a href="{{ route('walee.gastos') }}" class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-orange-500/20 dark:bg-orange-500/10 flex items-center justify-center">
                             <svg class="w-6 h-6 sm:w-8 sm:h-8 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,6 +164,30 @@
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">₡{{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-orange-600 dark:text-orange-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span>{{ now()->format('F Y') }}</span>
+                    </div>
+                </a>
+                
+                <!-- Porcentaje de Gastos -->
+                @php
+                    $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMes / $totalFacturadoEsteMes) * 100 : 0;
+                @endphp
+                <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2 sm:mb-3">
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Gastos vs Facturado</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">{{ number_format($porcentajeGastos, 1) }}%</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs sm:text-sm text-violet-600 dark:text-violet-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>

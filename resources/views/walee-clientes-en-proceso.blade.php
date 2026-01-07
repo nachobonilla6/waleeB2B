@@ -365,6 +365,42 @@
                             'brisbane' => 'Australia/Brisbane',
                         ];
                         
+                        // Mapeo de países a zonas horarias (para usar cuando solo tenemos país)
+                        $countryTimezones = [
+                            'spain' => 'Europe/Madrid',
+                            'españa' => 'Europe/Madrid',
+                            'united states' => 'America/New_York',
+                            'usa' => 'America/New_York',
+                            'estados unidos' => 'America/New_York',
+                            'united kingdom' => 'Europe/London',
+                            'uk' => 'Europe/London',
+                            'reino unido' => 'Europe/London',
+                            'france' => 'Europe/Paris',
+                            'francia' => 'Europe/Paris',
+                            'germany' => 'Europe/Berlin',
+                            'alemania' => 'Europe/Berlin',
+                            'italy' => 'Europe/Rome',
+                            'italia' => 'Europe/Rome',
+                            'portugal' => 'Europe/Lisbon',
+                            'mexico' => 'America/Mexico_City',
+                            'méxico' => 'America/Mexico_City',
+                            'argentina' => 'America/Argentina/Buenos_Aires',
+                            'colombia' => 'America/Bogota',
+                            'chile' => 'America/Santiago',
+                            'peru' => 'America/Lima',
+                            'perú' => 'America/Lima',
+                            'brazil' => 'America/Sao_Paulo',
+                            'brasil' => 'America/Sao_Paulo',
+                            'canada' => 'America/Toronto',
+                            'canadá' => 'America/Toronto',
+                            'costa rica' => 'America/Costa_Rica',
+                            'japan' => 'Asia/Tokyo',
+                            'japón' => 'Asia/Tokyo',
+                            'china' => 'Asia/Shanghai',
+                            'australia' => 'Australia/Sydney',
+                            'australia' => 'Australia/Sydney',
+                        ];
+                        
                         // Mapeo de idiomas a zonas horarias (fallback)
                         $langTimezones = [
                             'es' => 'Europe/Madrid',
@@ -375,22 +411,75 @@
                             'pt' => 'Europe/Lisbon'
                         ];
                         
-                        // Determinar zona horaria: primero por ciudad, luego por idioma
-                        $timezone = null;
-                        if ($cliente->ciudad) {
-                            $ciudadLower = strtolower(trim($cliente->ciudad));
-                            // Buscar coincidencia exacta o parcial
-                            foreach ($cityTimezones as $city => $tz) {
-                                if (strpos($ciudadLower, $city) !== false || $ciudadLower === $city) {
-                                    $timezone = $tz;
-                                    break;
+                        // Función para buscar ciudad en un texto
+                        $findCityInText = function($text) use ($cityTimezones) {
+                            if (empty($text)) return null;
+                            $textLower = strtolower(trim($text));
+                            // Buscar ciudades en orden de longitud (más específicas primero)
+                            $sortedCities = array_keys($cityTimezones);
+                            usort($sortedCities, function($a, $b) {
+                                return strlen($b) - strlen($a);
+                            });
+                            foreach ($sortedCities as $city) {
+                                if (strpos($textLower, $city) !== false) {
+                                    return $cityTimezones[$city];
                                 }
+                            }
+                            return null;
+                        };
+                        
+                        // Función para buscar país en un texto
+                        $findCountryInText = function($text) use ($countryTimezones) {
+                            if (empty($text)) return null;
+                            $textLower = strtolower(trim($text));
+                            foreach ($countryTimezones as $country => $tz) {
+                                if (strpos($textLower, $country) !== false) {
+                                    return $tz;
+                                }
+                            }
+                            return null;
+                        };
+                        
+                        // Determinar zona horaria: primero por ciudad (campo ciudad), luego por address, luego por país en address, luego por idioma
+                        $timezone = null;
+                        $timezoneSource = null; // Para el tooltip
+                        
+                        // 1. Buscar por campo ciudad
+                        if ($cliente->ciudad) {
+                            $timezone = $findCityInText($cliente->ciudad);
+                            if ($timezone) {
+                                $timezoneSource = 'ciudad: ' . $cliente->ciudad;
                             }
                         }
                         
-                        // Si no se encontró por ciudad, usar idioma como fallback
+                        // 2. Si no se encontró, buscar en el campo address
+                        if (!$timezone && $cliente->address) {
+                            $timezone = $findCityInText($cliente->address);
+                            if ($timezone) {
+                                $timezoneSource = 'address: ' . (strlen($cliente->address) > 30 ? substr($cliente->address, 0, 30) . '...' : $cliente->address);
+                            }
+                        }
+                        
+                        // 3. Si no se encontró ciudad, buscar país en address
+                        if (!$timezone && $cliente->address) {
+                            $timezone = $findCountryInText($cliente->address);
+                            if ($timezone) {
+                                $timezoneSource = 'address (país)';
+                            }
+                        }
+                        
+                        // 4. Si no se encontró, buscar país en campo ciudad
+                        if (!$timezone && $cliente->ciudad) {
+                            $timezone = $findCountryInText($cliente->ciudad);
+                            if ($timezone) {
+                                $timezoneSource = 'ciudad (país)';
+                            }
+                        }
+                        
+                        // 5. Si no se encontró, usar idioma como fallback
                         if (!$timezone && $cliente->idioma && isset($langTimezones[$cliente->idioma])) {
                             $timezone = $langTimezones[$cliente->idioma];
+                            $timezoneSource = 'idioma: ' . $cliente->idioma;
                         }
                         
                         // Obtener hora actual en la zona horaria del cliente
@@ -451,7 +540,7 @@
                             <!-- Email Counter and Timezone -->
                             <div class="flex-shrink-0 flex items-center gap-1.5">
                                 @if($clientTime && $timezone)
-                                    <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex flex-col items-center gap-0.5" title="Hora local del cliente{{ $cliente->ciudad ? ' - ' . $cliente->ciudad : '' }}" data-client-timezone="{{ $timezone }}" data-client-ciudad="{{ $cliente->ciudad ?? '' }}">
+                                    <div class="bg-violet-100 dark:bg-violet-500/20 border border-violet-200 dark:border-violet-500/30 rounded-lg px-2 py-1 flex flex-col items-center gap-0.5" title="Hora local del cliente{{ $timezoneSource ? ' (basada en ' . $timezoneSource . ')' : '' }}" data-client-timezone="{{ $timezone }}" data-client-ciudad="{{ $cliente->ciudad ?? '' }}">
                                         <div class="flex items-center gap-1">
                                             <svg class="w-3 h-3 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>

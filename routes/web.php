@@ -4662,6 +4662,12 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
             }
             $path = $imagen->store('productos-super', 'public');
             $producto->imagen = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
         }
         
         $producto->save();
@@ -4731,6 +4737,12 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
             }
             $path = $imagen->store('productos-super', 'public');
             $producto->imagen = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
         }
         
         $producto->save();

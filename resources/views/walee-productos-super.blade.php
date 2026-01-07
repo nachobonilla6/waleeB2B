@@ -410,7 +410,7 @@
                                             <div class="flex items-start justify-between gap-4">
                                                 @if($producto->imagen)
                                                     <div class="flex-shrink-0">
-                                                        <img src="{{ asset('storage/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                                        <img src="{{ $producto->imagen_url }}" alt="{{ $producto->nombre }}" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600" onerror="this.style.display='none'">
                                                     </div>
                                                 @endif
                                                 <div class="flex-1 min-w-0">

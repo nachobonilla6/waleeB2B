@@ -24,4 +24,27 @@ class ProductoSuper extends Model
         'activo' => 'boolean',
         'fecha_expiracion' => 'date',
     ];
+
+    /**
+     * Obtener la URL completa de la imagen
+     */
+    public function getImagenUrlAttribute()
+    {
+        if (!$this->imagen) {
+            return null;
+        }
+
+        // Si ya es una URL completa, retornarla
+        if (str_starts_with($this->imagen, 'http://') || str_starts_with($this->imagen, 'https://')) {
+            return $this->imagen;
+        }
+
+        // Si empieza con storage/, usar asset directamente
+        if (str_starts_with($this->imagen, 'storage/')) {
+            return asset($this->imagen);
+        }
+
+        // Si es una ruta relativa, agregar storage/
+        return asset('storage/' . $this->imagen);
+    }
 }

@@ -131,6 +131,8 @@
             </div>
 
             @php
+                use App\Models\UserWorldClock;
+
                 // Opciones disponibles para los relojes (tarjetas) – con banderas
                 $worldClockOptions = [
                     'montreal'     => '🇨🇦 Montreal',
@@ -162,7 +164,7 @@
                 ];
 
                 // Ciudades por defecto para cada tarjeta (se pueden cambiar desde el selector)
-                $worldClockDefaults = [
+                $defaultOrder = [
                     'montreal',
                     'london',
                     'tokyo',
@@ -176,12 +178,36 @@
                     'hongkong',
                     'southafrica',
                 ];
+
+                $worldClockDefaults = [];
+
+                // Si hay usuario autenticado, intentamos cargar sus preferencias desde DB
+                if (auth()->check()) {
+                    $prefs = UserWorldClock::where('user_id', auth()->id())
+                        ->orderBy('slot')
+                        ->get()
+                        ->keyBy('slot');
+
+                    for ($i = 0; $i < 12; $i++) {
+                        if (isset($prefs[$i]) && array_key_exists($prefs[$i]->city_key, $worldClockOptions)) {
+                            $worldClockDefaults[$i] = $prefs[$i]->city_key;
+                        } else {
+                            // Fallback al orden por defecto si existe, si no, usar la primera opción disponible
+                            $worldClockDefaults[$i] = $defaultOrder[$i] ?? array_key_first($worldClockOptions);
+                        }
+                    }
+                } else {
+                    // Sin usuario autenticado, usar solo el orden por defecto
+                    for ($i = 0; $i < 12; $i++) {
+                        $worldClockDefaults[$i] = $defaultOrder[$i] ?? array_key_first($worldClockOptions);
+                    }
+                }
             @endphp
             
             <!-- World Clocks Grid (cada tarjeta permite cambiar la ciudad) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                @foreach($worldClockDefaults as $defaultCity)
-                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $loop->index }}">
+                @foreach($worldClockDefaults as $slotIndex => $defaultCity)
+                    <div class="bg-violet-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-slate-700 world-clock-card" data-card-index="{{ $slotIndex }}">
                         <div class="text-center">
                             <div class="flex items-center justify-start gap-1 mb-1">
                                 <span class="inline-block w-2 h-2 rounded-full bg-violet-500 dark:bg-violet-400"></span>
@@ -234,24 +260,6 @@
             delhi:       { label: 'New Delhi',            tz: 'Asia/Kolkata' },
             auckland:    { label: 'Auckland',             tz: 'Pacific/Auckland' },
         };
-
-        function applySavedWorldClockSelections() {
-            // Restaurar selección de ciudad por tarjeta desde localStorage
-            document.querySelectorAll('.world-clock-card').forEach(card => {
-                const index = card.getAttribute('data-card-index');
-                if (!index) return;
-
-                const savedCity = localStorage.getItem(`waleeWorldClockCard_${index}`);
-                if (!savedCity) return;
-
-                const select = card.querySelector('.world-clock-select');
-                if (!select) return;
-
-                if (timezones[savedCity]) {
-                    select.value = savedCity;
-                }
-            });
-        }
 
         function updateWorldClocks() {
             // Ciudades activas según las tarjetas (lugares "guardados")
@@ -325,10 +333,23 @@
                 if (card) {
                     const index = card.getAttribute('data-card-index');
                     if (index !== null) {
+                        // Guardar selección en el backend para el usuario actual
                         try {
-                            localStorage.setItem(`waleeWorldClockCard_${index}`, event.target.value);
+                            fetch('/walee/world-clocks/save', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content
+                                },
+                                body: JSON.stringify({
+                                    slot: parseInt(index, 10),
+                                    city_key: event.target.value
+                                })
+                            }).catch((e) => {
+                                console.warn('No se pudo guardar la selección de ciudad en el servidor', e);
+                            });
                         } catch (e) {
-                            console.warn('No se pudo guardar la selección de ciudad en localStorage', e);
+                            console.warn('No se pudo guardar la selección de ciudad en el servidor', e);
                         }
                     }
                 }
@@ -337,7 +358,6 @@
         });
 
         // Actualizar relojes cada segundo
-        applySavedWorldClockSelections();
         updateWorldClocks();
         setInterval(updateWorldClocks, 1000);
     }

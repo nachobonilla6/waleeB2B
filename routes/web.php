@@ -354,6 +354,38 @@ Route::get('/walee-dashboard', function () {
     return view('walee-dashboard');
 })->middleware(['auth'])->name('walee.dashboard');
 
+// Guardar configuración de relojes mundiales del dashboard
+Route::post('/walee/world-clocks/save', function (\Illuminate\Http\Request $request) {
+    try {
+        $userId = auth()->id();
+        if (!$userId) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
+        $validated = $request->validate([
+            'slot' => 'required|integer|min:0|max:11',
+            'city_key' => 'required|string|max:50',
+        ]);
+
+        \App\Models\UserWorldClock::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'slot' => $validated['slot'],
+            ],
+            [
+                'city_key' => $validated['city_key'],
+            ]
+        );
+
+        return response()->json(['success' => true]);
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('Error guardando world clock', [
+            'error' => $e->getMessage(),
+        ]);
+        return response()->json(['success' => false, 'message' => 'Error interno'], 500);
+    }
+})->middleware(['auth'])->name('walee.world-clocks.save');
+
 // Dashboard de Tickets - Estadísticas
 Route::get('/walee-tickets-dashboard', function () {
     // Estadísticas de tickets

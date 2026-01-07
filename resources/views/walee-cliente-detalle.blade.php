@@ -1430,7 +1430,7 @@
             @endphp
             
         // Función para determinar si está abierto o cerrado
-        function getEstadoHorario(horario) {
+        function getEstadoHorario(horario, clientTimezone) {
             try {
                 let horarios = [];
                 if (typeof horario === 'string') {
@@ -1447,10 +1447,36 @@
                     return { abierto: null, texto: 'N/A' };
                 }
                 
-                const ahora = new Date();
-                const diaActual = ahora.getDay(); // 0 = domingo, 1 = lunes, etc.
-                const horaActual = ahora.getHours();
-                const minutoActual = ahora.getMinutes();
+                // Obtener hora actual en la zona horaria del cliente
+                let ahora;
+                let diaActual;
+                let horaActual;
+                let minutoActual;
+                
+                if (clientTimezone) {
+                    try {
+                        // Obtener fecha/hora en la zona horaria del cliente
+                        const nowInClientTZ = new Date(new Date().toLocaleString('en-US', { timeZone: clientTimezone }));
+                        ahora = nowInClientTZ;
+                        diaActual = nowInClientTZ.getDay(); // 0 = domingo, 1 = lunes, etc.
+                        horaActual = nowInClientTZ.getHours();
+                        minutoActual = nowInClientTZ.getMinutes();
+                    } catch (e) {
+                        console.error('Error obteniendo hora del cliente:', e);
+                        // Fallback a hora del sistema
+                        ahora = new Date();
+                        diaActual = ahora.getDay();
+                        horaActual = ahora.getHours();
+                        minutoActual = ahora.getMinutes();
+                    }
+                } else {
+                    // Si no hay zona horaria del cliente, usar hora del sistema
+                    ahora = new Date();
+                    diaActual = ahora.getDay();
+                    horaActual = ahora.getHours();
+                    minutoActual = ahora.getMinutes();
+                }
+                
                 const horaActualDecimal = horaActual + (minutoActual / 60);
                 
                 // Mapeo de días
@@ -1513,7 +1539,8 @@
         @if($cliente->horario)
         document.addEventListener('DOMContentLoaded', function() {
             const horario = @json($cliente->horario);
-            const estado = getEstadoHorario(horario);
+            const clientTimezone = '{{ $clientTimezone ?? '' }}';
+            const estado = getEstadoHorario(horario, clientTimezone);
             
             // Indicador principal del negocio (destacado)
             const negocioEstadoMobile = document.getElementById('negocioEstadoMobile');
@@ -1548,6 +1575,52 @@
                 if (btnMobile) btnMobile.classList.add('border-red-300', 'dark:border-red-700');
                 if (btnDesktop) btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
             }
+            
+            // Función para actualizar el estado del horario
+            function updateEstadoHorario() {
+                const nuevoEstado = getEstadoHorario(horario, clientTimezone);
+                
+                // Actualizar indicador principal
+                if (nuevoEstado.abierto === true) {
+                    const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>Negocio Abierto</span>';
+                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
+                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                } else if (nuevoEstado.abierto === false) {
+                    const badgePrincipal = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-full border border-red-600 dark:border-red-500/30 w-fit"><div class="w-2 h-2 rounded-full bg-red-400"></div>Negocio Cerrado</span>';
+                    if (negocioEstadoMobile) negocioEstadoMobile.innerHTML = badgePrincipal;
+                    if (negocioEstadoDesktop) negocioEstadoDesktop.innerHTML = badgePrincipal;
+                }
+                
+                // Actualizar badges en botones
+                if (nuevoEstado.abierto === true) {
+                    const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Abierto</span>';
+                    if (estadoMobile) estadoMobile.innerHTML = badge;
+                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                    if (btnMobile) {
+                        btnMobile.classList.remove('border-red-300', 'dark:border-red-700');
+                        btnMobile.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                    }
+                    if (btnDesktop) {
+                        btnDesktop.classList.remove('border-red-300', 'dark:border-red-700');
+                        btnDesktop.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                    }
+                } else if (nuevoEstado.abierto === false) {
+                    const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
+                    if (estadoMobile) estadoMobile.innerHTML = badge;
+                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                    if (btnMobile) {
+                        btnMobile.classList.remove('border-emerald-300', 'dark:border-emerald-700');
+                        btnMobile.classList.add('border-red-300', 'dark:border-red-700');
+                    }
+                    if (btnDesktop) {
+                        btnDesktop.classList.remove('border-emerald-300', 'dark:border-emerald-700');
+                        btnDesktop.classList.add('border-red-300', 'dark:border-red-700');
+                    }
+                }
+            }
+            
+            // Actualizar estado del horario cada minuto
+            setInterval(updateEstadoHorario, 60000);
         });
         @endif
             

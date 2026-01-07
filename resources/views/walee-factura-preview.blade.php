@@ -303,9 +303,9 @@
             </div>
         </div>
         
-        <div class="datos-box" style="flex: 1; text-align: right;">
-            <div class="datos-title" style="text-align: right;">Datos del cliente</div>
-            <div class="datos-content" style="text-align: right;">
+        <div class="datos-box cliente-box" style="flex: 1;">
+            <div class="datos-title">Datos del cliente</div>
+            <div class="datos-content">
                 @if($cliente)
                     <div><strong>{{ $cliente->nombre_empresa }}</strong></div>
                     @if($cliente->direccion)

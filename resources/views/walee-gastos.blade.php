@@ -168,20 +168,31 @@
             @include('partials.walee-navbar')
             
             <div class="mt-6 sm:mt-8 animate-fade-in-up">
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
                     <div>
                         <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Gastos</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Gestiona tus gastos recurrentes</p>
                     </div>
-                    <button 
-                        onclick="openCreateGastoModal()"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors shadow-lg"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span class="hidden sm:inline">Nuevo Gasto</span>
-                    </button>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <a 
+                            href="{{ route('walee.facturas') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors shadow-sm"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span class="hidden sm:inline">Volver</span>
+                        </a>
+                        <button 
+                            onclick="openCreateGastoModal()"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors shadow-lg"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span class="hidden sm:inline">Nuevo Gasto</span>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

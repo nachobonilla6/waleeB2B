@@ -129,9 +129,9 @@
                         </svg>
                     </button>
                     
-                    <div id="notesMenuContent" class="hidden max-h-64 overflow-y-auto">
+                    <div id="notesMenuContent" class="notes-menu-content hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                         @foreach($userNotes as $nota)
-                            <div class="flex items-start gap-2 px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
+                            <div class="note-item flex items-start gap-2 px-4 py-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 break-words">
                                         {{ Str::limit($nota->content, 80) }}
@@ -282,15 +282,32 @@
         
         if (content) {
             if (content.classList.contains('hidden')) {
+                // Abrir menú
                 content.classList.remove('hidden');
+                // Forzar reflow para que la transición funcione
+                content.offsetHeight;
+                // Aplicar altura máxima para la animación
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                
                 if (icon) {
                     icon.style.transform = 'rotate(180deg)';
                 }
             } else {
-                content.classList.add('hidden');
+                // Cerrar menú
+                content.style.maxHeight = '0px';
+                content.style.opacity = '0';
+                
                 if (icon) {
                     icon.style.transform = 'rotate(0deg)';
                 }
+                
+                // Esperar a que termine la animación antes de ocultar
+                setTimeout(() => {
+                    if (content.style.maxHeight === '0px') {
+                        content.classList.add('hidden');
+                    }
+                }, 300);
             }
         }
     }
@@ -373,5 +390,43 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+    
+    /* Animaciones suaves para el menú de notas */
+    .notes-menu-content {
+        transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        opacity: 0;
+    }
+    
+    .notes-menu-content:not(.hidden) {
+        opacity: 1;
+    }
+    
+    #notesMenuIcon {
+        transition: transform 0.3s ease-in-out;
+    }
+    
+    /* Animación de entrada para las notas individuales */
+    .note-item {
+        animation: slideIn 0.3s ease-out forwards;
+        opacity: 0;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Delay escalonado para cada nota */
+    .note-item:nth-child(1) { animation-delay: 0.05s; }
+    .note-item:nth-child(2) { animation-delay: 0.1s; }
+    .note-item:nth-child(3) { animation-delay: 0.15s; }
+    .note-item:nth-child(4) { animation-delay: 0.2s; }
+    .note-item:nth-child(5) { animation-delay: 0.25s; }
 </style>
 

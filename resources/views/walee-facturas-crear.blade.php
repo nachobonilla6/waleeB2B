@@ -1741,12 +1741,19 @@
                         <div class="grid grid-cols-2 gap-3 mb-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Subtotal</label>
-                                <p class="text-lg font-bold text-slate-900 dark:text-white">₡${facturaData.subtotal.toFixed(2)}</p>
+                                <p class="text-lg font-bold text-slate-900 dark:text-white">$${facturaData.subtotal.toFixed(2)}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500" id="modalSubtotalCRC">₡0</p>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">IVA (13%)</label>
-                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">₡${facturaData.iva.toFixed(2)}</p>
+                                <p class="text-lg font-bold text-blue-600 dark:text-blue-400">$${facturaData.iva.toFixed(2)}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-500" id="modalIvaCRC">₡0</p>
                             </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Total</label>
+                            <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400">$${facturaData.total.toFixed(2)}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500" id="modalTotalCRC">₡0</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -1787,6 +1794,7 @@
                 color: isDarkMode() ? '#e2e8f0' : '#1e293b',
                 didOpen: () => {
                     window.calcularTotalesModal = function() {
+                        const tasaCambio = {{ $tasaCambio ?? 520 }};
                         const subtotal = facturaData.items.reduce((sum, item) => sum + (item.subtotal || 0), 0);
                         const descuentoAntes = parseFloat(document.getElementById('modal_descuento_antes')?.value) || 0;
                         const subtotalConDescuento = subtotal - descuentoAntes;
@@ -1804,8 +1812,20 @@
                         facturaData.monto_pagado = montoPagado;
                         facturaData.saldo_pendiente = saldoPendiente;
                         
+                        // Actualizar valores en dólares y colones
                         if (document.getElementById('modal_total')) {
                             document.getElementById('modal_total').value = total.toFixed(2);
+                        }
+                        
+                        // Actualizar valores en colones (secundario)
+                        if (document.getElementById('modalSubtotalCRC')) {
+                            document.getElementById('modalSubtotalCRC').textContent = `₡${(subtotal * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                        if (document.getElementById('modalIvaCRC')) {
+                            document.getElementById('modalIvaCRC').textContent = `₡${(iva * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        }
+                        if (document.getElementById('modalTotalCRC')) {
+                            document.getElementById('modalTotalCRC').textContent = `₡${(total * tasaCambio).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                         }
                     };
                 },
@@ -1949,7 +1969,7 @@
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <p class="text-sm font-medium">${pago.descripcion || 'Sin descripción'}</p>
-                                <p class="text-xs text-slate-500">${pago.fecha} - ₡${parseFloat(pago.importe).toLocaleString()} (${pago.metodo_pago || 'Sin método'})</p>
+                                <p class="text-xs text-slate-500">${pago.fecha} - $${parseFloat(pago.importe).toLocaleString()} (${pago.metodo_pago || 'Sin método'})</p>
                             </div>
                             <button onclick="eliminarPagoModal(${index})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
                         </div>

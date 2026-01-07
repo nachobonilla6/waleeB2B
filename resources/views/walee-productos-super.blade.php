@@ -157,6 +157,26 @@
             return $p->precio * $p->stock;
         });
         $categorias = $productos->pluck('categoria')->filter()->unique()->sort()->values();
+        
+        // Productos que vencen pronto (7 días o menos)
+        $productosVencenPronto = $productos->filter(function($producto) {
+            if (!$producto->fecha_expiracion || !$producto->activo) {
+                return false;
+            }
+            $fechaExpiracion = \Carbon\Carbon::parse($producto->fecha_expiracion);
+            if ($fechaExpiracion->isPast()) {
+                return false; // Ya vencidos no cuentan
+            }
+            $diasRestantes = now()->diffInDays($fechaExpiracion, false);
+            return $diasRestantes <= 7 && $diasRestantes >= 0;
+        })->values();
+        
+        $productosVencidos = $productos->filter(function($producto) {
+            if (!$producto->fecha_expiracion || !$producto->activo) {
+                return false;
+            }
+            return \Carbon\Carbon::parse($producto->fecha_expiracion)->isPast();
+        })->values();
     @endphp
     
     <div class="min-h-screen relative overflow-hidden">
@@ -166,7 +186,24 @@
             <div class="mt-6 sm:mt-8 animate-fade-in-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
                     <div>
-                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Productos Super</h2>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Productos Super</h2>
+                            @if($productosVencenPronto->count() > 0)
+                                <button 
+                                    onclick="openVencenProntoModal()"
+                                    class="relative inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors shadow-md animate-pulse"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    <span class="text-sm">{{ $productosVencenPronto->count() }} vencen pronto</span>
+                                    <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
+                                    </span>
+                                </button>
+                            @endif
+                        </div>
                         <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Gestiona los productos del supermercado</p>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-3">
@@ -591,6 +628,106 @@
     </div>
     
     @include('partials.walee-support-button')
+    
+    <!-- Modal de Productos que Vencen Pronto -->
+    <div id="vencenProntoModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-4 sm:p-6 border-b border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-amber-500 rounded-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                                Productos que Vencen Pronto
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                {{ $productosVencenPronto->count() }} producto(s) vence(n) en los próximos 7 días
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="closeVencenProntoModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6">
+                @if($productosVencenPronto->isEmpty())
+                    <div class="text-center py-8">
+                        <p class="text-slate-600 dark:text-slate-400">No hay productos que vencen pronto</p>
+                    </div>
+                @else
+                    <div class="space-y-3">
+                        @foreach($productosVencenPronto as $producto)
+                            @php
+                                $fechaExpiracion = \Carbon\Carbon::parse($producto->fecha_expiracion);
+                                $diasRestantes = now()->diffInDays($fechaExpiracion, false);
+                            @endphp
+                            <div class="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-500 rounded-lg p-4 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <h4 class="font-bold text-amber-900 dark:text-amber-200">{{ $producto->nombre }}</h4>
+                                            @if($producto->categoria)
+                                                <span class="px-2 py-0.5 text-xs font-medium rounded-md bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                                                    {{ $producto->categoria }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        
+                                        <div class="flex flex-wrap items-center gap-4 text-sm">
+                                            <span class="font-semibold text-amber-900 dark:text-amber-200">
+                                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                @if($diasRestantes === 0)
+                                                    Vence HOY
+                                                @elseif($diasRestantes === 1)
+                                                    Vence mañana
+                                                @else
+                                                    Vence en {{ $diasRestantes }} días
+                                                @endif
+                                            </span>
+                                            <span class="text-slate-600 dark:text-slate-400">
+                                                Fecha: {{ $fechaExpiracion->format('d/m/Y') }}
+                                            </span>
+                                            @if($producto->stock > 0)
+                                                <span class="text-slate-600 dark:text-slate-400">
+                                                    Stock: {{ $producto->stock }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onclick="openEditProductoModal({{ $producto->id }}); closeVencenProntoModal();"
+                                        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors text-sm whitespace-nowrap"
+                                    >
+                                        Editar
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+            
+            <div class="p-4 sm:p-6 border-t border-slate-200 dark:border-slate-700">
+                <button 
+                    onclick="closeVencenProntoModal()"
+                    class="w-full px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors"
+                >
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
     
     <!-- Modal de IA -->
     <div id="aiModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4">
@@ -1104,6 +1241,24 @@
             // Limpiar ID si es nuevo producto
             document.getElementById('productoId').value = '';
         }
+        
+        // Funciones para modal de productos que vencen pronto
+        function openVencenProntoModal() {
+            document.getElementById('vencenProntoModal').classList.remove('hidden');
+        }
+        
+        function closeVencenProntoModal() {
+            document.getElementById('vencenProntoModal').classList.add('hidden');
+        }
+        
+        // Abrir modal automáticamente al cargar si hay productos que vencen pronto
+        @if($productosVencenPronto->count() > 0)
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                openVencenProntoModal();
+            }, 500); // Pequeño delay para mejor UX
+        });
+        @endif
     </script>
 </body>
 </html>

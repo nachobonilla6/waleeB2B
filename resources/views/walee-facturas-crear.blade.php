@@ -251,24 +251,66 @@
             
             <!-- Header -->
             <header class="mb-4 sm:mb-6 animate-fade-in-up">
-                <div class="flex items-center gap-3">
-                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            @if(isset($factura) && $factura)
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                <span>Editar Factura</span>
+                            @else
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                <span>Crear Factura</span>
+                            @endif
+                        </h1>
                         @if(isset($factura) && $factura)
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            <span>Editar Factura</span>
-                        @else
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            <span>Crear Factura</span>
+                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                #{{ $factura->numero_factura }}
+                            </span>
                         @endif
-                    </h1>
+                    </div>
+
                     @if(isset($factura) && $factura)
-                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                            #{{ $factura->numero_factura }}
-                        </span>
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <!-- Edit in modal (abre el flujo de fases con datos cargados) -->
+                            <button
+                                type="button"
+                                onclick="abrirModalFacturaDesdeEditar({{ $factura->id }})"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs sm:text-sm text-slate-700 dark:text-slate-200 transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                <span>Editar en modal</span>
+                            </button>
+
+                            <!-- Send -->
+                            <button
+                                type="button"
+                                onclick="enviarFactura({{ $factura->id }})"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-medium shadow-sm transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Enviar</span>
+                            </button>
+
+                            <!-- Resend -->
+                            <button
+                                type="button"
+                                onclick="reenviarFactura({{ $factura->id }})"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-medium shadow-sm transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <span>Reenviar</span>
+                            </button>
+                        </div>
                     @endif
                 </div>
                 @if(isset($factura) && $factura)
@@ -1526,6 +1568,12 @@
                 abrirModalFactura();
             }, 500);
         });
+
+        // Abrir modal de factura desde la página de edición (atajo para el botón "Editar en modal")
+        function abrirModalFacturaDesdeEditar(facturaId) {
+            // Simplemente reutilizamos el flujo normal del modal (ya tiene los datos precargados en facturaData)
+            abrirModalFactura();
+        }
         @endif
         
         // FASE 1: Cliente y Correo

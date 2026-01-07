@@ -139,7 +139,7 @@
                             </a>
                         @endif
                     </form>
-                    <button onclick="abrirModalCrearFactura()" class="px-3 py-1.5 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow flex-shrink-0">
+                    <button onclick="if(typeof abrirModalCrearFactura === 'function') { abrirModalCrearFactura(); } else { console.error('abrirModalCrearFactura no está definida'); alert('Error: El modal no está disponible. Por favor, recarga la página.'); }" class="px-3 py-1.5 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs shadow-sm hover:shadow flex-shrink-0">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>

@@ -588,6 +588,16 @@
                                     class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">DLC</label>
+                                <input 
+                                    type="date" 
+                                    id="productoDlc" 
+                                    name="dlc" 
+                                    value="{{ $producto->dlc ? \Carbon\Carbon::parse($producto->dlc)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -928,6 +938,7 @@
             formData.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
             formData.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
             formData.append('fecha_salida', document.getElementById('productoFechaSalida').value);
+            formData.append('dlc', document.getElementById('productoDlc').value);
             formData.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
             formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
             

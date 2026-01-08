@@ -174,6 +174,7 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Price</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLC</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -287,6 +288,11 @@
                                                 Out of stock
                                             </span>
                                         @endif
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="text-xs text-slate-700 dark:text-slate-300">
+                                            {{ $producto->dlc ? \Carbon\Carbon::parse($producto->dlc)->format('d/m/Y') : '-' }}
+                                        </span>
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center gap-2">

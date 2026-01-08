@@ -383,7 +383,7 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Fechas en grid 2x2 -->
+                                <!-- Fechas en grid 2x3 -->
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
                                         <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -438,6 +438,20 @@
                                             type="date" 
                                             id="productoFechaSalida" 
                                             name="fecha_salida" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            DLC
+                                        </label>
+                                        <input 
+                                            type="date" 
+                                            id="productoDlc" 
+                                            name="dlc" 
                                             class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                         >
                                     </div>
@@ -647,43 +661,62 @@
                                             data-vencen-pronto="{{ $venceraPronto ? '1' : '0' }}"
                                         >
                                             <div class="flex items-start gap-2 sm:gap-4">
-                                                @if($producto->imagen && !empty(trim($producto->imagen)))
-                                                    @php
-                                                        // Construir URL de la imagen usando la ruta definida
-                                                        $imagenPath = trim($producto->imagen);
-                                                        
-                                                        // Si ya es una URL completa, usarla
-                                                        if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
-                                                            $imagenUrl = $imagenPath;
-                                                        } else {
-                                                            // Extraer solo el nombre del archivo
-                                                            $filename = basename($imagenPath);
-                                                            // Usar la ruta definida en routes/web.php
-                                                            $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
-                                                        }
-                                                        
-                                                        // Verificar si el archivo existe físicamente
-                                                        $fullPath = storage_path('app/public/productos-super/' . basename($imagenPath));
-                                                        $fileExists = file_exists($fullPath);
-                                                    @endphp
-                                                    <div class="flex-shrink-0">
-                                                        @if(!$fileExists)
-                                                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 flex items-center justify-center" title="Archivo no encontrado: {{ $imagenPath }}">
-                                                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                                                </svg>
-                                                            </div>
-                                                        @else
+                                                <div class="flex gap-2 flex-shrink-0">
+                                                    @if($producto->imagen && !empty(trim($producto->imagen)))
+                                                        @php
+                                                            // Construir URL de la imagen usando la ruta definida
+                                                            $imagenPath = trim($producto->imagen);
+                                                            
+                                                            // Si ya es una URL completa, usarla
+                                                            if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                                                $imagenUrl = $imagenPath;
+                                                            } else {
+                                                                // Extraer solo el nombre del archivo
+                                                                $filename = basename($imagenPath);
+                                                                // Usar la ruta definida en routes/web.php
+                                                                $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                                            }
+                                                            
+                                                            // Verificar si el archivo existe físicamente
+                                                            $fullPath = storage_path('app/public/productos-super/' . basename($imagenPath));
+                                                            $fileExists = file_exists($fullPath);
+                                                        @endphp
+                                                        <div class="flex-shrink-0">
+                                                            @if(!$fileExists)
+                                                                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-red-300 dark:border-red-600 bg-red-50 dark:bg-red-900/20 flex items-center justify-center" title="Archivo no encontrado: {{ $imagenPath }}">
+                                                                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                                    </svg>
+                                                                </div>
+                                                            @else
+                                                                <img 
+                                                                    src="{{ $imagenUrl }}" 
+                                                                    alt="{{ $producto->nombre }}" 
+                                                                    class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
+                                                                    loading="lazy"
+                                                                    onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Ruta DB:', '{{ $imagenPath }}', 'URL:', this.src, 'Archivo existe:', {{ $fileExists ? 'true' : 'false' }}); this.onerror=null; this.style.display='none';"
+                                                                >
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                    
+                                                    @if($producto->foto_qr && !empty(trim($producto->foto_qr)))
+                                                        @php
+                                                            $qrPath = trim($producto->foto_qr);
+                                                            $qrFilename = basename($qrPath);
+                                                            $qrUrl = route('storage.productos-super.qr', ['filename' => $qrFilename]);
+                                                        @endphp
+                                                        <div class="flex-shrink-0">
                                                             <img 
-                                                                src="{{ $imagenUrl }}" 
-                                                                alt="{{ $producto->nombre }}" 
+                                                                src="{{ $qrUrl }}" 
+                                                                alt="QR {{ $producto->nombre }}" 
                                                                 class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm"
                                                                 loading="lazy"
-                                                                onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Ruta DB:', '{{ $imagenPath }}', 'URL:', this.src, 'Archivo existe:', {{ $fileExists ? 'true' : 'false' }}); this.onerror=null; this.style.display='none';"
+                                                                title="QR Code"
                                                             >
-                                                        @endif
-                                                    </div>
-                                                @endif
+                                                        </div>
+                                                    @endif
+                                                </div>
                                                 <div class="flex-1 min-w-0">
                                                     <div class="flex items-start justify-between gap-2 mb-1.5 sm:mb-2">
                                                         <div class="flex-1 min-w-0">
@@ -782,6 +815,11 @@
                                                                 @if($estaVencido || $venceraPronto)
                                                                     <span class="hidden sm:inline">({{ \Carbon\Carbon::parse($producto->fecha_expiracion)->diffForHumans() }})</span>
                                                                 @endif
+                                                            </span>
+                                                        @endif
+                                                        @if($producto->dlc)
+                                                            <span class="{{ $producto->activo ? 'text-slate-700 dark:text-slate-300' : 'text-slate-500 dark:text-slate-500' }}">
+                                                                DLC: {{ \Carbon\Carbon::parse($producto->dlc)->format('d/m/Y') }}
                                                             </span>
                                                         @endif
                                                     </div>
@@ -1081,6 +1119,7 @@
                     document.getElementById('productoFechaEntrada').value = data.producto.fecha_entrada || '';
                     document.getElementById('productoFechaLimiteVenta').value = data.producto.fecha_limite_venta || '';
                     document.getElementById('productoFechaSalida').value = data.producto.fecha_salida || '';
+                    document.getElementById('productoDlc').value = data.producto.dlc || '';
                     document.getElementById('productoCodigoBarras').value = data.producto.codigo_barras || '';
                     document.getElementById('productoActivo').checked = data.producto.activo || false;
                     
@@ -1187,6 +1226,7 @@
             formDataObj.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
             formDataObj.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
             formDataObj.append('fecha_salida', document.getElementById('productoFechaSalida').value);
+            formDataObj.append('dlc', document.getElementById('productoDlc').value);
             formDataObj.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
             formDataObj.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
             
@@ -1393,6 +1433,7 @@
             if (producto.fecha_entrada) document.getElementById('productoFechaEntrada').value = producto.fecha_entrada;
             if (producto.fecha_limite_venta) document.getElementById('productoFechaLimiteVenta').value = producto.fecha_limite_venta;
             if (producto.fecha_salida) document.getElementById('productoFechaSalida').value = producto.fecha_salida;
+            if (producto.dlc) document.getElementById('productoDlc').value = producto.dlc;
             if (producto.codigo_barras) document.getElementById('productoCodigoBarras').value = producto.codigo_barras;
             if (producto.activo !== undefined) document.getElementById('productoActivo').checked = producto.activo;
             

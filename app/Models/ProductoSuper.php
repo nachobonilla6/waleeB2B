@@ -19,6 +19,7 @@ class ProductoSuper extends Model
         'fecha_entrada',
         'fecha_limite_venta',
         'fecha_salida',
+        'dlc',
         'codigo_barras',
         'imagen',
         'foto_qr',
@@ -34,6 +35,7 @@ class ProductoSuper extends Model
         'fecha_entrada' => 'date',
         'fecha_limite_venta' => 'date',
         'fecha_salida' => 'date',
+        'dlc' => 'date',
     ];
 
     /**

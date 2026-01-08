@@ -5037,6 +5037,7 @@ Route::post('/walee-herramientas/inventory/producto', function (\Illuminate\Http
         
         $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
         $producto->fecha_salida = $request->input('fecha_salida');
+        $producto->dlc = $request->input('dlc');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         
@@ -5116,6 +5117,7 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
         $producto->fecha_entrada = $request->input('fecha_entrada');
         $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
         $producto->fecha_salida = $request->input('fecha_salida');
+        $producto->dlc = $request->input('dlc');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         
@@ -5375,6 +5377,7 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
         $producto->fecha_entrada = $request->input('fecha_entrada');
         $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
         $producto->fecha_salida = $request->input('fecha_salida');
+        $producto->dlc = $request->input('dlc');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         
@@ -5446,6 +5449,7 @@ Route::get('/walee-productos-super/{id}', function ($id) {
                 'fecha_entrada' => $producto->fecha_entrada ? $producto->fecha_entrada->format('Y-m-d') : null,
                 'fecha_limite_venta' => $producto->fecha_limite_venta ? $producto->fecha_limite_venta->format('Y-m-d') : null,
                 'fecha_salida' => $producto->fecha_salida ? $producto->fecha_salida->format('Y-m-d') : null,
+                'dlc' => $producto->dlc ? $producto->dlc->format('Y-m-d') : null,
                 'codigo_barras' => $producto->codigo_barras,
                 'imagen_url' => $producto->imagen ? asset('storage/' . $producto->imagen) : null,
                 'foto_qr_url' => $producto->foto_qr ? asset('storage/' . $producto->foto_qr) : null,
@@ -5475,6 +5479,7 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
         $producto->fecha_entrada = $request->input('fecha_entrada');
         $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
         $producto->fecha_salida = $request->input('fecha_salida');
+        $producto->dlc = $request->input('dlc');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         

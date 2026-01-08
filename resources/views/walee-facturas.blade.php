@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee B2B - Panel de Finanzas</title>
-    <meta name="description" content="Walee B2B - Panel de Finanzas e Facturas">
+    <title>Walee B2B - Finance Dashboard</title>
+    <meta name="description" content="Walee B2B - Finance and Invoices Dashboard">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -101,29 +101,29 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Panel de Finanzas'; @endphp
+            @php $pageTitle = 'Finance Dashboard'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                        Panel de Finanzas
+                        Finance Dashboard
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Facturado vs Gastos</p>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Invoiced vs Expenses</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3">
                     <a href="{{ route('walee.dashboard') }}" class="px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-slate-300 hover:to-slate-400 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white font-semibold rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm transform hover:scale-105 active:scale-95">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        <span class="hidden sm:inline">Volver</span>
+                        <span class="hidden sm:inline">Back</span>
                     </a>
                     <a href="{{ route('walee.facturas.lista') }}" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg sm:rounded-xl transition-all flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shadow-sm hover:shadow">
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <span>Ver Facturas</span>
+                        <span>View Invoices</span>
                     </a>
                 </div>
             </header>
@@ -147,15 +147,15 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Facturas Pagadas Este Mes</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Paid Invoices This Month</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">{{ $facturasPagadasEsteMes ?? 0 }}</p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">Facturas</p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">Invoices</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </a>
                 
@@ -169,7 +169,7 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Gastos Este Mes</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Expenses This Month</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format(($totalGastosEsteMes ?? 0) * $tasaCambio, 2, '.', ',') }}</p>
                     </div>
@@ -177,7 +177,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </a>
                 
@@ -191,7 +191,7 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Pérdidas Este Mes</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Losses This Month</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600 dark:text-red-400">${{ number_format(($perdidasEsteMes ?? 0) / $tasaCambio, 2, '.', ',') }}</p>
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($perdidasEsteMes ?? 0, 2, '.', ',') }}</p>
                     </div>
@@ -199,7 +199,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </div>
                 
@@ -213,14 +213,14 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Pérdidas</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Losses</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600 dark:text-red-400">{{ number_format($porcentajePerdidas ?? 0, 1) }}%</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-red-600 dark:text-red-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </div>
                 
@@ -234,14 +234,14 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Gastos vs Facturado</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Expenses vs Invoiced</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">{{ number_format($porcentajeGastos, 1) }}%</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-violet-600 dark:text-violet-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </div>
                 
@@ -255,7 +255,7 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Diferencia</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Difference</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                             {{ $diferencia >= 0 ? '+' : '' }}${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }}
                         </p>
@@ -265,7 +265,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                        <span>{{ now()->format('F Y') }}</span>
                     </div>
                 </div>
             </div>
@@ -281,10 +281,10 @@
                 $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMesCRC / $totalFacturadoEsteMes) * 100 : 0;
             @endphp
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm dark:shadow-none mb-6 sm:mb-8 animate-fade-in-up">
-                <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Resumen del Mes</h3>
+                <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Month Summary</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                     <div class="text-center sm:text-left">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Diferencia</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Difference</p>
                         <p class="text-xl sm:text-2xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                             {{ $diferencia >= 0 ? '+' : '' }}${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }}
                         </p>
@@ -293,15 +293,15 @@
                         </p>
                     </div>
                     <div class="text-center sm:text-left">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Porcentaje de Gastos</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Expenses Percentage</p>
                         <p class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
                             {{ number_format($porcentajeGastos, 1) }}%
                         </p>
                     </div>
                     <div class="text-center sm:text-left">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Estado</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-1">Status</p>
                         <p class="text-xl sm:text-2xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                            {{ $diferencia >= 0 ? '✓ Positivo' : 'Negativo' }}
+                            {{ $diferencia >= 0 ? '✓ Positive' : 'Negative' }}
                         </p>
                     </div>
                 </div>
@@ -309,7 +309,7 @@
                 <!-- Barra de progreso -->
                 <div class="mt-4 sm:mt-6">
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Gastos vs Facturado</span>
+                        <span class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Expenses vs Invoiced</span>
                         <span class="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">{{ number_format($porcentajeGastos, 1) }}%</span>
                     </div>
                     <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 sm:h-4 overflow-hidden">
@@ -323,7 +323,7 @@
             
             <!-- Gráfica de Gastos y Entradas -->
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm dark:shadow-none mb-6 sm:mb-8 animate-fade-in-up">
-                <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Gastos vs Entradas Este Mes</h3>
+                <h3 class="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Expenses vs Income This Month</h3>
                 <div class="relative w-full" style="height: 300px;">
                     <canvas id="gastosEntradasChart"></canvas>
                 </div>

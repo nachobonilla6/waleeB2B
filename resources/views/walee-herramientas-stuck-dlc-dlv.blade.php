@@ -63,6 +63,13 @@
         
         $productos = ProductoSuper::orderBy('nombre', 'asc')->get();
         
+        $totalProductos = $productos->count();
+        $productosActivos = $productos->where('activo', true)->count();
+        $stockTotal = $productos->where('activo', true)->sum('stock');
+        $stockBajo = $productos->where('activo', true)->filter(function($p) {
+            return $p->stock <= 10 && $p->stock > 0;
+        })->count();
+        $sinStock = $productos->where('activo', true)->where('stock', 0)->count();
     @endphp
     
     <div class="min-h-screen relative overflow-hidden">
@@ -94,6 +101,26 @@
                         </svg>
                         <span>New Product</span>
                     </button>
+                </div>
+            </div>
+            
+            <!-- Subtle Stats Widgets -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.12s;">
+                <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total</div>
+                    <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">{{ $totalProductos }}</div>
+                </div>
+                <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Active</div>
+                    <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">{{ $productosActivos }}</div>
+                </div>
+                <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Low Stock</div>
+                    <div class="text-lg font-semibold text-orange-600 dark:text-orange-400">{{ $stockBajo }}</div>
+                </div>
+                <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Out of Stock</div>
+                    <div class="text-lg font-semibold text-red-600 dark:text-red-400">{{ $sinStock }}</div>
                 </div>
             </div>
             

@@ -82,7 +82,7 @@
             <div class="mb-6 sm:mb-8 animate-fade-in-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Edit Product</h1>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Inventory</h1>
                         <p class="text-sm text-slate-600 dark:text-slate-400">{{ $producto->nombre }}</p>
                     </div>
                     <div class="flex items-center gap-2">
@@ -99,10 +99,158 @@
                 </div>
             </div>
             
-            <!-- Form Layout - Two Columns -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <!-- Left Column - Basic Fields -->
-                <div class="space-y-6">
+            <!-- Form -->
+            <form id="productoForm" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="_method" value="PUT">
+                
+                <!-- Status Section - Above all sections -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Status
+                    </h2>
+                    <div class="space-y-4">
+                        <label class="relative inline-flex items-center cursor-pointer group">
+                            <input 
+                                type="checkbox" 
+                                id="productoActivo" 
+                                name="activo" 
+                                value="1"
+                                {{ $producto->activo ? 'checked' : '' }}
+                                class="sr-only peer"
+                                onchange="updateStatusText()"
+                            >
+                            <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                            <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                {{ $producto->activo ? 'Active' : 'Inactive' }}
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Codes & Images Section - Full Width -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Codes & Images
+                    </h2>
+                    <div class="space-y-4">
+                        <!-- Desktop: Foto y QR en la misma línea -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Product Image -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Image</label>
+                                <input 
+                                    type="file" 
+                                    id="productoImagen" 
+                                    name="imagen" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
+                                >
+                                @if($producto->imagen)
+                                    @php
+                                        $imagenPath = trim($producto->imagen);
+                                        if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                            $imagenUrl = $imagenPath;
+                                        } else {
+                                            $filename = basename($imagenPath);
+                                            if (strpos($imagenPath, 'productos-super/') === 0) {
+                                                $imagenUrl = asset('storage/' . $imagenPath);
+                                            } else {
+                                                $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
+                                        <button 
+                                            type="button"
+                                            onclick="removeImagen()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove image"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
+                                @endif
+                            </div>
+                            
+                            <!-- QR Code Image -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
+                                <input 
+                                    type="file" 
+                                    id="productoFotoQr" 
+                                    name="foto_qr" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
+                                >
+                                <button 
+                                    type="button"
+                                    onclick="generateQRCode()"
+                                    class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
+                                    title="Generate QR Code automatically"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    <span>Generate QR Code</span>
+                                </button>
+                                <div id="qrCodeCanvas" class="mt-2 hidden"></div>
+                                @if($producto->foto_qr)
+                                    @php
+                                        $qrPath = trim($producto->foto_qr);
+                                        if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
+                                            $qrUrl = $qrPath;
+                                        } else {
+                                            $filename = basename($qrPath);
+                                            $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                        }
+                                    @endphp
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                                        <button 
+                                            type="button"
+                                            onclick="removeFotoQr()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove QR image"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Barcode debajo (en todas las versiones) -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
+                            <input 
+                                type="text" 
+                                id="productoCodigoBarras" 
+                                name="codigo_barras" 
+                                value="{{ $producto->codigo_barras }}"
+                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                                placeholder="Barcode"
+                            >
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Basic Info and Dates - Two Columns -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left Column - Basic Information -->
                     <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,9 +258,7 @@
                             </svg>
                             Basic Information
                         </h2>
-                        <form id="productoForm" class="space-y-4" enctype="multipart/form-data">
-                            @csrf
-                            <input type="hidden" name="_method" value="PUT">
+                        <div class="space-y-4">
                             
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Name *</label>
@@ -202,157 +348,10 @@
                                     >
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-                
-                <!-- Right Column - Advanced Settings -->
-                <div class="space-y-6">
-                    <!-- Codes & Images Section -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            Codes & Images
-                        </h2>
-                        <div class="space-y-4">
-                            <!-- Desktop: Foto y QR en la misma línea -->
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                <!-- Product Image -->
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Image</label>
-                                    <input 
-                                        type="file" 
-                                        id="productoImagen" 
-                                        name="imagen" 
-                                        accept="image/*"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
-                                    >
-                                    @if($producto->imagen)
-                                        @php
-                                            $imagenPath = trim($producto->imagen);
-                                            if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
-                                                $imagenUrl = $imagenPath;
-                                            } else {
-                                                $filename = basename($imagenPath);
-                                                if (strpos($imagenPath, 'productos-super/') === 0) {
-                                                    $imagenUrl = asset('storage/' . $imagenPath);
-                                                } else {
-                                                    $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
-                                                }
-                                            }
-                                        @endphp
-                                        <div class="mt-2 relative inline-block">
-                                            <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
-                                            <button 
-                                                type="button"
-                                                onclick="removeImagen()"
-                                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                                                title="Remove image"
-                                            >
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
-                                    @endif
-                                </div>
-                                
-                                <!-- QR Code Image -->
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
-                                    <input 
-                                        type="file" 
-                                        id="productoFotoQr" 
-                                        name="foto_qr" 
-                                        accept="image/*"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
-                                    >
-                                    <button 
-                                        type="button"
-                                        onclick="generateQRCode()"
-                                        class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
-                                        title="Generate QR Code automatically"
-                                    >
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                        </svg>
-                                        <span>Generate QR Code</span>
-                                    </button>
-                                    <div id="qrCodeCanvas" class="mt-2 hidden"></div>
-                                    @if($producto->foto_qr)
-                                        @php
-                                            $qrPath = trim($producto->foto_qr);
-                                            if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
-                                                $qrUrl = $qrPath;
-                                            } else {
-                                                $filename = basename($qrPath);
-                                                $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
-                                            }
-                                        @endphp
-                                        <div class="mt-2 relative inline-block">
-                                            <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
-                                            <button 
-                                                type="button"
-                                                onclick="removeFotoQr()"
-                                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                                                title="Remove QR image"
-                                            >
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
-                                    @endif
-                                </div>
-                            </div>
-                            
-                            <!-- Barcode debajo (en todas las versiones) -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
-                                <input 
-                                    type="text" 
-                                    id="productoCodigoBarras" 
-                                    name="codigo_barras" 
-                                    value="{{ $producto->codigo_barras }}"
-                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
-                                    placeholder="Barcode"
-                                >
-                            </div>
                         </div>
                     </div>
                     
-                    <!-- Status Toggle -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Status
-                        </h2>
-                        <div class="space-y-4">
-                            <label class="relative inline-flex items-center cursor-pointer group">
-                                <input 
-                                    type="checkbox" 
-                                    id="productoActivo" 
-                                    name="activo" 
-                                    value="1"
-                                    {{ $producto->activo ? 'checked' : '' }}
-                                    class="sr-only peer"
-                                    onchange="updateStatusText()"
-                                >
-                                <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
-                                <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    {{ $producto->activo ? 'Active' : 'Inactive' }}
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <!-- Dates Section -->
+                    <!-- Right Column - Dates -->
                     <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -403,19 +402,19 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Save Button -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                        <button 
-                            type="button"
-                            onclick="saveProducto()"
-                            class="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-lg"
-                        >
-                            Save Changes
-                        </button>
-                    </div>
                 </div>
-            </div>
+                
+                <!-- Save Button - Below -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <button 
+                        type="button"
+                        onclick="saveProducto()"
+                        class="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-lg"
+                    >
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     

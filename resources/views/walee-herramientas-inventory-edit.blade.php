@@ -846,32 +846,6 @@
                         throw new Error('QRCode library failed to load. Please check your internet connection and refresh the page.');
                     }
                 }
-                        await new Promise((resolve, reject) => {
-                            script.onload = () => {
-                                window.QRCodeLoaded = true;
-                                resolve();
-                            };
-                            script.onerror = () => {
-                                window.QRCodeLoading = false;
-                                reject(new Error('Failed to load QRCode library from CDN'));
-                            };
-                            document.head.appendChild(script);
-                        });
-                        window.QRCodeLoading = false;
-                    } else {
-                        // Esperar un poco más si ya se está cargando
-                        let waitRetries = 0;
-                        while (window.QRCodeLoading && waitRetries < 20) {
-                            await new Promise(resolve => setTimeout(resolve, 100));
-                            waitRetries++;
-                        }
-                    }
-                    
-                    // Verificar nuevamente después de intentar cargar
-                    if (typeof QRCode === 'undefined') {
-                        throw new Error('QRCode library failed to load. Please check your internet connection and refresh the page.');
-                    }
-                }
                 
                 // Verificar que QRCode.toCanvas esté disponible
                 if (typeof QRCode.toCanvas !== 'function') {

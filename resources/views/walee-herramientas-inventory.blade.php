@@ -64,13 +64,34 @@
         
         $productos = ProductoSuper::orderBy('nombre', 'asc')->get();
         
-        $totalProductos = $productos->count();
-        $productosActivos = $productos->where('activo', true)->count();
-        $stockTotal = $productos->where('activo', true)->sum('stock');
-        $stockBajo = $productos->where('activo', true)->filter(function($p) {
-            return $p->stock <= 10 && $p->stock > 0;
+        // Total stock - suma de todos los stocks
+        $totalStock = $productos->sum('stock');
+        
+        // Active stock - suma de stock de productos activos
+        $activeStock = $productos->where('activo', true)->sum('stock');
+        
+        // Productos que expiran pronto (7 días o menos) - usar fecha_limite_venta o fecha_expiracion
+        $productosExpiranPronto = $productos->filter(function($producto) {
+            $fechaLimite = $producto->fecha_limite_venta ?? $producto->fecha_expiracion;
+            if (!$fechaLimite || !$producto->activo) {
+                return false;
+            }
+            $fechaLimiteCarbon = \Carbon\Carbon::parse($fechaLimite);
+            if ($fechaLimiteCarbon->isPast()) {
+                return false; // Ya expirados no cuentan
+            }
+            $diasRestantes = now()->diffInDays($fechaLimiteCarbon, false);
+            return $diasRestantes <= 7 && $diasRestantes >= 0;
         })->count();
-        $sinStock = $productos->where('activo', true)->where('stock', 0)->count();
+        
+        // Productos expirados - usar fecha_limite_venta o fecha_expiracion
+        $productosExpirados = $productos->filter(function($producto) {
+            $fechaLimite = $producto->fecha_limite_venta ?? $producto->fecha_expiracion;
+            if (!$fechaLimite || !$producto->activo) {
+                return false;
+            }
+            return \Carbon\Carbon::parse($fechaLimite)->isPast();
+        })->count();
     @endphp
     
     <div class="min-h-screen relative overflow-hidden">
@@ -119,20 +140,20 @@
             <!-- Subtle Stats Widgets -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-fade-in-up" style="animation-delay: 0.12s;">
                 <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
-                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total</div>
-                    <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">{{ $totalProductos }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Stock</div>
+                    <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">{{ number_format($totalStock) }}</div>
                 </div>
                 <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
-                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Active</div>
-                    <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">{{ $productosActivos }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Active Stock</div>
+                    <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">{{ number_format($activeStock) }}</div>
                 </div>
                 <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
-                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Low Stock</div>
-                    <div class="text-lg font-semibold text-orange-600 dark:text-orange-400">{{ $stockBajo }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Expire Soon</div>
+                    <div class="text-lg font-semibold text-orange-600 dark:text-orange-400">{{ $productosExpiranPronto }}</div>
                 </div>
                 <div class="bg-white/60 dark:bg-slate-800/30 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50 dark:border-slate-700/30">
-                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Out of Stock</div>
-                    <div class="text-lg font-semibold text-red-600 dark:text-red-400">{{ $sinStock }}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Expired</div>
+                    <div class="text-lg font-semibold text-red-600 dark:text-red-400">{{ $productosExpirados }}</div>
                 </div>
             </div>
             

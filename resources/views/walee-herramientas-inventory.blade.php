@@ -191,6 +191,13 @@
                         <option value="zero">Out of stock</option>
                         <option value="active">Active only</option>
                     </select>
+                    <select 
+                        id="filterExpire"
+                        class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                        <option value="all">All products</option>
+                        <option value="expire-soon">Expire Soon (≤7 days)</option>
+                    </select>
                 </div>
             </div>
             
@@ -214,11 +221,28 @@
                         </thead>
                         <tbody id="productosTableBody" class="divide-y divide-slate-200 dark:divide-slate-700">
                             @foreach($productos as $producto)
+                                @php
+                                    // Verificar si expira pronto para el atributo data
+                                    $expiraProntoData = false;
+                                    $fechaLimite = $producto->fecha_limite_venta ?? $producto->fecha_expiracion;
+                                    if ($fechaLimite && $producto->activo) {
+                                        try {
+                                            $fechaLimiteCarbon = \Carbon\Carbon::parse($fechaLimite);
+                                            if (!$fechaLimiteCarbon->isPast()) {
+                                                $diasRestantes = now()->diffInDays($fechaLimiteCarbon, false);
+                                                $expiraProntoData = $diasRestantes <= 7 && $diasRestantes >= 0;
+                                            }
+                                        } catch (\Exception $e) {
+                                            // Ignorar errores de parsing
+                                        }
+                                    }
+                                @endphp
                                 <tr class="producto-row hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" 
                                     data-nombre="{{ strtolower($producto->nombre) }}"
                                     data-categoria="{{ strtolower($producto->categoria ?? '') }}"
                                     data-stock="{{ $producto->stock }}"
                                     data-activo="{{ $producto->activo ? '1' : '0' }}"
+                                    data-expira-pronto="{{ $expiraProntoData ? '1' : '0' }}"
                                 >
                                     <td class="px-4 py-3">
                                         @if($producto->imagen)
@@ -464,11 +488,13 @@
         document.getElementById('searchInput').addEventListener('input', filterProductos);
         document.getElementById('filterCategoria').addEventListener('change', filterProductos);
         document.getElementById('filterStock').addEventListener('change', filterProductos);
+        document.getElementById('filterExpire').addEventListener('change', filterProductos);
         
         function filterProductos() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const categoria = document.getElementById('filterCategoria').value.toLowerCase();
             const stockFilter = document.getElementById('filterStock').value;
+            const expireFilter = document.getElementById('filterExpire').value;
             const rows = document.querySelectorAll('.producto-row');
             
             rows.forEach(row => {
@@ -476,6 +502,7 @@
                 const rowCategoria = row.dataset.categoria;
                 const stock = parseInt(row.dataset.stock);
                 const activo = row.dataset.activo === '1';
+                const expiraPronto = row.dataset.expiraPronto === '1';
                 
                 let show = true;
                 
@@ -484,6 +511,7 @@
                 if (stockFilter === 'low' && (stock > 10 || stock === 0)) show = false;
                 if (stockFilter === 'zero' && stock !== 0) show = false;
                 if (stockFilter === 'active' && !activo) show = false;
+                if (expireFilter === 'expire-soon' && !expiraPronto) show = false;
                 
                 row.style.display = show ? '' : 'none';
             });

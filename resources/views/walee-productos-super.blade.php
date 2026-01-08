@@ -238,181 +238,265 @@
                         </button>
                         
                         <div id="formularioProducto" class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-md sticky top-4 hidden lg:block">
-                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4">Add Product</h3>
-                            <form id="productoForm" class="space-y-4" enctype="multipart/form-data">
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-3">Add Product</h3>
+                            <form id="productoForm" class="space-y-2.5" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" id="productoId" name="producto_id">
                                 
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoNombre" 
-                                        name="nombre" 
-                                        required
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                        placeholder="Ej: Leche, Pan, etc."
-                                    >
+                                <!-- Nombre y Categoría en la misma fila -->
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                            </svg>
+                                            Nombre *
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="productoNombre" 
+                                            name="nombre" 
+                                            required
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                            placeholder="Ej: Leche"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                            </svg>
+                                            Categoría
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="productoCategoria" 
+                                            name="categoria" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                            placeholder="Lácteos"
+                                        >
+                                    </div>
                                 </div>
                                 
+                                <!-- Descripción compacta -->
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
+                                    <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                                        </svg>
+                                        Descripción
+                                    </label>
                                     <textarea 
                                         id="productoDescripcion" 
                                         name="descripcion" 
-                                        rows="3"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-                                        placeholder="Descripción del producto..."
+                                        rows="2"
+                                        class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+                                        placeholder="Descripción..."
                                     ></textarea>
                                 </div>
                                 
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡)</label>
-                                    <input 
-                                        type="number" 
-                                        id="productoPrecio" 
-                                        name="precio" 
-                                        step="0.01"
-                                        min="0"
-                                        required
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                        placeholder="0.00"
-                                    >
+                                <!-- Precio, Brand y Sección en grid -->
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Precio *
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            id="productoPrecio" 
+                                            name="precio" 
+                                            step="0.01"
+                                            min="0"
+                                            required
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                            placeholder="0.00"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                            </svg>
+                                            Brand
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="productoBrand" 
+                                            name="brand" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                            placeholder="Nestlé"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                            </svg>
+                                            Sección
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="productoSeccion" 
+                                            name="seccion" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                            placeholder="Pasillo 3"
+                                        >
+                                    </div>
                                 </div>
                                 
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoCategoria" 
-                                        name="categoria" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                        placeholder="Ej: Lácteos, Panadería, etc."
-                                    >
+                                <!-- Stock y Cantidad en la misma fila -->
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                            </svg>
+                                            Stock
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            id="productoStock" 
+                                            name="stock" 
+                                            min="0"
+                                            value="0"
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                            </svg>
+                                            Cantidad
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            id="productoCantidad" 
+                                            name="cantidad" 
+                                            min="0"
+                                            value="0"
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
                                 </div>
                                 
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Brand</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoBrand" 
-                                        name="brand" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                        placeholder="Ej: Nestlé, Bimbo, etc."
-                                    >
+                                <!-- Fechas en grid 2x2 -->
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Entrada
+                                        </label>
+                                        <input 
+                                            type="date" 
+                                            id="productoFechaEntrada" 
+                                            name="fecha_entrada" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Expiración
+                                        </label>
+                                        <input 
+                                            type="date" 
+                                            id="productoFechaExpiracion" 
+                                            name="fecha_expiracion" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Límite Venta
+                                        </label>
+                                        <input 
+                                            type="date" 
+                                            id="productoFechaLimiteVenta" 
+                                            name="fecha_limite_venta" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                            </svg>
+                                            Salida
+                                        </label>
+                                        <input 
+                                            type="date" 
+                                            id="productoFechaSalida" 
+                                            name="fecha_salida" 
+                                            class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        >
+                                    </div>
                                 </div>
                                 
+                                <!-- Código de barras -->
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sección</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoSeccion" 
-                                        name="seccion" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                        placeholder="Ej: Pasillo 3, Estante A, etc."
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stock</label>
-                                    <input 
-                                        type="number" 
-                                        id="productoStock" 
-                                        name="stock" 
-                                        min="0"
-                                        value="0"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cantidad</label>
-                                    <input 
-                                        type="number" 
-                                        id="productoCantidad" 
-                                        name="cantidad" 
-                                        min="0"
-                                        value="0"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Expiración</label>
-                                    <input 
-                                        type="date" 
-                                        id="productoFechaExpiracion" 
-                                        name="fecha_expiracion" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Entrada</label>
-                                    <input 
-                                        type="date" 
-                                        id="productoFechaEntrada" 
-                                        name="fecha_entrada" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha Límite de Venta</label>
-                                    <input 
-                                        type="date" 
-                                        id="productoFechaLimiteVenta" 
-                                        name="fecha_limite_venta" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Salida</label>
-                                    <input 
-                                        type="date" 
-                                        id="productoFechaSalida" 
-                                        name="fecha_salida" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Código de Barras</label>
+                                    <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                        Código de Barras
+                                    </label>
                                     <input 
                                         type="text" 
                                         id="productoCodigoBarras" 
                                         name="codigo_barras" 
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                         placeholder="Opcional"
                                     >
                                 </div>
                                 
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen del Producto</label>
-                                    <input 
-                                        type="file" 
-                                        id="productoImagen" 
-                                        name="imagen" 
-                                        accept="image/*"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
-                                    >
-                                    <div id="imagenPreview" class="mt-2 hidden">
-                                        <img id="imagenPreviewImg" src="" alt="Vista previa" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                <!-- Imágenes en grid -->
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Imagen
+                                        </label>
+                                        <input 
+                                            type="file" 
+                                            id="productoImagen" 
+                                            name="imagen" 
+                                            accept="image/*"
+                                            class="w-full px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                        >
+                                        <div id="imagenPreview" class="mt-1 hidden">
+                                            <img id="imagenPreviewImg" src="" alt="Preview" class="w-16 h-16 object-cover rounded border border-slate-300 dark:border-slate-600">
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Foto QR</label>
-                                    <input 
-                                        type="file" 
-                                        id="productoFotoQr" 
-                                        name="foto_qr" 
-                                        accept="image/*"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
-                                    >
-                                    <div id="fotoQrPreview" class="mt-2 hidden">
-                                        <img id="fotoQrPreviewImg" src="" alt="Vista previa QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    <div>
+                                        <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                                            </svg>
+                                            QR
+                                        </label>
+                                        <input 
+                                            type="file" 
+                                            id="productoFotoQr" 
+                                            name="foto_qr" 
+                                            accept="image/*"
+                                            class="w-full px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                        >
+                                        <div id="fotoQrPreview" class="mt-1 hidden">
+                                            <img id="fotoQrPreviewImg" src="" alt="Preview QR" class="w-16 h-16 object-cover rounded border border-slate-300 dark:border-slate-600">
+                                        </div>
                                     </div>
                                 </div>
                                 

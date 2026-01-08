@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee B2B - Panel de Facebook</title>
-    <meta name="description" content="Walee B2B - Panel de Control de Facebook">
+    <title>Walee B2B - Facebook Dashboard</title>
+    <meta name="description" content="Walee B2B - Facebook Control Dashboard">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -89,7 +89,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Facebook - Panel'; @endphp
+            @php $pageTitle = 'Facebook - Dashboard'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
@@ -99,10 +99,10 @@
                         <svg class="w-6 h-6 md:w-8 md:h-8 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                         </svg>
-                        <span class="dashboard-facebook-title" style="color: #eab308 !important;">Dashboard Facebook</span>
+                        <span class="dashboard-facebook-title" style="color: #eab308 !important;">Facebook Dashboard</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                        Estadísticas y control de publicaciones
+                        Statistics and publication control
                     </p>
                 </div>
                 <a href="{{ route('walee.dashboard') }}" class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
@@ -124,7 +124,7 @@
                         </div>
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($totalPublicaciones) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Total Publicaciones</p>
+                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Total Publications</p>
                 </div>
                 
                 <!-- Este Mes -->
@@ -137,7 +137,7 @@
                         </div>
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($publicacionesEsteMes) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Este Mes</p>
+                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">This Month</p>
                 </div>
                 
                 <!-- Esta Semana -->
@@ -150,7 +150,7 @@
                         </div>
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($publicacionesEstaSemana) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Esta Semana</p>
+                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">This Week</p>
                 </div>
                 
                 <!-- Clientes Activos -->
@@ -163,14 +163,14 @@
                         </div>
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesActivos) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Clientes Activos</p>
+                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Active Clients</p>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
                 <!-- Gráfico de Publicaciones -->
                 <div class="lg:col-span-2 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.5s;">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Publicaciones - Últimos 15 Días</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Publications - Last 15 Days</h3>
                     <div class="h-48 md:h-64">
                         <canvas id="publicacionesChart"></canvas>
                     </div>
@@ -178,7 +178,7 @@
                 
                 <!-- Top Clientes -->
                 <div class="rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.6s;">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Top Clientes</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Top Clients</h3>
                     <div class="space-y-3">
                         @forelse($clientesTop as $index => $cliente)
                             @php
@@ -219,7 +219,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs md:text-sm font-medium text-slate-900 dark:text-white truncate">{{ $cliente->name }}</p>
-                                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">{{ $cliente->posts_count }} publicaciones</p>
+                                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">{{ $cliente->posts_count }} publications</p>
                                     @if($cliente->idioma)
                                         <p class="text-[10px] md:text-xs text-slate-500 dark:text-slate-500 mt-0.5">
                                             @php
@@ -239,7 +239,7 @@
                                 <span class="text-xs md:text-sm font-bold text-walee-500">#{{ $index + 1 }}</span>
                             </a>
                         @empty
-                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 text-center py-4">No hay clientes con publicaciones</p>
+                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 text-center py-4">No clients with publications</p>
                         @endforelse
                     </div>
                 </div>
@@ -248,9 +248,9 @@
             <!-- Publicaciones Recientes -->
             <div class="rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.7s;">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">Publicaciones Recientes</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">Recent Publications</h3>
                     <a href="{{ route('walee.facebook.publicaciones') }}" class="text-xs md:text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        Ver todas →
+                        View all →
                     </a>
                 </div>
                 <div class="space-y-3">
@@ -283,7 +283,7 @@
                             <svg class="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                             </svg>
-                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">No hay publicaciones recientes</p>
+                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">No recent publications</p>
                         </div>
                     @endforelse
                 </div>

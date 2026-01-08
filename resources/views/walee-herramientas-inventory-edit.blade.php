@@ -18,16 +18,41 @@
             const cdnUrls = [
                 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
                 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js',
+                'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.js',
+                'https://unpkg.com/qrcode@1.5.3/build/qrcode.js'
             ];
             
             let currentIndex = 0;
+            let loadTimeout = null;
             
             function loadQRCode() {
                 if (currentIndex >= cdnUrls.length) {
                     console.error('Failed to load QRCode library from all CDN sources');
                     window.QRCodeLoaded = false;
                     window.QRCodeLoadError = 'All CDN sources failed';
+                    // Mostrar notificación al usuario
+                    if (typeof Swal !== 'undefined') {
+                        const isDark = document.documentElement.classList.contains('dark');
+                        Swal.fire({
+                            background: isDark ? '#1e293b' : '#ffffff',
+                            color: isDark ? '#f1f5f9' : '#0f172a',
+                            icon: 'warning',
+                            title: 'QR Code Library Not Available',
+                            html: `
+                                <p class="mb-3">Unable to load QR code library from CDN sources.</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Possible solutions:</p>
+                                <ul class="text-left text-sm text-slate-600 dark:text-slate-400 space-y-1 mb-3">
+                                    <li>• Check your internet connection</li>
+                                    <li>• Refresh the page</li>
+                                    <li>• Try again later</li>
+                                </ul>
+                                <p class="text-xs text-slate-500 dark:text-slate-500">You can still upload a QR code image manually.</p>
+                            `,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                    }
                     return;
                 }
                 
@@ -36,10 +61,20 @@
                 script.async = true;
                 script.crossOrigin = 'anonymous';
                 
+                // Timeout para cada intento (5 segundos)
+                loadTimeout = setTimeout(function() {
+                    if (typeof QRCode === 'undefined') {
+                        console.warn('Timeout loading QRCode from:', cdnUrls[currentIndex]);
+                        script.onerror();
+                    }
+                }, 5000);
+                
                 script.onload = function() {
+                    clearTimeout(loadTimeout);
                     // Verificar que QRCode esté realmente disponible
                     if (typeof QRCode !== 'undefined') {
                         window.QRCodeLoaded = true;
+                        window.QRCodeLoadError = null;
                         console.log('QRCode library loaded successfully from:', cdnUrls[currentIndex]);
                     } else {
                         // Intentar siguiente CDN
@@ -49,6 +84,7 @@
                 };
                 
                 script.onerror = function() {
+                    clearTimeout(loadTimeout);
                     console.warn('Failed to load QRCode from:', cdnUrls[currentIndex]);
                     currentIndex++;
                     loadQRCode();
@@ -784,13 +820,26 @@
         
         async function generateQRCode() {
             try {
+                // Mostrar loading
+                Swal.fire({
+                    ...getSwalTheme(),
+                    title: 'Generating QR Code...',
+                    text: 'Please wait',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
                 // Esperar a que la librería QRCode esté cargada
                 let retries = 0;
-                const maxRetries = 60; // 6 segundos máximo
+                const maxRetries = 80; // 8 segundos máximo
                 
                 while ((typeof QRCode === 'undefined' || !window.QRCodeLoaded) && retries < maxRetries) {
                     // Si hay un error de carga, no seguir intentando
                     if (window.QRCodeLoadError) {
+                        Swal.close();
                         throw new Error('QRCode library failed to load from all CDN sources. Please check your internet connection and refresh the page.');
                     }
                     await new Promise(resolve => setTimeout(resolve, 100));
@@ -801,7 +850,24 @@
                 if (typeof QRCode === 'undefined') {
                     // Si hay un error de carga conocido, mostrar mensaje específico
                     if (window.QRCodeLoadError) {
-                        throw new Error('QRCode library failed to load from all CDN sources. Please check your internet connection and refresh the page.');
+                        Swal.close();
+                        Swal.fire({
+                            ...getSwalTheme(),
+                            icon: 'error',
+                            title: 'QR Code Library Not Available',
+                            html: `
+                                <p class="mb-3">Unable to load QR code library from CDN sources.</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Please try:</p>
+                                <ul class="text-left text-sm text-slate-600 dark:text-slate-400 space-y-1 mb-3">
+                                    <li>• Check your internet connection</li>
+                                    <li>• Refresh the page and try again</li>
+                                    <li>• Upload a QR code image manually instead</li>
+                                </ul>
+                            `,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                        return;
                     }
                     
                     // Intentar cargar manualmente como último recurso
@@ -809,7 +875,8 @@
                         window.QRCodeLoading = true;
                         const fallbackUrls = [
                             'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
-                            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js'
+                            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+                            'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
                         ];
                         
                         let loaded = false;
@@ -817,18 +884,24 @@
                             try {
                                 const script = document.createElement('script');
                                 script.src = url;
-                                script.async = true;
+                                script.async = false; // Cargar sincrónicamente para este intento
                                 script.crossOrigin = 'anonymous';
                                 await new Promise((resolve, reject) => {
+                                    const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
                                     script.onload = () => {
+                                        clearTimeout(timeout);
                                         if (typeof QRCode !== 'undefined') {
                                             loaded = true;
+                                            window.QRCodeLoaded = true;
                                             resolve();
                                         } else {
                                             reject(new Error('QRCode not defined after load'));
                                         }
                                     };
-                                    script.onerror = reject;
+                                    script.onerror = () => {
+                                        clearTimeout(timeout);
+                                        reject(new Error('Script load error'));
+                                    };
                                     document.head.appendChild(script);
                                 });
                                 if (loaded) break;
@@ -839,11 +912,28 @@
                         window.QRCodeLoading = false;
                     } else {
                         // Esperar un poco más si ya se está cargando
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                     
                     if (typeof QRCode === 'undefined') {
-                        throw new Error('QRCode library failed to load. Please check your internet connection and refresh the page.');
+                        Swal.close();
+                        Swal.fire({
+                            ...getSwalTheme(),
+                            icon: 'error',
+                            title: 'QR Code Library Not Available',
+                            html: `
+                                <p class="mb-3">Unable to load QR code library.</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Please try:</p>
+                                <ul class="text-left text-sm text-slate-600 dark:text-slate-400 space-y-1 mb-3">
+                                    <li>• Check your internet connection</li>
+                                    <li>• Refresh the page and try again</li>
+                                    <li>• Upload a QR code image manually instead</li>
+                                </ul>
+                            `,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                        return;
                     }
                 }
                 
@@ -980,6 +1070,7 @@
                                 removeFotoQrInput.value = '0';
                             }
                             
+                            Swal.close();
                             Swal.fire({
                                 ...getSwalTheme(),
                                 icon: 'success',
@@ -999,11 +1090,16 @@
                 
             } catch (error) {
                 console.error('Error generating QR code:', error);
+                Swal.close();
                 Swal.fire({
                     ...getSwalTheme(),
                     icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to generate QR code. Please try again.',
+                    title: 'Error Generating QR Code',
+                    html: `
+                        <p class="mb-3">${error.message || 'Failed to generate QR code. Please try again.'}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">You can upload a QR code image manually using the file input above.</p>
+                    `,
+                    confirmButtonText: 'OK',
                     confirmButtonColor: '#ef4444'
                 });
             }

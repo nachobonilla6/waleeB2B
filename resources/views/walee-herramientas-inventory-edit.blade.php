@@ -65,8 +65,46 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
         .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .section-dropdown {
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        .badge-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .badge-transition:hover {
+            transform: scale(1.05);
+        }
+        
+        input, select, textarea {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            transform: scale(1.01);
+        }
+        
+        .form-section {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .form-section:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
         ::-webkit-scrollbar { width: 6px; }
@@ -716,19 +754,35 @@
                         script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
                         script.async = true;
                         await new Promise((resolve, reject) => {
-                            script.onload = resolve;
-                            script.onerror = reject;
+                            script.onload = () => {
+                                window.QRCodeLoaded = true;
+                                resolve();
+                            };
+                            script.onerror = () => {
+                                window.QRCodeLoading = false;
+                                reject(new Error('Failed to load QRCode library from CDN'));
+                            };
                             document.head.appendChild(script);
                         });
                         window.QRCodeLoading = false;
                     } else {
                         // Esperar un poco más si ya se está cargando
-                        await new Promise(resolve => setTimeout(resolve, 500));
+                        let waitRetries = 0;
+                        while (window.QRCodeLoading && waitRetries < 20) {
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                            waitRetries++;
+                        }
                     }
                     
+                    // Verificar nuevamente después de intentar cargar
                     if (typeof QRCode === 'undefined') {
-                        throw new Error('QRCode library failed to load. Please refresh the page.');
+                        throw new Error('QRCode library failed to load. Please check your internet connection and refresh the page.');
                     }
+                }
+                
+                // Verificar que QRCode.toCanvas esté disponible
+                if (typeof QRCode.toCanvas !== 'function') {
+                    throw new Error('QRCode.toCanvas function is not available. The library may not be fully loaded.');
                 }
                 
                 // Obtener datos del producto para el QR
@@ -770,30 +824,46 @@
                 qrCanvas.appendChild(canvas);
                 
                 // Generar QR code
-                await QRCode.toCanvas(canvas, qrText, {
-                    width: 256,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#FFFFFF'
-                    },
-                    errorCorrectionLevel: 'M'
-                });
+                try {
+                    await QRCode.toCanvas(canvas, qrText, {
+                        width: 256,
+                        margin: 2,
+                        color: {
+                            dark: '#000000',
+                            light: '#FFFFFF'
+                        },
+                        errorCorrectionLevel: 'M'
+                    });
+                } catch (qrError) {
+                    console.error('QRCode.toCanvas error:', qrError);
+                    throw new Error('Failed to generate QR code image: ' + (qrError.message || 'Unknown error'));
+                }
                 
                 // Esperar a que el canvas esté listo
                 await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Verificar que el canvas tenga contenido
+                if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                    throw new Error('Canvas is empty. QR code generation may have failed.');
+                }
                 
                 // Convertir canvas a blob y crear File para el input
                 return new Promise((resolve, reject) => {
                     canvas.toBlob(function(blob) {
                         if (!blob) {
-                            reject(new Error('Failed to create blob from canvas'));
+                            reject(new Error('Failed to create blob from canvas. The canvas may be empty.'));
                             return;
                         }
                         
                         try {
                             const file = new File([blob], `qr-${productoId}-${Date.now()}.png`, { type: 'image/png' });
                             const dataTransfer = new DataTransfer();
+                            
+                            // Verificar que DataTransfer.items.add esté disponible
+                            if (!dataTransfer.items || typeof dataTransfer.items.add !== 'function') {
+                                throw new Error('File API not fully supported in this browser. Please use a modern browser.');
+                            }
+                            
                             dataTransfer.items.add(file);
                             const fileInput = document.getElementById('productoFotoQr');
                             
@@ -854,6 +924,7 @@
                             
                             resolve();
                         } catch (err) {
+                            console.error('Error processing QR code file:', err);
                             reject(err);
                         }
                     }, 'image/png');

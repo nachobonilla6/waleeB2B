@@ -96,7 +96,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Stock Management</h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Manage Producs</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Manage Products</p>
                     </div>
                     <button 
                         onclick="openCreateProductoModal()"

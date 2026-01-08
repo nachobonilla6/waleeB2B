@@ -3739,6 +3739,16 @@ Route::get('/walee-facturas', function () {
         ->whereYear('created_at', now()->year)
         ->sum('monto_pagado');
     
+    // Facturas pagadas del mes (cantidad)
+    $facturasPagadasEsteMes = \App\Models\Factura::whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->where('estado', 'pagada')
+        ->count();
+    
+    // Pérdidas y porcentaje de pérdidas
+    $perdidasEsteMes = $totalFacturadoEsteMes - $totalPagadoEsteMes;
+    $porcentajePerdidas = $totalFacturadoEsteMes > 0 ? ($perdidasEsteMes / $totalFacturadoEsteMes) * 100 : 0;
+    
     // Facturas recientes
     $facturasRecientes = \App\Models\Factura::with('cliente')
         ->orderBy('created_at', 'desc')
@@ -3797,6 +3807,9 @@ Route::get('/walee-facturas', function () {
         'totalPendiente',
         'totalFacturadoEsteMes',
         'totalPagadoEsteMes',
+        'facturasPagadasEsteMes',
+        'perdidasEsteMes',
+        'porcentajePerdidas',
         'facturasRecientes',
         'totalCotizaciones',
         'cotizacionesEsteMes',

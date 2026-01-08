@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full" id="html-root">
+<html lang="es" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee B2B - Finance Dashboard</title>
-    <meta name="description" content="Walee B2B - Finance and Invoices Dashboard">
+    <title>Walee B2B - Panel de Finanzas</title>
+    <meta name="description" content="Walee B2B - Panel de Finanzas e Facturas">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -69,6 +69,7 @@
         .stat-card:nth-child(4) { animation-delay: 0.4s; }
         .stat-card:nth-child(5) { animation-delay: 0.5s; }
         .stat-card:nth-child(6) { animation-delay: 0.6s; }
+        .stat-card:nth-child(7) { animation-delay: 0.7s; }
         
         /* Scrollbar styling */
         ::-webkit-scrollbar {
@@ -100,14 +101,14 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Finance Dashboard'; @endphp
+            @php $pageTitle = 'Panel de Finanzas'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                        Finance Dashboard
+                        Panel de Finanzas
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Facturado vs Gastos</p>
                 </div>
@@ -122,12 +123,12 @@
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <span>View Invoices</span>
+                        <span>Ver Facturas</span>
                     </a>
                 </div>
             </header>
             
-            <!-- Stats Grid - 4 Widgets -->
+            <!-- Stats Grid - 6 Widgets -->
             @php
                 // Los gastos están en dólares, las facturas en colones
                 $totalGastosEsteMesUSD = $totalGastosEsteMes ?? 0;
@@ -135,26 +136,26 @@
                 $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMesCRC / $totalFacturadoEsteMes) * 100 : 0;
                 $diferencia = $totalFacturadoEsteMes - $totalGastosEsteMesCRC;
             @endphp
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
-                <!-- Total Facturado Este Mes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
+                <!-- Total Facturas Pagadas Este Mes -->
                 <a href="{{ route('walee.facturas.lista') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-blue-500/20 dark:bg-blue-500/10 flex items-center justify-center">
                             <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Invoiced This Month</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalFacturadoEsteMes / $tasaCambio, 2, '.', ',') }}</p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($totalFacturadoEsteMes, 2, '.', ',') }}</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Facturas Pagadas Este Mes</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">{{ $facturasPagadasEsteMes ?? 0 }}</p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">Facturas</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->format('F Y') }}</span>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
                     </div>
                 </a>
                 
@@ -168,7 +169,7 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Expenses This Month</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Gastos Este Mes</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format(($totalGastosEsteMes ?? 0) * $tasaCambio, 2, '.', ',') }}</p>
                     </div>
@@ -176,9 +177,52 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->format('F Y') }}</span>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
                     </div>
                 </a>
+                
+                <!-- Pérdidas Este Mes -->
+                <div class="stat-card bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border border-red-200 dark:border-red-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-red-500/20 dark:bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2 sm:mb-3">
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Pérdidas Este Mes</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600 dark:text-red-400">${{ number_format(($perdidasEsteMes ?? 0) / $tasaCambio, 2, '.', ',') }}</p>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($perdidasEsteMes ?? 0, 2, '.', ',') }}</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs sm:text-sm text-red-600 dark:text-red-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                    </div>
+                </div>
+                
+                <!-- Porcentaje de Pérdidas -->
+                <div class="stat-card bg-gradient-to-br from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border border-red-200 dark:border-red-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-red-500/20 dark:bg-red-500/10 flex items-center justify-center">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2 sm:mb-3">
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Pérdidas</p>
+                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600 dark:text-red-400">{{ number_format($porcentajePerdidas ?? 0, 1) }}%</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs sm:text-sm text-red-600 dark:text-red-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
+                    </div>
+                </div>
                 
                 <!-- Porcentaje de Gastos -->
                 <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
@@ -197,7 +241,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->format('F Y') }}</span>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
                     </div>
                 </div>
                 
@@ -221,7 +265,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span>{{ now()->format('F Y') }}</span>
+                        <span>{{ now()->translatedFormat('F Y') }}</span>
                     </div>
                 </div>
             </div>

@@ -140,15 +140,16 @@
                         <p class="text-sm text-slate-600 dark:text-slate-400">DLC DLV</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <a 
-                            href="{{ route('walee.herramientas.inventory') }}"
+                        <button 
+                            type="button"
+                            onclick="cancelWithDeleteOption()"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors shadow-sm"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
-                            <span>Back</span>
-                        </a>
+                            <span>Cancel</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -764,6 +765,65 @@
                         showConfirmButton: false
                     });
                 }
+            });
+        }
+        
+        function cancelWithDeleteOption() {
+            const hasImagen = document.getElementById('currentImagenPreview') !== null;
+            const hasFotoQr = document.getElementById('currentQrPreview') !== null;
+            
+            if (!hasImagen && !hasFotoQr) {
+                // No hay fotos, simplemente cancelar
+                window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                return;
+            }
+            
+            // Mostrar opciones de cancelación
+            const options = [];
+            if (hasImagen) options.push('Product Image');
+            if (hasFotoQr) options.push('QR Image');
+            
+            Swal.fire({
+                ...getSwalTheme(),
+                title: 'Cancel Changes?',
+                html: `Do you want to delete photos before canceling?<br><br>Available photos: ${options.join(', ')}`,
+                icon: 'question',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Delete Photos & Cancel',
+                denyButtonText: 'Cancel Without Deleting',
+                cancelButtonText: 'Stay on Page',
+                confirmButtonColor: '#ef4444',
+                denyButtonColor: '#64748b',
+                cancelButtonColor: '#3b82f6'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Eliminar fotos y luego cancelar
+                    if (hasImagen) {
+                        const removeImagenInput = document.getElementById('removeImagen');
+                        if (removeImagenInput) {
+                            removeImagenInput.value = '1';
+                        }
+                    }
+                    if (hasFotoQr) {
+                        const removeFotoQrInput = document.getElementById('removeFotoQr');
+                        if (removeFotoQrInput) {
+                            removeFotoQrInput.value = '1';
+                        }
+                    }
+                    
+                    // Guardar cambios para eliminar las fotos
+                    saveProducto(true).then(() => {
+                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                    }).catch(() => {
+                        // Si falla, igualmente redirigir
+                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                    });
+                } else if (result.isDenied) {
+                    // Cancelar sin eliminar fotos
+                    window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                }
+                // Si cancela (Stay on Page), no hacer nada
             });
         }
         

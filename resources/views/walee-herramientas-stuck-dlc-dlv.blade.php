@@ -254,6 +254,22 @@
     @include('partials.walee-support-button')
     
     <script>
+        // Detect dark mode and configure SweetAlert
+        function getSwalConfig() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                colorScheme: isDark ? 'dark' : 'light',
+                customClass: {
+                    popup: isDark ? 'dark:bg-slate-800 dark:text-white' : 'bg-white text-slate-900',
+                    title: isDark ? 'dark:text-white' : 'text-slate-900',
+                    htmlContainer: isDark ? 'dark:text-slate-300' : 'text-slate-700',
+                    confirmButton: isDark ? 'dark:bg-orange-500 dark:hover:bg-orange-600' : 'bg-orange-500 hover:bg-orange-600',
+                    cancelButton: isDark ? 'dark:bg-slate-600 dark:hover:bg-slate-700' : 'bg-slate-600 hover:bg-slate-700',
+                    input: isDark ? 'dark:bg-slate-700 dark:text-white dark:border-slate-600' : 'bg-white text-slate-900 border-slate-300'
+                }
+            };
+        }
+        
         // Search and Filter
         document.getElementById('searchInput').addEventListener('input', filterProductos);
         document.getElementById('filterCategoria').addEventListener('change', filterProductos);
@@ -299,6 +315,7 @@
                 
                 if (data.success) {
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'success',
                         title: 'Updated!',
                         text: 'Stock updated successfully',
@@ -309,6 +326,7 @@
                     });
                 } else {
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'error',
                         title: 'Error',
                         text: 'Error updating stock: ' + (data.message || 'Unknown error')
@@ -317,6 +335,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
+                    ...getSwalConfig(),
                     icon: 'error',
                     title: 'Error',
                     text: 'Error updating stock'
@@ -328,6 +347,7 @@
         function openAIPrompt(field) {
             const fieldName = field === 'nombre' ? 'name' : 'description';
             Swal.fire({
+                ...getSwalConfig(),
                 title: 'AI Prompt',
                 input: 'textarea',
                 inputPlaceholder: `Describe the product ${fieldName} you want to generate...`,
@@ -366,6 +386,7 @@
         function startVoiceRecognition(targetField) {
             if (!recognition) {
                 Swal.fire({
+                    ...getSwalConfig(),
                     icon: 'error',
                     title: 'Not Supported',
                     text: 'Speech recognition is not supported in your browser'
@@ -405,6 +426,7 @@
         async function generateWithAI(prompt, targetField) {
             try {
                 Swal.fire({
+                    ...getSwalConfig(),
                     title: 'Generating with AI...',
                     text: 'Please wait',
                     allowOutsideClick: false,
@@ -441,6 +463,7 @@
                 }
                 
                 Swal.fire({
+                    ...getSwalConfig(),
                     icon: 'success',
                     title: 'Generated!',
                     text: 'Content has been generated and filled in',
@@ -450,6 +473,7 @@
             } catch (error) {
                 console.error('AI generation error:', error);
                 Swal.fire({
+                    ...getSwalConfig(),
                     icon: 'error',
                     title: 'Error',
                     text: 'Could not generate content. Please try again or enter manually.'
@@ -469,6 +493,7 @@
                 
                 if (!data.success) {
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'error',
                         title: 'Error',
                         text: 'Error loading product: ' + (data.message || 'Unknown error')
@@ -481,6 +506,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
+                    ...getSwalConfig(),
                     icon: 'error',
                     title: 'Error',
                     text: 'Error loading product'
@@ -557,6 +583,7 @@
             `;
             
             Swal.fire({
+                ...getSwalConfig(),
                 title: title,
                 html: htmlContent,
                 width: '700px',
@@ -625,6 +652,7 @@
                 
                 if (data.success) {
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'success',
                         title: 'Success!',
                         text: 'Product saved successfully',
@@ -646,6 +674,7 @@
         
         async function deleteProducto(id) {
             const result = await Swal.fire({
+                ...getSwalConfig(),
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
                 icon: 'warning',
@@ -669,6 +698,7 @@
                 
                 if (data.success) {
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'success',
                         title: 'Deleted!',
                         text: 'Product has been deleted.',
@@ -679,6 +709,7 @@
                     });
                 } else {
                     Swal.fire({
+                        ...getSwalConfig(),
                         icon: 'error',
                         title: 'Error',
                         text: 'Error deleting product: ' + (data.message || 'Unknown error')
@@ -687,6 +718,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
+                    ...getSwalConfig(),
                     icon: 'error',
                     title: 'Error',
                     text: 'Error deleting product'

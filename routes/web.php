@@ -106,7 +106,8 @@ Route::get('/storage/productos/{filename}', function ($filename) {
     }
 })->where('filename', '.*')->name('storage.productos');
 
-// Ruta para servir imágenes de productos super
+// Ruta para servir imágenes de productos super (PÚBLICA - sin autenticación)
+// Esta ruta debe estar ANTES de cualquier middleware que pueda bloquearla
 Route::get('/storage/productos-super/{filename}', function ($filename) {
     try {
         // Limpiar el nombre del archivo para seguridad
@@ -182,7 +183,8 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
     }
 })->where('filename', '.*')->name('storage.productos-super');
 
-// Ruta para servir fotos QR de productos super
+// Ruta para servir fotos QR de productos super (PÚBLICA - sin autenticación)
+// Esta ruta debe estar ANTES de cualquier middleware que pueda bloquearla
 Route::get('/storage/productos-super/qr/{filename}', function ($filename) {
     try {
         // Limpiar el nombre del archivo para seguridad

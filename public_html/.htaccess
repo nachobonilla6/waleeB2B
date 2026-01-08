@@ -25,6 +25,18 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ - [L]
     
+    # Allow direct access to storage/productos-super files
+    RewriteCond %{REQUEST_URI} ^/storage/productos-super/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ - [L]
+    
+    # Allow direct access to storage/productos-super/qr files
+    RewriteCond %{REQUEST_URI} ^/storage/productos-super/qr/
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ - [L]
+    
     # Allow direct access to publicidad files (public images)
     RewriteCond %{REQUEST_URI} ^/publicidad/
     RewriteCond %{REQUEST_FILENAME} -f

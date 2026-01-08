@@ -40,6 +40,17 @@
             </svg>
             <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Inventory</span>
         </a>
+        
+        <a 
+            href="{{ route('walee.herramientas.stuck.dlc.dlv') }}" 
+            class="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors group"
+            title="Stock Management"
+        >
+            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+            </svg>
+            <span class="text-sm font-medium text-orange-700 dark:text-orange-300">Stock Management</span>
+        </a>
     </div>
     
     <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
@@ -120,6 +131,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
                 <span class="font-medium">Inventory</span>
+            </a>
+            
+            <a 
+                href="{{ route('walee.herramientas.stuck.dlc.dlv') }}" 
+                onclick="closeMobileMenu()"
+                class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 last:border-b-0"
+            >
+                <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                </svg>
+                <span class="font-medium">Stock Management</span>
             </a>
             
             <a 

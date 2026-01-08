@@ -136,7 +136,7 @@
                 $porcentajeGastos = $totalFacturadoEsteMes > 0 ? ($totalGastosEsteMesCRC / $totalFacturadoEsteMes) * 100 : 0;
                 $diferencia = $totalFacturadoEsteMes - $totalGastosEsteMesCRC;
             @endphp
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
                 <!-- Total Facturas Pagadas Este Mes -->
                 <a href="{{ route('walee.facturas.lista') }}" class="stat-card bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 border border-blue-200 dark:border-blue-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
                     <div class="flex items-center justify-between mb-4 sm:mb-6">
@@ -152,28 +152,6 @@
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">Invoices</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-blue-600 dark:text-blue-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <span>{{ now()->format('F Y') }}</span>
-                    </div>
-                </a>
-                
-                <!-- Total Gastos Este Mes -->
-                <a href="{{ route('walee.gastos') }}" class="stat-card bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-500/10 dark:to-orange-600/5 border border-orange-200 dark:border-orange-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none hover:shadow-xl transition-all cursor-pointer">
-                    <div class="flex items-center justify-between mb-4 sm:mb-6">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-orange-500/20 dark:bg-orange-500/10 flex items-center justify-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Expenses This Month</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format(($totalGastosEsteMes ?? 0) * $tasaCambio, 2, '.', ',') }}</p>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs sm:text-sm text-orange-600 dark:text-orange-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
@@ -217,51 +195,6 @@
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600 dark:text-red-400">{{ number_format($porcentajePerdidas ?? 0, 1) }}%</p>
                     </div>
                     <div class="flex items-center gap-2 text-xs sm:text-sm text-red-600 dark:text-red-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <span>{{ now()->format('F Y') }}</span>
-                    </div>
-                </div>
-                
-                <!-- Porcentaje de Gastos -->
-                <div class="stat-card bg-gradient-to-br from-violet-50 to-violet-100/50 dark:from-violet-500/10 dark:to-violet-600/5 border border-violet-200 dark:border-violet-500/20 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
-                    <div class="flex items-center justify-between mb-4 sm:mb-6">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-violet-500/20 dark:bg-violet-500/10 flex items-center justify-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">% Expenses vs Invoiced</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">{{ number_format($porcentajeGastos, 1) }}%</p>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs sm:text-sm text-violet-600 dark:text-violet-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <span>{{ now()->format('F Y') }}</span>
-                    </div>
-                </div>
-                
-                <!-- Diferencia -->
-                <div class="stat-card bg-gradient-to-br {{ $diferencia >= 0 ? 'from-emerald-50 to-emerald-100/50 dark:from-emerald-500/10 dark:to-emerald-600/5 border-emerald-200 dark:border-emerald-500/20' : 'from-red-50 to-red-100/50 dark:from-red-500/10 dark:to-red-600/5 border-red-200 dark:border-red-500/20' }} border rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-lg dark:shadow-none">
-                    <div class="flex items-center justify-between mb-4 sm:mb-6">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl {{ $diferencia >= 0 ? 'bg-emerald-500/20 dark:bg-emerald-500/10' : 'bg-red-500/20 dark:bg-red-500/10' }} flex items-center justify-center">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8 {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Difference</p>
-                        <p class="text-3xl sm:text-4xl md:text-5xl font-bold {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                            {{ $diferencia >= 0 ? '+' : '' }}${{ number_format($diferencia / $tasaCambio, 2, '.', ',') }}
-                        </p>
-                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($diferencia, 2, '.', ',') }}</p>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs sm:text-sm {{ $diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>

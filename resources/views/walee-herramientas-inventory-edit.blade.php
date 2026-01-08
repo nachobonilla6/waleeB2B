@@ -251,8 +251,9 @@
                                 @endif
                             </div>
                             
-                            <!-- QR Code Image and Barcode (same column) -->
-                            <div class="space-y-4">
+                            <!-- QR Code Image and Barcode (same row) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- QR Code -->
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
                                     <input 
@@ -301,7 +302,7 @@
                                     @endif
                                 </div>
                                 
-                                <!-- Barcode debajo del QR en la misma columna -->
+                                <!-- Barcode -->
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
                                     <input 

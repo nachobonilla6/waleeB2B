@@ -4842,7 +4842,16 @@ Route::post('/walee-herramientas/inventory/producto', function (\Illuminate\Http
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);
         $producto->fecha_expiracion = $request->input('fecha_expiracion');
-        $producto->fecha_entrada = $request->input('fecha_entrada');
+        
+        // Fecha de entrada: usar la proporcionada o establecer fecha actual de 2026
+        $fechaEntrada = $request->input('fecha_entrada');
+        if (empty($fechaEntrada)) {
+            $today = \Carbon\Carbon::now();
+            $today->setYear(2026);
+            $fechaEntrada = $today->format('Y-m-d');
+        }
+        $producto->fecha_entrada = $fechaEntrada;
+        
         $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
         $producto->fecha_salida = $request->input('fecha_salida');
         $producto->codigo_barras = $request->input('codigo_barras');

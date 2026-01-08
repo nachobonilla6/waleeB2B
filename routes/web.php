@@ -5430,6 +5430,16 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
         
         $producto->save();
         
+        // Generar QR automáticamente si no hay foto_qr
+        if (!$producto->foto_qr) {
+            $qrText = $producto->codigo_barras ?: 'PROD-' . $producto->id . '-' . $producto->nombre;
+            $qrPath = generateAndSaveQRCode($qrText, $producto->id);
+            if ($qrPath) {
+                $producto->foto_qr = $qrPath;
+                $producto->save();
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Producto creado correctamente',

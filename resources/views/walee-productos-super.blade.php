@@ -239,6 +239,24 @@
                         
                         <div id="formularioProducto" class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-md sticky top-4 hidden lg:block">
                             <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-3">Add Product</h3>
+                            
+                            <!-- Batch Selector -->
+                            <div class="mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">Batch</label>
+                                <div class="relative">
+                                    <select 
+                                        id="batchSelector" 
+                                        onchange="applyBatchDates()"
+                                        class="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    >
+                                        <option value="default">Default (6 months)</option>
+                                        <option value="custom">Custom Dates</option>
+                                        <option value="3months">3 Months</option>
+                                        <option value="1year">1 Year</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
                             <form id="productoForm" class="space-y-2.5" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" id="productoId" name="producto_id">
@@ -322,13 +340,28 @@
                                             </svg>
                                             Brand
                                         </label>
-                                        <input 
-                                            type="text" 
+                                        <select 
                                             id="productoBrand" 
                                             name="brand" 
                                             class="w-full px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                            placeholder="Nestlé"
                                         >
+                                            <option value="">Select Brand</option>
+                                            <option value="Nestlé">Nestlé</option>
+                                            <option value="Coca-Cola">Coca-Cola</option>
+                                            <option value="Pepsi">Pepsi</option>
+                                            <option value="Unilever">Unilever</option>
+                                            <option value="P&G">P&G</option>
+                                            <option value="Kellogg's">Kellogg's</option>
+                                            <option value="Danone">Danone</option>
+                                            <option value="Mars">Mars</option>
+                                            <option value="Mondelez">Mondelez</option>
+                                            <option value="General Mills">General Mills</option>
+                                            <option value="Campofrío">Campofrío</option>
+                                            <option value="Bimbo">Bimbo</option>
+                                            <option value="Lala">Lala</option>
+                                            <option value="Alpina">Alpina</option>
+                                            <option value="Other">Other</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -1279,6 +1312,83 @@
                 console.error('Error:', error);
                 Swal.fire('Error', 'No se pudo guardar el producto', 'error');
             });
+        });
+        
+        // Función para aplicar fechas según el batch seleccionado
+        function applyBatchDates() {
+            const batchSelector = document.getElementById('batchSelector');
+            const batchValue = batchSelector.value;
+            
+            const today = new Date();
+            const fechaEntrada = document.getElementById('productoFechaEntrada');
+            const fechaLimiteVenta = document.getElementById('productoFechaLimiteVenta');
+            const fechaExpiracion = document.getElementById('productoFechaExpiracion');
+            const fechaSalida = document.getElementById('productoFechaSalida');
+            const fechaDlc = document.getElementById('productoDlc');
+            
+            // Formatear fecha como YYYY-MM-DD
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+            
+            // Calcular fecha futura
+            const addMonths = (date, months) => {
+                const result = new Date(date);
+                result.setMonth(result.getMonth() + months);
+                return result;
+            };
+            
+            let futureDate;
+            
+            switch(batchValue) {
+                case 'default':
+                    // Default: entrada hoy, demás 6 meses
+                    fechaEntrada.value = formatDate(today);
+                    futureDate = addMonths(today, 6);
+                    fechaLimiteVenta.value = formatDate(futureDate);
+                    fechaExpiracion.value = formatDate(futureDate);
+                    fechaSalida.value = formatDate(futureDate);
+                    fechaDlc.value = formatDate(futureDate);
+                    break;
+                case '3months':
+                    // 3 meses
+                    fechaEntrada.value = formatDate(today);
+                    futureDate = addMonths(today, 3);
+                    fechaLimiteVenta.value = formatDate(futureDate);
+                    fechaExpiracion.value = formatDate(futureDate);
+                    fechaSalida.value = formatDate(futureDate);
+                    fechaDlc.value = formatDate(futureDate);
+                    break;
+                case '1year':
+                    // 1 año
+                    fechaEntrada.value = formatDate(today);
+                    futureDate = addMonths(today, 12);
+                    fechaLimiteVenta.value = formatDate(futureDate);
+                    fechaExpiracion.value = formatDate(futureDate);
+                    fechaSalida.value = formatDate(futureDate);
+                    fechaDlc.value = formatDate(futureDate);
+                    break;
+                case 'custom':
+                    // Custom: limpiar fechas para entrada manual
+                    fechaEntrada.value = formatDate(today);
+                    fechaLimiteVenta.value = '';
+                    fechaExpiracion.value = '';
+                    fechaSalida.value = '';
+                    fechaDlc.value = '';
+                    break;
+            }
+        }
+        
+        // Configurar valores por defecto al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Aplicar fechas por defecto (6 meses) solo si no hay valores ya establecidos
+            const fechaEntrada = document.getElementById('productoFechaEntrada');
+            if (!fechaEntrada.value) {
+                applyBatchDates();
+            }
         });
         
         // Función para generar QR Code

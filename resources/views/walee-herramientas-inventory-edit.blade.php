@@ -140,6 +140,62 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </span>
+                                @php
+                                    // Verificar si expira pronto (7 días o menos)
+                                    $expiraPronto = false;
+                                    $diasExpira = null;
+                                    $fechaLimite = $producto->fecha_limite_venta ?? $producto->fecha_expiracion;
+                                    if ($fechaLimite && $producto->activo) {
+                                        try {
+                                            $fechaLimiteCarbon = \Carbon\Carbon::parse($fechaLimite);
+                                            if (!$fechaLimiteCarbon->isPast()) {
+                                                $diasRestantes = now()->diffInDays($fechaLimiteCarbon, false);
+                                                $diasExpira = $diasRestantes;
+                                                $expiraPronto = $diasRestantes <= 7 && $diasRestantes >= 0;
+                                            }
+                                        } catch (\Exception $e) {
+                                            // Ignorar errores de parsing
+                                        }
+                                    }
+                                    
+                                    // Verificar si sale pronto (7 días o menos)
+                                    $salePronto = false;
+                                    $diasSale = null;
+                                    if ($producto->fecha_salida && $producto->activo) {
+                                        try {
+                                            $fechaSalidaCarbon = \Carbon\Carbon::parse($producto->fecha_salida);
+                                            if (!$fechaSalidaCarbon->isPast()) {
+                                                $diasRestantes = now()->diffInDays($fechaSalidaCarbon, false);
+                                                $diasSale = $diasRestantes;
+                                                $salePronto = $diasRestantes <= 7 && $diasRestantes >= 0;
+                                            }
+                                        } catch (\Exception $e) {
+                                            // Ignorar errores de parsing
+                                        }
+                                    }
+                                @endphp
+                                @if($expiraPronto)
+                                    <span class="ml-2 inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-700/50 shadow-sm">
+                                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Expires Soon
+                                        @if($diasExpira !== null)
+                                            <span class="ml-1">({{ $diasExpira }}d)</span>
+                                        @endif
+                                    </span>
+                                @endif
+                                @if($salePronto)
+                                    <span class="ml-2 inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 shadow-sm">
+                                        <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                        </svg>
+                                        Exits Soon
+                                        @if($diasSale !== null)
+                                            <span class="ml-1">({{ $diasSale }}d)</span>
+                                        @endif
+                                    </span>
+                                @endif
                                 <!-- Hidden select for form submission -->
                                 <select 
                                     id="productoSeccion" 

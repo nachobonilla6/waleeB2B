@@ -738,7 +738,7 @@
             Swal.fire({
                 ...getSwalTheme(),
                 title: 'Remove QR Image?',
-                text: 'Are you sure you want to remove this QR code image?',
+                text: 'Are you sure you want to remove this QR code image? You can upload a new one after removing it.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
@@ -755,13 +755,20 @@
                     if (preview) {
                         preview.style.opacity = '0.5';
                         preview.style.filter = 'grayscale(100%)';
+                        preview.style.border = '2px dashed #ef4444';
+                    }
+                    // Mostrar mensaje de que puede subir una nueva imagen
+                    const qrInput = document.getElementById('productoFotoQr');
+                    if (qrInput) {
+                        qrInput.style.borderColor = '#3b82f6';
+                        qrInput.style.borderWidth = '2px';
                     }
                     Swal.fire({
                         ...getSwalTheme(),
                         icon: 'success',
                         title: 'QR image marked for removal',
-                        text: 'The QR image will be removed when you save the changes',
-                        timer: 2000,
+                        html: 'The QR image will be removed when you save the changes.<br><br>You can now upload a new QR image using the file input above.',
+                        timer: 3000,
                         showConfirmButton: false
                     });
                 }
@@ -1113,16 +1120,25 @@
         document.getElementById('productoFotoQr').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                // Si se sube una nueva imagen QR, resetear el flag de eliminación
+                const removeFotoQrInput = document.getElementById('removeFotoQr');
+                if (removeFotoQrInput) {
+                    removeFotoQrInput.value = '0';
+                }
+                
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const preview = document.querySelector('.mt-2 img[alt="Current QR"]');
+                    const preview = document.getElementById('currentQrPreview');
                     if (preview) {
                         preview.src = e.target.result;
+                        preview.style.opacity = '1';
+                        preview.style.filter = 'none';
+                        preview.style.border = '1px solid rgb(203 213 225)';
                     } else {
                         const container = document.getElementById('productoFotoQr').parentElement;
                         const div = document.createElement('div');
-                        div.className = 'mt-2';
-                        div.innerHTML = `<img src="${e.target.result}" alt="Preview QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">`;
+                        div.className = 'mt-2 relative inline-block';
+                        div.innerHTML = `<img src="${e.target.result}" alt="Preview QR" id="currentQrPreview" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">`;
                         container.appendChild(div);
                     }
                 };

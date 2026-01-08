@@ -250,6 +250,7 @@
                                     type="date" 
                                     id="productoFechaEntrada" 
                                     name="fecha_entrada" 
+                                    value="{{ now()->format('Y-m-d') }}"
                                     class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
                             </div>
@@ -463,6 +464,14 @@
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             updateStatusText();
+            
+            // Establecer fecha de entrada por defecto si está vacía (año 2026)
+            const fechaEntrada = document.getElementById('productoFechaEntrada');
+            if (!fechaEntrada.value) {
+                const today = new Date();
+                today.setFullYear(2026);
+                fechaEntrada.value = today.toISOString().split('T')[0];
+            }
         });
         
         function getSwalTheme() {
@@ -686,7 +695,17 @@
             if (producto.stock !== undefined) document.getElementById('productoStock').value = producto.stock;
             if (producto.cantidad !== undefined) document.getElementById('productoCantidad').value = producto.cantidad;
             if (producto.fecha_expiracion) document.getElementById('productoFechaExpiracion').value = producto.fecha_expiracion;
-            if (producto.fecha_entrada) document.getElementById('productoFechaEntrada').value = producto.fecha_entrada;
+            
+            // Fecha de entrada: usar la del producto o establecer fecha actual de 2026
+            const fechaEntradaInput = document.getElementById('productoFechaEntrada');
+            if (producto.fecha_entrada) {
+                fechaEntradaInput.value = producto.fecha_entrada;
+            } else if (!fechaEntradaInput.value) {
+                const today = new Date();
+                today.setFullYear(2026);
+                fechaEntradaInput.value = today.toISOString().split('T')[0];
+            }
+            
             if (producto.fecha_limite_venta) document.getElementById('productoFechaLimiteVenta').value = producto.fecha_limite_venta;
             if (producto.fecha_salida) document.getElementById('productoFechaSalida').value = producto.fecha_salida;
             if (producto.codigo_barras) document.getElementById('productoCodigoBarras').value = producto.codigo_barras;

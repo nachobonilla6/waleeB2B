@@ -5199,6 +5199,8 @@ Route::post('/walee-productos-super/ai/generate', function (\Illuminate\Http\Req
         }
         
         $systemPrompt = 'Eres un asistente que ayuda a crear productos para un supermercado. 
+IMPORTANTE: Estamos en el año 2026. Todas las fechas deben ser en 2026 o años futuros.
+
 Analiza la descripción del usuario y genera un objeto JSON con los siguientes campos:
 - nombre (string, requerido)
 - descripcion (string, opcional)
@@ -5207,14 +5209,14 @@ Analiza la descripción del usuario y genera un objeto JSON con los siguientes c
 - seccion (string, opcional)
 - stock (number, opcional, default 0)
 - cantidad (number, opcional, default 0)
-- fecha_expiracion (string, formato YYYY-MM-DD, opcional)
-- fecha_entrada (string, formato YYYY-MM-DD, opcional)
-- fecha_limite_venta (string, formato YYYY-MM-DD, opcional)
-- fecha_salida (string, formato YYYY-MM-DD, opcional)
+- fecha_expiracion (string, formato YYYY-MM-DD, opcional, debe ser en 2026 o posterior)
+- fecha_entrada (string, formato YYYY-MM-DD, opcional, debe ser en 2026 o posterior, por defecto usar fecha actual de 2026)
+- fecha_limite_venta (string, formato YYYY-MM-DD, opcional, debe ser en 2026 o posterior)
+- fecha_salida (string, formato YYYY-MM-DD, opcional, debe ser en 2026 o posterior)
 - codigo_barras (string, opcional)
 - activo (boolean, default true)
 
-Responde SOLO con un objeto JSON válido, sin texto adicional. Si falta información, usa valores razonables por defecto.';
+Responde SOLO con un objeto JSON válido, sin texto adicional. Si falta información, usa valores razonables por defecto. Si no se especifica fecha_entrada, usa la fecha actual de 2026.';
         
         $response = \Illuminate\Support\Facades\Http::timeout(60)
             ->withHeaders([

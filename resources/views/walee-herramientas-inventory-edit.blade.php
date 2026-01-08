@@ -449,10 +449,12 @@
                         icon: 'success',
                         title: 'Success!',
                         text: 'Product updated successfully',
-                        timer: 2000,
+                        timer: 1500,
                         showConfirmButton: false
+                    }).then(() => {
+                        // Refrescar la página para mostrar los cambios actualizados
+                        window.location.reload();
                     });
-                    // No redirigir, mantener en la página
                 } else {
                     Swal.fire({
                         ...getSwalTheme(),

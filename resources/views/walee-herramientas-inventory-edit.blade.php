@@ -382,20 +382,19 @@
                                         accept="image/*"
                                         class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
                                     >
-                                    <!-- Generate QR button disabled temporarily -->
-                                    <!--
-                                    <button 
-                                        type="button"
-                                        onclick="generateQRCode()"
-                                        class="mt-2 px-3 py-1.5 text-sm bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md shadow-purple-500/20 hover:shadow-lg hover:shadow-purple-500/30"
-                                        title="Generate QR Code automatically"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                        </svg>
-                                        <span>Generate QR</span>
-                                    </button>
-                                    -->
+                                    <div class="flex gap-2 mt-2">
+                                        <button 
+                                            type="button"
+                                            onclick="generateQRCode()"
+                                            class="px-2.5 py-1.5 text-xs bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
+                                            title="Generar QR automáticamente"
+                                        >
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                            </svg>
+                                            <span>Generar QR</span>
+                                        </button>
+                                    </div>
                                     <div id="qrCodeCanvas" class="mt-2 hidden"></div>
                                     @if($producto->foto_qr)
                                         @php
@@ -768,15 +767,12 @@
         }
         
         async function generateQRCode() {
-            // Function disabled temporarily - QR codes are now auto-generated on save
-            return;
-            /*
             try {
                 // Mostrar loading
                 Swal.fire({
                     ...getSwalTheme(),
-                    title: 'Generating QR Code...',
-                    text: 'Please wait',
+                    title: 'Generando QR Code...',
+                    text: 'Por favor espere',
                     allowOutsideClick: false,
                     allowEscapeKey: false,
                     didOpen: () => {
@@ -790,7 +786,7 @@
                 const productoId = {{ $producto->id }};
                 
                 if (!codigoBarras || !nombre) {
-                    throw new Error('Required fields not found');
+                    throw new Error('Campos requeridos no encontrados');
                 }
                 
                 // Crear texto para el QR (usar código de barras si existe, sino usar ID y nombre)
@@ -805,7 +801,7 @@
                 }
                 
                 if (!qrText || qrText.trim() === '') {
-                    throw new Error('QR text cannot be empty');
+                    throw new Error('El texto del QR no puede estar vacío');
                 }
                 
                 // Llamar al backend para generar el QR code
@@ -898,8 +894,8 @@
                 Swal.fire({
                     ...getSwalTheme(),
                     icon: 'success',
-                    title: 'QR Code Generated!',
-                    text: 'The QR code has been generated successfully',
+                    title: '¡QR Code Generado!',
+                    text: 'El código QR ha sido generado exitosamente',
                     timer: 2000,
                     showConfirmButton: false
                 });
@@ -910,16 +906,15 @@
                 Swal.fire({
                     ...getSwalTheme(),
                     icon: 'error',
-                    title: 'Error Generating QR Code',
+                    title: 'Error Generando QR Code',
                     html: `
-                        <p class="mb-3">${error.message || 'Failed to generate QR code. Please try again.'}</p>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">You can upload a QR code image manually using the file input above.</p>
+                        <p class="mb-3">${error.message || 'No se pudo generar el código QR. Por favor intente de nuevo.'}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Puede subir una imagen de código QR manualmente usando el campo de archivo arriba.</p>
                     `,
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#ef4444'
                 });
             }
-            */
         }
         
         async function saveProducto() {

@@ -501,13 +501,26 @@
                                             </svg>
                                             QR
                                         </label>
-                                        <input 
-                                            type="file" 
-                                            id="productoFotoQr" 
-                                            name="foto_qr" 
-                                            accept="image/*"
-                                            class="w-full px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
-                                        >
+                                        <div class="flex gap-1.5">
+                                            <input 
+                                                type="file" 
+                                                id="productoFotoQr" 
+                                                name="foto_qr" 
+                                                accept="image/*"
+                                                class="flex-1 px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                            >
+                                            <button 
+                                                type="button"
+                                                onclick="generateQRCodeProductosSuper()"
+                                                class="px-2 py-1.5 text-xs bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
+                                                title="Generar QR automáticamente"
+                                            >
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                </svg>
+                                                <span class="hidden sm:inline">QR</span>
+                                            </button>
+                                        </div>
                                         <div id="fotoQrPreview" class="mt-1 hidden">
                                             <img id="fotoQrPreviewImg" src="" alt="Preview QR" class="w-16 h-16 object-cover rounded border border-slate-300 dark:border-slate-600">
                                         </div>
@@ -1267,6 +1280,102 @@
                 Swal.fire('Error', 'No se pudo guardar el producto', 'error');
             });
         });
+        
+        // Función para generar QR Code
+        async function generateQRCodeProductosSuper() {
+            try {
+                Swal.fire({
+                    title: 'Generando QR Code...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const codigoBarras = document.getElementById('productoCodigoBarras');
+                const nombre = document.getElementById('productoNombre');
+                const productoId = document.getElementById('productoId')?.value;
+                
+                let qrText = '';
+                const codigoBarrasValue = codigoBarras?.value ? codigoBarras.value.trim() : '';
+                const nombreValue = nombre?.value ? nombre.value.trim() : 'Product';
+                
+                if (codigoBarrasValue !== '') {
+                    qrText = codigoBarrasValue;
+                } else {
+                    qrText = productoId ? `PROD-${productoId}-${nombreValue}` : `PROD-${nombreValue}-${Date.now()}`;
+                }
+                
+                if (!qrText || qrText.trim() === '') {
+                    throw new Error('El texto del QR no puede estar vacío');
+                }
+                
+                const response = await fetch('/walee-herramientas/inventory/producto/generate-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: qrText,
+                        producto_id: productoId || null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'No se pudo generar el código QR');
+                }
+                
+                // Convertir base64 a blob y asignar al input
+                const base64Data = data.qr_code.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                const file = new File([blob], `qr-${Date.now()}.png`, { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                
+                const fileInput = document.getElementById('productoFotoQr');
+                if (fileInput) {
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Mostrar preview
+                    const preview = document.getElementById('fotoQrPreview');
+                    const previewImg = document.getElementById('fotoQrPreviewImg');
+                    if (preview && previewImg) {
+                        previewImg.src = data.qr_code;
+                        preview.classList.remove('hidden');
+                    }
+                }
+                
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡QR Code Generado!',
+                    text: 'El código QR ha sido generado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Generando QR Code',
+                    text: error.message || 'No se pudo generar el código QR. Por favor intente de nuevo.'
+                });
+            }
+        }
         
         // Funciones de IA
         let recognition = null;

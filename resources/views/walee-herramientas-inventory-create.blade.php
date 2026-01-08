@@ -310,13 +310,26 @@
                             <!-- QR Code Image -->
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
-                                <input 
-                                    type="file" 
-                                    id="productoFotoQr" 
-                                    name="foto_qr" 
-                                    accept="image/*"
-                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
-                                >
+                                <div class="flex gap-2">
+                                    <input 
+                                        type="file" 
+                                        id="productoFotoQr" 
+                                        name="foto_qr" 
+                                        accept="image/*"
+                                        class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
+                                    >
+                                    <button 
+                                        type="button"
+                                        onclick="generateQRCodeCreate()"
+                                        class="px-2.5 py-2 text-xs bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all flex items-center gap-1 shadow-sm hover:shadow"
+                                        title="Generar QR automáticamente"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                        <span>QR</span>
+                                    </button>
+                                </div>
                                 <div id="qrPreview" class="mt-2 hidden">
                                     <img id="qrPreviewImg" src="" alt="Preview QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
                                 </div>
@@ -784,6 +797,103 @@
         }
         
         // AI Modal Functions
+        // Función para generar QR Code
+        async function generateQRCodeCreate() {
+            try {
+                Swal.fire({
+                    ...getSwalTheme(),
+                    title: 'Generando QR Code...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                const codigoBarras = document.getElementById('productoCodigoBarras');
+                const nombre = document.getElementById('productoNombre');
+                
+                let qrText = '';
+                const codigoBarrasValue = codigoBarras?.value ? codigoBarras.value.trim() : '';
+                const nombreValue = nombre?.value ? nombre.value.trim() : 'Product';
+                
+                if (codigoBarrasValue !== '') {
+                    qrText = codigoBarrasValue;
+                } else {
+                    qrText = `PROD-${nombreValue}-${Date.now()}`;
+                }
+                
+                if (!qrText || qrText.trim() === '') {
+                    throw new Error('El texto del QR no puede estar vacío');
+                }
+                
+                const response = await fetch('/walee-herramientas/inventory/producto/generate-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: qrText
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'No se pudo generar el código QR');
+                }
+                
+                // Convertir base64 a blob y asignar al input
+                const base64Data = data.qr_code.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
+                const file = new File([blob], `qr-${Date.now()}.png`, { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                
+                const fileInput = document.getElementById('productoFotoQr');
+                if (fileInput) {
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Mostrar preview
+                    const preview = document.getElementById('qrPreview');
+                    const previewImg = document.getElementById('qrPreviewImg');
+                    if (preview && previewImg) {
+                        previewImg.src = data.qr_code;
+                        preview.classList.remove('hidden');
+                    }
+                }
+                
+                Swal.close();
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'success',
+                    title: '¡QR Code Generado!',
+                    text: 'El código QR ha sido generado exitosamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                Swal.close();
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'error',
+                    title: 'Error Generando QR Code',
+                    text: error.message || 'No se pudo generar el código QR. Por favor intente de nuevo.'
+                });
+            }
+        }
+        
         function openAIModal() {
             document.getElementById('aiModal').classList.remove('hidden');
             document.getElementById('aiPrompt').focus();

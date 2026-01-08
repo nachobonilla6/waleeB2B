@@ -77,7 +77,7 @@
         </div>
         
         <!-- Login Card -->
-        <div class="relative w-full max-w-md lg:max-w-2xl animate-fade-in-up">
+        <div class="relative w-full max-w-md lg:max-w-lg animate-fade-in-up">
             <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl shadow-xl dark:shadow-none p-8 sm:p-10 lg:p-12 lg:py-8">
                 <!-- Logo and Title -->
                 <div class="text-center mb-6 lg:mb-6">

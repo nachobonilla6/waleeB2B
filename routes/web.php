@@ -4788,6 +4788,24 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
     }
 })->middleware(['auth'])->name('walee.productos.super.update');
 
+Route::put('/walee-productos-super/{id}/stock', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $producto = \App\Models\ProductoSuper::findOrFail($id);
+        $producto->stock = $request->input('stock', 0);
+        $producto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Stock actualizado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.productos.super.update-stock');
+
 Route::delete('/walee-productos-super/{id}', function ($id) {
     try {
         $producto = \App\Models\ProductoSuper::findOrFail($id);

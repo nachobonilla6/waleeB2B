@@ -102,7 +102,7 @@
                         <span class="dashboard-facebook-title" style="color: #eab308 !important;">Facebook Dashboard</span>
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                        Statistics and publication control
+                        Statistics and post control
                     </p>
                 </div>
                 <a href="{{ route('walee.dashboard') }}" class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all shadow-sm dark:shadow-none">
@@ -124,7 +124,7 @@
                         </div>
                     </div>
                     <p class="text-lg md:text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($totalPublicaciones) }}</p>
-                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Total Publications</p>
+                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 mt-1">Total Posts</p>
                 </div>
                 
                 <!-- Este Mes -->
@@ -170,7 +170,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
                 <!-- Gráfico de Publicaciones -->
                 <div class="lg:col-span-2 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.5s;">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Publications - Last 15 Days</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Posts - Last 15 Days</h3>
                     <div class="h-48 md:h-64">
                         <canvas id="publicacionesChart"></canvas>
                     </div>
@@ -219,7 +219,7 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-xs md:text-sm font-medium text-slate-900 dark:text-white truncate">{{ $cliente->name }}</p>
-                                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">{{ $cliente->posts_count }} publications</p>
+                                    <p class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">{{ $cliente->posts_count }} posts</p>
                                     @if($cliente->idioma)
                                         <p class="text-[10px] md:text-xs text-slate-500 dark:text-slate-500 mt-0.5">
                                             @php
@@ -239,7 +239,7 @@
                                 <span class="text-xs md:text-sm font-bold text-walee-500">#{{ $index + 1 }}</span>
                             </a>
                         @empty
-                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 text-center py-4">No clients with publications</p>
+                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 text-center py-4">No clients with posts</p>
                         @endforelse
                     </div>
                 </div>
@@ -248,7 +248,7 @@
             <!-- Publicaciones Recientes -->
             <div class="rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-4 md:p-6 animate-fade-in-up" style="animation-delay: 0.7s;">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">Recent Publications</h3>
+                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white">Recent Posts</h3>
                     <a href="{{ route('walee.facebook.publicaciones') }}" class="text-xs md:text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                         View all →
                     </a>
@@ -283,7 +283,7 @@
                             <svg class="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                             </svg>
-                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">No recent publications</p>
+                            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400">No recent posts</p>
                         </div>
                     @endforelse
                 </div>
@@ -299,15 +299,15 @@
     </div>
     
     <script>
-        // Gráfico de Publicaciones - Últimos 15 Días (Estilo Montaña) - Basado en publicaciones reales
+        // Posts Chart - Last 15 Days - Based on real posts
         const ctx = document.getElementById('publicacionesChart');
         if (ctx) {
             const publicacionesReales = @json($publicacionesPorDia);
             
-            // Extraer fechas y datos de las publicaciones reales
+            // Extract dates and data from real posts
             const fechas = publicacionesReales.map(item => {
                 const fecha = new Date(item.dia);
-                return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+                return fecha.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit' });
             });
             const datos = publicacionesReales.map(item => item.total);
             
@@ -316,7 +316,7 @@
                 data: {
                     labels: fechas,
                     datasets: [{
-                        label: 'Publicaciones',
+                        label: 'Posts',
                         data: datos,
                         borderColor: 'rgb(59, 130, 246)',
                         backgroundColor: 'rgba(59, 130, 246, 0.2)',
@@ -351,10 +351,10 @@
                             displayColors: false,
                             callbacks: {
                                 title: function(context) {
-                                    return 'Fecha: ' + context[0].label;
+                                    return 'Date: ' + context[0].label;
                                 },
                                 label: function(context) {
-                                    return 'Publicaciones: ' + context.parsed.y;
+                                    return 'Posts: ' + context.parsed.y;
                                 }
                             }
                         }

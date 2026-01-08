@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>walee B2B - Iniciar Sesión</title>
-    <meta name="description" content="Inicia sesión en walee B2B">
+    <title>Walee B2B - Iniciar Sesión</title>
+    <meta name="description" content="Inicia sesión en Walee B2B">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -83,11 +83,11 @@
                 <div class="text-center mb-8">
                     <div class="inline-flex items-center justify-center mb-4">
                         <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl walee-gradient flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
-                            <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="walee B2B" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover">
+                            <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee B2B" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover">
                         </div>
                     </div>
                     <h1 class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent mb-2">
-                        walee B2B
+                        Walee B2B
                     </h1>
                     <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
                         Inicia sesión en tu cuenta

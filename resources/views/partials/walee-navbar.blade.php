@@ -414,7 +414,7 @@
             
             // Copiar al portapapeles
             navigator.clipboard.writeText(noteContent).then(() => {
-                showNotification('Nota copiada', 'success');
+                showNotification('Note copied', 'success');
             }).catch(err => {
                 console.error('Error al copiar:', err);
                 // Fallback: usar método alternativo
@@ -428,7 +428,7 @@
                 textArea.select();
                 try {
                     document.execCommand('copy');
-                    showNotification('Nota copiada', 'success');
+                    showNotification('Note copied', 'success');
                 } catch (e) {
                     console.error('Error al copiar:', e);
                     showNotification('Error copying', 'error');

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Enviar Contrato</title>
-    <meta name="description" content="Enviar contrato a cliente">
+    <title>Walee - Send Contract</title>
+    <meta name="description" content="Send contract to supplier">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -68,7 +68,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Enviar Contrato'; @endphp
+            @php $pageTitle = 'Send Contract'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Notifications -->
@@ -100,29 +100,29 @@
                 
                 <!-- Header -->
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Enviar Contrato</h1>
-                    <p class="text-slate-600 dark:text-slate-400">Complete el formulario para enviar un contrato al cliente</p>
+                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Send Contract</h1>
+                    <p class="text-slate-600 dark:text-slate-400">Complete the form to send a contract to the supplier</p>
                 </div>
                 
                 <!-- Grid de campos: 1 columna en móvil, 2 columnas en md y lg -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Cliente Section -->
+                    <!-- Supplier Section -->
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                         <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
-                            Cliente
+                            Supplier
                         </h2>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Cliente <span class="text-red-500">*</span></label>
-                            <select id="cliente_id" name="cliente_id" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @error('cliente_id') border-red-500 @enderror">
-                                <option value="">Seleccionar cliente...</option>
-                                @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}" data-email="{{ $cliente->email }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
-                                        {{ $cliente->name }}
-                                        @if($cliente->idioma)
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Supplier <span class="text-red-500">*</span></label>
+                            <select id="proveedor_id" name="proveedor_id" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @error('proveedor_id') border-red-500 @enderror">
+                                <option value="">Select supplier...</option>
+                                @foreach($proveedores as $proveedor)
+                                    <option value="{{ $proveedor->id }}" data-email="{{ $proveedor->email }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                        {{ $proveedor->name }}
+                                        @if($proveedor->idioma)
                                             @php
                                                 $idiomas = [
                                                     'es' => '🇪🇸',
@@ -132,114 +132,129 @@
                                                     'it' => '🇮🇹',
                                                     'pt' => '🇵🇹'
                                                 ];
-                                                echo ' ' . ($idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma));
+                                                echo ' ' . ($idiomas[$proveedor->idioma] ?? strtoupper($proveedor->idioma));
                                             @endphp
                                         @endif
                                     </option>
                                 @endforeach
                             </select>
-                            @error('cliente_id')
+                            @error('proveedor_id')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                             
-                            <!-- Email del cliente seleccionado -->
-                            <div id="cliente-email-display" class="mt-3 p-3 rounded-lg bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 hidden">
+                            <!-- Email del proveedor seleccionado -->
+                            <div id="proveedor-email-display" class="mt-3 p-3 rounded-lg bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 hidden">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
                                     <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Email:</span>
-                                    <span id="cliente-email-text" class="text-sm font-medium text-violet-700 dark:text-violet-300"></span>
+                                    <span id="proveedor-email-text" class="text-sm font-medium text-violet-700 dark:text-violet-300"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Servicio Section -->
+                    <!-- Services Section -->
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                         <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
-                            Servicios
+                            Services
                         </h2>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Seleccionar Servicios <span class="text-red-500">*</span></label>
-                            <div class="space-y-3">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Select Services <span class="text-red-500">*</span></label>
+                            <div class="space-y-3" id="services-list">
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="diseno_web" {{ in_array('diseno_web', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">🌐 Diseño Web</span>
+                                    <span class="text-slate-900 dark:text-white">🌐 Web Design</span>
                                 </label>
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="redes_sociales" {{ in_array('redes_sociales', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">📱 Gestión Redes Sociales</span>
+                                    <span class="text-slate-900 dark:text-white">📱 Social Media Management</span>
                                 </label>
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="seo" {{ in_array('seo', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">🔍 SEO / Posicionamiento</span>
+                                    <span class="text-slate-900 dark:text-white">🔍 SEO / Positioning</span>
                                 </label>
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="publicidad" {{ in_array('publicidad', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">📢 Publicidad Digital</span>
+                                    <span class="text-slate-900 dark:text-white">📢 Digital Advertising</span>
                                 </label>
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="mantenimiento" {{ in_array('mantenimiento', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">🔧 Mantenimiento Web</span>
+                                    <span class="text-slate-900 dark:text-white">🔧 Web Maintenance</span>
                                 </label>
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="hosting" {{ in_array('hosting', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">☁️ Hosting & Dominio</span>
+                                    <span class="text-slate-900 dark:text-white">☁️ Hosting & Domain</span>
                                 </label>
                                 <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
                                     <input type="checkbox" name="servicios[]" value="combo" {{ in_array('combo', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">📦 Paquete Completo</span>
+                                    <span class="text-slate-900 dark:text-white">📦 Complete Package</span>
                                 </label>
                             </div>
+                            
+                            <!-- Custom Services Section -->
+                            <div id="custom-services-container" class="mt-4 space-y-3"></div>
+                            
+                            <!-- Add Custom Service Button -->
+                            <button type="button" id="add-custom-service" class="mt-3 w-full px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                + Add Custom Service
+                            </button>
+                            
                             @error('servicios')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                             @error('servicios.*')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
+                            @error('servicios_personalizados.*')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                     
-                    <!-- Precio Section -->
+                    <!-- Price Section -->
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                         <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Precio
+                            Price
                         </h2>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (CRC) <span class="text-red-500">*</span></label>
-                            <input type="number" id="precio" name="precio" step="0.01" min="0" value="{{ old('precio') }}" required placeholder="0.00" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all @error('precio') border-red-500 @enderror">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (USD) <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400">$</span>
+                                <input type="number" id="precio" name="precio" step="0.01" min="0" value="{{ old('precio') }}" required placeholder="0.00" class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all @error('precio') border-red-500 @enderror">
+                            </div>
                             @error('precio')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
                     
-                    <!-- Idioma Section -->
+                    <!-- Language Section -->
                     <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                         <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                             </svg>
-                            Idioma del Contrato
+                            Contract Language
                         </h2>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Idioma <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Language <span class="text-red-500">*</span></label>
                             <select id="idioma" name="idioma" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all @error('idioma') border-red-500 @enderror">
-                                <option value="">Seleccionar idioma...</option>
-                                <option value="es" {{ old('idioma') == 'es' ? 'selected' : '' }}>🇪🇸 Español</option>
+                                <option value="">Select language...</option>
+                                <option value="es" {{ old('idioma') == 'es' ? 'selected' : '' }}>🇪🇸 Spanish</option>
                                 <option value="en" {{ old('idioma') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
-                                <option value="fr" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 Français</option>
-                                <option value="zh" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 中文 (Mandarin)</option>
+                                <option value="fr" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 French</option>
+                                <option value="zh" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 Chinese (Mandarin)</option>
                             </select>
                             @error('idioma')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -248,19 +263,19 @@
                     </div>
                 </div>
                 
-                <!-- Archivos Adjuntos Section -->
+                <!-- Attachments Section -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm dark:shadow-none">
                     <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                         </svg>
-                        Archivos Adjuntos (Opcional)
+                        Attachments (Optional)
                     </h2>
                     
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Seleccionar Archivos</label>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Files</label>
                         <input type="file" id="archivos" name="archivos[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition-all @error('archivos') border-red-500 @enderror">
-                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Allowed formats: PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, ZIP, RAR</p>
                         @error('archivos')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
@@ -270,7 +285,7 @@
                         
                         <!-- Lista de archivos seleccionados -->
                         <div id="archivos-lista" class="mt-3 space-y-2 hidden">
-                            <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Archivos seleccionados:</p>
+                            <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Selected files:</p>
                             <div id="archivos-nombres" class="space-y-1"></div>
                         </div>
                     </div>
@@ -279,10 +294,10 @@
                 <!-- Actions -->
                 <div class="flex gap-4">
                     <a href="{{ route('walee.dashboard') }}" class="flex-1 px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-all text-center">
-                        Cancelar
+                        Cancel
                     </a>
                     <button type="submit" class="flex-1 px-6 py-3 bg-walee-500 hover:bg-walee-600 text-white rounded-xl font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
-                        Enviar Contrato
+                        Send Contract
                     </button>
                 </div>
             </form>
@@ -295,17 +310,19 @@
     @include('partials.walee-support-button')
     
     <script>
-        // Mostrar email del cliente seleccionado
+        let customServiceIndex = 0;
+        
+        // Mostrar email del proveedor seleccionado
         document.addEventListener('DOMContentLoaded', function() {
-            const clienteSelect = document.getElementById('cliente_id');
-            const emailDisplay = document.getElementById('cliente-email-display');
-            const emailText = document.getElementById('cliente-email-text');
+            const proveedorSelect = document.getElementById('proveedor_id');
+            const emailDisplay = document.getElementById('proveedor-email-display');
+            const emailText = document.getElementById('proveedor-email-text');
             
             function updateEmailDisplay() {
-                const selectedOption = clienteSelect.options[clienteSelect.selectedIndex];
+                const selectedOption = proveedorSelect.options[proveedorSelect.selectedIndex];
                 const email = selectedOption.getAttribute('data-email');
                 
-                if (email && clienteSelect.value) {
+                if (email && proveedorSelect.value) {
                     emailText.textContent = email;
                     emailDisplay.classList.remove('hidden');
                 } else {
@@ -317,7 +334,32 @@
             updateEmailDisplay();
             
             // Actualizar cuando cambie la selección
-            clienteSelect.addEventListener('change', updateEmailDisplay);
+            proveedorSelect.addEventListener('change', updateEmailDisplay);
+            
+            // Add Custom Service functionality
+            const addCustomServiceBtn = document.getElementById('add-custom-service');
+            const customServicesContainer = document.getElementById('custom-services-container');
+            
+            addCustomServiceBtn.addEventListener('click', function() {
+                const serviceId = 'custom_service_' + customServiceIndex++;
+                const serviceDiv = document.createElement('div');
+                serviceDiv.className = 'flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg';
+                serviceDiv.innerHTML = `
+                    <input type="checkbox" name="servicios[]" value="${serviceId}" checked class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                    <input type="text" name="servicios_personalizados[]" placeholder="Enter custom service name" required class="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                    <button type="button" class="remove-custom-service p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                `;
+                customServicesContainer.appendChild(serviceDiv);
+                
+                // Add remove functionality
+                serviceDiv.querySelector('.remove-custom-service').addEventListener('click', function() {
+                    serviceDiv.remove();
+                });
+            });
             
             // Mostrar lista de archivos seleccionados
             const archivosInput = document.getElementById('archivos');
@@ -396,4 +438,3 @@
     </script>
 </body>
 </html>
-

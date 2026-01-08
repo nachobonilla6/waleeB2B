@@ -5911,32 +5911,34 @@ Route::post('/walee-sheets/update-row', function (\Illuminate\Http\Request $requ
 
 // Herramientas - Enviar Contrato
 Route::get('/walee-herramientas/enviar-contrato', function () {
-    $clientes = \App\Models\Client::orderBy('name', 'asc')->get();
-    $clientesData = $clientes->map(function($cliente) {
+    $proveedores = \App\Models\Client::orderBy('name', 'asc')->get();
+    $proveedoresData = $proveedores->map(function($proveedor) {
         return [
-            'id' => $cliente->id,
-            'name' => $cliente->name,
-            'email' => $cliente->email,
+            'id' => $proveedor->id,
+            'name' => $proveedor->name,
+            'email' => $proveedor->email,
         ];
     });
-    return view('walee-herramientas-enviar-contrato', compact('clientes', 'clientesData'));
+    return view('walee-herramientas-enviar-contrato', compact('proveedores', 'proveedoresData'));
 })->middleware(['auth'])->name('walee.herramientas.enviar-contrato');
 
 Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Request $request) {
     try {
                 $validated = $request->validate([
-                    'cliente_id' => 'required|exists:clientes_en_proceso,id',
+                    'proveedor_id' => 'required|exists:clientes_en_proceso,id',
                     'servicios' => 'required|array|min:1',
-                    'servicios.*' => 'required|string|in:diseno_web,redes_sociales,seo,publicidad,mantenimiento,hosting,combo',
+                    'servicios.*' => 'required|string',
+                    'servicios_personalizados' => 'nullable|array',
+                    'servicios_personalizados.*' => 'nullable|string|max:255',
                     'precio' => 'required|numeric|min:0',
                     'idioma' => 'required|in:es,en,fr,zh',
                 ]);
 
-        $cliente = \App\Models\Client::findOrFail($validated['cliente_id']);
+        $proveedor = \App\Models\Client::findOrFail($validated['proveedor_id']);
         
-        if (!$cliente->email) {
+        if (!$proveedor->email) {
             return redirect()->back()
-                ->with('error', 'El cliente no tiene un correo electrónico registrado')
+                ->with('error', 'The supplier does not have a registered email address')
                 ->withInput();
         }
 
@@ -5974,11 +5976,22 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
 
         // Obtener información de todos los servicios seleccionados
         $serviciosSeleccionados = [];
+        $serviciosPersonalizados = $validated['servicios_personalizados'] ?? [];
+        $indexPersonalizado = 0;
+        
         foreach ($validated['servicios'] as $servicioKey) {
-            $serviciosSeleccionados[] = $servicios[$servicioKey] ?? [
-                'nombre' => ucfirst(str_replace('_', ' ', $servicioKey)),
-                'descripcion' => 'Servicio personalizado según acuerdo entre las partes.'
-            ];
+            // Si es un servicio predefinido, usar su información
+            if (isset($servicios[$servicioKey])) {
+                $serviciosSeleccionados[] = $servicios[$servicioKey];
+            } else {
+                // Si es un servicio personalizado, usar el nombre proporcionado
+                $nombrePersonalizado = $serviciosPersonalizados[$indexPersonalizado] ?? ucfirst(str_replace('_', ' ', $servicioKey));
+                $serviciosSeleccionados[] = [
+                    'nombre' => $nombrePersonalizado,
+                    'descripcion' => 'Custom service as agreed between the parties.'
+                ];
+                $indexPersonalizado++;
+            }
         }
         
         // Crear lista de nombres de servicios para el email
@@ -5986,7 +5999,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         $listaServicios = implode(', ', $nombresServicios);
 
         // Generar PDF del contrato usando mPDF
-        $pdfFileName = 'Contrato_' . str_replace(' ', '_', $cliente->name) . '_' . now()->format('Ymd') . '.pdf';
+        $pdfFileName = 'Contract_' . str_replace(' ', '_', $proveedor->name) . '_' . now()->format('Ymd') . '.pdf';
         $pdfPath = storage_path('app/temp/' . $pdfFileName);
         
         // Asegurar que el directorio existe
@@ -6000,7 +6013,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         
         // Generar HTML del contrato
         $htmlContent = view('contratos.contrato-pdf', [
-            'cliente' => $cliente,
+            'cliente' => $proveedor,
             'servicios' => $serviciosSeleccionados,
             'precio' => $validated['precio'],
             'idioma' => $idioma,
@@ -6045,15 +6058,15 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         $mpdf->Output($pdfPath, 'F');
 
         // Preparar cuerpo del email según el idioma
-        $clienteNombre = $cliente->name ?? $cliente->nombre_empresa ?? 'Cliente';
-        $clienteEmail = $cliente->email ?? $cliente->correo;
+        $proveedorNombre = $proveedor->name ?? $proveedor->nombre_empresa ?? 'Supplier';
+        $proveedorEmail = $proveedor->email ?? $proveedor->correo;
         
-        $emailBody = $translations['email_greeting'] . " " . $clienteNombre . ",\n\n";
+        $emailBody = $translations['email_greeting'] . " " . $proveedorNombre . ",\n\n";
         $emailBody .= $translations['email_body_1'] . " " . $listaServicios . ".\n\n";
         $emailBody .= $translations['email_body_2'] . "\n";
         $emailBody .= "- " . $translations['email_service'] . " " . $listaServicios . "\n";
-        $emailBody .= "- " . $translations['email_price'] . " " . number_format($validated['precio'], 2, ',', '.') . " CRC (" . number_format($validated['precio'] / 520, 2, '.', ',') . " USD)\n";
-        $emailBody .= "- " . $translations['email_date'] . " " . now()->format('d/m/Y') . "\n\n";
+        $emailBody .= "- " . $translations['email_price'] . " $" . number_format($validated['precio'], 2, '.', ',') . " USD\n";
+        $emailBody .= "- " . $translations['email_date'] . " " . now()->format('m/d/Y') . "\n\n";
         $emailBody .= $translations['email_body_3'] . "\n\n";
         $emailBody .= $translations['email_closing'] . "\n";
         $emailBody .= $translations['email_company'] . "\n";
@@ -6061,7 +6074,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
 
         // Enviar email con PDF adjunto
         if (!file_exists($pdfPath)) {
-            throw new \Exception('No se pudo generar el archivo PDF');
+            throw new \Exception('Could not generate PDF file');
         }
 
         // Procesar archivos adjuntos adicionales
@@ -6079,9 +6092,9 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
             }
         }
 
-        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($clienteEmail, $pdfPath, $pdfFileName, $listaServicios, $translations, $archivosAdjuntos) {
+        \Illuminate\Support\Facades\Mail::raw($emailBody, function ($message) use ($proveedorEmail, $pdfPath, $pdfFileName, $listaServicios, $translations, $archivosAdjuntos) {
             $message->from('websolutionscrnow@gmail.com', 'Web Solutions - WALEÉ')
-                    ->to($clienteEmail)
+                    ->to($proveedorEmail)
                     ->subject($translations['email_subject'] . ' ' . $listaServicios)
                     ->attach($pdfPath, [
                         'as' => $pdfFileName,
@@ -6110,7 +6123,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         // Guardar contrato en la base de datos
         \App\Models\Contrato::create([
             'cliente_id' => null, // No hay relación directa con clientes_en_proceso
-            'correo' => $clienteEmail,
+            'correo' => $proveedorEmail,
             'servicios' => $validated['servicios'],
             'precio' => $validated['precio'],
             'idioma' => $validated['idioma'],
@@ -6125,7 +6138,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
         }
         
         return redirect()->route('walee.herramientas.enviar-contrato')
-            ->with('success', 'Contrato enviado correctamente por email a ' . $clienteEmail);
+            ->with('success', 'Contract sent successfully by email to ' . $proveedorEmail);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return redirect()->back()
             ->withErrors($e->errors())

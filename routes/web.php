@@ -113,14 +113,35 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
         $filename = basename($filename);
         $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
         
+        // Buscar el archivo en el directorio productos-super
         $path = storage_path('app/public/productos-super/' . $filename);
         
+        // Log para debugging
+        \Log::info('Intentando servir imagen de producto super', [
+            'filename' => $filename,
+            'path' => $path,
+            'exists' => file_exists($path),
+            'is_file' => is_file($path)
+        ]);
+        
         if (!file_exists($path) || !is_file($path)) {
+            \Log::warning('Archivo de producto super no encontrado', [
+                'filename' => $filename,
+                'path' => $path,
+                'directory_exists' => is_dir(dirname($path)),
+                'directory_contents' => is_dir(dirname($path)) ? implode(', ', array_slice(scandir(dirname($path)), 0, 10)) : 'N/A'
+            ]);
             abort(404, 'Archivo no encontrado: ' . $filename);
         }
         
         $file = file_get_contents($path);
         $type = mime_content_type($path) ?: 'image/jpeg';
+        
+        \Log::info('Archivo de producto super servido correctamente', [
+            'filename' => $filename,
+            'size' => filesize($path),
+            'type' => $type
+        ]);
         
         return response($file, 200)
             ->header('Content-Type', $type)
@@ -130,7 +151,8 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
     } catch (\Exception $e) {
         \Log::error('Error al servir archivo de producto super', [
             'filename' => $filename ?? 'unknown',
-            'error' => $e->getMessage()
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
         ]);
         abort(500, 'Error al servir archivo');
     }

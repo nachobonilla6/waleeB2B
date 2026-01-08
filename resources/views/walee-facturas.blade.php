@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Dashboard de Finanzas</title>
-    <meta name="description" content="Walee - Dashboard de Finanzas y Facturas">
+    <title>Walee B2B - Finance Dashboard</title>
+    <meta name="description" content="Walee B2B - Finance and Invoices Dashboard">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -100,14 +100,14 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Dashboard de Finanzas'; @endphp
+            @php $pageTitle = 'Finance Dashboard'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                        Dashboard de Finanzas
+                        Finance Dashboard
                     </h1>
                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Facturado vs Gastos</p>
                 </div>
@@ -122,7 +122,7 @@
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <span>Ver Facturas</span>
+                        <span>View Invoices</span>
                     </a>
                 </div>
             </header>
@@ -146,7 +146,7 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Facturado Este Mes</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Invoiced This Month</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalFacturadoEsteMes / $tasaCambio, 2, '.', ',') }}</p>
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format($totalFacturadoEsteMes, 2, '.', ',') }}</p>
                     </div>
@@ -168,7 +168,7 @@
                         </div>
                     </div>
                     <div class="mb-2 sm:mb-3">
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Gastos Este Mes</p>
+                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-2">Total Expenses This Month</p>
                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">${{ number_format($totalGastosEsteMes ?? 0, 2, '.', ',') }}</p>
                         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-500 mt-1">₡{{ number_format(($totalGastosEsteMes ?? 0) * $tasaCambio, 2, '.', ',') }}</p>
                     </div>

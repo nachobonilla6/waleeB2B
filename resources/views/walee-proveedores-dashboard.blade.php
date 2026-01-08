@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Dashboard de Proveedores</title>
-    <meta name="description" content="Walee - Dashboard de Proveedores">
+    <title>Walee B2B - Suppliers Dashboard</title>
+    <meta name="description" content="Walee B2B - Suppliers Dashboard">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -303,16 +303,16 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Dashboard de Proveedores'; @endphp
+            @php $pageTitle = 'Suppliers Dashboard'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6 md:mb-8 animate-fade-in-up">
                 <div>
                     <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-                        Dashboard de Proveedores
+                        Suppliers Dashboard
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Total: {{ number_format($clientesActivos) }} proveedores activos</p>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 hidden sm:block">Total: {{ number_format($clientesActivos) }} active suppliers</p>
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <a href="{{ route('walee.dashboard') }}" class="px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-walee-500 to-walee-600 hover:from-walee-600 hover:to-walee-700 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg shadow-walee-500/30 hover:shadow-xl hover:shadow-walee-500/40 transition-all duration-300 flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm transform hover:scale-105 active:scale-95">
@@ -326,15 +326,15 @@
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span class="hidden sm:inline">Agregar Proveedor</span>
+                        <span class="hidden sm:inline">Add Supplier</span>
                         <span class="sm:hidden">Agregar</span>
                     </button>
                     <a href="{{ route('walee.proveedores.activos') }}" class="px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300 flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm transform hover:scale-105 active:scale-95">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
-                        <span class="hidden sm:inline">Ver todos los proveedores</span>
-                        <span class="sm:hidden">Ver todos</span>
+                        <span class="hidden sm:inline">View all suppliers</span>
+                        <span class="sm:hidden">View all</span>
                     </a>
                     <a href="{{ route('walee.dashboard') }}" class="px-4 py-2.5 sm:px-5 sm:py-3 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-slate-300 hover:to-slate-400 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white font-semibold rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm transform hover:scale-105 active:scale-95">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -357,7 +357,7 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Total Activos</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Total Active</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesActivos) }}</p>
                     </div>
                 </a>
@@ -372,7 +372,7 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Este Mes</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">This Month</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesEsteMes) }}</p>
                     </div>
                 </a>
@@ -387,7 +387,7 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Esta Semana</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">This Week</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesEstaSemana) }}</p>
                     </div>
                 </a>
@@ -402,7 +402,7 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Hoy</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Today</p>
                         <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesHoy) }}</p>
                     </div>
                 </a>
@@ -412,7 +412,7 @@
             <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
                 <!-- Chart -->
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
-                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Clientes Nuevos - Últimos 15 Días</h2>
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">New Suppliers - Last 15 Days</h2>
                     <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
                         <canvas id="clientesChart"></canvas>
                     </div>
@@ -423,10 +423,10 @@
             <div class="mb-4 sm:mb-6 md:mb-8">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Clientes con Publicaciones</h2>
+                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Suppliers with Publications</h2>
                         <div class="flex items-center gap-2">
                             <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-violet-600 dark:text-violet-400">{{ count($clientesConPublicaciones) }}</span>
-                            <span class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">clientes</span>
+                            <span class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">suppliers</span>
                         </div>
                     </div>
                     <div class="space-y-2 sm:space-y-3">
@@ -447,11 +447,11 @@
                                 @if($fotoUrl)
                                     <img src="{{ $fotoUrl }}" alt="{{ $item['client']->name }}" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg object-cover border-2 border-violet-500/30 flex-shrink-0 group-hover:scale-110 transition-transform">
                                 @else
-                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $item['client']->name ?: 'Cliente' }}" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg object-cover border-2 border-violet-500/30 flex-shrink-0 group-hover:scale-110 transition-transform opacity-80">
+                                    <img src="https://images.icon-icons.com/1188/PNG/512/1490201150-client_82317.png" alt="{{ $item['client']->name ?: 'Supplier' }}" class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg object-cover border-2 border-violet-500/30 flex-shrink-0 group-hover:scale-110 transition-transform opacity-80">
                                 @endif
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $item['client']->name ?: 'Sin nombre' }}</p>
-                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $item['client']->email ?: 'Sin email' }}</p>
+                                    <p class="font-medium text-xs sm:text-sm md:text-base text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{{ $item['client']->name ?: 'No name' }}</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">{{ $item['client']->email ?: 'No email' }}</p>
                                     @if($item['client']->idioma)
                                         <p class="text-xs text-slate-500 dark:text-slate-500 mt-0.5">
                                             @php
@@ -480,7 +480,7 @@
                                 </div>
                             </a>
                         @empty
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No hay clientes con publicaciones</p>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No suppliers with publications</p>
                         @endforelse
                     </div>
                 </div>
@@ -511,7 +511,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
                         </div>
-                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Clientes</span>
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Suppliers</span>
                     </a>
                     
                     <a href="{{ route('walee.facturas') }}" class="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-violet-50 dark:bg-slate-900/50 border border-black dark:border-black hover:border-black dark:hover:border-black hover:bg-violet-400/5 dark:hover:bg-violet-400/5 transition-all duration-300">
@@ -592,7 +592,7 @@
                 data: {
                     labels: @json($ultimos7Dias),
                     datasets: [{
-                        label: 'Clientes Nuevos',
+                        label: 'New Suppliers',
                         data: @json($clientesPorDia),
                         borderColor: 'rgb(16, 185, 129)',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -711,13 +711,13 @@
             }
             
             Swal.fire({
-                title: 'Agregar Cliente',
+                title: 'Add Supplier',
                 html: html,
                 width: modalWidth,
                 padding: isMobile ? '1rem' : '1.5rem',
                 showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#10b981',
                 cancelButtonColor: isDarkMode ? '#475569' : '#6b7280',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
@@ -748,7 +748,7 @@
                     
                     // Validar nombre requerido
                     if (!data.name || data.name.trim() === '') {
-                        Swal.showValidationMessage('El nombre es requerido');
+                        Swal.showValidationMessage('Name is required');
                         return false;
                     }
                     
@@ -778,8 +778,8 @@
                 if (response.ok) {
                     Swal.fire({
                         icon: 'success',
-                        title: '¡Cliente creado!',
-                        text: 'El cliente se ha agregado correctamente',
+                        title: 'Supplier created!',
+                        text: 'The supplier has been added successfully',
                         confirmButtonColor: '#10b981',
                         timer: 2000,
                         showConfirmButton: false
@@ -787,7 +787,7 @@
                         window.location.reload();
                     });
                 } else {
-                    let errorMessage = 'Error al crear el cliente';
+                    let errorMessage = 'Error creating supplier';
                     if (result.message) {
                         errorMessage = result.message;
                     } else if (result.errors) {

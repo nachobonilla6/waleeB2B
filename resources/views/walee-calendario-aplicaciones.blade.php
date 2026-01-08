@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Calendario de Aplicaciones</title>
-    <meta name="description" content="Calendario de Aplicaciones">
+    <title>Walee B2B - Applications Calendar</title>
+    <meta name="description" content="Applications Calendar">
     <meta name="theme-color" content="#8b5cf6">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -298,7 +298,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Calendario de Aplicaciones'; @endphp
+            @php $pageTitle = 'Applications Calendar'; @endphp
             @include('partials.walee-navbar')
             
             @if(session('success'))

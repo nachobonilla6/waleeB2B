@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Productos Super</title>
-    <meta name="description" content="Gestión de Productos del Supermercado">
+    <title>Walee B2B - Super Products</title>
+    <meta name="description" content="Supermarket Products Management">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -186,8 +186,8 @@
             <div class="mt-6 sm:mt-8 animate-fade-in-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-6">
                     <div>
-                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Productos Super</h2>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Gestiona los productos del supermercado</p>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Super Products</h2>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Manage supermarket products</p>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-3">
                         <a 
@@ -231,14 +231,14 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            <span>Agregar Producto</span>
+                            <span>Add Product</span>
                             <svg id="formToggleIcon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
                         
                         <div id="formularioProducto" class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-md sticky top-4 hidden lg:block">
-                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4">Agregar Producto</h3>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4">Add Product</h3>
                             <form id="productoForm" class="space-y-4" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" id="productoId" name="producto_id">
@@ -267,7 +267,7 @@
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (₡)</label>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡)</label>
                                     <input 
                                         type="number" 
                                         id="productoPrecio" 
@@ -281,7 +281,7 @@
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Categoría</label>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
                                     <input 
                                         type="text" 
                                         id="productoCategoria" 
@@ -381,7 +381,7 @@
                                         <input 
                                             type="text" 
                                             id="searchProductos"
-                                            placeholder="Buscar productos por nombre, categoría..."
+                                            placeholder="Search products by name, category..."
                                             class="w-full px-4 py-2.5 pl-10 pr-10 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm"
                                             onkeyup="buscarProductos()"
                                         >
@@ -429,7 +429,7 @@
                                         onchange="filtrarProductos()"
                                         class="flex-1 px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     >
-                                        <option value="">Todas las categorías</option>
+                                        <option value="">All categories</option>
                                         @foreach($categorias as $categoria)
                                             <option value="{{ $categoria }}">{{ $categoria }}</option>
                                         @endforeach
@@ -450,8 +450,8 @@
                         <!-- Lista de Productos -->
                         <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 md:p-6 border border-slate-200 dark:border-slate-700 shadow-md">
                             <div class="flex items-center justify-between mb-3 sm:mb-4">
-                                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Productos</h3>
-                                <span id="productosCount" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{{ $productos->count() }} productos</span>
+                                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Products</h3>
+                                <span id="productosCount" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{{ $productos->count() }} products</span>
                             </div>
                             
                             @if($productos->isEmpty())
@@ -459,7 +459,7 @@
                                     <svg class="w-16 h-16 mx-auto text-slate-400 dark:text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                     </svg>
-                                    <p class="text-slate-600 dark:text-slate-400 text-lg mb-2">No tienes productos aún</p>
+                                    <p class="text-slate-600 dark:text-slate-400 text-lg mb-2">You don't have any products yet</p>
                                     <p class="text-slate-500 dark:text-slate-500 text-sm">Agrega tu primer producto para comenzar</p>
                                 </div>
                             @else
@@ -644,7 +644,7 @@
                         <svg class="w-6 h-6 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                         </svg>
-                        Asistente IA para Productos
+                        AI Assistant for Products
                     </h3>
                     <button onclick="closeAIModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -663,7 +663,7 @@
                         <textarea 
                             id="aiPrompt"
                             rows="4"
-                            placeholder="Ej: Crear un producto llamado 'Leche entera' de la categoría 'Lácteos', precio 2500 colones, stock 50 unidades, expira en 30 días..."
+                            placeholder="E.g: Create a product called 'Whole milk' in the 'Dairy' category, price 2500 colones, stock 50 units, expires in 30 days..."
                             class="w-full px-4 py-3 pr-20 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all resize-none"
                         ></textarea>
                         <button 

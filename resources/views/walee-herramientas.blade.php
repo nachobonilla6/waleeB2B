@@ -126,7 +126,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-center">Stock</span>
+                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-center">Stock Management</span>
                 </a>
             </div>
             

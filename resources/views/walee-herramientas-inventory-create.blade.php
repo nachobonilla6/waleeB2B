@@ -935,7 +935,10 @@
             if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
             if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
             if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
-            if (producto.seccion) document.getElementById('productoSeccion').value = producto.seccion;
+            if (producto.seccion) {
+                document.getElementById('productoSeccion').value = producto.seccion;
+                updateSectionBadge();
+            }
             if (producto.stock !== undefined) document.getElementById('productoStock').value = producto.stock;
             if (producto.cantidad !== undefined) document.getElementById('productoCantidad').value = producto.cantidad;
             if (producto.fecha_expiracion) document.getElementById('productoFechaExpiracion').value = producto.fecha_expiracion;
@@ -996,15 +999,29 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Guardar indicador para hacer scroll después de recargar
-                    sessionStorage.setItem('scrollToTop', 'true');
                     Swal.fire({
                         ...getSwalTheme(),
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Product created successfully',
-                        timer: 1500,
-                        showConfirmButton: false
+                        html: `
+                            <div class="flex flex-col items-center justify-center gap-4 py-4">
+                                <div class="w-20 h-20 rounded-2xl walee-gradient flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
+                                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee B2B" class="w-16 h-16 rounded-xl object-cover">
+                                </div>
+                                <div class="text-center">
+                                    <h2 class="text-2xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent mb-2">
+                                        Walee B2B
+                                    </h2>
+                                    <p class="text-slate-700 dark:text-slate-300 text-lg">
+                                        Product created successfully
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        icon: false,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
                     }).then(() => {
                         // Redirigir a la página de edición del producto creado
                         if (data.producto_id) {
@@ -1188,193 +1205,3 @@
     </script>
 </body>
 </html>
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ prompt: prompt })
-            })
-            .then(response => response.json())
-            .then(data => {
-                processBtn.disabled = false;
-                processText.classList.remove('hidden');
-                processLoading.classList.add('hidden');
-                
-                if (data.success && data.producto) {
-                    // Mostrar respuesta
-                    document.getElementById('aiResponseText').textContent = data.response || 'Producto generado correctamente';
-                    document.getElementById('aiResponse').classList.remove('hidden');
-                    
-                    // Rellenar formulario
-                    fillFormWithAI(data.producto);
-                    
-                    // Cerrar modal después de un momento
-                    setTimeout(() => {
-                        closeAIModal();
-                    }, 2000);
-                } else {
-                    Swal.fire({
-                        ...getSwalTheme(),
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'No se pudo generar el producto'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                processBtn.disabled = false;
-                processText.classList.remove('hidden');
-                processLoading.classList.add('hidden');
-                Swal.fire({
-                    ...getSwalTheme(),
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo procesar la solicitud'
-                });
-            });
-        }
-        
-        function fillFormWithAI(producto) {
-            if (producto.nombre) document.getElementById('productoNombre').value = producto.nombre;
-            if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
-            if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
-            if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
-            if (producto.seccion) document.getElementById('productoSeccion').value = producto.seccion;
-            if (producto.stock !== undefined) document.getElementById('productoStock').value = producto.stock;
-            if (producto.cantidad !== undefined) document.getElementById('productoCantidad').value = producto.cantidad;
-            if (producto.fecha_expiracion) document.getElementById('productoFechaExpiracion').value = producto.fecha_expiracion;
-            
-            // Fecha de entrada: usar la del producto o establecer fecha actual de 2026
-            const fechaEntradaInput = document.getElementById('productoFechaEntrada');
-            if (producto.fecha_entrada) {
-                fechaEntradaInput.value = producto.fecha_entrada;
-            } else if (!fechaEntradaInput.value) {
-                const today = new Date();
-                today.setFullYear(2026);
-                fechaEntradaInput.value = today.toISOString().split('T')[0];
-            }
-            
-            if (producto.fecha_limite_venta) document.getElementById('productoFechaLimiteVenta').value = producto.fecha_limite_venta;
-            if (producto.fecha_salida) document.getElementById('productoFechaSalida').value = producto.fecha_salida;
-            if (producto.codigo_barras) document.getElementById('productoCodigoBarras').value = producto.codigo_barras;
-            if (producto.activo !== undefined) document.getElementById('productoActivo').checked = producto.activo;
-            updateStatusText();
-        }
-        
-        async function saveProducto() {
-            const formData = new FormData();
-            formData.append('nombre', document.getElementById('productoNombre').value);
-            formData.append('descripcion', document.getElementById('productoDescripcion').value);
-            formData.append('precio', document.getElementById('productoPrecio').value);
-            formData.append('categoria', document.getElementById('productoCategoria').value);
-            formData.append('seccion', document.getElementById('productoSeccion').value);
-            formData.append('stock', document.getElementById('productoStock').value);
-            formData.append('cantidad', document.getElementById('productoCantidad').value);
-            formData.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
-            formData.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
-            formData.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
-            formData.append('fecha_salida', document.getElementById('productoFechaSalida').value);
-            formData.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
-            formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
-            
-            const imagenFile = document.getElementById('productoImagen').files[0];
-            if (imagenFile) {
-                formData.append('imagen', imagenFile);
-            }
-            
-            const fotoQrFile = document.getElementById('productoFotoQr').files[0];
-            if (fotoQrFile) {
-                formData.append('foto_qr', fotoQrFile);
-            }
-            
-            try {
-                const response = await fetch('/walee-herramientas/inventory/producto', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Guardar indicador para hacer scroll después de recargar
-                    sessionStorage.setItem('scrollToTop', 'true');
-                    Swal.fire({
-                        ...getSwalTheme(),
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Product created successfully',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        // Redirigir a la página de edición del producto creado
-                        if (data.producto_id) {
-                            window.location.href = `/walee-herramientas/inventory/producto/${data.producto_id}/edit`;
-                        } else {
-                            window.location.href = '{{ route("walee.herramientas.inventory") }}';
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        ...getSwalTheme(),
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'Error creating product'
-                    });
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    ...getSwalTheme(),
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error creating product'
-                });
-            }
-        }
-        
-        // Preview de imágenes
-        document.getElementById('productoImagen').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('imagenPreviewImg').src = e.target.result;
-                    document.getElementById('imagenPreview').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                document.getElementById('imagenPreview').classList.add('hidden');
-            }
-        });
-        
-        document.getElementById('productoFotoQr').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('qrPreviewImg').src = e.target.result;
-                    document.getElementById('qrPreview').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                document.getElementById('qrPreview').classList.add('hidden');
-            }
-        });
-        
-        // Close modal on background click
-        document.getElementById('aiModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAIModal();
-            }
-        });
-    </script>
-</body>
-</html>
-

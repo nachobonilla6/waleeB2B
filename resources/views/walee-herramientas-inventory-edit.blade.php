@@ -266,13 +266,13 @@
                                     <button 
                                         type="button"
                                         onclick="generateQRCode()"
-                                        class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
+                                        class="mt-2 px-3 py-1.5 text-sm bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md shadow-purple-500/20 hover:shadow-lg hover:shadow-purple-500/30"
                                         title="Generate QR Code automatically"
                                     >
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                         </svg>
-                                        <span>Generate QR Code</span>
+                                        <span>Generate QR</span>
                                     </button>
                                     <div id="qrCodeCanvas" class="mt-2 hidden"></div>
                                     @if($producto->foto_qr)
@@ -629,6 +629,13 @@
         
         async function generateQRCode() {
             try {
+                // Esperar a que la librería QRCode esté cargada
+                let retries = 0;
+                while (typeof QRCode === 'undefined' && retries < 10) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    retries++;
+                }
+                
                 // Verificar que la librería QRCode esté cargada
                 if (typeof QRCode === 'undefined') {
                     throw new Error('QRCode library not loaded. Please refresh the page.');

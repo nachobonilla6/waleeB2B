@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Todas las Herramientas</title>
-    <meta name="description" content="Todas las herramientas de Walee">
+    <title>Walee B2B - All Tools</title>
+    <meta name="description" content="All Walee B2B tools">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -68,13 +68,13 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
-            @php $pageTitle = 'Herramientas'; @endphp
+            @php $pageTitle = 'Tools'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Header -->
             <div class="mb-4 sm:mb-6 md:mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
-                <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">Todas las Herramientas</h1>
-                <p class="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 hidden sm:block">Accede a todas las herramientas disponibles en Walee</p>
+                <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2">All Tools</h1>
+                <p class="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 hidden sm:block">Access all available tools in Walee B2B</p>
             </div>
             
             <!-- Herramientas Grid -->
@@ -86,7 +86,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors text-center">Facturas</span>
+                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors text-center">Invoices</span>
                 </a>
                 
                 <!-- Emails -->
@@ -106,7 +106,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
-                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors text-center">Tareas</span>
+                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors text-center">Tasks</span>
                 </a>
                 
                 <!-- Contratos -->
@@ -116,7 +116,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors text-center">Contratos</span>
+                    <span class="text-xs sm:text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors text-center">Contracts</span>
                 </a>
                 
                 <!-- Stuck DLC + DLV -->
@@ -136,7 +136,7 @@
             <!-- Footer -->
             <footer class="text-center py-4 sm:py-6 md:py-8 mt-6 sm:mt-8 md:mt-12">
                 <p class="text-xs sm:text-sm text-slate-500">
-                    <span class="text-walee-400 font-medium">Walee</span> · websolutions.work
+                    <span class="text-walee-400 font-medium">Walee B2B</span> · websolutions.work
                 </p>
             </footer>
         </div>

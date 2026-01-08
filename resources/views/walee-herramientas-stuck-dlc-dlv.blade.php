@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Stuck DLC + DLV - Gestión de Stock</title>
-    <meta name="description" content="Gestión de stock de productos">
+    <title>Walee - Stock Management</title>
+    <meta name="description" content="Product stock management">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -82,8 +82,8 @@
             <div class="mb-6 sm:mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Gestión de Stock</h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Administra el inventario de productos</p>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Stock Management</h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Manage product inventory</p>
                     </div>
                     <button 
                         onclick="openCreateProductoModal()"
@@ -92,7 +92,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span>Nuevo Producto</span>
+                        <span>New Product</span>
                     </button>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                         <input 
                             type="text" 
                             id="searchInput"
-                            placeholder="Buscar producto..."
+                            placeholder="Search product..."
                             class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         >
                     </div>
@@ -112,7 +112,7 @@
                         id="filterCategoria"
                         class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     >
-                        <option value="">Todas las categorías</option>
+                        <option value="">All categories</option>
                         @foreach($productos->pluck('categoria')->filter()->unique()->sort() as $categoria)
                             <option value="{{ $categoria }}">{{ $categoria }}</option>
                         @endforeach
@@ -121,10 +121,10 @@
                         id="filterStock"
                         class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     >
-                        <option value="all">Todo el stock</option>
-                        <option value="low">Stock bajo (≤10)</option>
-                        <option value="zero">Sin stock</option>
-                        <option value="active">Solo activos</option>
+                        <option value="all">All stock</option>
+                        <option value="low">Low stock (≤10)</option>
+                        <option value="zero">Out of stock</option>
+                        <option value="active">Active only</option>
                     </select>
                 </div>
             </div>
@@ -135,12 +135,12 @@
                     <table class="w-full">
                         <thead class="bg-slate-100 dark:bg-slate-900/50">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Producto</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Categoría</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Precio</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Product</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Category</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Price</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Estado</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Acciones</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="productosTableBody" class="divide-y divide-slate-200 dark:divide-slate-700">
@@ -178,20 +178,20 @@
                                     <td class="px-4 py-3 text-center">
                                         @if($producto->activo)
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
-                                                Activo
+                                                Active
                                             </span>
                                         @else
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300">
-                                                Inactivo
+                                                Inactive
                                             </span>
                                         @endif
                                         @if($producto->stock <= 10 && $producto->stock > 0)
                                             <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                                                Bajo
+                                                Low
                                             </span>
                                         @elseif($producto->stock == 0)
                                             <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
-                                                Agotado
+                                                Out of stock
                                             </span>
                                         @endif
                                     </td>
@@ -200,7 +200,7 @@
                                             <button 
                                                 onclick="editProducto({{ $producto->id }})"
                                                 class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                                                title="Editar"
+                                                title="Edit"
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -209,7 +209,7 @@
                                             <button 
                                                 onclick="deleteProducto({{ $producto->id }})"
                                                 class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                                title="Eliminar"
+                                                title="Delete"
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -230,7 +230,7 @@
     <div id="productoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden">
             <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">Nuevo Producto</h3>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">New Product</h3>
                 <button onclick="closeProductoModal()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -242,18 +242,18 @@
                 <input type="hidden" id="productoId" name="producto_id">
                 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre *</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name *</label>
                     <input type="text" id="productoNombre" name="nombre" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
                     <textarea id="productoDescripcion" name="descripcion" rows="3" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"></textarea>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Precio (₡) *</label>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
                         <input type="number" id="productoPrecio" name="precio" step="0.01" min="0" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                     </div>
                     <div>
@@ -263,21 +263,21 @@
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Categoría</label>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
                     <input type="text" id="productoCategoria" name="categoria" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                 </div>
                 
                 <div class="flex items-center">
                     <input type="checkbox" id="productoActivo" name="activo" checked class="w-4 h-4 text-orange-500 border-slate-300 rounded focus:ring-orange-500">
-                    <label for="productoActivo" class="ml-2 text-sm text-slate-700 dark:text-slate-300">Producto activo</label>
+                    <label for="productoActivo" class="ml-2 text-sm text-slate-700 dark:text-slate-300">Active product</label>
                 </div>
                 
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="closeProductoModal()" class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                        Cancelar
+                        Cancel
                     </button>
                     <button type="submit" class="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
-                        Guardar
+                        Save
                     </button>
                 </div>
             </form>
@@ -333,17 +333,17 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Error al actualizar stock: ' + (data.message || 'Error desconocido'));
+                    alert('Error updating stock: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al actualizar stock');
+                alert('Error updating stock');
             }
         }
         
         // Modal Functions
         function openCreateProductoModal() {
-            document.getElementById('modalTitle').textContent = 'Nuevo Producto';
+            document.getElementById('modalTitle').textContent = 'New Product';
             document.getElementById('productoForm').reset();
             document.getElementById('productoId').value = '';
             document.getElementById('productoModal').classList.remove('hidden');
@@ -361,13 +361,13 @@
                 const data = await response.json();
                 
                 if (!data.success) {
-                    alert('Error al cargar producto: ' + (data.message || 'Error desconocido'));
+                    alert('Error loading product: ' + (data.message || 'Unknown error'));
                     return;
                 }
                 
                 const producto = data.producto;
                 
-                document.getElementById('modalTitle').textContent = 'Editar Producto';
+                document.getElementById('modalTitle').textContent = 'Edit Product';
                 document.getElementById('productoId').value = producto.id;
                 document.getElementById('productoNombre').value = producto.nombre;
                 document.getElementById('productoDescripcion').value = producto.descripcion || '';
@@ -380,12 +380,12 @@
                 document.getElementById('productoModal').classList.add('flex');
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al cargar producto');
+                alert('Error loading product');
             }
         }
         
         async function deleteProducto(id) {
-            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+            if (!confirm('Are you sure you want to delete this product?')) return;
             
             try {
                 const response = await fetch(`/walee-productos-super/${id}`, {
@@ -400,11 +400,11 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Error al eliminar producto: ' + (data.message || 'Error desconocido'));
+                    alert('Error deleting product: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al eliminar producto');
+                alert('Error deleting product');
             }
         }
         
@@ -436,11 +436,11 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Error: ' + (data.message || 'Error desconocido'));
+                    alert('Error: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al guardar producto');
+                alert('Error saving product');
             }
         });
         

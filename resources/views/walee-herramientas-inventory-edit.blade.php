@@ -834,8 +834,8 @@
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        // Redirigir a la página de inventory
-                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                        // Recargar la página actual para mantener en la misma página del producto
+                        window.location.reload();
                     });
                 } else {
                     Swal.fire({

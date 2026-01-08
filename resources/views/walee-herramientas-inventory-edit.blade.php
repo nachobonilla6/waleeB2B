@@ -784,12 +784,7 @@
             formData.append('precio', document.getElementById('productoPrecio').value);
             formData.append('categoria', document.getElementById('productoCategoria').value);
             const seccionSelect = document.getElementById('productoSeccion');
-            const seccionCustomInput = document.getElementById('productoSeccionCustom');
-            let seccionValue = seccionSelect.value;
-            if (seccionValue === 'Other' && seccionCustomInput) {
-                seccionValue = seccionCustomInput.value.trim() || '';
-            }
-            formData.append('seccion', seccionValue);
+            formData.append('seccion', seccionSelect.value);
             formData.append('stock', document.getElementById('productoStock').value);
             formData.append('cantidad', document.getElementById('productoCantidad').value);
             formData.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);

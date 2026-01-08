@@ -100,372 +100,316 @@
             </div>
             
             <!-- Form -->
-            <form id="productoForm" class="animate-fade-in-up" style="animation-delay: 0.1s;" enctype="multipart/form-data">
+            <form id="productoForm" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
                 
-                <!-- Tabs Navigation -->
-                <div class="mb-4 bg-white dark:bg-slate-800 rounded-xl p-1.5 sm:p-2 border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <div class="flex gap-1 sm:gap-2">
-                        <button 
-                            type="button"
-                            onclick="switchTab(1)"
-                            id="tabBtn1"
-                            class="flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 bg-blue-500 text-white shadow-md"
-                        >
-                            <span class="flex items-center justify-center gap-1 sm:gap-2">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <span class="hidden sm:inline">Codes & Images</span>
-                                <span class="sm:hidden">Codes</span>
+                <!-- Status Section - Above all sections -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Status
+                    </h2>
+                    <div class="space-y-4">
+                        <label class="relative inline-flex items-center cursor-pointer group">
+                            <input 
+                                type="checkbox" 
+                                id="productoActivo" 
+                                name="activo" 
+                                value="1"
+                                {{ $producto->activo ? 'checked' : '' }}
+                                class="sr-only peer"
+                                onchange="updateStatusText()"
+                            >
+                            <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                            <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                {{ $producto->activo ? 'Active' : 'Inactive' }}
                             </span>
-                        </button>
-                        <button 
-                            type="button"
-                            onclick="switchTab(2)"
-                            id="tabBtn2"
-                            class="flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600"
-                        >
-                            <span class="flex items-center justify-center gap-1 sm:gap-2">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                                <span class="hidden sm:inline">Basic Information</span>
-                                <span class="sm:hidden">Basic</span>
-                            </span>
-                        </button>
-                        <button 
-                            type="button"
-                            onclick="switchTab(3)"
-                            id="tabBtn3"
-                            class="flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600"
-                        >
-                            <span class="flex items-center justify-center gap-1 sm:gap-2">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <span class="hidden sm:inline">Status & Dates</span>
-                                <span class="sm:hidden">Dates</span>
-                            </span>
-                        </button>
+                        </label>
                     </div>
                 </div>
                 
-                <!-- Tab Content Container -->
-                <div class="relative" style="min-height: calc(100vh - 380px); max-height: calc(100vh - 380px); overflow-y: auto;">
-                    <!-- Tab 1: Codes & Images -->
-                    <div id="tabContent1" class="tab-content">
-                        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-5 lg:p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4 sm:mb-5 flex items-center gap-2">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                Codes & Images
-                            </h2>
-                            <div class="space-y-4 sm:space-y-5">
-                                <!-- Desktop: Foto y QR en la misma línea -->
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
-                                    <!-- Product Image -->
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Product Image</label>
-                                        <input 
-                                            type="file" 
-                                            id="productoImagen" 
-                                            name="imagen" 
-                                            accept="image/*"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4 file:rounded-lg file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
-                                        >
-                                        @if($producto->imagen)
-                                            @php
-                                                $imagenPath = trim($producto->imagen);
-                                                if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
-                                                    $imagenUrl = $imagenPath;
-                                                } else {
-                                                    $filename = basename($imagenPath);
-                                                    if (strpos($imagenPath, 'productos-super/') === 0) {
-                                                        $imagenUrl = asset('storage/' . $imagenPath);
-                                                    } else {
-                                                        $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
-                                                    }
-                                                }
-                                            @endphp
-                                            <div class="mt-2 relative inline-block">
-                                                <img src="{{ $imagenUrl }}" alt="Current image" class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
-                                                <button 
-                                                    type="button"
-                                                    onclick="removeImagen()"
-                                                    class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 sm:p-1.5 shadow-lg transition-colors"
-                                                    title="Remove image"
-                                                >
-                                                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
-                                        @endif
-                                    </div>
-                                    
-                                    <!-- QR Code Image -->
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">QR Code Image</label>
-                                        <input 
-                                            type="file" 
-                                            id="productoFotoQr" 
-                                            name="foto_qr" 
-                                            accept="image/*"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4 file:rounded-lg file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
-                                        >
+                <!-- Codes & Images Section - Full Width -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Codes & Images
+                    </h2>
+                    <div class="space-y-4">
+                        <!-- Desktop: Foto y QR en la misma línea -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Product Image -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Image</label>
+                                <input 
+                                    type="file" 
+                                    id="productoImagen" 
+                                    name="imagen" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
+                                >
+                                @if($producto->imagen)
+                                    @php
+                                        $imagenPath = trim($producto->imagen);
+                                        if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                            $imagenUrl = $imagenPath;
+                                        } else {
+                                            $filename = basename($imagenPath);
+                                            if (strpos($imagenPath, 'productos-super/') === 0) {
+                                                $imagenUrl = asset('storage/' . $imagenPath);
+                                            } else {
+                                                $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
                                         <button 
                                             type="button"
-                                            onclick="generateQRCode()"
-                                            class="mt-2 w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
-                                            title="Generate QR Code automatically"
+                                            onclick="removeImagen()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove image"
                                         >
-                                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                             </svg>
-                                            <span>Generate QR Code</span>
                                         </button>
-                                        <div id="qrCodeCanvas" class="mt-2 hidden"></div>
-                                        @if($producto->foto_qr)
-                                            @php
-                                                $qrPath = trim($producto->foto_qr);
-                                                if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
-                                                    $qrUrl = $qrPath;
-                                                } else {
-                                                    $filename = basename($qrPath);
-                                                    $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
-                                                }
-                                            @endphp
-                                            <div class="mt-2 relative inline-block">
-                                                <img src="{{ $qrUrl }}" alt="Current QR" class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
-                                                <button 
-                                                    type="button"
-                                                    onclick="removeFotoQr()"
-                                                    class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 sm:p-1.5 shadow-lg transition-colors"
-                                                    title="Remove QR image"
-                                                >
-                                                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
-                                        @endif
                                     </div>
-                                </div>
-                                
-                                <!-- Barcode -->
-                                <div>
-                                    <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Barcode</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoCodigoBarras" 
-                                        name="codigo_barras" 
-                                        value="{{ $producto->codigo_barras }}"
-                                        class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
-                                        placeholder="Barcode"
-                                    >
-                                </div>
+                                    <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
+                                @endif
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tab 2: Basic Information -->
-                    <div id="tabContent2" class="tab-content hidden">
-                        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-5 lg:p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4 sm:mb-5 flex items-center gap-2">
-                                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                                Basic Information
-                            </h2>
-                            <div class="space-y-3 sm:space-y-4">
-                                <div>
-                                    <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Product Name *</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoNombre" 
-                                        name="nombre" 
-                                        value="{{ $producto->nombre }}"
-                                        required
-                                        class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Product name"
-                                    >
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Description</label>
-                                    <textarea 
-                                        id="productoDescripcion" 
-                                        name="descripcion" 
-                                        rows="3"
-                                        class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                        placeholder="Product description..."
-                                    >{{ $producto->descripcion }}</textarea>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Price (₡) *</label>
-                                        <input 
-                                            type="number" 
-                                            id="productoPrecio" 
-                                            name="precio" 
-                                            step="0.01"
-                                            min="0"
-                                            value="{{ $producto->precio }}"
-                                            required
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Category</label>
-                                        <input 
-                                            type="text" 
-                                            id="productoCategoria" 
-                                            name="categoria" 
-                                            value="{{ $producto->categoria }}"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="Category"
-                                        >
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Section</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoSeccion" 
-                                        name="seccion" 
-                                        value="{{ $producto->seccion }}"
-                                        class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Section"
-                                    >
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-3 sm:gap-4">
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Stock *</label>
-                                        <input 
-                                            type="number" 
-                                            id="productoStock" 
-                                            name="stock" 
-                                            min="0"
-                                            value="{{ $producto->stock }}"
-                                            required
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Quantity</label>
-                                        <input 
-                                            type="number" 
-                                            id="productoCantidad" 
-                                            name="cantidad" 
-                                            min="0"
-                                            value="{{ $producto->cantidad ?? 0 }}"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tab 3: Status & Dates -->
-                    <div id="tabContent3" class="tab-content hidden">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
-                            <!-- Status Section -->
-                            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-5 lg:p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4 sm:mb-5 flex items-center gap-2">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            
+                            <!-- QR Code Image -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
+                                <input 
+                                    type="file" 
+                                    id="productoFotoQr" 
+                                    name="foto_qr" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
+                                >
+                                <button 
+                                    type="button"
+                                    onclick="generateQRCode()"
+                                    class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
+                                    title="Generate QR Code automatically"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                     </svg>
-                                    Status
-                                </h2>
-                                <div class="space-y-4">
-                                    <label class="relative inline-flex items-center cursor-pointer group">
-                                        <input 
-                                            type="checkbox" 
-                                            id="productoActivo" 
-                                            name="activo" 
-                                            value="1"
-                                            {{ $producto->activo ? 'checked' : '' }}
-                                            class="sr-only peer"
-                                            onchange="updateStatusText()"
+                                    <span>Generate QR Code</span>
+                                </button>
+                                <div id="qrCodeCanvas" class="mt-2 hidden"></div>
+                                @if($producto->foto_qr)
+                                    @php
+                                        $qrPath = trim($producto->foto_qr);
+                                        if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
+                                            $qrUrl = $qrPath;
+                                        } else {
+                                            $filename = basename($qrPath);
+                                            $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                        }
+                                    @endphp
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                                        <button 
+                                            type="button"
+                                            onclick="removeFotoQr()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove QR image"
                                         >
-                                        <div class="w-12 h-6 sm:w-14 sm:h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 sm:after:h-6 sm:after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
-                                        <span id="statusText" class="ml-2 sm:ml-3 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
-                                            {{ $producto->activo ? 'Active' : 'Inactive' }}
-                                        </span>
-                                    </label>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Barcode debajo (en todas las versiones) -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
+                            <input 
+                                type="text" 
+                                id="productoCodigoBarras" 
+                                name="codigo_barras" 
+                                value="{{ $producto->codigo_barras }}"
+                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                                placeholder="Barcode"
+                            >
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Basic Info and Dates - Two Columns -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left Column - Basic Information -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Basic Information
+                        </h2>
+                        <div class="space-y-4">
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Name *</label>
+                                <input 
+                                    type="text" 
+                                    id="productoNombre" 
+                                    name="nombre" 
+                                    value="{{ $producto->nombre }}"
+                                    required
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Product name"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
+                                <textarea 
+                                    id="productoDescripcion" 
+                                    name="descripcion" 
+                                    rows="3"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    placeholder="Product description..."
+                                >{{ $producto->descripcion }}</textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoPrecio" 
+                                        name="precio" 
+                                        step="0.01"
+                                        min="0"
+                                        value="{{ $producto->precio }}"
+                                        required
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
+                                    <input 
+                                        type="text" 
+                                        id="productoCategoria" 
+                                        name="categoria" 
+                                        value="{{ $producto->categoria }}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Category"
+                                    >
                                 </div>
                             </div>
                             
-                            <!-- Dates Section -->
-                            <div class="bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-5 lg:p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4 sm:mb-5 flex items-center gap-2">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    Dates & Expiration
-                                </h2>
-                                <div class="space-y-3 sm:space-y-4">
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Entry Date</label>
-                                        <input 
-                                            type="date" 
-                                            id="productoFechaEntrada" 
-                                            name="fecha_entrada" 
-                                            value="{{ $producto->fecha_entrada ? \Carbon\Carbon::parse($producto->fecha_entrada)->format('Y-m-d') : '' }}"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Sale Limit Date</label>
-                                        <input 
-                                            type="date" 
-                                            id="productoFechaLimiteVenta" 
-                                            name="fecha_limite_venta" 
-                                            value="{{ $producto->fecha_limite_venta ? \Carbon\Carbon::parse($producto->fecha_limite_venta)->format('Y-m-d') : '' }}"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Expiration Date</label>
-                                        <input 
-                                            type="date" 
-                                            id="productoFechaExpiracion" 
-                                            name="fecha_expiracion" 
-                                            value="{{ $producto->fecha_expiracion ? \Carbon\Carbon::parse($producto->fecha_expiracion)->format('Y-m-d') : '' }}"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2">Exit Date</label>
-                                        <input 
-                                            type="date" 
-                                            id="productoFechaSalida" 
-                                            name="fecha_salida" 
-                                            value="{{ $producto->fecha_salida ? \Carbon\Carbon::parse($producto->fecha_salida)->format('Y-m-d') : '' }}"
-                                            class="w-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        >
-                                    </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Section</label>
+                                <input 
+                                    type="text" 
+                                    id="productoSeccion" 
+                                    name="seccion" 
+                                    value="{{ $producto->seccion }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Section"
+                                >
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stock *</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoStock" 
+                                        name="stock" 
+                                        min="0"
+                                        value="{{ $producto->stock }}"
+                                        required
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
                                 </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Quantity</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoCantidad" 
+                                        name="cantidad" 
+                                        min="0"
+                                        value="{{ $producto->cantidad ?? 0 }}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Dates -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Dates & Expiration
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Entry Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaEntrada" 
+                                    name="fecha_entrada" 
+                                    value="{{ $producto->fecha_entrada ? \Carbon\Carbon::parse($producto->fecha_entrada)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sale Limit Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaLimiteVenta" 
+                                    name="fecha_limite_venta" 
+                                    value="{{ $producto->fecha_limite_venta ? \Carbon\Carbon::parse($producto->fecha_limite_venta)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Expiration Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaExpiracion" 
+                                    name="fecha_expiracion" 
+                                    value="{{ $producto->fecha_expiracion ? \Carbon\Carbon::parse($producto->fecha_expiracion)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Exit Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaSalida" 
+                                    name="fecha_salida" 
+                                    value="{{ $producto->fecha_salida ? \Carbon\Carbon::parse($producto->fecha_salida)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Save Button - Fixed at bottom -->
-                <div class="mt-4 sm:mt-5 bg-white dark:bg-slate-800 rounded-xl p-4 sm:p-5 lg:p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <!-- Save Button - Below -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                     <button 
                         type="button"
                         onclick="saveProducto()"
-                        class="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-lg"
+                        class="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-lg"
                     >
                         Save Changes
                     </button>
@@ -486,37 +430,9 @@
             statusText.textContent = checkbox.checked ? 'Active' : 'Inactive';
         }
         
-        // Tab switching function
-        function switchTab(tabNumber) {
-            // Hide all tab contents
-            for (let i = 1; i <= 3; i++) {
-                const content = document.getElementById(`tabContent${i}`);
-                const btn = document.getElementById(`tabBtn${i}`);
-                if (content) content.classList.add('hidden');
-                if (btn) {
-                    btn.classList.remove('bg-blue-500', 'text-white', 'shadow-md');
-                    btn.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
-                }
-            }
-            
-            // Show selected tab content
-            const selectedContent = document.getElementById(`tabContent${tabNumber}`);
-            const selectedBtn = document.getElementById(`tabBtn${tabNumber}`);
-            if (selectedContent) {
-                selectedContent.classList.remove('hidden');
-            }
-            if (selectedBtn) {
-                selectedBtn.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
-                selectedBtn.classList.add('bg-blue-500', 'text-white', 'shadow-md');
-            }
-        }
-        
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             updateStatusText();
-            
-            // Initialize first tab as active (Codes & Images)
-            switchTab(1);
             
             // Hacer scroll hacia arriba si se guardó recientemente
             if (sessionStorage.getItem('scrollToTop') === 'true') {

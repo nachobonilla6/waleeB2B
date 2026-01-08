@@ -200,17 +200,17 @@
                                                     }
                                                 @endphp
                                                 <img src="{{ $imagenUrl }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
-                                            @endif
-                                            <div>
-                                                <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
                                                 @if($producto->brand)
-                                                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Brand: {{ $producto->brand }}</div>
+                                                    <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mt-1">Brand: {{ $producto->brand }}</div>
                                                 @endif
-                                            </div>
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-4 py-3">
-                                        <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>
+                                        <div class="flex flex-col gap-1">
+                                            <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
+                                            <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3">
                                         <span class="text-sm font-medium text-slate-900 dark:text-white">₡{{ number_format($producto->precio, 2) }}</span>

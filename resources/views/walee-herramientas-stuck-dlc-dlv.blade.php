@@ -169,6 +169,7 @@
                         <thead class="bg-slate-100 dark:bg-slate-900/50">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Product</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Name</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Category</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Price</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
@@ -201,16 +202,16 @@
                                                 @endphp
                                                 <img src="{{ $imagenUrl }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
                                                 @if($producto->brand)
-                                                    <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mt-1">Brand: {{ $producto->brand }}</div>
+                                                    <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mt-1">{{ $producto->brand }}</div>
                                                 @endif
                                             @endif
                                         </div>
                                     </td>
                                     <td class="px-4 py-3">
-                                        <div class="flex flex-col gap-1">
-                                            <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
-                                            <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>
-                                        </div>
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>
                                     </td>
                                     <td class="px-4 py-3">
                                         <span class="text-sm font-medium text-slate-900 dark:text-white">₡{{ number_format($producto->precio, 2) }}</span>

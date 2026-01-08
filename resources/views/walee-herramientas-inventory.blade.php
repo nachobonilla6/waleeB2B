@@ -239,9 +239,9 @@
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Quantity</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Entry Date</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Sale Limit</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Exit Date</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLV</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLC</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Exit Date</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">QR Code</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Barcode</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
@@ -417,12 +417,12 @@
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="text-xs text-slate-700 dark:text-slate-300">
-                                            {{ $producto->fecha_salida ? \Carbon\Carbon::parse($producto->fecha_salida)->format('d/m/Y') : '-' }}
+                                            {{ $producto->dlc ? \Carbon\Carbon::parse($producto->dlc)->format('d/m/Y') : '-' }}
                                         </span>
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="text-xs text-slate-700 dark:text-slate-300">
-                                            {{ $producto->dlc ? \Carbon\Carbon::parse($producto->dlc)->format('d/m/Y') : '-' }}
+                                            {{ $producto->fecha_salida ? \Carbon\Carbon::parse($producto->fecha_salida)->format('d/m/Y') : '-' }}
                                         </span>
                                     </td>
                                     <td class="px-4 py-3 text-center">

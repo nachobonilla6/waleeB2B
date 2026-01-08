@@ -172,9 +172,10 @@
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Product</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Category</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Price</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLC</th>
+                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLV</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Status</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">DLC</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -257,6 +258,16 @@
                                     <td class="px-4 py-3">
                                         <span class="text-sm font-medium text-slate-900 dark:text-white">₡{{ number_format($producto->precio, 2) }}</span>
                                     </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="text-xs text-slate-700 dark:text-slate-300">
+                                            {{ $producto->dlc ? \Carbon\Carbon::parse($producto->dlc)->format('d/m/Y') : '-' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="text-xs text-slate-700 dark:text-slate-300">
+                                            {{ $producto->fecha_limite_venta ? \Carbon\Carbon::parse($producto->fecha_limite_venta)->format('d/m/Y') : '-' }}
+                                        </span>
+                                    </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center gap-2">
                                             <input 
@@ -288,11 +299,6 @@
                                                 Out of stock
                                             </span>
                                         @endif
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="text-xs text-slate-700 dark:text-slate-300">
-                                            {{ $producto->dlc ? \Carbon\Carbon::parse($producto->dlc)->format('d/m/Y') : '-' }}
-                                        </span>
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center gap-2">

@@ -452,8 +452,6 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Guardar indicador para hacer scroll después de recargar
-                    sessionStorage.setItem('scrollToTop', 'true');
                     Swal.fire({
                         ...getSwalTheme(),
                         icon: 'success',
@@ -462,8 +460,8 @@
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        // Refrescar la página para mostrar los cambios actualizados
-                        window.location.reload();
+                        // Redirigir a la página de inventory
+                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
                     });
                 } else {
                     Swal.fire({

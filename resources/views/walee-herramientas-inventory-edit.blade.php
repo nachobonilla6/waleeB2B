@@ -393,6 +393,14 @@
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             updateStatusText();
+            
+            // Hacer scroll hacia arriba si se guardó recientemente
+            if (sessionStorage.getItem('scrollToTop') === 'true') {
+                sessionStorage.removeItem('scrollToTop');
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
+            }
         });
         
         function getSwalTheme() {
@@ -444,6 +452,8 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    // Guardar indicador para hacer scroll después de recargar
+                    sessionStorage.setItem('scrollToTop', 'true');
                     Swal.fire({
                         ...getSwalTheme(),
                         icon: 'success',

@@ -375,8 +375,8 @@
                                 </svg>
                             </div>
                             <div class="min-w-0 flex-1">
-                                <h3 class="text-base md:text-lg font-semibold text-violet-900 dark:text-violet-300 truncate">Calendario de Aplicaciones</h3>
-                                <p class="text-xs md:text-sm text-violet-700 dark:text-violet-400 truncate">Vista semanal</p>
+                                <h3 class="text-base md:text-lg font-semibold text-violet-900 dark:text-violet-300 truncate">Applications Calendar</h3>
+                                <p class="text-xs md:text-sm text-violet-700 dark:text-violet-400 truncate">Weekly view</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 sm:gap-2 flex-shrink-0 flex-wrap header-actions">
@@ -413,14 +413,14 @@
                                 <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                <span class="hidden sm:inline">Vista Mensual</span>
-                                <span class="sm:hidden">Mensual</span>
+                                <span class="hidden sm:inline">Monthly View</span>
+                                <span class="sm:hidden">Monthly</span>
                             </a>
                             <button onclick="showNuevoEventoModal()" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                <span class="hidden sm:inline">Nuevo Evento</span>
+                                <span class="hidden sm:inline">New Event</span>
                                 <span class="sm:hidden">Nuevo</span>
                             </button>
                             @if($vista === 'semanal')
@@ -479,7 +479,7 @@
                                                 </p>
                                             </div>
                                             <div class="md:hidden">
-                                                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $eventosOrdenados->count() }} eventos</span>
+                                                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $eventosOrdenados->count() }} events</span>
                                             </div>
                                         </div>
                                         <div class="flex gap-1.5 mt-2">
@@ -490,7 +490,7 @@
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                 </svg>
-                                                <span>Evento</span>
+                                                <span>Event</span>
                                             </button>
                                             <button 
                                                 onclick="showNuevaTareaModalConFecha('{{ $diaSemana->format('Y-m-d') }}', '09:00')"

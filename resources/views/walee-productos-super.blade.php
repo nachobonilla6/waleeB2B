@@ -487,19 +487,22 @@
                                             <div class="flex items-start gap-2 sm:gap-4">
                                                 @if($producto->imagen && !empty(trim($producto->imagen)))
                                                     @php
-                                                        // Construir URL de la imagen directamente
+                                                        // Construir URL de la imagen usando la ruta definida
                                                         $imagenPath = trim($producto->imagen);
-                                                        // Verificar si el archivo existe físicamente
-                                                        $fullPath = storage_path('app/public/' . $imagenPath);
-                                                        $fileExists = file_exists($fullPath);
                                                         
                                                         // Si ya es una URL completa, usarla
                                                         if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
                                                             $imagenUrl = $imagenPath;
                                                         } else {
-                                                            // Construir URL usando asset con storage/
-                                                            $imagenUrl = asset('storage/' . $imagenPath);
+                                                            // Extraer solo el nombre del archivo
+                                                            $filename = basename($imagenPath);
+                                                            // Usar la ruta definida en routes/web.php
+                                                            $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
                                                         }
+                                                        
+                                                        // Verificar si el archivo existe físicamente
+                                                        $fullPath = storage_path('app/public/productos-super/' . basename($imagenPath));
+                                                        $fileExists = file_exists($fullPath);
                                                     @endphp
                                                     <div class="flex-shrink-0">
                                                         @if(!$fileExists)

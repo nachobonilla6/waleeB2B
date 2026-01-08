@@ -201,7 +201,10 @@
                                                 if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
                                                     $imagenUrl = $imagenPath;
                                                 } else {
-                                                    $imagenUrl = asset('storage/' . $imagenPath);
+                                                    // Extraer solo el nombre del archivo
+                                                    $filename = basename($imagenPath);
+                                                    // Usar la ruta definida en routes/web.php
+                                                    $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
                                                 }
                                             @endphp
                                             <img 
@@ -254,7 +257,10 @@
                                                 if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
                                                     $qrUrl = $qrPath;
                                                 } else {
-                                                    $qrUrl = asset('storage/' . $qrPath);
+                                                    // Extraer solo el nombre del archivo
+                                                    $filename = basename($qrPath);
+                                                    // Usar la ruta definida en routes/web.php
+                                                    $qrUrl = route('storage.productos-super', ['filename' => $filename]);
                                                 }
                                             @endphp
                                             <img 

@@ -5932,7 +5932,7 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
                     'servicios_personalizados' => 'nullable|array',
                     'servicios_personalizados.*' => 'nullable|string|max:255',
                     'precio' => 'required|numeric|min:0',
-                    'idioma' => 'required|in:es,en,fr,zh',
+                    'idioma' => 'required|in:es,en,fr,zh,ar,hi',
                 ]);
 
         $proveedor = \App\Models\Client::findOrFail($validated['proveedor_id']);

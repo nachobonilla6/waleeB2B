@@ -279,6 +279,8 @@
                                     <option value="en" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
                                     <option value="fr" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 French</option>
                                     <option value="zh" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 Chinese (Mandarin)</option>
+                                    <option value="ar" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'ar' ? 'selected' : '' }}>🇸🇦 Arabic</option>
+                                    <option value="hi" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'hi' ? 'selected' : '' }}>🇮🇳 Hindi</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                     <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -5253,6 +5253,7 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
         $producto->descripcion = $request->input('descripcion');
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
+        $producto->brand = $request->input('brand');
         $producto->seccion = $request->input('seccion');
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);
@@ -5323,6 +5324,7 @@ Route::get('/walee-productos-super/{id}', function ($id) {
                 'descripcion' => $producto->descripcion,
                 'precio' => $producto->precio,
                 'categoria' => $producto->categoria,
+                'brand' => $producto->brand,
                 'seccion' => $producto->seccion,
                 'stock' => $producto->stock,
                 'cantidad' => $producto->cantidad,
@@ -5351,6 +5353,7 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
         $producto->descripcion = $request->input('descripcion');
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
+        $producto->brand = $request->input('brand');
         $producto->seccion = $request->input('seccion');
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);

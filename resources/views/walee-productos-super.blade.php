@@ -292,6 +292,28 @@
                                 </div>
                                 
                                 <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Brand</label>
+                                    <input 
+                                        type="text" 
+                                        id="productoBrand" 
+                                        name="brand" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        placeholder="Ej: Nestlé, Bimbo, etc."
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sección</label>
+                                    <input 
+                                        type="text" 
+                                        id="productoSeccion" 
+                                        name="seccion" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                        placeholder="Ej: Pasillo 3, Estante A, etc."
+                                    >
+                                </div>
+                                
+                                <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stock</label>
                                     <input 
                                         type="number" 
@@ -304,11 +326,53 @@
                                 </div>
                                 
                                 <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Cantidad</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoCantidad" 
+                                        name="cantidad" 
+                                        min="0"
+                                        value="0"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    >
+                                </div>
+                                
+                                <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Expiración</label>
                                     <input 
                                         type="date" 
                                         id="productoFechaExpiracion" 
                                         name="fecha_expiracion" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Entrada</label>
+                                    <input 
+                                        type="date" 
+                                        id="productoFechaEntrada" 
+                                        name="fecha_entrada" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha Límite de Venta</label>
+                                    <input 
+                                        type="date" 
+                                        id="productoFechaLimiteVenta" 
+                                        name="fecha_limite_venta" 
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Fecha de Salida</label>
+                                    <input 
+                                        type="date" 
+                                        id="productoFechaSalida" 
+                                        name="fecha_salida" 
                                         class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                     >
                                 </div>
@@ -335,6 +399,20 @@
                                     >
                                     <div id="imagenPreview" class="mt-2 hidden">
                                         <img id="imagenPreviewImg" src="" alt="Vista previa" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Foto QR</label>
+                                    <input 
+                                        type="file" 
+                                        id="productoFotoQr" 
+                                        name="foto_qr" 
+                                        accept="image/*"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-300"
+                                    >
+                                    <div id="fotoQrPreview" class="mt-2 hidden">
+                                        <img id="fotoQrPreviewImg" src="" alt="Vista previa QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
                                     </div>
                                 </div>
                                 
@@ -760,6 +838,8 @@
             document.getElementById('productoActivo').checked = true;
             document.getElementById('imagenPreview').classList.add('hidden');
             document.getElementById('imagenPreviewImg').src = '';
+            document.getElementById('fotoQrPreview').classList.add('hidden');
+            document.getElementById('fotoQrPreviewImg').src = '';
         }
         
         // Preview de imagen
@@ -774,6 +854,21 @@
                 reader.readAsDataURL(file);
             } else {
                 document.getElementById('imagenPreview').classList.add('hidden');
+            }
+        });
+        
+        // Preview de foto QR
+        document.getElementById('productoFotoQr').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('fotoQrPreviewImg').src = e.target.result;
+                    document.getElementById('fotoQrPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('fotoQrPreview').classList.add('hidden');
             }
         });
         
@@ -894,8 +989,14 @@
                     document.getElementById('productoDescripcion').value = data.producto.descripcion || '';
                     document.getElementById('productoPrecio').value = data.producto.precio || '';
                     document.getElementById('productoCategoria').value = data.producto.categoria || '';
+                    document.getElementById('productoBrand').value = data.producto.brand || '';
+                    document.getElementById('productoSeccion').value = data.producto.seccion || '';
                     document.getElementById('productoStock').value = data.producto.stock || 0;
+                    document.getElementById('productoCantidad').value = data.producto.cantidad || 0;
                     document.getElementById('productoFechaExpiracion').value = data.producto.fecha_expiracion || '';
+                    document.getElementById('productoFechaEntrada').value = data.producto.fecha_entrada || '';
+                    document.getElementById('productoFechaLimiteVenta').value = data.producto.fecha_limite_venta || '';
+                    document.getElementById('productoFechaSalida').value = data.producto.fecha_salida || '';
                     document.getElementById('productoCodigoBarras').value = data.producto.codigo_barras || '';
                     document.getElementById('productoActivo').checked = data.producto.activo || false;
                     
@@ -905,6 +1006,14 @@
                         document.getElementById('imagenPreview').classList.remove('hidden');
                     } else {
                         document.getElementById('imagenPreview').classList.add('hidden');
+                    }
+                    
+                    // Mostrar foto QR actual si existe
+                    if (data.producto.foto_qr_url) {
+                        document.getElementById('fotoQrPreviewImg').src = data.producto.foto_qr_url;
+                        document.getElementById('fotoQrPreview').classList.remove('hidden');
+                    } else {
+                        document.getElementById('fotoQrPreview').classList.add('hidden');
                     }
                     
                     // En móvil, mostrar el formulario si está oculto
@@ -986,14 +1095,25 @@
             formDataObj.append('descripcion', document.getElementById('productoDescripcion').value);
             formDataObj.append('precio', document.getElementById('productoPrecio').value);
             formDataObj.append('categoria', document.getElementById('productoCategoria').value);
+            formDataObj.append('brand', document.getElementById('productoBrand').value);
+            formDataObj.append('seccion', document.getElementById('productoSeccion').value);
             formDataObj.append('stock', document.getElementById('productoStock').value);
+            formDataObj.append('cantidad', document.getElementById('productoCantidad').value);
             formDataObj.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
+            formDataObj.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
+            formDataObj.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
+            formDataObj.append('fecha_salida', document.getElementById('productoFechaSalida').value);
             formDataObj.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
             formDataObj.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
             
             const imagenFile = document.getElementById('productoImagen').files[0];
             if (imagenFile) {
                 formDataObj.append('imagen', imagenFile);
+            }
+            
+            const fotoQrFile = document.getElementById('productoFotoQr').files[0];
+            if (fotoQrFile) {
+                formDataObj.append('foto_qr', fotoQrFile);
             }
             
             if (productoId) {
@@ -1181,8 +1301,14 @@
             if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
             if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
             if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
+            if (producto.brand) document.getElementById('productoBrand').value = producto.brand;
+            if (producto.seccion) document.getElementById('productoSeccion').value = producto.seccion;
             if (producto.stock !== undefined) document.getElementById('productoStock').value = producto.stock;
+            if (producto.cantidad !== undefined) document.getElementById('productoCantidad').value = producto.cantidad;
             if (producto.fecha_expiracion) document.getElementById('productoFechaExpiracion').value = producto.fecha_expiracion;
+            if (producto.fecha_entrada) document.getElementById('productoFechaEntrada').value = producto.fecha_entrada;
+            if (producto.fecha_limite_venta) document.getElementById('productoFechaLimiteVenta').value = producto.fecha_limite_venta;
+            if (producto.fecha_salida) document.getElementById('productoFechaSalida').value = producto.fecha_salida;
             if (producto.codigo_barras) document.getElementById('productoCodigoBarras').value = producto.codigo_barras;
             if (producto.activo !== undefined) document.getElementById('productoActivo').checked = producto.activo;
             

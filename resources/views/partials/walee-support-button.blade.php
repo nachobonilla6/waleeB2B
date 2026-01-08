@@ -18,7 +18,7 @@ EN<!-- Botón Flotante Principal -->
             target="_blank" 
             rel="noopener noreferrer"
             class="w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group"
-            title="Abrir YouTube"
+            title="Open YouTube"
         >
             <svg class="w-5 h-5 text-red-600 dark:text-red-400 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -29,7 +29,7 @@ EN<!-- Botón Flotante Principal -->
         <button 
             onclick="openSupportModal()" 
             class="w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group"
-            title="Soporte"
+            title="Support"
         >
             <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -40,7 +40,7 @@ EN<!-- Botón Flotante Principal -->
         <button 
             onclick="scrollToTop()" 
             class="w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group"
-            title="Ir arriba"
+            title="Go up"
         >
             <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
@@ -51,7 +51,7 @@ EN<!-- Botón Flotante Principal -->
         <button 
             onclick="scrollToBottom()" 
             class="w-12 h-12 bg-white dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 group"
-            title="Ir abajo"
+            title="Go down"
         >
             <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-walee-400 dark:group-hover:text-walee-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
@@ -64,7 +64,7 @@ EN<!-- Botón Flotante Principal -->
         @click="open = !open"
         class="w-14 h-14 bg-walee-500 hover:bg-walee-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 dark:bg-walee-600 dark:hover:bg-walee-700"
         :class="{ 'rotate-45': open }"
-        title="Menú de acciones"
+        title="Actions menu"
     >
         <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -89,8 +89,8 @@ EN<!-- Botón Flotante Principal -->
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-black dark:text-white">Soporte</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400">¿Necesitas ayuda?</p>
+                    <h3 class="text-lg font-semibold text-black dark:text-white">Support</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Need help?</p>
                 </div>
             </div>
             <button onclick="closeSupportModal()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors">
@@ -106,18 +106,18 @@ EN<!-- Botón Flotante Principal -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Subject -->
                 <div class="md:col-span-1">
-                    <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Asunto</label>
+                    <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Subject</label>
                     <input 
                         type="text" 
                         name="subject" 
-                        placeholder="¿En qué podemos ayudarte?"
+                        placeholder="How can we help you?"
                         class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all text-sm"
                     >
                 </div>
                 
                 <!-- Estado del Ticket -->
                 <div class="md:col-span-1">
-                    <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Estado del ticket</label>
+                    <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Ticket status</label>
                     <div class="space-y-2">
                         <!-- Urgente Radio -->
                         <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
@@ -132,7 +132,7 @@ EN<!-- Botón Flotante Principal -->
                                 <svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                 </svg>
-                                <span class="text-sm font-medium text-black dark:text-white">Urgente</span>
+                                <span class="text-sm font-medium text-black dark:text-white">Urgent</span>
                             </div>
                         </label>
                         
@@ -149,7 +149,7 @@ EN<!-- Botón Flotante Principal -->
                                 <svg class="w-5 h-5 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                 </svg>
-                                <span class="text-sm font-medium text-black dark:text-white">Prioritario</span>
+                                <span class="text-sm font-medium text-black dark:text-white">Priority</span>
                             </div>
                         </label>
                         
@@ -166,7 +166,7 @@ EN<!-- Botón Flotante Principal -->
                                 <svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
-                                <span class="text-sm font-medium text-black dark:text-white">A Discutir</span>
+                                <span class="text-sm font-medium text-black dark:text-white">To Discuss</span>
                             </div>
                         </label>
                     </div>
@@ -176,12 +176,12 @@ EN<!-- Botón Flotante Principal -->
             <!-- Message -->
             <div>
                 <div class="flex items-center justify-between mb-2">
-                    <label class="block text-sm font-medium text-black dark:text-slate-300">Mensaje</label>
+                    <label class="block text-sm font-medium text-black dark:text-slate-300">Message</label>
                     <button 
                         type="button"
                         onclick="toggleEmojiPicker()"
                         class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-all"
-                        title="Insertar emoji"
+                        title="Insert emoji"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -468,14 +468,14 @@ EN<!-- Botón Flotante Principal -->
                     name="message" 
                     id="supportMessage"
                     rows="4" 
-                    placeholder="Describe tu problema o pregunta..."
+                    placeholder="Describe your problem or question..."
                     class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-black dark:text-white placeholder-slate-500 dark:placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all resize-none text-sm"
                 ></textarea>
             </div>
             
             <!-- File Upload -->
             <div>
-                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Archivos adjuntos (opcional)</label>
+                <label class="block text-sm font-medium text-black dark:text-slate-300 mb-2">Attachments (optional)</label>
                 <div class="relative">
                     <input 
                         type="file" 
@@ -493,7 +493,7 @@ EN<!-- Botón Flotante Principal -->
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <span id="fileLabel" class="text-sm">Subir archivos (imágenes o PDF)</span>
+                        <span id="fileLabel" class="text-sm">Upload files (images or PDF)</span>
                     </label>
                 </div>
                 <!-- Selected Files List -->
@@ -508,14 +508,14 @@ EN<!-- Botón Flotante Principal -->
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
-                Enviar mensaje
+                Send message
             </button>
         </form>
         
         <!-- Footer -->
         <div class="px-5 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700/50">
             <p class="text-xs text-slate-600 dark:text-slate-500 text-center">
-                También puedes escribirnos a <span class="text-walee-400">websolutionscrnow@gmail.com</span>
+                You can also write to us at <span class="text-walee-400">websolutionscrnow@gmail.com</span>
             </p>
         </div>
     </div>
@@ -564,8 +564,8 @@ EN<!-- Botón Flotante Principal -->
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h4 class="font-semibold mb-1">Soporte Temporalmente Deshabilitado</h4>
-                        <p class="text-sm text-white/90">Volvemos el <strong>5 de enero</strong>. Gracias por tu comprensión.</p>
+                        <h4 class="font-semibold mb-1">Support Temporarily Disabled</h4>
+                        <p class="text-sm text-white/90">We'll be back on <strong>January 5th</strong>. Thank you for your understanding.</p>
                     </div>
                     <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 text-white/80 hover:text-white transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -660,7 +660,7 @@ EN<!-- Botón Flotante Principal -->
                 form.reset();
             }
             if (fileLabel) {
-                fileLabel.textContent = 'Subir archivos (imágenes o PDF)';
+                fileLabel.textContent = 'Upload files (images or PDF)';
             }
             if (filesList) {
                 filesList.classList.add('hidden');
@@ -699,7 +699,7 @@ EN<!-- Botón Flotante Principal -->
                         type="button" 
                         onclick="removeSupportFile(${index})" 
                         class="ml-2 p-1 text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                        title="Eliminar archivo"
+                        title="Remove file"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -713,7 +713,7 @@ EN<!-- Botón Flotante Principal -->
             if (fileLabel) {
                 fileLabel.textContent = fileCount === 1 
                     ? input.files[0].name 
-                    : `${fileCount} archivos seleccionados`;
+                    : `${fileCount} files selected`;
             }
         }
         
@@ -801,7 +801,7 @@ EN<!-- Botón Flotante Principal -->
                     const mensaje = this.querySelector('[name="message"]').value.trim();
                     
                     if (!asunto || !mensaje) {
-                        showSupportNotification('Error', 'Por favor completa el asunto y mensaje', 'error');
+                        showSupportNotification('Error', 'Please complete the subject and message', 'error');
                         return;
                     }
                     
@@ -813,7 +813,7 @@ EN<!-- Botón Flotante Principal -->
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Enviando...
+                        Sending...
                     `;
                     
                     try {
@@ -856,29 +856,29 @@ EN<!-- Botón Flotante Principal -->
                         
                         if (data.success) {
                             const estadoRadio = document.querySelector('input[name="ticket_estado"]:checked');
-                            let message = 'Tu mensaje ha sido recibido. Te responderemos pronto.';
+                            let message = 'Your message has been received. We will respond soon.';
                             
                             if (estadoRadio) {
                                 const estado = estadoRadio.value;
                                 if (estado === 'urgente') {
-                                    message = 'Tu mensaje urgente ha sido recibido. Te responderemos lo antes posible.';
+                                    message = 'Your urgent message has been received. We will respond as soon as possible.';
                                 } else if (estado === 'prioritario') {
-                                    message = 'Tu mensaje prioritario ha sido recibido. Te responderemos pronto.';
+                                    message = 'Your priority message has been received. We will respond soon.';
                                 } else if (estado === 'a_discutir') {
-                                    message = 'Tu mensaje ha sido recibido y será discutido. Te responderemos pronto.';
+                                    message = 'Your message has been received and will be discussed. We will respond soon.';
                                 }
                             }
                             
-                            showSupportNotification('¡Enviado!', message, 'success');
+                            showSupportNotification('Sent!', message, 'success');
                             // Limpiar formulario y datos guardados después de enviar exitosamente
                             clearSupportFormData();
                             
                             setTimeout(() => closeSupportModal(), 2000);
                         } else {
-                            showSupportNotification('Error', data.message || 'No se pudo enviar el mensaje', 'error');
+                            showSupportNotification('Error', data.message || 'Could not send message', 'error');
                         }
                     } catch (error) {
-                        showSupportNotification('Error', 'Error de conexión: ' + error.message, 'error');
+                        showSupportNotification('Error', 'Connection error: ' + error.message, 'error');
                     } finally {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalText;

@@ -49,7 +49,7 @@
                 <svg class="w-5 h-5 text-slate-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                <span class="font-medium text-slate-900 dark:text-white">Volver</span>
+                <span class="font-medium text-slate-900 dark:text-white">Back</span>
             </a>
             
             <a 
@@ -92,7 +92,7 @@
                         <input 
                             type="text" 
                             id="quickTaskInput"
-                            placeholder="Agregar task rápida..." 
+                            placeholder="Add quick task..." 
                             class="flex-1 px-2 py-1.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent text-slate-900 dark:text-white placeholder-slate-400"
                             required
                         />
@@ -120,7 +120,7 @@
                         onclick="toggleTasksMenu()"
                         class="w-full flex items-center justify-between px-4 py-2 text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     >
-                        <span class="font-semibold uppercase tracking-wider">Tasks Recientes</span>
+                        <span class="font-semibold uppercase tracking-wider">Recent Tasks</span>
                         <svg id="tasksMenuIcon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
@@ -147,7 +147,7 @@
                                 <button 
                                     onclick="eliminarQuickTask(event, {{ $task->id }})"
                                     class="flex-shrink-0 p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors opacity-60 group-hover:opacity-100"
-                                    title="Eliminar task"
+                                    title="Delete task"
                                 >
                                     <svg class="w-4 h-4 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -161,7 +161,7 @@
                                 onclick="closeMobileMenu()"
                                 class="block px-4 py-2 text-xs text-center text-violet-600 dark:text-violet-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-200 dark:border-slate-700"
                             >
-                                Ver todas las tasks →
+                                View all tasks →
                             </a>
                         @endif
                     </div>
@@ -176,7 +176,7 @@
                 <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                <span class="font-medium">Calendario</span>
+                <span class="font-medium">Calendar</span>
             </a>
             
             <div class="border-b border-slate-200 dark:border-slate-700">
@@ -206,7 +206,7 @@
                         onclick="toggleNotesMenu()"
                         class="w-full flex items-center justify-between px-4 py-2 text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     >
-                        <span class="font-semibold uppercase tracking-wider">Mis Notas Recientes</span>
+                        <span class="font-semibold uppercase tracking-wider">My Recent Notes</span>
                         <svg id="notesMenuIcon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
@@ -226,7 +226,7 @@
                                 <button 
                                     onclick="copyNoteFromMenu(event)"
                                     class="flex-shrink-0 p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors opacity-60 group-hover:opacity-100"
-                                    title="Copiar nota"
+                                    title="Copy note"
                                     data-note-id="{{ $nota->id }}"
                                     data-note-content="{{ base64_encode($nota->content) }}"
                                 >
@@ -242,7 +242,7 @@
                                 onclick="closeMobileMenu()"
                                 class="block px-4 py-2 text-xs text-center text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-t border-slate-200 dark:border-slate-700"
                             >
-                                Ver todas las notas →
+                                View all notes →
                             </a>
                         @endif
                     </div>
@@ -270,7 +270,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
-                    <span class="font-medium">Cerrar sesión</span>
+                    <span class="font-medium">Sign out</span>
                 </button>
             </form>
         </div>
@@ -403,7 +403,7 @@
         const noteContentEncoded = button.getAttribute('data-note-content');
         
         if (!noteContentEncoded) {
-            console.error('No se encontró el contenido de la nota');
+            console.error('Note content not found');
             showNotification('Error al copiar', 'error');
             return;
         }
@@ -431,7 +431,7 @@
                     showNotification('Nota copiada', 'success');
                 } catch (e) {
                     console.error('Error al copiar:', e);
-                    showNotification('Error al copiar', 'error');
+                    showNotification('Error copying', 'error');
                 }
                 document.body.removeChild(textArea);
             });
@@ -510,13 +510,13 @@
             
             if (data.success) {
                 input.value = '';
-                showNotification('Task agregada', 'success');
+                showNotification('Task added', 'success');
                 // Recargar la página después de un breve delay
                 setTimeout(() => {
                     location.reload();
                 }, 500);
             } else {
-                showNotification('Error al agregar task', 'error');
+                showNotification('Error adding task', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -553,7 +553,7 @@
             } else {
                 // Revertir checkbox
                 event.target.checked = !checked;
-                showNotification('Error al actualizar task', 'error');
+                showNotification('Error updating task', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -566,7 +566,7 @@
         event.stopPropagation();
         event.preventDefault();
         
-        if (!confirm('¿Eliminar esta task?')) return;
+        if (!confirm('Delete this task?')) return;
         
         try {
             const response = await fetch(`/walee-quick-task/${taskId}`, {
@@ -579,11 +579,11 @@
             const data = await response.json();
             
             if (data.success) {
-                showNotification('Task eliminada', 'success');
+                showNotification('Task deleted', 'success');
                 // Remover el elemento del DOM
                 event.target.closest('.task-item').remove();
             } else {
-                showNotification('Error al eliminar task', 'error');
+                showNotification('Error deleting task', 'error');
             }
         } catch (error) {
             console.error('Error:', error);

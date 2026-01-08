@@ -449,11 +449,10 @@
                         icon: 'success',
                         title: 'Success!',
                         text: 'Product updated successfully',
-                        timer: 1500,
+                        timer: 2000,
                         showConfirmButton: false
-                    }).then(() => {
-                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
                     });
+                    // No redirigir, mantener en la página
                 } else {
                     Swal.fire({
                         ...getSwalTheme(),

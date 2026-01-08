@@ -356,6 +356,18 @@
                                     </div>
                                     <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
                                 @endif
+                                <!-- Brand field below image -->
+                                <div class="mt-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Brand</label>
+                                    <input 
+                                        type="text" 
+                                        id="productoBrand" 
+                                        name="brand" 
+                                        value="{{ $producto->brand }}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Brand"
+                                    >
+                                </div>
                             </div>
                             
                             <!-- QR Code Image and Barcode (same row) -->
@@ -458,6 +470,18 @@
                             </div>
                             
                             <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
+                                <input 
+                                    type="text" 
+                                    id="productoCategoria" 
+                                    name="categoria" 
+                                    value="{{ $producto->categoria }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Category"
+                                >
+                            </div>
+                            
+                            <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
                                 <textarea 
                                     id="productoDescripcion" 
@@ -468,31 +492,18 @@
                                 >{{ $producto->descripcion }}</textarea>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
-                                    <input 
-                                        type="number" 
-                                        id="productoPrecio" 
-                                        name="precio" 
-                                        step="0.01"
-                                        min="0"
-                                        value="{{ $producto->precio }}"
-                                        required
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    >
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
-                                    <input 
-                                        type="text" 
-                                        id="productoCategoria" 
-                                        name="categoria" 
-                                        value="{{ $producto->categoria }}"
-                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Category"
-                                    >
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
+                                <input 
+                                    type="number" 
+                                    id="productoPrecio" 
+                                    name="precio" 
+                                    step="0.01"
+                                    min="0"
+                                    value="{{ $producto->precio }}"
+                                    required
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
                             </div>
                             
                             <div class="grid grid-cols-2 gap-4">
@@ -903,6 +914,7 @@
             formData.append('descripcion', document.getElementById('productoDescripcion').value);
             formData.append('precio', document.getElementById('productoPrecio').value);
             formData.append('categoria', document.getElementById('productoCategoria').value);
+            formData.append('brand', document.getElementById('productoBrand')?.value || '');
             const seccionSelect = document.getElementById('productoSeccion');
             formData.append('seccion', seccionSelect.value);
             formData.append('stock', document.getElementById('productoStock').value);

@@ -4906,6 +4906,7 @@ Route::post('/walee-herramientas/inventory/producto', function (\Illuminate\Http
         $producto->descripcion = $request->input('descripcion');
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
+        $producto->brand = $request->input('brand');
         $producto->seccion = $request->input('seccion');
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);
@@ -4993,6 +4994,7 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
         $producto->descripcion = $request->input('descripcion');
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
+        $producto->brand = $request->input('brand');
         $producto->seccion = $request->input('seccion');
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);

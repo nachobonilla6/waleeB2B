@@ -12,6 +12,54 @@
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Cargar QRCode de forma asíncrona con múltiples fallbacks
+        (function() {
+            const cdnUrls = [
+                'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+                'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
+            ];
+            
+            let currentIndex = 0;
+            
+            function loadQRCode() {
+                if (currentIndex >= cdnUrls.length) {
+                    console.error('Failed to load QRCode library from all CDN sources');
+                    window.QRCodeLoaded = false;
+                    window.QRCodeLoadError = 'All CDN sources failed';
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = cdnUrls[currentIndex];
+                script.async = true;
+                script.crossOrigin = 'anonymous';
+                
+                script.onload = function() {
+                    // Verificar que QRCode esté realmente disponible
+                    if (typeof QRCode !== 'undefined') {
+                        window.QRCodeLoaded = true;
+                        console.log('QRCode library loaded successfully from:', cdnUrls[currentIndex]);
+                    } else {
+                        // Intentar siguiente CDN
+                        currentIndex++;
+                        loadQRCode();
+                    }
+                };
+                
+                script.onerror = function() {
+                    console.warn('Failed to load QRCode from:', cdnUrls[currentIndex]);
+                    currentIndex++;
+                    loadQRCode();
+                };
+                
+                document.head.appendChild(script);
+            }
+            
+            loadQRCode();
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -48,8 +96,63 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
         .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .section-dropdown {
+            animation: slideIn 0.2s ease-out;
+        }
+        
+        .badge-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .badge-transition:hover {
+            transform: scale(1.05);
+        }
+        
+        input, select, textarea {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            transform: scale(1.01);
+        }
+        
+        .form-section {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .form-section:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .walee-gradient {
+            background: linear-gradient(135deg, #D59F3B 0%, #E0C684 50%, #C78F2E 100%);
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(213, 159, 59, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(213, 159, 59, 0.5);
+            }
+        }
+        
+        .swal2-popup-custom {
+            padding: 2rem !important;
         }
         
         ::-webkit-scrollbar { width: 6px; }
@@ -82,18 +185,8 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Inventory</h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">Add a new product to inventory</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button 
-                            onclick="openAIModal()"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg font-medium transition-colors shadow-lg"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                            </svg>
-                            <span>AI Assistant</span>
-                        </button>
                         <a 
                             href="{{ route('walee.herramientas.inventory') }}"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors shadow-sm"
@@ -111,8 +204,95 @@
             <form id="productoForm" class="space-y-6 animate-fade-in-up" style="animation-delay: 0.1s;" enctype="multipart/form-data">
                 @csrf
                 
+                <!-- Section Field and Status Toggle -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between gap-4">
+                        <!-- Left side: Section -->
+                        <div class="flex items-center gap-4">
+                            <label class="block text-xl font-semibold text-slate-700 dark:text-slate-300">Section</label>
+                            <!-- Section Badge with Dropdown -->
+                            <div class="relative" id="sectionBadgeContainer">
+                                <span 
+                                    id="sectionBadge" 
+                                    onclick="toggleSectionDropdown()"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50 cursor-pointer hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors opacity-50"
+                                >
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    <span id="sectionBadgeText">Select Section</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </span>
+                                <!-- Hidden select for form submission -->
+                                <select 
+                                    id="productoSeccion" 
+                                    name="seccion" 
+                                    onchange="updateSectionBadge()"
+                                    class="hidden"
+                                >
+                                    <option value="">None</option>
+                                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+                                    <option value="Meat & Poultry">Meat & Poultry</option>
+                                    <option value="Dairy & Eggs">Dairy & Eggs</option>
+                                    <option value="Bakery">Bakery</option>
+                                    <option value="Beverages">Beverages</option>
+                                    <option value="Snacks">Snacks</option>
+                                    <option value="Canned Goods">Canned Goods</option>
+                                    <option value="Frozen Foods">Frozen Foods</option>
+                                    <option value="Cleaning Supplies">Cleaning Supplies</option>
+                                    <option value="Personal Care">Personal Care</option>
+                                    <option value="Baby Products">Baby Products</option>
+                                    <option value="Pet Supplies">Pet Supplies</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <!-- Custom Dropdown Menu -->
+                                <div id="sectionDropdown" class="hidden absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50 overflow-hidden section-dropdown">
+                                    <div class="py-1 max-h-64 overflow-y-auto">
+                                        <button type="button" onclick="selectSection('')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">None</button>
+                                        <button type="button" onclick="selectSection('Fruits & Vegetables')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Fruits & Vegetables</button>
+                                        <button type="button" onclick="selectSection('Meat & Poultry')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Meat & Poultry</button>
+                                        <button type="button" onclick="selectSection('Dairy & Eggs')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Dairy & Eggs</button>
+                                        <button type="button" onclick="selectSection('Bakery')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Bakery</button>
+                                        <button type="button" onclick="selectSection('Beverages')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Beverages</button>
+                                        <button type="button" onclick="selectSection('Snacks')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Snacks</button>
+                                        <button type="button" onclick="selectSection('Canned Goods')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Canned Goods</button>
+                                        <button type="button" onclick="selectSection('Frozen Foods')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Frozen Foods</button>
+                                        <button type="button" onclick="selectSection('Cleaning Supplies')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Cleaning Supplies</button>
+                                        <button type="button" onclick="selectSection('Personal Care')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Personal Care</button>
+                                        <button type="button" onclick="selectSection('Baby Products')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Baby Products</button>
+                                        <button type="button" onclick="selectSection('Pet Supplies')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Pet Supplies</button>
+                                        <button type="button" onclick="selectSection('Other')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Other</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right side: Status -->
+                        <div class="flex items-center gap-4">
+                            <label class="block text-xl font-semibold text-slate-700 dark:text-slate-300">Status</label>
+                            <label class="relative inline-flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    id="productoActivo" 
+                                    name="activo" 
+                                    value="1"
+                                    checked
+                                    class="sr-only peer"
+                                    onchange="updateStatusText()"
+                                >
+                                <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                                <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Active
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Status Section - Above all sections -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hidden">
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -139,7 +319,7 @@
                 </div>
                 
                 <!-- Codes & Images Section - Full Width -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="form-section bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -197,7 +377,7 @@
                 <!-- Basic Info and Dates - Two Columns -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Left Column - Basic Information -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="form-section bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -318,7 +498,7 @@
                     </div>
                     
                     <!-- Right Column - Dates -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="form-section bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -368,7 +548,7 @@
                 </div>
                 
                 <!-- Save Button - Below -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="form-section bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                     <button 
                         type="button"
                         onclick="saveProducto()"
@@ -465,6 +645,65 @@
             const statusText = document.getElementById('statusText');
             statusText.textContent = checkbox.checked ? 'Active' : 'Inactive';
         }
+        
+        function toggleSectionDropdown() {
+            const dropdown = document.getElementById('sectionDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+        
+        function selectSection(value) {
+            const seccionSelect = document.getElementById('productoSeccion');
+            const sectionBadge = document.getElementById('sectionBadge');
+            const sectionBadgeText = document.getElementById('sectionBadgeText');
+            const dropdown = document.getElementById('sectionDropdown');
+            
+            if (seccionSelect && sectionBadge && sectionBadgeText) {
+                seccionSelect.value = value;
+                
+                if (value === '') {
+                    sectionBadgeText.textContent = 'Select Section';
+                    sectionBadge.classList.add('opacity-50');
+                } else {
+                    sectionBadgeText.textContent = value;
+                    sectionBadge.classList.remove('opacity-50');
+                }
+                
+                // Cerrar dropdown
+                if (dropdown) {
+                    dropdown.classList.add('hidden');
+                }
+            }
+        }
+        
+        function updateSectionBadge() {
+            const seccionSelect = document.getElementById('productoSeccion');
+            const sectionBadge = document.getElementById('sectionBadge');
+            const sectionBadgeText = document.getElementById('sectionBadgeText');
+            
+            if (seccionSelect && sectionBadge && sectionBadgeText) {
+                const seccionValue = seccionSelect.value.trim();
+                if (seccionValue) {
+                    sectionBadgeText.textContent = seccionValue;
+                    sectionBadge.classList.remove('opacity-50');
+                } else {
+                    sectionBadgeText.textContent = 'Select Section';
+                    sectionBadge.classList.add('opacity-50');
+                }
+            }
+        }
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('sectionDropdown');
+            const badge = document.getElementById('sectionBadge');
+            const container = document.getElementById('sectionBadgeContainer');
+            
+            if (dropdown && badge && container && !container.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
         
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
@@ -639,6 +878,200 @@
             
             processBtn.disabled = true;
             processText.classList.add('hidden');
+            processLoading.classList.remove('hidden');
+            
+            fetch('/walee-productos-super/ai/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                processBtn.disabled = false;
+                processText.classList.remove('hidden');
+                processLoading.classList.add('hidden');
+                
+                if (data.success && data.producto) {
+                    // Mostrar respuesta
+                    document.getElementById('aiResponseText').textContent = data.response || 'Producto generado correctamente';
+                    document.getElementById('aiResponse').classList.remove('hidden');
+                    
+                    // Rellenar formulario
+                    fillFormWithAI(data.producto);
+                    
+                    // Cerrar modal después de un momento
+                    setTimeout(() => {
+                        closeAIModal();
+                    }, 2000);
+                } else {
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'No se pudo generar el producto'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                processBtn.disabled = false;
+                processText.classList.remove('hidden');
+                processLoading.classList.add('hidden');
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo procesar la solicitud'
+                });
+            });
+        }
+        
+        function fillFormWithAI(producto) {
+            if (producto.nombre) document.getElementById('productoNombre').value = producto.nombre;
+            if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
+            if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
+            if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
+            if (producto.seccion) document.getElementById('productoSeccion').value = producto.seccion;
+            if (producto.stock !== undefined) document.getElementById('productoStock').value = producto.stock;
+            if (producto.cantidad !== undefined) document.getElementById('productoCantidad').value = producto.cantidad;
+            if (producto.fecha_expiracion) document.getElementById('productoFechaExpiracion').value = producto.fecha_expiracion;
+            
+            // Fecha de entrada: usar la del producto o establecer fecha actual de 2026
+            const fechaEntradaInput = document.getElementById('productoFechaEntrada');
+            if (producto.fecha_entrada) {
+                fechaEntradaInput.value = producto.fecha_entrada;
+            } else if (!fechaEntradaInput.value) {
+                const today = new Date();
+                today.setFullYear(2026);
+                fechaEntradaInput.value = today.toISOString().split('T')[0];
+            }
+            
+            if (producto.fecha_limite_venta) document.getElementById('productoFechaLimiteVenta').value = producto.fecha_limite_venta;
+            if (producto.fecha_salida) document.getElementById('productoFechaSalida').value = producto.fecha_salida;
+            if (producto.codigo_barras) document.getElementById('productoCodigoBarras').value = producto.codigo_barras;
+            if (producto.activo !== undefined) document.getElementById('productoActivo').checked = producto.activo;
+            updateStatusText();
+        }
+        
+        async function saveProducto() {
+            const formData = new FormData();
+            formData.append('nombre', document.getElementById('productoNombre').value);
+            formData.append('descripcion', document.getElementById('productoDescripcion').value);
+            formData.append('precio', document.getElementById('productoPrecio').value);
+            formData.append('categoria', document.getElementById('productoCategoria').value);
+            formData.append('seccion', document.getElementById('productoSeccion').value);
+            formData.append('stock', document.getElementById('productoStock').value);
+            formData.append('cantidad', document.getElementById('productoCantidad').value);
+            formData.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
+            formData.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
+            formData.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
+            formData.append('fecha_salida', document.getElementById('productoFechaSalida').value);
+            formData.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
+            formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
+            
+            const imagenFile = document.getElementById('productoImagen').files[0];
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+            
+            const fotoQrFile = document.getElementById('productoFotoQr').files[0];
+            if (fotoQrFile) {
+                formData.append('foto_qr', fotoQrFile);
+            }
+            
+            try {
+                const response = await fetch('/walee-herramientas/inventory/producto', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Guardar indicador para hacer scroll después de recargar
+                    sessionStorage.setItem('scrollToTop', 'true');
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Product created successfully',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Redirigir a la página de edición del producto creado
+                        if (data.producto_id) {
+                            window.location.href = `/walee-herramientas/inventory/producto/${data.producto_id}/edit`;
+                        } else {
+                            window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error creating product'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error creating product'
+                });
+            }
+        }
+        
+        // Preview de imágenes
+        document.getElementById('productoImagen').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagenPreviewImg').src = e.target.result;
+                    document.getElementById('imagenPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('imagenPreview').classList.add('hidden');
+            }
+        });
+        
+        document.getElementById('productoFotoQr').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('qrPreviewImg').src = e.target.result;
+                    document.getElementById('qrPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('qrPreview').classList.add('hidden');
+            }
+        });
+        
+        // Close modal on background click
+        document.getElementById('aiModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAIModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
             processLoading.classList.remove('hidden');
             
             fetch('/walee-productos-super/ai/generate', {

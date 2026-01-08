@@ -1180,13 +1180,13 @@ Route::get('/walee-calendario', function (\Illuminate\Http\Request $request) {
     $clienteId = $request->get('cliente_id');
     
     if (!$clienteId) {
-        return redirect()->route('walee.clientes.activos')->with('error', 'Cliente no especificado');
+        return redirect()->route('walee.proveedores.activos')->with('error', 'Proveedor no especificado');
     }
     
     $cliente = \App\Models\Client::find($clienteId);
     
     if (!$cliente) {
-        return redirect()->route('walee.clientes.activos')->with('error', 'Cliente no encontrado');
+        return redirect()->route('walee.proveedores.activos')->with('error', 'Proveedor no encontrado');
     }
     
     return view('walee-calendario', compact('cliente'));
@@ -2280,15 +2280,15 @@ Route::post('/walee-tickets/{id}/estado', function (\Illuminate\Http\Request $re
 })->middleware(['auth'])->name('walee.tickets.estado');
 
 // Ruta para WALEE Clientes - Selector de opciones
-Route::get('/walee-clientes', function () {
-    return view('walee-clientes');
-})->middleware(['auth'])->name('walee.clientes');
+Route::get('/walee-proveedores', function () {
+    return view('walee-proveedores');
+})->middleware(['auth'])->name('walee.proveedores');
 
-Route::get('/walee-clientes/dashboard', function () {
-    return view('walee-clientes-dashboard');
-})->middleware(['auth'])->name('walee.clientes.dashboard');
+Route::get('/walee-proveedores/dashboard', function () {
+    return view('walee-proveedores-dashboard');
+})->middleware(['auth'])->name('walee.proveedores.dashboard');
 
-Route::post('/walee-clientes/create', function (\Illuminate\Http\Request $request) {
+Route::post('/walee-proveedores/create', function (\Illuminate\Http\Request $request) {
     try {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -2312,7 +2312,7 @@ Route::post('/walee-clientes/create', function (\Illuminate\Http\Request $reques
         
         return response()->json([
             'success' => true,
-            'message' => 'Cliente creado correctamente',
+            'message' => 'Proveedor creado correctamente',
             'client' => $client
         ]);
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -2322,31 +2322,31 @@ Route::post('/walee-clientes/create', function (\Illuminate\Http\Request $reques
             'errors' => $e->errors()
         ], 422);
     } catch (\Exception $e) {
-        \Log::error('Error al crear cliente: ' . $e->getMessage());
+        \Log::error('Error al crear proveedor: ' . $e->getMessage());
         return response()->json([
             'success' => false,
-            'message' => 'Error al crear el cliente: ' . $e->getMessage()
+            'message' => 'Error al crear el proveedor: ' . $e->getMessage()
         ], 500);
     }
-})->middleware(['auth'])->name('walee.clientes.create');
+})->middleware(['auth'])->name('walee.proveedores.create');
 
-// Ruta para WALEE Clientes Activos - Lista de clientes aceptados
-Route::get('/walee-clientes-activos', function () {
-    return view('walee-clientes-activos');
-})->middleware(['auth'])->name('walee.clientes.activos');
+// Ruta para WALEE Proveedores Activos - Lista de proveedores aceptados
+Route::get('/walee-proveedores-activos', function () {
+    return view('walee-proveedores-activos');
+})->middleware(['auth'])->name('walee.proveedores.activos');
 
-// Ruta para WALEE Clientes en Proceso - Lista de clientes en seguimiento
-Route::get('/walee-clientes-en-proceso', function () {
-    return view('walee-clientes-en-proceso');
-})->middleware(['auth'])->name('walee.clientes.proceso');
+// Ruta para WALEE Proveedores en Proceso - Lista de proveedores en seguimiento
+Route::get('/walee-proveedores-en-proceso', function () {
+    return view('walee-proveedores-en-proceso');
+})->middleware(['auth'])->name('walee.proveedores.proceso');
 
-Route::post('/walee-clientes-en-proceso/delete', function (\Illuminate\Http\Request $request) {
+Route::post('/walee-proveedores-en-proceso/delete', function (\Illuminate\Http\Request $request) {
     $clientIds = $request->input('client_ids', []);
     
     if (empty($clientIds) || !is_array($clientIds)) {
         return response()->json([
             'success' => false,
-            'message' => 'No se proporcionaron IDs de clientes'
+            'message' => 'No se proporcionaron IDs de proveedores'
         ], 400);
     }
     
@@ -2355,19 +2355,19 @@ Route::post('/walee-clientes-en-proceso/delete', function (\Illuminate\Http\Requ
         
         return response()->json([
             'success' => true,
-            'message' => "Se borraron {$deleted} cliente(s) exitosamente",
+            'message' => "Se borraron {$deleted} proveedor(es) exitosamente",
             'deleted_count' => $deleted
         ]);
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
-            'message' => 'Error al borrar clientes: ' . $e->getMessage()
+            'message' => 'Error al borrar proveedores: ' . $e->getMessage()
         ], 500);
     }
-})->middleware(['auth'])->name('walee.clientes.en-proceso.delete');
+})->middleware(['auth'])->name('walee.proveedores.en-proceso.delete');
 
 // Ruta para toggle is_active
-Route::post('/walee-clientes-en-proceso/{id}/toggle-active', function ($id, \Illuminate\Http\Request $request) {
+Route::post('/walee-proveedores-en-proceso/{id}/toggle-active', function ($id, \Illuminate\Http\Request $request) {
     try {
         $client = \App\Models\Client::findOrFail($id);
         $client->is_active = $request->input('is_active', false);
@@ -2384,7 +2384,7 @@ Route::post('/walee-clientes-en-proceso/{id}/toggle-active', function ($id, \Ill
             'message' => 'Error al actualizar el estado: ' . $e->getMessage()
         ], 500);
     }
-})->middleware(['auth'])->name('walee.clientes.en-proceso.toggle-active');
+})->middleware(['auth'])->name('walee.proveedores.en-proceso.toggle-active');
 
 // Rutas para WALEE Extraer Clientes
 Route::get('/walee-extraer-clientes', function () {
@@ -4083,7 +4083,7 @@ Route::get('/walee-facturas/cliente/{id}', function ($id) {
         return view('walee-facturas-cliente', ['cliente' => $client, 'clienteFacturas' => $cliente]);
     } catch (\Exception $e) {
         \Log::error('Error al cargar facturas del cliente: ' . $e->getMessage());
-        return redirect()->route('walee.clientes.activos')->with('error', 'Error al cargar las facturas del cliente');
+        return redirect()->route('walee.proveedores.activos')->with('error', 'Error al cargar las facturas del proveedor');
     }
 })->middleware(['auth'])->name('walee.facturas.cliente');
 
@@ -4117,7 +4117,7 @@ Route::get('/walee-contratos/cliente/{id}', function ($id) {
         return view('walee-contratos-cliente', ['cliente' => $client, 'clienteFacturas' => $cliente]);
     } catch (\Exception $e) {
         \Log::error('Error al cargar contratos del cliente: ' . $e->getMessage());
-        return redirect()->route('walee.clientes.activos')->with('error', 'Error al cargar los contratos del cliente');
+        return redirect()->route('walee.proveedores.activos')->with('error', 'Error al cargar los contratos del proveedor');
     }
 })->middleware(['auth'])->name('walee.contratos.cliente');
 
@@ -4142,7 +4142,7 @@ Route::get('/walee-productos/cliente/{id}', function ($id) {
         return view('walee-productos-cliente', compact('cliente', 'productos'));
     } catch (\Exception $e) {
         \Log::error('Error al cargar productos del cliente: ' . $e->getMessage());
-        return redirect()->route('walee.clientes.activos')->with('error', 'Error al cargar los productos del cliente');
+        return redirect()->route('walee.proveedores.activos')->with('error', 'Error al cargar los productos del proveedor');
     }
 })->middleware(['auth'])->name('walee.productos.cliente');
 

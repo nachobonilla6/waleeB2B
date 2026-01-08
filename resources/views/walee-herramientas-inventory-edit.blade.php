@@ -113,21 +113,48 @@
                         Status
                     </h2>
                     <div class="space-y-4">
-                        <label class="relative inline-flex items-center cursor-pointer group">
+                        <!-- Section Field -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Section</label>
                             <input 
-                                type="checkbox" 
-                                id="productoActivo" 
-                                name="activo" 
-                                value="1"
-                                {{ $producto->activo ? 'checked' : '' }}
-                                class="sr-only peer"
-                                onchange="updateStatusText()"
+                                type="text" 
+                                id="productoSeccion" 
+                                name="seccion" 
+                                value="{{ $producto->seccion }}"
+                                oninput="updateSectionBadge()"
+                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                placeholder="Section"
                             >
-                            <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
-                            <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                {{ $producto->activo ? 'Active' : 'Inactive' }}
-                            </span>
-                        </label>
+                            <!-- Section Badge -->
+                            <div class="mt-2" id="sectionBadgeContainer">
+                                <span id="sectionBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50 {{ !$producto->seccion ? 'hidden' : '' }}">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    <span id="sectionBadgeText">Section: {{ $producto->seccion ?: 'No section' }}</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Toggle -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Status</label>
+                            <label class="relative inline-flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    id="productoActivo" 
+                                    name="activo" 
+                                    value="1"
+                                    {{ $producto->activo ? 'checked' : '' }}
+                                    class="sr-only peer"
+                                    onchange="updateStatusText()"
+                                >
+                                <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                                <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    {{ $producto->activo ? 'Active' : 'Inactive' }}
+                                </span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 
@@ -261,16 +288,6 @@
                             Basic Information
                         </h2>
                         <div class="space-y-4">
-                            <!-- Section Badge -->
-                            <div class="mb-2" id="sectionBadgeContainer">
-                                <span id="sectionBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50 {{ !$producto->seccion ? 'hidden' : '' }}">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                    </svg>
-                                    <span id="sectionBadgeText">Section: {{ $producto->seccion ?: 'No section' }}</span>
-                                </span>
-                            </div>
-                            
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Name *</label>
                                 <input 
@@ -320,19 +337,6 @@
                                         placeholder="Category"
                                     >
                                 </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Section</label>
-                                <input 
-                                    type="text" 
-                                    id="productoSeccion" 
-                                    name="seccion" 
-                                    value="{{ $producto->seccion }}"
-                                    oninput="updateSectionBadge()"
-                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Section"
-                                >
                             </div>
                             
                             <div class="grid grid-cols-2 gap-4">

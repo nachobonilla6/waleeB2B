@@ -117,27 +117,34 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Supplier <span class="text-red-500">*</span></label>
-                            <select id="proveedor_id" name="proveedor_id" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 focus:outline-none transition-all @error('proveedor_id') border-red-500 @enderror">
-                                <option value="">Select supplier...</option>
-                                @foreach($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}" data-email="{{ $proveedor->email }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
-                                        {{ $proveedor->name }}
-                                        @if($proveedor->idioma)
-                                            @php
-                                                $idiomas = [
-                                                    'es' => '🇪🇸',
-                                                    'en' => '🇬🇧',
-                                                    'fr' => '🇫🇷',
-                                                    'de' => '🇩🇪',
-                                                    'it' => '🇮🇹',
-                                                    'pt' => '🇵🇹'
-                                                ];
-                                                echo ' ' . ($idiomas[$proveedor->idioma] ?? strtoupper($proveedor->idioma));
-                                            @endphp
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="relative">
+                                <select id="proveedor_id" name="proveedor_id" required class="appearance-none w-full px-4 py-3 pr-10 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-violet-500 dark:focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 dark:focus:ring-violet-400/20 focus:outline-none transition-all hover:border-slate-400 dark:hover:border-slate-500 cursor-pointer @error('proveedor_id') border-red-500 dark:border-red-500 @enderror">
+                                    <option value="" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Select supplier...</option>
+                                    @foreach($proveedores as $proveedor)
+                                        <option value="{{ $proveedor->id }}" data-email="{{ $proveedor->email }}" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                            {{ $proveedor->name }}
+                                            @if($proveedor->idioma)
+                                                @php
+                                                    $idiomas = [
+                                                        'es' => '🇪🇸',
+                                                        'en' => '🇬🇧',
+                                                        'fr' => '🇫🇷',
+                                                        'de' => '🇩🇪',
+                                                        'it' => '🇮🇹',
+                                                        'pt' => '🇵🇹'
+                                                    ];
+                                                    echo ' ' . ($idiomas[$proveedor->idioma] ?? strtoupper($proveedor->idioma));
+                                                @endphp
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </div>
                             @error('proveedor_id')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -235,13 +242,20 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Language <span class="text-red-500">*</span></label>
-                            <select id="idioma" name="idioma" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all @error('idioma') border-red-500 @enderror">
-                                <option value="">Select language...</option>
-                                <option value="es" {{ old('idioma') == 'es' ? 'selected' : '' }}>🇪🇸 Spanish</option>
-                                <option value="en" {{ old('idioma') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
-                                <option value="fr" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 French</option>
-                                <option value="zh" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 Chinese (Mandarin)</option>
-                            </select>
+                            <div class="relative">
+                                <select id="idioma" name="idioma" required class="appearance-none w-full px-4 py-3 pr-10 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-amber-500 dark:focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:focus:ring-amber-400/20 focus:outline-none transition-all hover:border-slate-400 dark:hover:border-slate-500 cursor-pointer @error('idioma') border-red-500 dark:border-red-500 @enderror">
+                                    <option value="" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Select language...</option>
+                                    <option value="es" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'es' ? 'selected' : '' }}>🇪🇸 Spanish</option>
+                                    <option value="en" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'en' ? 'selected' : '' }}>🇬🇧 English</option>
+                                    <option value="fr" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'fr' ? 'selected' : '' }}>🇫🇷 French</option>
+                                    <option value="zh" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white py-2" {{ old('idioma') == 'zh' ? 'selected' : '' }}>🇨🇳 Chinese (Mandarin)</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                            </div>
                             @error('idioma')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror

@@ -355,11 +355,16 @@
             <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-walee-400/20 dark:bg-walee-400/10 rounded-full blur-3xl"></div>
         </div>
         
+        <!-- Fixed Navbar -->
+        <div class="fixed top-0 left-0 right-0 z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
+            <div class="max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
+                @php $pageTitle = 'Dashboard'; @endphp
+                @include('partials.walee-navbar')
+            </div>
+        </div>
+        
         <!-- Main Content -->
-        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Dashboard'; @endphp
-            @include('partials.walee-navbar')
-            
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-24 sm:pt-28">
             <!-- World Map & Timezones (primero en el dashboard) -->
             @include('partials.walee-world-map-clocks')
             

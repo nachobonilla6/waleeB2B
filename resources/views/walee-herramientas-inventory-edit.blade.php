@@ -515,6 +515,7 @@
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             updateStatusText();
+            updateSectionBadge();
             
             // Hacer scroll hacia arriba si se guardó recientemente
             if (sessionStorage.getItem('scrollToTop') === 'true') {

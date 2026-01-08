@@ -1000,8 +1000,8 @@
                             popup: 'swal2-popup-custom'
                         }
                     }).then(() => {
-                        // Redirigir a la página de inventory
-                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                        // Recargar la página de edición para mostrar los cambios actualizados
+                        window.location.reload();
                     });
                 } else {
                     Swal.fire({

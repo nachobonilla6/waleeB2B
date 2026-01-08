@@ -246,6 +246,48 @@
             }, 300);
         }, 2000);
     }
+    
+    // Deploy function - triggers N8N webhook
+    async function triggerDeploy() {
+        const webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook-test/waleeb2b';
+        const command = 'git pull origin main && php artisan migrate --force && php artisan optimize:clear';
+        
+        // Confirm action
+        const confirmed = confirm('Are you sure you want to deploy?\n\nThis will execute:\n' + command);
+        if (!confirmed) return;
+        
+        try {
+            // Show loading state
+            const deployButton = event.target.closest('button');
+            const originalContent = deployButton.innerHTML;
+            deployButton.disabled = true;
+            deployButton.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>Deploying...</span>';
+            
+            // Call webhook with command
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    command: command
+                })
+            });
+            
+            // Restore button
+            deployButton.disabled = false;
+            deployButton.innerHTML = originalContent;
+            
+            if (response.ok) {
+                showNotification('Deploy triggered successfully!', 'success');
+            } else {
+                throw new Error('Webhook returned error status: ' + response.status);
+            }
+        } catch (error) {
+            console.error('Deploy error:', error);
+            showNotification('Error triggering deploy: ' + error.message, 'error');
+        }
+    }
 </script>
 
 <style>

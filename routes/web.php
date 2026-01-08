@@ -4997,6 +4997,94 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
     }
 })->middleware(['auth'])->name('walee.herramientas.inventory.update');
 
+// Herramientas - Inventory - Generar QR Code (Backend)
+Route::post('/walee-herramientas/inventory/producto/generate-qr', function (\Illuminate\Http\Request $request) {
+    try {
+        $text = $request->input('text');
+        $productoId = $request->input('producto_id');
+        
+        if (empty($text)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'QR text is required'
+            ], 400);
+        }
+        
+        // Usar BaconQrCode para generar el QR
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+            new \BaconQrCode\Renderer\Image\ImagickImageBackEnd()
+        );
+        $writer = new \BaconQrCode\Writer($renderer);
+        
+        // Generar QR code como PNG
+        $qrCode = $writer->writeString($text);
+        
+        // Convertir a base64 para enviar al frontend
+        $base64 = base64_encode($qrCode);
+        
+        return response()->json([
+            'success' => true,
+            'qr_code' => 'data:image/png;base64,' . $base64,
+            'message' => 'QR code generated successfully'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error generating QR code with Imagick', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        // Fallback: intentar con GD si Imagick no está disponible
+        try {
+            $text = $request->input('text');
+            
+            $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                new \BaconQrCode\Renderer\Image\GdImageBackEnd()
+            );
+            $writer = new \BaconQrCode\Writer($renderer);
+            
+            $qrCode = $writer->writeString($text);
+            $base64 = base64_encode($qrCode);
+            
+            return response()->json([
+                'success' => true,
+                'qr_code' => 'data:image/png;base64,' . $base64,
+                'message' => 'QR code generated successfully (GD)'
+            ]);
+        } catch (\Exception $e2) {
+            \Log::error('Error generating QR code with GD', [
+                'error' => $e2->getMessage()
+            ]);
+            
+            // Último fallback: SVG
+            try {
+                $text = $request->input('text');
+                
+                $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                    new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                    new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+                );
+                $writer = new \BaconQrCode\Writer($renderer);
+                
+                $qrCode = $writer->writeString($text);
+                $base64 = base64_encode($qrCode);
+                
+                return response()->json([
+                    'success' => true,
+                    'qr_code' => 'data:image/svg+xml;base64,' . $base64,
+                    'message' => 'QR code generated successfully (SVG)'
+                ]);
+            } catch (\Exception $e3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error generating QR code: ' . $e3->getMessage()
+                ], 500);
+            }
+        }
+    }
+})->middleware(['auth'])->name('walee.herramientas.inventory.generate-qr');
+
 // Productos Super
 Route::get('/walee-productos-super', function () {
     return view('walee-productos-super');

@@ -832,116 +832,6 @@
                     }
                 });
                 
-                // Esperar a que la librería QRCode esté cargada
-                let retries = 0;
-                const maxRetries = 80; // 8 segundos máximo
-                
-                while ((typeof QRCode === 'undefined' || !window.QRCodeLoaded) && retries < maxRetries) {
-                    // Si hay un error de carga, no seguir intentando
-                    if (window.QRCodeLoadError) {
-                        Swal.close();
-                        throw new Error('QRCode library failed to load from all CDN sources. Please check your internet connection and refresh the page.');
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    retries++;
-                }
-                
-                // Verificar que la librería QRCode esté cargada
-                if (typeof QRCode === 'undefined') {
-                    // Si hay un error de carga conocido, mostrar mensaje específico
-                    if (window.QRCodeLoadError) {
-                        Swal.close();
-                        Swal.fire({
-                            ...getSwalTheme(),
-                            icon: 'error',
-                            title: 'QR Code Library Not Available',
-                            html: `
-                                <p class="mb-3">Unable to load QR code library from CDN sources.</p>
-                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Please try:</p>
-                                <ul class="text-left text-sm text-slate-600 dark:text-slate-400 space-y-1 mb-3">
-                                    <li>• Check your internet connection</li>
-                                    <li>• Refresh the page and try again</li>
-                                    <li>• Upload a QR code image manually instead</li>
-                                </ul>
-                            `,
-                            confirmButtonText: 'OK',
-                            confirmButtonColor: '#3b82f6'
-                        });
-                        return;
-                    }
-                    
-                    // Intentar cargar manualmente como último recurso
-                    if (!window.QRCodeLoading) {
-                        window.QRCodeLoading = true;
-                        const fallbackUrls = [
-                            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
-                            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
-                            'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
-                        ];
-                        
-                        let loaded = false;
-                        for (const url of fallbackUrls) {
-                            try {
-                                const script = document.createElement('script');
-                                script.src = url;
-                                script.async = false; // Cargar sincrónicamente para este intento
-                                script.crossOrigin = 'anonymous';
-                                await new Promise((resolve, reject) => {
-                                    const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
-                                    script.onload = () => {
-                                        clearTimeout(timeout);
-                                        if (typeof QRCode !== 'undefined') {
-                                            loaded = true;
-                                            window.QRCodeLoaded = true;
-                                            resolve();
-                                        } else {
-                                            reject(new Error('QRCode not defined after load'));
-                                        }
-                                    };
-                                    script.onerror = () => {
-                                        clearTimeout(timeout);
-                                        reject(new Error('Script load error'));
-                                    };
-                                    document.head.appendChild(script);
-                                });
-                                if (loaded) break;
-                            } catch (e) {
-                                console.warn('Failed to load from:', url, e);
-                            }
-                        }
-                        window.QRCodeLoading = false;
-                    } else {
-                        // Esperar un poco más si ya se está cargando
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                    }
-                    
-                    if (typeof QRCode === 'undefined') {
-                        Swal.close();
-                        Swal.fire({
-                            ...getSwalTheme(),
-                            icon: 'error',
-                            title: 'QR Code Library Not Available',
-                            html: `
-                                <p class="mb-3">Unable to load QR code library.</p>
-                                <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Please try:</p>
-                                <ul class="text-left text-sm text-slate-600 dark:text-slate-400 space-y-1 mb-3">
-                                    <li>• Check your internet connection</li>
-                                    <li>• Refresh the page and try again</li>
-                                    <li>• Upload a QR code image manually instead</li>
-                                </ul>
-                            `,
-                            confirmButtonText: 'OK',
-                            confirmButtonColor: '#3b82f6'
-                        });
-                        return;
-                    }
-                }
-                
-                // Verificar que QRCode.toCanvas esté disponible
-                if (typeof QRCode.toCanvas !== 'function') {
-                    throw new Error('QRCode.toCanvas function is not available. The library may not be fully loaded.');
-                }
-                
                 // Obtener datos del producto para el QR
                 const codigoBarras = document.getElementById('productoCodigoBarras');
                 const nombre = document.getElementById('productoNombre');
@@ -966,126 +856,100 @@
                     throw new Error('QR text cannot be empty');
                 }
                 
-                // Limpiar canvas anterior si existe
-                const qrCanvas = document.getElementById('qrCodeCanvas');
-                if (!qrCanvas) {
-                    throw new Error('QR canvas element not found');
+                // Llamar al backend para generar el QR code
+                const response = await fetch('/walee-herramientas/inventory/producto/generate-qr', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: qrText,
+                        producto_id: productoId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to generate QR code');
                 }
                 
-                qrCanvas.innerHTML = '';
-                qrCanvas.classList.remove('hidden');
+                // Convertir base64 a blob
+                const base64Data = data.qr_code.split(',')[1];
+                const byteCharacters = atob(base64Data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'image/png' });
                 
-                // Crear canvas para el QR
-                const canvas = document.createElement('canvas');
-                canvas.id = 'generatedQRCanvas';
-                qrCanvas.appendChild(canvas);
+                // Crear File desde blob
+                const file = new File([blob], `qr-${productoId}-${Date.now()}.png`, { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
                 
-                // Generar QR code
-                try {
-                    await QRCode.toCanvas(canvas, qrText, {
-                        width: 256,
-                        margin: 2,
-                        color: {
-                            dark: '#000000',
-                            light: '#FFFFFF'
-                        },
-                        errorCorrectionLevel: 'M'
-                    });
-                } catch (qrError) {
-                    console.error('QRCode.toCanvas error:', qrError);
-                    throw new Error('Failed to generate QR code image: ' + (qrError.message || 'Unknown error'));
+                // Verificar que DataTransfer.items.add esté disponible
+                if (!dataTransfer.items || typeof dataTransfer.items.add !== 'function') {
+                    throw new Error('File API not fully supported in this browser. Please use a modern browser.');
                 }
                 
-                // Esperar a que el canvas esté listo
-                await new Promise(resolve => setTimeout(resolve, 100));
+                dataTransfer.items.add(file);
+                const fileInput = document.getElementById('productoFotoQr');
                 
-                // Verificar que el canvas tenga contenido
-                if (!canvas || canvas.width === 0 || canvas.height === 0) {
-                    throw new Error('Canvas is empty. QR code generation may have failed.');
+                if (!fileInput) {
+                    throw new Error('File input not found');
                 }
                 
-                // Convertir canvas a blob y crear File para el input
-                return new Promise((resolve, reject) => {
-                    canvas.toBlob(function(blob) {
-                        if (!blob) {
-                            reject(new Error('Failed to create blob from canvas. The canvas may be empty.'));
-                            return;
-                        }
-                        
-                        try {
-                            const file = new File([blob], `qr-${productoId}-${Date.now()}.png`, { type: 'image/png' });
-                            const dataTransfer = new DataTransfer();
-                            
-                            // Verificar que DataTransfer.items.add esté disponible
-                            if (!dataTransfer.items || typeof dataTransfer.items.add !== 'function') {
-                                throw new Error('File API not fully supported in this browser. Please use a modern browser.');
-                            }
-                            
-                            dataTransfer.items.add(file);
-                            const fileInput = document.getElementById('productoFotoQr');
-                            
-                            if (!fileInput) {
-                                reject(new Error('File input not found'));
-                                return;
-                            }
-                            
-                            fileInput.files = dataTransfer.files;
-                            
-                            // Mostrar preview del QR generado
-                            const preview = document.getElementById('currentQrPreview');
-                            const canvasDataUrl = canvas.toDataURL('image/png');
-                            
-                            if (preview) {
-                                preview.src = canvasDataUrl;
-                                preview.style.opacity = '1';
-                                preview.style.filter = 'none';
-                            } else {
-                                // Crear preview si no existe
-                                const previewContainer = fileInput.parentElement;
-                                const existingPreview = previewContainer.querySelector('.mt-2.relative');
-                                if (existingPreview) {
-                                    existingPreview.remove();
-                                }
-                                const newPreview = document.createElement('div');
-                                newPreview.className = 'mt-2 relative inline-block';
-                                newPreview.innerHTML = `
-                                    <img src="${canvasDataUrl}" alt="Generated QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
-                                    <button 
-                                        type="button"
-                                        onclick="removeFotoQr()"
-                                        class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                                        title="Remove QR image"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                        </svg>
-                                    </button>
-                                `;
-                                fileInput.parentElement.appendChild(newPreview);
-                            }
-                            
-                            // Resetear flag de remover si estaba marcado
-                            const removeFotoQrInput = document.getElementById('removeFotoQr');
-                            if (removeFotoQrInput) {
-                                removeFotoQrInput.value = '0';
-                            }
-                            
-                            Swal.close();
-                            Swal.fire({
-                                ...getSwalTheme(),
-                                icon: 'success',
-                                title: 'QR Code Generated!',
-                                text: 'The QR code has been generated successfully',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            
-                            resolve();
-                        } catch (err) {
-                            console.error('Error processing QR code file:', err);
-                            reject(err);
-                        }
-                    }, 'image/png');
+                fileInput.files = dataTransfer.files;
+                
+                // Mostrar preview del QR generado
+                const preview = document.getElementById('currentQrPreview');
+                
+                if (preview) {
+                    preview.src = data.qr_code;
+                    preview.style.opacity = '1';
+                    preview.style.filter = 'none';
+                } else {
+                    // Crear preview si no existe
+                    const previewContainer = fileInput.parentElement;
+                    const existingPreview = previewContainer.querySelector('.mt-2.relative');
+                    if (existingPreview) {
+                        existingPreview.remove();
+                    }
+                    const newPreview = document.createElement('div');
+                    newPreview.className = 'mt-2 relative inline-block';
+                    newPreview.innerHTML = `
+                        <img src="${data.qr_code}" alt="Generated QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                        <button 
+                            type="button"
+                            onclick="removeFotoQr()"
+                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                            title="Remove QR image"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    fileInput.parentElement.appendChild(newPreview);
+                }
+                
+                // Resetear flag de remover si estaba marcado
+                const removeFotoQrInput = document.getElementById('removeFotoQr');
+                if (removeFotoQrInput) {
+                    removeFotoQrInput.value = '0';
+                }
+                
+                Swal.close();
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'success',
+                    title: 'QR Code Generated!',
+                    text: 'The QR code has been generated successfully',
+                    timer: 2000,
+                    showConfirmButton: false
                 });
                 
             } catch (error) {

@@ -90,17 +90,6 @@
         >
         <div class="py-2">
             <a 
-                href="#" 
-                onclick="openSupportModal(); closeMobileMenu(); return false;"
-                class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-walee-200 to-walee-300 dark:from-walee-700 dark:to-walee-800 hover:from-walee-300 hover:to-walee-400 dark:hover:from-walee-600 dark:hover:to-walee-700"
-            >
-                <svg class="w-5 h-5 text-walee-600 dark:text-walee-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="font-medium text-walee-700 dark:text-walee-200">Welcome, Support</span>
-            </a>
-            
-            <a 
                 href="{{ route('walee.dashboard') }}" 
                 onclick="closeMobileMenu()"
                 class="flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-slate-300 hover:to-slate-400 dark:hover:from-slate-600 dark:hover:to-slate-700"

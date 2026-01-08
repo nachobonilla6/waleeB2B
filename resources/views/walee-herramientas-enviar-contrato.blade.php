@@ -167,34 +167,20 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Select Services <span class="text-red-500">*</span></label>
                             <div class="space-y-3" id="services-list">
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="diseno_web" {{ in_array('diseno_web', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">🌐 Web Design</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="redes_sociales" {{ in_array('redes_sociales', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">📱 Social Media Management</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="seo" {{ in_array('seo', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">🔍 SEO / Positioning</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="publicidad" {{ in_array('publicidad', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">📢 Digital Advertising</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="mantenimiento" {{ in_array('mantenimiento', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">🔧 Web Maintenance</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="hosting" {{ in_array('hosting', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">☁️ Hosting & Domain</span>
-                                </label>
-                                <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
-                                    <input type="checkbox" name="servicios[]" value="combo" {{ in_array('combo', old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
-                                    <span class="text-slate-900 dark:text-white">📦 Complete Package</span>
-                                </label>
+                                @foreach($servicios as $servicio)
+                                    <label class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 cursor-pointer transition-all">
+                                        <input type="checkbox" name="servicios[]" value="{{ $servicio->codigo }}" {{ in_array($servicio->codigo, old('servicios', [])) ? 'checked' : '' }} class="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 focus:ring-2">
+                                        <div class="flex-1">
+                                            <span class="text-slate-900 dark:text-white">{{ $servicio->nombre }}</span>
+                                            @if($servicio->descripcion)
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ Str::limit($servicio->descripcion, 80) }}</p>
+                                            @endif
+                                        </div>
+                                        @if($servicio->tipo === 'personalizado')
+                                            <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">Custom</span>
+                                        @endif
+                                    </label>
+                                @endforeach
                             </div>
                             
                             <!-- Custom Services Section -->

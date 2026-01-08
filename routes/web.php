@@ -5919,7 +5919,8 @@ Route::get('/walee-herramientas/enviar-contrato', function () {
             'email' => $proveedor->email,
         ];
     });
-    return view('walee-herramientas-enviar-contrato', compact('proveedores', 'proveedoresData'));
+    $servicios = \App\Models\Servicio::activos()->orderBy('tipo')->orderBy('nombre')->get();
+    return view('walee-herramientas-enviar-contrato', compact('proveedores', 'proveedoresData', 'servicios'));
 })->middleware(['auth'])->name('walee.herramientas.enviar-contrato');
 
 Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Request $request) {
@@ -5942,54 +5943,44 @@ Route::post('/walee-herramientas/enviar-contrato', function (\Illuminate\Http\Re
                 ->withInput();
         }
 
-        // Mapeo de servicios a nombres y descripciones
-        $servicios = [
-            'diseno_web' => [
-                'nombre' => 'Diseño Web',
-                'descripcion' => 'Diseño y desarrollo de sitio web profesional, incluyendo diseño responsivo, optimización SEO básica y entrega de código fuente.'
-            ],
-            'redes_sociales' => [
-                'nombre' => 'Gestión de Redes Sociales',
-                'descripcion' => 'Gestión completa de redes sociales, incluyendo creación de contenido, programación de publicaciones, interacción con seguidores y análisis de métricas.'
-            ],
-            'seo' => [
-                'nombre' => 'SEO / Posicionamiento',
-                'descripcion' => 'Servicios de optimización para motores de búsqueda, incluyendo investigación de palabras clave, optimización on-page, link building y análisis de resultados.'
-            ],
-            'publicidad' => [
-                'nombre' => 'Publicidad Digital',
-                'descripcion' => 'Campañas publicitarias en plataformas digitales, incluyendo Google Ads, Facebook Ads, Instagram Ads y gestión de presupuesto publicitario.'
-            ],
-            'mantenimiento' => [
-                'nombre' => 'Mantenimiento Web',
-                'descripcion' => 'Servicio de mantenimiento continuo del sitio web, incluyendo actualizaciones de seguridad, respaldos, monitoreo y soporte técnico.'
-            ],
-            'hosting' => [
-                'nombre' => 'Hosting & Dominio',
-                'descripcion' => 'Servicios de hosting web y registro de dominio, incluyendo alojamiento, certificados SSL, correo electrónico y soporte técnico.'
-            ],
-            'combo' => [
-                'nombre' => 'Paquete Completo',
-                'descripcion' => 'Paquete integral que incluye diseño web, hosting, dominio, gestión de redes sociales, SEO básico y mantenimiento mensual.'
-            ],
-        ];
-
+        // Obtener servicios desde la base de datos
+        $serviciosDB = \App\Models\Servicio::activos()->get()->keyBy('codigo');
+        
         // Obtener información de todos los servicios seleccionados
         $serviciosSeleccionados = [];
         $serviciosPersonalizados = $validated['servicios_personalizados'] ?? [];
         $indexPersonalizado = 0;
         
         foreach ($validated['servicios'] as $servicioKey) {
-            // Si es un servicio predefinido, usar su información
-            if (isset($servicios[$servicioKey])) {
-                $serviciosSeleccionados[] = $servicios[$servicioKey];
-            } else {
-                // Si es un servicio personalizado, usar el nombre proporcionado
-                $nombrePersonalizado = $serviciosPersonalizados[$indexPersonalizado] ?? ucfirst(str_replace('_', ' ', $servicioKey));
+            // Buscar servicio en la BD por código o ID
+            $servicio = $serviciosDB->get($servicioKey) ?? \App\Models\Servicio::find($servicioKey);
+            
+            if ($servicio) {
+                // Servicio encontrado en BD
                 $serviciosSeleccionados[] = [
-                    'nombre' => $nombrePersonalizado,
-                    'descripcion' => 'Custom service as agreed between the parties.'
+                    'nombre' => $servicio->nombre,
+                    'descripcion' => $servicio->descripcion ?? 'Custom service as agreed between the parties.'
                 ];
+            } else {
+                // Es un servicio personalizado nuevo, guardarlo en BD
+                $nombrePersonalizado = $serviciosPersonalizados[$indexPersonalizado] ?? ucfirst(str_replace('_', ' ', $servicioKey));
+                
+                // Generar código único para el servicio personalizado
+                $codigoPersonalizado = 'custom_' . time() . '_' . $indexPersonalizado;
+                
+                $servicioNuevo = \App\Models\Servicio::create([
+                    'codigo' => $codigoPersonalizado,
+                    'nombre' => $nombrePersonalizado,
+                    'descripcion' => 'Custom service as agreed between the parties.',
+                    'tipo' => 'personalizado',
+                    'activo' => true,
+                ]);
+                
+                $serviciosSeleccionados[] = [
+                    'nombre' => $servicioNuevo->nombre,
+                    'descripcion' => $servicioNuevo->descripcion
+                ];
+                
                 $indexPersonalizado++;
             }
         }

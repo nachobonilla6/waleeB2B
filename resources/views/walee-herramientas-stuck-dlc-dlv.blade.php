@@ -63,16 +63,6 @@
         
         $productos = ProductoSuper::orderBy('nombre', 'asc')->get();
         
-        $totalProductos = $productos->count();
-        $productosActivos = $productos->where('activo', true)->count();
-        $stockTotal = $productos->where('activo', true)->sum('stock');
-        $stockBajo = $productos->where('activo', true)->filter(function($p) {
-            return $p->stock <= 10 && $p->stock > 0;
-        })->count();
-        $sinStock = $productos->where('activo', true)->where('stock', 0)->count();
-        $valorTotalInventario = $productos->where('activo', true)->sum(function($p) {
-            return $p->precio * $p->stock;
-        });
     @endphp
     
     <div class="min-h-screen relative overflow-hidden">
@@ -107,51 +97,8 @@
                 </div>
             </div>
             
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
-                <div class="bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs text-slate-600 dark:text-slate-400">Total Productos</span>
-                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
-                    </div>
-                    <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ $totalProductos }}</p>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs text-slate-600 dark:text-slate-400">Stock Total</span>
-                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                    </div>
-                    <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ number_format($stockTotal) }}</p>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs text-slate-600 dark:text-slate-400">Stock Bajo</span>
-                        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                        </svg>
-                    </div>
-                    <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $stockBajo }}</p>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs text-slate-600 dark:text-slate-400">Sin Stock</span>
-                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </div>
-                    <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $sinStock }}</p>
-                </div>
-            </div>
-            
             <!-- Search and Filters -->
-            <div class="bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="bg-white dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700/50 shadow-sm mb-6 animate-fade-in-up" style="animation-delay: 0.15s;">
                 <div class="flex flex-col sm:flex-row gap-4">
                     <div class="flex-1">
                         <input 
@@ -183,7 +130,7 @@
             </div>
             
             <!-- Products Table -->
-            <div class="bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm overflow-hidden animate-fade-in-up" style="animation-delay: 0.25s;">
+            <div class="bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm overflow-hidden animate-fade-in-up" style="animation-delay: 0.2s;">
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-slate-100 dark:bg-slate-900/50">

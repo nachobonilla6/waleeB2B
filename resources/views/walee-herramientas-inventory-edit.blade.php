@@ -303,9 +303,20 @@
                                             }
                                         }
                                     @endphp
-                                    <div class="mt-2">
-                                        <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
+                                        <button 
+                                            type="button"
+                                            onclick="removeImagen()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove image"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
                                     </div>
+                                    <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
                                 @endif
                             </div>
                             
@@ -328,9 +339,20 @@
                                             $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
                                         }
                                     @endphp
-                                    <div class="mt-2">
-                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    <div class="mt-2 relative inline-block">
+                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                                        <button 
+                                            type="button"
+                                            onclick="removeFotoQr()"
+                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                            title="Remove QR image"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
                                     </div>
+                                    <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
                                 @endif
                             </div>
                         </div>
@@ -412,6 +434,74 @@
             };
         }
         
+        function removeImagen() {
+            Swal.fire({
+                ...getSwalTheme(),
+                title: 'Remove Image?',
+                text: 'Are you sure you want to remove this image?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, remove it',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const removeImagenInput = document.getElementById('removeImagen');
+                    if (removeImagenInput) {
+                        removeImagenInput.value = '1';
+                    }
+                    const preview = document.getElementById('currentImagenPreview');
+                    if (preview) {
+                        preview.style.opacity = '0.5';
+                        preview.style.filter = 'grayscale(100%)';
+                    }
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'success',
+                        title: 'Image marked for removal',
+                        text: 'The image will be removed when you save the changes',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+        
+        function removeFotoQr() {
+            Swal.fire({
+                ...getSwalTheme(),
+                title: 'Remove QR Image?',
+                text: 'Are you sure you want to remove this QR code image?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, remove it',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const removeFotoQrInput = document.getElementById('removeFotoQr');
+                    if (removeFotoQrInput) {
+                        removeFotoQrInput.value = '1';
+                    }
+                    const preview = document.getElementById('currentQrPreview');
+                    if (preview) {
+                        preview.style.opacity = '0.5';
+                        preview.style.filter = 'grayscale(100%)';
+                    }
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'success',
+                        title: 'QR image marked for removal',
+                        text: 'The QR image will be removed when you save the changes',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+        
         async function saveProducto() {
             const formData = new FormData();
             formData.append('_method', 'PUT');
@@ -437,6 +527,17 @@
             const fotoQrFile = document.getElementById('productoFotoQr').files[0];
             if (fotoQrFile) {
                 formData.append('foto_qr', fotoQrFile);
+            }
+            
+            // Agregar flags para remover fotos
+            const removeImagenInput = document.getElementById('removeImagen');
+            if (removeImagenInput) {
+                formData.append('remove_imagen', removeImagenInput.value);
+            }
+            
+            const removeFotoQrInput = document.getElementById('removeFotoQr');
+            if (removeFotoQrInput) {
+                formData.append('remove_foto_qr', removeFotoQrInput.value);
             }
             
             try {

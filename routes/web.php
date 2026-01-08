@@ -4925,6 +4925,17 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         
+        // Manejar eliminación de imagen
+        if ($request->input('remove_imagen') === '1') {
+            if ($producto->imagen) {
+                $imagenPath = storage_path('app/public/' . $producto->imagen);
+                if (file_exists($imagenPath)) {
+                    unlink($imagenPath);
+                }
+                $producto->imagen = null;
+            }
+        }
+        
         // Subir nueva imagen si existe
         if ($request->hasFile('imagen')) {
             if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
@@ -4940,6 +4951,17 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
             $fullPath = storage_path('app/public/' . $path);
             if (file_exists($fullPath)) {
                 chmod($fullPath, 0644);
+            }
+        }
+        
+        // Manejar eliminación de foto QR
+        if ($request->input('remove_foto_qr') === '1') {
+            if ($producto->foto_qr) {
+                $qrPath = storage_path('app/public/' . $producto->foto_qr);
+                if (file_exists($qrPath)) {
+                    unlink($qrPath);
+                }
+                $producto->foto_qr = null;
             }
         }
         

@@ -353,11 +353,11 @@
                                     value="1"
                                     {{ $producto->activo ? 'checked' : '' }}
                                     class="sr-only peer"
+                                    onchange="updateStatusText()"
                                 >
                                 <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
-                                <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    <span class="peer-checked:hidden">Inactive</span>
-                                    <span class="hidden peer-checked:inline">Active</span>
+                                <span id="statusText" class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    {{ $producto->activo ? 'Active' : 'Inactive' }}
                                 </span>
                             </label>
                         </div>
@@ -383,6 +383,17 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         const productoId = {{ $producto->id }};
+        
+        function updateStatusText() {
+            const checkbox = document.getElementById('productoActivo');
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = checkbox.checked ? 'Active' : 'Inactive';
+        }
+        
+        // Inicializar el texto del status al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatusText();
+        });
         
         function getSwalTheme() {
             const isDark = document.documentElement.classList.contains('dark');

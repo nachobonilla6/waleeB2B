@@ -183,67 +183,69 @@
                                 @endif
                             </div>
                             
-                            <!-- QR Code Image -->
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
-                                <input 
-                                    type="file" 
-                                    id="productoFotoQr" 
-                                    name="foto_qr" 
-                                    accept="image/*"
-                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
-                                >
-                                <button 
-                                    type="button"
-                                    onclick="generateQRCode()"
-                                    class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
-                                    title="Generate QR Code automatically"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                    </svg>
-                                    <span>Generate QR Code</span>
-                                </button>
-                                <div id="qrCodeCanvas" class="mt-2 hidden"></div>
-                                @if($producto->foto_qr)
-                                    @php
-                                        $qrPath = trim($producto->foto_qr);
-                                        if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
-                                            $qrUrl = $qrPath;
-                                        } else {
-                                            $filename = basename($qrPath);
-                                            $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
-                                        }
-                                    @endphp
-                                    <div class="mt-2 relative inline-block">
-                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
-                                        <button 
-                                            type="button"
-                                            onclick="removeFotoQr()"
-                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                                            title="Remove QR image"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
-                                @endif
+                            <!-- QR Code Image and Barcode (same column) -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
+                                    <input 
+                                        type="file" 
+                                        id="productoFotoQr" 
+                                        name="foto_qr" 
+                                        accept="image/*"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
+                                    >
+                                    <button 
+                                        type="button"
+                                        onclick="generateQRCode()"
+                                        class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
+                                        title="Generate QR Code automatically"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                        <span>Generate QR Code</span>
+                                    </button>
+                                    <div id="qrCodeCanvas" class="mt-2 hidden"></div>
+                                    @if($producto->foto_qr)
+                                        @php
+                                            $qrPath = trim($producto->foto_qr);
+                                            if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
+                                                $qrUrl = $qrPath;
+                                            } else {
+                                                $filename = basename($qrPath);
+                                                $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                            }
+                                        @endphp
+                                        <div class="mt-2 relative inline-block">
+                                            <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                                            <button 
+                                                type="button"
+                                                onclick="removeFotoQr()"
+                                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                                title="Remove QR image"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
+                                    @endif
+                                </div>
+                                
+                                <!-- Barcode debajo del QR en la misma columna -->
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
+                                    <input 
+                                        type="text" 
+                                        id="productoCodigoBarras" 
+                                        name="codigo_barras" 
+                                        value="{{ $producto->codigo_barras }}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                                        placeholder="Barcode"
+                                    >
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Barcode debajo (en todas las versiones) -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
-                            <input 
-                                type="text" 
-                                id="productoCodigoBarras" 
-                                name="codigo_barras" 
-                                value="{{ $producto->codigo_barras }}"
-                                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
-                                placeholder="Barcode"
-                            >
                         </div>
                     </div>
                 </div>

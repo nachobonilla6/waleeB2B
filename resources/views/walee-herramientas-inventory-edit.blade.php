@@ -13,20 +13,51 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Cargar QRCode de forma asíncrona y esperar a que esté disponible
+        // Cargar QRCode de forma asíncrona con múltiples fallbacks
         (function() {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-            script.async = true;
-            script.onload = function() {
-                window.QRCodeLoaded = true;
-                console.log('QRCode library loaded successfully');
-            };
-            script.onerror = function() {
-                console.error('Failed to load QRCode library');
-                window.QRCodeLoaded = false;
-            };
-            document.head.appendChild(script);
+            const cdnUrls = [
+                'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+                'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
+            ];
+            
+            let currentIndex = 0;
+            
+            function loadQRCode() {
+                if (currentIndex >= cdnUrls.length) {
+                    console.error('Failed to load QRCode library from all CDN sources');
+                    window.QRCodeLoaded = false;
+                    window.QRCodeLoadError = 'All CDN sources failed';
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = cdnUrls[currentIndex];
+                script.async = true;
+                script.crossOrigin = 'anonymous';
+                
+                script.onload = function() {
+                    // Verificar que QRCode esté realmente disponible
+                    if (typeof QRCode !== 'undefined') {
+                        window.QRCodeLoaded = true;
+                        console.log('QRCode library loaded successfully from:', cdnUrls[currentIndex]);
+                    } else {
+                        // Intentar siguiente CDN
+                        currentIndex++;
+                        loadQRCode();
+                    }
+                };
+                
+                script.onerror = function() {
+                    console.warn('Failed to load QRCode from:', cdnUrls[currentIndex]);
+                    currentIndex++;
+                    loadQRCode();
+                };
+                
+                document.head.appendChild(script);
+            }
+            
+            loadQRCode();
         })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

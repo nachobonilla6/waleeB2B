@@ -487,31 +487,8 @@
         }
         
         async function editProducto(id) {
-            try {
-                const response = await fetch(`/walee-productos-super/${id}`);
-                const data = await response.json();
-                
-                if (!data.success) {
-                    Swal.fire({
-                        ...getSwalConfig(),
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error loading product: ' + (data.message || 'Unknown error')
-                    });
-                    return;
-                }
-                
-                const producto = data.producto;
-                showProductModal(producto);
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    ...getSwalConfig(),
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error loading product'
-                });
-            }
+            // Redirigir a walee-productos-super con el ID del producto
+            window.location.href = `/walee-productos-super?edit=${id}`;
         }
         
         function showProductModal(producto = null) {

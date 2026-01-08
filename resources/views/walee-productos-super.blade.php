@@ -712,6 +712,17 @@
     <script>
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         
+        // Cargar producto para editar si hay parámetro en la URL
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get('edit');
+            if (editId) {
+                openEditProductoModal(editId);
+                // Limpiar el parámetro de la URL sin recargar la página
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+        
         function getSwalTheme() {
             const isDark = document.documentElement.classList.contains('dark');
             return {

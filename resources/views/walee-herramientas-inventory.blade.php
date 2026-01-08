@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee - Inventory Management</title>
-    <meta name="description" content="Product inventory management">
+    <title>Walee - DLC DLV Management</title>
+    <meta name="description" content="DLC DLV management">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -132,7 +132,7 @@
         <!-- Fixed Navbar -->
         <div class="fixed top-0 left-0 right-0 z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
             <div class="max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
-                @php $pageTitle = 'Inventory'; @endphp
+                @php $pageTitle = 'DLC DLV'; @endphp
                 @include('partials.walee-navbar')
             </div>
         </div>
@@ -143,7 +143,7 @@
             <div class="mb-6 sm:mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Inventory Management</h1>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">DLC DLV Management</h1>
                         <p class="text-sm text-slate-600 dark:text-slate-400">Manage products</p>
                     </div>
                     <div class="flex items-center gap-2">

@@ -33,12 +33,12 @@
         <a 
             href="{{ route('walee.herramientas.inventory') }}" 
             class="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors group"
-            title="Inventory"
+            title="DLC DLV"
         >
             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
-            <span class="text-sm font-medium text-blue-700 dark:text-blue-300">Inventory</span>
+            <span class="text-sm font-medium text-blue-700 dark:text-blue-300">DLC DLV</span>
         </a>
         
         <a 
@@ -130,7 +130,7 @@
                 <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
-                <span class="font-medium">Inventory</span>
+                <span class="font-medium">DLC DLV</span>
             </a>
             
             <a 

@@ -391,8 +391,12 @@
                                             if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
                                                 $qrUrl = $qrPath;
                                             } else {
-                                                $filename = basename($qrPath);
-                                                $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                                // Usar asset() para acceso público directo
+                                                if (str_starts_with($qrPath, 'storage/')) {
+                                                    $qrUrl = asset($qrPath);
+                                                } else {
+                                                    $qrUrl = asset('storage/' . $qrPath);
+                                                }
                                             }
                                         @endphp
                                         <div class="mt-2 relative inline-block">

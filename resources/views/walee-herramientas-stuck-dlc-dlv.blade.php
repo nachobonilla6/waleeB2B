@@ -152,10 +152,7 @@
                                     data-activo="{{ $producto->activo ? '1' : '0' }}"
                                 >
                                     <td class="px-4 py-3">
-                                        <div class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</div>
-                                        @if($producto->descripcion)
-                                            <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ Str::limit($producto->descripcion, 50) }}</div>
-                                        @endif
+                                        <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
                                     </td>
                                     <td class="px-4 py-3">
                                         <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>

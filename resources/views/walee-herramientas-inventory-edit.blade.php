@@ -314,20 +314,7 @@
                                 
                                 <!-- QR Code Image -->
                                 <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">QR Code Image</label>
-                                        <button 
-                                            type="button"
-                                            onclick="generateQRCode()"
-                                            class="px-3 py-1.5 text-xs bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors shadow-sm"
-                                            title="Generate QR Code automatically"
-                                        >
-                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                            </svg>
-                                            Generate QR
-                                        </button>
-                                    </div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
                                     <input 
                                         type="file" 
                                         id="productoFotoQr" 
@@ -335,6 +322,17 @@
                                         accept="image/*"
                                         class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
                                     >
+                                    <button 
+                                        type="button"
+                                        onclick="generateQRCode()"
+                                        class="mt-2 w-full px-4 py-2.5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 active:scale-95"
+                                        title="Generate QR Code automatically"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                        <span>Generate QR Code</span>
+                                    </button>
                                     <div id="qrCodeCanvas" class="mt-2 hidden"></div>
                                     @if($producto->foto_qr)
                                         @php

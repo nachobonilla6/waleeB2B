@@ -253,16 +253,10 @@ Route::get('/login', function () {
 // Ruta POST para procesar login
 Route::post('/login', [LoginController::class, 'store'])->middleware('guest')->name('login.store');
 
-// Página de inicio
+// Página de inicio - Muestra el dashboard directamente
 Route::get('/', function () {
-    $sitios = Sitio::with('tags')
-        ->where('en_linea', true)
-        ->orderBy('created_at', 'desc')
-        ->take(6) // Show only 6 most recent active sites
-        ->get();
-    
-    return view('welcome', compact('sitios'));
-})->name('home');
+    return view('walee-dashboard');
+})->middleware(['auth'])->name('home');
 
 
 // Sistema para tu negocio - Página pública

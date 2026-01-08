@@ -10,12 +10,9 @@
 
 ## 🔧 Comandos Rápidos
 
-### 1. Navegar al directorio del proyecto
-```bash
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
-```
+> **Nota**: Se asume que ya estás en el directorio `/home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com`
 
-### 2. Verificar si es un repositorio Git
+### 1. Verificar si es un repositorio Git
 ```bash
 git status
 ```

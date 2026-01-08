@@ -12,11 +12,10 @@ Las dependencias de Composer no se instalaron correctamente o el vendor está co
 
 ### Paso 1: Limpiar vendor y reinstalar
 
-```bash
-# 1. Navegar al directorio del proyecto
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
+> **Nota**: Se asume que ya estás en el directorio del proyecto
 
-# 2. Eliminar vendor y composer.lock (hacer backup primero si es necesario)
+```bash
+# 1. Eliminar vendor y composer.lock (hacer backup primero si es necesario)
 rm -rf vendor
 rm -f composer.lock
 
@@ -87,9 +86,9 @@ php artisan key:generate
 
 ## Solución Rápida (Todo en uno)
 
-```bash
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
+> **Nota**: Se asume que ya estás en el directorio del proyecto
 
+```bash
 # Limpiar todo
 rm -rf vendor
 composer clear-cache

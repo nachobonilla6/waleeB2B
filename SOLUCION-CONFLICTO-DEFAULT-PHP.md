@@ -13,13 +13,10 @@ El archivo `public_html/default.php` es la página por defecto de Hostinger. Exi
 
 ## Solución Rápida
 
-Ejecuta estos comandos en el servidor:
+Ejecuta estos comandos en el servidor (asumiendo que ya estás en el directorio del proyecto):
 
 ```bash
-# 1. Navegar al directorio del proyecto
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
-
-# 2. Mover o renombrar el archivo default.php
+# 1. Mover o renombrar el archivo default.php
 mv public_html/default.php public_html/default.php.backup
 
 # 3. Ahora hacer pull
@@ -34,10 +31,7 @@ git pull origin main
 Si no necesitas el archivo `default.php` (que es solo la página de bienvenida de Hostinger):
 
 ```bash
-# 1. Navegar al directorio del proyecto
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
-
-# 2. Eliminar el archivo
+# 1. Eliminar el archivo
 rm public_html/default.php
 
 # 3. Hacer pull
@@ -49,10 +43,7 @@ git pull origin main
 Esta opción guarda temporalmente tus cambios locales:
 
 ```bash
-# 1. Navegar al directorio del proyecto
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
-
-# 2. Agregar el archivo al staging (aunque no esté rastreado)
+# 1. Agregar el archivo al staging (aunque no esté rastreado)
 git add -f public_html/default.php
 
 # 3. Hacer stash

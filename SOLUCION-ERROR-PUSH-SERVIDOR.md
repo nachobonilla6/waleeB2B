@@ -17,11 +17,10 @@ Este error ocurre porque:
 
 ### En el Servidor (solo hacer PULL, nunca PUSH)
 
-```bash
-# 1. Navegar al directorio del proyecto
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
+> **Nota**: Se asume que ya estás en el directorio del proyecto
 
-# 2. Verificar el estado actual
+```bash
+# 1. Verificar el estado actual
 git status
 
 # 3. Verificar qué rama estás usando

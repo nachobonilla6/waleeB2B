@@ -11,30 +11,19 @@ Estás en un directorio que no es un repositorio Git, o no estás en el director
 
 ## Solución
 
+> **Nota**: Se asume que ya estás en el directorio `/home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com`
+
 ### Paso 1: Verificar el directorio actual
 ```bash
 pwd
 ```
 
-### Paso 2: Navegar al directorio correcto del proyecto
-Según tu dominio actual, el proyecto debería estar en:
+Si no estás en el directorio correcto, navega a él:
 ```bash
 cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
 ```
 
-O si estás en `public_html`:
-```bash
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com/public_html
-```
-
-**Nota**: Si el directorio tiene un nombre diferente, verifica con:
-```bash
-cd ~/domains
-ls -la
-# Busca el directorio que corresponda a tu dominio
-```
-
-### Paso 3: Verificar si es un repositorio Git
+### Paso 2: Verificar si es un repositorio Git
 ```bash
 git status
 ```
@@ -68,10 +57,7 @@ git pull origin main
 ⚠️ **ADVERTENCIA**: Esto sobrescribirá los archivos existentes si ya los tienes.
 
 ```bash
-# 1. Ir al directorio padre
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
-
-# 2. Hacer backup de los archivos existentes (si los hay)
+# 1. Hacer backup de los archivos existentes (si los hay)
 # Si tienes archivos importantes, haz backup primero:
 # tar -czf backup-$(date +%Y%m%d).tar.gz public_html/
 
@@ -112,12 +98,9 @@ git pull origin main
 
 ## Comandos Rápidos (Todo en uno)
 
-Si estás seguro de que el directorio correcto es `/home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com`:
+Comandos rápidos (asumiendo que ya estás en el directorio correcto):
 
 ```bash
-# Navegar al directorio
-cd /home/u655097049/domains/ghostwhite-parrot-934435.hostingersite.com
-
 # Verificar si es git
 if [ -d .git ]; then
     echo "✅ Es un repositorio Git"

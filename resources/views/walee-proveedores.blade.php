@@ -124,7 +124,7 @@
             <!-- Options Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                 <!-- Clientes Activos -->
-                <a href="{{ route('walee.clientes.activos') }}" class="option-card group relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 p-3 sm:p-5 lg:p-8 hover:border-emerald-400/50 hover:from-emerald-500/15 hover:to-emerald-600/10 transition-all duration-500">
+                <a href="{{ route('walee.proveedores.activos') }}" class="option-card group relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 p-3 sm:p-5 lg:p-8 hover:border-emerald-400/50 hover:from-emerald-500/15 hover:to-emerald-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl transform translate-x-10 sm:translate-x-16 lg:translate-x-20 -translate-y-10 sm:-translate-y-16 lg:-translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative flex items-center gap-3 sm:gap-4 lg:gap-6">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-lg sm:rounded-xl lg:rounded-2xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
@@ -169,7 +169,7 @@
                 </a>
                 
                 <!-- Clientes en Proceso -->
-                <a href="{{ route('walee.clientes.proceso') }}" class="option-card group relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-3 sm:p-5 lg:p-8 hover:border-amber-400/50 hover:from-amber-500/15 hover:to-amber-600/10 transition-all duration-500">
+                <a href="{{ route('walee.proveedores.proceso') }}" class="option-card group relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-3 sm:p-5 lg:p-8 hover:border-amber-400/50 hover:from-amber-500/15 hover:to-amber-600/10 transition-all duration-500">
                     <div class="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-amber-500/10 rounded-full blur-3xl transform translate-x-10 sm:translate-x-16 lg:translate-x-20 -translate-y-10 sm:-translate-y-16 lg:-translate-y-20 group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative flex items-center gap-3 sm:gap-4 lg:gap-6">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-lg sm:rounded-xl lg:rounded-2xl bg-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">

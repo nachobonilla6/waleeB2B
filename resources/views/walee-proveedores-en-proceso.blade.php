@@ -261,7 +261,7 @@
             <div class="mb-3">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm">
                     <div class="flex gap-2 items-center">
-                        <form method="GET" action="{{ route('walee.clientes.proceso') }}" class="flex gap-2 flex-1">
+                        <form method="GET" action="{{ route('walee.proveedores.proceso') }}" class="flex gap-2 flex-1">
                             <div class="relative flex-1">
                                 <input 
                                     type="text" 
@@ -285,7 +285,7 @@
                                 <option value="pt" {{ $idiomaFilter == 'pt' ? 'selected' : '' }}>🇵🇹 Português</option>
                             </select>
                             @if(request()->get('search') || $idiomaFilter)
-                                <a href="{{ route('walee.clientes.proceso') }}" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
+                                <a href="{{ route('walee.proveedores.proceso') }}" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg transition-all flex items-center gap-1.5 text-xs">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>

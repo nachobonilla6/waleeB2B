@@ -257,17 +257,10 @@
                                                 if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
                                                     $qrUrl = $qrPath;
                                                 } else {
-                                                    // Si el path incluye 'qr/', extraer el nombre del archivo
-                                                    if (strpos($qrPath, 'qr/') !== false) {
-                                                        $filename = basename($qrPath);
-                                                        // Construir URL directamente para QR (está en subdirectorio)
-                                                        $qrUrl = asset('storage/productos-super/qr/' . $filename);
-                                                    } else {
-                                                        // Extraer solo el nombre del archivo
-                                                        $filename = basename($qrPath);
-                                                        // Usar la ruta definida en routes/web.php
-                                                        $qrUrl = route('storage.productos-super', ['filename' => $filename]);
-                                                    }
+                                                    // Extraer solo el nombre del archivo
+                                                    $filename = basename($qrPath);
+                                                    // Usar la ruta definida para QR
+                                                    $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
                                                 }
                                             @endphp
                                             <img 

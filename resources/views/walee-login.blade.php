@@ -77,10 +77,10 @@
         </div>
         
         <!-- Login Card -->
-        <div class="relative w-full max-w-md animate-fade-in-up">
-            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl shadow-xl dark:shadow-none p-8 sm:p-10">
+        <div class="relative w-full max-w-md lg:max-w-2xl animate-fade-in-up">
+            <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl shadow-xl dark:shadow-none p-8 sm:p-10 lg:p-12 lg:py-8">
                 <!-- Logo and Title -->
-                <div class="text-center mb-8">
+                <div class="text-center mb-6 lg:mb-6">
                     <div class="inline-flex items-center justify-center mb-4">
                         <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl walee-gradient flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
                             <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee B2B" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover">
@@ -113,7 +113,7 @@
                 @endif
                 
                 <!-- Login Form -->
-                <form method="POST" action="{{ route('login.store') }}" class="space-y-6">
+                <form method="POST" action="{{ route('login.store') }}" class="space-y-5 lg:space-y-4">
                     @csrf
                     
                     <!-- Email -->

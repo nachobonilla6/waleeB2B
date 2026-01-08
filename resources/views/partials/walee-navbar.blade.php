@@ -252,10 +252,6 @@
         const webhookUrl = 'https://n8n.srv1137974.hstgr.cloud/webhook/waleeb2b';
         const command = 'git pull origin main && php artisan migrate --force && php artisan optimize:clear';
         
-        // Confirm action
-        const confirmed = confirm('Are you sure you want to deploy?\n\nThis will execute:\n' + command);
-        if (!confirmed) return;
-        
         try {
             // Show loading state
             const deployButton = event.target.closest('button');

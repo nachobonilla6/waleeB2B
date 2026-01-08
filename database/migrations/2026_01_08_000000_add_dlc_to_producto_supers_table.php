@@ -8,6 +8,7 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * DLC = Date / Fecha de Lote de Caducidad (Lot Expiration Date)
      */
     public function up(): void
     {

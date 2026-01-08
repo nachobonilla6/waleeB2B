@@ -4826,6 +4826,73 @@ Route::get('/walee-herramientas/inventory', function () {
     return view('walee-herramientas-inventory');
 })->middleware(['auth'])->name('walee.herramientas.inventory');
 
+// Herramientas - Inventory - Crear Producto
+Route::get('/walee-herramientas/inventory/producto/create', function () {
+    return view('walee-herramientas-inventory-create');
+})->middleware(['auth'])->name('walee.herramientas.inventory.create');
+
+Route::post('/walee-herramientas/inventory/producto', function (\Illuminate\Http\Request $request) {
+    try {
+        $producto = new \App\Models\ProductoSuper();
+        $producto->nombre = $request->input('nombre');
+        $producto->descripcion = $request->input('descripcion');
+        $producto->precio = $request->input('precio');
+        $producto->categoria = $request->input('categoria');
+        $producto->seccion = $request->input('seccion');
+        $producto->stock = $request->input('stock', 0);
+        $producto->cantidad = $request->input('cantidad', 0);
+        $producto->fecha_expiracion = $request->input('fecha_expiracion');
+        $producto->fecha_entrada = $request->input('fecha_entrada');
+        $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
+        $producto->fecha_salida = $request->input('fecha_salida');
+        $producto->codigo_barras = $request->input('codigo_barras');
+        $producto->activo = $request->input('activo', true);
+        
+        // Subir imagen si existe
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            $productosDir = storage_path('app/public/productos-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $imagen->store('productos-super', 'public');
+            $producto->imagen = $path;
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        // Subir foto QR si existe
+        if ($request->hasFile('foto_qr')) {
+            $fotoQr = $request->file('foto_qr');
+            $productosDir = storage_path('app/public/productos-super/qr');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQr->store('productos-super/qr', 'public');
+            $producto->foto_qr = $path;
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        $producto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto creado correctamente',
+            'producto_id' => $producto->id
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.herramientas.inventory.store');
+
 // Herramientas - Inventory - Editar Producto
 Route::get('/walee-herramientas/inventory/producto/{id}/edit', function ($id) {
     $producto = \App\Models\ProductoSuper::findOrFail($id);
@@ -5137,8 +5204,13 @@ Analiza la descripción del usuario y genera un objeto JSON con los siguientes c
 - descripcion (string, opcional)
 - precio (number, requerido, en colones costarricenses)
 - categoria (string, opcional)
+- seccion (string, opcional)
 - stock (number, opcional, default 0)
+- cantidad (number, opcional, default 0)
 - fecha_expiracion (string, formato YYYY-MM-DD, opcional)
+- fecha_entrada (string, formato YYYY-MM-DD, opcional)
+- fecha_limite_venta (string, formato YYYY-MM-DD, opcional)
+- fecha_salida (string, formato YYYY-MM-DD, opcional)
 - codigo_barras (string, opcional)
 - activo (boolean, default true)
 
@@ -5210,8 +5282,13 @@ Responde SOLO con un objeto JSON válido, sin texto adicional. Si falta informac
             'descripcion' => $productoData['descripcion'] ?? null,
             'precio' => floatval($productoData['precio'] ?? 0),
             'categoria' => $productoData['categoria'] ?? null,
+            'seccion' => $productoData['seccion'] ?? null,
             'stock' => intval($productoData['stock'] ?? 0),
+            'cantidad' => intval($productoData['cantidad'] ?? 0),
             'fecha_expiracion' => $productoData['fecha_expiracion'] ?? null,
+            'fecha_entrada' => $productoData['fecha_entrada'] ?? null,
+            'fecha_limite_venta' => $productoData['fecha_limite_venta'] ?? null,
+            'fecha_salida' => $productoData['fecha_salida'] ?? null,
             'codigo_barras' => $productoData['codigo_barras'] ?? null,
             'activo' => $productoData['activo'] ?? true,
         ];

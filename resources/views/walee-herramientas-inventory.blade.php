@@ -446,9 +446,9 @@
             window.location.href = `/walee-herramientas/inventory/producto/${id}/edit`;
         }
         
-        // Create Producto Modal
+        // Create Producto - redirect to create page
         function openCreateProductoModal() {
-            window.location.href = '/walee-productos-super';
+            window.location.href = '{{ route("walee.herramientas.inventory.create") }}';
         }
         
         // Delete Producto

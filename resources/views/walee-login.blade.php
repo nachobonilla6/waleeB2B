@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full" id="html-root">
+<html lang="en" class="h-full" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Walee B2B - Iniciar Sesión</title>
-    <meta name="description" content="Inicia sesión en Walee B2B">
+    <title>Walee B2B - Sign In</title>
+    <meta name="description" content="Sign in to Walee B2B">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -90,7 +90,7 @@
                         Walee B2B
                     </h1>
                     <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
-                        Inicia sesión en tu cuenta
+                        Sign in to your account
                     </p>
                 </div>
                 
@@ -119,7 +119,7 @@
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                            Correo electrónico
+                            Email
                         </label>
                         <input 
                             type="email" 
@@ -129,7 +129,7 @@
                             required 
                             autofocus
                             autocomplete="email"
-                            placeholder="tu@email.com"
+                            placeholder="your@email.com"
                             class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:border-walee-500 focus:ring-2 focus:ring-walee-500/20 focus:outline-none transition-all"
                         >
                     </div>
@@ -138,11 +138,11 @@
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <label for="password" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Contraseña
+                                Password
                             </label>
                             @if (Route::has('password.request'))
                                 <a href="{{ route('password.request') }}" class="text-sm text-walee-600 dark:text-walee-400 hover:text-walee-700 dark:hover:text-walee-300 transition-colors">
-                                    ¿Olvidaste tu contraseña?
+                                    Forgot your password?
                                 </a>
                             @endif
                         </div>
@@ -182,7 +182,7 @@
                             class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-walee-500 focus:ring-walee-500 focus:ring-2"
                         >
                         <label for="remember" class="ml-2 text-sm text-slate-700 dark:text-slate-300">
-                            Recordarme
+                            Remember me
                         </label>
                     </div>
                     
@@ -191,7 +191,7 @@
                         type="submit"
                         class="w-full px-6 py-3 rounded-xl walee-gradient text-white font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                        Iniciar sesión
+                        Sign in
                     </button>
                 </form>
                 
@@ -199,9 +199,9 @@
                 @if (Route::has('register'))
                     <div class="mt-6 text-center">
                         <p class="text-sm text-slate-600 dark:text-slate-400">
-                            ¿No tienes una cuenta? 
+                            Don't have an account? 
                             <a href="{{ route('register') }}" class="text-walee-600 dark:text-walee-400 hover:text-walee-700 dark:hover:text-walee-300 font-medium transition-colors">
-                                Regístrate
+                                Sign up
                             </a>
                         </p>
                     </div>

@@ -492,8 +492,8 @@
         }
         
         async function editProducto(id) {
-            // Redirigir a walee-productos-super con el ID del producto
-            window.location.href = `/walee-productos-super?edit=${id}`;
+            // Redirigir a la página de edición de inventory
+            window.location.href = `/walee-herramientas/inventory/producto/${id}/edit`;
         }
         
         function showProductModal(producto = null) {

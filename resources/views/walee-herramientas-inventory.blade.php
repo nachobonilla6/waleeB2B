@@ -234,9 +234,8 @@
                     <table class="w-full">
                         <thead class="bg-slate-100 dark:bg-slate-900/50">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Product</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Name</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Category</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Photo</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Product Name</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Quantity</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Stock</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Entry Date</th>
@@ -265,7 +264,7 @@
                                         }
                                     }
                                 @endphp
-                                <tr class="producto-row hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" 
+                                <tr class="producto-row hover:bg-slate-50 dark:hover:bg-slate-800/50" 
                                     data-nombre="{{ strtolower($producto->nombre) }}"
                                     data-categoria="{{ strtolower($producto->categoria ?? '') }}"
                                     data-stock="{{ $producto->stock }}"
@@ -273,66 +272,61 @@
                                     data-expira-pronto="{{ $expiraProntoData ? '1' : '0' }}"
                                 >
                                     <td class="px-4 py-3">
-                                        <div class="flex flex-col gap-2">
-                                            @if($producto->imagen)
-                                                @php
-                                                    $imagenPath = trim($producto->imagen);
+                                        @if($producto->imagen)
+                                            @php
+                                                $imagenPath = trim($producto->imagen);
+                                                
+                                                // Si ya es una URL completa, usarla
+                                                if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                                    $imagenUrl = $imagenPath;
+                                                } else {
+                                                    // El path almacenado puede ser "productos-super/imagen.jpg" o solo "imagen.jpg"
+                                                    // Extraer solo el nombre del archivo
+                                                    $filename = basename($imagenPath);
                                                     
-                                                    // Si ya es una URL completa, usarla
-                                                    if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
-                                                        $imagenUrl = $imagenPath;
-                                                    } else {
-                                                        // El path almacenado puede ser "productos-super/imagen.jpg" o solo "imagen.jpg"
-                                                        // Extraer solo el nombre del archivo
-                                                        $filename = basename($imagenPath);
-                                                        
-                                                        // Verificar si el archivo existe físicamente
-                                                        $fullPath = storage_path('app/public/productos-super/' . $filename);
-                                                        $fileExists = file_exists($fullPath);
-                                                        
-                                                        // Si no existe con el nombre directo, intentar con el path completo
-                                                        if (!$fileExists && strpos($imagenPath, 'productos-super/') !== false) {
-                                                            // El path ya incluye el directorio, verificar directamente
-                                                            $fullPathAlt = storage_path('app/public/' . $imagenPath);
-                                                            if (file_exists($fullPathAlt)) {
-                                                                $fileExists = true;
-                                                            }
-                                                        }
-                                                        
-                                                        // Construir URL - intentar primero con la ruta definida
-                                                        // Si el path incluye el directorio completo, usar asset() directamente
-                                                        if (strpos($imagenPath, 'productos-super/') === 0) {
-                                                            // El path ya incluye el directorio, usar asset() directamente
-                                                            $imagenUrl = asset('storage/' . $imagenPath);
-                                                        } else {
-                                                            // Usar la ruta definida con solo el nombre del archivo
-                                                            $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                                    // Verificar si el archivo existe físicamente
+                                                    $fullPath = storage_path('app/public/productos-super/' . $filename);
+                                                    $fileExists = file_exists($fullPath);
+                                                    
+                                                    // Si no existe con el nombre directo, intentar con el path completo
+                                                    if (!$fileExists && strpos($imagenPath, 'productos-super/') !== false) {
+                                                        // El path ya incluye el directorio, verificar directamente
+                                                        $fullPathAlt = storage_path('app/public/' . $imagenPath);
+                                                        if (file_exists($fullPathAlt)) {
+                                                            $fileExists = true;
                                                         }
                                                     }
-                                                @endphp
-                                                <img 
-                                                    src="{{ $imagenUrl }}" 
-                                                    alt="{{ $producto->nombre }}" 
-                                                    class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600"
-                                                    loading="lazy"
-                                                    onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Path DB:', '{{ $imagenPath }}', 'Filename:', '{{ $filename ?? 'N/A' }}', 'URL:', this.src, 'File exists:', {{ $fileExists ?? false ? 'true' : 'false' }}); this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                                >
-                                                <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center hidden">
-                                                    <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                    </svg>
-                                                </div>
-                                                @if($producto->brand)
-                                                    <div class="text-xs font-medium text-slate-700 dark:text-slate-300 mt-1">{{ $producto->brand }}</div>
-                                                @endif
-                                            @else
-                                                <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                                                    <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                    </svg>
-                                                </div>
-                                            @endif
-                                        </div>
+                                                    
+                                                    // Construir URL - intentar primero con la ruta definida
+                                                    // Si el path incluye el directorio completo, usar asset() directamente
+                                                    if (strpos($imagenPath, 'productos-super/') === 0) {
+                                                        // El path ya incluye el directorio, usar asset() directamente
+                                                        $imagenUrl = asset('storage/' . $imagenPath);
+                                                    } else {
+                                                        // Usar la ruta definida con solo el nombre del archivo
+                                                        $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                                    }
+                                                }
+                                            @endphp
+                                            <img 
+                                                src="{{ $imagenUrl }}" 
+                                                alt="{{ $producto->nombre }}" 
+                                                class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600"
+                                                loading="lazy"
+                                                onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Path DB:', '{{ $imagenPath }}', 'Filename:', '{{ $filename ?? 'N/A' }}', 'URL:', this.src, 'File exists:', {{ $fileExists ?? false ? 'true' : 'false' }}); this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                            >
+                                            <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center hidden">
+                                                <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                        @else
+                                            <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                                                <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex flex-col gap-2">
@@ -398,9 +392,6 @@
                                                 @endif
                                             </div>
                                         </div>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="text-sm font-medium text-slate-900 dark:text-white">{{ $producto->cantidad ?? 0 }}</span>

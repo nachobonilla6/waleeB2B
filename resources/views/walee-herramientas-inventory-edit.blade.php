@@ -403,16 +403,21 @@
                                             if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
                                                 $qrUrl = $qrPath;
                                             } else {
-                                                // Usar asset() para acceso público directo
-                                                if (str_starts_with($qrPath, 'storage/')) {
-                                                    $qrUrl = asset($qrPath);
+                                                // Extraer solo el nombre del archivo
+                                                $filename = basename($qrPath);
+                                                
+                                                // Si el path contiene 'qr', usar la ruta específica para QR
+                                                if (strpos($qrPath, 'productos-super/qr/') !== false || strpos($qrPath, 'qr/') !== false) {
+                                                    // Usar la ruta específica para QR
+                                                    $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
                                                 } else {
-                                                    $qrUrl = asset('storage/' . $qrPath);
+                                                    // Si solo tiene el nombre del archivo, asumir que está en qr/
+                                                    $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
                                                 }
                                             }
                                         @endphp
                                         <div class="mt-2 relative inline-block">
-                                            <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                                            <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview" onerror="console.error('Error loading QR image:', this.src); this.style.display='none';">
                                             <button 
                                                 type="button"
                                                 onclick="removeFotoQr()"

@@ -108,6 +108,120 @@ Route::get('/storage/productos/{filename}', function ($filename) {
 
 // Ruta para servir imágenes de productos super (PÚBLICA - sin autenticación)
 // Esta ruta debe estar ANTES de cualquier middleware que pueda bloquearla
+// Ruta para servir imágenes QR de productos super
+Route::get('/storage/productos-super/qr/{filename}', function ($filename) {
+    try {
+        // Limpiar el nombre del archivo para seguridad
+        $originalFilename = $filename;
+        $filename = basename($filename);
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
+        
+        if (empty($filename)) {
+            \Log::error('Nombre de archivo QR inválido después de limpieza', [
+                'original' => $originalFilename,
+                'cleaned' => $filename
+            ]);
+            abort(404, 'Nombre de archivo inválido');
+        }
+        
+        // Buscar el archivo en el directorio productos-super/qr
+        $path = storage_path('app/public/productos-super/qr/' . $filename);
+        
+        \Log::info('Buscando archivo QR de producto super', [
+            'original_filename' => $originalFilename,
+            'cleaned_filename' => $filename,
+            'path' => $path,
+            'path_exists' => file_exists($path),
+            'is_file' => is_file($path),
+            'is_readable' => is_readable($path),
+            'directory_exists' => is_dir(dirname($path))
+        ]);
+        
+        // Verificar que el archivo existe
+        if (!file_exists($path)) {
+            \Log::warning('Archivo QR de producto super no encontrado', [
+                'filename' => $filename,
+                'path' => $path,
+                'directory_exists' => is_dir(dirname($path)),
+                'directory_readable' => is_readable(dirname($path))
+            ]);
+            abort(404, 'Archivo QR no encontrado: ' . $filename);
+        }
+        
+        if (!is_file($path)) {
+            \Log::warning('Path QR no es un archivo', [
+                'filename' => $filename,
+                'path' => $path
+            ]);
+            abort(404, 'No es un archivo: ' . $filename);
+        }
+        
+        if (!is_readable($path)) {
+            \Log::error('Archivo QR no es legible (permisos)', [
+                'filename' => $filename,
+                'path' => $path,
+                'permissions' => substr(sprintf('%o', fileperms($path)), -4)
+            ]);
+            abort(500, 'Archivo QR no legible: ' . $filename);
+        }
+        
+        // Leer el archivo
+        $file = @file_get_contents($path);
+        if ($file === false) {
+            \Log::error('No se pudo leer el archivo QR', [
+                'filename' => $filename,
+                'path' => $path,
+                'error' => error_get_last()
+            ]);
+            abort(500, 'Error al leer archivo QR');
+        }
+        
+        // Obtener el tipo MIME
+        $type = 'image/jpeg'; // Default
+        if (function_exists('mime_content_type')) {
+            $detectedType = @mime_content_type($path);
+            if ($detectedType !== false) {
+                $type = $detectedType;
+            }
+        } elseif (function_exists('finfo_file')) {
+            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $detectedType = @finfo_file($finfo, $path);
+                if ($detectedType !== false) {
+                    $type = $detectedType;
+                }
+                @finfo_close($finfo);
+            }
+        }
+        
+        // Obtener el tamaño del archivo
+        $fileSize = @filesize($path);
+        if ($fileSize === false) {
+            $fileSize = strlen($file);
+        }
+        
+        \Log::info('Archivo QR de producto super servido correctamente', [
+            'filename' => $filename,
+            'size' => $fileSize,
+            'type' => $type
+        ]);
+        
+        return response($file, 200)
+            ->header('Content-Type', $type)
+            ->header('Content-Length', $fileSize)
+            ->header('Cache-Control', 'public, max-age=31536000')
+            ->header('Expires', gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
+    } catch (\Exception $e) {
+        \Log::error('Error sirviendo archivo QR de producto super', [
+            'filename' => $filename ?? 'unknown',
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        abort(500, 'Error al servir archivo QR');
+    }
+})->name('storage.productos-super.qr');
+
+// Esta ruta debe estar ANTES de cualquier middleware que pueda bloquearla
 Route::get('/storage/productos-super/{filename}', function ($filename) {
     try {
         // Limpiar el nombre del archivo para seguridad

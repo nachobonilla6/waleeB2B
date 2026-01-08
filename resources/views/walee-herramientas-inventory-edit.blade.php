@@ -978,104 +978,115 @@
             }
         }
         
-        async function saveProducto() {
-            const formData = new FormData();
-            formData.append('_method', 'PUT');
-            formData.append('nombre', document.getElementById('productoNombre').value);
-            formData.append('descripcion', document.getElementById('productoDescripcion').value);
-            formData.append('precio', document.getElementById('productoPrecio').value);
-            formData.append('categoria', document.getElementById('productoCategoria').value);
-            formData.append('brand', document.getElementById('productoBrand')?.value || '');
-            const seccionSelect = document.getElementById('productoSeccion');
-            formData.append('seccion', seccionSelect.value);
-            formData.append('stock', document.getElementById('productoStock').value);
-            formData.append('cantidad', document.getElementById('productoCantidad').value);
-            formData.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
-            formData.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
-            formData.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
-            formData.append('fecha_salida', document.getElementById('productoFechaSalida').value);
-            formData.append('dlc', document.getElementById('productoDlc').value);
-            formData.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
-            formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
-            
-            const imagenFile = document.getElementById('productoImagen').files[0];
-            if (imagenFile) {
-                formData.append('imagen', imagenFile);
-            }
-            
-            const fotoQrFile = document.getElementById('productoFotoQr').files[0];
-            if (fotoQrFile) {
-                formData.append('foto_qr', fotoQrFile);
-            }
-            
-            // Agregar flags para remover fotos
-            const removeImagenInput = document.getElementById('removeImagen');
-            if (removeImagenInput) {
-                formData.append('remove_imagen', removeImagenInput.value);
-            }
-            
-            const removeFotoQrInput = document.getElementById('removeFotoQr');
-            if (removeFotoQrInput) {
-                formData.append('remove_foto_qr', removeFotoQrInput.value);
-            }
-            
-            try {
-                const response = await fetch(`/walee-herramientas/inventory/producto/${productoId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });
+        async function saveProducto(silent = false) {
+            return new Promise(async (resolve, reject) => {
+                const formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('nombre', document.getElementById('productoNombre').value);
+                formData.append('descripcion', document.getElementById('productoDescripcion').value);
+                formData.append('precio', document.getElementById('productoPrecio').value);
+                formData.append('categoria', document.getElementById('productoCategoria').value);
+                formData.append('brand', document.getElementById('productoBrand')?.value || '');
+                const seccionSelect = document.getElementById('productoSeccion');
+                formData.append('seccion', seccionSelect.value);
+                formData.append('stock', document.getElementById('productoStock').value);
+                formData.append('cantidad', document.getElementById('productoCantidad').value);
+                formData.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
+                formData.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
+                formData.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
+                formData.append('fecha_salida', document.getElementById('productoFechaSalida').value);
+                formData.append('dlc', document.getElementById('productoDlc').value);
+                formData.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
+                formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
                 
-                const data = await response.json();
-                
-                if (data.success) {
-                    Swal.fire({
-                        ...getSwalTheme(),
-                        html: `
-                            <div class="flex flex-col items-center justify-center gap-4 py-4">
-                                <div class="w-20 h-20 rounded-2xl walee-gradient flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
-                                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee B2B" class="w-16 h-16 rounded-xl object-cover">
-                                </div>
-                                <div class="text-center">
-                                    <h2 class="text-2xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent mb-2">
-                                        Walee B2B
-                                    </h2>
-                                    <p class="text-slate-700 dark:text-slate-300 text-lg">
-                                        Product updated successfully
-                                    </p>
-                                </div>
-                            </div>
-                        `,
-                        icon: false,
-                        timer: 2000,
-                        showConfirmButton: false,
-                        customClass: {
-                            popup: 'swal2-popup-custom'
-                        }
-                    }).then(() => {
-                        // Recargar la página de edición para mostrar los cambios actualizados
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        ...getSwalTheme(),
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.message || 'Error updating product'
-                    });
+                const imagenFile = document.getElementById('productoImagen').files[0];
+                if (imagenFile) {
+                    formData.append('imagen', imagenFile);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    ...getSwalTheme(),
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error updating product'
-                });
-            }
+                
+                const fotoQrFile = document.getElementById('productoFotoQr').files[0];
+                if (fotoQrFile) {
+                    formData.append('foto_qr', fotoQrFile);
+                }
+                
+                // Agregar flags para remover fotos
+                const removeImagenInput = document.getElementById('removeImagen');
+                if (removeImagenInput) {
+                    formData.append('remove_imagen', removeImagenInput.value);
+                }
+                
+                const removeFotoQrInput = document.getElementById('removeFotoQr');
+                if (removeFotoQrInput) {
+                    formData.append('remove_foto_qr', removeFotoQrInput.value);
+                }
+                
+                try {
+                    const response = await fetch(`/walee-herramientas/inventory/producto/${productoId}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        if (!silent) {
+                            Swal.fire({
+                                ...getSwalTheme(),
+                                html: `
+                                    <div class="flex flex-col items-center justify-center gap-4 py-4">
+                                        <div class="w-20 h-20 rounded-2xl walee-gradient flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
+                                            <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee B2B" class="w-16 h-16 rounded-xl object-cover">
+                                        </div>
+                                        <div class="text-center">
+                                            <h2 class="text-2xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent mb-2">
+                                                Walee B2B
+                                            </h2>
+                                            <p class="text-slate-700 dark:text-slate-300 text-lg">
+                                                Product updated successfully
+                                            </p>
+                                        </div>
+                                    </div>
+                                `,
+                                icon: false,
+                                timer: 2000,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'swal2-popup-custom'
+                                }
+                            }).then(() => {
+                                // Recargar la página de edición para mostrar los cambios actualizados
+                                window.location.reload();
+                            });
+                        }
+                        resolve(data);
+                    } else {
+                        if (!silent) {
+                            Swal.fire({
+                                ...getSwalTheme(),
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Error updating product'
+                            });
+                        }
+                        reject(new Error(data.message || 'Error updating product'));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    if (!silent) {
+                        Swal.fire({
+                            ...getSwalTheme(),
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error updating product'
+                        });
+                    }
+                    reject(error);
+                }
+            });
         }
         
         // Preview de imágenes

@@ -489,6 +489,61 @@
             statusText.textContent = checkbox.checked ? 'Active' : 'Inactive';
         }
         
+        function toggleSectionDropdown() {
+            const dropdown = document.getElementById('sectionDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+        
+        function selectSection(value) {
+            const seccionSelect = document.getElementById('productoSeccion');
+            const sectionBadge = document.getElementById('sectionBadge');
+            const sectionBadgeText = document.getElementById('sectionBadgeText');
+            const dropdown = document.getElementById('sectionDropdown');
+            const seccionCustomInput = document.getElementById('productoSeccionCustom');
+            
+            if (seccionSelect && sectionBadge && sectionBadgeText) {
+                seccionSelect.value = value;
+                
+                if (value === 'Other') {
+                    // Mostrar input personalizado
+                    if (!seccionCustomInput) {
+                        const container = document.getElementById('sectionBadgeContainer');
+                        const customInput = document.createElement('input');
+                        customInput.type = 'text';
+                        customInput.id = 'productoSeccionCustom';
+                        customInput.placeholder = 'Custom section';
+                        customInput.className = 'mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent';
+                        customInput.oninput = function() {
+                            updateSectionBadge();
+                        };
+                        container.appendChild(customInput);
+                    } else {
+                        seccionCustomInput.style.display = 'block';
+                    }
+                    sectionBadgeText.textContent = 'Other';
+                } else if (value === '') {
+                    sectionBadgeText.textContent = 'Select Section';
+                    sectionBadge.classList.add('opacity-50');
+                    if (seccionCustomInput) {
+                        seccionCustomInput.style.display = 'none';
+                    }
+                } else {
+                    sectionBadgeText.textContent = value;
+                    sectionBadge.classList.remove('opacity-50');
+                    if (seccionCustomInput) {
+                        seccionCustomInput.style.display = 'none';
+                    }
+                }
+                
+                // Cerrar dropdown
+                if (dropdown) {
+                    dropdown.classList.add('hidden');
+                }
+            }
+        }
+        
         function updateSectionBadge() {
             const seccionSelect = document.getElementById('productoSeccion');
             const seccionCustomInput = document.getElementById('productoSeccionCustom');
@@ -498,38 +553,37 @@
             if (seccionSelect && sectionBadge && sectionBadgeText) {
                 let seccionValue = '';
                 
-                if (seccionSelect.value === 'Other') {
-                    // Mostrar input personalizado si no existe
-                    if (!seccionCustomInput) {
-                        const container = seccionSelect.parentElement;
-                        const customInput = document.createElement('input');
-                        customInput.type = 'text';
-                        customInput.id = 'productoSeccionCustom';
-                        customInput.placeholder = 'Custom section';
-                        customInput.className = 'mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent';
-                        customInput.oninput = updateSectionBadge;
-                        container.appendChild(customInput);
+                if (seccionSelect.value === 'Other' && seccionCustomInput) {
+                    seccionValue = seccionCustomInput.value.trim();
+                    if (seccionValue) {
+                        sectionBadgeText.textContent = seccionValue;
+                        sectionBadge.classList.remove('opacity-50');
                     } else {
-                        seccionCustomInput.style.display = 'block';
+                        sectionBadgeText.textContent = 'Other';
                     }
-                    seccionValue = seccionCustomInput ? seccionCustomInput.value.trim() : '';
                 } else {
                     seccionValue = seccionSelect.value.trim();
-                    // Ocultar input personalizado si no es "Other"
-                    if (seccionCustomInput) {
-                        seccionCustomInput.style.display = 'none';
+                    if (seccionValue) {
+                        sectionBadgeText.textContent = seccionValue;
+                        sectionBadge.classList.remove('opacity-50');
+                    } else {
+                        sectionBadgeText.textContent = 'Select Section';
+                        sectionBadge.classList.add('opacity-50');
                     }
-                }
-                
-                // Actualizar badge
-                if (seccionValue) {
-                    sectionBadgeText.textContent = seccionValue;
-                    sectionBadge.classList.remove('hidden');
-                } else {
-                    sectionBadge.classList.add('hidden');
                 }
             }
         }
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('sectionDropdown');
+            const badge = document.getElementById('sectionBadge');
+            const container = document.getElementById('sectionBadgeContainer');
+            
+            if (dropdown && badge && container && !container.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
         
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {

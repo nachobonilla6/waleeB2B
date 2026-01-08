@@ -207,29 +207,32 @@
                                                     // Extraer solo el nombre del archivo
                                                     $filename = basename($imagenPath);
                                                     
-                                                    // Intentar múltiples métodos para construir la URL
-                                                    // Método 1: Usar la ruta definida (preferido)
-                                                    $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
-                                                    
-                                                    // Verificar si el archivo existe físicamente para debugging
+                                                    // Verificar si el archivo existe físicamente
                                                     $fullPath = storage_path('app/public/productos-super/' . $filename);
                                                     $fileExists = file_exists($fullPath);
                                                     
-                                                    // Si el archivo no existe, intentar con el path completo
-                                                    if (!$fileExists && strpos($imagenPath, 'productos-super/') === false) {
-                                                        // Si el path no incluye el directorio, intentar agregarlo
-                                                        $fullPathAlt = storage_path('app/public/productos-super/' . $imagenPath);
+                                                    // Si no existe con el nombre directo, intentar con el path completo
+                                                    if (!$fileExists && strpos($imagenPath, 'productos-super/') !== false) {
+                                                        // El path ya incluye el directorio, verificar directamente
+                                                        $fullPathAlt = storage_path('app/public/' . $imagenPath);
                                                         if (file_exists($fullPathAlt)) {
-                                                            $imagenUrl = route('storage.productos-super', ['filename' => basename($fullPathAlt)]);
+                                                            $fileExists = true;
                                                         }
                                                     }
+                                                    
+                                                    // Construir URL usando la ruta definida
+                                                    $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                                    
+                                                    // Si la ruta no funciona, usar Storage::url como fallback
+                                                    // Pero primero intentar con la ruta definida
                                                 }
                                             @endphp
                                             <img 
                                                 src="{{ $imagenUrl }}" 
                                                 alt="{{ $producto->nombre }}" 
                                                 class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600"
-                                                onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Path DB:', '{{ $imagenPath }}', 'Filename:', '{{ $filename ?? 'N/A' }}', 'URL:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                                loading="lazy"
+                                                onerror="console.error('Error cargando imagen:', '{{ $producto->nombre }}', 'Path DB:', '{{ $imagenPath }}', 'Filename:', '{{ $filename ?? 'N/A' }}', 'URL:', this.src, 'File exists:', {{ $fileExists ?? false ? 'true' : 'false' }}); this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                             >
                                             <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center hidden">
                                                 <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

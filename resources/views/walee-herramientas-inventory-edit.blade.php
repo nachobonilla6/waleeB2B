@@ -786,21 +786,66 @@
             try {
                 // Esperar a que la librería QRCode esté cargada
                 let retries = 0;
-                const maxRetries = 50; // 5 segundos máximo
+                const maxRetries = 60; // 6 segundos máximo
                 
                 while ((typeof QRCode === 'undefined' || !window.QRCodeLoaded) && retries < maxRetries) {
+                    // Si hay un error de carga, no seguir intentando
+                    if (window.QRCodeLoadError) {
+                        throw new Error('QRCode library failed to load from all CDN sources. Please check your internet connection and refresh the page.');
+                    }
                     await new Promise(resolve => setTimeout(resolve, 100));
                     retries++;
                 }
                 
                 // Verificar que la librería QRCode esté cargada
                 if (typeof QRCode === 'undefined') {
-                    // Intentar cargar manualmente si aún no está disponible
+                    // Si hay un error de carga conocido, mostrar mensaje específico
+                    if (window.QRCodeLoadError) {
+                        throw new Error('QRCode library failed to load from all CDN sources. Please check your internet connection and refresh the page.');
+                    }
+                    
+                    // Intentar cargar manualmente como último recurso
                     if (!window.QRCodeLoading) {
                         window.QRCodeLoading = true;
-                        const script = document.createElement('script');
-                        script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-                        script.async = true;
+                        const fallbackUrls = [
+                            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+                            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js'
+                        ];
+                        
+                        let loaded = false;
+                        for (const url of fallbackUrls) {
+                            try {
+                                const script = document.createElement('script');
+                                script.src = url;
+                                script.async = true;
+                                script.crossOrigin = 'anonymous';
+                                await new Promise((resolve, reject) => {
+                                    script.onload = () => {
+                                        if (typeof QRCode !== 'undefined') {
+                                            loaded = true;
+                                            resolve();
+                                        } else {
+                                            reject(new Error('QRCode not defined after load'));
+                                        }
+                                    };
+                                    script.onerror = reject;
+                                    document.head.appendChild(script);
+                                });
+                                if (loaded) break;
+                            } catch (e) {
+                                console.warn('Failed to load from:', url, e);
+                            }
+                        }
+                        window.QRCodeLoading = false;
+                    } else {
+                        // Esperar un poco más si ya se está cargando
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                    
+                    if (typeof QRCode === 'undefined') {
+                        throw new Error('QRCode library failed to load. Please check your internet connection and refresh the page.');
+                    }
+                }
                         await new Promise((resolve, reject) => {
                             script.onload = () => {
                                 window.QRCodeLoaded = true;

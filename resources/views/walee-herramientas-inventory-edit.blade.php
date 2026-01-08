@@ -12,6 +12,7 @@
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -268,6 +269,102 @@
                             Codes & Images
                         </h2>
                         <div class="space-y-4">
+                            <!-- Desktop: Foto y QR en la misma línea -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <!-- Product Image -->
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Image</label>
+                                    <input 
+                                        type="file" 
+                                        id="productoImagen" 
+                                        name="imagen" 
+                                        accept="image/*"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
+                                    >
+                                    @if($producto->imagen)
+                                        @php
+                                            $imagenPath = trim($producto->imagen);
+                                            if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                                $imagenUrl = $imagenPath;
+                                            } else {
+                                                $filename = basename($imagenPath);
+                                                if (strpos($imagenPath, 'productos-super/') === 0) {
+                                                    $imagenUrl = asset('storage/' . $imagenPath);
+                                                } else {
+                                                    $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                                }
+                                            }
+                                        @endphp
+                                        <div class="mt-2 relative inline-block">
+                                            <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
+                                            <button 
+                                                type="button"
+                                                onclick="removeImagen()"
+                                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                                title="Remove image"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
+                                    @endif
+                                </div>
+                                
+                                <!-- QR Code Image -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">QR Code Image</label>
+                                        <button 
+                                            type="button"
+                                            onclick="generateQRCode()"
+                                            class="px-3 py-1.5 text-xs bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors shadow-sm"
+                                            title="Generate QR Code automatically"
+                                        >
+                                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                            </svg>
+                                            Generate QR
+                                        </button>
+                                    </div>
+                                    <input 
+                                        type="file" 
+                                        id="productoFotoQr" 
+                                        name="foto_qr" 
+                                        accept="image/*"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
+                                    >
+                                    <div id="qrCodeCanvas" class="mt-2 hidden"></div>
+                                    @if($producto->foto_qr)
+                                        @php
+                                            $qrPath = trim($producto->foto_qr);
+                                            if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
+                                                $qrUrl = $qrPath;
+                                            } else {
+                                                $filename = basename($qrPath);
+                                                $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                            }
+                                        @endphp
+                                        <div class="mt-2 relative inline-block">
+                                            <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                                            <button 
+                                                type="button"
+                                                onclick="removeFotoQr()"
+                                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                                title="Remove QR image"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <!-- Barcode debajo (en todas las versiones) -->
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
                                 <input 
@@ -278,82 +375,6 @@
                                     class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
                                     placeholder="Barcode"
                                 >
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Image</label>
-                                <input 
-                                    type="file" 
-                                    id="productoImagen" 
-                                    name="imagen" 
-                                    accept="image/*"
-                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
-                                >
-                                @if($producto->imagen)
-                                    @php
-                                        $imagenPath = trim($producto->imagen);
-                                        if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
-                                            $imagenUrl = $imagenPath;
-                                        } else {
-                                            $filename = basename($imagenPath);
-                                            if (strpos($imagenPath, 'productos-super/') === 0) {
-                                                $imagenUrl = asset('storage/' . $imagenPath);
-                                            } else {
-                                                $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
-                                            }
-                                        }
-                                    @endphp
-                                    <div class="mt-2 relative inline-block">
-                                        <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentImagenPreview">
-                                        <button 
-                                            type="button"
-                                            onclick="removeImagen()"
-                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                                            title="Remove image"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <input type="hidden" id="removeImagen" name="remove_imagen" value="0">
-                                @endif
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
-                                <input 
-                                    type="file" 
-                                    id="productoFotoQr" 
-                                    name="foto_qr" 
-                                    accept="image/*"
-                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
-                                >
-                                @if($producto->foto_qr)
-                                    @php
-                                        $qrPath = trim($producto->foto_qr);
-                                        if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
-                                            $qrUrl = $qrPath;
-                                        } else {
-                                            $filename = basename($qrPath);
-                                            $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
-                                        }
-                                    @endphp
-                                    <div class="mt-2 relative inline-block">
-                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
-                                        <button 
-                                            type="button"
-                                            onclick="removeFotoQr()"
-                                            class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
-                                            title="Remove QR image"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <input type="hidden" id="removeFotoQr" name="remove_foto_qr" value="0">
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -500,6 +521,107 @@
                     });
                 }
             });
+        }
+        
+        async function generateQRCode() {
+            try {
+                // Obtener datos del producto para el QR
+                const codigoBarras = document.getElementById('productoCodigoBarras').value;
+                const nombre = document.getElementById('productoNombre').value;
+                const productoId = {{ $producto->id }};
+                
+                // Crear texto para el QR (usar código de barras si existe, sino usar ID y nombre)
+                let qrText = '';
+                if (codigoBarras && codigoBarras.trim() !== '') {
+                    qrText = codigoBarras;
+                } else {
+                    qrText = `PROD-${productoId}-${nombre}`;
+                }
+                
+                // Limpiar canvas anterior si existe
+                const qrCanvas = document.getElementById('qrCodeCanvas');
+                qrCanvas.innerHTML = '';
+                qrCanvas.classList.remove('hidden');
+                
+                // Crear canvas para el QR
+                const canvas = document.createElement('canvas');
+                qrCanvas.appendChild(canvas);
+                
+                // Generar QR code
+                await QRCode.toCanvas(canvas, qrText, {
+                    width: 256,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                });
+                
+                // Convertir canvas a blob y crear File para el input
+                canvas.toBlob(function(blob) {
+                    const file = new File([blob], `qr-${productoId}-${Date.now()}.png`, { type: 'image/png' });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    const fileInput = document.getElementById('productoFotoQr');
+                    fileInput.files = dataTransfer.files;
+                    
+                    // Mostrar preview del QR generado
+                    const preview = document.getElementById('currentQrPreview');
+                    if (preview) {
+                        preview.src = canvas.toDataURL();
+                        preview.style.opacity = '1';
+                        preview.style.filter = 'none';
+                    } else {
+                        // Crear preview si no existe
+                        const previewContainer = fileInput.parentElement;
+                        const existingPreview = previewContainer.querySelector('.mt-2.relative');
+                        if (existingPreview) {
+                            existingPreview.remove();
+                        }
+                        const newPreview = document.createElement('div');
+                        newPreview.className = 'mt-2 relative inline-block';
+                        newPreview.innerHTML = `
+                            <img src="${canvas.toDataURL()}" alt="Generated QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600" id="currentQrPreview">
+                            <button 
+                                type="button"
+                                onclick="removeFotoQr()"
+                                class="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors"
+                                title="Remove QR image"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        `;
+                        fileInput.parentElement.appendChild(newPreview);
+                    }
+                    
+                    // Resetear flag de remover si estaba marcado
+                    const removeFotoQrInput = document.getElementById('removeFotoQr');
+                    if (removeFotoQrInput) {
+                        removeFotoQrInput.value = '0';
+                    }
+                    
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'success',
+                        title: 'QR Code Generated!',
+                        text: 'The QR code has been generated successfully',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to generate QR code. Please try again.',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
         
         async function saveProducto() {

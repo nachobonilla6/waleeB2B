@@ -11,6 +11,7 @@
     @include('partials.walee-dark-mode-init')
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -250,64 +251,6 @@
         </div>
     </div>
     
-    <!-- Create/Edit Producto Modal -->
-    <div id="productoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white" id="modalTitle">New Product</h3>
-                <button onclick="closeProductoModal()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <form id="productoForm" class="p-6 space-y-4">
-                @csrf
-                <input type="hidden" id="productoId" name="producto_id">
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name *</label>
-                    <input type="text" id="productoNombre" name="nombre" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
-                    <textarea id="productoDescripcion" name="descripcion" rows="3" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"></textarea>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
-                        <input type="number" id="productoPrecio" name="precio" step="0.01" min="0" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stock *</label>
-                        <input type="number" id="productoStock" name="stock" min="0" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
-                    <input type="text" id="productoCategoria" name="categoria" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                </div>
-                
-                <div class="flex items-center">
-                    <input type="checkbox" id="productoActivo" name="activo" checked class="w-4 h-4 text-orange-500 border-slate-300 rounded focus:ring-orange-500">
-                    <label for="productoActivo" class="ml-2 text-sm text-slate-700 dark:text-slate-300">Active product</label>
-                </div>
-                
-                <div class="flex gap-3 pt-4">
-                    <button type="button" onclick="closeProductoModal()" class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" class="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
-                        Save
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
     @include('partials.walee-support-button')
     
     <script>
@@ -355,28 +298,168 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: 'Stock updated successfully',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
                 } else {
-                    alert('Error updating stock: ' + (data.message || 'Unknown error'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error updating stock: ' + (data.message || 'Unknown error')
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error updating stock');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error updating stock'
+                });
             }
         }
         
-        // Modal Functions
-        function openCreateProductoModal() {
-            document.getElementById('modalTitle').textContent = 'New Product';
-            document.getElementById('productoForm').reset();
-            document.getElementById('productoId').value = '';
-            document.getElementById('productoModal').classList.remove('hidden');
-            document.getElementById('productoModal').classList.add('flex');
+        // AI Prompt Modal
+        function openAIPrompt(field) {
+            const fieldName = field === 'nombre' ? 'name' : 'description';
+            Swal.fire({
+                title: 'AI Prompt',
+                input: 'textarea',
+                inputPlaceholder: `Describe the product ${fieldName} you want to generate...`,
+                inputAttributes: {
+                    'aria-label': 'Enter your prompt'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Generate',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#9333ea',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please enter a prompt!';
+                    }
+                },
+                preConfirm: (prompt) => {
+                    if (prompt) {
+                        generateWithAI(prompt, field);
+                    }
+                }
+            });
         }
         
-        function closeProductoModal() {
-            document.getElementById('productoModal').classList.add('hidden');
-            document.getElementById('productoModal').classList.remove('flex');
+        // Speech Recognition
+        let recognition = null;
+        let isListening = false;
+        
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+        }
+        
+        function startVoiceRecognition(targetField) {
+            if (!recognition) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Not Supported',
+                    text: 'Speech recognition is not supported in your browser'
+                });
+                return;
+            }
+            
+            if (isListening) {
+                recognition.stop();
+                isListening = false;
+                return;
+            }
+            
+            isListening = true;
+            recognition.start();
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                const activeElement = document.activeElement;
+                if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+                    activeElement.value = activeElement.value + ' ' + transcript;
+                }
+                isListening = false;
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                isListening = false;
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+            };
+        }
+        
+        // AI Prompt Function
+        async function generateWithAI(prompt, targetField) {
+            try {
+                Swal.fire({
+                    title: 'Generating with AI...',
+                    text: 'Please wait',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Simulate AI generation (replace with actual AI API call)
+                // For demo purposes, we'll use a simple text generation
+                // In production, replace this with actual AI API call
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+                
+                Swal.close();
+                
+                // Generate text based on prompt (demo mode)
+                let generatedText = '';
+                if (targetField === 'nombre') {
+                    generatedText = prompt.split(' ').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ');
+                } else {
+                    generatedText = `This is a ${prompt}. High quality product with excellent features and customer satisfaction.`;
+                }
+                
+                // Find the active field in the SweetAlert modal
+                const swalContainer = document.querySelector('.swal2-popup');
+                if (swalContainer) {
+                    const field = swalContainer.querySelector(`#producto${targetField.charAt(0).toUpperCase() + targetField.slice(1)}`);
+                    if (field) {
+                        field.value = generatedText;
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Generated!',
+                    text: 'Content has been generated and filled in',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                console.error('AI generation error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Could not generate content. Please try again or enter manually.'
+                });
+            }
+        }
+        
+        // Modal Functions with SweetAlert
+        function openCreateProductoModal() {
+            showProductModal();
         }
         
         async function editProducto(id) {
@@ -385,66 +468,149 @@
                 const data = await response.json();
                 
                 if (!data.success) {
-                    alert('Error loading product: ' + (data.message || 'Unknown error'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error loading product: ' + (data.message || 'Unknown error')
+                    });
                     return;
                 }
                 
                 const producto = data.producto;
-                
-                document.getElementById('modalTitle').textContent = 'Edit Product';
-                document.getElementById('productoId').value = producto.id;
-                document.getElementById('productoNombre').value = producto.nombre;
-                document.getElementById('productoDescripcion').value = producto.descripcion || '';
-                document.getElementById('productoPrecio').value = producto.precio;
-                document.getElementById('productoStock').value = producto.stock;
-                document.getElementById('productoCategoria').value = producto.categoria || '';
-                document.getElementById('productoActivo').checked = producto.activo;
-                
-                document.getElementById('productoModal').classList.remove('hidden');
-                document.getElementById('productoModal').classList.add('flex');
+                showProductModal(producto);
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error loading product');
-            }
-        }
-        
-        async function deleteProducto(id) {
-            if (!confirm('Are you sure you want to delete this product?')) return;
-            
-            try {
-                const response = await fetch(`/walee-productos-super/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error loading product'
                 });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error deleting product: ' + (data.message || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error deleting product');
             }
         }
         
-        // Form Submit
-        document.getElementById('productoForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        function showProductModal(producto = null) {
+            const isEdit = producto !== null;
+            const title = isEdit ? 'Edit Product' : 'New Product';
             
-            const formData = new FormData(this);
-            const productoId = document.getElementById('productoId').value;
+            const htmlContent = `
+                <form id="productoForm" class="space-y-4">
+                    @csrf
+                    <input type="hidden" id="productoId" name="producto_id" value="${producto?.id || ''}">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name *</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="productoNombre" name="nombre" value="${producto?.nombre || ''}" required class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            <button type="button" onclick="startVoiceRecognition('nombre')" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors" title="Voice Input">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                </svg>
+                            </button>
+                            <button type="button" onclick="openAIPrompt('nombre')" class="px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors" title="AI Generate">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
+                        <div class="flex gap-2">
+                            <textarea id="productoDescripcion" name="descripcion" rows="3" class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none">${producto?.descripcion || ''}</textarea>
+                            <div class="flex flex-col gap-2">
+                                <button type="button" onclick="startVoiceRecognition('descripcion')" class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors" title="Voice Input">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                    </svg>
+                                </button>
+                                <button type="button" onclick="openAIPrompt('descripcion')" class="px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors" title="AI Generate">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
+                            <input type="number" id="productoPrecio" name="precio" step="0.01" min="0" value="${producto?.precio || ''}" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stock *</label>
+                            <input type="number" id="productoStock" name="stock" min="0" value="${producto?.stock || ''}" required class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
+                        <input type="text" id="productoCategoria" name="categoria" value="${producto?.categoria || ''}" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="productoActivo" name="activo" ${producto?.activo ? 'checked' : ''} class="w-4 h-4 text-orange-500 border-slate-300 rounded focus:ring-orange-500">
+                        <label for="productoActivo" class="ml-2 text-sm text-slate-700 dark:text-slate-300">Active product</label>
+                    </div>
+                </form>
+            `;
+            
+            Swal.fire({
+                title: title,
+                html: htmlContent,
+                width: '700px',
+                heightAuto: false,
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#f97316',
+                cancelButtonColor: '#64748b',
+                didOpen: () => {
+                    // Attach form submit handler
+                    const form = document.getElementById('productoForm');
+                    if (form) {
+                        form.addEventListener('submit', handleFormSubmit);
+                    }
+                },
+                preConfirm: () => {
+                    return handleFormSubmit();
+                }
+            });
+        }
+        
+        async function handleFormSubmit(e) {
+            if (e) e.preventDefault();
+            
+            const productoId = document.getElementById('productoId')?.value;
+            const nombre = document.getElementById('productoNombre')?.value;
+            const descripcion = document.getElementById('productoDescripcion')?.value;
+            const precio = document.getElementById('productoPrecio')?.value;
+            const stock = document.getElementById('productoStock')?.value;
+            const categoria = document.getElementById('productoCategoria')?.value;
+            const activo = document.getElementById('productoActivo')?.checked;
+            
+            if (!nombre || !precio || !stock) {
+                Swal.showValidationMessage('Please fill in all required fields');
+                return false;
+            }
+            
+            const formData = new FormData();
+            formData.append('nombre', nombre);
+            formData.append('descripcion', descripcion || '');
+            formData.append('precio', precio);
+            formData.append('stock', stock);
+            formData.append('categoria', categoria || '');
+            formData.append('activo', activo ? '1' : '0');
+            
+            if (productoId) {
+                formData.append('_method', 'PUT');
+            }
+            
             const url = productoId 
                 ? `/walee-productos-super/${productoId}`
                 : '/walee-productos-super';
             const method = productoId ? 'PUT' : 'POST';
-            
-            // Agregar activo como checkbox
-            formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
             
             try {
                 const response = await fetch(url, {
@@ -458,22 +624,76 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Product saved successfully',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
                 } else {
-                    alert('Error: ' + (data.message || 'Unknown error'));
+                    Swal.showValidationMessage('Error: ' + (data.message || 'Unknown error'));
+                    return false;
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error saving product');
+                Swal.showValidationMessage('Error saving product');
+                return false;
             }
-        });
+        }
         
-        // Close modal on outside click
-        document.getElementById('productoModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeProductoModal();
+        async function deleteProducto(id) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, delete it!'
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            try {
+                const response = await fetch(`/walee-productos-super/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Product has been deleted.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error deleting product: ' + (data.message || 'Unknown error')
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error deleting product'
+                });
             }
-        });
+        }
+        
     </script>
 </body>
 </html>

@@ -897,6 +897,7 @@
             if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
             if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
             if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
+            if (producto.brand) document.getElementById('productoBrand').value = producto.brand;
             if (producto.seccion) {
                 document.getElementById('productoSeccion').value = producto.seccion;
                 updateSectionBadge();
@@ -1052,6 +1053,7 @@
             if (producto.descripcion) document.getElementById('productoDescripcion').value = producto.descripcion;
             if (producto.precio) document.getElementById('productoPrecio').value = producto.precio;
             if (producto.categoria) document.getElementById('productoCategoria').value = producto.categoria;
+            if (producto.brand) document.getElementById('productoBrand').value = producto.brand;
             if (producto.seccion) {
                 document.getElementById('productoSeccion').value = producto.seccion;
                 updateSectionBadge();

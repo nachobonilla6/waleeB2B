@@ -111,24 +111,57 @@ Route::get('/storage/productos/{filename}', function ($filename) {
 Route::get('/storage/productos-super/{filename}', function ($filename) {
     try {
         // Limpiar el nombre del archivo para seguridad
+        $originalFilename = $filename;
         $filename = basename($filename);
         $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
         
         if (empty($filename)) {
+            \Log::error('Nombre de archivo inválido después de limpieza', [
+                'original' => $originalFilename,
+                'cleaned' => $filename
+            ]);
             abort(404, 'Nombre de archivo inválido');
         }
         
         // Buscar el archivo en el directorio productos-super
         $path = storage_path('app/public/productos-super/' . $filename);
         
+        \Log::info('Buscando archivo de producto super', [
+            'original_filename' => $originalFilename,
+            'cleaned_filename' => $filename,
+            'path' => $path,
+            'path_exists' => file_exists($path),
+            'is_file' => is_file($path),
+            'is_readable' => is_readable($path),
+            'directory_exists' => is_dir(dirname($path))
+        ]);
+        
         // Verificar que el archivo existe
-        if (!file_exists($path) || !is_file($path)) {
+        if (!file_exists($path)) {
             \Log::warning('Archivo de producto super no encontrado', [
                 'filename' => $filename,
                 'path' => $path,
-                'directory_exists' => is_dir(dirname($path))
+                'directory_exists' => is_dir(dirname($path)),
+                'directory_readable' => is_readable(dirname($path))
             ]);
             abort(404, 'Archivo no encontrado: ' . $filename);
+        }
+        
+        if (!is_file($path)) {
+            \Log::warning('Path no es un archivo', [
+                'filename' => $filename,
+                'path' => $path
+            ]);
+            abort(404, 'No es un archivo: ' . $filename);
+        }
+        
+        if (!is_readable($path)) {
+            \Log::error('Archivo no es legible (permisos)', [
+                'filename' => $filename,
+                'path' => $path,
+                'permissions' => substr(sprintf('%o', fileperms($path)), -4)
+            ]);
+            abort(500, 'Archivo no legible: ' . $filename);
         }
         
         // Leer el archivo
@@ -136,7 +169,8 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
         if ($file === false) {
             \Log::error('No se pudo leer el archivo', [
                 'filename' => $filename,
-                'path' => $path
+                'path' => $path,
+                'error' => error_get_last()
             ]);
             abort(500, 'Error al leer archivo');
         }
@@ -165,6 +199,12 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
             $fileSize = strlen($file);
         }
         
+        \Log::info('Archivo de producto super servido correctamente', [
+            'filename' => $filename,
+            'size' => $fileSize,
+            'type' => $type
+        ]);
+        
         return response($file, 200)
             ->header('Content-Type', $type)
             ->header('Content-Length', $fileSize)
@@ -176,7 +216,10 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
     } catch (\Exception $e) {
         \Log::error('Error al servir archivo de producto super', [
             'filename' => $filename ?? 'unknown',
+            'original_filename' => $originalFilename ?? 'unknown',
             'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
             'trace' => $e->getTraceAsString()
         ]);
         abort(500, 'Error al servir archivo: ' . $e->getMessage());

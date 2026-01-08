@@ -104,7 +104,54 @@
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
                 
-                <!-- Status Section - Above all sections -->
+                <!-- Section Field - Above Status -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Section</label>
+                        <!-- Section Badge -->
+                        <div id="sectionBadgeContainer">
+                            <span id="sectionBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50 {{ !$producto->seccion ? 'hidden' : '' }}">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                                <span id="sectionBadgeText">{{ $producto->seccion ?: 'No section' }}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <select 
+                        id="productoSeccion" 
+                        name="seccion" 
+                        onchange="updateSectionBadge()"
+                        class="w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent cursor-pointer"
+                    >
+                        <option value="">Select Section</option>
+                        <option value="Fruits & Vegetables" {{ $producto->seccion == 'Fruits & Vegetables' ? 'selected' : '' }}>Fruits & Vegetables</option>
+                        <option value="Meat & Poultry" {{ $producto->seccion == 'Meat & Poultry' ? 'selected' : '' }}>Meat & Poultry</option>
+                        <option value="Dairy & Eggs" {{ $producto->seccion == 'Dairy & Eggs' ? 'selected' : '' }}>Dairy & Eggs</option>
+                        <option value="Bakery" {{ $producto->seccion == 'Bakery' ? 'selected' : '' }}>Bakery</option>
+                        <option value="Beverages" {{ $producto->seccion == 'Beverages' ? 'selected' : '' }}>Beverages</option>
+                        <option value="Snacks" {{ $producto->seccion == 'Snacks' ? 'selected' : '' }}>Snacks</option>
+                        <option value="Canned Goods" {{ $producto->seccion == 'Canned Goods' ? 'selected' : '' }}>Canned Goods</option>
+                        <option value="Frozen Foods" {{ $producto->seccion == 'Frozen Foods' ? 'selected' : '' }}>Frozen Foods</option>
+                        <option value="Cleaning Supplies" {{ $producto->seccion == 'Cleaning Supplies' ? 'selected' : '' }}>Cleaning Supplies</option>
+                        <option value="Personal Care" {{ $producto->seccion == 'Personal Care' ? 'selected' : '' }}>Personal Care</option>
+                        <option value="Baby Products" {{ $producto->seccion == 'Baby Products' ? 'selected' : '' }}>Baby Products</option>
+                        <option value="Pet Supplies" {{ $producto->seccion == 'Pet Supplies' ? 'selected' : '' }}>Pet Supplies</option>
+                        <option value="Other" {{ $producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']) ? 'selected' : '' }}>Other</option>
+                    </select>
+                    @if($producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']))
+                        <input 
+                            type="text" 
+                            id="productoSeccionCustom" 
+                            value="{{ $producto->seccion }}"
+                            oninput="updateSectionBadge()"
+                            placeholder="Custom section"
+                            class="mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                        >
+                    @endif
+                </div>
+                
+                <!-- Status Section -->
                 <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,42 +160,6 @@
                         Status
                     </h2>
                     <div class="space-y-4">
-                        <!-- Section Field -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Section</label>
-                            <select 
-                                id="productoSeccion" 
-                                name="seccion" 
-                                onchange="updateSectionBadge()"
-                                class="w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent cursor-pointer"
-                            >
-                                <option value="">Select Section</option>
-                                <option value="Fruits & Vegetables" {{ $producto->seccion == 'Fruits & Vegetables' ? 'selected' : '' }}>Fruits & Vegetables</option>
-                                <option value="Meat & Poultry" {{ $producto->seccion == 'Meat & Poultry' ? 'selected' : '' }}>Meat & Poultry</option>
-                                <option value="Dairy & Eggs" {{ $producto->seccion == 'Dairy & Eggs' ? 'selected' : '' }}>Dairy & Eggs</option>
-                                <option value="Bakery" {{ $producto->seccion == 'Bakery' ? 'selected' : '' }}>Bakery</option>
-                                <option value="Beverages" {{ $producto->seccion == 'Beverages' ? 'selected' : '' }}>Beverages</option>
-                                <option value="Snacks" {{ $producto->seccion == 'Snacks' ? 'selected' : '' }}>Snacks</option>
-                                <option value="Canned Goods" {{ $producto->seccion == 'Canned Goods' ? 'selected' : '' }}>Canned Goods</option>
-                                <option value="Frozen Foods" {{ $producto->seccion == 'Frozen Foods' ? 'selected' : '' }}>Frozen Foods</option>
-                                <option value="Cleaning Supplies" {{ $producto->seccion == 'Cleaning Supplies' ? 'selected' : '' }}>Cleaning Supplies</option>
-                                <option value="Personal Care" {{ $producto->seccion == 'Personal Care' ? 'selected' : '' }}>Personal Care</option>
-                                <option value="Baby Products" {{ $producto->seccion == 'Baby Products' ? 'selected' : '' }}>Baby Products</option>
-                                <option value="Pet Supplies" {{ $producto->seccion == 'Pet Supplies' ? 'selected' : '' }}>Pet Supplies</option>
-                                <option value="Other" {{ $producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']) ? 'selected' : '' }}>Other</option>
-                            </select>
-                            @if($producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']))
-                                <input 
-                                    type="text" 
-                                    id="productoSeccionCustom" 
-                                    value="{{ $producto->seccion }}"
-                                    oninput="updateSectionBadge()"
-                                    placeholder="Custom section"
-                                    class="mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-                                >
-                            @endif
-                        </div>
-                        
                         <!-- Status Toggle -->
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Status</label>
@@ -462,8 +473,12 @@
         function updateSectionBadge() {
             const seccionSelect = document.getElementById('productoSeccion');
             const seccionCustomInput = document.getElementById('productoSeccionCustom');
+            const sectionBadge = document.getElementById('sectionBadge');
+            const sectionBadgeText = document.getElementById('sectionBadgeText');
             
-            if (seccionSelect) {
+            if (seccionSelect && sectionBadge && sectionBadgeText) {
+                let seccionValue = '';
+                
                 if (seccionSelect.value === 'Other') {
                     // Mostrar input personalizado si no existe
                     if (!seccionCustomInput) {
@@ -478,11 +493,21 @@
                     } else {
                         seccionCustomInput.style.display = 'block';
                     }
+                    seccionValue = seccionCustomInput ? seccionCustomInput.value.trim() : '';
                 } else {
+                    seccionValue = seccionSelect.value.trim();
                     // Ocultar input personalizado si no es "Other"
                     if (seccionCustomInput) {
                         seccionCustomInput.style.display = 'none';
                     }
+                }
+                
+                // Actualizar badge
+                if (seccionValue) {
+                    sectionBadgeText.textContent = seccionValue;
+                    sectionBadge.classList.remove('hidden');
+                } else {
+                    sectionBadge.classList.add('hidden');
                 }
             }
         }

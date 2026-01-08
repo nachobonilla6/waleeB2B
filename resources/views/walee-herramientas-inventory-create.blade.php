@@ -1188,8 +1188,6 @@
     </script>
 </body>
 </html>
-            
-            fetch('/walee-productos-super/ai/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

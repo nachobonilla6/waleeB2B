@@ -370,6 +370,8 @@
                                         accept="image/*"
                                         class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
                                     >
+                                    <!-- Generate QR button disabled temporarily -->
+                                    <!--
                                     <button 
                                         type="button"
                                         onclick="generateQRCode()"
@@ -381,6 +383,7 @@
                                         </svg>
                                         <span>Generate QR</span>
                                     </button>
+                                    -->
                                     <div id="qrCodeCanvas" class="mt-2 hidden"></div>
                                     @if($producto->foto_qr)
                                         @php
@@ -735,6 +738,9 @@
         }
         
         async function generateQRCode() {
+            // Function disabled temporarily - QR codes are now auto-generated on save
+            return;
+            /*
             try {
                 // Mostrar loading
                 Swal.fire({
@@ -883,6 +889,7 @@
                     confirmButtonColor: '#ef4444'
                 });
             }
+            */
         }
         
         async function saveProducto() {

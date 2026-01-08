@@ -185,7 +185,29 @@
                                     data-activo="{{ $producto->activo ? '1' : '0' }}"
                                 >
                                     <td class="px-4 py-3">
-                                        <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
+                                        <div class="flex flex-col gap-2">
+                                            @if($producto->imagen)
+                                                @php
+                                                    $imagenPath = trim($producto->imagen);
+                                                    if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                                        $imagenUrl = $imagenPath;
+                                                    } else {
+                                                        if (str_starts_with($imagenPath, 'storage/')) {
+                                                            $imagenUrl = asset($imagenPath);
+                                                        } else {
+                                                            $imagenUrl = asset('storage/' . $imagenPath);
+                                                        }
+                                                    }
+                                                @endphp
+                                                <img src="{{ $imagenUrl }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                            @endif
+                                            <div>
+                                                <span class="font-medium text-slate-900 dark:text-white">{{ $producto->nombre }}</span>
+                                                @if($producto->brand)
+                                                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Brand: {{ $producto->brand }}</div>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="px-4 py-3">
                                         <span class="text-sm text-slate-700 dark:text-slate-300">{{ $producto->categoria ?? '-' }}</span>

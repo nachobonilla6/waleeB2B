@@ -11,6 +11,7 @@ class ProductoSuper extends Model
         'descripcion',
         'precio',
         'categoria',
+        'brand',
         'seccion',
         'stock',
         'cantidad',

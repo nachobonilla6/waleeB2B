@@ -136,7 +136,8 @@
             <div class="mb-6 sm:mb-8 animate-fade-in-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">DLC DLV</h1>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Inventory</h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">DLC DLV</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <a 

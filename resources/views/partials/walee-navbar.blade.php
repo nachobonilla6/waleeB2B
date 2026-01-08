@@ -6,7 +6,7 @@
         </a>
         <div class="min-w-0 flex-1">
             <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent truncate">
-                Walee
+                Walee B2B
             </h1>
             <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 truncate">
                 @php

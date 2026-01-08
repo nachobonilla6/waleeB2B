@@ -374,7 +374,7 @@
                     <svg class="w-5 h-5 text-walee-600 dark:text-walee-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
-                    My Applications
+                    Company
                 </h2>
                 
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">

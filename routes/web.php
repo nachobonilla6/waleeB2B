@@ -4826,6 +4826,79 @@ Route::get('/walee-herramientas/inventory', function () {
     return view('walee-herramientas-inventory');
 })->middleware(['auth'])->name('walee.herramientas.inventory');
 
+// Herramientas - Inventory - Editar Producto
+Route::get('/walee-herramientas/inventory/producto/{id}/edit', function ($id) {
+    $producto = \App\Models\ProductoSuper::findOrFail($id);
+    return view('walee-herramientas-inventory-edit', compact('producto'));
+})->middleware(['auth'])->name('walee.herramientas.inventory.edit');
+
+Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\Http\Request $request, $id) {
+    try {
+        $producto = \App\Models\ProductoSuper::findOrFail($id);
+        $producto->nombre = $request->input('nombre');
+        $producto->descripcion = $request->input('descripcion');
+        $producto->precio = $request->input('precio');
+        $producto->categoria = $request->input('categoria');
+        $producto->seccion = $request->input('seccion');
+        $producto->stock = $request->input('stock', 0);
+        $producto->cantidad = $request->input('cantidad', 0);
+        $producto->fecha_expiracion = $request->input('fecha_expiracion');
+        $producto->fecha_entrada = $request->input('fecha_entrada');
+        $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
+        $producto->fecha_salida = $request->input('fecha_salida');
+        $producto->codigo_barras = $request->input('codigo_barras');
+        $producto->activo = $request->input('activo', true);
+        
+        // Subir nueva imagen si existe
+        if ($request->hasFile('imagen')) {
+            if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
+                unlink(storage_path('app/public/' . $producto->imagen));
+            }
+            $imagen = $request->file('imagen');
+            $productosDir = storage_path('app/public/productos-super');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $imagen->store('productos-super', 'public');
+            $producto->imagen = $path;
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        // Subir nueva foto QR si existe
+        if ($request->hasFile('foto_qr')) {
+            if ($producto->foto_qr && file_exists(storage_path('app/public/' . $producto->foto_qr))) {
+                unlink(storage_path('app/public/' . $producto->foto_qr));
+            }
+            $fotoQr = $request->file('foto_qr');
+            $productosDir = storage_path('app/public/productos-super/qr');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQr->store('productos-super/qr', 'public');
+            $producto->foto_qr = $path;
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        $producto->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto actualizado correctamente',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage(),
+        ], 500);
+    }
+})->middleware(['auth'])->name('walee.herramientas.inventory.update');
+
 // Productos Super
 Route::get('/walee-productos-super', function () {
     return view('walee-productos-super');
@@ -4838,6 +4911,7 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
         $producto->descripcion = $request->input('descripcion');
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
+        $producto->seccion = $request->input('seccion');
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);
         $producto->fecha_expiracion = $request->input('fecha_expiracion');
@@ -4907,6 +4981,7 @@ Route::get('/walee-productos-super/{id}', function ($id) {
                 'descripcion' => $producto->descripcion,
                 'precio' => $producto->precio,
                 'categoria' => $producto->categoria,
+                'seccion' => $producto->seccion,
                 'stock' => $producto->stock,
                 'cantidad' => $producto->cantidad,
                 'fecha_expiracion' => $producto->fecha_expiracion ? $producto->fecha_expiracion->format('Y-m-d') : null,
@@ -4934,6 +5009,7 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
         $producto->descripcion = $request->input('descripcion');
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
+        $producto->seccion = $request->input('seccion');
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('cantidad', 0);
         $producto->fecha_expiracion = $request->input('fecha_expiracion');

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Walee - Edit Product</title>
+    <meta name="description" content="Edit Product - Inventory Management">
+    <meta name="theme-color" content="#D59F3B">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    @include('partials.walee-dark-mode-init')
+    @include('partials.walee-violet-light-mode')
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        walee: {
+                            50: '#FBF7EE',
+                            100: '#F5ECD6',
+                            200: '#EBD9AD',
+                            300: '#E0C684',
+                            400: '#D59F3B',
+                            500: '#C78F2E',
+                            600: '#A67524',
+                            700: '#7F5A1C',
+                            800: '#594013',
+                            900: '#33250B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(213, 159, 59, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(213, 159, 59, 0.5); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-200 min-h-screen">
+    <div class="min-h-screen relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/20 dark:bg-blue-400/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/3 -left-20 w-60 h-60 bg-walee-400/10 dark:bg-walee-400/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-blue-400/20 dark:bg-blue-400/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <!-- Fixed Navbar -->
+        <div class="fixed top-0 left-0 right-0 z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
+            <div class="max-w-[90rem] mx-auto px-4 py-4 sm:px-6 lg:px-8">
+                @php $pageTitle = 'Edit Product'; @endphp
+                @include('partials.walee-navbar')
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8 pt-24 sm:pt-28">
+            <!-- Header -->
+            <div class="mb-6 sm:mb-8 animate-fade-in-up">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Edit Product</h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $producto->nombre }}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a 
+                            href="{{ route('walee.herramientas.inventory') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors shadow-sm"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            <span>Back</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Layout - Two Columns -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <!-- Left Column - Basic Fields -->
+                <div class="space-y-6">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Basic Information
+                        </h2>
+                        <form id="productoForm" class="space-y-4" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="_method" value="PUT">
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Name *</label>
+                                <input 
+                                    type="text" 
+                                    id="productoNombre" 
+                                    name="nombre" 
+                                    value="{{ $producto->nombre }}"
+                                    required
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Product name"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
+                                <textarea 
+                                    id="productoDescripcion" 
+                                    name="descripcion" 
+                                    rows="3"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    placeholder="Product description..."
+                                >{{ $producto->descripcion }}</textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price (₡) *</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoPrecio" 
+                                        name="precio" 
+                                        step="0.01"
+                                        min="0"
+                                        value="{{ $producto->precio }}"
+                                        required
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
+                                    <input 
+                                        type="text" 
+                                        id="productoCategoria" 
+                                        name="categoria" 
+                                        value="{{ $producto->categoria }}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Category"
+                                    >
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Section</label>
+                                <input 
+                                    type="text" 
+                                    id="productoSeccion" 
+                                    name="seccion" 
+                                    value="{{ $producto->seccion }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Section"
+                                >
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stock *</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoStock" 
+                                        name="stock" 
+                                        min="0"
+                                        value="{{ $producto->stock }}"
+                                        required
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Quantity</label>
+                                    <input 
+                                        type="number" 
+                                        id="productoCantidad" 
+                                        name="cantidad" 
+                                        min="0"
+                                        value="{{ $producto->cantidad ?? 0 }}"
+                                        class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Advanced Settings -->
+                <div class="space-y-6">
+                    <!-- Dates Section -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Dates & Expiration
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Entry Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaEntrada" 
+                                    name="fecha_entrada" 
+                                    value="{{ $producto->fecha_entrada ? \Carbon\Carbon::parse($producto->fecha_entrada)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sale Limit Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaLimiteVenta" 
+                                    name="fecha_limite_venta" 
+                                    value="{{ $producto->fecha_limite_venta ? \Carbon\Carbon::parse($producto->fecha_limite_venta)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Expiration Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaExpiracion" 
+                                    name="fecha_expiracion" 
+                                    value="{{ $producto->fecha_expiracion ? \Carbon\Carbon::parse($producto->fecha_expiracion)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Exit Date</label>
+                                <input 
+                                    type="date" 
+                                    id="productoFechaSalida" 
+                                    name="fecha_salida" 
+                                    value="{{ $producto->fecha_salida ? \Carbon\Carbon::parse($producto->fecha_salida)->format('Y-m-d') : '' }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Codes & Images Section -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Codes & Images
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Barcode</label>
+                                <input 
+                                    type="text" 
+                                    id="productoCodigoBarras" 
+                                    name="codigo_barras" 
+                                    value="{{ $producto->codigo_barras }}"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                                    placeholder="Barcode"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Product Image</label>
+                                <input 
+                                    type="file" 
+                                    id="productoImagen" 
+                                    name="imagen" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
+                                >
+                                @if($producto->imagen)
+                                    @php
+                                        $imagenPath = trim($producto->imagen);
+                                        if (str_starts_with($imagenPath, 'http://') || str_starts_with($imagenPath, 'https://')) {
+                                            $imagenUrl = $imagenPath;
+                                        } else {
+                                            $filename = basename($imagenPath);
+                                            if (strpos($imagenPath, 'productos-super/') === 0) {
+                                                $imagenUrl = asset('storage/' . $imagenPath);
+                                            } else {
+                                                $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                            }
+                                        }
+                                    @endphp
+                                    <div class="mt-2">
+                                        <img src="{{ $imagenUrl }}" alt="Current image" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">QR Code Image</label>
+                                <input 
+                                    type="file" 
+                                    id="productoFotoQr" 
+                                    name="foto_qr" 
+                                    accept="image/*"
+                                    class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 dark:file:bg-purple-900/30 dark:file:text-purple-300"
+                                >
+                                @if($producto->foto_qr)
+                                    @php
+                                        $qrPath = trim($producto->foto_qr);
+                                        if (str_starts_with($qrPath, 'http://') || str_starts_with($qrPath, 'https://')) {
+                                            $qrUrl = $qrPath;
+                                        } else {
+                                            $filename = basename($qrPath);
+                                            $qrUrl = route('storage.productos-super.qr', ['filename' => $filename]);
+                                        }
+                                    @endphp
+                                    <div class="mt-2">
+                                        <img src="{{ $qrUrl }}" alt="Current QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Toggle -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Status
+                        </h2>
+                        <div class="space-y-4">
+                            <label class="relative inline-flex items-center cursor-pointer group">
+                                <input 
+                                    type="checkbox" 
+                                    id="productoActivo" 
+                                    name="activo" 
+                                    value="1"
+                                    {{ $producto->activo ? 'checked' : '' }}
+                                    class="sr-only peer"
+                                >
+                                <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                                <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    <span class="peer-checked:hidden">Inactive</span>
+                                    <span class="hidden peer-checked:inline">Active</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Save Button -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <button 
+                            type="button"
+                            onclick="saveProducto()"
+                            class="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors shadow-lg"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    @include('partials.walee-support-button')
+    
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const productoId = {{ $producto->id }};
+        
+        function getSwalTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                background: isDark ? '#1e293b' : '#ffffff',
+                color: isDark ? '#f1f5f9' : '#0f172a',
+                borderColor: isDark ? '#334155' : '#e2e8f0'
+            };
+        }
+        
+        async function saveProducto() {
+            const formData = new FormData();
+            formData.append('_method', 'PUT');
+            formData.append('nombre', document.getElementById('productoNombre').value);
+            formData.append('descripcion', document.getElementById('productoDescripcion').value);
+            formData.append('precio', document.getElementById('productoPrecio').value);
+            formData.append('categoria', document.getElementById('productoCategoria').value);
+            formData.append('seccion', document.getElementById('productoSeccion').value);
+            formData.append('stock', document.getElementById('productoStock').value);
+            formData.append('cantidad', document.getElementById('productoCantidad').value);
+            formData.append('fecha_entrada', document.getElementById('productoFechaEntrada').value);
+            formData.append('fecha_limite_venta', document.getElementById('productoFechaLimiteVenta').value);
+            formData.append('fecha_expiracion', document.getElementById('productoFechaExpiracion').value);
+            formData.append('fecha_salida', document.getElementById('productoFechaSalida').value);
+            formData.append('codigo_barras', document.getElementById('productoCodigoBarras').value);
+            formData.append('activo', document.getElementById('productoActivo').checked ? '1' : '0');
+            
+            const imagenFile = document.getElementById('productoImagen').files[0];
+            if (imagenFile) {
+                formData.append('imagen', imagenFile);
+            }
+            
+            const fotoQrFile = document.getElementById('productoFotoQr').files[0];
+            if (fotoQrFile) {
+                formData.append('foto_qr', fotoQrFile);
+            }
+            
+            try {
+                const response = await fetch(`/walee-herramientas/inventory/producto/${productoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Product updated successfully',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
+                    });
+                } else {
+                    Swal.fire({
+                        ...getSwalTheme(),
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error updating product'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    ...getSwalTheme(),
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error updating product'
+                });
+            }
+        }
+        
+        // Preview de imágenes
+        document.getElementById('productoImagen').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.querySelector('.mt-2 img[alt="Current image"]');
+                    if (preview) {
+                        preview.src = e.target.result;
+                    } else {
+                        const container = document.getElementById('productoImagen').parentElement;
+                        const div = document.createElement('div');
+                        div.className = 'mt-2';
+                        div.innerHTML = `<img src="${e.target.result}" alt="Preview" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">`;
+                        container.appendChild(div);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('productoFotoQr').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.querySelector('.mt-2 img[alt="Current QR"]');
+                    if (preview) {
+                        preview.src = e.target.result;
+                    } else {
+                        const container = document.getElementById('productoFotoQr').parentElement;
+                        const div = document.createElement('div');
+                        div.className = 'mt-2';
+                        div.innerHTML = `<img src="${e.target.result}" alt="Preview QR" class="w-32 h-32 object-cover rounded-lg border border-slate-300 dark:border-slate-600">`;
+                        container.appendChild(div);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
+

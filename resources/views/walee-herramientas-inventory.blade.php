@@ -441,9 +441,9 @@
             }
         });
         
-        // Edit Producto - redirect to walee-productos-super
+        // Edit Producto - redirect to inventory edit page
         function editProducto(id) {
-            window.location.href = `/walee-productos-super?edit=${id}`;
+            window.location.href = `/walee-herramientas/inventory/producto/${id}/edit`;
         }
         
         // Create Producto Modal

@@ -329,6 +329,7 @@
                                     id="productoSeccion" 
                                     name="seccion" 
                                     value="{{ $producto->seccion }}"
+                                    oninput="updateSectionBadge()"
                                     class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Section"
                                 >
@@ -441,9 +442,26 @@
             statusText.textContent = checkbox.checked ? 'Active' : 'Inactive';
         }
         
+        function updateSectionBadge() {
+            const seccionInput = document.getElementById('productoSeccion');
+            const sectionBadge = document.getElementById('sectionBadge');
+            const sectionBadgeText = document.getElementById('sectionBadgeText');
+            
+            if (seccionInput && sectionBadge && sectionBadgeText) {
+                const seccionValue = seccionInput.value.trim();
+                if (seccionValue) {
+                    sectionBadgeText.textContent = `Section: ${seccionValue}`;
+                    sectionBadge.classList.remove('hidden');
+                } else {
+                    sectionBadge.classList.add('hidden');
+                }
+            }
+        }
+        
         // Inicializar el texto del status al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             updateStatusText();
+            updateSectionBadge();
             
             // Hacer scroll hacia arriba si se guardó recientemente
             if (sessionStorage.getItem('scrollToTop') === 'true') {

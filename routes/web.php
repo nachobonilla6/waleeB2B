@@ -4660,6 +4660,11 @@ Route::get('/walee-herramientas', function () {
     return view('walee-herramientas');
 })->middleware(['auth'])->name('walee.herramientas');
 
+// Herramientas - Stuck DLC + DLV
+Route::get('/walee-herramientas/stuck-dlc-dlv', function () {
+    return view('walee-herramientas-stuck-dlc-dlv');
+})->middleware(['auth'])->name('walee.herramientas.stuck-dlc-dlv');
+
 // Productos Super
 Route::get('/walee-productos-super', function () {
     return view('walee-productos-super');

@@ -43,6 +43,18 @@
     </div>
     
     <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 relative">
+        <!-- Deploy Button (Desktop only) -->
+        <button 
+            onclick="triggerDeploy()"
+            class="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-walee-500 to-walee-600 hover:from-walee-600 hover:to-walee-700 text-white text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+            title="Deploy: git pull && migrate && optimize:clear"
+        >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span>Deploy</span>
+        </button>
+        
         @include('partials.walee-dark-mode-toggle')
         
         <!-- Menu Toggle Button (Mobile & Desktop) -->

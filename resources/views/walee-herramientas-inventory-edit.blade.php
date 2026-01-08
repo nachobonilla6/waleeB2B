@@ -83,7 +83,6 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Inventory</h1>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ $producto->nombre }}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <a 
@@ -109,7 +108,7 @@
                     <div class="flex items-center justify-between gap-4">
                         <!-- Left side: Section -->
                         <div class="flex items-center gap-4">
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Section</label>
+                            <label class="block text-base font-medium text-slate-700 dark:text-slate-300">Section</label>
                             <!-- Section Badge with Dropdown -->
                             <div class="relative" id="sectionBadgeContainer">
                                 <span 

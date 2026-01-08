@@ -99,7 +99,7 @@
         
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            @php $pageTitle = 'Send Contract'; @endphp
+            @php $pageTitle = 'Contract Builder'; @endphp
             @include('partials.walee-navbar')
             
             <!-- Notifications -->
@@ -131,8 +131,7 @@
                 
                 <!-- Header -->
                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Send Contract</h1>
-                    <p class="text-slate-600 dark:text-slate-400">Complete the form to send a contract to the supplier</p>
+                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Contract Builder</h1>
                 </div>
                 
                 <!-- Grid de campos: 1 columna en móvil, 2 columnas en md y lg -->

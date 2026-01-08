@@ -12,7 +12,23 @@
     @include('partials.walee-violet-light-mode')
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        // Cargar QRCode de forma asíncrona y esperar a que esté disponible
+        (function() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+            script.async = true;
+            script.onload = function() {
+                window.QRCodeLoaded = true;
+                console.log('QRCode library loaded successfully');
+            };
+            script.onerror = function() {
+                console.error('Failed to load QRCode library');
+                window.QRCodeLoaded = false;
+            };
+            document.head.appendChild(script);
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -631,14 +647,35 @@
             try {
                 // Esperar a que la librería QRCode esté cargada
                 let retries = 0;
-                while (typeof QRCode === 'undefined' && retries < 10) {
+                const maxRetries = 50; // 5 segundos máximo
+                
+                while ((typeof QRCode === 'undefined' || !window.QRCodeLoaded) && retries < maxRetries) {
                     await new Promise(resolve => setTimeout(resolve, 100));
                     retries++;
                 }
                 
                 // Verificar que la librería QRCode esté cargada
                 if (typeof QRCode === 'undefined') {
-                    throw new Error('QRCode library not loaded. Please refresh the page.');
+                    // Intentar cargar manualmente si aún no está disponible
+                    if (!window.QRCodeLoading) {
+                        window.QRCodeLoading = true;
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+                        script.async = true;
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                        window.QRCodeLoading = false;
+                    } else {
+                        // Esperar un poco más si ya se está cargando
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                    
+                    if (typeof QRCode === 'undefined') {
+                        throw new Error('QRCode library failed to load. Please refresh the page.');
+                    }
                 }
                 
                 // Obtener datos del producto para el QR

@@ -4665,6 +4665,11 @@ Route::get('/walee-herramientas/stuck-dlc-dlv', function () {
     return view('walee-herramientas-stuck-dlc-dlv');
 })->middleware(['auth'])->name('walee.herramientas.stuck-dlc-dlv');
 
+// Herramientas - Inventory
+Route::get('/walee-herramientas/inventory', function () {
+    return view('walee-herramientas-inventory');
+})->middleware(['auth'])->name('walee.herramientas.inventory');
+
 // Productos Super
 Route::get('/walee-productos-super', function () {
     return view('walee-productos-super');
@@ -4678,7 +4683,11 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
         $producto->stock = $request->input('stock', 0);
+        $producto->cantidad = $request->input('cantidad', 0);
         $producto->fecha_expiracion = $request->input('fecha_expiracion');
+        $producto->fecha_entrada = $request->input('fecha_entrada');
+        $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
+        $producto->fecha_salida = $request->input('fecha_salida');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         
@@ -4691,6 +4700,23 @@ Route::post('/walee-productos-super', function (\Illuminate\Http\Request $reques
             }
             $path = $imagen->store('productos-super', 'public');
             $producto->imagen = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        // Subir foto QR si existe
+        if ($request->hasFile('foto_qr')) {
+            $fotoQr = $request->file('foto_qr');
+            $productosDir = storage_path('app/public/productos-super/qr');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQr->store('productos-super/qr', 'public');
+            $producto->foto_qr = $path;
             
             // Asegurar permisos públicos
             $fullPath = storage_path('app/public/' . $path);
@@ -4726,9 +4752,14 @@ Route::get('/walee-productos-super/{id}', function ($id) {
                 'precio' => $producto->precio,
                 'categoria' => $producto->categoria,
                 'stock' => $producto->stock,
+                'cantidad' => $producto->cantidad,
                 'fecha_expiracion' => $producto->fecha_expiracion ? $producto->fecha_expiracion->format('Y-m-d') : null,
+                'fecha_entrada' => $producto->fecha_entrada ? $producto->fecha_entrada->format('Y-m-d') : null,
+                'fecha_limite_venta' => $producto->fecha_limite_venta ? $producto->fecha_limite_venta->format('Y-m-d') : null,
+                'fecha_salida' => $producto->fecha_salida ? $producto->fecha_salida->format('Y-m-d') : null,
                 'codigo_barras' => $producto->codigo_barras,
                 'imagen_url' => $producto->imagen ? asset('storage/' . $producto->imagen) : null,
+                'foto_qr_url' => $producto->foto_qr ? asset('storage/' . $producto->foto_qr) : null,
                 'activo' => $producto->activo,
             ]
         ]);
@@ -4748,7 +4779,11 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
         $producto->precio = $request->input('precio');
         $producto->categoria = $request->input('categoria');
         $producto->stock = $request->input('stock', 0);
+        $producto->cantidad = $request->input('cantidad', 0);
         $producto->fecha_expiracion = $request->input('fecha_expiracion');
+        $producto->fecha_entrada = $request->input('fecha_entrada');
+        $producto->fecha_limite_venta = $request->input('fecha_limite_venta');
+        $producto->fecha_salida = $request->input('fecha_salida');
         $producto->codigo_barras = $request->input('codigo_barras');
         $producto->activo = $request->input('activo', true);
         
@@ -4766,6 +4801,28 @@ Route::put('/walee-productos-super/{id}', function (\Illuminate\Http\Request $re
             }
             $path = $imagen->store('productos-super', 'public');
             $producto->imagen = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        }
+        
+        // Subir nueva foto QR si existe
+        if ($request->hasFile('foto_qr')) {
+            // Eliminar foto QR anterior si existe
+            if ($producto->foto_qr && file_exists(storage_path('app/public/' . $producto->foto_qr))) {
+                unlink(storage_path('app/public/' . $producto->foto_qr));
+            }
+            
+            $fotoQr = $request->file('foto_qr');
+            $productosDir = storage_path('app/public/productos-super/qr');
+            if (!file_exists($productosDir)) {
+                mkdir($productosDir, 0755, true);
+            }
+            $path = $fotoQr->store('productos-super/qr', 'public');
+            $producto->foto_qr = $path;
             
             // Asegurar permisos públicos
             $fullPath = storage_path('app/public/' . $path);

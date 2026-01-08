@@ -12,17 +12,26 @@ class ProductoSuper extends Model
         'precio',
         'categoria',
         'stock',
+        'cantidad',
         'fecha_expiracion',
+        'fecha_entrada',
+        'fecha_limite_venta',
+        'fecha_salida',
         'codigo_barras',
         'imagen',
+        'foto_qr',
         'activo',
     ];
 
     protected $casts = [
         'precio' => 'decimal:2',
         'stock' => 'integer',
+        'cantidad' => 'integer',
         'activo' => 'boolean',
         'fecha_expiracion' => 'date',
+        'fecha_entrada' => 'date',
+        'fecha_limite_venta' => 'date',
+        'fecha_salida' => 'date',
     ];
 
     /**

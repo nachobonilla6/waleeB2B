@@ -104,10 +104,31 @@
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
                 
-                <!-- Section Field - Above Status -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <div class="flex items-center justify-between mb-4">
+                <!-- Section Field - Above Status (Outside Status Section) -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-4">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Section</label>
+                        <select 
+                            id="productoSeccion" 
+                            name="seccion" 
+                            onchange="updateSectionBadge()"
+                            class="w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent cursor-pointer"
+                        >
+                            <option value="">Select Section</option>
+                            <option value="Fruits & Vegetables" {{ $producto->seccion == 'Fruits & Vegetables' ? 'selected' : '' }}>Fruits & Vegetables</option>
+                            <option value="Meat & Poultry" {{ $producto->seccion == 'Meat & Poultry' ? 'selected' : '' }}>Meat & Poultry</option>
+                            <option value="Dairy & Eggs" {{ $producto->seccion == 'Dairy & Eggs' ? 'selected' : '' }}>Dairy & Eggs</option>
+                            <option value="Bakery" {{ $producto->seccion == 'Bakery' ? 'selected' : '' }}>Bakery</option>
+                            <option value="Beverages" {{ $producto->seccion == 'Beverages' ? 'selected' : '' }}>Beverages</option>
+                            <option value="Snacks" {{ $producto->seccion == 'Snacks' ? 'selected' : '' }}>Snacks</option>
+                            <option value="Canned Goods" {{ $producto->seccion == 'Canned Goods' ? 'selected' : '' }}>Canned Goods</option>
+                            <option value="Frozen Foods" {{ $producto->seccion == 'Frozen Foods' ? 'selected' : '' }}>Frozen Foods</option>
+                            <option value="Cleaning Supplies" {{ $producto->seccion == 'Cleaning Supplies' ? 'selected' : '' }}>Cleaning Supplies</option>
+                            <option value="Personal Care" {{ $producto->seccion == 'Personal Care' ? 'selected' : '' }}>Personal Care</option>
+                            <option value="Baby Products" {{ $producto->seccion == 'Baby Products' ? 'selected' : '' }}>Baby Products</option>
+                            <option value="Pet Supplies" {{ $producto->seccion == 'Pet Supplies' ? 'selected' : '' }}>Pet Supplies</option>
+                            <option value="Other" {{ $producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']) ? 'selected' : '' }}>Other</option>
+                        </select>
                         <!-- Section Badge -->
                         <div id="sectionBadgeContainer">
                             <span id="sectionBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50 {{ !$producto->seccion ? 'hidden' : '' }}">
@@ -118,27 +139,6 @@
                             </span>
                         </div>
                     </div>
-                    <select 
-                        id="productoSeccion" 
-                        name="seccion" 
-                        onchange="updateSectionBadge()"
-                        class="w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent cursor-pointer"
-                    >
-                        <option value="">Select Section</option>
-                        <option value="Fruits & Vegetables" {{ $producto->seccion == 'Fruits & Vegetables' ? 'selected' : '' }}>Fruits & Vegetables</option>
-                        <option value="Meat & Poultry" {{ $producto->seccion == 'Meat & Poultry' ? 'selected' : '' }}>Meat & Poultry</option>
-                        <option value="Dairy & Eggs" {{ $producto->seccion == 'Dairy & Eggs' ? 'selected' : '' }}>Dairy & Eggs</option>
-                        <option value="Bakery" {{ $producto->seccion == 'Bakery' ? 'selected' : '' }}>Bakery</option>
-                        <option value="Beverages" {{ $producto->seccion == 'Beverages' ? 'selected' : '' }}>Beverages</option>
-                        <option value="Snacks" {{ $producto->seccion == 'Snacks' ? 'selected' : '' }}>Snacks</option>
-                        <option value="Canned Goods" {{ $producto->seccion == 'Canned Goods' ? 'selected' : '' }}>Canned Goods</option>
-                        <option value="Frozen Foods" {{ $producto->seccion == 'Frozen Foods' ? 'selected' : '' }}>Frozen Foods</option>
-                        <option value="Cleaning Supplies" {{ $producto->seccion == 'Cleaning Supplies' ? 'selected' : '' }}>Cleaning Supplies</option>
-                        <option value="Personal Care" {{ $producto->seccion == 'Personal Care' ? 'selected' : '' }}>Personal Care</option>
-                        <option value="Baby Products" {{ $producto->seccion == 'Baby Products' ? 'selected' : '' }}>Baby Products</option>
-                        <option value="Pet Supplies" {{ $producto->seccion == 'Pet Supplies' ? 'selected' : '' }}>Pet Supplies</option>
-                        <option value="Other" {{ $producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']) ? 'selected' : '' }}>Other</option>
-                    </select>
                     @if($producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']))
                         <input 
                             type="text" 

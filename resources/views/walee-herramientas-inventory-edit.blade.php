@@ -189,16 +189,6 @@
                             </label>
                         </div>
                     </div>
-                    @if($producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']))
-                        <input 
-                            type="text" 
-                            id="productoSeccionCustom" 
-                            value="{{ $producto->seccion }}"
-                            oninput="updateSectionBadge()"
-                            placeholder="Custom section"
-                            class="mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-                        >
-                    @endif
                 </div>
                 
                 <!-- Codes & Images Section - Full Width -->
@@ -501,40 +491,16 @@
             const sectionBadge = document.getElementById('sectionBadge');
             const sectionBadgeText = document.getElementById('sectionBadgeText');
             const dropdown = document.getElementById('sectionDropdown');
-            const seccionCustomInput = document.getElementById('productoSeccionCustom');
             
             if (seccionSelect && sectionBadge && sectionBadgeText) {
                 seccionSelect.value = value;
                 
-                if (value === 'Other') {
-                    // Mostrar input personalizado
-                    if (!seccionCustomInput) {
-                        const container = document.getElementById('sectionBadgeContainer');
-                        const customInput = document.createElement('input');
-                        customInput.type = 'text';
-                        customInput.id = 'productoSeccionCustom';
-                        customInput.placeholder = 'Custom section';
-                        customInput.className = 'mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent';
-                        customInput.oninput = function() {
-                            updateSectionBadge();
-                        };
-                        container.appendChild(customInput);
-                    } else {
-                        seccionCustomInput.style.display = 'block';
-                    }
-                    sectionBadgeText.textContent = 'Other';
-                } else if (value === '') {
+                if (value === '') {
                     sectionBadgeText.textContent = 'Select Section';
                     sectionBadge.classList.add('opacity-50');
-                    if (seccionCustomInput) {
-                        seccionCustomInput.style.display = 'none';
-                    }
                 } else {
                     sectionBadgeText.textContent = value;
                     sectionBadge.classList.remove('opacity-50');
-                    if (seccionCustomInput) {
-                        seccionCustomInput.style.display = 'none';
-                    }
                 }
                 
                 // Cerrar dropdown
@@ -546,30 +512,17 @@
         
         function updateSectionBadge() {
             const seccionSelect = document.getElementById('productoSeccion');
-            const seccionCustomInput = document.getElementById('productoSeccionCustom');
             const sectionBadge = document.getElementById('sectionBadge');
             const sectionBadgeText = document.getElementById('sectionBadgeText');
             
             if (seccionSelect && sectionBadge && sectionBadgeText) {
-                let seccionValue = '';
-                
-                if (seccionSelect.value === 'Other' && seccionCustomInput) {
-                    seccionValue = seccionCustomInput.value.trim();
-                    if (seccionValue) {
-                        sectionBadgeText.textContent = seccionValue;
-                        sectionBadge.classList.remove('opacity-50');
-                    } else {
-                        sectionBadgeText.textContent = 'Other';
-                    }
+                const seccionValue = seccionSelect.value.trim();
+                if (seccionValue) {
+                    sectionBadgeText.textContent = seccionValue;
+                    sectionBadge.classList.remove('opacity-50');
                 } else {
-                    seccionValue = seccionSelect.value.trim();
-                    if (seccionValue) {
-                        sectionBadgeText.textContent = seccionValue;
-                        sectionBadge.classList.remove('opacity-50');
-                    } else {
-                        sectionBadgeText.textContent = 'Select Section';
-                        sectionBadge.classList.add('opacity-50');
-                    }
+                    sectionBadgeText.textContent = 'Select Section';
+                    sectionBadge.classList.add('opacity-50');
                 }
             }
         }

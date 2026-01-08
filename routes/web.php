@@ -4826,6 +4826,74 @@ Route::get('/walee-herramientas/inventory', function () {
     return view('walee-herramientas-inventory');
 })->middleware(['auth'])->name('walee.herramientas.inventory');
 
+// Helper function para generar y guardar QR code
+if (!function_exists('generateAndSaveQRCode')) {
+    function generateAndSaveQRCode($text, $productoId = null) {
+        try {
+            // Crear texto para el QR
+            $qrText = !empty($text) ? $text : 'PROD-' . ($productoId ?? time());
+            
+            // Intentar con Imagick primero
+            try {
+                $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                    new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                    new \BaconQrCode\Renderer\Image\ImagickImageBackEnd()
+                );
+                $writer = new \BaconQrCode\Writer($renderer);
+                $qrCode = $writer->writeString($qrText);
+            } catch (\Exception $e) {
+                // Fallback a GD
+                try {
+                    $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                        new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                        new \BaconQrCode\Renderer\Image\GdImageBackEnd()
+                    );
+                    $writer = new \BaconQrCode\Writer($renderer);
+                    $qrCode = $writer->writeString($qrText);
+                } catch (\Exception $e2) {
+                    // Último fallback: SVG
+                    $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                        new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                        new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+                    );
+                    $writer = new \BaconQrCode\Writer($renderer);
+                    $qrCode = $writer->writeString($qrText);
+                }
+            }
+            
+            // Guardar el QR code
+            $qrDir = storage_path('app/public/productos-super/qr');
+            if (!file_exists($qrDir)) {
+                mkdir($qrDir, 0755, true);
+            }
+            
+            $filename = 'qr-' . ($productoId ?? uniqid()) . '-' . time() . '.png';
+            $filePath = $qrDir . '/' . $filename;
+            
+            // Si es SVG, convertir a PNG o guardar como SVG
+            if (strpos($qrCode, '<svg') !== false) {
+                // Es SVG, guardar como SVG
+                $filename = 'qr-' . ($productoId ?? uniqid()) . '-' . time() . '.svg';
+                $filePath = $qrDir . '/' . $filename;
+                file_put_contents($filePath, $qrCode);
+            } else {
+                // Es PNG, guardar directamente
+                file_put_contents($filePath, $qrCode);
+            }
+            
+            chmod($filePath, 0644);
+            
+            return 'productos-super/qr/' . $filename;
+        } catch (\Exception $e) {
+            \Log::error('Error generating QR code', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return null;
+        }
+    }
+}
+
 // Herramientas - Inventory - Crear Producto
 Route::get('/walee-herramientas/inventory/producto/create', function () {
     return view('walee-herramientas-inventory-create');
@@ -4888,6 +4956,16 @@ Route::post('/walee-herramientas/inventory/producto', function (\Illuminate\Http
         }
         
         $producto->save();
+        
+        // Generar QR automáticamente si no hay foto_qr
+        if (!$producto->foto_qr) {
+            $qrText = $producto->codigo_barras ?: 'PROD-' . $producto->id . '-' . $producto->nombre;
+            $qrPath = generateAndSaveQRCode($qrText, $producto->id);
+            if ($qrPath) {
+                $producto->foto_qr = $qrPath;
+                $producto->save();
+            }
+        }
         
         return response()->json([
             'success' => true,
@@ -4985,6 +5063,16 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
         
         $producto->save();
         
+        // Generar QR automáticamente si no hay foto_qr y no se eliminó
+        if (!$producto->foto_qr && $request->input('remove_foto_qr') !== '1') {
+            $qrText = $producto->codigo_barras ?: 'PROD-' . $producto->id . '-' . $producto->nombre;
+            $qrPath = generateAndSaveQRCode($qrText, $producto->id);
+            if ($qrPath) {
+                $producto->foto_qr = $qrPath;
+                $producto->save();
+            }
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'Producto actualizado correctamente',
@@ -4997,7 +5085,73 @@ Route::put('/walee-herramientas/inventory/producto/{id}', function (\Illuminate\
     }
 })->middleware(['auth'])->name('walee.herramientas.inventory.update');
 
-// Herramientas - Inventory - Generar QR Code (Backend)
+// Helper function para generar y guardar QR code
+function generateAndSaveQRCode($text, $productoId = null) {
+    try {
+        // Crear texto para el QR
+        $qrText = !empty($text) ? $text : 'PROD-' . ($productoId ?? time());
+        
+        // Intentar con Imagick primero
+        try {
+            $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                new \BaconQrCode\Renderer\Image\ImagickImageBackEnd()
+            );
+            $writer = new \BaconQrCode\Writer($renderer);
+            $qrCode = $writer->writeString($qrText);
+        } catch (\Exception $e) {
+            // Fallback a GD
+            try {
+                $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                    new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                    new \BaconQrCode\Renderer\Image\GdImageBackEnd()
+                );
+                $writer = new \BaconQrCode\Writer($renderer);
+                $qrCode = $writer->writeString($qrText);
+            } catch (\Exception $e2) {
+                // Último fallback: SVG
+                $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+                    new \BaconQrCode\Renderer\RendererStyle\RendererStyle(256, 2),
+                    new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+                );
+                $writer = new \BaconQrCode\Writer($renderer);
+                $qrCode = $writer->writeString($qrText);
+            }
+        }
+        
+        // Guardar el QR code
+        $qrDir = storage_path('app/public/productos-super/qr');
+        if (!file_exists($qrDir)) {
+            mkdir($qrDir, 0755, true);
+        }
+        
+        $filename = 'qr-' . ($productoId ?? uniqid()) . '-' . time() . '.png';
+        $filePath = $qrDir . '/' . $filename;
+        
+        // Si es SVG, convertir a PNG o guardar como SVG
+        if (strpos($qrCode, '<svg') !== false) {
+            // Es SVG, guardar como SVG
+            $filename = 'qr-' . ($productoId ?? uniqid()) . '-' . time() . '.svg';
+            $filePath = $qrDir . '/' . $filename;
+            file_put_contents($filePath, $qrCode);
+        } else {
+            // Es PNG, guardar directamente
+            file_put_contents($filePath, $qrCode);
+        }
+        
+        chmod($filePath, 0644);
+        
+        return 'productos-super/qr/' . $filename;
+    } catch (\Exception $e) {
+        \Log::error('Error generating QR code', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return null;
+    }
+}
+
+// Herramientas - Inventory - Generar QR Code (Backend) - Para uso manual desde frontend
 Route::post('/walee-herramientas/inventory/producto/generate-qr', function (\Illuminate\Http\Request $request) {
     try {
         $text = $request->input('text');

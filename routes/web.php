@@ -113,48 +113,72 @@ Route::get('/storage/productos-super/{filename}', function ($filename) {
         $filename = basename($filename);
         $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
         
+        if (empty($filename)) {
+            abort(404, 'Nombre de archivo inválido');
+        }
+        
         // Buscar el archivo en el directorio productos-super
         $path = storage_path('app/public/productos-super/' . $filename);
         
-        // Log para debugging
-        \Log::info('Intentando servir imagen de producto super', [
-            'filename' => $filename,
-            'path' => $path,
-            'exists' => file_exists($path),
-            'is_file' => is_file($path)
-        ]);
-        
+        // Verificar que el archivo existe
         if (!file_exists($path) || !is_file($path)) {
             \Log::warning('Archivo de producto super no encontrado', [
                 'filename' => $filename,
                 'path' => $path,
-                'directory_exists' => is_dir(dirname($path)),
-                'directory_contents' => is_dir(dirname($path)) ? implode(', ', array_slice(scandir(dirname($path)), 0, 10)) : 'N/A'
+                'directory_exists' => is_dir(dirname($path))
             ]);
             abort(404, 'Archivo no encontrado: ' . $filename);
         }
         
-        $file = file_get_contents($path);
-        $type = mime_content_type($path) ?: 'image/jpeg';
+        // Leer el archivo
+        $file = @file_get_contents($path);
+        if ($file === false) {
+            \Log::error('No se pudo leer el archivo', [
+                'filename' => $filename,
+                'path' => $path
+            ]);
+            abort(500, 'Error al leer archivo');
+        }
         
-        \Log::info('Archivo de producto super servido correctamente', [
-            'filename' => $filename,
-            'size' => filesize($path),
-            'type' => $type
-        ]);
+        // Obtener el tipo MIME
+        $type = 'image/jpeg'; // Default
+        if (function_exists('mime_content_type')) {
+            $detectedType = @mime_content_type($path);
+            if ($detectedType !== false) {
+                $type = $detectedType;
+            }
+        } elseif (function_exists('finfo_file')) {
+            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $detectedType = @finfo_file($finfo, $path);
+                if ($detectedType !== false) {
+                    $type = $detectedType;
+                }
+                @finfo_close($finfo);
+            }
+        }
+        
+        // Obtener el tamaño del archivo
+        $fileSize = @filesize($path);
+        if ($fileSize === false) {
+            $fileSize = strlen($file);
+        }
         
         return response($file, 200)
             ->header('Content-Type', $type)
-            ->header('Content-Length', filesize($path))
+            ->header('Content-Length', $fileSize)
             ->header('Cache-Control', 'public, max-age=31536000')
             ->header('Access-Control-Allow-Origin', '*');
+    } catch (\Illuminate\Http\Exceptions\HttpResponseException $e) {
+        // Re-lanzar excepciones HTTP (404, 500, etc.)
+        throw $e;
     } catch (\Exception $e) {
         \Log::error('Error al servir archivo de producto super', [
             'filename' => $filename ?? 'unknown',
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ]);
-        abort(500, 'Error al servir archivo');
+        abort(500, 'Error al servir archivo: ' . $e->getMessage());
     }
 })->where('filename', '.*')->name('storage.productos-super');
 
@@ -165,26 +189,61 @@ Route::get('/storage/productos-super/qr/{filename}', function ($filename) {
         $filename = basename($filename);
         $filename = preg_replace('/[^a-zA-Z0-9._-]/', '', $filename);
         
+        if (empty($filename)) {
+            abort(404, 'Nombre de archivo inválido');
+        }
+        
         $path = storage_path('app/public/productos-super/qr/' . $filename);
         
         if (!file_exists($path) || !is_file($path)) {
             abort(404, 'Archivo QR no encontrado: ' . $filename);
         }
         
-        $file = file_get_contents($path);
-        $type = mime_content_type($path) ?: 'image/jpeg';
+        // Leer el archivo
+        $file = @file_get_contents($path);
+        if ($file === false) {
+            abort(500, 'Error al leer archivo QR');
+        }
+        
+        // Obtener el tipo MIME
+        $type = 'image/jpeg'; // Default
+        if (function_exists('mime_content_type')) {
+            $detectedType = @mime_content_type($path);
+            if ($detectedType !== false) {
+                $type = $detectedType;
+            }
+        } elseif (function_exists('finfo_file')) {
+            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
+            if ($finfo !== false) {
+                $detectedType = @finfo_file($finfo, $path);
+                if ($detectedType !== false) {
+                    $type = $detectedType;
+                }
+                @finfo_close($finfo);
+            }
+        }
+        
+        // Obtener el tamaño del archivo
+        $fileSize = @filesize($path);
+        if ($fileSize === false) {
+            $fileSize = strlen($file);
+        }
         
         return response($file, 200)
             ->header('Content-Type', $type)
-            ->header('Content-Length', filesize($path))
+            ->header('Content-Length', $fileSize)
             ->header('Cache-Control', 'public, max-age=31536000')
             ->header('Access-Control-Allow-Origin', '*');
+    } catch (\Illuminate\Http\Exceptions\HttpResponseException $e) {
+        // Re-lanzar excepciones HTTP (404, 500, etc.)
+        throw $e;
     } catch (\Exception $e) {
         \Log::error('Error al servir archivo QR de producto super', [
             'filename' => $filename ?? 'unknown',
-            'error' => $e->getMessage()
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
         ]);
-        abort(500, 'Error al servir archivo QR');
+        abort(500, 'Error al servir archivo QR: ' . $e->getMessage());
     }
 })->where('filename', '.*')->name('storage.productos-super.qr');
 

@@ -108,7 +108,7 @@
                     <div class="flex items-center justify-between gap-4">
                         <!-- Left side: Section -->
                         <div class="flex items-center gap-4">
-                            <label class="block text-lg font-medium text-slate-700 dark:text-slate-300">Section</label>
+                            <label class="block text-xl font-semibold text-slate-700 dark:text-slate-300">Section</label>
                             <!-- Section Badge with Dropdown -->
                             <div class="relative" id="sectionBadgeContainer">
                                 <span 

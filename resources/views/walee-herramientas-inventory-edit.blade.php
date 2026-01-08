@@ -107,6 +107,23 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
+        .walee-gradient {
+            background: linear-gradient(135deg, #D59F3B 0%, #E0C684 50%, #C78F2E 100%);
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(213, 159, 59, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(213, 159, 59, 0.5);
+            }
+        }
+        
+        .swal2-popup-custom {
+            padding: 2rem !important;
+        }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(213, 159, 59, 0.3); border-radius: 3px; }
@@ -996,14 +1013,30 @@
                 if (data.success) {
                     Swal.fire({
                         ...getSwalTheme(),
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Product updated successfully',
-                        timer: 1500,
-                        showConfirmButton: false
+                        html: `
+                            <div class="flex flex-col items-center justify-center gap-4 py-4">
+                                <div class="w-20 h-20 rounded-2xl walee-gradient flex items-center justify-center shadow-lg" style="animation: pulse-glow 3s infinite;">
+                                    <img src="https://i.postimg.cc/RVw3wk3Y/wa-(Edited).jpg" alt="Walee B2B" class="w-16 h-16 rounded-xl object-cover">
+                                </div>
+                                <div class="text-center">
+                                    <h2 class="text-2xl font-bold bg-gradient-to-r from-walee-300 via-walee-400 to-walee-500 bg-clip-text text-transparent mb-2">
+                                        Walee B2B
+                                    </h2>
+                                    <p class="text-slate-700 dark:text-slate-300 text-lg">
+                                        Product updated successfully
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        icon: false,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'swal2-popup-custom'
+                        }
                     }).then(() => {
-                        // Recargar la página actual para mantener en la misma página del producto
-                        window.location.reload();
+                        // Redirigir a la página de inventory
+                        window.location.href = '{{ route("walee.herramientas.inventory") }}';
                     });
                 } else {
                     Swal.fire({

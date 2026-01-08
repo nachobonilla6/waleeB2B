@@ -477,10 +477,9 @@
             if (seccionSelect && sectionBadge && sectionBadgeText) {
                 let seccionValue = '';
                 
-                if (seccionSelect.value === 'Other' && seccionCustomInput) {
-                    seccionValue = seccionCustomInput.value.trim();
-                    // Mostrar/ocultar input personalizado
-                    if (!seccionCustomInput.parentElement) {
+                if (seccionSelect.value === 'Other') {
+                    // Mostrar input personalizado si no existe
+                    if (!seccionCustomInput) {
                         const container = seccionSelect.parentElement;
                         const customInput = document.createElement('input');
                         customInput.type = 'text';
@@ -488,11 +487,11 @@
                         customInput.placeholder = 'Custom section';
                         customInput.className = 'mt-2 w-48 max-w-xs px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent';
                         customInput.oninput = updateSectionBadge;
-                        container.appendChild(customInput);
-                    }
-                    if (seccionCustomInput) {
+                        container.insertBefore(customInput, sectionBadge.parentElement);
+                    } else {
                         seccionCustomInput.style.display = 'block';
                     }
+                    seccionValue = seccionCustomInput ? seccionCustomInput.value.trim() : '';
                 } else {
                     seccionValue = seccionSelect.value.trim();
                     // Ocultar input personalizado si no es "Other"

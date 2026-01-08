@@ -220,8 +220,8 @@
                                         Expires Soon
                                     </span>
                                 @endif
-                                @if($salePronto)
-                                    <span class="ml-2 inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 shadow-sm">
+                                 @if($salePronto)
+                                     <span class="badge-transition ml-2 inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 shadow-sm">
                                         <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                         </svg>
@@ -254,7 +254,7 @@
                                     <option value="Other" {{ $producto->seccion && !in_array($producto->seccion, ['Fruits & Vegetables', 'Meat & Poultry', 'Dairy & Eggs', 'Bakery', 'Beverages', 'Snacks', 'Canned Goods', 'Frozen Foods', 'Cleaning Supplies', 'Personal Care', 'Baby Products', 'Pet Supplies']) ? 'selected' : '' }}>Other</option>
                                 </select>
                                 <!-- Custom Dropdown Menu -->
-                                <div id="sectionDropdown" class="hidden absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50 overflow-hidden">
+                                <div id="sectionDropdown" class="hidden absolute top-full left-0 mt-1 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 z-50 overflow-hidden section-dropdown">
                                     <div class="py-1 max-h-64 overflow-y-auto">
                                         <button type="button" onclick="selectSection('')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">None</button>
                                         <button type="button" onclick="selectSection('Fruits & Vegetables')" class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors">Fruits & Vegetables</button>
@@ -307,7 +307,7 @@
                 </div>
                 
                 <!-- Codes & Images Section - Full Width -->
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div class="form-section bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -429,7 +429,7 @@
                 <!-- Basic Info and Dates - Two Columns -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Left Column - Basic Information -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="form-section bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>

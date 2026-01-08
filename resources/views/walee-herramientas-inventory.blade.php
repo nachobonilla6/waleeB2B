@@ -48,8 +48,35 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
         .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .producto-row {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .producto-row:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .badge-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .badge-transition:hover {
+            transform: scale(1.05);
         }
         
         ::-webkit-scrollbar { width: 6px; }
@@ -237,7 +264,7 @@
                                         }
                                     }
                                 @endphp
-                                <tr class="producto-row hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors" 
+                                <tr class="producto-row hover:bg-slate-50 dark:hover:bg-slate-800/50" 
                                     data-nombre="{{ strtolower($producto->nombre) }}"
                                     data-categoria="{{ strtolower($producto->categoria ?? '') }}"
                                     data-stock="{{ $producto->stock }}"
@@ -340,12 +367,12 @@
                                                     }
                                                 @endphp
                                                 @if($producto->seccion)
-                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50">
+                                                    <span class="badge-transition inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 border border-violet-200 dark:border-violet-700/50">
                                                         {{ $producto->seccion }}
                                                     </span>
                                                 @endif
                                                 @if($expiraPronto)
-                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-700/50 shadow-sm">
+                                                    <span class="badge-transition inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-700/50 shadow-sm">
                                                         <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                         </svg>
@@ -353,7 +380,7 @@
                                                     </span>
                                                 @endif
                                                 @if($salePronto)
-                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 shadow-sm">
+                                                    <span class="badge-transition inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700/50 shadow-sm">
                                                         <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                                         </svg>
@@ -420,7 +447,7 @@
                                         <div class="flex items-center justify-center gap-2">
                                             <button 
                                                 onclick="editProducto({{ $producto->id }})"
-                                                class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-md"
                                                 title="Edit"
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,7 +456,7 @@
                                             </button>
                                             <button 
                                                 onclick="deleteProducto({{ $producto->id }})"
-                                                class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-md"
                                                 title="Delete"
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -450,8 +477,8 @@
     @include('partials.walee-support-button')
     
     <!-- QR Modal -->
-    <div id="qrModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full p-6">
+    <div id="qrModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all duration-300 scale-95" id="qrModalContent">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white">QR Code</h3>
                 <button onclick="closeQRModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">

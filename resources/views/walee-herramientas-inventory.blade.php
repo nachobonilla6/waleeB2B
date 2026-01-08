@@ -220,11 +220,15 @@
                                                         }
                                                     }
                                                     
-                                                    // Construir URL usando la ruta definida
-                                                    $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
-                                                    
-                                                    // Si la ruta no funciona, usar Storage::url como fallback
-                                                    // Pero primero intentar con la ruta definida
+                                                    // Construir URL - intentar primero con la ruta definida
+                                                    // Si el path incluye el directorio completo, usar asset() directamente
+                                                    if (strpos($imagenPath, 'productos-super/') === 0) {
+                                                        // El path ya incluye el directorio, usar asset() directamente
+                                                        $imagenUrl = asset('storage/' . $imagenPath);
+                                                    } else {
+                                                        // Usar la ruta definida con solo el nombre del archivo
+                                                        $imagenUrl = route('storage.productos-super', ['filename' => $filename]);
+                                                    }
                                                 }
                                             @endphp
                                             <img 

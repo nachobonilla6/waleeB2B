@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Walee - Create Product</title>
-    <meta name="description" content="Create Product - DLC DLV Management">
+    <meta name="description" content="Create Product - Inventory Management">
     <meta name="theme-color" content="#D59F3B">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     @include('partials.walee-dark-mode-init')
@@ -136,7 +136,8 @@
             <div class="mb-6 sm:mb-8 animate-fade-in-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">DLC DLV</h1>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Inventory</h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">DLC DLV</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <a 

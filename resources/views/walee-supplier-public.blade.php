@@ -689,6 +689,7 @@
                     const estado = document.getElementById('editProductStatus').value;
                     const precio = parseFloat(document.getElementById('editProductPrice').value) || 0;
                     const stock = parseInt(document.getElementById('editProductStock').value) || 0;
+                    const fecha_expiracion = document.getElementById('editProductExpirationDate').value;
                     const imagen = document.getElementById('editProductImage').files[0];
                     
                     if (!nombre) {
@@ -701,7 +702,7 @@
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, precio, stock, cliente_id: supplierId, imagen: imagen, product_id: producto.id };
+                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, cliente_id: supplierId, imagen: imagen, product_id: producto.id };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {
@@ -713,6 +714,7 @@
                         formData.append('estado', result.value.estado);
                         formData.append('precio', result.value.precio);
                         formData.append('stock', result.value.stock);
+                        formData.append('fecha_expiracion', result.value.fecha_expiracion || '');
                         formData.append('cliente_id', result.value.cliente_id);
                         formData.append('product_id', result.value.product_id);
                         
@@ -857,6 +859,7 @@
                     const estado = document.getElementById('productStatus').value;
                     const precio = parseFloat(document.getElementById('productPrice').value) || 0;
                     const stock = parseInt(document.getElementById('productStock').value) || 0;
+                    const fecha_expiracion = document.getElementById('productExpirationDate').value;
                     const imagen = document.getElementById('productImage').files[0];
                     
                     if (!nombre) {
@@ -869,7 +872,7 @@
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, precio, stock, cliente_id: supplierId, imagen: imagen };
+                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, cliente_id: supplierId, imagen: imagen };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {
@@ -881,6 +884,7 @@
                         formData.append('estado', result.value.estado);
                         formData.append('precio', result.value.precio);
                         formData.append('stock', result.value.stock);
+                        formData.append('fecha_expiracion', result.value.fecha_expiracion || '');
                         formData.append('cliente_id', result.value.cliente_id);
                         
                         if (result.value.imagen) {

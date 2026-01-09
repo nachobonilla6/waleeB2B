@@ -6953,6 +6953,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'estado' => 'nullable|in:activo,inactivo',
             'precio' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
+            'fecha_expiracion' => 'nullable|date',
             'imagen' => 'nullable|image|max:5120', // 5MB max
         ]);
         
@@ -7049,6 +7050,7 @@ Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\
             'estado' => 'nullable|in:activo,inactivo',
             'precio' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
+            'fecha_expiracion' => 'nullable|date',
             'imagen' => 'nullable|image|max:5120', // 5MB max
         ]);
         
@@ -7059,6 +7061,7 @@ Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\
         $producto->activo = $request->input('estado') === 'activo';
         $producto->stock = $request->input('stock', 0);
         $producto->cantidad = $request->input('stock', 0);
+        $producto->fecha_expiracion = $request->input('fecha_expiracion') ?: null;
         
         // Handle image update
         if ($request->hasFile('imagen')) {

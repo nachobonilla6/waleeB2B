@@ -484,6 +484,119 @@
             });
         }
         
+        // Add Product Modal
+        function openAddProductModal() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const supplierId = @json($supplier->id);
+            
+            Swal.fire({
+                title: 'Add New Product',
+                html: `
+                    <form id="addProductForm" class="space-y-4 text-left">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Product Name *</label>
+                            <input type="text" id="productName" name="nombre" required
+                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                   placeholder="Enter product name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Type</label>
+                            <input type="text" id="productType" name="tipo"
+                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                   placeholder="Enter product type">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
+                            <textarea id="productDescription" name="descripcion" rows="3"
+                                      class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                      placeholder="Enter product description"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                            <select id="productStatus" name="estado"
+                                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="activo">Active</option>
+                                <option value="inactivo">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                `,
+                width: '600px',
+                padding: '1.5rem',
+                showCancelButton: true,
+                confirmButtonText: 'Add Product',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                customClass: {
+                    popup: isDarkMode ? 'dark-swal' : 'light-swal',
+                    htmlContainer: isDarkMode ? 'dark-swal-html' : 'light-swal-html'
+                },
+                didOpen: () => {
+                    const popup = Swal.getPopup();
+                    if (isDarkMode) {
+                        popup.style.backgroundColor = '#0f172a';
+                        popup.style.color = '#e2e8f0';
+                    }
+                },
+                preConfirm: () => {
+                    const nombre = document.getElementById('productName').value.trim();
+                    const tipo = document.getElementById('productType').value.trim();
+                    const descripcion = document.getElementById('productDescription').value.trim();
+                    const estado = document.getElementById('productStatus').value;
+                    
+                    if (!nombre) {
+                        Swal.showValidationMessage('Product name is required');
+                        return false;
+                    }
+                    
+                    return { nombre, tipo, descripcion, estado, cliente_id: supplierId };
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch('{{ route("walee.supplier.public.add-product", $supplier->id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify(result.value)
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Product added successfully',
+                                confirmButtonColor: '#10b981',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message || 'Failed to add product',
+                                confirmButtonColor: '#ef4444'
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred. Please try again.',
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
+            });
+        }
+        
         // WhatsApp Modal
         function openWhatsAppModal() {
             @if(!$whatsappLink)

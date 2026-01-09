@@ -6777,7 +6777,58 @@ Route::get('/walee-supplier/{id}', function ($id) {
     // Obtener cantidad de emails enviados al cliente
     $emailsEnviados = \App\Models\PropuestaPersonalizada::where('cliente_id', $cliente->id)->count();
     
-    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId', 'templates', 'emailsEnviados'));
+    // Función para obtener bandera del país
+    $getCountryFlag = function($countryName) {
+        if (empty($countryName)) return null;
+        
+        $countryFlags = [
+            'costa rica' => '🇨🇷',
+            'mexico' => '🇲🇽',
+            'méxico' => '🇲🇽',
+            'usa' => '🇺🇸',
+            'united states' => '🇺🇸',
+            'estados unidos' => '🇺🇸',
+            'spain' => '🇪🇸',
+            'españa' => '🇪🇸',
+            'colombia' => '🇨🇴',
+            'argentina' => '🇦🇷',
+            'chile' => '🇨🇱',
+            'peru' => '🇵🇪',
+            'perú' => '🇵🇪',
+            'ecuador' => '🇪🇨',
+            'venezuela' => '🇻🇪',
+            'guatemala' => '🇬🇹',
+            'panama' => '🇵🇦',
+            'panamá' => '🇵🇦',
+            'nicaragua' => '🇳🇮',
+            'honduras' => '🇭🇳',
+            'el salvador' => '🇸🇻',
+            'belize' => '🇧🇿',
+            'brazil' => '🇧🇷',
+            'brasil' => '🇧🇷',
+            'canada' => '🇨🇦',
+            'canadá' => '🇨🇦',
+            'france' => '🇫🇷',
+            'francia' => '🇫🇷',
+            'germany' => '🇩🇪',
+            'alemania' => '🇩🇪',
+            'italy' => '🇮🇹',
+            'italia' => '🇮🇹',
+            'portugal' => '🇵🇹',
+            'united kingdom' => '🇬🇧',
+            'reino unido' => '🇬🇧',
+            'uk' => '🇬🇧',
+        ];
+        
+        $countryLower = strtolower(trim($countryName));
+        return $countryFlags[$countryLower] ?? null;
+    };
+    
+    // Obtener país y bandera
+    $pais = $cliente->fiscal_country ?? null;
+    $bandera = $pais ? $getCountryFlag($pais) : null;
+    
+    return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId', 'templates', 'emailsEnviados', 'pais', 'bandera'));
 })->middleware(['auth'])->name('walee.supplier.detalle');
 
 // Ruta para editar un cliente

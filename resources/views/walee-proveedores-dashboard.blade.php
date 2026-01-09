@@ -710,7 +710,7 @@
             <div class="mb-4 sm:mb-6 md:mb-8">
                 <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
                     <div class="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Suppliers with Publications</h2>
+                        <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white">Suppliers</h2>
                         <div class="flex items-center gap-2">
                             <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-violet-600 dark:text-violet-400">{{ count($clientesConPublicaciones) }}</span>
                             <span class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">suppliers</span>

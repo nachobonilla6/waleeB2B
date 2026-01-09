@@ -83,7 +83,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-2xl mx-auto px-4 py-8 sm:px-6 lg:px-8 w-full">
+        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full">
             @if(!session('supplier_public_authenticated_' . $supplier->id))
                 <!-- Access Code Form -->
                 <div class="max-w-md mx-auto mt-20">
@@ -111,9 +111,9 @@
                 </div>
             @else
                 <!-- Supplier Profile -->
-                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none p-4 sm:p-6">
+                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none p-4 sm:p-5">
                     <!-- Header -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
                         <div class="flex items-center gap-4 flex-1">
                             <!-- Foto -->
                             <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border-2 border-emerald-500/30 shadow-sm flex-shrink-0">
@@ -153,7 +153,7 @@
                     </div>
                     
                     <!-- Quick Actions -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                         <!-- Note Button -->
                         <button onclick="openNotaModal()" class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-violet-100 dark:bg-violet-500/20 hover:bg-violet-200 dark:hover:bg-violet-500/30 text-violet-600 dark:text-violet-400 border border-violet-600 dark:border-violet-500/30 transition-all group shadow-sm">
                             <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,7 +199,7 @@
                     </div>
                     
                     <!-- Subscribe Section - Subtle -->
-                    <div class="pt-3 pb-2">
+                    <div class="pt-2 pb-1">
                         <div class="text-center">
                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
                                 Subscribe for more features
@@ -211,8 +211,8 @@
                     </div>
                     
                     <!-- Edit Profile Form -->
-                    <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <div class="flex items-center justify-between mb-3">
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Edit Profile</h2>
                             <button onclick="openEditProfileModal()" class="px-4 py-2 bg-walee-500 hover:bg-walee-600 text-white rounded-lg font-medium transition-colors">
                                 Edit

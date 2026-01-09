@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    protected $table = 'clientes_en_proceso';
+    protected $table = 'suppliers';
 
     protected $fillable = [
         'name',

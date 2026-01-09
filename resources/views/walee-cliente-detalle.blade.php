@@ -777,11 +777,18 @@
                     <div class="flex-1 min-w-0">
                                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white break-words mb-2">{{ $cliente->name }}</h1>
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-1.5">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                            </span>
+                                    <div class="flex items-center gap-2 mb-1.5">
+                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
+                                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                        </span>
+                                        <button onclick="openNotaModal()" class="ml-auto flex items-center justify-center p-1.5 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Nota">
+                                            <svg class="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                             
                             <!-- Is Active Toggle Mobile -->
                             <div class="flex items-center gap-2 mb-1.5">
@@ -864,15 +871,24 @@
                 </div>
             </div>
             
+                        <!-- Contacto de la empresa Mobile -->
+                        @if($cliente->contacto_empresa)
+                            <div class="px-3 pb-2">
+                                <div class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Contacto de la empresa:</span>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        
                         <!-- Acciones Rápidas Mobile -->
                         <div class="px-3 pb-3">
-                            <div class="grid grid-cols-5 gap-1.5">
-                                <!-- Nota Button -->
-                                <button onclick="openNotaModal()" class="flex items-center justify-center p-2 rounded-lg bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-600 border border-amber-600 dark:border-slate-700 transition-all group shadow-sm" title="Nota">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform text-amber-600 dark:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </button>
+                            <div class="grid grid-cols-4 gap-1.5">
                                 
                                 <!-- Website Button -->
                                 @if($cliente->website)
@@ -1014,11 +1030,19 @@
                         <div class="flex-1 min-w-0">
                                     <h1 class="text-2xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2 sm:mb-3 truncate">{{ $cliente->name }}</h1>
                                     <div class="flex flex-col">
-                                        <span class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Estado:</span>
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit mb-2">
-                                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                            {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
-                                    </span>
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-sm font-medium text-slate-600 dark:text-slate-400">Estado:</span>
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-600 dark:border-emerald-500/30 w-fit">
+                                                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                                {{ $cliente->estado === 'accepted' ? 'Activo' : ucfirst($cliente->estado) }}
+                                            </span>
+                                            <button onclick="openNotaModal()" class="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Nota">
+                                                <svg class="w-4 h-4 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                                <span class="text-xs font-semibold">Nota</span>
+                                            </button>
+                                        </div>
                                     
                                     <!-- Is Active Toggle Desktop -->
                                     <div class="flex items-center gap-2 mb-2">
@@ -1101,16 +1125,23 @@
                     </div>
                 </div>
                 
+                            <!-- Contacto de la empresa Desktop -->
+                            @if($cliente->contacto_empresa)
+                                <div class="mb-3">
+                                    <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                        <svg class="w-5 h-5 text-slate-500 dark:text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                        <div class="flex-1 min-w-0">
+                                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Contacto de la empresa:</span>
+                                            <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">{{ $cliente->contacto_empresa }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            
                             <!-- Acciones Rápidas Desktop -->
                             <div class="flex flex-wrap gap-2.5">
-                                <!-- Nota Button -->
-                                <button onclick="openNotaModal()" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-500/10 dark:to-amber-600/5 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-500/20 dark:hover:to-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]" title="Nota">
-                                    <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                    <span class="text-sm font-semibold">Nota</span>
-                                </button>
-                                
                                 <!-- Website Button -->
                                 @if($cliente->website)
                                     <a href="{{ $cliente->website }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-500/10 dark:to-blue-600/5 hover:from-blue-100 hover:to-blue-200/50 dark:hover:from-blue-500/20 dark:hover:to-blue-600/10 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-500/20 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all group shadow-sm hover:shadow-md active:scale-[0.98]">

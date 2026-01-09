@@ -492,37 +492,48 @@
             Swal.fire({
                 title: 'Add New Product',
                 html: `
-                    <form id="addProductForm" class="space-y-4 text-left">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Product Name *</label>
-                            <input type="text" id="productName" name="nombre" required
-                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                   placeholder="Enter product name">
+                    <form id="addProductForm" class="space-y-2.5 text-left">
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Product Name *</label>
+                                <input type="text" id="productName" name="nombre" required
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       placeholder="Product name">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Type</label>
+                                <input type="text" id="productType" name="tipo"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       placeholder="Product type">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Stock Quantity</label>
+                                <input type="number" id="productStock" name="stock" min="0" value="0"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Status</label>
+                                <select id="productStatus" name="estado"
+                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <option value="activo">Active</option>
+                                    <option value="inactivo">Inactive</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Type</label>
-                            <input type="text" id="productType" name="tipo"
-                                   class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                   placeholder="Enter product type">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
-                            <textarea id="productDescription" name="descripcion" rows="3"
-                                      class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                      placeholder="Enter product description"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                            <select id="productStatus" name="estado"
-                                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <option value="activo">Active</option>
-                                <option value="inactivo">Inactive</option>
-                            </select>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Description</label>
+                            <textarea id="productDescription" name="descripcion" rows="2"
+                                      class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                      placeholder="Product description"></textarea>
                         </div>
                     </form>
                 `,
-                width: '600px',
-                padding: '1.5rem',
+                width: '500px',
+                padding: '1rem',
+                maxHeight: '500px',
                 showCancelButton: true,
                 confirmButtonText: 'Add Product',
                 cancelButtonText: 'Cancel',
@@ -544,13 +555,14 @@
                     const tipo = document.getElementById('productType').value.trim();
                     const descripcion = document.getElementById('productDescription').value.trim();
                     const estado = document.getElementById('productStatus').value;
+                    const stock = parseInt(document.getElementById('productStock').value) || 0;
                     
                     if (!nombre) {
                         Swal.showValidationMessage('Product name is required');
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, cliente_id: supplierId };
+                    return { nombre, tipo, descripcion, estado, stock, cliente_id: supplierId };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {

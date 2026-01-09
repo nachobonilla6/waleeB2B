@@ -15,6 +15,7 @@ class Rproducto extends Model
         'tipo',
         'fotos',
         'cliente_id',
+        'stock',
     ];
     
     public function cliente()

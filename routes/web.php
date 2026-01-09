@@ -6951,6 +6951,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'tipo' => 'nullable|string|max:255',
             'descripcion' => 'nullable|string',
             'estado' => 'nullable|in:activo,inactivo',
+            'stock' => 'nullable|integer|min:0',
         ]);
         
         $producto = \App\Models\Rproducto::create([
@@ -6959,6 +6960,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'tipo' => $request->input('tipo'),
             'descripcion' => $request->input('descripcion'),
             'estado' => $request->input('estado', 'activo'),
+            'stock' => $request->input('stock', 0),
         ]);
         
         return response()->json([

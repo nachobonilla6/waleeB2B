@@ -6958,19 +6958,33 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
         
         $imagenPath = null;
         if ($request->hasFile('imagen')) {
-            // Asegurar que el directorio existe
-            $productosDir = storage_path('app/public/productos-super');
-            if (!file_exists($productosDir)) {
-                mkdir($productosDir, 0755, true);
-            }
-            
-            $path = $request->file('imagen')->store('productos-super', 'public');
-            $imagenPath = $path;
-            
-            // Asegurar permisos públicos
-            $fullPath = storage_path('app/public/' . $path);
-            if (file_exists($fullPath)) {
-                chmod($fullPath, 0644);
+            try {
+                $imagen = $request->file('imagen');
+                // Asegurar que el directorio existe
+                $productosDir = storage_path('app/public/productos-super');
+                if (!file_exists($productosDir)) {
+                    mkdir($productosDir, 0755, true);
+                }
+                
+                // Generar nombre único para el archivo
+                $filename = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                $path = 'productos-super/' . $filename;
+                
+                // Mover el archivo manualmente
+                $imagen->move($productosDir, $filename);
+                $imagenPath = $path;
+                
+                // Asegurar permisos públicos
+                $fullPath = storage_path('app/public/' . $path);
+                if (file_exists($fullPath)) {
+                    chmod($fullPath, 0644);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error uploading image: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to upload image: ' . $e->getMessage()
+                ], 500);
             }
         }
         
@@ -7047,24 +7061,38 @@ Route::post('/walee-supplier/{id}/public/update-product', function (\Illuminate\
         
         // Handle image update
         if ($request->hasFile('imagen')) {
-            // Delete old image if exists
-            if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
-                unlink(storage_path('app/public/' . $producto->imagen));
-            }
-            
-            // Asegurar que el directorio existe
-            $productosDir = storage_path('app/public/productos-super');
-            if (!file_exists($productosDir)) {
-                mkdir($productosDir, 0755, true);
-            }
-            
-            $path = $request->file('imagen')->store('productos-super', 'public');
-            $producto->imagen = $path;
-            
-            // Asegurar permisos públicos
-            $fullPath = storage_path('app/public/' . $path);
-            if (file_exists($fullPath)) {
-                chmod($fullPath, 0644);
+            try {
+                // Delete old image if exists
+                if ($producto->imagen && file_exists(storage_path('app/public/' . $producto->imagen))) {
+                    unlink(storage_path('app/public/' . $producto->imagen));
+                }
+                
+                $imagen = $request->file('imagen');
+                // Asegurar que el directorio existe
+                $productosDir = storage_path('app/public/productos-super');
+                if (!file_exists($productosDir)) {
+                    mkdir($productosDir, 0755, true);
+                }
+                
+                // Generar nombre único para el archivo
+                $filename = time() . '_' . uniqid() . '.' . $imagen->getClientOriginalExtension();
+                $path = 'productos-super/' . $filename;
+                
+                // Mover el archivo manualmente
+                $imagen->move($productosDir, $filename);
+                $producto->imagen = $path;
+                
+                // Asegurar permisos públicos
+                $fullPath = storage_path('app/public/' . $path);
+                if (file_exists($fullPath)) {
+                    chmod($fullPath, 0644);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error uploading image: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to upload image: ' . $e->getMessage()
+                ], 500);
             }
         }
         

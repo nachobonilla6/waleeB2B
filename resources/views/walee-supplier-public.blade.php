@@ -1035,9 +1035,39 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed && result.value) {
-                    const message = encodeURIComponent(result.value);
-                    const separator = whatsappLink.includes('?') ? '&' : '?';
-                    window.open(`${whatsappLink}${separator}text=${message}`, '_blank');
+                    const message = result.value;
+                    
+                    // Limpiar número de teléfono (remover espacios, guiones, etc.)
+                    const telefonoLimpio = whatsappLink.replace(/https?:\/\/.*\/.*\/([^\/]+).*/, '$1').replace(/[^\d+]/g, '');
+                    
+                    // Asegurar que tenga el código de país si no lo tiene
+                    let numeroFinal = telefonoLimpio;
+                    if (!numeroFinal.startsWith('+')) {
+                        // Si no tiene código de país, asumir que es local
+                        if (numeroFinal.length <= 8) {
+                            numeroFinal = '+506' + numeroFinal; // Ajusta el código de país según necesites
+                        } else {
+                            numeroFinal = '+' + numeroFinal;
+                        }
+                    }
+                    
+                    // Codificar el mensaje para URL
+                    const mensajeCodificado = encodeURIComponent(message);
+                    
+                    // Detectar si es móvil o desktop
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    
+                    let whatsappUrl;
+                    if (isMobile) {
+                        // Para móviles usar wa.me
+                        whatsappUrl = `https://wa.me/${numeroFinal}?text=${mensajeCodificado}`;
+                    } else {
+                        // Para desktop usar web.whatsapp.com
+                        whatsappUrl = `https://web.whatsapp.com/send?phone=${numeroFinal}&text=${mensajeCodificado}`;
+                    }
+                    
+                    // Abrir WhatsApp
+                    window.open(whatsappUrl, '_blank');
                 }
             });
         }

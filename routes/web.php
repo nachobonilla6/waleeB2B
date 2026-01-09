@@ -6997,6 +6997,7 @@ Route::post('/walee-supplier/{id}/public/add-product', function (\Illuminate\Htt
             'activo' => $request->input('estado') === 'activo',
             'stock' => $request->input('stock', 0),
             'cantidad' => $request->input('stock', 0),
+            'fecha_expiracion' => $request->input('fecha_expiracion') ?: null,
             'imagen' => $imagenPath,
         ]);
         

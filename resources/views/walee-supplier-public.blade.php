@@ -465,6 +465,7 @@
                                     ${producto.categoria ? `<span>${producto.categoria}</span>` : ''}
                                     ${producto.precio !== undefined ? `<span>$${parseFloat(producto.precio).toFixed(2)}</span>` : ''}
                                     ${producto.stock !== undefined ? `<span>Stock: ${producto.stock}</span>` : ''}
+                                    ${producto.fecha_expiracion ? `<span>Exp: ${new Date(producto.fecha_expiracion).toLocaleDateString()}</span>` : ''}
                                 </div>
                                 ${producto.activo !== undefined ? `<span class="inline-block mt-1 px-1.5 py-0.5 text-xs rounded ${producto.activo ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">${producto.activo ? 'Active' : 'Inactive'}</span>` : ''}
                             </div>
@@ -636,6 +637,12 @@
                                     <option value="inactivo" ${!producto.activo ? 'selected' : ''}>Inactive</option>
                                 </select>
                             </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Expiration Date</label>
+                                <input type="date" id="editProductExpirationDate" name="fecha_expiracion"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                       value="${producto.fecha_expiracion || ''}">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Description</label>
@@ -802,6 +809,11 @@
                                     <option value="activo">Active</option>
                                     <option value="inactivo">Inactive</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Expiration Date</label>
+                                <input type="date" id="productExpirationDate" name="fecha_expiracion"
+                                       class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             </div>
                         </div>
                         <div>

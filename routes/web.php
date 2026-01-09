@@ -6831,6 +6831,40 @@ Route::get('/walee-supplier/{id}', function ($id) {
     return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId', 'templates', 'emailsEnviados', 'pais', 'bandera'));
 })->middleware(['auth'])->name('walee.supplier.detalle');
 
+// Generate access code for supplier
+Route::post('/walee-supplier/generate-access-code', function (\Illuminate\Http\Request $request) {
+    $supplierId = $request->input('supplier_id');
+    
+    if (!$supplierId) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Supplier ID is required'
+        ], 400);
+    }
+    
+    $supplier = \App\Models\Client::find($supplierId);
+    
+    if (!$supplier) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Supplier not found'
+        ], 404);
+    }
+    
+    // Generar código aleatorio de 4 dígitos
+    $accessCode = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+    
+    // Guardar el código en la base de datos
+    $supplier->access_code = $accessCode;
+    $supplier->save();
+    
+    return response()->json([
+        'success' => true,
+        'access_code' => $accessCode,
+        'message' => 'Access code generated successfully'
+    ]);
+})->middleware(['auth'])->name('walee.supplier.generate-access-code');
+
 // Public Supplier Profile Routes (no authentication required)
 Route::get('/walee-supplier/{id}/public', function ($id) {
     $supplier = \App\Models\Client::findOrFail($id);
@@ -6840,8 +6874,10 @@ Route::get('/walee-supplier/{id}/public', function ($id) {
 Route::post('/walee-supplier/{id}/public/authenticate', function (\Illuminate\Http\Request $request, $id) {
     $code = $request->input('code');
     
-    // Access code: 1234
-    if ($code === '1234') {
+    $supplier = \App\Models\Client::findOrFail($id);
+    
+    // Verificar el código de acceso del supplier
+    if ($supplier->access_code && $code === $supplier->access_code) {
         $request->session()->put('supplier_public_authenticated_' . $id, true);
         return response()->json([
             'success' => true,

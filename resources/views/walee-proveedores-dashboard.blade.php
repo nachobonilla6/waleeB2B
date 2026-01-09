@@ -1003,43 +1003,77 @@
         }
         
         // Función para enviar link por WhatsApp
-        function sendWhatsAppLink(telefono, nombreProveedor, codigo) {
-            const link = 'https://websolutions.work';
-            const mensaje = `Este es el link para pedido: ${link}\n\nCódigo: ${codigo}`;
-            
-            // Limpiar número de teléfono (remover espacios, guiones, etc.)
-            const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');
-            
-            // Asegurar que tenga el código de país si no lo tiene
-            let numeroFinal = telefonoLimpio;
-            if (!numeroFinal.startsWith('+')) {
-                // Si no tiene código de país, asumir que es local (puedes ajustar según tu país)
-                // Por ahora, si no tiene +, agregar el código por defecto (ej: +506 para Costa Rica)
-                // Puedes cambiar esto según tus necesidades
-                if (numeroFinal.length <= 8) {
-                    numeroFinal = '+506' + numeroFinal; // Ajusta el código de país según necesites
-                } else {
-                    numeroFinal = '+' + numeroFinal;
+        async function sendWhatsAppLink(telefono, nombreProveedor, supplierId) {
+            try {
+                // Generar código de acceso aleatorio
+                const response = await fetch('{{ route("walee.supplier.generate-access-code") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ supplier_id: supplierId })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to generate access code',
+                        confirmButtonColor: '#ef4444'
+                    });
+                    return;
                 }
+                
+                const accessCode = data.access_code;
+                const publicUrl = `{{ url('/walee-supplier') }}/${supplierId}/public`;
+                const link = publicUrl;
+                const mensaje = `Este es el link para pedido: ${link}\n\nCódigo: ${accessCode}`;
+                
+                // Limpiar número de teléfono (remover espacios, guiones, etc.)
+                const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');
+                
+                // Asegurar que tenga el código de país si no lo tiene
+                let numeroFinal = telefonoLimpio;
+                if (!numeroFinal.startsWith('+')) {
+                    // Si no tiene código de país, asumir que es local (puedes ajustar según tu país)
+                    // Por ahora, si no tiene +, agregar el código por defecto (ej: +506 para Costa Rica)
+                    // Puedes cambiar esto según tus necesidades
+                    if (numeroFinal.length <= 8) {
+                        numeroFinal = '+506' + numeroFinal; // Ajusta el código de país según necesites
+                    } else {
+                        numeroFinal = '+' + numeroFinal;
+                    }
+                }
+                
+                // Codificar el mensaje para URL
+                const mensajeCodificado = encodeURIComponent(mensaje);
+                
+                // Detectar si es móvil o desktop
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                let whatsappUrl;
+                if (isMobile) {
+                    // Para móviles usar wa.me
+                    whatsappUrl = `https://wa.me/${numeroFinal}?text=${mensajeCodificado}`;
+                } else {
+                    // Para desktop usar web.whatsapp.com
+                    whatsappUrl = `https://web.whatsapp.com/send?phone=${numeroFinal}&text=${mensajeCodificado}`;
+                }
+                
+                // Abrir WhatsApp
+                window.open(whatsappUrl, '_blank');
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred. Please try again.',
+                    confirmButtonColor: '#ef4444'
+                });
             }
-            
-            // Codificar el mensaje para URL
-            const mensajeCodificado = encodeURIComponent(mensaje);
-            
-            // Detectar si es móvil o desktop
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            
-            let whatsappUrl;
-            if (isMobile) {
-                // Para móviles usar wa.me
-                whatsappUrl = `https://wa.me/${numeroFinal}?text=${mensajeCodificado}`;
-            } else {
-                // Para desktop usar web.whatsapp.com
-                whatsappUrl = `https://web.whatsapp.com/send?phone=${numeroFinal}&text=${mensajeCodificado}`;
-            }
-            
-            // Abrir WhatsApp
-            window.open(whatsappUrl, '_blank');
         }
         
         // Modal para crear cliente

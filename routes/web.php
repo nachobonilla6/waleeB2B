@@ -6831,6 +6831,73 @@ Route::get('/walee-supplier/{id}', function ($id) {
     return view('walee-cliente-detalle', compact('cliente', 'contratos', 'cotizaciones', 'facturas', 'productos', 'clientePrincipal', 'citasPasadas', 'citasPendientes', 'publicacionesProgramadas', 'publicacionesPublicadas', 'clientePlaneadorId', 'templates', 'emailsEnviados', 'pais', 'bandera'));
 })->middleware(['auth'])->name('walee.supplier.detalle');
 
+// Public Supplier Profile Routes (no authentication required)
+Route::get('/walee-supplier/{id}/public', function ($id) {
+    $supplier = \App\Models\Client::findOrFail($id);
+    return view('walee-supplier-public', compact('supplier'));
+})->name('walee.supplier.public');
+
+Route::post('/walee-supplier/{id}/public/authenticate', function (\Illuminate\Http\Request $request, $id) {
+    $code = $request->input('code');
+    
+    // Access code: 1234
+    if ($code === '1234') {
+        $request->session()->put('supplier_public_authenticated_' . $id, true);
+        return response()->json([
+            'success' => true,
+            'message' => 'Access granted'
+        ]);
+    }
+    
+    return response()->json([
+        'success' => false,
+        'message' => 'Invalid access code'
+    ], 401);
+})->name('walee.supplier.public.authenticate');
+
+Route::post('/walee-supplier/{id}/public/update', function (\Illuminate\Http\Request $request, $id) {
+    // Check authentication
+    if (!$request->session()->has('supplier_public_authenticated_' . $id)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Not authenticated'
+        ], 401);
+    }
+    
+    $supplier = \App\Models\Client::findOrFail($id);
+    
+    // Update allowed fields
+    if ($request->has('name')) {
+        $supplier->name = $request->input('name');
+    }
+    if ($request->has('email')) {
+        $supplier->email = $request->input('email');
+    }
+    if ($request->has('telefono_1')) {
+        $supplier->telefono_1 = $request->input('telefono_1');
+    }
+    if ($request->has('telefono_2')) {
+        $supplier->telefono_2 = $request->input('telefono_2');
+    }
+    if ($request->has('address')) {
+        $supplier->address = $request->input('address');
+        $supplier->direccion = $request->input('address');
+    }
+    if ($request->has('contacto_empresa')) {
+        $supplier->contacto_empresa = $request->input('contacto_empresa');
+    }
+    if ($request->has('nota')) {
+        $supplier->nota = $request->input('nota');
+    }
+    
+    $supplier->save();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Profile updated successfully'
+    ]);
+})->name('walee.supplier.public.update');
+
 // Ruta para editar un cliente
 Route::get('/walee-supplier/{id}/editar', function ($id) {
     $cliente = \App\Models\Client::findOrFail($id);

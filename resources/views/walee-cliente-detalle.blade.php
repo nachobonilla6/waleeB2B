@@ -919,25 +919,25 @@
                         @endphp
                         
                         <!-- Appointments -->
-                        <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/20 text-slate-500 dark:text-slate-400 hover:text-yellow-600 dark:hover:text-yellow-400 border border-slate-300 dark:border-slate-700 hover:border-yellow-300 dark:hover:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.calendario', ['cliente_id' => $cliente->id]) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-yellow-100 dark:bg-yellow-500/20 hover:bg-yellow-200 dark:hover:bg-yellow-500/30 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Appointments</span>
                             <span class="text-sm font-bold">{{ $totalCitas }}</span>
                         </a>
                         
                         <!-- Invoices -->
-                        <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-red-100 dark:hover:bg-red-500/20 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 border border-slate-300 dark:border-slate-700 hover:border-red-300 dark:hover:border-red-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.facturas.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-red-100 dark:bg-red-500/20 hover:bg-red-200 dark:hover:bg-red-500/30 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Invoices</span>
                             <span class="text-sm font-bold">{{ $facturas->count() }}</span>
                         </a>
                         
                         <!-- Quotes -->
-                        <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 border border-slate-300 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.cotizaciones.crear') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Quotes</span>
                             <span class="text-sm font-bold">{{ $cotizaciones->count() }}</span>
                         </a>
                         
                         <!-- Contracts -->
-                        <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-orange-100 dark:hover:bg-orange-500/20 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-300 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.contratos.cliente', $cliente->id) }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-orange-100 dark:bg-orange-500/20 hover:bg-orange-200 dark:hover:bg-orange-500/30 text-orange-700 dark:text-orange-400 border border-orange-300 dark:border-orange-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Contracts</span>
                             <span class="text-sm font-bold">{{ $contratos->count() }}</span>
                         </a>
@@ -949,7 +949,7 @@
                         </a>
                         
                         <!-- Emails Enviados -->
-                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-slate-100 dark:bg-slate-800/50 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-300 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
+                        <a href="{{ route('walee.emails.enviados') }}?cliente_id={{ $cliente->id }}" class="flex flex-col items-center justify-center gap-1 py-3 px-4 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 transition-all shadow-sm cursor-pointer">
                             <span class="text-xs font-medium">Emails Enviados</span>
                             <span class="text-sm font-bold">{{ $emailsEnviados ?? 0 }}</span>
                         </a>

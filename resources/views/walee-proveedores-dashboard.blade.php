@@ -1029,8 +1029,8 @@
                 
                 const accessCode = data.access_code;
                 const publicUrl = `{{ url('/walee-supplier') }}/${supplierId}/public`;
-                const link = publicUrl;
-                const mensaje = `Este es el link para pedido: ${link}\n\nCódigo: ${accessCode}`;
+                const siteUrl = 'https://websolutions.work';
+                const mensaje = `Este es el link para pedido: ${siteUrl}\n\nLink de perfil público: ${publicUrl}\n\nCódigo: ${accessCode}`;
                 
                 // Limpiar número de teléfono (remover espacios, guiones, etc.)
                 const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');

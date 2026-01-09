@@ -24,6 +24,7 @@ class ProductoSuper extends Model
         'imagen',
         'foto_qr',
         'activo',
+        'cliente_id',
     ];
 
     protected $casts = [

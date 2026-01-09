@@ -1029,8 +1029,7 @@
                 
                 const accessCode = data.access_code;
                 const publicUrl = `{{ url('/walee-supplier') }}/${supplierId}/public`;
-                const siteUrl = 'https://ghostwhite-parrot-934435.hostingersite.com';
-                const mensaje = `Este es el link para pedido: ${siteUrl}\n\nLink de perfil público: ${publicUrl}\n\nCódigo: ${accessCode}`;
+                const mensaje = `Link de perfil público: ${publicUrl}\n\nCódigo: ${accessCode}`;
                 
                 // Limpiar número de teléfono (remover espacios, guiones, etc.)
                 const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');

@@ -725,7 +725,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full">
+        <div class="relative max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full">
             @include('partials.walee-back-button')
             <!-- Botón del extractor fuera de la sección, esquina superior derecha (desactivado) -->
             <div class="absolute top-6 right-4 sm:right-6 z-30">

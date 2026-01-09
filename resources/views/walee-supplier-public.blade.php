@@ -77,13 +77,21 @@
         // Obtener productos del supplier con URLs de imágenes
         $productos = \App\Models\ProductoSuper::where('cliente_id', $supplier->id)->orderBy('created_at', 'desc')->get();
         $productos = $productos->map(function($producto) {
-            $producto->imagen_url = $producto->imagen ? asset('storage/' . $producto->imagen) : null;
-            // Formatear fechas para JavaScript
-            $producto->fecha_expiracion = $producto->fecha_expiracion ? $producto->fecha_expiracion->format('Y-m-d') : null;
-            $producto->fecha_entrada = $producto->fecha_entrada ? $producto->fecha_entrada->format('Y-m-d') : null;
-            $producto->dlc = $producto->dlc ? $producto->dlc->format('Y-m-d') : null;
-            $producto->fecha_limite_venta = $producto->fecha_limite_venta ? $producto->fecha_limite_venta->format('Y-m-d') : null;
-            return $producto;
+            // Asegurar que todos los campos estén presentes y formateados correctamente
+            return [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre ?? '',
+                'categoria' => $producto->categoria ?? '',
+                'descripcion' => $producto->descripcion ?? '',
+                'precio' => $producto->precio ?? 0,
+                'stock' => $producto->stock ?? 0,
+                'activo' => $producto->activo ?? false,
+                'fecha_expiracion' => $producto->fecha_expiracion ? $producto->fecha_expiracion->format('Y-m-d') : null,
+                'fecha_entrada' => $producto->fecha_entrada ? $producto->fecha_entrada->format('Y-m-d') : null,
+                'dlc' => $producto->dlc ? $producto->dlc->format('Y-m-d') : null,
+                'fecha_limite_venta' => $producto->fecha_limite_venta ? $producto->fecha_limite_venta->format('Y-m-d') : null,
+                'imagen_url' => $producto->imagen ? asset('storage/' . $producto->imagen) : null,
+            ];
         });
     @endphp
 

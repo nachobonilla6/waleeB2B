@@ -682,7 +682,7 @@
                                 </a>
                                 <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                                     @if($telefonoLimpio)
-                                        <button onclick="sendWhatsAppLink('{{ $telefonoLimpio }}', '{{ $item['client']->name }}')" 
+                                        <button onclick="sendWhatsAppLink('{{ $telefonoLimpio }}', '{{ $item['client']->name }}', '{{ $item['client']->id }}')" 
                                                 class="flex items-center justify-center p-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 transition-all group shadow-sm hover:shadow-md"
                                                 title="Enviar link por WhatsApp">
                                             <svg class="w-5 h-5 flex-shrink-0 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
@@ -1003,9 +1003,9 @@
         }
         
         // Función para enviar link por WhatsApp
-        function sendWhatsAppLink(telefono, nombreProveedor) {
+        function sendWhatsAppLink(telefono, nombreProveedor, codigo) {
             const link = 'https://websolutions.work';
-            const mensaje = `Hola ${nombreProveedor}, aquí está el link para compartir: ${link}`;
+            const mensaje = `Este es el link para pedido: ${link}\n\nCódigo: ${codigo}`;
             
             // Limpiar número de teléfono (remover espacios, guiones, etc.)
             const telefonoLimpio = telefono.replace(/[\s\-\(\)]/g, '');

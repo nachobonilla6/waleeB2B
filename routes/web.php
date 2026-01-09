@@ -534,6 +534,11 @@ Route::get('/sistema-para-tu-negocio', function () {
     return view('sistema-para-tu-negocio');
 })->name('sistema.negocio');
 
+// Subscribe page - Página pública
+Route::get('/suscribe', function () {
+    return view('suscribe');
+})->name('suscribe');
+
 // Formulario para crear un nuevo ticket
 Route::get('/tickets/crear', function () {
     return view('test-form');

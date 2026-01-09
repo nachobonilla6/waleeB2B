@@ -1764,20 +1764,14 @@
                 // Actualizar badges en botones
                 if (nuevoEstado.abierto === true) {
                     const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">Abierto</span>';
-                    if (estadoMobile) estadoMobile.innerHTML = badge;
-                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
-                    if (btnMobile) {
-                        btnMobile.classList.remove('border-red-300', 'dark:border-red-700');
-                        btnMobile.classList.add('border-emerald-300', 'dark:border-emerald-700');
-                    }
-                    if (btnDesktop) {
-                        btnDesktop.classList.remove('border-red-300', 'dark:border-red-700');
-                        btnDesktop.classList.add('border-emerald-300', 'dark:border-emerald-700');
+                    if (estadoHorario) estadoHorario.innerHTML = badge;
+                    if (btnHorario) {
+                        btnHorario.classList.remove('border-red-300', 'dark:border-red-700');
+                        btnHorario.classList.add('border-emerald-300', 'dark:border-emerald-700');
                     }
                 } else if (nuevoEstado.abierto === false) {
                     const badge = '<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Cerrado</span>';
-                    if (estadoMobile) estadoMobile.innerHTML = badge;
-                    if (estadoDesktop) estadoDesktop.innerHTML = badge;
+                    if (estadoHorario) estadoHorario.innerHTML = badge;
                     if (btnMobile) {
                         btnMobile.classList.remove('border-emerald-300', 'dark:border-emerald-700');
                         btnMobile.classList.add('border-red-300', 'dark:border-red-700');

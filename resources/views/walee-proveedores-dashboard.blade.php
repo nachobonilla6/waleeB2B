@@ -133,6 +133,10 @@
             ->whereYear('created_at', now()->year)
             ->count();
         
+        // Clientes de esta semana (solo con is_active = true)
+        $inicioSemana = now()->startOfWeek();
+        $finSemana = now()->endOfWeek();
+        
         // Estadísticas de Orders/Receipts (Facturas)
         $totalOrdersReceipts = Factura::count();
         $ordersReceiptsEsteMes = Factura::whereMonth('created_at', now()->month)
@@ -142,10 +146,6 @@
             ->count();
         $ordersReceiptsHoy = Factura::whereDate('created_at', today())
             ->count();
-        
-        // Clientes de esta semana (solo con is_active = true)
-        $inicioSemana = now()->startOfWeek();
-        $finSemana = now()->endOfWeek();
         $clientesEstaSemana = Client::where('is_active', true)
             ->whereBetween('created_at', [$inicioSemana, $finSemana])
             ->count();

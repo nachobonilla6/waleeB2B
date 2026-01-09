@@ -280,18 +280,6 @@
                         </button>
                     </div>
                     
-                    <!-- Subscribe Section - Subtle -->
-                    <div class="pt-2 pb-1">
-                        <div class="text-center">
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                                Subscribe for more features
-                            </p>
-                            <a href="https://websolutions.work/suscribe" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs text-walee-500 hover:text-walee-600 dark:text-walee-400 dark:hover:text-walee-300 transition-colors underline decoration-dotted underline-offset-2">
-                                <span>websolutions.work/suscribe</span>
-                            </a>
-                        </div>
-                    </div>
-                    
                     <!-- Edit Profile Form -->
                     <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
                         <div class="flex items-center justify-between mb-3">

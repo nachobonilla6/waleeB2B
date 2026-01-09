@@ -837,6 +837,25 @@
                             </div>
                         @endif
                         
+                        @if($cliente->idioma)
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Language:</span>
+                                <span class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+                                    @php
+                                        $idiomas = [
+                                            'es' => 'Español',
+                                            'en' => 'English',
+                                            'fr' => 'Français',
+                                            'de' => 'Deutsch',
+                                            'it' => 'Italiano',
+                                            'pt' => 'Português'
+                                        ];
+                                        echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
+                                    @endphp
+                                </span>
+                            </div>
+                        @endif
+                        
                         @if($cliente->horario)
                             <button onclick="showHorarioModal('{{ addslashes($cliente->horario) }}', '{{ $clientTimezone ?? '' }}', '{{ $systemTimezone }}')" id="horarioBtn" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs transition-colors border border-slate-200 dark:border-slate-700">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -957,27 +976,6 @@
                     
                     <!-- Additional Info -->
                     <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-3">
-                        @if($cliente->idioma)
-                            <div class="flex items-center gap-2 text-sm">
-                                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                                </svg>
-                                <span class="text-slate-600 dark:text-slate-400">
-                                    @php
-                                        $idiomas = [
-                                            'es' => 'Español',
-                                            'en' => 'English',
-                                            'fr' => 'Français',
-                                            'de' => 'Deutsch',
-                                            'it' => 'Italiano',
-                                            'pt' => 'Português'
-                                        ];
-                                        echo $idiomas[$cliente->idioma] ?? strtoupper($cliente->idioma);
-                                    @endphp
-                                </span>
-                            </div>
-                        @endif
-                        
                         @if($cliente->industria)
                             <div class="flex items-center gap-2 text-sm">
                                 <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

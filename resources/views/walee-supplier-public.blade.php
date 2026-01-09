@@ -610,9 +610,24 @@
         
         // Edit Product Modal
         function openEditProductModal(producto) {
+            // Preparar datos del producto igual que en edit profile
+            const productData = {
+                id: producto.id || '',
+                nombre: producto.nombre || '',
+                categoria: producto.categoria || '',
+                descripcion: producto.descripcion || '',
+                precio: producto.precio || 0,
+                stock: producto.stock || 0,
+                activo: producto.activo ? 'activo' : 'inactivo',
+                fecha_expiracion: (producto.fecha_expiracion && producto.fecha_expiracion !== null) ? producto.fecha_expiracion : '',
+                fecha_entrada: (producto.fecha_entrada && producto.fecha_entrada !== null) ? producto.fecha_entrada : '',
+                dlc: (producto.dlc && producto.dlc !== null) ? producto.dlc : '',
+                fecha_limite_venta: (producto.fecha_limite_venta && producto.fecha_limite_venta !== null) ? producto.fecha_limite_venta : '',
+                imagen_url: producto.imagen_url || ''
+            };
+            
             const isDarkMode = document.documentElement.classList.contains('dark');
             const supplierId = @json($supplier->id);
-            const imagenUrl = producto.imagen_url || '';
             
             Swal.fire({
                 title: 'Edit Product',
@@ -623,13 +638,13 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Product Name *</label>
                                 <input type="text" id="editProductName" name="nombre" required
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${producto.nombre || ''}">
+                                       value="${productData.nombre}">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Type</label>
                                 <input type="text" id="editProductType" name="tipo"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${producto.categoria || ''}">
+                                       value="${productData.categoria}">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2.5">
@@ -637,13 +652,13 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Price *</label>
                                 <div class="relative">
                                     <span class="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm">$</span>
-                                    <input type="number" id="editProductPrice" name="precio" min="0" step="0.01" value="${producto.precio || 0}" required
+                                    <input type="number" id="editProductPrice" name="precio" min="0" step="0.01" value="${productData.precio}" required
                                            class="w-full pl-6 pr-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Stock Quantity</label>
-                                <input type="number" id="editProductStock" name="stock" min="0" value="${producto.stock || 0}"
+                                <input type="number" id="editProductStock" name="stock" min="0" value="${productData.stock}"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             </div>
                         </div>
@@ -652,15 +667,15 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Status</label>
                                 <select id="editProductStatus" name="estado"
                                         class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                    <option value="activo" ${producto.activo ? 'selected' : ''}>Active</option>
-                                    <option value="inactivo" ${!producto.activo ? 'selected' : ''}>Inactive</option>
+                                    <option value="activo" ${productData.activo === 'activo' ? 'selected' : ''}>Active</option>
+                                    <option value="inactivo" ${productData.activo === 'inactivo' ? 'selected' : ''}>Inactive</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Expiration Date</label>
                                 <input type="date" id="editProductExpirationDate" name="fecha_expiracion"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${(producto.fecha_expiracion && producto.fecha_expiracion !== null) ? producto.fecha_expiracion : ''}">
+                                       value="${productData.fecha_expiracion}">
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-2.5">
@@ -668,30 +683,30 @@
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Entry Date</label>
                                 <input type="date" id="editProductEntryDate" name="fecha_entrada"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${(producto.fecha_entrada && producto.fecha_entrada !== null) ? producto.fecha_entrada : ''}">
+                                       value="${productData.fecha_entrada}">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLC</label>
                                 <input type="date" id="editProductDlc" name="dlc"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${(producto.dlc && producto.dlc !== null) ? producto.dlc : ''}">
+                                       value="${productData.dlc}">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">DLV</label>
                                 <input type="date" id="editProductDlv" name="fecha_limite_venta"
                                        class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                       value="${(producto.fecha_limite_venta && producto.fecha_limite_venta !== null) ? producto.fecha_limite_venta : ''}">
+                                       value="${productData.fecha_limite_venta}">
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Description</label>
                             <textarea id="editProductDescription" name="descripcion" rows="2"
-                                      class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">${producto.descripcion || ''}</textarea>
+                                      class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">${productData.descripcion}</textarea>
                         </div>
-                        ${imagenUrl ? `
+                        ${productData.imagen_url ? `
                         <div class="flex items-center gap-2">
                             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-0.5">Current:</label>
-                            <img src="${imagenUrl}" alt="Current" class="w-12 h-12 object-cover rounded border border-slate-300 dark:border-slate-600">
+                            <img src="${productData.imagen_url}" alt="Current" class="w-12 h-12 object-cover rounded border border-slate-300 dark:border-slate-600">
                         </div>
                         ` : ''}
                         <div>
@@ -744,7 +759,7 @@
                         return false;
                     }
                     
-                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, fecha_entrada, dlc, fecha_limite_venta, cliente_id: supplierId, imagen: imagen, product_id: producto.id };
+                    return { nombre, tipo, descripcion, estado, precio, stock, fecha_expiracion, fecha_entrada, dlc, fecha_limite_venta, cliente_id: supplierId, imagen: imagen, product_id: productData.id };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {

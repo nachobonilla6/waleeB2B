@@ -93,6 +93,39 @@
                 'imagen_url' => $producto->imagen ? asset('storage/' . $producto->imagen) : null,
             ];
         });
+        
+        // Obtener conteos de estadísticas
+        // Buscar cliente principal por email o nombre para obtener citas, facturas, cotizaciones y contratos
+        $clientePrincipal = null;
+        if ($supplier->email) {
+            $clientePrincipal = \App\Models\Cliente::where('correo', $supplier->email)->first();
+        }
+        if (!$clientePrincipal && $supplier->name) {
+            $clientePrincipal = \App\Models\Cliente::where('nombre_empresa', $supplier->name)->first();
+        }
+        
+        $appointmentsCount = 0;
+        $invoicesCount = 0;
+        $quotesCount = 0;
+        $contractsCount = 0;
+        
+        if ($clientePrincipal) {
+            $appointmentsCount = \App\Models\Cita::where('cliente_id', $clientePrincipal->id)->count();
+            $invoicesCount = \App\Models\Factura::where('cliente_id', $clientePrincipal->id)->count();
+            $quotesCount = \App\Models\Cotizacion::where('cliente_id', $clientePrincipal->id)->count();
+            $contractsCount = \App\Models\Contrato::where('cliente_id', $clientePrincipal->id)->count();
+        }
+        
+        // También buscar citas por client_id (suppliers)
+        $appointmentsCount += \App\Models\Cita::where('client_id', $supplier->id)->count();
+        
+        // Buscar contratos por correo si no hay cliente principal
+        if (!$clientePrincipal && $supplier->email) {
+            $contractsCount = \App\Models\Contrato::where('correo', $supplier->email)->count();
+        }
+        
+        $productsCount = $productos->count();
+        $emailsSentCount = \App\Models\EmailTemplate::where('cliente_id', $supplier->id)->count();
     @endphp
 
     <div class="min-h-screen relative flex flex-col">

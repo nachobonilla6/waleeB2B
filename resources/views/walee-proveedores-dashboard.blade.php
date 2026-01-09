@@ -338,6 +338,63 @@
             }
             return Carbon::parse($producto->fecha_entrada)->gte($fechaLimiteNuevo);
         })->sum('stock');
+        
+        // Estadísticas de Conformidad
+        // Global Conformity Rate: Porcentaje de facturas pagadas/completas
+        $totalFacturas = Factura::count();
+        $facturasPagadas = Factura::where('estado', 'pagada')->count();
+        $facturasCompletas = Factura::where(function($query) {
+            $query->where('estado', 'pagada')
+                  ->orWhereRaw('monto_pagado >= total');
+        })->count();
+        $globalConformityRate = $totalFacturas > 0 ? round(($facturasCompletas / $totalFacturas) * 100, 1) : 0;
+        
+        // Delivery Conformity: Porcentaje de facturas entregadas a tiempo
+        $facturasConFechaVencimiento = Factura::whereNotNull('fecha_vencimiento')
+            ->whereNotNull('enviada_at')
+            ->get();
+        
+        $facturasEntregadasATiempo = $facturasConFechaVencimiento->filter(function($factura) {
+            $fechaVencimiento = Carbon::parse($factura->fecha_vencimiento);
+            $fechaEnvio = Carbon::parse($factura->enviada_at);
+            return $fechaEnvio->lte($fechaVencimiento);
+        })->count();
+        
+        $totalFacturasConFecha = $facturasConFechaVencimiento->count();
+        $deliveryConformity = $totalFacturasConFecha > 0 ? round(($facturasEntregadasATiempo / $totalFacturasConFecha) * 100, 1) : 0;
+        
+        // Datos para gráficos de conformidad (últimos 7 días)
+        $conformityData = [];
+        $deliveryConformityData = [];
+        $conformityLabels = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $fecha = now()->subDays($i);
+            $fechaStr = $fecha->format('Y-m-d');
+            $conformityLabels[] = $fecha->format('d/m');
+            
+            // Facturas del día
+            $facturasDelDia = Factura::whereDate('created_at', $fechaStr)->get();
+            $totalDelDia = $facturasDelDia->count();
+            $completasDelDia = $facturasDelDia->filter(function($f) {
+                return $f->estado == 'pagada' || ($f->monto_pagado >= $f->total);
+            })->count();
+            $conformityDelDia = $totalDelDia > 0 ? round(($completasDelDia / $totalDelDia) * 100, 1) : 0;
+            $conformityData[] = $conformityDelDia;
+            
+            // Entregas del día
+            $facturasEnviadasDelDia = Factura::whereDate('enviada_at', $fechaStr)
+                ->whereNotNull('fecha_vencimiento')
+                ->get();
+            $totalEnviadasDelDia = $facturasEnviadasDelDia->count();
+            $aTiempoDelDia = $facturasEnviadasDelDia->filter(function($f) {
+                $fechaVencimiento = Carbon::parse($f->fecha_vencimiento);
+                $fechaEnvio = Carbon::parse($f->enviada_at);
+                return $fechaEnvio->lte($fechaVencimiento);
+            })->count();
+            $deliveryDelDia = $totalEnviadasDelDia > 0 ? round(($aTiempoDelDia / $totalEnviadasDelDia) * 100, 1) : 0;
+            $deliveryConformityData[] = $deliveryDelDia;
+        }
     @endphp
 
     <div class="min-h-screen relative overflow-hidden">
@@ -527,12 +584,60 @@
             </div>
             
             <!-- Charts and Quick Actions -->
-            <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
                 <!-- Chart -->
-                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
+                <div class="lg:col-span-1 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.5s">
                     <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">New Suppliers - Last 15 Days</h2>
                     <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
                         <canvas id="clientesChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Global Conformity Rate Chart -->
+                <div class="lg:col-span-1 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.6s">
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Global Conformity Rate</h2>
+                    <div class="relative w-full flex items-center justify-center" style="height: 200px; sm:height: 250px; md:height: 300px;">
+                        <div class="relative" style="width: 200px; height: 200px;">
+                            <canvas id="globalConformityChart"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center">
+                                    <p class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">{{ $globalConformityRate }}%</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">Conformity</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ $facturasCompletas }} / {{ $totalFacturas }} invoices</p>
+                    </div>
+                </div>
+                
+                <!-- Delivery Conformity Chart -->
+                <div class="lg:col-span-1 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.7s">
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Delivery Conformity</h2>
+                    <div class="relative w-full flex items-center justify-center" style="height: 200px; sm:height: 250px; md:height: 300px;">
+                        <div class="relative" style="width: 200px; height: 200px;">
+                            <canvas id="deliveryConformityChart"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center">
+                                    <p class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">{{ $deliveryConformity }}%</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">On Time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-center">
+                        <p class="text-xs text-slate-600 dark:text-slate-400">{{ $facturasEntregadasATiempo }} / {{ $totalFacturasConFecha }} deliveries</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Conformity Trends Chart -->
+            <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
+                <div class="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 shadow-sm dark:shadow-none animate-fade-in-up" style="animation-delay: 0.8s">
+                    <h2 class="text-sm sm:text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-2 sm:mb-3 md:mb-4">Conformity Trends - Last 7 Days</h2>
+                    <div class="relative w-full" style="height: 200px; sm:height: 250px; md:height: 300px;">
+                        <canvas id="conformityTrendsChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -748,6 +853,165 @@
                             },
                             grid: {
                                 color: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Global Conformity Rate Chart (Donut)
+        const ctxGlobalConformity = document.getElementById('globalConformityChart');
+        if (ctxGlobalConformity) {
+            const conformityRate = {{ $globalConformityRate }};
+            const nonConformityRate = 100 - conformityRate;
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            new Chart(ctxGlobalConformity, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Conform', 'Non-conform'],
+                    datasets: [{
+                        data: [conformityRate, nonConformityRate],
+                        backgroundColor: [
+                            'rgb(16, 185, 129)',
+                            isDarkMode ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.5)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Delivery Conformity Chart (Donut)
+        const ctxDeliveryConformity = document.getElementById('deliveryConformityChart');
+        if (ctxDeliveryConformity) {
+            const deliveryRate = {{ $deliveryConformity }};
+            const nonDeliveryRate = 100 - deliveryRate;
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            new Chart(ctxDeliveryConformity, {
+                type: 'doughnut',
+                data: {
+                    labels: ['On Time', 'Delayed'],
+                    datasets: [{
+                        data: [deliveryRate, nonDeliveryRate],
+                        backgroundColor: [
+                            'rgb(59, 130, 246)',
+                            isDarkMode ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.5)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Conformity Trends Chart (Line)
+        const ctxConformityTrends = document.getElementById('conformityTrendsChart');
+        if (ctxConformityTrends) {
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            new Chart(ctxConformityTrends, {
+                type: 'line',
+                data: {
+                    labels: @json($conformityLabels),
+                    datasets: [
+                        {
+                            label: 'Global Conformity Rate',
+                            data: @json($conformityData),
+                            borderColor: 'rgb(16, 185, 129)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Delivery Conformity',
+                            data: @json($deliveryConformityData),
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: isDarkMode ? '#fff' : '#1e293b',
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                color: isDarkMode ? '#94a3b8' : '#64748b',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                color: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: isDarkMode ? '#94a3b8' : '#64748b'
+                            },
+                            grid: {
+                                color: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
                             }
                         }
                     }

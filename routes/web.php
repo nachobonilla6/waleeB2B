@@ -6926,6 +6926,41 @@ Route::post('/walee-supplier/{id}/public/update', function (\Illuminate\Http\Req
         $supplier->nota = $request->input('nota');
     }
     
+    // Handle photo upload
+    if ($request->hasFile('foto')) {
+        try {
+            // Delete old photo if exists
+            if ($supplier->foto) {
+                $oldPath = storage_path('app/public/' . $supplier->foto);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+            
+            $foto = $request->file('foto');
+            // Asegurar que el directorio existe
+            $fotosDir = storage_path('app/public/clientes_en_proceso_fotos');
+            if (!file_exists($fotosDir)) {
+                mkdir($fotosDir, 0755, true);
+            }
+            
+            $path = $foto->store('clientes_en_proceso_fotos', 'public');
+            $supplier->foto = $path;
+            
+            // Asegurar permisos públicos
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                chmod($fullPath, 0644);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error uploading photo: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to upload photo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
     $supplier->save();
     
     return response()->json([

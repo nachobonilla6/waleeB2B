@@ -1250,7 +1250,8 @@
                 telefono_1: @json($supplier->telefono_1 ?? ''),
                 telefono_2: @json($supplier->telefono_2 ?? ''),
                 address: @json($supplier->address ?? $supplier->direccion ?? ''),
-                contacto_empresa: @json($supplier->contacto_empresa ?? '')
+                contacto_empresa: @json($supplier->contacto_empresa ?? ''),
+                foto_url: @json($fotoUrl ?? '')
             };
             
             const isDarkMode = document.documentElement.classList.contains('dark');
@@ -1286,6 +1287,16 @@
                                 <input type="text" id="profileContactoEmpresa" name="contacto_empresa" value="${supplier.contacto_empresa}" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
                             </div>
                         </div>
+                        <div class="mt-3">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Photo</label>
+                            ${supplier.foto_url ? `
+                            <div class="mb-2">
+                                <img src="${supplier.foto_url}" alt="Current photo" class="w-20 h-20 object-cover rounded-lg border border-slate-300 dark:border-slate-600">
+                            </div>
+                            ` : ''}
+                            <input type="file" id="profileFoto" name="foto" accept="image/*" class="w-full px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-500">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Optional: Upload a new photo</p>
+                        </div>
                     </form>
                 `,
                 showCancelButton: true,
@@ -1314,13 +1325,15 @@
                         Swal.showValidationMessage('Name is required');
                         return false;
                     }
+                    const foto = document.getElementById('profileFoto').files[0];
                     return {
                         name: name,
                         email: document.getElementById('profileEmail').value,
                         telefono_1: document.getElementById('profileTelefono1').value,
                         telefono_2: document.getElementById('profileTelefono2').value,
                         address: document.getElementById('profileAddress').value,
-                        contacto_empresa: document.getElementById('profileContactoEmpresa').value
+                        contacto_empresa: document.getElementById('profileContactoEmpresa').value,
+                        foto: foto
                     };
                 }
             }).then((result) => {
@@ -1333,13 +1346,24 @@
         // Update Profile
         async function updateProfile(data) {
             try {
+                const formData = new FormData();
+                formData.append('name', data.name);
+                formData.append('email', data.email || '');
+                formData.append('telefono_1', data.telefono_1 || '');
+                formData.append('telefono_2', data.telefono_2 || '');
+                formData.append('address', data.address || '');
+                formData.append('contacto_empresa', data.contacto_empresa || '');
+                
+                if (data.foto) {
+                    formData.append('foto', data.foto);
+                }
+                
                 const response = await fetch('{{ route("walee.supplier.public.update", $supplier->id) }}', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
-                    body: JSON.stringify(data)
+                    body: formData
                 });
                 
                 const result = await response.json();

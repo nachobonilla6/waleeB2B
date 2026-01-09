@@ -1609,6 +1609,7 @@
                 ciudad: @json($cliente->ciudad ?? ''),
                 idioma: @json($cliente->idioma ?? ''),
                 feedback: @json($cliente->feedback ?? ''),
+                contacto_empresa: @json($cliente->contacto_empresa ?? ''),
                 inicial: @json(strtoupper(substr($cliente->name, 0, 1)))
             };
             
@@ -1681,6 +1682,14 @@
                                 <option value="activo" ${clienteData.estado === 'activo' ? 'selected' : ''}>Activo</option>
                                 <option value="rechazado" ${clienteData.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
                             </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 ${isDesktop ? 'lg:grid-cols-3' : 'sm:grid-cols-2'} gap-3 sm:gap-2.5">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-1.5">Company Contact</label>
+                            <input type="text" id="clientContactoEmpresa" name="contacto_empresa" value="${clienteData.contacto_empresa || ''}"
+                                   class="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-walee-400">
                         </div>
                     </div>
                     

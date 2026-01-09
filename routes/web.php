@@ -2558,7 +2558,7 @@ Route::get('/walee-proveedores/dashboard', function () {
     return view('walee-proveedores-dashboard');
 })->middleware(['auth'])->name('walee.proveedores.dashboard');
 
-// Ruta para dashboard de clientes (alias para compatibilidad)
+// Ruta para dashboard de suppliers (alias para compatibilidad - usa tabla suppliers)
 Route::get('/walee-clientes/dashboard', function () {
     return view('walee-clientes-dashboard');
 })->middleware(['auth'])->name('walee.clientes.dashboard');
@@ -2648,7 +2648,7 @@ Route::post('/walee-clientes-en-proceso/delete', function (\Illuminate\Http\Requ
     if (empty($clientIds) || !is_array($clientIds)) {
         return response()->json([
             'success' => false,
-            'message' => 'No se proporcionaron IDs de clientes'
+            'message' => 'No se proporcionaron IDs de suppliers'
         ], 400);
     }
     
@@ -2657,13 +2657,13 @@ Route::post('/walee-clientes-en-proceso/delete', function (\Illuminate\Http\Requ
         
         return response()->json([
             'success' => true,
-            'message' => "Se borraron {$deleted} cliente(s) exitosamente",
+            'message' => "Se borraron {$deleted} supplier(s) exitosamente",
             'deleted_count' => $deleted
         ]);
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
-            'message' => 'Error al borrar clientes: ' . $e->getMessage()
+            'message' => 'Error al borrar suppliers: ' . $e->getMessage()
         ], 500);
     }
 })->middleware(['auth'])->name('walee.clientes.en-proceso.delete');

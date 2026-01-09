@@ -260,6 +260,16 @@
             <div class="absolute top-1/3 -left-20 w-60 h-60 bg-violet-400/10 dark:bg-violet-400/5 rounded-full blur-3xl"></div>
         </div>
         
+        <!-- Back Button - Outside, top right, below navbar -->
+        <div class="fixed top-20 right-4 z-50">
+            <a href="{{ route('walee.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                <span>Back</span>
+            </a>
+        </div>
+        
         <!-- Main Content -->
         <div class="relative max-w-[90rem] mx-auto px-4 py-6 sm:px-6 lg:px-8">
             @php $pageTitle = 'Calendario de Aplicaciones'; @endphp
@@ -344,13 +354,6 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 sm:gap-2 flex-shrink-0 flex-wrap">
-                        <a href="{{ route('walee.dashboard') }}" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-slate-300 hover:to-slate-400 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                            </svg>
-                            <span class="hidden sm:inline">Back</span>
-                            <span class="sm:hidden">Back</span>
-                        </a>
                         @if(!$isAuthorized)
                             <a href="{{ route('google-calendar.auth') }}" class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg active:scale-95">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -168,103 +168,32 @@
             ->limit(5)
             ->get();
         
-        // Clientes con publicaciones
-        $clientesConPublicaciones = [];
-        $clientesMap = []; // Mapa para evitar duplicados usando client_id como clave
-        $emailsProcesados = []; // Para evitar procesar el mismo email múltiples veces
-        $publicacionesData = PublicidadEvento::select('cliente_id')
-            ->selectRaw('COUNT(*) as total_publicaciones')
-            ->selectRaw('SUM(CASE WHEN estado = "programado" THEN 1 ELSE 0 END) as programadas')
-            ->groupBy('cliente_id')
+        // Todos los suppliers activos
+        $todosLosSuppliers = Client::where('is_active', true)
+            ->orderBy('name', 'asc')
             ->get();
         
-        foreach ($publicacionesData as $pubData) {
-            $clientePlaneador = Cliente::find($pubData->cliente_id);
-            if ($clientePlaneador) {
-                // Normalizar email para comparación
-                $emailNormalizado = strtolower(trim($clientePlaneador->correo ?? ''));
-                
-                // Si ya procesamos este email, saltar para evitar duplicados
-                if (!empty($emailNormalizado) && isset($emailsProcesados[$emailNormalizado])) {
-                    // Si ya existe este email, agregar las publicaciones al cliente existente
-                    $clientIdExistente = $emailsProcesados[$emailNormalizado];
-                    if (isset($clientesMap[$clientIdExistente])) {
-                        $clientesMap[$clientIdExistente]['total_publicaciones'] += $pubData->total_publicaciones;
-                        $clientesMap[$clientIdExistente]['programadas'] += $pubData->programadas;
-                    }
-                    continue;
-                }
-                
-                // Buscar el cliente correspondiente en Client por email (solo con is_active = true)
-                $client = null;
-                if (!empty($emailNormalizado)) {
-                    $client = Client::where('is_active', true)
-                        ->whereRaw('LOWER(TRIM(email)) = ?', [$emailNormalizado])
-                        ->first();
-                }
-                
-                // Si no se encuentra por email, buscar por nombre exacto primero
-                if (!$client && !empty($clientePlaneador->nombre_empresa)) {
-                    $nombreNormalizado = trim($clientePlaneador->nombre_empresa);
-                    $client = Client::where('is_active', true)
-                        ->where('name', $nombreNormalizado)
-                        ->first();
-                }
-                
-                // Si aún no se encuentra, buscar por nombre parcial (último recurso)
-                if (!$client && !empty($clientePlaneador->nombre_empresa)) {
-                    $client = Client::where('is_active', true)
-                        ->where('name', 'like', '%' . $clientePlaneador->nombre_empresa . '%')
-                        ->first();
-                }
-                
-                if ($client) {
-                    $clientId = $client->id;
-                    
-                    // Si el cliente ya existe en el mapa, agregar las publicaciones al total existente
-                    if (isset($clientesMap[$clientId])) {
-                        $clientesMap[$clientId]['total_publicaciones'] += $pubData->total_publicaciones;
-                        $clientesMap[$clientId]['programadas'] += $pubData->programadas;
-                    } else {
-                        // Si es un cliente nuevo, agregarlo al mapa
-                        $clientesMap[$clientId] = [
-                            'client' => $client,
-                            'cliente_planeador' => $clientePlaneador,
-                            'total_publicaciones' => $pubData->total_publicaciones,
-                            'programadas' => $pubData->programadas,
-                        ];
-                        
-                        // Registrar el email procesado para evitar duplicados
-                        if (!empty($emailNormalizado)) {
-                            $emailsProcesados[$emailNormalizado] = $clientId;
-                        }
-                    }
+        // Formatear para mantener compatibilidad con el HTML existente
+        $clientesConPublicaciones = $todosLosSuppliers->map(function($client) {
+            // Obtener publicaciones del supplier si tiene relación con Cliente
+            $totalPublicaciones = 0;
+            $programadas = 0;
+            
+            if ($client->email) {
+                $clientePlaneador = Cliente::where('correo', $client->email)->first();
+                if ($clientePlaneador) {
+                    $publicaciones = PublicidadEvento::where('cliente_id', $clientePlaneador->id)->get();
+                    $totalPublicaciones = $publicaciones->count();
+                    $programadas = $publicaciones->where('estado', 'programado')->count();
                 }
             }
-        }
-        
-        // Convertir el mapa a array y eliminar cualquier duplicado residual
-        $clientesConPublicaciones = array_values($clientesMap);
-        
-        // Verificación adicional: eliminar duplicados por ID de cliente (por si acaso)
-        $idsUnicos = [];
-        $clientesConPublicacionesUnicos = [];
-        foreach ($clientesConPublicaciones as $item) {
-            $clientId = $item['client']->id;
-            if (!isset($idsUnicos[$clientId])) {
-                $idsUnicos[$clientId] = true;
-                $clientesConPublicacionesUnicos[] = $item;
-            }
-        }
-        $clientesConPublicaciones = $clientesConPublicacionesUnicos;
-        
-        // Ordenar por total de publicaciones descendente
-        usort($clientesConPublicaciones, function($a, $b) {
-            return $b['total_publicaciones'] <=> $a['total_publicaciones'];
-        });
-        
-        // Limitar a los primeros 10
-        $clientesConPublicaciones = array_slice($clientesConPublicaciones, 0, 10);
+            
+            return [
+                'client' => $client,
+                'total_publicaciones' => $totalPublicaciones,
+                'programadas' => $programadas,
+            ];
+        })->toArray();
         
         // Análisis ABC de Proveedores (Pareto)
         // Agrupar facturas por cliente y calcular totales
@@ -766,14 +695,16 @@
                                     </div>
                                 </a>
                                 <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                                    <div class="text-right mr-2">
-                                        <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
-                                            <span class="text-violet-600 dark:text-violet-400">{{ $item['programadas'] }}</span>
-                                            <span class="text-slate-500 dark:text-slate-400">/</span>
-                                            <span class="text-slate-700 dark:text-slate-300">{{ $item['total_publicaciones'] }}</span>
-                                        </p>
-                                        <p class="text-xs text-slate-500 dark:text-slate-500">Programadas / Total</p>
-                                    </div>
+                                    @if($item['total_publicaciones'] > 0)
+                                        <div class="text-right mr-2">
+                                            <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+                                                <span class="text-violet-600 dark:text-violet-400">{{ $item['programadas'] }}</span>
+                                                <span class="text-slate-500 dark:text-slate-400">/</span>
+                                                <span class="text-slate-700 dark:text-slate-300">{{ $item['total_publicaciones'] }}</span>
+                                            </p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-500">Programadas / Total</p>
+                                        </div>
+                                    @endif
                                     @if($telefonoLimpio)
                                         <button onclick="sendWhatsAppLink('{{ $telefonoLimpio }}', '{{ $item['client']->name }}')" 
                                                 class="flex items-center justify-center p-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-200 dark:hover:bg-emerald-500/30 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 transition-all group shadow-sm hover:shadow-md"
@@ -786,7 +717,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No suppliers with publications</p>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center py-3 sm:py-4">No suppliers found</p>
                         @endforelse
                     </div>
                 </div>

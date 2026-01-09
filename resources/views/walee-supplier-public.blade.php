@@ -510,7 +510,7 @@
                 confirmButtonText: 'Save',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#D59F3B',
-                reverseButtons: false,
+                reverseButtons: true,
                 padding: '1rem',
                 customClass: {
                     popup: isDarkMode ? 'dark-swal' : 'light-swal',

@@ -2558,6 +2558,11 @@ Route::get('/walee-proveedores/dashboard', function () {
     return view('walee-proveedores-dashboard');
 })->middleware(['auth'])->name('walee.proveedores.dashboard');
 
+// Ruta para dashboard de clientes (alias para compatibilidad)
+Route::get('/walee-clientes/dashboard', function () {
+    return view('walee-clientes-dashboard');
+})->middleware(['auth'])->name('walee.clientes.dashboard');
+
 Route::post('/walee-proveedores/create', function (\Illuminate\Http\Request $request) {
     try {
         $validated = $request->validate([

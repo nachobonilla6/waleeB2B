@@ -751,6 +751,16 @@
                         </button>
                     </div>
                     
+                    <!-- Botón del extractor arriba a la derecha de la sección (desactivado) -->
+                    <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+                        <span class="inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-gray-400/80 backdrop-blur-sm text-white border border-white/20 transition-all shadow-lg cursor-not-allowed opacity-60" title="Extractor desactivado">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm font-medium hidden sm:inline">Extractor</span>
+                        </span>
+                    </div>
+                    
                     <!-- Mobile: Layout reorganizado -->
                     <div class="block sm:hidden w-full">
                         <div class="flex items-start gap-3 p-3 w-full">

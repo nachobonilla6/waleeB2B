@@ -1008,7 +1008,7 @@
                     let finalMessage = message;
                     
                     if (selectedProducts.length > 0) {
-                        finalMessage += '\n\n📦 *Available Products:*\n';
+                        finalMessage += '\n\nAvailable Products:\n';
                         selectedProducts.forEach((product, index) => {
                             finalMessage += `${index + 1}. ${product.name}`;
                             if (product.stock && parseInt(product.stock) > 0) {

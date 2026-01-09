@@ -83,7 +83,7 @@
         </div>
         
         <!-- Main Content -->
-        <div class="relative max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8 w-full">
+        <div class="relative max-w-2xl mx-auto px-4 py-8 sm:px-6 lg:px-8 w-full">
             @if(!session('supplier_public_authenticated_' . $supplier->id))
                 <!-- Access Code Form -->
                 <div class="max-w-md mx-auto mt-20">
@@ -111,7 +111,7 @@
                 </div>
             @else
                 <!-- Supplier Profile -->
-                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none p-6 sm:p-8">
+                <div class="bg-white dark:bg-slate-900/60 rounded-2xl lg:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none p-4 sm:p-6">
                     <!-- Header -->
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
                         <div class="flex items-center gap-4 flex-1">

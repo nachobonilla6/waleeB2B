@@ -7258,6 +7258,9 @@ Route::match(['put', 'post'], '/walee-supplier/{id}', function (\Illuminate\Http
         if ($request->has('estado')) {
             $data['estado'] = $request->input('estado');
         }
+        if ($request->has('contacto_empresa')) {
+            $data['contacto_empresa'] = $request->input('contacto_empresa');
+        }
         if ($request->has('feedback')) {
             $data['feedback'] = $request->input('feedback');
         }

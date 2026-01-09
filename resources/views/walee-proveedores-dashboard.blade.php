@@ -124,6 +124,12 @@
             ->whereYear('created_at', now()->year)
             ->count();
         
+        // Clientes recibidos este mes
+        $clientesReceivedEsteMes = Client::where('estado', 'received')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        
         // Clientes de esta semana (solo con is_active = true)
         $inicioSemana = now()->startOfWeek();
         $finSemana = now()->endOfWeek();
@@ -383,8 +389,8 @@
                         </div>
                     </div>
                     <div class="mb-1 sm:mb-2">
-                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">This Month</p>
-                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesEsteMes) }}</p>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-0.5 sm:mb-1">Total Received This Month</p>
+                        <p class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($clientesReceivedEsteMes) }}</p>
                     </div>
                 </a>
                 
